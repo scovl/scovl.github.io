@@ -78,7 +78,9 @@ O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus
 
 *   **Deployment**
 
-	* No fluxo de trabalho padrão no OpenShift, o deployment da aplicação é acionado automaticamente depois que a imagem do contêiner é criado e disponibilizado. O processo de deployment usa a imagem do aplicativo recém criado e a implanta em um ou mais nodes. Além dos pods dos aplicativos, um serviço é criado, junto com uma rota de DNS na camada de roteamento.![https://i.imgur.com/8KwX9UK.png](https://i.imgur.com/8KwX9UK.png)
+	* No fluxo de trabalho padrão no OpenShift, o deployment da aplicação é acionado automaticamente depois que a imagem do contêiner é criado e disponibilizado. O processo de deployment usa a imagem do aplicativo recém criado e a implanta em um ou mais nodes. Além dos pods dos aplicativos, um serviço é criado, junto com uma rota de DNS na camada de roteamento.
+
+![https://i.imgur.com/tl53ec9.png](https://i.imgur.com/tl53ec9.png)
 
 *   **Upgrade**
 
