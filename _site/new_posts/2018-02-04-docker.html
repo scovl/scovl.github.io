@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{{ page.title }} - lobocode - Labs</title>
+        <title>Atomic Project - lobocode - Labs</title>
         <meta name="viewport" content="width=device-width">
 
         <meta name="description"
@@ -37,20 +37,49 @@
         <nav id="top-navigation">
           <ul>
 
-			{% for link in site.navigation %}
-                {% assign current = nil %}
-                {% if page.url == link.url or page.snip and link.url == '/index.html' %}
-                  {% assign current = 'active' %}
-                {% endif %}
-              <li><a class="{{ current }}" href="{{ link.url }}">{{ link.text }}</a></li>
-            {% endfor %}
+			
+                
+                
+              <li><a class="active" href="/index.html">Home</a></li>
+            
+                
+                
+              <li><a class="" href="/about/index.html">About</a></li>
+            
+                
+                
+              <li><a class="" href="/projects/index.html">Projects</a></li>
+            
           </ul>
         </nav>
       </div>
 
       <div id="content">
         <div id="content-wrapper">
-          {{ content }}
+          <header class="page-heading">
+	<h2 class="page-title">Atomic Project</h2>
+	<p class="meta published-date">Published </p>
+	<h3 class="page-snip">Docker server planning</h3>
+</header>
+
+<div id="post">
+	
+
+	<div id="disqus_thread"></div>
+	<script>
+
+		(function() { // DON'T EDIT BELOW THIS LINE
+			var d = document, s = d.createElement('script');
+			s.src = 'https://lobocode.disqus.com/embed.js';
+			s.setAttribute('data-timestamp', +new Date());
+			(d.head || d.body).appendChild(s);
+		})();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+	<script id="dsq-count-scr" src="//lobocode.disqus.com/count.js" async></script>
+</div>
+
         </div>
       </div>
 

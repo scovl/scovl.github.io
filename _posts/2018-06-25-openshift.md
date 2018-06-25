@@ -2,17 +2,18 @@
 layout: post
 title: OpenShift 
 snip:  Arrumando a casa
+tags: openshift fedora
 ---
 
 
-**Capítulo 1 - O conceito**
+#### CAPÍTULO 1 - O CONCEITO
 
 *   **[Breve introdução](#breve-introducao)**
 *   **[Plataforma em contêineres](#plataforma-em-conteineres)**
 *   **[Casos de Uso](#casos-de-uso)**
 *   **[Escalonando Aplicações](#escalonando-aplicacoes)**
 
-**Breve introdução**
+### BREVE INTRODUCAO
 
 Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o **[LXC](https://en.wikipedia.org/wiki/LXC)**.
 
@@ -32,7 +33,9 @@ Hoje um dos mais conhecidos LXC’s do mercado é o **[Docker](https://pt.wikipe
 
 Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de haver plataformas estender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift que agrega valor, funcionalidades e uma experiência mais agradável para os administradores de sistemas e desenvolvedores.
 
-**PLATAFORMA EM CONTÊINERES**
+---
+
+### PLATAFORMA EM CONTEINERES
 
 **O que é uma plataforma de contêineres?**
 
@@ -82,7 +85,9 @@ expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-
 
 *   Retirement (fim do ciclo de vida).
 
-**Casos de uso**
+---
+
+### CASOS DE USO
 
 Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta de isolar processos e serviços como os mainframes, e a revolução da virtualização onde várias máquinas virtuais podem ser executadas em um único servidor físico, podemos compreender melhor o rumo em que as tecnologias hoje tem avançado.
 
@@ -125,7 +130,9 @@ Isso é proposital e ocorre por design para permitir que os contêineres estejam
 
 Em todas essas situações e muitas outras, você precisa ter **armazenamento persistente disponível em seus contêineres**. Esse armazenamento deve ser definido como parte do deploy da sua aplicação e deve estar disponível em todos os nodes do cluster no OpenShift. Felizmente, o OpenShift tem várias maneiras de resolver esse problema. Quando você consegue integrar efetivamente o armazenamento compartilhado aos contêineres da sua aplicação, poderá pensar em escalabilidade.
 
-**Escalonando aplicações**
+---
+
+### ESCALONANDO APLICACOES
 
 Para aplicações stateless, escalar para cima e para baixo é simples. Como não há dependências além do que está no contêiner e como as transações que acontecem no contêiner são atômicas por design, tudo o que você precisa fazer para dimensionar uma aplicação stateless, é implantar mais instâncias dele e equilibrá-las. Para tornar esse processo ainda mais fácil, o OpenShift faz o proxy das conexões para cada aplicativo por meio de um balanceador de carga integrado. Isso permite que os aplicativos aumentem e diminuam o escalonamento sem alteração na maneira como os usuários se conectam a aplicação.
 
