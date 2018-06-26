@@ -190,23 +190,26 @@ Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de coma
 
 Para garantir que seu cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
 
-<div class="datatable-begin"></div>
+![https://i.imgur.com/SH20A4i.png](https://i.imgur.com/SH20A4i.png)
 
-|-------------------|---------------------------------------|-------------------------------------------------|    
-|Número da Porta    | Protocolo de Rede                     | Motivo                                          |
-|-------------------|-------------------------------------- |-------------------------------------------------|
-|22                 | TCP                                   | Acesso SSH                                      |
-|1936               | TCP                                   | Estatísticas do roteador OpenShift              |
-|8053               | TCP e UDP                             | Gerenciamento do DNS interno                    |
-|4789               | UDP                                   | Comunicação de rede definida por software (SDN) |
-|443                | TCP                                   | Comunicação SSL                                 |
-|8443               | TCP                                   | Serviços Web e API                              |
-|10250              | TCP                                   | Comunicação do Kubernetes                       |
-|9200               | TCP                                   | Serviço para agregar logs                       |
-|9300               | TCP                                   | Serviço para agregar logs                       |
+No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso permite que o tráfego criptografado rede entre os nodes funcione corretamente. Basicamente você precisará configurar um **[registro DNS curinga](https://tools.ietf.org/html/rfc4592)** que apontará para o seu cluster afim de acessar os aplicativos que você implementar futuramente.
 
-<div class="datatable-end"></div>
+Se você já tem um servidor DNS já resolve a questão. Caso contrário, você poderá usar o domínio **[nip.io](nip.io)**.
 
+> NOTA: Se você tem experiência com servidores Linux, poderá estar se perguntando: "Por que não posso simplesmente usar o arquivo `/etc/hosts` para este fim? A resposta é bem simples: esta configuração só funcionaria bem em um host pois não há propagação do DNS na rede. Serviria bem para um Minishift por exemplo. Mas para clusters distribuídos, o melhor é ter um DNS propagado.
+
+O domínio **[nip.io](http://nip.io/)** quebra um galho enorme neste aspecto. Em vez de configurar e gerenciar um servidor DNS, você poderá criar registros DNS que resolvam qualquer endereço IP escolhido. 
+
+A única desvantagem do **[nip.io](http://nip.io/)** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/)**.  A baixo, um exemplo do que poderemos configurar como modelo:
+
+
+
+
+O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS e os hostnames configurados funcionem de maneira consistente. Se você não usasse endereço IP estático, seria necessário gerenciar um servidor DHCP em seu ambiente o que de todo modo não é uma boa prática.
+
+> NOTA: O servidor DNS que estamos usando é o 8.8.8.8, que é um dos servidores DNS públicos do Google. Você pode usar qualquer servidor DNS que desejar, mas, para funcionar, ele deve resolver consultas DNS públicas para o domínio nip.io. 
+
+Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements)** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor porém com uma abordagem distribuída.
 
 #### ACESSANDO SEU CLUSTER E EFETUANDO LOGIN
 
