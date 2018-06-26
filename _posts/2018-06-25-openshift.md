@@ -5,7 +5,7 @@ snip:  Arrumando a casa
 tags: openshift fedora
 ---
 
-> Este é um material que fora elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização.
+> Este é um material que fora elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
 
 ---
 
@@ -15,6 +15,16 @@ tags: openshift fedora
 *   **[Plataforma em contêineres](#plataforma-em-conteineres)**
 *   **[Casos de Uso](#casos-de-uso)**
 *   **[Escalonando Aplicações](#escalonando-aplicacoes)**
+
+#### CAPÍTULO 2 - GETTING STARTED
+
+* **[Instalando o OpenShift](#instalando-o-openshift)**
+* **[Acessando seu cluster e efetuando login](#acessando-seu-cluster-e-efetuando-login)**
+* **[Criando projetos e implementando aplicativos](#criando-projetos-e-implementando-aplicativos)**
+* **[Acessando sua aplicação criando rotas](#acessando-sua-aplicacao-criando-rotas)**
+* **[Investigando componentes da aplicação](#investigando-componentes-da-aplicacao)**
+* **[Comparando linha de comando com fluxo de trabalho web](#comparando-linha-de-comando-com-fluxo-de-trabalho-web)**
+
 
 ---
 
@@ -66,7 +76,7 @@ O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubern
 
 Para tirar proveito de todo o potencial de uma plataforma de contêiner como o Kubernetes, é necessário alguns componentes adicionais. O OpenShift usa o docker e o Kubernetes como ponto de partida e adiciona mais algumas ferramentas para proporcionar uma melhor experiência aos usuários. O OpenShift usa a arquitetura master/node do Kubernetes e partir daí, se expande para fornecer serviços adicionais.
 
-Em uma plataforma de contêiner como o OpenShift, as imagens do contêiner são criados quando ocorre o deploy das aplicações ou quando são atualizados. Para ser eficaz, as imagens do contêiner devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um DockerHub self-hosted).
+Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando ocorre o deploy das aplicações, ou quando as imagens são atualizadas. Para ser eficaz, as imagens devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um **[DockerHub](https://hub.docker.com/)** local).
 
 No Kubernetes, os contêineres são criados nos nodes usando componentes chamados **pods**. Os pods são a menor unidade dentro de um cluster Kubernetes e nada mais é do que containers rodando dentro do seu cluster. Quando um aplicativo consiste em mais de um pods, o acesso ao aplicativo é gerenciado por meio de um componente chamado service. 
 
@@ -170,5 +180,57 @@ No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo co
 
 Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o docker e o Kubernetes. Osbenefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.
 
+---
 
-Continua...
+#### INSTALANDO O OPENSHIFT
+
+Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet.
+
+Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar seu cluster. Para instalar o `oc`, você precisa ser super usuário, ou ter acesso ao **root**. Para você compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://github.com/openshift/origin/blob/master/docs/cli.md](https://github.com/openshift/origin/blob/master/docs/cli.md)** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar sua interface Web e a sua API. Você acessará o seu servidor master nessa porta.
+
+Para garantir que seu cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
+
+<div class="datatable-begin"></div>
+
+|-------------------|---------------------------------------|-------------------------------------------------|    
+|Número da Porta    | Protocolo de Rede                     | Motivo                                          |
+|-------------------|-------------------------------------- |-------------------------------------------------|
+|22                 | TCP                                   | Acesso SSH                                      |
+|1936               | TCP                                   | Estatísticas do roteador OpenShift              |
+|8053               | TCP e UDP                             | Gerenciamento do DNS interno                    |
+|4789               | UDP                                   | Comunicação de rede definida por software (SDN) |
+|443                | TCP                                   | Comunicação SSL                                 |
+|8443               | TCP                                   | Serviços Web e API                              |
+|10250              | TCP                                   | Comunicação do Kubernetes                       |
+|9200               | TCP                                   | Serviço para agregar logs                       |
+|9300               | TCP                                   | Serviço para agregar logs                       |
+
+<div class="datatable-end"></div>
+
+
+#### ACESSANDO SEU CLUSTER E EFETUANDO LOGIN
+
+Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful]()**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. 
+
+Antes de começar a usar o OpenShift de fato, é importar ressaltar que existe uma maneira mais fácil de testar esta tecnologia usando o **[Minishift](https://github.com/minishift/minishift)** que funciona **[all in one]()**. Isto é, tudo em uma coisa só. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado, certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes. 
+
+Montar um ambiente do zero é um aprendizado bastante rico e te encorajo a faze-lo. Para facilitar um pouco mais na montagem dos ambientes, irei compartilhar a maneira automatizada de montagem de um ambiente OpenShifit usando o **[Ansible]()** para obter o mesmo resultado.
+
+No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas pelas regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer combinação de usuário e senha combinação para efetuar login. 
+
+Esta configuração inicial é chamada de **[Allow All identity provider]()**. Isto é, cada nome de usuário é exclusivo e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações para estudo de implementação (nosso caso). 
+
+O primeiro usuário que você criar será chamado **fulano**. Este usuário representará um usuário final do OpenShift. 
+
+
+> NOTA: Este método de autenticação é sensível a maiúsculas e minúsculas. Embora as senhas possam ser qualquer coisa, fulano e Fulano são usuários diferentes.
+
+
+Usando a linha de comando, execute o comando `oc login`, usando **fulano** para o nome de usuário e senha e o URL para o servidor de API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:
+
+
+{% highlight bash %}
+$ oc login -u fulano -p fulano https://ocp-1.192.168.122.100.nip.io:8443
+{% endhighlight %}
+
+``
