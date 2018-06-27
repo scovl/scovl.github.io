@@ -19,6 +19,7 @@ tags: openshift fedora
 #### CAPÍTULO 2 - GETTING STARTED
 
 * **[Instalando o OpenShift](#instalando-o-openshift)**
+* **[Configurando o ambiente](#configurando-o-ambiente)**
 * **[Acessando seu cluster e efetuando login](#acessando-seu-cluster-e-efetuando-login)**
 * **[Criando projetos e implementando aplicativos](#criando-projetos-e-implementando-aplicativos)**
 * **[Acessando sua aplicação criando rotas](#acessando-sua-aplicacao-criando-rotas)**
@@ -237,6 +238,24 @@ Com esses pacotes instalados, precisaremos iniciar o NetworkManager pois o OpenS
 sudo systemctl enable NetworkManager --now
 {% endhighlight %}
 
+Posso dizer que a partir daquí já temos o OpenShift Origin instalado no servidor. No entanto, é necessário mais alguns passos afim de deixa-lo de fato "redondo". Como por exemplo, temos que configurar a resolução do DNS nos dois servidores, precisamos preparar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux. Ou seja, bastante trabalho pela frente.
+
+---
+
+#### CONFIGURANDO O AMBIENTE
+
+Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial. 
+
+> NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io]()** para seus hostnames.
+
+Vamos então editar o  client DNS do CentOs que é o `/etc/resolv.conf`. 
+
+
+Continua...
+
+---
+
+### WIP - Continua...
 
 #### ACESSANDO SEU CLUSTER E EFETUANDO LOGIN
 
