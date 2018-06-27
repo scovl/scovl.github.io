@@ -186,9 +186,9 @@ Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele impl
 
 Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet.
 
-Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar seu cluster. Para instalar o `oc`, você precisa ser super usuário, ou ter acesso ao **root**. Para você compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://github.com/openshift/origin/blob/master/docs/cli.md](https://github.com/openshift/origin/blob/master/docs/cli.md)** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar sua interface Web e a sua API. Você acessará o seu servidor master nessa porta.
+Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o `oc`, você precisará ser super usuário, ou ter acesso ao **root**. Para compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://github.com/openshift/origin/blob/master/docs/cli.md](https://github.com/openshift/origin/blob/master/docs/cli.md)** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.
 
-Para garantir que seu cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
+Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
 
 ![https://i.imgur.com/SH20A4i.png](https://i.imgur.com/SH20A4i.png)
 
@@ -202,14 +202,41 @@ O domínio **[nip.io](http://nip.io/)** quebra um galho enorme neste aspecto. Em
 
 A única desvantagem do **[nip.io](http://nip.io/)** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/)**.  A baixo, um exemplo do que poderemos configurar como modelo:
 
-
-
+![https://i.imgur.com/LKIgIoQ.png](https://i.imgur.com/LKIgIoQ.png)
 
 O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS e os hostnames configurados funcionem de maneira consistente. Se você não usasse endereço IP estático, seria necessário gerenciar um servidor DHCP em seu ambiente o que de todo modo não é uma boa prática.
 
 > NOTA: O servidor DNS que estamos usando é o 8.8.8.8, que é um dos servidores DNS públicos do Google. Você pode usar qualquer servidor DNS que desejar, mas, para funcionar, ele deve resolver consultas DNS públicas para o domínio nip.io. 
 
-Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements)** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor porém com uma abordagem distribuída.
+Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements)** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor:
+
+![https://i.imgur.com/qAChvCm.png](https://i.imgur.com/qAChvCm.png)
+
+
+Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório **[Extra Packages for Enterprise Linux - EPEL]()** e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:
+
+{% highlight bash %}
+sudo yum -y install epel-release centos-release-openshift-origin36
+{% endhighlight %}
+
+Em seguida, alguns pacotes adicionais:
+
+{% highlight bash %}
+sudo yum -y install origin origin-clients vim-enhanced atomic-openshift-utils 
+{% endhighlight %}
+
+Agora o NetworkManager e o certificado:
+
+{% highlight bash %}
+sudo yum -y install NetworkManager python-rhsm-certificates
+{% endhighlight %}
+
+Com esses pacotes instalados, precisaremos iniciar o NetworkManager pois o OpenShift usa o NetworkManager para gerenciar as configurações de rede de todos os servidores no cluster:
+
+{% highlight bash %}
+sudo systemctl enable NetworkManager --now
+{% endhighlight %}
+
 
 #### ACESSANDO SEU CLUSTER E EFETUANDO LOGIN
 
