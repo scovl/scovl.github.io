@@ -87,6 +87,7 @@
   <li><strong><a href="#configurando-o-conteiner-storage">Configurando o conteiner storage</a></strong></li>
   <li><strong><a href="#configurando-o-selinux-em-seus-nodes">Configurando o SElinux em seus nodes</a></strong></li>
   <li><strong><a href="#instalando-o-openshift">Instalando o OpenShift</a></strong></li>
+  <li><strong><a href="#executando-o-playbook">Executando o Playbook</a></strong></li>
 </ul>
 
 <h4 id="capÍtulo-3---wip">CAPÍTULO 3 - WIP</h4>
@@ -628,6 +629,49 @@ host1 <span class="nv">foo</span><span class="o">=</span>bar
 </blockquote>
 
 <p>As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>OSEv3:children]
+nodes
+nfs
+masters
+etcd
+
+<span class="o">[</span>OSEv3:vars]
+<span class="nv">openshift_master_cluster_public_hostname</span><span class="o">=</span>None
+<span class="nv">openshift_master_default_subdomain</span><span class="o">=</span>apps.192.168.122.101.nip.io
+<span class="nv">ansible_ssh_user</span><span class="o">=</span>root
+<span class="nv">openshift_master_cluster_hostname</span><span class="o">=</span>None
+<span class="nv">openshift_override_hostname_check</span><span class="o">=</span><span class="nb">true
+</span><span class="nv">deployment_type</span><span class="o">=</span>origin
+
+<span class="o">[</span>nodes:vars]
+<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+
+<span class="o">[</span>masters:vars]
+<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+
+<span class="o">[</span>nodes]
+192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_schedulable</span><span class="o">=</span>False <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local
+</span>192.168.122.101  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp2.192.168.122.101.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp2.192.168.122.101.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_node_labels</span><span class="o">=</span><span class="s2">"{'region': 'infra'}"</span> <span class="nv">openshift_schedulable</span><span class="o">=</span>True
+
+<span class="o">[</span>nfs]
+192.168.122.100 <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+
+<span class="o">[</span>masters]
+192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+
+<span class="o">[</span>etcd]
+192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span></code></pre></figure>
+
+<blockquote>
+  <p>NOTA: O node ocp1 possui uma variável chamada <code class="highlighter-rouge">openshift_node_labels</code>. os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante a implantação, <code class="highlighter-rouge">region = infra</code>, informa ao OpenShift o node correto para implementar o contêiner que executa solicitações de conexões com a Internet.</p>
+</blockquote>
+
+<p>Depois de fazer qualquer edição de inventário necessária para corresponder ao seu ambiente, salve seu inventário em seu node master como <code class="highlighter-rouge">/root/ hosts</code>. O próximo passo é iniciar a implementação do OpenShift.</p>
+
+<hr />
+
+<h4 id="executando-o-playbook">EXECUTANDO O PLAYBOOK</h4>
 
 <hr />
 
