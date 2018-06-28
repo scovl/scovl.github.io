@@ -26,13 +26,6 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - WIP
-* **[Acessando seu cluster e efetuando login](#acessando-seu-cluster-e-efetuando-login)**
-* **[Criando projetos e implementando aplicativos](#criando-projetos-e-implementando-aplicativos)**
-* **[Acessando sua aplicação criando rotas](#acessando-sua-aplicacao-criando-rotas)**
-* **[Investigando componentes da aplicação](#investigando-componentes-da-aplicacao)**
-* **[Comparando linha de comando com fluxo de trabalho web](#comparando-linha-de-comando-com-fluxo-de-trabalho-web)**
-
 
 ---
 
