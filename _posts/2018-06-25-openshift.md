@@ -22,6 +22,7 @@ tags: openshift fedora
 * **[Configurando o NetworkManager](#configurando-o-networkmanager)**
 * **[Instalando ferramentas no servidor master](#instalando-ferramentas-no-servidor-master)**
 * **[Configurando o conteiner storage](#configurando-o-conteiner-storage)**
+* **[Configurando o SElinux em seus nodes](#configurando-o-selinux-em-seus-nodes)**
 
 #### CAPÍTULO 3 - WIP
 * **[Acessando seu cluster e efetuando login](#acessando-seu-cluster-e-efetuando-login)**
@@ -432,10 +433,12 @@ Criando o arquivo de configuração do `docker-storage-setup`:
 
 {% highlight bash %}
 cat <<EOF > /etc/sysconfig/docker-storage-setup
-DEVS=/dev/vdb # /dev/vdb é o volume de 20 GB que você criou para os nodes.
+DEVS=/dev/vdb 
 VG=docker-vg
 EOF
 {% endhighlight %}
+
+Perceba que o particionamento `/dev/vdb`, trata-se do volume de 20 GB que você criou para os nodes.
 
 > NOTA: Se você não tiver certeza sobre o nome do disco a ser usado para o armazenamento em contêiner, o comando `lsblk` fornecerá uma lista de todos os discos em seu servidor. A saída está em um diagrama de árvore fácil de entender.
 
@@ -480,6 +483,17 @@ CGroup: /system.slice/docker.service
 {% endhighlight %}
 
 O próximo passo é modificar o **[SELinux]()** para permitir que o OpenShift se conecte ao **[NFS]()** como uma fonte de armazenamento persistente.
+
+---
+
+#### CONFIGURANDO O SELINUX EM SEUS NODES
+
+No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando `setsebool`:
+
+{% highlight bash %}
+sudo setsebool -P virt_use_nfs 1
+sudo setsebool -P virt_sandbox_use_nfs 1
+{% endhighlight %}
 
 
 ---

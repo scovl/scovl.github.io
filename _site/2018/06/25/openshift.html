@@ -85,6 +85,7 @@
   <li><strong><a href="#configurando-o-networkmanager">Configurando o NetworkManager</a></strong></li>
   <li><strong><a href="#instalando-ferramentas-no-servidor-master">Instalando ferramentas no servidor master</a></strong></li>
   <li><strong><a href="#configurando-o-conteiner-storage">Configurando o conteiner storage</a></strong></li>
+  <li><strong><a href="#configurando-o-selinux-em-seus-nodes">Configurando o SElinux em seus nodes</a></strong></li>
 </ul>
 
 <h4 id="capÍtulo-3---wip">CAPÍTULO 3 - WIP</h4>
@@ -503,9 +504,11 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <p>Criando o arquivo de configuração do <code class="highlighter-rouge">docker-storage-setup</code>:</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; /etc/sysconfig/docker-storage-setup
-DEVS=/dev/vdb # /dev/vdb é o volume de 20 GB que você criou para os nodes.
+DEVS=/dev/vdb 
 VG=docker-vg
 EOF</span></code></pre></figure>
+
+<p>Perceba que o particionamento <code class="highlighter-rouge">/dev/vdb</code>, trata-se do volume de 20 GB que você criou para os nodes.</p>
 
 <blockquote>
   <p>NOTA: Se você não tiver certeza sobre o nome do disco a ser usado para o armazenamento em contêiner, o comando <code class="highlighter-rouge">lsblk</code> fornecerá uma lista de todos os discos em seu servidor. A saída está em um diagrama de árvore fácil de entender.</p>
@@ -544,6 +547,15 @@ Memory: 121.4M
 CGroup: /system.slice/docker.service</code></pre></figure>
 
 <p>O próximo passo é modificar o <strong><a href="">SELinux</a></strong> para permitir que o OpenShift se conecte ao <strong><a href="">NFS</a></strong> como uma fonte de armazenamento persistente.</p>
+
+<hr />
+
+<h4 id="configurando-o-selinux-em-seus-nodes">CONFIGURANDO O SELINUX EM SEUS NODES</h4>
+
+<p>No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando <code class="highlighter-rouge">setsebool</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>setsebool <span class="nt">-P</span> virt_use_nfs 1
+<span class="nb">sudo </span>setsebool <span class="nt">-P</span> virt_sandbox_use_nfs 1</code></pre></figure>
 
 <hr />
 
