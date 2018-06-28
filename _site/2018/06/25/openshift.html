@@ -86,6 +86,7 @@
   <li><strong><a href="#instalando-ferramentas-no-servidor-master">Instalando ferramentas no servidor master</a></strong></li>
   <li><strong><a href="#configurando-o-conteiner-storage">Configurando o conteiner storage</a></strong></li>
   <li><strong><a href="#configurando-o-selinux-em-seus-nodes">Configurando o SElinux em seus nodes</a></strong></li>
+  <li><strong><a href="#instalando-o-openshift">Instalando o OpenShift</a></strong></li>
 </ul>
 
 <h4 id="capÍtulo-3---wip">CAPÍTULO 3 - WIP</h4>
@@ -328,7 +329,7 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>systemctl <span class="nb">enable </span>NetworkManager <span class="nt">--now</span></code></pre></figure>
 
-<p>Posso dizer que a partir daquí já temos o OpenShift Origin instalado no servidor. No entanto, é necessário mais alguns passos afim de deixa-lo de fato “redondo”. Como por exemplo, temos que configurar a resolução do DNS nos dois servidores, precisamos preparar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux. Ou seja, bastante trabalho pela frente.</p>
+<p>Mais a diante irei configurar a resolução do DNS nos dois servidores, será necessário configurar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux, e de fato instalar o OpenShift com a criação de Playbooks no Ansible. Ou seja, bastante trabalho pela frente.</p>
 
 <hr />
 
@@ -559,31 +560,77 @@ CGroup: /system.slice/docker.service</code></pre></figure>
 
 <hr />
 
-<h3 id="wip---continua">WIP - Continua…</h3>
+<h4 id="instalando-o-openshift">INSTALANDO O OPENSHIFT</h4>
 
-<h4 id="acessando-seu-cluster-e-efetuando-login">ACESSANDO SEU CLUSTER E EFETUANDO LOGIN</h4>
+<p>O OpenShift é instalado usando um playbook Ansible. Isto é, uma coleção de tarefas e parâmetros necessários para executar uma tarefa. Para executar um playbook Ansible, três coisas devem estar presentes no seu servidor:</p>
 
-<p>Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela <strong><a href="">API RESTful</a></strong>. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso.</p>
+<ul>
+  <li><strong>Ansible Engine</strong> - Executa o código do manual. Se você seguiu o artigo desde o início, certamente já o tem instalado.</li>
+  <li><strong>Playbook</strong> - O código que é executado propriamente. Quando você instalou os pacotes do OpenShift, diversos playbooks foram incluídos.</li>
+  <li><strong>Inventário</strong> - A lista de hosts onde os playbooks serão executados. Os inventários podem ser divididos em grupos, e conter quaisquer variáveis necessárias para executar os playbooks nos hosts.</li>
+</ul>
 
-<p>Antes de começar a usar o OpenShift de fato, é importar ressaltar que existe uma maneira mais fácil de testar esta tecnologia usando o <strong><a href="https://github.com/minishift/minishift">Minishift</a></strong> que funciona <strong><a href="">all in one</a></strong>. Isto é, tudo em uma coisa só. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado, certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes.</p>
+<p>O inventário Ansible para o OpenShift contém informações sobre seus dois hosts e especifica quais funções cada node terá em seu cluster. Se você estiver usando os endereços IP e os hostnames que estamos usando neste artigo, poderá fazer o download de um inventário preparado para o seu node master a seguir:</p>
 
-<p>Montar um ambiente do zero é um aprendizado bastante rico e te encorajo a faze-lo. Para facilitar um pouco mais na montagem dos ambientes, irei compartilhar a maneira automatizada de montagem de um ambiente OpenShifit usando o <strong><a href="">Ansible</a></strong> para obter o mesmo resultado.</p>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>curl <span class="nt">-o</span> /root/hosts https://raw.githubusercontent.com/OpenShiftInAction/AppendixA/master/hosts</code></pre></figure>
 
-<p>No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas pelas regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer combinação de usuário e senha combinação para efetuar login.</p>
+<p>Para aqueles que desejam personalizar a instalação, vamos analisar os componentes do inventário e como eles são projetados. Inventários fatíveis são divididos em grupos. Cada grupo consiste em hosts que são definidos pelo hostname ou pelo endereço IP. Em um inventário, um grupo também pode ser definido listando os grupos filho usando a sintaxe <code class="highlighter-rouge">:children</code>. No exemplo a seguir, o grupo <code class="highlighter-rouge">master_group</code> é formado pelos hosts no grupo1 e group2:</p>
 
-<p>Esta configuração inicial é chamada de <strong><a href="">Allow All identity provider</a></strong>. Isto é, cada nome de usuário é exclusivo e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações para estudo de implementação (nosso caso).</p>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>master_group:children]
+group1
+group2
 
-<p>O primeiro usuário que você criar será chamado <strong>fulano</strong>. Este usuário representará um usuário final do OpenShift.</p>
+<span class="o">[</span>group1]
+host1
+host2
+
+<span class="o">[</span>group2]
+host3
+host4
+
+<span class="o">[</span>group3]
+host5
+host6</code></pre></figure>
+
+<p>Outra capacidade dos inventários é que você pode definir variáveis para os hosts, e grupos de hosts. Você pode definir variáveis para um grupo inteiro usando um cabeçalho de grupo e a sintaxe <code class="highlighter-rouge">:vars</code>. Para definir uma variável para um único host, adicione-a à mesma linha usada para definir o host em um grupo. Por exemplo:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>group1]
+host1 <span class="nv">var2</span><span class="o">=</span>False <span class="nv">var3</span><span class="o">=</span>42
+host1 <span class="nv">foo</span><span class="o">=</span>bar
+
+<span class="o">[</span>group1:vars]
+<span class="nv">var1</span><span class="o">=</span>True</code></pre></figure>
+
+<p>Seu inventário inicial no OpenShift usa vários grupos e muitas variáveis:</p>
+
+<ul>
+  <li><strong>OSEv3</strong> - O grupo que representa seu cluster inteiro. É composto pelos nós de grupos secundários, mestres, nfs e etcd.</li>
+  <li><strong>nodes</strong> - Todos os grupos em seu cluster, incluindo todos os mestres e todos os nós de aplicativos.</li>
+  <li><strong>masters</strong> - os nós no seu cluster que serão designados como mestres.</li>
+  <li><strong>nfs</strong> - Nós usados para fornecer armazenamento compartilhado do NFS para vários serviços nos nós principais. Isso é necessário se você tiver vários servidores mestres. Não estamos aproveitando vários mestres neste cluster inicial, mas o grupo ainda é necessário para implantar o OpenShift.</li>
+  <li><strong>etcd</strong> - Os nós onde o etcd será implantado. O etcd é o banco de dados do Kubernetes e do OpenShift. Seu cluster usará o servidor master para abrigar o banco de dados do etcd. Para clusters maiores, o etcd pode ser separado em seus próprios nós do cluster.</li>
+</ul>
+
+<p>Para os grupos de nodes e masters, você desabilitará algumas das verificações do sistema que o manual de implantação executa antes da implantação. Essas verificações verificam a quantidade de espaço livre e memória disponível no sistema; Para um cluster inicial, você poderá usar valores menores que as recomendações que são apontadas por um dessas verificações. (Você poderá aprender mais sobre essas tais verificações em <strong><a href="https://goo.gl/8C65s7">https://goo.gl/8C65s7</a></strong>. Para desabilitar as verificações, você define variáveis para cada um desses grupos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>nodes:vars]
+<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+
+<span class="o">[</span>masters:vars]
+<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage</code></pre></figure>
+
+<p>Os comandos acima desativam as verificações de armazenamento e memória para o grupo masters.</p>
+
+<p>Seu inventário poderá conter definições de variáveis para a maioria dos hosts. A variável <code class="highlighter-rouge">ansible_connection</code> informa ao mecanismo Ansible para se conectar ao host a partir do sistema local onde o playbook está sendo executado. Variáveis Ansible adicionais são discutidas em <strong><a href="https://goo.gl/kAvqKz">https://goo.gl/kAvqKz</a></strong>.</p>
 
 <blockquote>
-  <p>NOTA: Este método de autenticação é sensível a maiúsculas e minúsculas. Embora as senhas possam ser qualquer coisa, fulano e Fulano são usuários diferentes.</p>
+  <p>NOTA: Os endereços IP e os hostnames usados neste inventário são específicos para um exemplo de cluster. Se seus endereços IP e hostnames forem diferentes, você precisará alterá-los no inventário para implementar o OpenShift com êxito.</p>
 </blockquote>
 
-<p>Usando a linha de comando, execute o comando <code class="highlighter-rouge">oc login</code>, usando <strong>fulano</strong> para o nome de usuário e senha e o URL para o servidor de API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:</p>
+<p>As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>oc login <span class="nt">-u</span> fulano <span class="nt">-p</span> fulano https://ocp-1.192.168.122.100.nip.io:8443</code></pre></figure>
+<hr />
 
-<p>``</p>
 
 	<div id="disqus_thread"></div>
 	<script>
