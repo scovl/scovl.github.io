@@ -334,7 +334,7 @@ pre.att {
     border-radius: .3em;
     white-space: pre-wrap;
     border-radius: 8px;
-    text-align: justify;
+
 }
 </style>
 
@@ -562,8 +562,31 @@ Seu inventário poderá conter definições de variáveis para a maioria dos hos
 > NOTA: Os endereços IP e os hostnames usados neste inventário são específicos para um exemplo de cluster. Se seus endereços IP e hostnames forem diferentes, você precisará alterá-los no inventário para implementar o OpenShift com êxito.
 
 As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.
+<div>
+<style media="screen" type="text/css">
 
-{% highlight bash %}
+pre.att1 {
+    font-size: 1em;
+    line-height: 1.5em;
+    font-family: "Courier New",Courier,monospace;
+    overflow: auto;
+    width: 100%;
+    position: relative;
+    background: #eee;
+    padding: .75em;
+    margin: 1.5em 0 1.5em 0;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    border-radius: .3em;
+    white-space: pre-wrap;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: monospace;
+
+}
+</style>
+<pre class="att1">
 [OSEv3:children]
 nodes
 nfs
@@ -572,7 +595,7 @@ etcd
 
 [OSEv3:vars]
 openshift_master_cluster_public_hostname=None
-openshift_master_default_subdomain=apps.192.168.122.101.nip.io
+openshift_master_default_subdomain=apps.192.168.100.2.nip.io
 ansible_ssh_user=root
 openshift_master_cluster_hostname=None
 openshift_override_hostname_check=true
@@ -585,18 +608,19 @@ openshift_disable_check=disk_availability,memory_availability,docker_storage
 openshift_disable_check=disk_availability,memory_availability,docker_storage
 
 [nodes]
-192.168.122.100  openshift_public_ip=192.168.122.100 openshift_ip=192.168.122.100 openshift_public_hostname=ocp1.192.168.122.100.nip.io openshift_hostname=ocp1.192.168.122.100.nip.io connect_to=192.168.122.100 openshift_schedulable=False ansible_connection=local
-192.168.122.101  openshift_public_ip=192.168.122.101 openshift_ip=192.168.122.101 openshift_public_hostname=ocp2.192.168.122.101.nip.io openshift_hostname=ocp2.192.168.122.101.nip.io connect_to=192.168.122.101 openshift_node_labels="{'region': 'infra'}" openshift_schedulable=True
+192.168.122.100 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 openshift_schedulable=False ansible_connection=local
+192.168.100.2 openshift_public_ip=192.168.100.2 openshift_ip=192.168.100.2 openshift_public_hostname=ocp2.192.168.100.2.nip.io openshift_hostname=ocp2.192.168.100.2.nip.io connect_to=192.168.100.2 openshift_node_labels="{'region': 'infra'}" openshift_schedulable=True
 
 [nfs]
-192.168.122.100 connect_to=192.168.122.100 ansible_connection=local
+192.168.100.1 connect_to=192.168.100.1 ansible_connection=local
 
 [masters]
-192.168.122.100  openshift_public_ip=192.168.122.100 openshift_ip=192.168.122.100 openshift_public_hostname=ocp1.192.168.122.100.nip.io openshift_hostname=ocp1.192.168.122.100.nip.io connect_to=192.168.122.100 ansible_connection=local
+192.168.100.1 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
 
 [etcd]
-192.168.122.100  openshift_public_ip=192.168.122.100 openshift_ip=192.168.122.100 openshift_public_hostname=ocp1.192.168.122.100.nip.io openshift_hostname=ocp1.192.168.122.100.nip.io connect_to=192.168.122.100 ansible_connection=local
-{% endhighlight %}
+192.168.100.1  openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
+</pre>
+</div>
 
 > NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante a implantação, `region = infra`, informa ao OpenShift o node correto para implementar o contêiner que executa solicitações de conexões com a Internet. 
 
