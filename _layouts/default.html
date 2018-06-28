@@ -7,11 +7,11 @@
         <meta name="viewport" content="width=device-width">
 
         <meta name="description"
-              content="Rants about programming, open source, caffeine, unfunny
+              content="DevOps, SRE, Labs, sysadmin, programming, open source, caffeine, unfunny
               jokes and such stuff." >
         <meta name="keywords"
-              content="programming, open source, javascript, python,
-              functional programming, clean code junkie">
+              content="DevOps, SRE, Labs, sysadmin, programming, open source, caffeine, unfunny
+              jokes and such stuff.">
 
         <link href="/atom.xml"
               rel="alternate"
@@ -26,7 +26,7 @@
 
     </head>
     <body>
-
+	<div id="wrapper">
       <div id="header">
         <header id="logo">
           <h1>
@@ -36,7 +36,6 @@
         </header>
         <nav id="top-navigation">
           <ul>
-
 			{% for link in site.navigation %}
                 {% assign current = nil %}
                 {% if page.url == link.url or page.snip and link.url == '/index.html' %}
@@ -51,7 +50,8 @@
       <div id="content">
         <div id="content-wrapper">
           {{ content }}
-        </div>
+       </div>
+		</div>
       </div>
 
       <div id="footer">
