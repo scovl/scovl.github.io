@@ -412,7 +412,7 @@ A partir daquí, estaremos prontos para configurar o contêiner de armazenamento
 
 ---
 
-#### CONFIGURANDO CONTEINER STORAGE
+#### CONFIGURANDO O CONTEINER STORAGE
 
 Um aplicativo chamado `docker-storage-setup` configura o armazenamento desejado para o Docker usar quando ele cria contêineres para o OpenShift.
 
