@@ -11,16 +11,17 @@ tags: openshift fedora
 
 #### CAPÍTULO 1 - O CONCEITO
 
-*   **[Breve introdução](#breve-introducao)**
-*   **[Plataforma em contêineres](#plataforma-em-conteineres)**
-*   **[Casos de Uso](#casos-de-uso)**
-*   **[Escalonando Aplicações](#escalonando-aplicacoes)**
+* **[Breve introdução](#breve-introducao)**
+* **[Plataforma em contêineres](#plataforma-em-conteineres)**
+* **[Casos de Uso](#casos-de-uso)**
+* **[Escalonando Aplicações](#escalonando-aplicacoes)**
 
 #### CAPÍTULO 2 - GETTING STARTED
 
 * **[Instalando o OpenShift](#instalando-o-openshift)**
-* **[Configurando o ambiente](#configurando-o-ambiente)**
-* **[Instalando ferramentas no servidor master](#instalando-ferramentas-no-servidor-principal)**
+* **[Configurando o NetworkManager](#configurando-o-networkmanager)**
+* **[Instalando ferramentas no servidor master](#instalando-ferramentas-no-servidor-master)**
+* **[Configurando o conteiner storage](#configurando-o-conteiner-storage)**
 
 #### CAPÍTULO 3 - WIP
 * **[Acessando seu cluster e efetuando login](#acessando-seu-cluster-e-efetuando-login)**
@@ -245,7 +246,7 @@ Posso dizer que a partir daquí já temos o OpenShift Origin instalado no servid
 
 ---
 
-#### CONFIGURANDO O AMBIENTE
+#### CONFIGURANDO O NETWORKMANAGER
 
 Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial. 
 
@@ -369,6 +370,117 @@ O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domíni
 ---
 
 #### INSTALANDO FERRAMENTAS NO SERVIDOR MASTER
+
+Vários pacotes precisam ser instalados apenas no servidor master. O processo de instalação do OpenShift é escrito usando o Ansible. 
+Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. 
+
+Para instalações mais elaboradas, existe uma documentação em **[https://docs.openshift.com/container-platform/3.6/install_config/install/advanced_install.html](https://docs.openshift.com/container-platform/3.6/install_config/install/advanced_install.html)**.
+
+O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.
+
+> NOTA: Precisamos nos preocupar apenas com Ansible no servidor master. Isso porque não há agente nos nodes. O Ansible não usa um agente nos sistemas que está controlando; em vez disso, ele usa o SSH como um mecanismo de transporte e para executar comandos remotos. 
+
+Inicie este processo executando o seguinte comando yum:
+
+{% highlight bash %}
+sudo yum -y install httpd-tools gcc python-devel python-pip
+{% endhighlight %}
+
+O pacote python-pip instala o gerenciador de pacotes de aplicativos Python chamado pip. Ele é usado para instalar aplicativos escritos em Python e disponíveis no Índice de pacotes do Python (www.pypi.org). Com pip instalado, você pode usá-lo para instalar o Ansible e garantir que você instale a versão 2.2.2.0, que é a usada com o OpenShift 3.6:
+
+{% highlight bash %}
+pip -v install ansible==2.2.2.0
+{% endhighlight %}
+
+Para que o instalador do OpenShift funcione corretamente, você precisa criar um par de chaves SSH no seu servidor master e distribuir a chave pública para o seu node. Para criar um novo par de chaves SSH em seu servidor master, você pode usar o comando `ssh-keygen` como neste exemplo:
+
+{% highlight bash %}
+sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
+{% endhighlight %}
+
+Esse comando cria um par de chaves SSH no diretório inicial do usuário `/root`, na subpasta `.ssh`. No Linux, esse é o local padrão para as chaves SSH de um usuário. Em seguida, execute o seguinte comando `ssh-copy-id` para distribuir sua chave pública SSH recém-criada para o seu node OpenShift (se você usou endereços IP diferentes para seu mestre e node, ajuste o comando de acordo):
+
+{% highlight bash %}
+for i in 192.168.100.1 192.168.100.2;do ssh-copy-id root@$i;done
+{% endhighlight %}
+
+Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. 
+
+Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
+
+{% highlight bash %}
+sudo yum -y install docker libcgroup-tools
+{% endhighlight %}
+
+A partir daquí, estaremos prontos para configurar o contêiner de armazenamento de dados do OpenShift.
+
+---
+
+#### CONFIGURANDO CONTEINER STORAGE
+
+Um aplicativo chamado `docker-storage-setup` configura o armazenamento desejado para o Docker usar quando ele cria contêineres para o OpenShift.
+
+> NOTA: Neste artigo estou usando uma configuração de gerenciamento baseado no volume lógico (LVM). Esta configuração cria um volume LVM para cada contêiner sob demanda.
+
+Inicialmente, eles são pequenos, mas podem crescer até o tamanho máximo configurado no OpenShift para seus contêineres. Você pode encontrar detalhes adicionais sobre a configuração de armazenamento na documentação do OpenShift em **[https://goo.gl/knBqkk](https://goo.gl/knBqkk)**.
+
+A primeira etapa desse processo é criar um arquivo de configuração para o `docker-storage-setup` em seu nó OpenShift. O disco especificado em `/etc/sysconfig/docker-storage-setup` é o segundo disco que você criou para sua VM.
+
+> NOTA: Dependendo da sua distribuição Linux, o nome do particionamento de disco `/dev /vdb em nosso exemplo` pode variar, mas a operação não.
+
+Criando o arquivo de configuração do `docker-storage-setup`:
+
+{% highlight bash %}
+cat <<EOF > /etc/sysconfig/docker-storage-setup
+DEVS=/dev/vdb # /dev/vdb é o volume de 20 GB que você criou para os nodes.
+VG=docker-vg
+EOF
+{% endhighlight %}
+
+> NOTA: Se você não tiver certeza sobre o nome do disco a ser usado para o armazenamento em contêiner, o comando `lsblk` fornecerá uma lista de todos os discos em seu servidor. A saída está em um diagrama de árvore fácil de entender.
+
+Depois de criar o arquivo `/etc/sysconfig/docker-storage-setup`, execute o `docker-storage-setup` que deverá gerar uma saída parecida com esta:
+
+{% highlight bash %}
+docker-storage-setup
+
+Checking that no-one is using this disk right now ...
+OK
+Disk /dev/vdb: 41610 cylinders, 16 heads, 63 sectors/track
+...
+Rounding up size to full physical extent 24.00 MiB
+Logical volume "docker-pool" created.
+Logical volume docker-vg/docker-pool changed.
+{% endhighlight %}
+
+Com o contêiner storage configurado, é hora de iniciar o serviço do docker no node do OpenShift. Observe que este é o tempo de execução médio que os serviços irão iniciar daquí em diante usando o OpenShift:
+
+{% highlight bash %}
+sudo systemctl enable docker.service --now
+{% endhighlight %}
+
+Agora verifique se o serviço docker iniciou corretamente:
+
+{% highlight bash %}
+sudo systemctl status docker
+{% endhighlight %}
+
+A saída esperada do comando acima, será algo semelhante a isto:
+
+{% highlight bash %}
+? docker.service - Docker Application Container Engine
+Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+Drop-In: /etc/systemd/system/docker.service.d
+??custom.conf
+Active: active (running) since Fri 2017-11-10 18:45:12 UTC; 12 secs ago
+Docs: http://docs.docker.com
+Main PID: 2352 (dockerd-current)
+Memory: 121.4M
+CGroup: /system.slice/docker.service
+{% endhighlight %}
+
+O próximo passo é modificar o **[SELinux]()** para permitir que o OpenShift se conecte ao **[NFS]()** como uma fonte de armazenamento persistente.
+
 
 ---
 
