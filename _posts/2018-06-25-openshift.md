@@ -18,7 +18,7 @@ tags: openshift fedora
 
 #### CAPÍTULO 2 - GETTING STARTED
 
-* **[Instalando o OpenShift](#instalando-o-openshift)**
+* **[Preparando para instalar o OpenShift](#preparando-para-instalar-o-openshift)**
 * **[Configurando o NetworkManager](#configurando-o-networkmanager)**
 * **[Instalando ferramentas no servidor master](#instalando-ferramentas-no-servidor-master)**
 * **[Configurando o conteiner storage](#configurando-o-conteiner-storage)**
@@ -188,7 +188,7 @@ Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele impl
 
 ---
 
-#### INSTALANDO O OPENSHIFT
+#### PREPARANDO PARA INSTALAR O OPENSHIFT
 
 Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet.
 
