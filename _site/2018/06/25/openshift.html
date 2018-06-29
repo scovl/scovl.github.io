@@ -7,11 +7,11 @@
         <meta name="viewport" content="width=device-width">
 
         <meta name="description"
-              content="Rants about programming, open source, caffeine, unfunny
+              content="DevOps, SRE, Labs, sysadmin, programming, open source, caffeine, unfunny
               jokes and such stuff." >
         <meta name="keywords"
-              content="programming, open source, javascript, python,
-              functional programming, clean code junkie">
+              content="DevOps, SRE, Labs, sysadmin, programming, open source, caffeine, unfunny
+              jokes and such stuff.">
 
         <link href="/atom.xml"
               rel="alternate"
@@ -26,17 +26,11 @@
 
     </head>
     <body>
-
+	<div id="wrapper">
       <div id="header">
-        <header id="logo">
-          <h1>
-            <a href="/">Lobocode Labs</a>
-            <em>SRE, labs, sharing knowledge...</em>
-          </h1>
-        </header>
+        
         <nav id="top-navigation">
           <ul>
-
 			
                 
                 
@@ -62,7 +56,7 @@
 	<h3 class="page-snip">Arrumando a casa</h3>
 </header>
 
-<div id="post">
+<div id="post" class="textual-content">
 	<blockquote>
   <p>Este é um material que fora elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.</p>
 </blockquote>
@@ -408,7 +402,7 @@ pre.att {
     border-radius: .3em;
     white-space: pre-wrap;
     border-radius: 8px;
-    text-align: justify;
+
 }
 </style>
 
@@ -620,39 +614,65 @@ host1 <span class="nv">foo</span><span class="o">=</span>bar
 </blockquote>
 
 <p>As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.</p>
+<div>
+<style media="screen" type="text/css">
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>OSEv3:children]
+pre.att1 {
+    font-size: 1em;
+    line-height: 1.5em;
+    font-family: "Courier New",Courier,monospace;
+    overflow: auto;
+    width: 100%;
+    position: relative;
+    background: #eee;
+    padding: .75em;
+    margin: 1.5em 0 1.5em 0;
+    -moz-border-radius: .3em;
+    -webkit-border-radius: .3em;
+    border-radius: .3em;
+    white-space: pre-wrap;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: monospace;
+
+}
+</style>
+<pre class="att1">
+[OSEv3:children]
 nodes
 nfs
 masters
 etcd
 
-<span class="o">[</span>OSEv3:vars]
-<span class="nv">openshift_master_cluster_public_hostname</span><span class="o">=</span>None
-<span class="nv">openshift_master_default_subdomain</span><span class="o">=</span>apps.192.168.122.101.nip.io
-<span class="nv">ansible_ssh_user</span><span class="o">=</span>root
-<span class="nv">openshift_master_cluster_hostname</span><span class="o">=</span>None
-<span class="nv">openshift_override_hostname_check</span><span class="o">=</span><span class="nb">true
-</span><span class="nv">deployment_type</span><span class="o">=</span>origin
+[OSEv3:vars]
+openshift_master_cluster_public_hostname=None
+openshift_master_default_subdomain=apps.192.168.100.2.nip.io
+ansible_ssh_user=root
+openshift_master_cluster_hostname=None
+openshift_override_hostname_check=true
+deployment_type=origin
 
-<span class="o">[</span>nodes:vars]
-<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+[nodes:vars]
+openshift_disable_check=disk_availability,memory_availability,docker_storage
 
-<span class="o">[</span>masters:vars]
-<span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+[masters:vars]
+openshift_disable_check=disk_availability,memory_availability,docker_storage
 
-<span class="o">[</span>nodes]
-192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_schedulable</span><span class="o">=</span>False <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local
-</span>192.168.122.101  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp2.192.168.122.101.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp2.192.168.122.101.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.101 <span class="nv">openshift_node_labels</span><span class="o">=</span><span class="s2">"{'region': 'infra'}"</span> <span class="nv">openshift_schedulable</span><span class="o">=</span>True
+[nodes]
+192.168.122.100 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 openshift_schedulable=False ansible_connection=local
+192.168.100.2 openshift_public_ip=192.168.100.2 openshift_ip=192.168.100.2 openshift_public_hostname=ocp2.192.168.100.2.nip.io openshift_hostname=ocp2.192.168.100.2.nip.io connect_to=192.168.100.2 openshift_node_labels="{'region': 'infra'}" openshift_schedulable=True
 
-<span class="o">[</span>nfs]
-192.168.122.100 <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+[nfs]
+192.168.100.1 connect_to=192.168.100.1 ansible_connection=local
 
-<span class="o">[</span>masters]
-192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+[masters]
+192.168.100.1 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
 
-<span class="o">[</span>etcd]
-192.168.122.100  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.122.100 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.122.100.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.122.100 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span></code></pre></figure>
+[etcd]
+192.168.100.1  openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
+</pre>
+</div>
 
 <blockquote>
   <p>NOTA: O node ocp1 possui uma variável chamada <code class="highlighter-rouge">openshift_node_labels</code>. os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante a implantação, <code class="highlighter-rouge">region = infra</code>, informa ao OpenShift o node correto para implementar o contêiner que executa solicitações de conexões com a Internet.</p>
@@ -682,7 +702,8 @@ etcd
 	<script id="dsq-count-scr" src="//lobocode.disqus.com/count.js" async></script>
 </div>
 
-        </div>
+       </div>
+		</div>
       </div>
 
       <div id="footer">
