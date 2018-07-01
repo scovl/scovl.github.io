@@ -240,7 +240,7 @@ Mais a diante irei configurar a resolução do DNS nos dois servidores, será ne
 
 Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial. 
 
-> NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io](){:target="_blank"}** para seus hostnames.
+> NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io](nip.io){:target="_blank"}** para seus hostnames.
 
 Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. 
 
@@ -248,7 +248,7 @@ O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` 
 
 Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html){:target="_blank"}** para saber mais.
 
-Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](){:target="_blank"}**), conforme mostrado seguir:
+Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io){:target="_blank"}**), conforme mostrado seguir:
 
 Editando o `/etc/resolv.conf`:
 {% highlight bash %}
@@ -312,11 +312,9 @@ Pós reiniciar o NetworkManager, confira se de fato o arquivo `/etc/resolv.conf`
 
 **Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:**
 
+O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o **[HAProxy](){:target="_blank"}** para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O **[HAProxy](){:target="_blank"}** é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
+
 {% highlight bash %}
-O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o HAProxy para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O HAProxy é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster.
-
-Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
-
 $ dig +short *.apps.jeduncan.com
 12.207.21.2
 
@@ -338,11 +336,7 @@ O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domíni
 #### INSTALANDO FERRAMENTAS NO SERVIDOR MASTER
 
 Vários pacotes precisam ser instalados apenas no servidor master. O processo de instalação do OpenShift é escrito usando o Ansible. 
-Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. 
-
-Para instalações mais elaboradas, existe uma documentação em **[https://docs.openshift.com/container-platform/3.6/install_config/install/advanced_install.html](https://docs.openshift.com/container-platform/3.6/install_config/install/advanced_install.html){:target="_blank"}**.
-
-O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.
+Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. Para instalações mais elaboradas, existe uma documentação em **[https://goo.gl/rngdLy](https://goo.gl/rngdLy){:target="_blank"}**. O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.
 
 > NOTA: Precisamos nos preocupar apenas com Ansible no servidor master. Isso porque não há agente nos nodes. O Ansible não usa um agente nos sistemas que está controlando; em vez disso, ele usa o SSH como um mecanismo de transporte e para executar comandos remotos. 
 
