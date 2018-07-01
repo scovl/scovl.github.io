@@ -13,39 +13,6 @@ comments: true
     {{ content }}
   </div>
 
-  {% page.comments %}
-  
-
-  <div class="row">
-    <div class="col-lg-8 col-md-10 mx-auto">
-      <div class="clearfix">
-        <div class="comments">
-
-      
-        {% jekyll.environment == 'production' %}
-      
-
-      
-            {{ include disqus.html }}
-      
-
-      
-         {% else %}
-      
-
-          <h4>Disqus comentários aqui!</h4>
-
-      
-         {% endif %}
-      
-        </div>
-        <hr>
-      </div>
-      
-    </div>
-  </div>
-
-
-{% endif %}
+  {% include disqus.html %}
 
 </article>
