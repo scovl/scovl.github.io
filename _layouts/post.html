@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 comments: true
 ---
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
@@ -14,5 +14,7 @@ comments: true
   </div>
 
   {% include disqus.html %}
+  {% if page.comments %} • <a href="https://lobocode.github.io{{ page.url }}#disqus_thread">0 Comments</a>{% endif %}
+
 
 </article>
