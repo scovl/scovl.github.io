@@ -13,27 +13,25 @@ comments: true
     {{ content }}
   </div>
   <!-- Comments -->
-  {% if page.comments %}
-  <div class="row">
-    <div class="col-lg-8 col-md-10 mx-auto">
-      <div class="clearfix">
-        <div class="comments">
-        {% if jekyll.environment == 'production' %}
-            {% include disqus.html %}
-        {% else %}
-        <h4>Disqus comentários aqui!</h4>
-        {% endif %}
-        </div>
-      </div>
-      
-    </div>
-  </div>
+  <div id="disqus_thread"></div>
+<script>
 
-{% endif %}
-<script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script>
-<script>addBackToTop({
-  diameter: 40,
-  backgroundColor: '#138611',
-  textColor: 'white'
-})</script>
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://lobocode-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                            
 </article>
