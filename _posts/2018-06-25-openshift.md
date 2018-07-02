@@ -317,19 +317,24 @@ O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o
 {% highlight bash %}
 $ dig +short *.apps.jeduncan.com
 12.207.21.2
+{% endhighlight %}
 
 Observe que se você procurar qualquer outro registro terminado em .apps.jeduncan.com, e ele retornará o mesmo IP:
 
+{% highlight bash %}
 $ dig +short app1.apps.jeduncan.com
 12.207.21.2
+{% endhighlight %}
 
 ou
 
+{% highlight bash %}
 $ dig +short someother.apps.jeduncan.com
 12.207.21.2
+{% endhighlight %}
 
 O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domínio curinga criado. Dessa forma, todas as entradas do DNS para seus aplicativos funcionam sem qualquer configuração adicional.
-{% endhighlight %}
+
 
 ---
 
