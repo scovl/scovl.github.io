@@ -12,9 +12,23 @@ comments: true
   <div class="post-content" itemprop="articleBody">
     {{ content }}
   </div>
+  <!-- Comments -->
+  {% if page.comments %}
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+      <div class="clearfix">
+        <div class="comments">
+        {% if jekyll.environment == 'production' %}
+            {% include disqus.html %}
+        {% else %}
+        <h4>Disqus comentários aqui!</h4>
+        {% endif %}
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
-  {% include disqus.html %}
-  {% if page.comments %} • <a href="https://lobocode.github.io{{ page.url }}#disqus_thread">0 Comments</a>{% endif %}
-
+{% endif %}
 
 </article>
