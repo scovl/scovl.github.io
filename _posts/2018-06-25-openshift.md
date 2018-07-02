@@ -582,7 +582,7 @@ O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para i
 
 Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a Internet, o deploy pode levar cerca de 30 a 45 minutos. Se tudo for bem sucedido, a saída indicará que o processo foi concluído com sucesso. Do contrário, observe o erro que estará em vermelho no terminal e busque debuga-lo. Quando a instalação estiver concluída, você poderá acessar seu host `https://ocp1.192.168.1.100.nip.io:8443`:
 
-![]()
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/tela.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/tela.png)
 
 > NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
 
