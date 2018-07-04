@@ -242,13 +242,9 @@ Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado at�
 
 > NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io](nip.io){:target="_blank"}** para seus hostnames.
 
-Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. 
+Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.
 
-O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.
-
-Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html){:target="_blank"}** para saber mais.
-
-Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io){:target="_blank"}**), conforme mostrado seguir:
+Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html){:target="_blank"}** para saber mais. Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io){:target="_blank"}**), conforme mostrado seguir:
 
 Editando o `/etc/resolv.conf`:
 {% highlight bash %}
@@ -309,8 +305,7 @@ Active: active (running) Because Sat 2017-05-13 17:05:12 EDT; 6s ago
 
 Pós reiniciar o NetworkManager, confira se de fato o arquivo `/etc/resolv.conf` foi alterado. Se não houver o parâmetro `search`, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.
 
-
-**Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:**
+##### Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:
 
 O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o **[HAProxy](){:target="_blank"}** para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O **[HAProxy](){:target="_blank"}** é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
 
@@ -369,9 +364,7 @@ Esse comando cria um par de chaves SSH no diretório inicial do usuário `/root`
 for i in 192.168.100.1 192.168.100.2;do ssh-copy-id root@$i;done
 {% endhighlight %}
 
-Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. 
-
-Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
+Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
 
 {% highlight bash %}
 sudo yum -y install docker libcgroup-tools
