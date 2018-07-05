@@ -57,7 +57,7 @@ Trata-se de uma plataforma que usa contêineres para gerar build, deploy, servir
 
 *   Sistemas de arquivos montados.
 *   Recursos de memória compartilhada.
-*   Nome do host e nome de domínio.
+*   Hostname e nome de domínio (dns).
 *   Recursos de rede (endereço IP, endereço MAC, buffers de memória).
 *   Contadores de processo.
 
