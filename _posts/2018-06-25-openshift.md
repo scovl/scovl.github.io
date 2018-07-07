@@ -544,7 +544,7 @@ openshift_disable_check=disk_availability,memory_availability,docker_storage
 192.168.100.1  openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
 {% endhighlight %}
 
-> NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante a implantação, `region = infra`, informa ao OpenShift o node correto para implementar o contêiner que executa solicitações de conexões com a Internet. 
+> NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. Os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante o nosso deployment, `region = infra`, por exemplo, informa ao OpenShift os componentes de infraestrutura como o router, o registro integrado, métricas etc..
 
 Depois de fazer qualquer edição de inventário necessária para corresponder ao seu ambiente, salve seu inventário em seu node master como `/root/ hosts`. O próximo passo é iniciar a implementação do OpenShift.
 
