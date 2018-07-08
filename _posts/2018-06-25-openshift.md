@@ -558,8 +558,7 @@ Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a
 
 > NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
 
-Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! Nos próximos capítulos irei explicar cada funcionalidade e o que podemos fazer com esta solução.
-
+Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! Nos próximos capítulos irei aprofundar melhor nas funcionalidades da ferramenta.
 
 ---
 
