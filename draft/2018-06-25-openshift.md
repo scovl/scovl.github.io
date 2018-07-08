@@ -26,10 +26,6 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - GETTING STARTED
-
-* **[Criando projetos e implementando aplicações](#criando-projetos-e-implementando-aplicacoes)**
-
 
 ---
 
@@ -37,23 +33,19 @@ tags: openshift fedora
 
 Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o **[LXC](https://en.wikipedia.org/wiki/LXC){:target="_blank"}**.
 
-![https://i.imgur.com/ycHhkfb.png](https://i.imgur.com/ycHhkfb.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/lxc.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/lxc.png)
 
 O Linux Container ou **[LXC](https://en.wikipedia.org/wiki/LXC){:target="_blank"}** como é mais conhecido, foi lançado em 2008 e é uma tecnologia que permite a criação de múltiplas instâncias isoladas de um determinado Sistema Operacional dentro de um único host. É uma maneira de virtualizar aplicações dentro de um servidor Linux. O conceito é simples e antigo sendo o comando **[chroot](https://en.wikipedia.org/wiki/Chroot){:target="_blank"}** seu precursor mais famoso que foi lançado em 1979 pelo **[Unix V7](https://en.wikipedia.org/wiki/Version_7_Unix){:target="_blank"}** com o intuito de segregar acessos a diretórios e evitar que o usuário pudesse ter acesso à estrutura raiz (“/” ou root). Esse conceito evoluiu alguns anos mais tarde com o lançamento do **[jail](https://www.freebsd.org/cgi/man.cgi?query=jail&amp;sektion=8&amp;manpath=freebsd-release-ports){:target="_blank"}**, no sistema operacional FreeBSD 4.
 
 Essa implementação já introduzia a ideia de segregação de rede e limitação dos acessos de superusuários aos processos que passou a ser adotada com maiores funcionalidades pelas distribuições Linux. Posteriormente foi melhor definido em alguns sistemas como o **[AIX WPAR](https://en.wikipedia.org/wiki/Workload_Partitions){:target="_blank"}** e o **[Solaris Containers](https://en.wikipedia.org/wiki/Solaris_Containers){:target="_blank"}**. Nesses dois sistemas já havia o conceito de virtualização de sistema operacional, mas não o conceito de contêineres.
 
-Nas distribuições Linux o chroot era uma maneira fácil de criar uma jail para as conexões dos servidores FTP, mas acabou ficando mais conhecido pela sua vulnerabilidade do que pela sua segurança. Mais tarde o chroot acabou ajudando a cunhar um termo **[jailbreak](https://pt.wikipedia.org/wiki/Jailbreak_(iOS)){:target="_blank"}**.
-
-A grande diferença entre o chroot e o LXC é o nível de segurança que se pode alcançar. Com relação à virtualização, a diferença está no fato do LXC não necessitar de uma camada de sistema operacional para cada aplicação. Ao comparar com a virtualização tradicional, fica mais claro que uma aplicação sendo executada em um LXC demanda muito menos recursos, consumindo menos espaço em disco, e com um nível de portabilidade difícil de ser alcançado por outras plataformas.
+Nas distribuições Linux o chroot era uma maneira fácil de criar uma jail para as conexões dos servidores FTP, mas acabou ficando mais conhecido pela sua vulnerabilidade do que pela sua segurança. Mais tarde o chroot acabou ajudando a cunhar um termo **[jailbreak](https://pt.wikipedia.org/wiki/Jailbreak_(iOS)){:target="_blank"}**. A grande diferença entre o chroot e o LXC é o nível de segurança que se pode alcançar. Com relação à virtualização, a diferença está no fato do LXC não necessitar de uma camada de sistema operacional para cada aplicação. Ao comparar com a virtualização tradicional, fica mais claro que uma aplicação sendo executada em um LXC demanda muito menos recursos, consumindo menos espaço em disco, e com um nível de portabilidade difícil de ser alcançado por outras plataformas.
 
 Mas não foi só a adoção de desenvolvedores e administradores de sistemas que tornou essa tecnologia tão popular. A consolidação da virtualização no mercado e a crescente demanda por computação em nuvem criaram o ambiente perfeito para o LXC se espalhar rapidamente. Aplicações podem ser portadas direto do laptop do desenvolvedor, para o servidor de produção, ou ainda para uma instância virtual em uma nuvem pública ou privada.
 
-![https://i.imgur.com/6zqz4UI.png](https://i.imgur.com/6zqz4UI.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/docker.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/docker.png)
 
-Hoje um dos mais conhecidos LXC’s do mercado é o **[Docker](https://pt.wikipedia.org/wiki/Docker_(programa)){:target="_blank"}**, escrito em **[GO](https://golang.org/){:target="_blank"}**, que nasceu como um projeto open source da **[DotCloud](https://cloud.docker.com/)**, uma empresa de **[PaaS (Platform as a Service)](https://pt.wikipedia.org/wiki/Plataforma_como_servi%C3%A7o){:target="_blank"}** que apesar de estar mais interessada em utilizar LXC apenas em suas aplicações, acabou desenvolvendo um produto que foi muito bem aceito pelo mercado.
-
-Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de extender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift.
+Hoje um dos mais conhecidos LXC’s do mercado é o **[Docker](https://pt.wikipedia.org/wiki/Docker_(programa)){:target="_blank"}**, escrito em **[GO](https://golang.org/){:target="_blank"}**, que nasceu como um projeto open source da **[DotCloud](https://cloud.docker.com/)**, uma empresa de **[PaaS (Platform as a Service)](https://pt.wikipedia.org/wiki/Plataforma_como_servi%C3%A7o){:target="_blank"}** que apesar de estar mais interessada em utilizar LXC apenas em suas aplicações, acabou desenvolvendo um produto que foi muito bem aceito pelo mercado. Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de extender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift.
 
 ---
 
@@ -65,7 +57,7 @@ Trata-se de uma plataforma que usa contêineres para gerar build, deploy, servir
 
 *   Sistemas de arquivos montados.
 *   Recursos de memória compartilhada.
-*   Nome do host e nome de domínio.
+*   Hostname e nome de domínio (dns).
 *   Recursos de rede (endereço IP, endereço MAC, buffers de memória).
 *   Contadores de processo.
 
@@ -75,23 +67,19 @@ Existem alguns orquestradores conhecidos na comunidade e no mercado como o Ranch
 
 O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubernetes mantêm as informações sobre o cluster de servidores e os nodes executam as cargas de trabalho reais do aplicativo. A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. A baixo uma visão geral da arquitetura do Kubernetes:
 
-![https://i.imgur.com/2wzeZJt.png](https://i.imgur.com/2wzeZJt.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/2wzeZJt.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/2wzeZJt.png)
 
 Para tirar proveito de todo o potencial de uma plataforma de contêiner como o Kubernetes, é necessário alguns componentes adicionais. O OpenShift usa o docker e o Kubernetes como ponto de partida e adiciona mais algumas ferramentas para proporcionar uma melhor experiência aos usuários. O OpenShift usa a arquitetura master/node do Kubernetes e partir daí, se expande para fornecer serviços adicionais.
 
-Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando ocorre o deploy das aplicações, ou quando as imagens são atualizadas. Para ser eficaz, as imagens devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um **[DockerHub](https://hub.docker.com/){:target="_blank"}** local).
+Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando ocorre o deploy das aplicações, ou quando as imagens são atualizadas. Para ser eficaz, as imagens devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um **[DockerHub](https://hub.docker.com/){:target="_blank"}** local). No Kubernetes, os contêineres são criados nos nodes usando componentes chamados **pods**. Os pods são a menor unidade dentro de um cluster Kubernetes e nada mais é do que containers rodando dentro do seu cluster. Quando um aplicativo consiste em mais de um pods, o acesso ao aplicativo é gerenciado por meio de um componente chamado service. 
 
-No Kubernetes, os contêineres são criados nos nodes usando componentes chamados **pods**. Os pods são a menor unidade dentro de um cluster Kubernetes e nada mais é do que containers rodando dentro do seu cluster. Quando um aplicativo consiste em mais de um pods, o acesso ao aplicativo é gerenciado por meio de um componente chamado service. Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. A camada de roteamento é um software balanceador de carga.
-
-Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
+Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. A camada de roteamento é um software balanceador de carga. Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
 
 Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
 
-![https://i.imgur.com/o3uoJ12.png](https://i.imgur.com/o3uoJ12.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png)
 
-O OpenShift usa uma solução de rede definida por software **[SDN](https://pt.wikipedia.org/wiki/Software_defined_networking){:target="_blank"}** para criptografar e modelar o tráfego de rede em um cluster. O OpenShift SDN, é uma solução que usa o **[Open vSwitch](http://openvswitch.org){:target="_blank"}** e outras tecnologias software livre, que são configuradas por padrão quando o OpenShift é implementado. Outras soluções SDN também são suportadas.
-
-O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus aplicativos em todas as fases de seu ciclo de vida:
+O OpenShift usa uma solução de rede definida por software **[SDN](https://pt.wikipedia.org/wiki/Software_defined_networking){:target="_blank"}** para criptografar e modelar o tráfego de rede em um cluster. O OpenShift SDN, é uma solução que usa o **[Open vSwitch](http://openvswitch.org){:target="_blank"}** e outras tecnologias software livre, que são configuradas por padrão quando o OpenShift é implementado. Outras soluções SDN também são suportadas. O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus aplicativos em todas as fases de seu ciclo de vida:
 
 *   **Build**
 
@@ -101,11 +89,11 @@ O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus
 
 	* No fluxo de trabalho padrão no OpenShift, o deployment da aplicação é acionado automaticamente depois que a imagem do contêiner é criado e disponibilizado. O processo de deployment usa a imagem do aplicativo recém criado e a implanta em um ou mais nodes. Além dos pods dos aplicativos, um serviço é criado, junto com uma rota de DNS na camada de roteamento.
 
-![https://i.imgur.com/tl53ec9.png](https://i.imgur.com/tl53ec9.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/tl53ec9.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/tl53ec9.png)
 
 *   **Upgrade**
 
-	* Os usuários podem acessar o aplicativo recém-criado através da camada de roteamento após todos os componentes terem sido implantados. As atualizações de aplicativos usam o mesmo fluxo de trabalho. Quando um upgrade é acionado, uma nova imagem de contêiner é criada e a nova versão do aplicativo é implantada. Vários processos de atualização estarão disponíveis. A baixo a visão geral do processo de deploy da aplicação:![https://i.imgur.com/aGhInY5.png](https://i.imgur.com/aGhInY5.png)
+	* Os usuários podem acessar o aplicativo recém-criado através da camada de roteamento após todos os componentes terem sido implantados. As atualizações de aplicativos usam o mesmo fluxo de trabalho. Quando um upgrade é acionado, uma nova imagem de contêiner é criada e a nova versão do aplicativo é implantada. Vários processos de atualização estarão disponíveis. A baixo a visão geral do processo de deploy da aplicação:![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/aGhInY5.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/aGhInY5.png)
 
 É assim que o OpenShift funciona em alto nível. Para obter uma lista mais abrangente de como o OpenShift se integra e
 expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-platform/kubernetes.html](http://www.openshift.com/container-platform/kubernetes.html){:target="_blank"}**.
@@ -116,9 +104,7 @@ expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-
 
 ### CASOS DE USO
 
-Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta de isolar processos e serviços como os mainframes, e a revolução da virtualização onde várias máquinas virtuais podem ser executadas em um único servidor físico, podemos compreender melhor o rumo em que as tecnologias hoje tem avançado.
-
-Por exemplo, com máquinas virtuais, cada processo é isolado em sua própria máquina virtual. Como cada máquina virtual possui um sistema operacional completo e um kernel completo, ele deve ter todos os sistemas de arquivos necessários para um sistema operacional completo. Isso também significa que ele deve ser corrigido, gerenciado e tratado como uma infraestrutura tradicional. Contêineres são o próximo passo nessa evolução. Um contêiner contém tudo o que a aplicação precisa para rodar com sucesso. Como por exemplo:
+Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta de isolar processos e serviços como os mainframes, e a revolução da virtualização onde várias máquinas virtuais podem ser executadas em um único servidor físico, podemos compreender melhor o rumo em que as tecnologias hoje tem avançado. Por exemplo, com máquinas virtuais, cada processo é isolado em sua própria máquina virtual. Como cada máquina virtual possui um sistema operacional completo e um kernel completo, ele deve ter todos os sistemas de arquivos necessários para um sistema operacional completo. Isso também significa que ele deve ser corrigido, gerenciado e tratado como uma infraestrutura tradicional. Contêineres são o próximo passo nessa evolução. Um contêiner contém tudo o que a aplicação precisa para rodar com sucesso. Como por exemplo:
 
 *   Código-fonte ou o código compilado
 *   Bibliotecas e aplicativos necessários para rodar corretamente
@@ -126,11 +112,11 @@ Por exemplo, com máquinas virtuais, cada processo é isolado em sua própria m�
 
 Máquinas virtuais podem ser usadas para isolamento do processo:
 
-![https://i.imgur.com/FsyZT7m.png](https://i.imgur.com/FsyZT7m.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/FsyZT7m.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/FsyZT7m.png)
 
 Casos de uso para plataformas que trabalham com contêineres:
 
-![https://i.imgur.com/MTIhnmV.png](https://i.imgur.com/MTIhnmV.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/MTIhnmV.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/MTIhnmV.png)
 
 Os contêineres usam um único kernel para servir aplicações economizando espaço, e recursos e fornecendo plataformas de aplicações flexíveis. No entanto, é bom frizar que **o que os contêineres não contêm, é igualmente importante**. Ao contrário das máquinas virtuais, todos os contêineres são executados em um único kernel Linux compartilhado. Para isolar os aplicativos, os contêineres usam componentes dentro do kernel. Como os contêineres não precisam incluir um kernel completo para atender a aplicação a ser implementada, além de todas as dependências de um sistema operacional, eles tendem a ser muito menores do que as máquinas virtuais, tanto em suas necessidades de armazenamento, quanto no consumo de recursos.
 
@@ -143,7 +129,7 @@ As tecnologias por trás dos contêineres fornecem vários benefícios técnicos
 
 Comparando máquinas virtuais e contêineres, podemos ver, por exemplo, que os contêineres fornecem uma melhor utilização dos recursos do servidor:
 
-![https://i.imgur.com/IP1wCV7.png](https://i.imgur.com/IP1wCV7.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/IP1wCV7.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/IP1wCV7.png)
 
 No entanto, mesmo que os contêineres sejam ótimas ferramentas, nem sempre são a melhor ferramenta para todos os trabalhos. Por exemplo, se você tiver um aplicativo legado complexo, tenha cuidado ao decidir dividi-lo e convertê-lo em uma série de contêineres. Se a aplicação em questão trata-se de um modelo monolítico muito grande, e com diversos recursos, com um banco de dados relacional enorme, e esta aplicação fizer parte de todo um ecossistema de outras aplicações onde compartilha recursos, executa-lo em um contêiner não fará muito sentido e poderá ser um desafio bastante cansativo de tentar implementa-lo em contêineres.
 
@@ -167,7 +153,7 @@ Se seus aplicativos forem stateful, o que significa que eles precisam armazenar 
 
 À medida que você começa a separar os aplicativos tradicionais e monolíticos em serviços menores que funcionam de forma eficaz em contêineres, você começará a visualizar suas necessidades de dados de uma maneira diferente. Esse processo é geralmente chamado de design de aplicativos como microsserviços. Integrando aplicativos stateful e stateless:
 
-![https://i.imgur.com/cG69vhp.png](https://i.imgur.com/cG69vhp.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/cG69vhp.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/cG69vhp.png)
 
 O OpenShift pode integrar e gerenciar plataformas de armazenamento externo e garantir que o volume de armazenamento de melhor ajuste seja correspondido com os aplicativos que precisam dele. Para qualquer aplicação, você terá serviços que precisam ser informativos e outros sem estado. Por exemplo, o serviço que fornece conteúdo da web estático pode ser sem estado, enquanto o serviço que processa a autenticação do usuário precisa poder gravar informações no armazenamento persistente.
 
@@ -175,7 +161,7 @@ Como cada serviço é executado em seu próprio contêiner, os serviços podem s
 
 No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalonam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:
 
-![https://i.imgur.com/8sPOhGu.png](https://i.imgur.com/8sPOhGu.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/8sPOhGu.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/8sPOhGu.png)
 
 Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o docker e o Kubernetes. Osbenefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.
 
@@ -189,19 +175,15 @@ Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de coma
 
 Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports){:target="_blank"}**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
 
-![https://i.imgur.com/SH20A4i.png](https://i.imgur.com/SH20A4i.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/SH20A4i.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/SH20A4i.png)
 
-No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso permite que o tráfego criptografado rede entre os nodes funcione corretamente. Basicamente você precisará configurar um **[registro DNS curinga](https://tools.ietf.org/html/rfc4592){:target="_blank"}** que apontará para o seu cluster afim de acessar os aplicativos que você implementar futuramente.
-
-Se você já tem um servidor DNS já resolve a questão. Caso contrário, você poderá usar o domínio **[nip.io](nip.io){:target="_blank"}**.
+No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso permite que o tráfego criptografado rede entre os nodes funcione corretamente. Basicamente você precisará configurar um **[registro DNS curinga](https://tools.ietf.org/html/rfc4592){:target="_blank"}** que apontará para o seu cluster afim de acessar os aplicativos que você implementar futuramente. Se você já tem um servidor DNS já resolve a questão. Caso contrário, você poderá usar o domínio **[nip.io](nip.io){:target="_blank"}**.
 
 > NOTA: Se você tem experiência com servidores Linux, poderá estar se perguntando: "Por que não posso simplesmente usar o arquivo `/etc/hosts` para este fim? A resposta é bem simples: esta configuração só funcionaria bem em um host pois não há propagação do DNS na rede. Serviria bem para um Minishift por exemplo. Mas para clusters distribuídos, o melhor é ter um DNS propagado.
 
-O domínio **[nip.io](http://nip.io/){:target="_blank"}** quebra um galho enorme neste aspecto. Em vez de configurar e gerenciar um servidor DNS, você poderá criar registros DNS que resolvam qualquer endereço IP escolhido. 
+O domínio **[nip.io](http://nip.io/){:target="_blank"}** quebra um galho enorme neste aspecto. Em vez de configurar e gerenciar um servidor DNS, você poderá criar registros DNS que resolvam qualquer endereço IP escolhido. A única desvantagem do **[nip.io](http://nip.io/){:target="_blank"}** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/){:target="_blank"}**.  A baixo, um exemplo do que poderemos configurar como modelo:
 
-A única desvantagem do **[nip.io](http://nip.io/){:target="_blank"}** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/){:target="_blank"}**.  A baixo, um exemplo do que poderemos configurar como modelo:
-
-![https://i.imgur.com/LKIgIoQ.png](https://i.imgur.com/LKIgIoQ.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/LKIgIoQ.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/LKIgIoQ.png)
 
 O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS e os hostnames configurados funcionem de maneira consistente. Se você não usasse endereço IP estático, seria necessário gerenciar um servidor DHCP em seu ambiente o que de todo modo não é uma boa prática.
 
@@ -209,7 +191,7 @@ O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS 
 
 Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements){:target="_blank"}** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor:
 
-![https://i.imgur.com/qAChvCm.png](https://i.imgur.com/qAChvCm.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/qAChvCm.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/qAChvCm.png)
 
 
 Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório **[Extra Packages for Enterprise Linux - EPEL]()** e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:
@@ -246,13 +228,9 @@ Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado at�
 
 > NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io](nip.io){:target="_blank"}** para seus hostnames.
 
-Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. 
+Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.
 
-O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.
-
-Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html){:target="_blank"}** para saber mais.
-
-Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io){:target="_blank"}**), conforme mostrado seguir:
+Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html){:target="_blank"}** para saber mais. Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado](){:target="_blank"}**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io){:target="_blank"}**), conforme mostrado seguir:
 
 Editando o `/etc/resolv.conf`:
 {% highlight bash %}
@@ -313,8 +291,7 @@ Active: active (running) Because Sat 2017-05-13 17:05:12 EDT; 6s ago
 
 Pós reiniciar o NetworkManager, confira se de fato o arquivo `/etc/resolv.conf` foi alterado. Se não houver o parâmetro `search`, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.
 
-
-**Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:**
+##### Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:
 
 O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o **[HAProxy](){:target="_blank"}** para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O **[HAProxy](){:target="_blank"}** é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
 
@@ -338,7 +315,6 @@ $ dig +short someother.apps.jeduncan.com
 {% endhighlight %}
 
 O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domínio curinga criado. Dessa forma, todas as entradas do DNS para seus aplicativos funcionam sem qualquer configuração adicional.
-
 
 ---
 
@@ -373,9 +349,7 @@ Esse comando cria um par de chaves SSH no diretório inicial do usuário `/root`
 for i in 192.168.100.1 192.168.100.2;do ssh-copy-id root@$i;done
 {% endhighlight %}
 
-Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. 
-
-Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
+Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
 
 {% highlight bash %}
 sudo yum -y install docker libcgroup-tools
@@ -569,7 +543,7 @@ openshift_disable_check=disk_availability,memory_availability,docker_storage
 192.168.100.1  openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
 {% endhighlight %}
 
-> NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante a implantação, `region = infra`, informa ao OpenShift o node correto para implementar o contêiner que executa solicitações de conexões com a Internet. 
+> NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. Os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante o nosso deployment, `region = infra`, por exemplo, informa ao OpenShift os componentes de infraestrutura como o router, o registro integrado, métricas etc..
 
 Depois de fazer qualquer edição de inventário necessária para corresponder ao seu ambiente, salve seu inventário em seu node master como `/root/ hosts`. O próximo passo é iniciar a implementação do OpenShift.
 
@@ -590,9 +564,8 @@ Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a
 
 > NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
 
-Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesso!
+Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! 
 
-> DICA: O OpenShift possui um conjunto de ferramentas de diagnóstico através do comando `oc`. A documentação para aprender como executar tais diagnósticos está disponível em **[https://goo.gl/xLsCFk](https://goo.gl/xLsCFk){:target="_blank"}**
 
 ---
 
