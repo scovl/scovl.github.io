@@ -5,7 +5,7 @@ snip:  Arrumando a casa
 tags: openshift fedora
 ---
 
-> Este é um material que fora elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
+> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
 
 ---
 
@@ -25,6 +25,12 @@ tags: openshift fedora
 * **[Configurando o SElinux em seus nodes](#configurando-o-selinux-em-seus-nodes)**
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
+
+#### CAPÍTULO 3 - MÃOS À OBRA
+
+* **[Criando Projetos](#criando-projetos)**
+* **[Implementando Aplicações](#implementando-aplicacoes)**
+* **[Implementando Aplicações usando interface web](#implementando-aplicacoes-usando-interface-web)**
 
 
 ---
@@ -61,9 +67,7 @@ Trata-se de uma plataforma que usa contêineres para gerar build, deploy, servir
 *   Recursos de rede (endereço IP, endereço MAC, buffers de memória).
 *   Contadores de processo.
 
-Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalonável.
-
-Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O **[OpenShift](https://www.openshift.com/){:target="_blank"}** usa o **[Kubernetes](https://kubernetes.io){:target="_blank"}** como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a **[Cloud Native Computing Foundation](http://www.cncf.io){:target="_blank"}**.
+Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalonável. Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O **[OpenShift](https://www.openshift.com/){:target="_blank"}** usa o **[Kubernetes](https://kubernetes.io){:target="_blank"}** como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a **[Cloud Native Computing Foundation](http://www.cncf.io){:target="_blank"}**.
 
 O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubernetes mantêm as informações sobre o cluster de servidores e os nodes executam as cargas de trabalho reais do aplicativo. A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. A baixo uma visão geral da arquitetura do Kubernetes:
 
@@ -75,7 +79,7 @@ Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando
 
 Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. A camada de roteamento é um software balanceador de carga. Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
 
-Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
+Nesse caso o registro DNS que foi criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png)
 
@@ -157,9 +161,7 @@ Se seus aplicativos forem stateful, o que significa que eles precisam armazenar 
 
 O OpenShift pode integrar e gerenciar plataformas de armazenamento externo e garantir que o volume de armazenamento de melhor ajuste seja correspondido com os aplicativos que precisam dele. Para qualquer aplicação, você terá serviços que precisam ser informativos e outros sem estado. Por exemplo, o serviço que fornece conteúdo da web estático pode ser sem estado, enquanto o serviço que processa a autenticação do usuário precisa poder gravar informações no armazenamento persistente.
 
-Como cada serviço é executado em seu próprio contêiner, os serviços podem ser ampliados e desativados independentemente. Em vez de precisar ampliar toda a sua base de código, com os contêineres, você dimensiona apenas os serviços em seu aplicativo que precisam processar cargas de trabalho adicionais. Além disso, como apenas os contêineres que precisam de acesso ao armazenamento persistente o contêm, os dados que entram no contêiner são mais seguros.
-
-No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalonam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:
+Como cada serviço é executado em seu próprio contêiner, os serviços podem ser ampliados e desativados independentemente. Em vez de precisar ampliar toda a sua base de código, com os contêineres, você dimensiona apenas os serviços em seu aplicativo que precisam processar cargas de trabalho adicionais. Além disso, como apenas os contêineres que precisam de acesso ao armazenamento persistente o contêm, os dados que entram no contêiner são mais seguros. No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalonam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/8sPOhGu.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/8sPOhGu.png)
 
@@ -169,9 +171,7 @@ Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele impl
 
 #### PREPARANDO PARA INSTALAR O OPENSHIFT
 
-Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet.
-
-Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o `oc`, você precisará ser super usuário, ou ter acesso ao **root**. Para compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://github.com/openshift/origin/blob/master/docs/cli.md](https://github.com/openshift/origin/blob/master/docs/cli.md){:target="_blank"}** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.
+Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet. Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o `oc`, você precisará ser super usuário, ou ter acesso ao **root**. Para compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://goo.gl/9n8DbQ](https://goo.gl/9n8DbQ){:target="_blank"}** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.
 
 Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports){:target="_blank"}**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
 
@@ -564,32 +564,68 @@ Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a
 
 > NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
 
-Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! 
-
+Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! Nos próximos capítulos irei aprofundar melhor nas funcionalidades da ferramenta.
 
 ---
 
-#### CRIANDO PROJETOS E IMPLEMENTANDO APLICACOES
+#### CRIANDO PROJETOS 
 
-Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful]()**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift de fato, que a minha proposta aqui é a de orientar na montagem e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de preferência de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[Minishift](https://github.com/minishift/minishift)** que funciona **[all in one]()**. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado, certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes. 
+Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful]()**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[Minishift](https://github.com/minishift/minishift){:target="_blank"}** isto é, um projeto **[all in one]()**. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes. 
 
-No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas pelas regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer definição de usuário, e senha possam efetuar o login. Esta configuração inicial é chamada de **[Allow All identity provider]()**. Isto é, cada nome de usuário é exclusivo, e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações de teste (nosso caso). O primeiro usuário que irei usar como exemplo neste artigo, **fulano**. Este usuário representará um usuário final do OpenShift. 
+No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas por regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer definição de usuário e senha possam efetuar o login. Esta configuração inicial é chamada de **[Allow All identity provider]()**. Isto é, cada nome de usuário é exclusivo, e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações de teste. O primeiro usuário que irei usar como exemplo neste artigo, se chamará `fulano`. Este usuário representará um usuário final do OpenShift. 
 
 > NOTA: Este método de autenticação é sensível a maiúsculas e minúsculas. Isto é, embora as senhas possam ser qualquer coisa, fulano e Fulano são usuários diferentes.
 
-Usando a linha de comando, execute o comando `oc login`, usando **fulano** para o nome de usuário e senha e o URL para o servidor de API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:
-
+Usando a linha de comando, execute o comando `oc login`, usando **fulano** para o nome de usuário e senha, e a URL da API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:
 
 {% highlight bash %}
-$ oc login -u fulano -p fulano https://ocp-1.192.168.122.100.nip.io:8443
+$ oc login -u fulano -p fulano https://ocp-1.192.168.100.1.nip.io:8443
 {% endhighlight %}
-
 
 Os parâmetros usados acima para login com o comando `oc` são:
 * -u, o nome de usuário para efetuar login.
 * -p, a senha do usuário.
-* URL para o servidor da API do servidor master. Por padrão, roda em HTTPS na porta TCP 8443.
+* URL da API do servidor master. Por padrão, roda em HTTPS na porta TCP 8443.
 
-No OpenShift, os projetos são a maneira fundamental pela qual os aplicativos são organizados. Os projetos permitem que os usuários colecionem seus aplicativos em grupos lógicos. Eles também servem outras funções úteis relacionadas à segurança. 
+No OpenShift, as aplicações são organizadas em projetos. Os projetos permitem que os usuários colecionem seus aplicativos em grupos lógicos. Eles também servem outras funções úteis relacionadas à segurança. Para especificar um comando a ser executado em um projeto específico, independentemente do seu projeto atual, use o parâmetro `-n` com o nome do projeto. Essa é uma opção útil quando você está escrevendo scripts que usam o comando `oc` e atuam em vários projetos. Também é uma boa prática em geral. Para criar um projeto, você precisa executar o comando `oc new-project` e fornecer um nome para o projeto. Para o seu primeiro projeto, use `image-uploader` como o nome do projeto:
 
-Para especificar um comando a ser executado um projeto específico, independentemente do seu projetoatual, use o parâmetro `-n` com o nome do projeto.
+{% highlight bash %}
+$ oc new-project image-uploader --display-name='Image Uploader Project'
+{% endhighlight %}
+
+> NOTA: Você poderá encontrar na documentação todos os recursos do comando `oc` em **[https://goo.gl/Y3soGH](https://goo.gl/Y3soGH){:target="_blank"}**.
+
+Além do nome do seu projeto, você pode opcionalmente fornecer um `display name`. O display name é um nome mais amigável para o seu projeto visto que o nome do projeto, tem uma sintaxe restrita porque se torna parte da URL de todos os aplicativos implementados no OpenShift. Agora que você criou seu primeiro projeto, vamos fazer o deploy do nosso primeiro aplicativo. Digamos que o Image Uploader é um aplicativo PHP web que é usado para carregar e exibir arquivos do seu computador. Antes de efetuar o deploy do aplicativo, vou explicar o funcionamento de todos os seus componentes para que você entenda como todas as partes se encaixam e funcionam juntas. Aplicações no OpenShift não são estruturas monolíticas; elas consistem em vários componentes diferentes em um projeto que trabalham em conjunto para implantar, atualizar e manter seu aplicativo durante seu ciclo de vida. Esses componentes são:
+
+* Custom container images
+* Image streams
+* Application pods
+* Build configs
+* Deployment configs
+* Deployments
+* Services
+
+Todos esses componentes trabalham juntos para atender as aplicações dos usuários finais. As interações entre os componentes do aplicativo podem parecer um tanto complexo, então, vamos ver o que esses componentes fazem com mais detalhes. Começaremos com a forma como o OpenShift cria e usa imagens personalizadas para cada aplicativo. Cada deploy realizado, é criado uma imagem personalizada para servir a sua aplicação. Essa imagem é criada usando o código-fonte do aplicativo e uma imagem de base personalizada chamada de `builder image`. 
+
+Por exemplo, a `builder image` do PHP que contém o servidor da web Apache, e as principais bibliotecas da linguagem. O processo de construção da imagem integra seu código-fonte e cria uma imagem customizada que será usada para o deploy do aplicativo em um contêiner. Uma vez criadas, todas as imagens, juntamente com todas as imagens do builder, serão armazenados no registro integrado do OpenShift. Como os componentes do aplicativo trabalham juntos: Cada aplicativo implementado cria esses componentes no cluster do OpenShift. Este fluxo de trabalho é totalmente automatizado e personalizável:
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift)
+
+Uma `build config` contém todas as informações necessárias para construir um aplicativo usando seu código-fonte. Isso inclui todas as informações necessárias para criar a imagem do aplicativo que irá gerar o contêiner. Por exemplo:
+
+* A URL para o código-fonte do aplicativo
+* O nome da imagem builder a ser usada
+* O nome da imagem dos aplicativos criados
+* Os eventos que podem acionar uma nova build
+
+A imagem acima ilustra bem esses relacionamentos. A configuração de versão é usada para acompanhar o que é necessário para criar seu aplicativo e acionar a criação da imagem do aplicativo. Depois que a configuração da build faz seu trabalho, ela aciona a configuração do deployment criado para o aplicativo recém-criado. O trabalho de implementar e atualizar o aplicativo é tratado pelo `deployment config component`. As configurações de deployment rastreiam várias informações sobre um aplicativo. Como por exemplo:
+
+* A versão atualmente implantada do aplicativo.
+* O número de réplicas a serem mantidas para o aplicativo.
+* Acionar eventos que podem acionar uma redistribuição. Por padrão, as alterações de configuração na implementação ou alterações na imagem do contêiner acionam uma redistribuição automática do aplicativo.
+* Atualização estratégica. O app-cli usa a estratégia padrão de atualização sem interrupção.
+* O deploy de aplicativos.
+
+Um dos principais recursos dos aplicativos executados no OpenShift é que eles são dimensionáveis horizontalmente. Esse conceito é representado na configuração de deployment pelo número de réplicas. O número de réplicas especificadas em uma configuração de deployment é passado para um objeto do Kubernetes chamado de `replication controller`. Esse é um tipo especial de pod do Kubernetes que permite que várias réplicas - que cópias de pods de aplicativos sejam mantidas em execução o tempo todo. Todos os pods no OpenShift são implementados com `replication controller` por padrão. Outro recurso gerenciado por uma configuração de deployment é como as atualizações de aplicativos podem ser totalmente automatizadas. Cada deployment de um aplicativo é monitorado e disponível para o componente de configuração de deployment usando o deployment.
+
+No OpenShift, um pod pode existir em uma das cinco fases a qualquer momento em seu ciclo de vida. Essas fases são descritas em detalhes na documentação do Kubernetes [https://goo.gl/HKT5yZ](https://goo.gl/HKT5yZ){:target="_blank"}. A seguir, um breve resumo das cinco fases do pod:
