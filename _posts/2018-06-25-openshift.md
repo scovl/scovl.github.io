@@ -29,7 +29,8 @@ tags: openshift fedora
 #### CAPÍTULO 3 - EXPLORANDO A FERRAMENTA
 
 * **[Criando Projetos](#criando-projetos)**
-
+* **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
+* **[Implementando aplicativos usando interface web](#implementando-aplicativos-usando-interface-web)**
 
 ---
 
@@ -638,3 +639,14 @@ O método padrão de atualização de aplicativos no OpenShift é executar uma a
 
 ---
 
+#### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
+
+Work in progress
+
+---
+
+#### IMPLEMENTANDO APLICATIVOS USANDO INTERFACE WEB
+
+Work in progress
+
+---
