@@ -26,11 +26,11 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - MÃOS À OBRA
+#### CAPÍTULO 3 - EXPLORANDO A FERRAMENTA
 
 * **[Criando Projetos](#criando-projetos)**
-* **[Implementando Aplicações](#implementando-aplicacoes)**
-* **[Implementando Aplicações usando interface web](#implementando-aplicacoes-usando-interface-web)**
+* **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
+* **[Implementando aplicativos usando interface web](#implementando-aplicativos-usando-interface-web)**
 
 
 ---
@@ -605,11 +605,11 @@ Além do nome do seu projeto, você pode opcionalmente fornecer um `display name
 * Deployments
 * Services
 
-Todos esses componentes trabalham juntos para atender as aplicações dos usuários finais. As interações entre os componentes do aplicativo podem parecer um tanto complexo, então, vamos ver o que esses componentes fazem com mais detalhes. Começaremos com a forma como o OpenShift cria e usa imagens personalizadas para cada aplicativo. Cada deploy realizado, é criado uma imagem personalizada para servir a sua aplicação. Essa imagem é criada usando o código-fonte do aplicativo e uma imagem de base personalizada chamada de `builder image`. 
+Todos esses componentes trabalham juntos para atender as aplicações dos usuários finais. As interações entre os componentes do aplicativo podem parecer um tanto complexo, então, vamos ver o que esses componentes fazem com mais detalhes. Começaremos com a forma como o OpenShift cria e usa imagens personalizadas para cada aplicativo. Cada deploy realizado, é criado uma imagem personalizada para servir a sua aplicação. Essa imagem é criada usando o código-fonte do aplicativo e uma imagem de base personalizada chamada de `builder image`.
 
 Por exemplo, a `builder image` do PHP que contém o servidor da web Apache, e as principais bibliotecas da linguagem. O processo de construção da imagem integra seu código-fonte e cria uma imagem customizada que será usada para o deploy do aplicativo em um contêiner. Uma vez criadas, todas as imagens, juntamente com todas as imagens do builder, serão armazenados no registro integrado do OpenShift. Como os componentes do aplicativo trabalham juntos: Cada aplicativo implementado cria esses componentes no cluster do OpenShift. Este fluxo de trabalho é totalmente automatizado e personalizável:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/novoprojeto.png](/media/openshift/novoprojeto.png)
 
 Uma `build config` contém todas as informações necessárias para construir um aplicativo usando seu código-fonte. Isso inclui todas as informações necessárias para criar a imagem do aplicativo que irá gerar o contêiner. Por exemplo:
 
@@ -629,3 +629,19 @@ A imagem acima ilustra bem esses relacionamentos. A configuração de versão é
 Um dos principais recursos dos aplicativos executados no OpenShift é que eles são dimensionáveis horizontalmente. Esse conceito é representado na configuração de deployment pelo número de réplicas. O número de réplicas especificadas em uma configuração de deployment é passado para um objeto do Kubernetes chamado de `replication controller`. Esse é um tipo especial de pod do Kubernetes que permite que várias réplicas - que cópias de pods de aplicativos sejam mantidas em execução o tempo todo. Todos os pods no OpenShift são implementados com `replication controller` por padrão. Outro recurso gerenciado por uma configuração de deployment é como as atualizações de aplicativos podem ser totalmente automatizadas. Cada deployment de um aplicativo é monitorado e disponível para o componente de configuração de deployment usando o deployment.
 
 No OpenShift, um pod pode existir em uma das cinco fases a qualquer momento em seu ciclo de vida. Essas fases são descritas em detalhes na documentação do Kubernetes [https://goo.gl/HKT5yZ](https://goo.gl/HKT5yZ){:target="_blank"}. A seguir, um breve resumo das cinco fases do pod:
+
+* Pendente: o pod foi aceito pelo OpenShift, mas ainda não está agendado em um dos nodes da aplicação.
+* Em execução - o pod está agendado em um node e está confirmado para subir e rodar.
+* Sucedido: todos os contêineres em um grupo foram encerrados com sucesso e não serão reiniciados.
+* Falha - um ou mais contêineres em um grupo não foram iniciados.
+* Desconhecido - algo deu errado e o OpenShift não consegue obter um status mais preciso para o pod.
+
+No caso de Falha e Sucedido, estes são considerados estados terminais para um pod em seu ciclo de vida. Quando um pod atinge um desses estados, ele não será reiniciado. Você pode ver a fase atual de cada pod em um projeto executando o comando `oc get pods`. Cada vez que uma nova versão de um aplicativo é criada por sua configuração de uma nova build, uma nova implementação é criada e rastreada. Um deployment representa uma versão exclusiva de um aplicativo. Cada deployment faz referência a uma versão da imagem do aplicativo que foi criada e cria o `replication controller` para manter os pods.
+
+O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.
+
+De uma forma bastante resumida, o recurso `image streams` são usados para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
+
+---
+
+#### Implementando nosso primeiro aplicativo
