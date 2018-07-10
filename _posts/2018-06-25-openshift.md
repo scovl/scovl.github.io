@@ -26,6 +26,10 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
+#### CAPÍTULO 3 - EXPLORANDO A FERRAMENTA
+
+* **[Criando Projetos](#criando-projetos)**
+
 
 ---
 
@@ -562,4 +566,77 @@ Se você conseguir acessar a interface da figura acima, o seu Openshift foi inst
 
 ---
 
+#### CRIANDO PROJETOS 
+
+Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful](https://docs.openshift.com/container-platform/3.5/rest_api/index.html){:target="_blank"}**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[Minishift](https://github.com/minishift/minishift){:target="_blank"}** isto é, um projeto **[all-in-one](https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/){:target="_blank"}**. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes. 
+
+No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas por regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer definição de usuário e senha possam efetuar o login. Esta configuração inicial é chamada de `Allow All identity provider`. Isto é, cada nome de usuário é exclusivo, e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações de teste. O primeiro usuário que irei usar como exemplo neste artigo, se chamará `fulano`. Este usuário representará um usuário final do OpenShift. 
+
+> NOTA: Este método de autenticação é sensível a maiúsculas e minúsculas. Isto é, embora as senhas possam ser qualquer coisa, fulano e Fulano são usuários diferentes.
+
+Usando a linha de comando, execute o comando `oc login`, usando **fulano** para o nome de usuário e senha, e a URL da API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:
+
+{% highlight bash %}
+$ oc login -u fulano -p fulano https://ocp-1.192.168.100.1.nip.io:8443
+{% endhighlight %}
+
+Os parâmetros usados acima para login com o comando `oc` são:
+* -u, o nome de usuário para efetuar login.
+* -p, a senha do usuário.
+* URL da API do servidor master. Por padrão, roda em HTTPS na porta TCP 8443.
+
+No OpenShift, as aplicações são organizadas em projetos. Os projetos permitem que os usuários colecionem seus aplicativos em grupos lógicos. Eles também servem outras funções úteis relacionadas à segurança. Para especificar um comando a ser executado em um projeto específico, independentemente do seu projeto atual, use o parâmetro `-n` com o nome do projeto. Essa é uma opção útil quando você está escrevendo scripts que usam o comando `oc` e atuam em vários projetos. Também é uma boa prática em geral. Para criar um projeto, você precisa executar o comando `oc new-project` e fornecer um nome para o projeto. Para o seu primeiro projeto, use `image-uploader` como o nome do projeto:
+
+{% highlight bash %}
+$ oc new-project image-uploader --display-name='Image Uploader Project'
+{% endhighlight %}
+
+> NOTA: Você poderá encontrar na documentação todos os recursos do comando `oc` em **[https://goo.gl/Y3soGH](https://goo.gl/Y3soGH){:target="_blank"}**.
+
+Além do nome do seu projeto, você pode opcionalmente fornecer um `display name`. O display name é um nome mais amigável para o seu projeto visto que o nome do projeto, tem uma sintaxe restrita porque se torna parte da URL de todos os aplicativos implementados no OpenShift. Agora que você criou seu primeiro projeto, vamos fazer o deploy do nosso primeiro aplicativo. Digamos que o Image Uploader seja um aplicativo Python usado para carregar e exibir arquivos. Antes de efetuar o deploy do aplicativo, vou explicar o funcionamento de todos os seus componentes para que você entenda como todas as partes se encaixam e funcionam juntas. Aplicações no OpenShift não são estruturas monolíticas; elas consistem em vários componentes diferentes em um projeto que trabalham em conjunto para implantar, atualizar e manter seu aplicativo durante seu ciclo de vida. Esses componentes são:
+
+* Custom container images
+* Image streams
+* Application pods
+* Build configs
+* Deployment configs
+* Deployments
+* Services
+
+Todos esses componentes trabalham juntos para atender as aplicações dos usuários finais. As interações entre os componentes do aplicativo podem parecer um tanto complexo, então, vamos ver o que esses componentes fazem com mais detalhes. Começaremos com a forma como o OpenShift cria e usa imagens personalizadas para cada aplicativo. Para cada deploy realizado, é criado uma imagem personalizada para servir a sua aplicação. Essa imagem é criada usando o código-fonte do aplicativo e uma imagem de base personalizada chamada de `builder image`.
+
+Por exemplo, o `builder image` do Python pode conter servidor da web, e as principais bibliotecas da linguagem. O processo de construção da imagem integra seu código-fonte e cria uma imagem customizada que será usada para o deploy do aplicativo em um contêiner. Uma vez criadas todas as imagens juntamente com todas as builder images, serão então armazenados no registro integrado do OpenShift. Cada aplicativo implementado cria esses componentes no cluster do OpenShift. Este fluxo de trabalho é totalmente automatizado e personalizável:
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/novoprojeto.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/novoprojeto.png)
+
+Uma `build config` contém todas as informações necessárias para construir um aplicativo usando seu código-fonte. Isso inclui todas as informações necessárias para criar a imagem do aplicativo que irá gerar o contêiner. Por exemplo:
+
+* A URL para o código-fonte do aplicativo
+* O nome do imagem builder a ser usada
+* O nome da imagem dos aplicativos criados
+* Os eventos que podem acionar uma nova build
+
+A imagem acima ilustra bem esses relacionamentos. A configuração de versão é usada para acompanhar o que é necessário para criar seu aplicativo e acionar a criação da imagem do aplicativo. Depois que a configuração do build faz seu trabalho, ele aciona a configuração do deployment criado para o aplicativo recém-criado. O trabalho de implementar e atualizar o aplicativo é tratado pelo `deployment config component`. O `deployment config` rastreia várias informações sobre o aplicativo. Como por exemplo:
+
+* A versão atualmente implantada do aplicativo.
+* O número de réplicas a serem mantidas para o aplicativo.
+* Aciona eventos que podem chamar uma redistribuição. Por padrão, as alterações do deployment config ou alterações na imagem acionam uma redistribuição automática do aplicativo.
+* Atualização estratégica. O app-cli usa a estratégia padrão de atualização sem interrupção.
+* O deploy de aplicativos.
+
+Um dos principais recursos dos aplicativos executados no OpenShift é que eles são dimensionáveis horizontalmente. Esse conceito é representado no deployment config pelo número de réplicas. O número de réplicas especificadas em uma configuração de deployment é passado para um objeto do Kubernetes chamado de `replication controller`. Esse é um tipo especial de pod do Kubernetes que permite várias réplicas - que são cópias de pods de aplicativos sejam mantidas em execução o tempo todo. Todos os pods no OpenShift são implementados com `replication controller` por padrão. Outro recurso gerenciado por um deployment config é como as atualizações de aplicativos podem ser totalmente automatizados. No OpenShift, um pod pode existir em uma das cinco fases a qualquer momento em seu ciclo de vida. Essas fases são descritas em detalhes na documentação do Kubernetes [https://goo.gl/HKT5yZ](https://goo.gl/HKT5yZ){:target="_blank"}. A seguir, um breve resumo das cinco fases do pod:
+
+* Pendente: o pod foi aceito pelo OpenShift, mas ainda não está agendado em um dos nodes da aplicação.
+* Em execução - o pod está agendado em um node e está confirmado para subir e rodar.
+* Sucedido: todos os contêineres em um grupo foram encerrados com sucesso e não serão reiniciados.
+* Falha - um ou mais contêineres em um grupo não foram iniciados.
+* Desconhecido - algo deu errado e o OpenShift não consegue obter um status mais preciso para o pod.
+
+Os estados Falha e Sucedido são considerados estados terminais para um pod em seu ciclo de vida. Quando um pod atinge um desses estados, ele não será reiniciado. Você pode ver a fase atual de cada pod em um projeto executando o comando `oc get pods`. Cada vez que uma nova versão de um aplicativo é criada uma nova implementação é criada e rastreada. Um deployment representa uma versão exclusiva de um aplicativo. Cada deployment faz referência a uma versão da imagem que foi criada, e cria o `replication controller` para manter os pods.
+
+O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.
+
+De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
+
+---
 
