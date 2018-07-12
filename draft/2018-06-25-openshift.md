@@ -32,7 +32,6 @@ tags: openshift fedora
 * **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
 * **[Implementando aplicativos usando interface web](#implementando-aplicativos-usando-interface-web)**
 
-
 ---
 
 ### BREVE INTRODUCAO
@@ -79,7 +78,7 @@ Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando
 
 Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. A camada de roteamento é um software balanceador de carga. Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
 
-Nesse caso o registro DNS que foi criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
+Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/o3uoJ12.png)
 
@@ -636,8 +635,68 @@ Um dos principais recursos dos aplicativos executados no OpenShift é que eles s
 
 Os estados Falha e Sucedido são considerados estados terminais para um pod em seu ciclo de vida. Quando um pod atinge um desses estados, ele não será reiniciado. Você pode ver a fase atual de cada pod em um projeto executando o comando `oc get pods`. Cada vez que uma nova versão de um aplicativo é criada uma nova implementação é criada e rastreada. Um deployment representa uma versão exclusiva de um aplicativo. Cada deployment faz referência a uma versão da imagem que foi criada, e cria o `replication controller` para manter os pods.
 
-O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. Esses tipos de eventos são monitorados pelo `image streams` no OpenShift. De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
+O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. 
+
+Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
 
 ---
 
-#### Implementando nosso primeiro aplicativo
+#### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
+
+Os aplicativos são implantados usando o comando `oc new-app`. Quando você executa esse comando para efetuar o deployment do aplicativo Image Uploader, por exemplo, será necessário fornecer três informações:
+
+* O tipo de image streams que você deseja usar - o OpenShift é enviado com várias imagens de contêiner chamadas de builder images que você pode usar como ponto de partida para os aplicativos. Neste exemplo, você usará o builder image do Python para criar seu aplicativo.
+* Um nome para o seu aplicativo - neste exemplo, use `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
+* O local do código-fonte do seu aplicativo - o OpenShift pegará esse código-fonte e o combinará com o builder image Python para criar uma imagem personalizada para o deployment do seu aplicativo.
+
+Seguindo as informações acima, vamos então organizar como será o projeto:
+
+{% highlight bash %}
+$ oc new-app \
+> --image-stream=python \
+> --code=https://github.com/lobocode/openshift/image-uploader.py
+> --name=app-cli
+...
+{% endhighlight %}
+
+A saída prevista será algo mais ou menos assim:
+
+{% highlight bash %}
+--> Success
+Build scheduled, use 'oc logs -f bc/cli-app' to track its progress.
+Run 'oc status' to view your app.
+{% endhighlight %}
+
+Agora que você implementou o seu primeiro aplicativo, precisará acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado `service`, que é vinculado para fornecer acesso ao aplicativo para os usuários. 
+
+![]()
+
+Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para seu aplicativo. Você pode ver informações sobre o serviço para `app-cli` executando o comando `oc describe svc/app-cli`:
+
+{% highlight bash %}
+$ oc describe svc/app-cli
+Name:	app-cli
+Namespace:	image-uploader
+Labels:	app=app-cli
+Selector:	app=app-cli,deploymentconfig=app-cli
+Type:	ClusterIP
+IP:	172.30.90.167
+Port:	8080-tcp	8080/TCP
+Endpoints:
+Session Affinity:	None
+No events.
+{% endhighlight %}
+
+Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster do OpenShift. Outras informações mantidas incluem o endereço IP do serviço e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o serviço para o aplicativo app-cli. As configurações de compilação podem ser acessadas com `bc/<app-name>` e as configurações de implantação com `dc/<app-name>`. Você pode encontrar o restante do atalho na documentação do oc em https://docs.openshift.org/latest/cli_reference/get_started_cli.html.
+
+Os serviços fornecem um gateway consistente para a implantação de seu aplicativo. Mas o endereço IP de um serviço está disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente de aplicativo. Em seguida, você criará uma rota para expor o app-cli externamente do seu cluster do OpenShift.
+
+
+
+---
+
+#### IMPLEMENTANDO APLICATIVOS USANDO INTERFACE WEB
+
+Work in progress
+
+---
