@@ -643,13 +643,13 @@ Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma
 
 #### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
 
-Os aplicativos são implantados usando o comando `oc new-app`. Quando você executa esse comando para efetuar o deployment do aplicativo Image Uploader, por exemplo, será necessário fornecer três informações:
+Os aplicativos são implantados usando o comando `oc new-app`. Quando você executa esse comando para efetuar o deployment do aplicativo Image Uploader, por exemplo, basicamente será necessário fornecer três informações:
 
-* O tipo de image streams que você deseja usar - o OpenShift é enviado com várias imagens de contêiner chamadas de builder images que você pode usar como ponto de partida para os aplicativos. Neste exemplo, você usará o builder image do Python para criar seu aplicativo.
-* Um nome para o seu aplicativo - neste exemplo, use `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
-* O local do código-fonte do seu aplicativo - o OpenShift pegará esse código-fonte e o combinará com o builder image Python para criar uma imagem personalizada para o deployment do seu aplicativo.
+* O tipo do image stream que você deseja usar - o OpenShift envia várias imagens chamadas de `builder images` que você pode usar como ponto de partida para os aplicativos. Neste exemplo, usaremos o builder image do Python para criar o aplicativo.
+* Um nome para o seu aplicativo - neste exemplo, usarei `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
+* O local do código-fonte do seu aplicativo - o OpenShift pegará esse código-fonte e o combinará com o `builder image` Python para criar uma imagem personalizada para o deployment.
 
-Seguindo as informações acima, vamos então organizar como será o projeto:
+Seguindo as informações acima vamos organizar como será o projeto:
 
 {% highlight bash %}
 $ oc new-app \
@@ -667,11 +667,11 @@ Build scheduled, use 'oc logs -f bc/cli-app' to track its progress.
 Run 'oc status' to view your app.
 {% endhighlight %}
 
-Agora que você implementou o seu primeiro aplicativo, precisará acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado `service`, que é vinculado para fornecer acesso ao aplicativo para os usuários. 
+Agora que implementamos o aplicativo, precisaremos acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado `service`, que é vinculado para fornecer acesso do aplicativo aos usuários: 
 
 ![]()
 
-Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para seu aplicativo. Você pode ver informações sobre o serviço para `app-cli` executando o comando `oc describe svc/app-cli`:
+Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você pode ver informações sobre o serviço `app-cli` executando o comando `oc describe svc/app-cli`:
 
 {% highlight bash %}
 $ oc describe svc/app-cli
@@ -687,9 +687,9 @@ Session Affinity:	None
 No events.
 {% endhighlight %}
 
-Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster do OpenShift. Outras informações mantidas incluem o endereço IP do serviço e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o serviço para o aplicativo app-cli. As configurações de compilação podem ser acessadas com `bc/<app-name>` e as configurações de implantação com `dc/<app-name>`. Você pode encontrar o restante do atalho na documentação do oc em https://docs.openshift.org/latest/cli_reference/get_started_cli.html.
+Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações mantidas incluem o endereço IP do service e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o service do aplicativo `app-cli`. As configurações do builder podem ser acessadas com `bc/<app-name>` e as configurações de deployment com `dc/<app-name>`. Você pode encontrar todas as outras referências de comandos para o service na documentação do oc em [https://docs.openshift.org/latest/cli_reference/get_started_cli.html)](https://docs.openshift.org/latest/cli_reference/get_started_cli.html){:target="_blank"}.
 
-Os serviços fornecem um gateway consistente para a implantação de seu aplicativo. Mas o endereço IP de um serviço está disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente de aplicativo. Em seguida, você criará uma rota para expor o app-cli externamente do seu cluster do OpenShift.
+Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster OpenShift.
 
 
 
