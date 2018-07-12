@@ -26,7 +26,7 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - EXPLORANDO A FERRAMENTA
+#### CAPÍTULO 3 - TEST DRIVE
 
 * **[Criando Projetos](#criando-projetos)**
 * **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
