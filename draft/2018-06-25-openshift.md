@@ -689,9 +689,42 @@ No events.
 
 Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações mantidas incluem o endereço IP do service e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o service do aplicativo `app-cli`. As configurações do builder podem ser acessadas com `bc/<app-name>` e as configurações de deployment com `dc/<app-name>`. Você pode encontrar todas as outras referências de comandos para o service na documentação do oc em [https://docs.openshift.org/latest/cli_reference/get_started_cli.html)](https://docs.openshift.org/latest/cli_reference/get_started_cli.html){:target="_blank"}.
 
-Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster OpenShift.
+Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster OpenShift. Quando você instala seu cluster OpenShift, um dos serviços criados é o [HAProxy](){:target="_blank"} que fica em execução em um contêiner. O HAProxy software open-source de balanceamento de carga. Para criar uma rota para o nosso aplicativo `app-cli`, execute o seguinte comando:
 
+oc expose svc/app-cli
 
+Como discutimos anteriormente, o OpenShift usa projetos para organizar aplicativos. O projeto de um aplicativo é incluído no URL gerado quando você cria uma rota de aplicativo. O URL de cada aplicativo usa o seguinte formato:
+
+<application-name>-<project-name>.<cluster-app-domain>
+
+Quando você implanta o OpenShift no apêndice A, você especifica os aplicativos de domínio do aplicativo.192,168.122.101.nip.io. Por padrão, todos os aplicativos no OpenShift são servidos usando o protocolo HTTP. Quando você coloca tudo isso junto, o URL de app-cli deve ser o seguinte:
+
+http://app-cli-image-uploader.apps.192.168.122.101.nip.io
+
+Você pode obter informações sobre a rota que acabou de criar, executando o comando oc describe route / app-cli:
+
+$ oc describe route/app-cli
+Name:		app-cli
+Namespace:		image-uploader
+Created:		About an hour ago
+Labels:		app=app-cli
+Annotations:		openshift.io/host.generated=true
+Requested Host:		app-cli-image-uploader.apps.192.168.122.101.nip.io
+Path:		<none>
+TLS Termination:		<none>
+Insecure Policy:		<none>
+Endpoint Port:		8080-tcp
+Service:		app-cli
+Weight:		100 (100%)
+Endpoints:	10.129.1.112:8080
+
+A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional em um navegador da Web. Você deve ser capaz de navegar até seu aplicativo App-CLI usando a URL para a rota que foi criada. 
+
+![]()
+
+No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos. Vamos passar o resto deste livro discutindo os diferentes aspectos dessas relações em profundidade. Que o conhecimento fundamental de como as plataformas de contêiner operam é incrivelmente valiosa.
+
+![]()
 
 ---
 
