@@ -722,11 +722,11 @@ Endpoints:	10.129.1.112:8080
 
 A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional em um navegador da Web. Você deve ser capaz de navegar até seu aplicativo App-CLI usando a URL para a rota que foi criada. 
 
-![]()
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/)
 
 No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos. Vamos passar o resto deste livro discutindo os diferentes aspectos dessas relações em profundidade. Que o conhecimento fundamental de como as plataformas de contêiner operam é incrivelmente valiosa.
 
-![]()
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png)
 
 ---
 
