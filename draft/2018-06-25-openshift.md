@@ -695,7 +695,9 @@ oc expose svc/app-cli
 
 Como discutimos anteriormente, o OpenShift usa projetos para organizar aplicativos. O projeto de um aplicativo é incluído no URL gerado quando você cria uma rota de aplicativo. O URL de cada aplicativo usa o seguinte formato:
 
+{% highlight bash %}
 <application-name>-<project-name>.<cluster-app-domain>
+{% endhighlight %}
 
 Quando você implanta o OpenShift no apêndice A, você especifica os aplicativos de domínio do aplicativo.192,168.122.101.nip.io. Por padrão, todos os aplicativos no OpenShift são servidos usando o protocolo HTTP. Quando você coloca tudo isso junto, o URL de app-cli deve ser o seguinte:
 
