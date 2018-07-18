@@ -654,7 +654,7 @@ Seguindo as informações acima vamos organizar como será o projeto:
 {% highlight bash %}
 $ oc new-app \
 > --image-stream=python \
-> --code=https://github.com/lobocode/openshift/image-uploader.py
+> --code=https://github.com/lobocode/openshiftlab/scripts/image-uploader.py
 > --name=app-cli
 ...
 {% endhighlight %}
