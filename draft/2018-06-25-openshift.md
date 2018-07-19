@@ -669,7 +669,8 @@ Run 'oc status' to view your app.
 
 Agora que implementamos o aplicativo, precisaremos acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado `service`, que é vinculado para fornecer acesso do aplicativo aos usuários: 
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/
+)
 
 Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você pode ver informações sobre o serviço `app-cli` executando o comando `oc describe svc/app-cli`:
 
@@ -724,7 +725,7 @@ Endpoints:	10.129.1.112:8080
 
 A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional em um navegador da Web. Você deve ser capaz de navegar até seu aplicativo App-CLI usando a URL para a rota que foi criada. 
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/image-uploader.py](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/image-uploader.py)
 
 No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos. Vamos passar o resto deste livro discutindo os diferentes aspectos dessas relações em profundidade. Que o conhecimento fundamental de como as plataformas de contêiner operam é incrivelmente valiosa.
 
