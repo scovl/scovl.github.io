@@ -26,7 +26,7 @@ tags: openshift fedora
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - EXPLORANDO A FERRAMENTA
+#### CAPÍTULO 3 - TEST DRIVE
 
 * **[Criando Projetos](#criando-projetos)**
 * **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
@@ -635,13 +635,102 @@ Um dos principais recursos dos aplicativos executados no OpenShift é que eles s
 
 Os estados Falha e Sucedido são considerados estados terminais para um pod em seu ciclo de vida. Quando um pod atinge um desses estados, ele não será reiniciado. Você pode ver a fase atual de cada pod em um projeto executando o comando `oc get pods`. Cada vez que uma nova versão de um aplicativo é criada uma nova implementação é criada e rastreada. Um deployment representa uma versão exclusiva de um aplicativo. Cada deployment faz referência a uma versão da imagem que foi criada, e cria o `replication controller` para manter os pods.
 
-O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
+O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. 
+
+Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
 
 ---
 
 #### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
 
-Work in progress
+O deployment dos aplicativos são feitos usando o comando `oc new-app`. Em nosso exemplo, quando você executa este comando para efetuar o deployment do aplicativo Image Uploader, será necessário fornecer três informações básicas:
+
+* O tipo do image stream que você deseja usar - o OpenShift envia várias imagens chamadas de `builder images` que você pode usar como ponto de partida para os aplicativos. Neste exemplo, usaremos o builder image do Python para criar o aplicativo.
+* Um nome para o seu aplicativo - neste exemplo, usarei `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
+* O local do código-fonte do seu aplicativo - o OpenShift pegará esse código-fonte e o combinará com o `builder image` Python para criar uma imagem personalizada para o deployment.
+
+Como todo sistema requer algum nível de organização, vou organizar de maneira simples o projeto `Image Uploader`:
+
+{% highlight bash %}
+$ oc new-app \
+> --image-stream=python \
+> --code=https://github.com/lobocode/openshiftlab/scripts/image-uploader.py
+> --name=app-cli
+...
+{% endhighlight %}
+
+A saída do código acima será algo nestes moldes:
+
+{% highlight bash %}
+--> Success
+Build scheduled, use 'oc logs -f bc/cli-app' to track its progress.
+Run 'oc status' to view your app.
+{% endhighlight %}
+
+Agora que fizemos o deployment do aplicativo, precisaremos acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado `service`, que é vinculado para fornecer acesso do aplicativo aos usuários: 
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png)
+
+Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você pode ver informações sobre o serviço `app-cli` executando o comando `oc describe svc/app-cli`:
+
+{% highlight bash %}
+$ oc describe svc/app-cli
+Name:	app-cli
+Namespace:	image-uploader
+Labels:	app=app-cli
+Selector:	app=app-cli,deploymentconfig=app-cli
+Type:	ClusterIP
+IP:	172.30.90.167
+Port:	8080-tcp	8080/TCP
+Endpoints:
+Session Affinity:	None
+No events.
+{% endhighlight %}
+
+Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações incluem o endereço IP do service e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o service do aplicativo `app-cli`. As configurações do builder podem ser acessadas com `bc/<app-name>` e as configurações de deployment com `dc/<app-name>`. Você pode encontrar todas as outras referências de comandos para o service na documentação do `oc` em [https://docs.openshift.org/latest/cli_reference/get_started_cli.html)](https://docs.openshift.org/latest/cli_reference/get_started_cli.html){:target="_blank"}.
+
+Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster OpenShift. Quando você instala seu cluster OpenShift, um dos serviços criados é o [HAProxy](){:target="_blank"} que fica em execução em um contêiner. O HAProxy é um software open-source de balanceamento de carga. Para criar uma rota para o nosso aplicativo `app-cli`, execute o seguinte comando:
+
+{% highlight bash %}
+oc expose svc/app-cli
+{% endhighlight %}
+
+Como discutimos anteriormente, o OpenShift usa projetos para organizar aplicativos. O projeto de um aplicativo é incluído no URL gerado quando você cria uma rota de aplicativo. O URL de cada aplicativo usa o seguinte formato:
+
+{% highlight bash %}
+<application-name>-<project-name>.<cluster-app-domain>
+{% endhighlight %}
+
+Quando você implanta o OpenShift no apêndice A, você especifica os aplicativos de domínio do aplicativo.192,168.100.2.nip.io. Por padrão, todos os aplicativos no OpenShift são servidos usando o protocolo HTTP. Quando você coloca tudo isso junto, o URL de app-cli deve ser o seguinte:
+
+http://app-cli-image-uploader.apps.192.168.100.2.nip.io
+
+Você pode obter informações sobre a rota que acabou de criar, executando o comando `oc describe route/app-cli`:
+
+{% highlight bash %}
+$ oc describe route/app-cli
+Name:		app-cli
+Namespace:		image-uploader
+Created:		About an hour ago
+Labels:		app=app-cli
+Annotations:		openshift.io/host.generated=true
+Requested Host:		app-cli-image-uploader.apps.192.168.122.101.nip.io
+Path:		<none>
+TLS Termination:		<none>
+Insecure Policy:		<none>
+Endpoint Port:		8080-tcp
+Service:		app-cli
+Weight:		100 (100%)
+Endpoints:	10.129.1.112:8080
+{% endhighlight %}
+
+A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional no navegador Web:  
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png)
+
+No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos:
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png)
 
 ---
 
