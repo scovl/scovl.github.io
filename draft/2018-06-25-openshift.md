@@ -701,7 +701,7 @@ Como discutimos anteriormente, o OpenShift usa projetos para organizar aplicativ
 
 Quando você implanta o OpenShift no apêndice A, você especifica os aplicativos de domínio do aplicativo.192,168.122.101.nip.io. Por padrão, todos os aplicativos no OpenShift são servidos usando o protocolo HTTP. Quando você coloca tudo isso junto, o URL de app-cli deve ser o seguinte:
 
-http://app-cli-image-uploader.apps.192.168.122.101.nip.io
+http://app-cli-image-uploader.apps.192.168.100.2.nip.io
 
 Você pode obter informações sobre a rota que acabou de criar, executando o comando oc describe route/app-cli:
 
@@ -724,7 +724,7 @@ Endpoints:	10.129.1.112:8080
 
 A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional em um navegador da Web. Você deve ser capaz de navegar até seu aplicativo App-CLI usando a URL para a rota que foi criada. 
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/imageuploader1.png)
 
 No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos. Vamos passar o resto deste livro discutindo os diferentes aspectos dessas relações em profundidade. Que o conhecimento fundamental de como as plataformas de contêiner operam é incrivelmente valiosa.
 

@@ -637,6 +637,7 @@ Os estados Falha e Sucedido são considerados estados terminais para um pod em s
 
 O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para a nova implantação, os pods da implantação antiga são removidos do sistema. Novas implantações de aplicativos podem ser acionadas automaticamente por eventos, como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível. Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma forma bastante resumida, o recurso `image streams` é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando image streams, você pode monitorar aplicativos e acionar novos deployments quando seus componentes são atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.
 
+
 ---
 
 #### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
