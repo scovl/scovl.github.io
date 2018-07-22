@@ -30,7 +30,11 @@ tags: openshift fedora
 
 * **[Criando Projetos](#criando-projetos)**
 * **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
-* **[Implementando aplicativos usando interface web](#implementando-aplicativos-usando-interface-web)**
+
+#### CAPÍTULO 4 - APROFUNDANDO
+
+* **[Compreendendo o processo](#compreendendo-o-processo)**
+* **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
 
 ---
 
@@ -735,10 +739,32 @@ No OpenShift, vários componentes trabalham em conjunto para criar, implantar e 
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png)
 
----
-
-#### IMPLEMENTANDO APLICATIVOS USANDO INTERFACE WEB
-
-Work in progress
+Todo este processo de deployment da nossa aplicação poderia ter sido feita pela interface web do OpenShift. No entanto, compreendo que temos mais domínio da ferramenta se optarmos pelas configurações em linha de comando. Você poderá experimentar usar a interface Web do OpenShift para fazer o mesmo ou explorar outros caminhos. A partir daquí, analisaremos mais detalhadamente o cluster do OpenShift e investigaremos como os contêineres isolam seus processos no node do aplicativo.
 
 ---
+
+#### COMPREENDENDO O PROCESSO
+
+É de extrema importância obter o entendimento de como um contêiner realmente funciona, compreender como os sistemas são projetados e como os problemas são analisados quando eles inevitavelmente ocorrem. Então vamos partir para os conceitos básicos para tentar definir exatamente o que é um contêiner. Um contêiner pode ser definido como uma maneira mais eficaz de isolar processos em um sistema Linux. 
+
+Quando você faz o deploy de um aplicativo no OpenShift, uma solicitação é iniciada na API do OpenShift. Para entender realmente como os contêineres isolam os processos dentro deles, precisamos dar uma olhada mais detalhada de como esses serviços funcionam juntos até o deploy do aplicativo. Quando o deploy de um aplicativo é feito no OpenShift, o processo começa com os services. O deploy da aplicação começa com componentes de aplicativos exclusivos do OpenShift. O processo segue da seguinte maneira:
+
+1. O OpenShift cria uma imagem personalizada usando seu código-fonte e o modelo de imagem do construtor que você especificou. Por exemplo, app-cli usa a builder image do Python.
+2. Essa imagem é carregada no registro interno que está rodando em um contêiner.
+3. O OpenShift cria uma build config para documentar como seu aplicativo é construído. Isso inclui qual imagem foi criada, a builder image usada, a localização do código-fonte e outras informações.
+4. O OpenShift cria um deployment config para controlar os deployments e atualizações dos seus aplicativos. As informações contidas no deployment config incluem o número de réplicas, o método de atualização e variáveis ​​específicas do aplicativo e volumes montados.
+5. O OpenShift cria um deployment, que representa uma única versão do deploy do aplicativo. Cada deployment exclusivo é associado ao componente deployment config do seu aplicativo.
+6. O balanceador de carga interno do OpenShift é atualizado com uma entrada para o registro DNS do aplicativo. Esta entrada será vinculada a um componente criado pelo Kubernetes.
+7. O OpenShift cria um componente Image Stream. No OpenShift, um image stream monitora o builder image, o deployment config e outros componentes que modificam. Se uma alteração for detectada, os image streams podem acionar as redefinições de aplicativos para refletir as alterações.
+
+A imagem abaixo mostra como esses componentes estão interligados. Quando um desenvolvedor cria um código-fonte e aciona um novo deployment do aplicativo (neste caso, usando a ferramenta de linha de comando `oc`), o OpenShift cria os componentes deployment config, o image stream e build config.
+
+![]()
+
+O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens do OpenShift. O componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criado e será vinculada a um objeto do Kubernetes. 
+
+Na acima observe que os usuários estão sozinhos sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como da janela de encaixe, para obter o aplicativo implantado para o usuário. 
+
+---
+
+#### UM POUCO SOBRE KUBERNETES
