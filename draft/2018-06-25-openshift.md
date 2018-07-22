@@ -643,11 +643,11 @@ Esses tipos de eventos são monitorados pelo `image streams` no OpenShift.De uma
 
 #### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
 
-Os aplicativos são implantados usando o comando `oc new-app`. Quando você executa esse comando para efetuar o deployment do aplicativo Image Uploader, por exemplo, basicamente será necessário fornecer três informações:
+Para fazer o deployment dos aplicativos usamos o comando `oc new-app`. Executando este comando em nosso aplicativo, no caso, o Image Uploader, será necessário fornecer três informações:
 
 * O tipo do image stream que você deseja usar - o OpenShift envia várias imagens chamadas de `builder images` que você pode usar como ponto de partida para os aplicativos. Neste exemplo, usaremos o builder image do Python para criar o aplicativo.
 * Um nome para o seu aplicativo - neste exemplo, usarei `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
-* O local do código-fonte do seu aplicativo - o OpenShift pegará esse código-fonte e o combinará com o `builder image` Python para criar uma imagem personalizada para o deployment.
+* O local onde estará o código-fonte do aplicativo - o OpenShift pegará esse código-fonte e o combinará com o `builder image` Python para criar uma imagem personalizada.
 
 Seguindo as informações acima vamos organizar como será o projeto:
 
@@ -671,7 +671,7 @@ Agora que implementamos o aplicativo, precisaremos acessar o pod recém-implemen
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/deployanapplication.png)
 
-Embora os pods possam ir e vir, é preciso haver uma presença consistente para seus aplicativos no OpenShift. Isso é o que um service faz. Um service usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você pode ver informações sobre o serviço `app-cli` executando o comando `oc describe svc/app-cli`:
+Um service usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você poderá visualizar informações sobre o service `app-cli` executando o comando `oc describe svc/app-cli`:
 
 {% highlight bash %}
 $ oc describe svc/app-cli
@@ -687,23 +687,27 @@ Session Affinity:	None
 No events.
 {% endhighlight %}
 
-Cada serviço recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações mantidas incluem o endereço IP do service e as portas TCP para se conectar no pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada na linha de comando para economizar tempo e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o service do aplicativo `app-cli`. As configurações do builder podem ser acessadas com `bc/<app-name>` e as configurações de deployment com `dc/<app-name>`. Você pode encontrar todas as outras referências de comandos para o service na documentação do oc em [https://docs.openshift.org/latest/cli_reference/get_started_cli.html)](https://docs.openshift.org/latest/cli_reference/get_started_cli.html){:target="_blank"}.
+Cada service recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações mantidas incluem o endereço IP do service e as portas TCP para se conectar ao pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada em linha de comando para economizar tempo, e evitar nomes de componentes com erros ortográficos. O comando anterior usa `svc/app-cli` para obter informações sobre o service do aplicativo `app-cli`. As configurações do builder podem ser acessados com `bc/<app-name>` e as configurações de deployment com `dc/<app-name>`. Você pode encontrar todas as outras referências de comandos para o service na documentação do oc em [https://docs.openshift.org/latest/cli_reference/get_started_cli.html)](https://docs.openshift.org/latest/cli_reference/get_started_cli.html){:target="_blank"}.
 
-Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster OpenShift. Quando você instala seu cluster OpenShift, um dos serviços criados é o [HAProxy](){:target="_blank"} que fica em execução em um contêiner. O HAProxy software open-source de balanceamento de carga. Para criar uma rota para o nosso aplicativo `app-cli`, execute o seguinte comando:
+Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o `app-cli` externamente no seu cluster. Quando você instala seu cluster, um dos serviços criados é o [HAProxy](https://en.wikipedia.org/wiki/HAProxy){:target="_blank"} que fica em execução em um contêiner. O HAProxy é um software open-source de balanceamento de carga. Para criar uma rota para o nosso aplicativo `app-cli`, execute o seguinte comando:
 
+{% highlight bash %}
 oc expose svc/app-cli
+{% endhighlight %}
 
-Como discutimos anteriormente, o OpenShift usa projetos para organizar aplicativos. O projeto de um aplicativo é incluído no URL gerado quando você cria uma rota de aplicativo. O URL de cada aplicativo usa o seguinte formato:
+A URL de cada aplicativo usa o seguinte formato:
 
 {% highlight bash %}
 <application-name>-<project-name>.<cluster-app-domain>
 {% endhighlight %}
 
-Quando você implanta o OpenShift no apêndice A, você especifica os aplicativos de domínio do aplicativo.192,168.122.101.nip.io. Por padrão, todos os aplicativos no OpenShift são servidos usando o protocolo HTTP. Quando você coloca tudo isso junto, o URL de app-cli deve ser o seguinte:
+Neste artigo, especificamente na instalação do OpenShift, especificamos o domínio `aplicativo.192,168.100.2.nip.io`. Por padrão, todos os aplicativos no OpenShift estarão disponíveis usando o protocolo HTTP. Quando você coloca tudo isso junto, a URL do `app-cli` deve ser o seguinte:
 
+{% highlight bash %}
 http://app-cli-image-uploader.apps.192.168.100.2.nip.io
+{% endhighlight %}
 
-Você pode obter informações sobre a rota que acabou de criar, executando o comando oc describe route/app-cli:
+Você poderá obter mais informações sobre a rota que acabou de criar, executando o comando `oc describe route/app-cli`:
 
 {% highlight bash %}
 $ oc describe route/app-cli
@@ -712,8 +716,8 @@ Namespace:		image-uploader
 Created:		About an hour ago
 Labels:		app=app-cli
 Annotations:		openshift.io/host.generated=true
-Requested Host:		app-cli-image-uploader.apps.192.168.122.101.nip.io
-Path:		<none>
+Requested Host:		app-cli-image-uploader.apps.192.168.100.2.nip.io
+Path:					<none>
 TLS Termination:		<none>
 Insecure Policy:		<none>
 Endpoint Port:		8080-tcp
@@ -722,11 +726,12 @@ Weight:		100 (100%)
 Endpoints:	10.129.1.112:8080
 {% endhighlight %}
 
-A saída informa as configurações de host adicionadas ao HAProxy, o serviço associado à rota e os endpoints para o serviço se conectar ao tratamento de solicitações para a rota. Agora que você criou a rota para seu aplicativo, vá em frente e verifique se ele está funcional em um navegador da Web. Você deve ser capaz de navegar até seu aplicativo App-CLI usando a URL para a rota que foi criada. 
+A saída informa as configurações de host adicionadas ao HAProxy, o service associado à rota, e os endpoints para o service se conectar às solicitações para a rota. Agora que criamos a rota para o aplicativo, verificaremos se está funcional em um navegador Web:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/app/imageuploader1.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/imageuploader1.png)
 
-No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar aplicativos. Vamos passar o resto deste livro discutindo os diferentes aspectos dessas relações em profundidade. Que o conhecimento fundamental de como as plataformas de contêiner operam é incrivelmente valiosa.
+
+No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar os aplicativos:
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/apprequest.png)
 
