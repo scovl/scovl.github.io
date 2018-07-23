@@ -35,6 +35,7 @@ tags: openshift fedora
 
 * **[Compreendendo o processo](#compreendendo-o-processo)**
 * **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
+* **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
 
 ---
 
@@ -759,7 +760,7 @@ Quando você faz o deploy de um aplicativo no OpenShift, uma solicitação é in
 
 A imagem abaixo mostra como esses componentes estão interligados. Quando um desenvolvedor cria um código-fonte e aciona um novo deployment do aplicativo (neste caso, usando a ferramenta de linha de comando `oc`), o OpenShift cria os componentes deployment config, o image stream e build config.
 
-![]()
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
 
 O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens do OpenShift. O componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criado e será vinculada a um objeto do Kubernetes. 
 
@@ -768,3 +769,21 @@ Na acima observe que os usuários estão sozinhos sem acesso ao aplicativo. Não
 ---
 
 #### UM POUCO SOBRE KUBERNETES
+
+O Kubernetes é a engine de orquestração no coração do OpenShift. De muitas maneiras, um cluster do OpenShift é um cluster do Kubernetes. Quando você fez o deploy da nossa aplicação de exemplo, no caso o `app-cli`, o Kubernetes criou vários componentes como:
+
+* Replication controller - dimensiona o aplicativo conforme necessário no Kubernetes. Esse componente também garante que o número desejado de réplicas na configuração de implementação seja mantido em todos os momentos.
+* Service - expõe o aplicativo. Um serviço do Kubernetes é um endereço IP único usado para acessar todos os pods ativos de uma implantação de aplicativo. Quando você dimensiona um aplicativo para cima ou para baixo, o número de pods muda, mas eles são tudo acessado através de um único service.
+* Pods - representa a menor unidade escalável no OpenShift.
+
+Normalmente, um único pod é composto por um único contêiner. Mas, em algumas situações, faz sentido ter um pod composto por vários contêineres. A figura a seguir ilustra os relacionamentos entre os componentes criador pelo Kubernetes. O replication controller determina quantos pods são criados para um deploy inicial de um aplicativo e está vinculado ao componente de deployment do OpenShift. Também vinculado ao componente pod é um service do Kubernetes. O service representa todos os pods que o replication controller efetuou o deploy. Ele fornece um único endereço IP no OpenShift para acessar seu aplicativo, pois ele é dimensionado para cima e para baixo em diferentes nodes em seu cluster. O service é o endereço IP interno mencionado na rota criada no balanceador de carga do OpenShift.
+
+O relacionamento entre o deployment e os replication controllers são como os aplicativos são implantados, dimensionados e atualizados. Quando são feitas alterações em uma configuração de deployment, um novo deploy é criado, o que, por sua vez, cria um novo replication controller. O replication controller, em seguida, cria o número desejado de pods dentro do cluster, que é onde o aplicativo é realmente implantado.
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
+
+O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do docker para criar os contêineres de aplicações.
+
+---
+
+#### UM POUCO SOBRE DOCKER
