@@ -794,7 +794,7 @@ O Docker é um contêiner runtime. Isto é, é uma aplicação em servidor que c
 
 Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em [http://cri-o.io](http://cri-o.io){:target="_blank"}. O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o docker usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco03.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco03.png)
 
 O Docker usa três componentes do kernel Linux para isolar os aplicativos em execução nos contêineres que são criados e limita seu acesso aos recursos no host. São eles:
 
@@ -804,7 +804,7 @@ O Docker usa três componentes do kernel Linux para isolar os aplicativos em exe
 
 O daemon do docker cria esses recursos do kernel dinamicamente quando o contêiner é criado. Esses recursos estão associados aos aplicativos que são iniciados para o contêiner correspondente; seu aplicativo agora está sendo executado em um contêiner. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco04.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco04.png)
 
 Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O kernelspace é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no kernelspace.
 
