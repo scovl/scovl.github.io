@@ -760,7 +760,7 @@ Quando você faz o deploy de uma aplicação no OpenShift, é iniciada uma solic
 
 A imagem abaixo mostra como esses componentes estão interligados. Quando um desenvolvedor cria um código-fonte de um aplicativo e aciona um novo deployment (neste caso, usando a ferramenta de linha de comando `oc`), o OpenShift cria os componentes como o deployment config, o image stream e o build config.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco01.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco1.png)
 
 O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. 
 
@@ -782,7 +782,7 @@ O service também está vinculado ao pod. O service representa todos os pods que
 
 O relacionamento entre o deployment e os replication controllers pode ser explicado na forma como é feito o deployment dos aplicativos, como são dimensionados e atualizados. Quando são feitas alterações em uma configuração de deployment, um novo deploy é criado, o que, por sua vez, cria um novo replication controller. O replication controller, em seguida, cria o número desejado de pods dentro do cluster, que é onde realmente ocorre o deployment do aplicativo.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco02.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/appco02.png)
 
 O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do docker para criar os contêineres das aplicações.
 
