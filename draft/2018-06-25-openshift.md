@@ -36,7 +36,9 @@ tags: openshift fedora
 * **[Compreendendo o processo](#compreendendo-o-processo)**
 * **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
 * **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
-
+* **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
+* **[Namespaces como ponto de montagem](#namespaces-como-ponto-de-montagem)**
+* 
 ---
 
 ### BREVE INTRODUCAO
@@ -746,9 +748,9 @@ Todo este processo de deployment da nossa aplicação poderia ter sido feita pel
 
 #### COMPREENDENDO O PROCESSO
 
-É de extrema importância compreender como um contêiner realmente funciona, como os sistemas são projetados e como os problemas são analisados quando eles inevitavelmente ocorrem. Então vamos partir para os conceitos básicos para tentar definir exatamente o que é um contêiner, o que roda por trás do Openshift e os seus componentes. Um contêiner pode ser definido como uma maneira mais eficaz de isolar processos em um sistema Linux. 
+É de extrema importância compreender como um contêiner realmente funciona, como os sistemas são projetados e como os problemas são analisados quando eles inevitavelmente ocorrem. Então vamos partir para os conceitos básicos e definir exatamente o que é um contêiner, o que roda por trás do Openshift e os seus componentes. Um contêiner pode ser definido de diversas maneiras. No entanto, particularmente, a definição que na minha opinião define melhor o que é um contêiner, é esta: "uma maneira mais eficaz de isolar processos em um sistema Linux".
 
-Quando você faz o deploy de uma aplicação no OpenShift, é iniciada uma solicitação em sua API. Para entender realmente como os contêineres isolam os processos dentro deles, precisamos olhar clinicamente como esses serviços funcionam juntos até o deploy do aplicativo. Quando o deploy de um aplicativo é feito no OpenShift, o processo começa com os services. O deploy da aplicação começa com componentes de aplicativos exclusivos do OpenShift. O processo segue da seguinte maneira:
+Quando você faz o deploy de uma aplicação no OpenShift, uma solicitação é iniciada em sua [API](https://canaltech.com.br/software/o-que-e-api/){:target="_blank"}. Para entender realmente como os contêineres isolam os processos dentro deles, precisamos olhar clinicamente como esses serviços funcionam juntos até o deploy da aplicação. Quando o deploy de um aplicativo é feito no OpenShift, o processo começa com os services. O deploy da aplicação começa com componentes de aplicativos exclusivos do OpenShift. O processo segue da seguinte maneira:
 
 1. O OpenShift cria uma imagem personalizada usando seu código-fonte e o builder image do que você especificou. Por exemplo, app-cli usa a builder image do Python.
 2. Essa imagem é carregada no registro interno que está rodando em um contêiner.
@@ -756,15 +758,13 @@ Quando você faz o deploy de uma aplicação no OpenShift, é iniciada uma solic
 4. O OpenShift cria um deployment config para controlar os deployments e atualizações dos seus aplicativos. As informações contidas no deployment config incluem o número de réplicas, o método de atualização e variáveis ​​específicas do aplicativo e volumes montados.
 5. O OpenShift cria um deployment, que representa uma única versão do deploy do aplicativo. Cada deployment é associado ao componente deployment config do seu aplicativo.
 6. O balanceador de carga interno do OpenShift é atualizado com uma entrada para o registro DNS do aplicativo. Esta entrada será vinculada a um componente criado pelo Kubernetes.
-7. O OpenShift cria um componente Image Stream. No OpenShift, um image stream monitora o builder image, o deployment config e outros componentes que sofrem modificações. Se uma alteração for detectada, os image streams podem acionar as redefinições de aplicativos para refletir as alterações.
+7. O OpenShift cria um componente chamado Image Stream. No OpenShift, um image stream monitora o builder image, o deployment config e outros componentes que sofrem modificações. Se uma alteração for detectada, os image streams podem acionar as redefinições de aplicativos para refletir as mudanças.
 
 A imagem abaixo mostra como esses componentes estão interligados. Quando um desenvolvedor cria um código-fonte de um aplicativo e aciona um novo deployment (neste caso, usando a ferramenta de linha de comando `oc`), o OpenShift cria os componentes como o deployment config, o image stream e o build config.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco01.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco1.png)
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco01.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco01.png)
 
-O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. 
-
-Na imagem acima observe que os usuários estão sozinhos sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do docker para obter o depoyment do aplicativo para o usuário. 
+O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. Na imagem acima observe que os usuários estão sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do docker para obter o deployment do aplicativo para o usuário. 
 
 ---
 
@@ -776,23 +776,21 @@ O Kubernetes é a engine de orquestração, e é o coração do OpenShift. De mu
 * Service - este componente expõe o aplicativo. Um service do Kubernetes é um endereço IP único usado para acessar todos os pods ativos de um deployment da aplicação. Quando você dimensiona um aplicativo para cima ou para baixo, o número de pods muda, mas eles todos são acessados através de um único service.
 * Pods - representa a menor unidade escalável no OpenShift.
 
-Normalmente, um único pod é composto por um único contêiner. Mas, em algumas situações, faz sentido ter um pod composto por vários contêineres. A figura a seguir ilustra os relacionamentos entre os componentes criador pelo Kubernetes. O replication controller determina quantos pods são criados para um deploy inicial de um aplicativo e está vinculado ao componente de deployment do OpenShift. 
-
-O service também está vinculado ao pod. O service representa todos os pods que o replication controller efetuou o deploy. Ele fornece um único endereço IP no OpenShift para acessar seu aplicativo, pois ele é dimensionado para cima e para baixo em diferentes nodes em seu cluster. O service é o endereço IP interno mencionado na rota criada no balanceador de carga do OpenShift.
+Normalmente, um único pod é composto por um único contêiner. Mas, em algumas situações, faz sentido ter um pod composto por vários contêineres. A figura a seguir ilustra os relacionamentos entre os componentes criador pelo Kubernetes. O replication controller determina quantos pods são criados para um deploy inicial de um aplicativo e está vinculado ao componente de deployment do OpenShift. O service também está vinculado ao pod. O service representa todos os pods que o replication controller efetuou o deploy. Ele fornece um único endereço IP no OpenShift para acessar seu aplicativo, pois ele é dimensionado para cima e para baixo em diferentes nodes em seu cluster. O service é o endereço IP interno mencionado na rota criada no balanceador de carga do OpenShift.
 
 O relacionamento entre o deployment e os replication controllers pode ser explicado na forma como é feito o deployment dos aplicativos, como são dimensionados e atualizados. Quando são feitas alterações em uma configuração de deployment, um novo deploy é criado, o que, por sua vez, cria um novo replication controller. O replication controller, em seguida, cria o número desejado de pods dentro do cluster, que é onde realmente ocorre o deployment do aplicativo.
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco02.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco02.png)
 
-O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do docker para criar os contêineres das aplicações.
+O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do [docker](https://www.docker.com/what-docker){:target="_blank"} para criar os contêineres das aplicações.
 
 ---
 
 #### UM POUCO SOBRE DOCKER
 
-O Docker é um contêiner runtime. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.
+O [Docker](https://www.docker.com/what-docker){:target="_blank"} é um contêiner runtime. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.
 
-Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em [http://cri-o.io](http://cri-o.io){:target="_blank"}. O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o docker usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
+Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em [http://cri-o.io](http://cri-o.io){:target="_blank"}. O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o [docker](https://www.docker.com/what-docker){:target="_blank"} usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco03.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco03.png)
 
@@ -800,12 +798,80 @@ O Docker usa três componentes do kernel Linux para isolar os aplicativos em exe
 
 * Linux namespaces - forneça isolamento para os recursos em execução no contêiner. Embora o termo seja o mesmo, esse é um conceito diferente dos namespaces do Kubernetes [https://goo.gl/GYZQ4a](https://goo.gl/GYZQ4a){:target="_blank"}, que são mais ou menos análogos a um projeto do OpenShift.
 * Control groups (cgroups) - fornecem limites máximos de acesso garantido para CPU e memória no node do aplicativo. 
-* SELinux contexts - Impede que os aplicativos em um contêiner acessem indevidamente recursos no host ou em outros contêineres. UmSELinux context é um rótulo exclusivo aplicado aos recursos de um contêiner no node do aplicativo. Esse rótulo exclusivo impede que o contêiner acesse qualquer coisa que não tenha um marcador correspondente no host. 
+* SELinux contexts - Impede que os aplicativos em um contêiner acessem indevidamente recursos no host ou em outros contêineres. Um SELinux context é um rótulo exclusivo do aplicado aos recursos de um contêiner no node. Esse rótulo exclusivo impede que o contêiner acesse qualquer coisa que não tenha um marcador correspondente no host. 
 
-O daemon do docker cria esses recursos do kernel dinamicamente quando o contêiner é criado. Esses recursos estão associados aos aplicativos que são iniciados para o contêiner correspondente; seu aplicativo agora está sendo executado em um contêiner. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
-
+O [daemon](https://pt.wikipedia.org/wiki/Daemon_(computa%C3%A7%C3%A3o)){:target="_blank"} do docker cria esses recursos do kernel dinamicamente quando o contêiner é criado. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco04.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco04.png)
 
-Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O kernelspace é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no kernelspace.
+Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html){:target="_blank"} é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html){:target="_blank"}.
 
-Os aplicativos em um contêiner são executados no espaço do usuário, mas os componentes que isolam os aplicativos no contêiner são executados no kernelspace. Isso significa que os contêineres são isolados usando componentes do kernel que não podem ser modificados de dentro do contêiner. 
+Os aplicativos em um contêiner são executados no espaço do usuário, mas os componentes que isolam os aplicativos no contêiner são executados no [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html){:target="_blank"}. Isso significa que os contêineres são isolados usando componentes do kernel que não podem ser modificados de dentro do contêiner. 
+
+---
+
+#### FLUXO DE TRABALHO AUTOMATIZADO
+
+O fluxo de trabalho automatizado executado ao implantar um aplicativo no OpenShift inclui o OpenShift, o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na figura 3.5.
+
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco05.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco05.png)
+
+O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregues consistentemente de acordo com os designs do desenvolvedores. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.
+
+Armado com o PID para o atual contêiner app-cli, você pode começar a analisar como os contêineres isolam recursos de processo com namespaces do Linux. O Docker cria um conjunto exclusivo de namespaces para isolar os recursos em cada contêiner. A aplicação está vinculada aos namespaces porque elas são exclusivas para cada contêiner. O Cgroups e o SELinux são configurados para incluir informações para um contêiner recém-criado, mas esses recursos do kernel Linux são compartilhados entre todos os contêineres em execução no node do aplicativo.
+
+Para obter uma lista dos namespaces criados para o `app-cli`, use o comando `lsns`. Você precisa que o PID para `app-cli` passe como parâmetro para `lsns`. O comando `lsns` aceita um PID com a opção `-p` e gera os namespaces associados a esse PID. A saída para `lsns` possui as seis colunas a seguir:
+
+* NS - Inode associado ao namespace
+* TYPE - tipo de namespace criado
+* NPROCS - Número de processos associados ao namespace
+* PID - processo usado para criar o namespace
+* USER - usuário que possui o namespace
+* COMMAND - Comando executado para iniciar o processo para criar o namespace
+
+Quando você executa o comando, a saída de lsns mostra seis namespaces para app-cli. Cinco desses namespaces são exclusivos do app-cli e fornecem o isolamento do contêiner que estamos discutindo neste capítulo. Há também dois namespaces adicionais no Linux que não são usados ​​diretamente pelo OpenShift. O namespace de usuário não é usado atualmente pelo OpenShift, e o namespace do cgroup é compartilhado entre todos os contêineres no sistema.
+
+Em um nó de aplicativo OpenShift, o namespace de usuário é compartilhado entre todos os aplicativos no host. O namespace de usuário foi criado pelo PID 1 no host, tem mais de 200 processos associados a ele e está associado ao comando systemd. Os outros namespaces associados ao PID app-cli têm muito menos processos e não pertencem ao PID 1 no host. O OpenShift usa cinco namespaces do Linux para isolar processos e recursos em nós de aplicativos. Apresentar uma definição concisa para o que um namespace faz é um pouco difícil. Duas analogias descrevem melhor suas propriedades mais importantes, se você perdoar uma pequena licença poética:
+
+* Namespaces são como paredes de papel no kernel do Linux. Eles são leves e fáceis de levantar, mas oferecem privacidade suficiente quando estão no lugar. 
+* Os namespaces são semelhantes aos espelhos bidirecionais. De dentro do contêiner, apenas os recursos no namespace estão disponíveis. Mas com o ferramental adequado, você pode ver o que há em um namespace do sistema host. 
+
+O snippet a seguir lista todos os namespaces de app-cli com lsns:
+
+ {% highlight bash %}
+# lsns -p 4470
+		NS TYPE NPROCS PID USER COMMAND
+4026531837 user	254	1 root	/usr/lib/systemd/systemd --	switched-root --system --deserialize 20
+4026532211 mnt	12 4470 1000080000 httpd -D FOREGROUND
+4026532212 uts	12 4470 1000080000 httpd -D FOREGROUND
+4026532213 pid	12 4470 1000080000 httpd -D FOREGROUND
+4026532420 ipc	13 3476 1001	/usr/bin/pod
+4026532423 net	13 3476 1001	/usr/bin/pod
+{% endhighlight %}
+
+Como você pode ver, os cinco namespaces que o OpenShift usa para isolar aplicativos são os seguintes:
+
+* Mount - garante que apenas o conteúdo correto esteja disponível para os aplicativos no contêiner
+* Network - fornece a cada contêiner sua própria pilha de rede isolada
+* PID - fornece a cada contêiner seu próprio conjunto de contadores PID
+* UTS - Dá a cada contêiner seu próprio nome de host e nome de domínio
+* IPC - fornece isolamento de memória compartilhada para cada contêiner
+
+Atualmente, há dois namespaces adicionais no kernel do Linux que não são usados ​​pelo OpenShift:
+
+* Cgroup - Cgroups são usados ​​como um recurso compartilhado em um nó OpenShift, portanto, O namespace não é necessário para o isolamento efetivo.
+
+* User - Esse namespace pode mapear um usuário em um contêiner para um usuário diferente no host. Por exemplo, um usuário com ID 0 no contêiner poderia ter o ID do usuário 5000 ao interagir com recursos fora do contêiner. Esse recurso pode ser ativado no OpenShift, mas há problemas com o desempenho e a configuração de nós que estão fora do escopo do nosso cluster de exemplo. Se você quiser mais informações sobre como habilitar o namespace de usuário para trabalhar com o docker e, portanto, com o OpenShift, consulte o artigo “Protegendo hosts do Docker com namespaces de usuário” por Chris Binnie (Linux.com, http://mng.bz/Giwd ).
+
+> NOTA: Perceba que existe um caminho `/usr/bin/pod`.Esta é uma pseudo-aplicação que é usada para contêineres criados pelo Kubernetes. Na maioria das circunstâncias, um pod consiste em um contêiner. Existem condições, no entanto, em que um único pod pode conter vários contêineres. Quando isso ocorre, todos os contêineres no pod compartilham esses namespaces. Isso significa que eles compartilham um único endereço IP e podem se comunicar com dispositivos de memória compartilhada como se estivessem no mesmo host.
+
+Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo como eles aprimoram sua postura de segurança e como eles isolam seus recursos associados. Vamos partir agora para namespaces como ponto de montagem.
+
+---
+
+#### NAMESPACES COMO PONTO DE MONTAGEM
+
+#### Referências
+
+* OpenShift in Action - [https://www.manning.com/books/openshift-in-action](https://www.manning.com/books/openshift-in-action){:target="_blank"}
+* Kubernetes in Action - [https://www.manning.com/books/kubernetes-in-action](https://www.manning.com/books/kubernetes-in-action){:target="_blank"}
+* Docker in Practice, Second Edition - [https://www.manning.com/books/docker-in-practice-second-edition](https://www.manning.com/books/docker-in-practice-second-edition){:target="_blank"}
