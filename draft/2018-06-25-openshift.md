@@ -811,13 +811,13 @@ Os aplicativos em um contêiner são executados no espaço do usuário, mas os c
 
 #### FLUXO DE TRABALHO AUTOMATIZADO
 
-O fluxo de trabalho automatizado executado ao implantar um aplicativo no OpenShift inclui o OpenShift, o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na figura 3.5.
+O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco05.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/appco05.png)
 
-O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregues consistentemente de acordo com os designs do desenvolvedores. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.
+O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregue. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.
 
-Armado com o PID para o atual contêiner app-cli, você pode começar a analisar como os contêineres isolam recursos de processo com namespaces do Linux. O Docker cria um conjunto exclusivo de namespaces para isolar os recursos em cada contêiner. A aplicação está vinculada aos namespaces porque elas são exclusivas para cada contêiner. O Cgroups e o SELinux são configurados para incluir informações para um contêiner recém-criado, mas esses recursos do kernel Linux são compartilhados entre todos os contêineres em execução no node do aplicativo.
+Você pode analisar como os contêineres isolam recursos de processo com namespaces do Linux testando o PID atual do contêiner `app-cli`. O Docker cria um conjunto exclusivo de namespaces para isolar os recursos em cada contêiner. A aplicação está vinculada aos namespaces porque elas são exclusivas para cada contêiner. O [Cgroups](https://en.wikipedia.org/wiki/Cgroups){:target="_blank"} e o [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux){:target="_blank"} são configurados para incluir informações para um contêiner recém-criado, mas esses recursos do kernel Linux são compartilhados entre todos os contêineres em execução no node do aplicativo.
 
 Para obter uma lista dos namespaces criados para o `app-cli`, use o comando `lsns`. Você precisa que o PID para `app-cli` passe como parâmetro para `lsns`. O comando `lsns` aceita um PID com a opção `-p` e gera os namespaces associados a esse PID. A saída para `lsns` possui as seis colunas a seguir:
 
@@ -828,14 +828,14 @@ Para obter uma lista dos namespaces criados para o `app-cli`, use o comando `lsn
 * USER - usuário que possui o namespace
 * COMMAND - Comando executado para iniciar o processo para criar o namespace
 
-Quando você executa o comando, a saída de lsns mostra seis namespaces para app-cli. Cinco desses namespaces são exclusivos do app-cli e fornecem o isolamento do contêiner que estamos discutindo neste capítulo. Há também dois namespaces adicionais no Linux que não são usados ​​diretamente pelo OpenShift. O namespace de usuário não é usado atualmente pelo OpenShift, e o namespace do cgroup é compartilhado entre todos os contêineres no sistema.
+Quando você executa o comando, a saída de `lsns` mostra seis namespaces para app-cli. Cinco desses namespaces são exclusivos do app-cli e fornecem o isolamento do contêiner que estamos tratando. Há também dois namespaces adicionais no Linux que não são usados ​​diretamente pelo OpenShift. O namespace de usuário não é usado atualmente pelo OpenShift, e o namespace do cgroup é compartilhado entre todos os contêineres no sistema.
 
-Em um nó de aplicativo OpenShift, o namespace de usuário é compartilhado entre todos os aplicativos no host. O namespace de usuário foi criado pelo PID 1 no host, tem mais de 200 processos associados a ele e está associado ao comando systemd. Os outros namespaces associados ao PID app-cli têm muito menos processos e não pertencem ao PID 1 no host. O OpenShift usa cinco namespaces do Linux para isolar processos e recursos em nós de aplicativos. Apresentar uma definição concisa para o que um namespace faz é um pouco difícil. Duas analogias descrevem melhor suas propriedades mais importantes, se você perdoar uma pequena licença poética:
+Em um node do aplicativo OpenShift, o namespace de usuário é compartilhado entre todos os aplicativos no host. O namespace do usuário foi criado pelo PID 1 no host, tem mais de 200 processos associados a ele, e está associado ao comando `systemd`. Os outros namespaces associados ao PID app-cli têm muito menos processos e não pertencem ao PID 1 no host. O OpenShift usa cinco namespaces do Linux para isolar processos e recursos em nodes de aplicativos. Apresentar uma definição concisa para o que um namespace faz é um pouco difícil. Duas analogias descrevem melhor suas propriedades mais importantes, se você perdoar uma pequena licença poética:
 
 * Namespaces são como paredes de papel no kernel do Linux. Eles são leves e fáceis de levantar, mas oferecem privacidade suficiente quando estão no lugar. 
 * Os namespaces são semelhantes aos espelhos bidirecionais. De dentro do contêiner, apenas os recursos no namespace estão disponíveis. Mas com o ferramental adequado, você pode ver o que há em um namespace do sistema host. 
 
-O snippet a seguir lista todos os namespaces de app-cli com lsns:
+O exemplo a seguir lista todos os namespaces de app-cli com `lsns`:
 
  {% highlight bash %}
 # lsns -p 4470
@@ -848,23 +848,23 @@ O snippet a seguir lista todos os namespaces de app-cli com lsns:
 4026532423 net	13 3476 1001	/usr/bin/pod
 {% endhighlight %}
 
-Como você pode ver, os cinco namespaces que o OpenShift usa para isolar aplicativos são os seguintes:
+Como você pode ver, os cinco namespaces que o OpenShift usa para isolar aplicativos são:
 
 * Mount - garante que apenas o conteúdo correto esteja disponível para os aplicativos no contêiner
 * Network - fornece a cada contêiner sua própria pilha de rede isolada
-* PID - fornece a cada contêiner seu próprio conjunto de contadores PID
-* UTS - Dá a cada contêiner seu próprio nome de host e nome de domínio
+* PID - fornece a cada contêiner seu próprio conjunto de PID
+* UTS - Dá a cada contêiner seu próprio hostname e domain name
 * IPC - fornece isolamento de memória compartilhada para cada contêiner
 
 Atualmente, há dois namespaces adicionais no kernel do Linux que não são usados ​​pelo OpenShift:
 
-* Cgroup - Cgroups são usados ​​como um recurso compartilhado em um nó OpenShift, portanto, O namespace não é necessário para o isolamento efetivo.
+* Cgroup - Cgroups são usados ​​como um recurso compartilhado em um node OpenShift, portanto, o namespace não é necessário para o isolamento efetivo.
 
-* User - Esse namespace pode mapear um usuário em um contêiner para um usuário diferente no host. Por exemplo, um usuário com ID 0 no contêiner poderia ter o ID do usuário 5000 ao interagir com recursos fora do contêiner. Esse recurso pode ser ativado no OpenShift, mas há problemas com o desempenho e a configuração de nós que estão fora do escopo do nosso cluster de exemplo. Se você quiser mais informações sobre como habilitar o namespace de usuário para trabalhar com o docker e, portanto, com o OpenShift, consulte o artigo “Protegendo hosts do Docker com namespaces de usuário” por Chris Binnie (Linux.com, http://mng.bz/Giwd ).
+* User - Esse namespace pode mapear um usuário em um contêiner para um usuário diferente no host. Por exemplo, um usuário com ID 0 no contêiner poderia ter o ID do usuário 5000 ao interagir com recursos fora do contêiner. Esse recurso pode ser ativado no OpenShift, mas há problemas com o desempenho e a configuração de nodes que estão fora do escopo do nosso cluster de exemplo.
 
-> NOTA: Perceba que existe um caminho `/usr/bin/pod`.Esta é uma pseudo-aplicação que é usada para contêineres criados pelo Kubernetes. Na maioria das circunstâncias, um pod consiste em um contêiner. Existem condições, no entanto, em que um único pod pode conter vários contêineres. Quando isso ocorre, todos os contêineres no pod compartilham esses namespaces. Isso significa que eles compartilham um único endereço IP e podem se comunicar com dispositivos de memória compartilhada como se estivessem no mesmo host.
+> NOTA: Observe que existe uma aplicação em  `/usr/bin/pod`. Na verdade esta é uma pseudo-aplicação que é usada para contêineres criados pelo Kubernetes. Na maioria das circunstâncias, um pod consiste em um contêiner. Existem condições, no entanto, em que um único pod pode conter vários contêineres. Quando isso ocorre, todos os contêineres no pod compartilham esses namespaces. Isso significa que eles compartilham um único endereço IP e podem se comunicar com dispositivos de memória compartilhada como se estivessem no mesmo host.
 
-Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo como eles aprimoram sua postura de segurança e como eles isolam seus recursos associados. Vamos partir agora para namespaces como ponto de montagem.
+Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo como eles aprimoram sua segurança e como eles isolam seus recursos associados. Vamos partir agora para namespaces como ponto de montagem.
 
 ---
 
