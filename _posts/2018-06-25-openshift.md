@@ -768,10 +768,10 @@ A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estra
 
 O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
 
-Na saída anterior, observe que o contêiner contém um ID curto _fae8e211e7a7_ que é o contêiner app-cli. Você pode ter certeza disso porque ele foi criado a partir da imagem do contêiner personalizado app-cli no registro OpenShift. O comando `docker inspect` exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o `docker inspect` retornará uma longa lista de informações sobre o contêiner no formato [JSON](https://pt.wikipedia.org/wiki/JSON){:target="_blank"}. Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o `docker ps`, é possível também obter o PID do contêiner app-cli usando o `docker inspect`, conforme demonstrado no exemplo a seguir:
+O comando `docker inspect` exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o `docker inspect` retornará uma longa lista de informações sobre o contêiner no formato [JSON](https://pt.wikipedia.org/wiki/JSON){:target="_blank"}. Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o `docker ps`, é possível também obter o PID do contêiner app-cli usando o `docker inspect`, conforme demonstrado no exemplo a seguir:
 
 {% highlight bash %}
-# docker inspect -f '{{ .State.Pid }}' fae8e211e7a7 4470
+# docker inspect -f '{{ .State.Pid }}' fae9e245e6a7 4470
 {% endhighlight %}
 
 O `Property accessors` é uma maneira de descrever e acessar uma parte específica de dados em um conjunto de dados JSON. (Você pode aprender mais sobre em [https://goo.gl/ZY9vNt](https://goo.gl/ZY9vNt){:target="_blank"}.) É possível executar o docker inspect <ID do contêiner> no node do aplicativo para ver todos os dados disponíveis no Docker sobre um contêiner em execução. 
@@ -779,7 +779,7 @@ O `Property accessors` é uma maneira de descrever e acessar uma parte específi
 Se você excluir o pode app-cli ou parar o contêiner usando o docker diretamente, o OpenShift criará um novo contêiner usando a mesma imagem e configuração, mas terá um PID diferente. O PID também será alterado se você reiniciar o node do aplicativo ou fizer redeploy dos seus aplicativos. De forma semelhante, o ID do contêiner será alterado nas mesmas circunstâncias. Estes não são valores permanentes no seu node. Para iniciar uma sessão de shell interativa em um contêiner em execução, edite o seguinte comando para fazer referência ao ID do seu contêiner:
 
 {% highlight bash %}
-docker exec -it f3cce9147cd1 bash
+docker exec -it fae9e245e6a7 bash
 {% endhighlight %}
 
 A opção `-i` fornece uma sessão de usuário interativa, `-t` cria uma sessão `TTY` no contêiner e o `bash` inicia o programa terminal do shell bash no TTY que você criou no contêiner. Você entrou efetivamente no seu contêiner em execução. Em vez de apenas fornecer a saída do comando, o parâmetro interativo fornece um shell bash ativo.
