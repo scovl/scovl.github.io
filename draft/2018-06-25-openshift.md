@@ -664,7 +664,7 @@ Seguindo as informações acima vamos organizar como será o projeto:
 {% highlight bash %}
 $ oc new-app \
 > --image-stream=golang \
-> --code=https://github.com/lobocode/openshiftlab/scripts/image-uploader.go
+> --code=https://github.com/lobocode/image-uploader.git \
 > --name=app-cli
 ...
 {% endhighlight %}
@@ -914,3 +914,5 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 * OpenShift in Action - [https://www.manning.com/books/openshift-in-action](https://www.manning.com/books/openshift-in-action){:target="_blank"}
 * Kubernetes in Action - [https://www.manning.com/books/kubernetes-in-action](https://www.manning.com/books/kubernetes-in-action){:target="_blank"}
 * Docker in Practice, Second Edition - [https://www.manning.com/books/docker-in-practice-second-edition](https://www.manning.com/books/docker-in-practice-second-edition){:target="_blank"}
+* GO in Action - [https://www.manning.com/books/go-in-action](https://www.manning.com/books/go-in-action){:target="_blank"}
+* Go Web Programming - [https://www.manning.com/books/go-web-programming](https://www.manning.com/books/go-web-programming)
