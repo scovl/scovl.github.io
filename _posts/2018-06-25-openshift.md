@@ -38,7 +38,7 @@ tags: openshift fedora
 * **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
 * **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
 * **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
-* **[Namespaces como ponto de montagem](#namespaces-como-ponto-de-montagem)**
+* **[O namespace mount](#o-namespace-mount)**
 
 
 ---
@@ -907,7 +907,7 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 
 ---
 
-#### NAMESPACES COMO PONTO DE MONTAGEM
+#### O NAMESPACE MOUNT
 
 Work in progress
 
