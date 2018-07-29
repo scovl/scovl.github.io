@@ -5,7 +5,7 @@ snip:  Arrumando a casa
 tags: openshift fedora
 ---
 
-> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
+> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no [github](https://github.com/lobocode/lobocode.github.io/blob/master/_posts/2018-06-25-openshift.md){:target="_blank"}. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
 
 ---
 
@@ -39,7 +39,8 @@ tags: openshift fedora
 * **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
 * **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
 * **[Namespaces como ponto de montagem](#namespaces-como-ponto-de-montagem)**
-* 
+
+
 ---
 
 ### BREVE INTRODUCAO
@@ -750,22 +751,22 @@ Todo este processo de deployment da nossa aplicação poderia ter sido feita pel
 
 ---
 
-#### TRABALHANDO DIRETAMENTE COM DOCKER - revisar
+#### TRABALHANDO DIRETAMENTE COM DOCKER
 
 O [Docker](https://www.docker.com/what-docker){:target="_blank"} possui em uma ferramenta de linha de comando apropriadamente chamada de `docker`. Para obter as informações necessárias para aprofundar o modo como os contêineres isolam os aplicativos no OpenShift, o comando `docker` deve ser o seu ponto de partida. Para interagir diretamente com o docker, você precisa do SSH e preferencialmente executar os comandos em modo `root` no node da aplicação. A primeira coisa a percorreremos, é a lista de todos os contêineres atualmente em execução.
 
 Entre no node da aplicação e execute o comando `docker ps`. Este comando retorna uma lista de todos os contêineres atualmente em execução no node do aplicativo. Cada linha na saída do comando `docker ps` representa um contêiner em execução. O primeiro valor em cada linha é uma versão abreviada do ID desse contêiner. Você pode também confirmar com qual aplicação está lidando ao observar o nome dado ao contêiner. Se você seguiu os passos acima, certamente que a saída do `docker ps` será grande pois inclui informações sobre contêineres que hospedam o registro interno e o balanceador de carga HAProxy. 
 
-@code
-
-A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como [docker.io/lobocode/golang-app:latest](docker.io/lobocode/golang-app:latest){:target="_blank"}. Essa URL do registro pode ser dividida em quatro componentes:
+A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como _docker.io/lobocode/golang-app:latest_ por exemplo. Essa URL do registro pode ser dividida em quatro componentes:
 
 * docker.io - URL do registro. Nesse caso, o Docker Hub.
 * lobocode - conta de usuário para o registro. Neste caso, lobocode, a minha conta pessoal.
 * golang-app - Nome da imagem do contêiner para download.
 * latest - Tag ou versão específica da imagem do contêiner.
 
-O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash SHA256 é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes SHA256 são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
+> NOTA: A URL _docker.io/lobocode/golang-app:latest_, é meramente ilustrativa. Sinta-se livre para testar quaisquer aplicações consultando o [Dockerhub](https://hub.docker.com/){:target="_blank"}.
+
+O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes [SHA256](https://en.wikipedia.org/wiki/SHA-2){:target="_blank"} são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
 
 Na saída anterior, observe que o contêiner contém um ID curto _fae8e211e7a7_ que é o contêiner app-cli. Você pode ter certeza disso porque ele foi criado a partir da imagem do contêiner personalizado app-cli no registro OpenShift. O comando `docker inspect` exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o `docker inspect` retornará uma longa lista de informações sobre o contêiner no formato [JSON](https://pt.wikipedia.org/wiki/JSON){:target="_blank"}. Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o `docker ps`, é possível também obter o PID do contêiner app-cli usando o `docker inspect`, conforme demonstrado no exemplo a seguir:
 
@@ -898,7 +899,6 @@ Como você pode ver, os cinco namespaces que o OpenShift usa para isolar aplicat
 Atualmente, há dois namespaces adicionais no kernel do Linux que não são usados ​​pelo OpenShift:
 
 * Cgroup - Cgroups são usados ​​como um recurso compartilhado em um node OpenShift, portanto, o namespace não é necessário para o isolamento efetivo.
-
 * User - Esse namespace pode mapear um usuário em um contêiner para um usuário diferente no host. Por exemplo, um usuário com ID 0 no contêiner poderia ter o ID do usuário 5000 ao interagir com recursos fora do contêiner. Esse recurso pode ser ativado no OpenShift, mas há problemas com o desempenho e a configuração de nodes que estão fora do escopo do nosso cluster de exemplo.
 
 > NOTA: Observe que existe uma aplicação em  `/usr/bin/pod`. Na verdade esta é uma pseudo-aplicação que é usada para contêineres criados pelo Kubernetes. Na maioria das circunstâncias, um pod consiste em um contêiner. Existem condições, no entanto, em que um único pod pode conter vários contêineres. Quando isso ocorre, todos os contêineres no pod compartilham esses namespaces. Isso significa que eles compartilham um único endereço IP e podem se comunicar com dispositivos de memória compartilhada como se estivessem no mesmo host.
@@ -908,6 +908,10 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 ---
 
 #### NAMESPACES COMO PONTO DE MONTAGEM
+
+Work in progress
+
+---
 
 #### Referências
 
