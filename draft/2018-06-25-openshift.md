@@ -913,7 +913,7 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 
 O namespace _mount_ isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace _mount_ para o contêiner _app-cli_, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner _app-cli_ personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.
 
-![]()
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png)
 
 Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico [LVM]() neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico [LV]() quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando `lsblk`. O dispositivo LV que o contêiner _app-cli_ usa para armazenamento é registrado nas informações do `docker inspect`. Para obter o LV para seu contêiner _app-cli_, execute o seguinte comando: 
 
