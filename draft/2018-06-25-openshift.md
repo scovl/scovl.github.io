@@ -955,8 +955,7 @@ drwxr-xr-x. 	 4 root root 32 Sep 14 22:05 opt
 
 Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace _mount_ criado para o contêiner isola seu conteúdo. Entender como os namespaces _mount_ funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado.
 
-![]()
-
+![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png)
 
 Por fim, ainda sobre o namespace _mount_ pressione `Ctrl+D` para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace _UTS_ .
 
@@ -1008,6 +1007,7 @@ Podemos usar o comando `ps` com a opção `--ppid` para visualizarmos os process
 $ oc exec app-cli ps
 {% endhighlight %}
 
+Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos próximos capítulos irei abordar sobre os services, como testar uma aplicação uma aplicação resiliente, compreender melhor o replication controller, labels e seletores, como escalar aplicações com auto-scaling e metrics, como configurar um storage persistente com nfs e lvm, operações de segurança com SElinux, quotas, cgroups, e compreender melhor sobre HAPROXY. Por fim, irei concluir este artigo com a integração de tudo isso ao Jenkins.
 
 ---
 
