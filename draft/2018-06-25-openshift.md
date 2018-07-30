@@ -953,11 +953,7 @@ drwxr-xr-x. 	 4 root root 32 Sep 14 22:05 opt
 ...
 {% endhighlight %}
 
-Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace _mount_ criado para o contêiner isola seu conteúdo. Entender como os namespaces _mount_ funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado.
-
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/media/openshift/namespace-mount.png)
-
-Por fim, ainda sobre o namespace _mount_ pressione `Ctrl+D` para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace _UTS_ .
+Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace _mount_ criado para o contêiner isola seu conteúdo. Entender como os namespaces _mount_ funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado. Por fim, ainda sobre o namespace _mount_ pressione `Ctrl+D` para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace _UTS_ .
 
 ---
 
