@@ -38,7 +38,9 @@ tags: openshift fedora
 * **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
 * **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
 * **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
-* **[Namespaces como ponto de montagem](#namespaces-como-ponto-de-montagem)**
+* **[O namespace MOUNT](#o-namespace-mount)**
+* **[O namespace UTS](#o-namespace-uts)**
+* **[O namespace PID](#o-namespace-pid)**
 
 
 ---
@@ -907,9 +909,105 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 
 ---
 
-#### NAMESPACES COMO PONTO DE MONTAGEM
+#### O NAMESPACE MOUNT 
 
-Work in progress
+O namespace _mount_ isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace _mount_ para o contêiner _app-cli_, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner _app-cli_ personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.
+
+![]()
+
+Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico [LVM]() neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico [LV]() quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando `lsblk`. O dispositivo LV que o contêiner _app-cli_ usa para armazenamento é registrado nas informações do `docker inspect`. Para obter o LV para seu contêiner _app-cli_, execute o seguinte comando: 
+
+{% highlight bash %}
+docker inspect -f '{{ .GraphDriver.Data.DeviceName }}' fae8e211e7a7
+{% endhighlight %}
+
+Você receberá um valor semelhante ao `docker-253: 1-10125-8bd64caed0421039e83ee4f1cdcbcf25708e3da97081d43a99b6d20a3eb09c98`. Esse é o nome do LV que está sendo usado como o sistema de arquivos _root_ do contêiner _app-cli_. O namespace _mount_ para os contêineres das suas aplicações é criado em um namespace de montagem diferente do sistema operacional do node. Quando o daemon do docker é iniciado, ele cria seu próprio namespace _mount_ para conter o conteúdo do sistema de arquivos para os contêineres que cria. Você pode confirmar isso executando `lsns` para o processo docker. Para obter o PID do processo docker principal, execute o seguinte comando `pgrep` (o processo `dockerd-current` é o nome do processo principal do daemon do docker):
+
+{% highlight bash %}
+# pgrep -f dockerd-current
+{% endhighlight %}
+
+Depois de ter o PID do daemon do docker, você pode usar o comando `lsns` para visualizar seus namespaces. Você pode também usar uma ferramenta de linha de comando chamada `nsenter` caso deseje inserir um namespace ativo para outro aplicativo. É uma ótima ferramenta para usar quando você precisa solucionar problemas de um contêiner que não está funcionando como deveria. Para usar o `nsenter`, você dá a ele um PID para o container com a opção `--target` e, em seguida, instrui-o a respeito de quais namespaces você deseja inserir para esse PID:
+
+{% highlight bash %}
+$ nsenter --target 2385
+{% endhighlight %}
+
+De dentro do namespace _mount_ do docker, a saída do comando `mount` inclui o ponto de montagem do sistema de arquivos root do app-cli. O LV que o docker criou para o app-cli é montado no node do aplicativo em `/var/lib/docker/devicemapper/mnt/8bd64cae...`. Vá para esse diretório enquanto estiver no namespace _mount_ do daemon do docker e você encontrará um diretório chamado _rootfs_. Este diretório é o sistema de arquivos da sua aplicação app-cli no contêiner:
+
+{% highlight bash %}
+# ls -al rootfs
+-rw-r--r--. 	 1 root root 15759 Aug 1 17:24 anaconda-post.log
+lrwxrwxrwx. 	 1 root root 7 Aug 1 17:23 bin -> usr/bin
+drwxr-xr-x. 	 3 root root 18 Sep 14 22:18 boot
+drwxr-xr-x. 	 4 root root 43 Sep 21 23:19 dev
+drwxr-xr-x. 	53 root root 4096 Sep 21 23:19 etc
+-rw-r--r--. 	 1 root root 7388 Sep 14 22:16 help.1
+drwxr-xr-x. 	 2 root	root 6 Nov 5 2016 home
+lrwxrwxrwx.      1 root root 7 Aug 1 17:23 lib -> usr/lib
+lrwxrwxrwx. 	 1 root root 9 Aug 1 17:23 lib64 -> usr/lib64
+drwx------. 	 2 root root 6 Aug 1 17:23 lost+found
+drwxr-xr-x. 	 2 root root 6 Nov 5 2016 media
+drwxr-xr-x.      2 root root 6 Nov 5 2016 mnt
+drwxr-xr-x. 	 4 root root 32 Sep 14 22:05 opt
+...
+{% endhighlight %}
+
+Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace _mount_ criado para o contêiner isola seu conteúdo. Entender como os namespaces _mount_ funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado.
+
+![]()
+
+
+Por fim, ainda sobre o namespace _mount_ pressione `Ctrl+D` para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace _UTS_ .
+
+---
+
+#### O NAMESPACE UTS
+
+O namespace _UTS_ ou  _Unix time sharing_ permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace _UTS_ não tem nada a ver com o gerenciamento do relógio do sistema. O namespace _UTS_ é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando `uname -a` em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace _UTS_ segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando `docker exec` com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:
+
+{% highlight bash %}
+# docker exec fae8e211e7a7 hostname
+{% endhighlight %}
+
+Se você escalar a sua aplicação, o container em cada pod terá um hostname único também. Para confirmar que cada contêiner possui um hostname exclusivo, efetue login no seu cluster como seu usuário desenvolvedor:
+
+{% highlight bash %}
+oc login -u developer -p developer https://ocp1.192.168.100.1.nip.io:8443
+{% endhighlight %}
+
+A ferramenta de linha de comando `oc` tem uma funcionalidade semelhante ao `docker exec`. Em vez de passar o ID para o contêiner, no entanto, você pode passar o pod no qual deseja executar o comando. Depois de efetuar login no seu cliente oc, dimensione sua aplicação para dois pods com o seguinte comando:
+
+{% highlight bash %}
+oc scale dc/app-cli --replicas=2
+{% endhighlight %}
+
+Isso causará uma atualização no deployment config da aplicação e acionará a criação de um novo pod. Você pode obter o nome do novo grupo executando o comando `oc get pods --show-all=false`. A opção `--show-all=false` impede a saída de pods em um estado Concluído, portanto, você vê apenas pods ativos na saída:
+
+{% highlight bash %}
+$ oc get pods --show-all=false
+{% endhighlight %}
+
+Para obter o hostname de seu novo pod, use o comando `oc exec`. É semelhante ao `docker exec`, mas, em vez do ID de um contêiner, você usa o nome do pod para especificar onde deseja que o comando seja executado. O hostname do novo pod corresponde ao nome do pod, assim como o seu pod original:
+
+{% highlight bash %}
+$ oc exec app-cli-1-9hsz1 hostname
+{% endhighlight %}
+
+Quando você está solucionando problemas a nível da aplicação, esse é um benefício incrivelmente útil fornecido pelo _namespace UTS_. Agora que você sabe como os hostnames funcionam nos contêineres, vamos partir para o namespace do PID.
+
+---
+
+#### O NAMESPACE PID
+
+Os PIDs são como um aplicativo envia sinais e informações para outros aplicativos, isolar PIDs visíveis em um contêiner apenas para os aplicativos nele contidos é um recurso de segurança importante. Isso é feito usando o _namespace PID_. Em um servidor Linux, o comando `ps` mostra todos os processos em execução, juntamente com seus PIDs associados no host. A opção --ppid limita a saída a um único PID e a qualquer processo filho que tenha gerado. 
+
+Podemos usar o comando `ps` com a opção `--ppid` para visualizarmos os processos no node da aplicação. No entanto, acaba não sendo uma boa prática caso você deseje ver todos os PID's visíveis dentro do contêiner. A melhor alternativa neste caso, é usar o comando abaixo:
+
+{% highlight bash %}
+$ oc exec app-cli ps
+{% endhighlight %}
+
 
 ---
 
