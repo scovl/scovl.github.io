@@ -11,6 +11,6 @@ permalink: /contato/
  Linkedin: <a href="https://br.linkedin.com/in/vitor-lobo-65797a50">https://br.linkedin.com/in/vitor-lobo-65797a50</a>
  Telegram: @lobocode
  IRC: lobocode
- Twitter: <a href="https://twitter.com/loboc0de">@loboc0de</a>
+ Twitter: <a href="https://twitter.com/loboriseup">@loboriseup</a>
 </pre>
 
