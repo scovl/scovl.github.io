@@ -5,14 +5,13 @@ permalink: /projects/
 ---
 
 
-[Atomic Project](http://www.projectatomic.io/){:target="_blank"} - O projeto Atomic fornece uma plataforma para implantar e gerenciar contêineres em servidores bare-metal, virtual ou baseados em nuvem. O projeto Atomic foi projetado pela Red Hat e pela comunidade, para ser minimalista e voltado para o trabalho com o Docker.
+[Atomic Project](http://www.projectatomic.io/){:target="_blank"} - The Atomic project provides a platform for deploying and managing containers on bare-metal, virtual, or cloud-based servers. The Atomic project was designed by Red Hat and the community, to be minimalist and geared towards working with Docker.
 
-[Cockpit](https://cockpit-project.org/){:target="_blank"} - Cockpit é uma interface de administração de servidores interativa. É fácil de usar e muito leve. O Cockpit interage diretamente com o sistema operacional a partir de uma sessão real do Linux em um navegador.
+[Cockpit](https://cockpit-project.org/){:target="_blank"} - Cockpit is an interactive server administration interface. It is easy to use and very light. The Cockpit interacts directly with the operating system from a real Linux session in a browser..
 
-[Fedora CoreOS](https://coreos.fedoraproject.org/){:target="_blank"} - O Fedora CoreOS é um sistema operacional de atualização automática, mínimalista, monolítico e focado em contêiner, projetado para clusters, mas também operável de forma independente, otimizado para o Kubernetes, mas também funciona sem ele.
 
 ---
 
-## Projeto pessoal
+## Personal projects
 
-**[Vim Files](https://github.com/lobocode/vimfiles){:target="_blank"}** - Configurações pessoais do vim.
+**[Vim Files](https://github.com/lobocode/vimfiles){:target="_blank"}** - Vim personal settings.
