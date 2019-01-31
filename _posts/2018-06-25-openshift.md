@@ -2,7 +2,7 @@
 layout: post
 title: OpenShift 
 snip:  Arrumando a casa
-tags: openshift fedora
+tags: openshift fedora - [PT-BR]
 ---
 
 > Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no [github](https://github.com/lobocode/lobocode.github.io/blob/master/_posts/2018-06-25-openshift.md){:target="_blank"}. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.

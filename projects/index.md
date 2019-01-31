@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Contribuições
-permalink: /projetos/
+title: Contributions
+permalink: /projects/
 ---
 
 
