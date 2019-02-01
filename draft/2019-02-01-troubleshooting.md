@@ -7,12 +7,12 @@ tags: troubleshooting fedora
 
 Vamos pensar no seguinte cenário:
 
-Construímos um layout de particionamento básico do file sistem do Linux:
+Construímos um layout de particionamento básico do filesystem do Linux:
 
-* **/** -
-* **/boot** -
-* **/home** -
-* **swap** -
+* **/** - Partição Raiz
+* **/boot** - Partição boot
+* **/home** - Partição do usuário
+* **swap** - Memória virtual Swap
 
 No arquivo /etc/fstab, este layout se encontra desta maneira:
 
@@ -77,7 +77,7 @@ Valor	Descrição
 4	O comando fsck alterou o sistema de arquivos; o usuário deve reiniciar o sistema imediatamente.
 8	O sistema de arquivos contém danos não reparados.
 
-Se o seu problema estiver relacionado a algum destes fatores acima, certamente que o fsck irá resolve-lo. Mas e se não houver relação? Se ocorrer do sistema além de estar com problemas, a distribuição estiver em uma versão já depreciada impedindo o upgrade e possível correção do problema? Certamente que formatar toda a máquina não seria uma solução agradável para este caso. Então vamos pelo caminho difícil:
+Se o seu problema estiver relacionado a algum destes fatores acima, certamente que o fsck irá resolve-lo. Mas e se não houver relação? Se ocorrer do sistema além de estar com problemas, a distribuição estiver em uma versão já depreciada impedindo o upgrade e possível correção do problema? Certamente que formatar toda a máquina não seria uma solução agradável para este caso. Então vamos para uma das alternativas:
 
 Tratando-se da partição /boot (que geralmente é uma partição pequena), você poderá se precaver de acidentes simplesmente gerando um backup do particionamento usando o comando `dd`:
 
@@ -87,6 +87,18 @@ E para restaurar este backup bastaria usar o seguinte comando:
 
 	# gunzip -c /PATH/TO/DRIVE/backup_sda1.img.gz | dd of=/dev/sda1
 
-Na verdade você pode fazer o mesmo com as demais partições. No entanto, o comando dd copia byte-a-byte toda a partição e isto nem sempre compensa pois demanda muito espaço e tempo. 
+É bastante seguro fazer isto. Na verdade, se você puder fazer backup daquilo que julga importante e necessário, é o mais apropriado a se fazer. Além disso você poderá fazer o backup do MBR:
 
-Nota: É muito importante salvar o arquivo /etc/fstab para não perder a referência dos UUID. No entanto, se você perder a referência dos UUID, poderá usar o comando dumpe2fs para checar o UUID de cada partição, e montar corretamente o seu /etc/fstab.
+	dd if=/dev/sda of=/PATH/TO/DRIVE/mbr-backup.img bs=512 count=1
+
+E para restaurar:
+	
+	dd if=/PATH/TO/DRIVE/mbr-backup.img of=/dev/sda bs=512 count=1
+
+Observe que a solução acima só funcionará se você já tiver planejado o backup antes visto que requer um planejamento em relação a prevenção de desastres. Se você não tiver o backup do particionamento que deseja restaurar, podemos atacar o problema de uma perspectiva diferente. Algumas perguntas poderão surgir neste cenario:
+
+1. O que é importante salvar?
+2. O que está impedindo do sistema funcionar?
+3. Qual medida você tomará para evitar falhas como esta futuramente? 
+
+
