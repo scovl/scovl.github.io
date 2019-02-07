@@ -1,31 +1,42 @@
 ---
 layout: post
 title: Troubleshooting - 001
-snip: Resolving complex file-system problems - [EN]
+snip: Resolving complex filesystem problems - [EN]
 tags: troubleshooting fedora 
 ---
 
-Vamos pensar no seguinte cenário:
 
-Construímos um layout de particionamento básico do filesystem do Linux:
+### Ext4 - Filesystem
 
-* **/** - Partição Raiz
-* **/boot** - Partição boot
-* **/home** - Partição do usuário
-* **swap** - Memória virtual Swap
+###### GPT
 
-No arquivo /etc/fstab, este layout se encontra desta maneira:
+Let's think of a scenario where we build a basic partitioning layout of the Linux file system:
 
 ```
+/ - Root partition
+/boot - Boot partition
+/home - Home partition
+swap - Swap partition
+```
+
+In the `/etc/fstab` file, this layout looks like this:
+
+```
+# /etc/fstab
+# Created by anaconda on xxx
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
 UUID=9038feb4-be33-4160-a95e-22bd56543c2a /                       ext4    defaults        1 1
 UUID=d49db5f7-7669-474d-bcdb-15451a6e1d8c /boot                   ext4    defaults        1 2
 UUID=67b83e06-bc52-463a-a73f-d05efad45a03 /home                   ext4    defaults        1 2
 UUID=deedc1e3-84dd-465c-bbba-412b4643a7d3 swap                    swap    defaults        0 0
 ```
 
-Nota: Veja o layout de particionamento recomendado pela Redhat : https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/installation_guide/s2-diskpartrecommend-x86.
+> **Note**: [See Redhat recommended partitioning layout](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/installation_guide/s2-diskpartrecommend-x86){:target="_blank"}
 
-Já com o comando lsblk, podemos ver os dispositivos listados em bloco:
+With the `lsblk` command, we can see the devices listed in block:
 
 ```
 NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
@@ -37,68 +48,91 @@ sda      8:0    0 465.8G  0 disk
 └─sda5   8:5    0   150G  0 part /
 ```
 
-Digamos que o disco /boot que corresponde ao /dev/sda1 tenha sido corrompido impedindo que o sistema carregue. Neste caso, o que fazer? Geralmente o próprio linux dá uma sugestão quando ocorre este tipo de problema. A solução normalmente consiste em usar a ferramenta fsck para checar e reparar possíveis erros na partição . Geralmente o fsck é usado da seguinte maneira:
+Let's say the `/boot/` disk corresponding to `/dev/sda1` has been corrupted, preventing the system from loading. In this case, what to do? Usually, Linux itself gives a suggestion when this type of problem occurs. The solution usually consists of using the `fsck` command to check and repair possible errors in the partition. Usually, `fsck` is used as follows:
 
-`# fsck.ext4 /dev/sda1`
+```
+# fsck.ext4 /dev/sda1 -f -y -p
+```
 
-> Obs: O comando acima deve ser aplicado com o disco desmontado. Consulte a manpage da ferramenta.
+> Note: The above command must be applied with the disassembled disk. The `fsck` is just the original name. When they came out with new file systems they would need a specific tool for each one, efsck for ext, e2fsck for ext2, dosfsck, fsckvfat. So they made fsck the front end that just calls whichever is the appropriate tool. In redhat systems, usually fsck is referenced as e2fsck. But they are the same tools. All options for fsck are specified in the e2fsck(8) manual page.
 
-O comando fsck pode ser usado para solucionais em específico estes problemas abaixo:
 
-* Blocos ou fragmentos alocados para diversos arquivos.
-* inodes contendo números de bloco ou de fragmento que são sobrepostos.
-* inodes contendo números de bloco ou de fragmento fora do intervalo.
-* Discordâncias entre o número de referências de diretório a um arquivo e a contagem de links do arquivo.
-* Blocos ou fragmentos alocados ilegalmente.
-* inodes contendo números de bloco ou de fragmento que estão marcados como livres no mapeamento de disco.
-* inodes contendo números de bloco ou de fragmento corrompidos.
-* Um fragmento que não for o último endereço do disco em um inode. Essa verificação não se aplica a sistemas de arquivos compactados.
-* Arquivos maiores que 32 KB contendo um fragmento. Essa verificação não se aplica a sistemas de arquivos compactados.
-* Verificações de tamanho:
-	* Número incorreto de blocos.
-	* Tamanho de diretório que não for um múltiplo de 512 bytes.
 
-Nota: Essas verificações não se aplicam a sistemas de arquivos compactados.
+In general, the `fsck` command should be used to address these specific issues below:
 
-* Verificações de diretório:
-	* Entrada de diretório contendo um número de nó-i marcado como livre no mapeamento de inode.
-	* Número de nó-i fora do intervalo.
-	* Ponto (.) link ausente ou não apontando para si mesmo.
-	* Ponto ponto (..) link ausente ou não apontando para o diretório pai.
-	* Arquivos não referenciados ou diretórios que não podem ser atingidos.
-* Mapeamento de disco inconsistente.
-* mapa de inode inconsistente.
+* Blocks or fragments allocated to various files.
+* inodes containing block or fragment numbers that are superimposed.
+* inodes containing block or fragment numbers out of range.
+* Disagreements between the number of directory references to a file and the count of file links.
+* Blocks or fragments illegally allocated.
+* inodes containing block or fragment numbers that are marked as free in disk mapping.
+* inodes containing corrupted block or fragment numbers.
+* A fragment that is not the last address of the disk in an inode. This check does not apply to compressed file systems.
+* Files larger than 32 KB containing a fragment. This check does not apply to compressed file systems.
+* Size Checks:
+	* Incorrect number of blocks.
+	* A directory size that is not a multiple of 512 bytes.
 
-Além de suas mensagens, o comando fsck registra o resultado de suas verificações e reparos por meio de seu valor de saída. Esse valor de saída pode ser qualquer soma das condições a seguir:
+> Note: These checks don't apply to compressed file systems.
 
-Valor	Descrição
-0	Todos os sistemas de arquivos verificados estão ok agora.
-2	O comando fsck foi interrompido antes de concluir as verificações ou os reparos.
-4	O comando fsck alterou o sistema de arquivos; o usuário deve reiniciar o sistema imediatamente.
-8	O sistema de arquivos contém danos não reparados.
+* Directory Checks:
+	* Directory entry containing an i-node number marked free in the inode mapping.
+	* Number of i-node out of range.
+	* Point (.) Link missing or not pointing to itself.
+	* Point point (..) link missing or not pointing to parent directory.
+	* Unreferenced files or directories that can not be reached.
+* Inconsistent disk mapping.
+* inconsistent inode map.
 
-Se o seu problema estiver relacionado a algum destes fatores acima, certamente que o fsck irá resolve-lo. Mas e se não houver relação? Se ocorrer do sistema além de estar com problemas, a distribuição estiver em uma versão já depreciada impedindo o upgrade e possível correção do problema? Certamente que formatar toda a máquina não seria uma solução agradável para este caso. Então vamos para uma das alternativas:
+The `fsck` command also records the result of its checks and repairs by its output value. This output value can be any sum of the following conditions:
 
-Tratando-se da partição /boot (que geralmente é uma partição pequena), você poderá se precaver de acidentes simplesmente gerando um backup do particionamento usando o comando `dd`:
+```
+Value	Description
+0	All verified file systems are ok now.
+2	The fsck command was interrupted before completing checks or repairs.
+4	The fsck command changed the file system; the user must restart the system immediately.
+8	The file system contains unrepaired damage.
+```
+
+---
+
+If your problem is related to any of these factors above, surely `fsck` will solve it. But what if there's no relation? If the system occurs besides being in trouble, the distribution is in an already deprecated version, preventing the upgrade and possible correction of the problem? Of course, formatting the whole machine would not be a pleasant solution to this case. So let's go to one of the alternatives:
+
+> Note: Save a filesystem image for support investigations. A pre-repair filesystem metadata image can often be useful for support investigations if there is a possibility that the corruption was due to a software bug. Patterns of corruption present in the pre-repair image may aid in root-cause analysis.
+
+In the case of the `/boot` partition (which is usually a small partition), you can prevent crashes simply by generating a partitioning backup using the `dd` command:
 
 	# dd if=/dev/sda1 conv=sync,noerror bs=64K | gzip -c  > /PATH/TO/DRIVE/backup_sda1.img.gz
 
-E para restaurar este backup bastaria usar o seguinte comando:
+And to restore this backup, use the command below:
 
 	# gunzip -c /PATH/TO/DRIVE/backup_sda1.img.gz | dd of=/dev/sda1
 
-É bastante seguro fazer isto. Na verdade, se você puder fazer backup daquilo que julga importante e necessário, é o mais apropriado a se fazer. Além disso você poderá fazer o backup do MBR:
+It's quite safe to do this. In fact, if you can back up what you think is important and necessary, it is the most appropriate thing to do. In addition, you can back up the **[MBR]()**:
 
 	dd if=/dev/sda of=/PATH/TO/DRIVE/mbr-backup.img bs=512 count=1
 
-E para restaurar:
+And to restore:
 	
 	dd if=/PATH/TO/DRIVE/mbr-backup.img of=/dev/sda bs=512 count=1
 
-Observe que a solução acima só funcionará se você já tiver planejado o backup antes visto que requer um planejamento em relação a prevenção de desastres. Se você não tiver o backup do particionamento que deseja restaurar, podemos atacar o problema de uma perspectiva diferente. Algumas perguntas poderão surgir neste cenario:
+Note that the above workaround will only work if you have previously planned the backup since it requires planning in relation to disaster prevention. If you do not have the backup of the partitioning you want to restore, we can attack the problem from a different perspective. Some questions may arise in this scenario:
 
-1. O que é importante salvar?
-2. O que está impedindo do sistema funcionar?
-3. Qual medida você tomará para evitar falhas como esta futuramente? 
+1. What is important to save?
+2. What is stopping the system from working?
+3. What will you do to avoid failures like this one in the future?
+
+
+With these questions in mind, we can better design our actions from then on. If the `/boot` partition is having problems, and you aren't able to resolve with `fsck` command, we can easily rebuild it. But before this, it's important to know what the `/boot` contains:
+
+> Note: In this example I'm using Fedora. But we can use any other distribution.
+
+---
+
+### XFS - Filesystem
+
+---
+
+### LVM - Filesystem
 
 
