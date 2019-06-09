@@ -1,2 +1,0 @@
-#### lobocode.me
-Personal blog.
