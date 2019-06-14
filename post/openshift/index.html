@@ -111,7 +111,7 @@
 <li><strong><a href="#breve-introducao">Breve introdução</a></strong></li>
 <li><strong><a href="#plataforma-em-conteineres">Plataforma em contêineres</a></strong></li>
 <li><strong><a href="#casos-de-uso">Casos de Uso</a></strong></li>
-<li><strong><a href="#escalonando-aplicacoes">Escalonando Aplicações</a></strong></li>
+<li><strong><a href="#escalando-aplicacoes">Escalando Aplicações</a></strong></li>
 </ul>
 
 <h4 id="capítulo-2-preparando-o-ambiente">CAPÍTULO 2 - PREPARANDO O AMBIENTE</h4>
@@ -152,7 +152,7 @@
 
 <p>Imagine o seguinte cenário:</p>
 
-<p>Você contém diversos servidores rodando diversas aplicações em produção e homologação que precisam ser monitoradas, os deploy&rsquo;s precisam ser rápidos e eficientes com o menor risco possível de queda. Além disso a sua infraEstrutura precisa ser escalonável, precisa suportar todas as requesições necessárias para atender à demanda esperada pelo cliente. Imagine este cenário com integração contínua, com deploy contínuo onde ao desenvolvedor, caberá apenas trabalhar com a ferramenta de controle de versão (git, svn, etc..). Imagine um sistema inteligente o suficiente para detectar alterações em código, falhas, ser capaz de voltar a versão automaticamente se algo der errado, ser capaz de escalonar horizontalmente automaticamente se as requisições e os acessos aumentarem de repente, e também ser capaz de voltar ao seu estado normal assim que os acessos cessarem.</p>
+<p>Você contém diversos servidores rodando diversas aplicações em produção e homologação que precisam ser monitoradas, os deploy&rsquo;s precisam ser rápidos e eficientes com o menor risco possível de queda. Além disso a sua infraEstrutura precisa ser escalável, precisa suportar todas as requesições necessárias para atender à demanda esperada pelo cliente. Imagine este cenário com integração contínua, com deploy contínuo onde ao desenvolvedor, caberá apenas trabalhar com a ferramenta de controle de versão (git, svn, etc..). Imagine um sistema inteligente o suficiente para detectar alterações em código, falhas, ser capaz de voltar a versão automaticamente se algo der errado, ser capaz de escalar horizontalmente automaticamente se as requisições e os acessos aumentarem de repente, e também ser capaz de voltar ao seu estado normal assim que os acessos cessarem.</p>
 
 <p>Além de tudo isso, este sistema inteligente é capaz de prolongar a vida útil dos servidores por entrar em estado IDLE quando nenhuma requisição estiver rodando, e retornar ao estado normal a partir da primeira requisição. E tudo de maneira automática. Este sistema também é capaz de fazer canary teste, para descobrir a aceitação em produção de um determinado sistema. Imaginou o cenário? Pois bem, é sobre esta tecnologia que irei escrever aqui. Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o <strong><a href="https://en.wikipedia.org/wiki/LXC" target="_blank">LXC</a></strong>.</p>
 
@@ -184,7 +184,7 @@
 <li>Contadores de processo.</li>
 </ul>
 
-<p>Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalonável. Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O <strong><a href="https://www.openshift.com/" target="_blank">OpenShift</a></strong> usa o <strong><a href="https://kubernetes.io" target="_blank">Kubernetes</a></strong> como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a <strong><a href="http://www.cncf.io" target="_blank">Cloud Native Computing Foundation</a></strong>.</p>
+<p>Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalável. Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O <strong><a href="https://www.openshift.com/" target="_blank">OpenShift</a></strong> usa o <strong><a href="https://kubernetes.io" target="_blank">Kubernetes</a></strong> como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a <strong><a href="http://www.cncf.io" target="_blank">Cloud Native Computing Foundation</a></strong>.</p>
 
 <p>O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubernetes mantêm as informações sobre o cluster de servidores e os nodes executam as cargas de trabalho reais do aplicativo. A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. A baixo uma visão geral da arquitetura do Kubernetes:</p>
 
@@ -288,7 +288,7 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 
 <hr />
 
-<h3 id="escalonando-aplicacoes">ESCALONANDO APLICACOES</h3>
+<h3 id="escalando-aplicacoes">ESCALANDO APLICACOES</h3>
 
 <p>Para aplicações stateless, escalar para cima e para baixo é simples. Como não há dependências além do que está no contêiner e como as transações que acontecem no contêiner são atômicas por design, tudo o que você precisa fazer para dimensionar uma aplicação stateless, é implantar mais instâncias dele e equilibrá-las. Para tornar esse processo ainda mais fácil, o OpenShift faz o proxy das conexões para cada aplicativo por meio de um balanceador de carga integrado. Isso permite que os aplicativos aumentem e diminuam o escalonamento sem alteração na maneira como os usuários se conectam a aplicação.</p>
 
@@ -300,7 +300,7 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 
 <p>O OpenShift pode integrar e gerenciar plataformas de armazenamento externo e garantir que o volume de armazenamento de melhor ajuste seja correspondido com os aplicativos que precisam dele. Para qualquer aplicação, você terá serviços que precisam ser informativos e outros sem estado. Por exemplo, o serviço que fornece conteúdo da web estático pode ser sem estado, enquanto o serviço que processa a autenticação do usuário precisa poder gravar informações no armazenamento persistente.</p>
 
-<p>Como cada serviço é executado em seu próprio contêiner, os serviços podem ser ampliados e desativados independentemente. Em vez de precisar ampliar toda a sua base de código, com os contêineres, você dimensiona apenas os serviços em seu aplicativo que precisam processar cargas de trabalho adicionais. Além disso, como apenas os contêineres que precisam de acesso ao armazenamento persistente o contêm, os dados que entram no contêiner são mais seguros. No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalonam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:</p>
+<p>Como cada serviço é executado em seu próprio contêiner, os serviços podem ser ampliados e desativados independentemente. Em vez de precisar ampliar toda a sua base de código, com os contêineres, você dimensiona apenas os serviços em seu aplicativo que precisam processar cargas de trabalho adicionais. Além disso, como apenas os contêineres que precisam de acesso ao armazenamento persistente o contêm, os dados que entram no contêiner são mais seguros. No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:</p>
 
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/8sPOhGu.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/8sPOhGu.png#center" /></p>
 
@@ -1231,7 +1231,7 @@ drwxr-xr-x. 	 4 root root 32 Sep 14 22:05 opt
                 </div>
 
                 <p class="footer-copyright">
-                    <span>&copy; 2019 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                    <span>&copy; 2019 / Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a></span>
                 </p>
                 <p class="footer-copyright">
                 </p>
