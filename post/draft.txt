@@ -1,0 +1,26 @@
+Service Discovery 
+
+Once you have all your applications instrumented and your exporters running, Prometheus needs to know where they are. This is so Prometheus will know what is meant to monitor, and be able to notice if something it is meant to be monitoring is not responding. 
+
+With dynamic environments you cannot simply provide a list of applications and exporters once, as it will get out of date. This is where service dis‐ covery comes in.  You probably already have some database of your machines, applications, and what they do. It might be inside Chef’s database, an inventory file for Ansible, based on tags on your EC2 instance, in labels and annotations in Kubernetes, or maybe just sitting in your documentation wiki.
+
+Prometheus has integrations with many common service discovery mechanisms, such as Kubernetes, EC2, and Consul. There is also a generic integration for those whose setup is a little off the beaten path (see “File” on page 130).  This still leaves a problem though. Just because Prometheus has a list of machines and services doesn’t mean we know how they fit into your architecture. For example, you might be using the EC2 Name tag6 to indicate what application runs on a machine, whereas others might use a tag called app.  As every organisation does it slightly differently, Prometheus allows you to configure how metadata from service discovery is mapped to monitoring targets and their labels using relabelling.
+
+Scraping Service discovery and relabelling give us a list of targets to be monitored. Now Prom‐ etheus needs to fetch the metrics. Prometheus does this by sending a HTTP request called a scrape. The response to the scrape is parsed and ingested into storage. Several useful metrics are also added in, such as if the scrape succeeded and how long it took.  Scrapes happen regularly; usually you would configure it to happen every 10 to 60 seconds for each target.
+
+Storage
+
+Prometheus stores data locally in a custom database. Distributed systems are chal‐ lenging to make reliable, so Prometheus does not attempt to do any form of cluster‐ ing. In addition to reliability, this makes Prometheus easier to run.  Over the years, storage has gone through a number of redesigns, with the storage system in Prometheus 2.0 being the third iteration. The storage system can handle ingesting millions of samples per second, making it possible to monitor thousands of machines with a single Prometheus server. The compression algorithm used can ach‐ ieve 1.3 bytes per sample on real-world data.
+
+An SSD is recommended, but not strictly required.  Dashboards Prometheus has a number of HTTP APIs that allow you to both request raw data and evaluate PromQL queries. These can be used to produce graphs and dashboards. Out of the box, Prometheus provides the expression browser. It uses these APIs and is suit‐ able for ad hoc querying and data exploration, but it is not a general dashboard sys‐ tem.  It is recommended that you use Grafana for dashboards. It has a wide variety of fea‐ tures, including official support for Prometheus as a data source. It can produce a wide variety of dashboards, such as the one in Figure 1-2. Grafana supports talking to multiple Prometheus servers, even within a single dashboard panel.
+
+Recording Rules and Alerts Although PromQL and the storage engine are powerful and efficient, aggregating metrics from thousands of machines on the fly every time you render a graph can get a little laggy. Recording rules allow PromQL expressions to be evaluated on a regular basis and their results ingested into the storage engine.  Alerting rules are another form of recording rules. They also evaluate PromQL expressions regularly, and any results from those expressions become alerts.
+
+Alerts are sent to the Alertmanager.  Alert Management The Alertmanager receives alerts from Prometheus servers and turns them into noti‐ fications. Notifications can include email, chat applications such as Slack, and serv‐ ices such as PagerDuty.  The Alertmanager does more than blindly turn alerts into notifications on a one-to- one basis. Related alerts can be aggregated into one notification, throttled to reduce pager storms,7 and different routing and notification outputs can be configured for each of your different teams. Alerts can also be silenced, perhaps to snooze an issue you are already aware of in advance when you know maintenance is scheduled.
+
+The Alertmanager’s role stops at sending notifications; to manage human responses to incidents you should use services such as PagerDuty and ticketing systems.
+
+Long-Term Storage
+
+Since Prometheus stores data only on the local machine, you are limited by how much disk space you can fit on that machine.8 While you usually care only about the most recent day or so worth of data, for long-term capacity planning a longer reten‐ tion period is desirable.  Prometheus does not offer a clustered storage solution to store data across multiple machines, but there are remote read and write APIs that allow other systems to hook in and take on this role. These allow PromQL queries to be transparently run against both local and remote data.
+
