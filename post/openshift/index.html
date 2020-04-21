@@ -910,7 +910,7 @@ Endpoints:	10.129.1.112:8080
 
 <p>Se você excluir o pode app-cli ou parar o contêiner usando o docker diretamente, o OpenShift criará um novo contêiner usando a mesma imagem e configuração, mas terá um PID diferente. O PID também será alterado se você reiniciar o node do aplicativo ou fizer redeploy dos seus aplicativos. De forma semelhante, o ID do contêiner será alterado nas mesmas circunstâncias. Estes não são valores permanentes no seu node. Para iniciar uma sessão de shell interativa em um contêiner em execução, edite o seguinte comando para fazer referência ao ID do seu contêiner:</p>
 
-<pre><code># docker exec -it fae9e245e6a7 bash
+<pre><code class="language-bash"># docker exec -it fae9e245e6a7 bash
 </code></pre>
 
 <p>A opção <code>-i</code> fornece uma sessão de usuário interativa, <code>-t</code> cria uma sessão <code>TTY</code> no contêiner e o <code>bash</code> inicia o programa terminal do shell bash no TTY que você criou no contêiner. Você entrou efetivamente no seu contêiner em execução. Em vez de apenas fornecer a saída do comando, o parâmetro interativo fornece um shell bash ativo.</p>
@@ -1066,12 +1066,12 @@ Endpoints:	10.129.1.112:8080
 
 <p>Você receberá um valor semelhante ao <code>docker-253: 1-10125-8bd64caed0421039e83ee4f1cdcbcf25708e3da97081d43a99b6d20a3eb09c98</code>. Esse é o nome do LV que está sendo usado como o sistema de arquivos <em>root</em> do contêiner <em>app-cli</em>. O namespace <em>mount</em> para os contêineres das suas aplicações é criado em um namespace de montagem diferente do sistema operacional do node. Quando o daemon do docker é iniciado, ele cria seu próprio namespace <em>mount</em> para conter o conteúdo do sistema de arquivos para os contêineres que cria. Você pode confirmar isso executando <code>lsns</code> para o processo docker. Para obter o PID do processo docker principal, execute o seguinte comando <code>pgrep</code> (o processo <code>dockerd-current</code> é o nome do processo principal do daemon do docker):</p>
 
-<pre><code># pgrep -f dockerd-current
+<pre><code class="language-bash"># pgrep -f dockerd-current
 </code></pre>
 
 <p>Depois de ter o PID do daemon do docker, você pode usar o comando <code>lsns</code> para visualizar seus namespaces. Você pode também usar uma ferramenta de linha de comando chamada <code>nsenter</code> caso deseje inserir um namespace ativo para outro aplicativo. É uma ótima ferramenta para usar quando você precisa solucionar problemas de um contêiner que não está funcionando como deveria. Para usar o <code>nsenter</code>, você dá a ele um PID para o container com a opção <code>--target</code> e, em seguida, instrui-o a respeito de quais namespaces você deseja inserir para esse PID:</p>
 
-<pre><code>$ nsenter --target 2385
+<pre><code class="language-bash">$ nsenter --target 2385
 </code></pre>
 
 <p>De dentro do namespace <em>mount</em> do docker, a saída do comando <code>mount</code> inclui o ponto de montagem do sistema de arquivos root do app-cli. O LV que o docker criou para o app-cli é montado no node do aplicativo em <code>/var/lib/docker/devicemapper/mnt/8bd64cae...</code>. Vá para esse diretório enquanto estiver no namespace <em>mount</em> do daemon do docker e você encontrará um diretório chamado <em>rootfs</em>. Este diretório é o sistema de arquivos da sua aplicação app-cli no contêiner:</p>
@@ -1101,7 +1101,7 @@ drwxr-xr-x. 	 4 root root 32 Sep 14 22:05 opt
 
 <p>O namespace <em>UTS</em> ou  <em>Unix time sharing</em> permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace <em>UTS</em> não tem nada a ver com o gerenciamento do relógio do sistema. O namespace <em>UTS</em> é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando <code>uname -a</code> em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace <em>UTS</em> segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando <code>docker exec</code> com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:</p>
 
-<pre><code># docker exec fae8e211e7a7 hostname
+<pre><code class="language-bash"># docker exec fae8e211e7a7 hostname
 </code></pre>
 
 <p>Se você escalar a sua aplicação, o container em cada pod terá um hostname único também. Para confirmar que cada contêiner possui um hostname exclusivo, efetue login no seu cluster como seu usuário desenvolvedor:</p>
