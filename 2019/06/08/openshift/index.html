@@ -15,8 +15,12 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://lobocode.github.io/2019/06/08/openshift/">
         <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
-        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&amp;display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet"> 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         
         
@@ -32,7 +36,7 @@
                     <div class="site-title-wrapper">
                         
                             <h1>
-                                <a title="lobocode" href="https://lobocode.github.io">lobocode.github.io</a>
+                                <a title="lobocode" href="https://lobocode.github.io">$ /home/lobocode_</a>
                             </h1>
                         
                         <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
@@ -111,14 +115,14 @@
 <p>Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no <a href="https://github.com/lobocode/lobocode.github.io/blob/master/_posts/2018-06-25-openshift.md">github</a>. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.</p>
 </blockquote>
 <hr>
-<h4 id="captulo-1--o-conceito">CAPÍTULO 1 - O CONCEITO</h4>
+<h3 id="captulo-1--o-conceito">CAPÍTULO 1 - O CONCEITO</h3>
 <ul>
 <li><strong><a href="#breve-introducao">Breve introdução</a></strong></li>
 <li><strong><a href="#plataforma-em-conteineres">Plataforma em contêineres</a></strong></li>
 <li><strong><a href="#casos-de-uso">Casos de Uso</a></strong></li>
 <li><strong><a href="#escalando-aplicacoes">Escalando Aplicações</a></strong></li>
 </ul>
-<h4 id="captulo-2--preparando-o-ambiente">CAPÍTULO 2 - PREPARANDO O AMBIENTE</h4>
+<h3 id="captulo-2--preparando-o-ambiente">CAPÍTULO 2 - PREPARANDO O AMBIENTE</h3>
 <ul>
 <li><strong><a href="#preparando-para-instalar-o-openshift">Preparando para instalar o OpenShift</a></strong></li>
 <li><strong><a href="#configurando-o-networkmanager">Configurando o NetworkManager</a></strong></li>
@@ -128,13 +132,13 @@
 <li><strong><a href="#instalando-o-openshift">Instalando o OpenShift</a></strong></li>
 <li><strong><a href="#executando-o-playbook">Executando o Playbook</a></strong></li>
 </ul>
-<h4 id="captulo-3--test-drive">CAPÍTULO 3 - TEST DRIVE</h4>
+<h3 id="captulo-3--test-drive">CAPÍTULO 3 - TEST DRIVE</h3>
 <ul>
 <li><strong><a href="#criando-projetos">Criando Projetos</a></strong></li>
 <li><strong><a href="#implementando-nosso-primeiro-aplicativo">Implementando nosso primeiro aplicativo</a></strong></li>
 <li><strong><a href="#trabalhando-diretamente-com-docker">Trabalhando diretamente com docker</a></strong></li>
 </ul>
-<h4 id="captulo-4--aprofundando">CAPÍTULO 4 - APROFUNDANDO</h4>
+<h3 id="captulo-4--aprofundando">CAPÍTULO 4 - APROFUNDANDO</h3>
 <ul>
 <li><strong><a href="#compreendendo-o-processo">Compreendendo o processo</a></strong></li>
 <li><strong><a href="#um-pouco-sobre-kubernetes">Um pouco sobre kubernetes</a></strong></li>
@@ -247,7 +251,7 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/8sPOhGu.png#center" alt=""></p>
 <p>Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o docker e o Kubernetes. Osbenefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.</p>
 <hr>
-<h4 id="preparando-para-instalar-o-openshift">PREPARANDO PARA INSTALAR O OPENSHIFT</h4>
+<h3 id="preparando-para-instalar-o-openshift">PREPARANDO PARA INSTALAR O OPENSHIFT</h3>
 <p>Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet. Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o <code>oc</code>, você precisará ser super usuário, ou ter acesso ao <strong>root</strong>. Para compreender melhor do que se trata o comando <code>oc</code>, recomendo acessar <strong><a href="https://goo.gl/9n8DbQ"><a href="https://goo.gl/9n8DbQ">https://goo.gl/9n8DbQ</a></a></strong> documentação completa do comando <code>oc</code>. A configuração padrão do OpenShift usa a porta <strong>TCP 8443</strong> para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.</p>
 <p>Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em <strong><a href="https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports"><a href="https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports">https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports</a></a></strong>. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/SH20A4i.png#center" alt=""></p>
@@ -273,7 +277,7 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo systemctl <span class="nb">enable</span> NetworkManager --now
 </code></pre></div><p>Mais a diante irei configurar a resolução do DNS nos dois servidores, será necessário configurar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux, e de fato instalar o OpenShift com a criação de Playbooks no Ansible. Ou seja, bastante trabalho pela frente.</p>
 <hr>
-<h4 id="configurando-o-networkmanager">CONFIGURANDO O NETWORKMANAGER</h4>
+<h3 id="configurando-o-networkmanager">CONFIGURANDO O NETWORKMANAGER</h3>
 <p>Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial.</p>
 <blockquote>
 <p>NOTA: Estas etapas se aplicam somente se você estiver usando o <strong><a href="nip.io">nip.io</a></strong> para seus hostnames.</p>
@@ -317,7 +321,7 @@ Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/NetworkManager.se
 Active: active <span class="o">(</span>running<span class="o">)</span> Because Sat 2017-05-13 17:05:12 EDT<span class="p">;</span> 6s ago
 ...
 </code></pre></div><p>Pós reiniciar o NetworkManager, confira se de fato o arquivo <code>/etc/resolv.conf</code> foi alterado. Se não houver o parâmetro <code>search</code>, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.</p>
-<h5 id="uma-viso-mais-aprofundada-dos-subdomnios-curinga-e-do-openshift">Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:</h5>
+<h3 id="uma-viso-mais-aprofundada-dos-subdomnios-curinga-e-do-openshift">Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:</h3>
 <p>O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o <strong><a href="">HAProxy</a></strong> para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O <strong><a href="">HAProxy</a></strong> é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ dig +short *.apps.jeduncan.com
 12.207.21.2
@@ -329,7 +333,7 @@ Active: active <span class="o">(</span>running<span class="o">)</span> Because S
 12.207.21.2
 </code></pre></div><p>O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domínio curinga criado. Dessa forma, todas as entradas do DNS para seus aplicativos funcionam sem qualquer configuração adicional.</p>
 <hr>
-<h4 id="instalando-ferramentas-no-servidor-master">INSTALANDO FERRAMENTAS NO SERVIDOR MASTER</h4>
+<h3 id="instalando-ferramentas-no-servidor-master">INSTALANDO FERRAMENTAS NO SERVIDOR MASTER</h3>
 <p>Vários pacotes precisam ser instalados apenas no servidor master. O processo de instalação do OpenShift é escrito usando o Ansible.
 Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. Para instalações mais elaboradas, existe uma documentação em <strong><a href="https://goo.gl/rngdLy"><a href="https://goo.gl/rngdLy">https://goo.gl/rngdLy</a></a></strong>. O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.</p>
 <blockquote>
@@ -347,7 +351,7 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo yum -y install docker libcgroup-tools
 </code></pre></div><p>A partir daquí, estaremos prontos para configurar o contêiner de armazenamento de dados do OpenShift.</p>
 <hr>
-<h4 id="configurando-o-conteiner-storage">CONFIGURANDO O CONTEINER STORAGE</h4>
+<h3 id="configurando-o-conteiner-storage">CONFIGURANDO O CONTEINER STORAGE</h3>
 <p>Um aplicativo chamado <code>docker-storage-setup</code> configura o armazenamento desejado para o Docker usar quando ele cria contêineres para o OpenShift.</p>
 <blockquote>
 <p>NOTA: Neste artigo estou usando uma configuração de gerenciamento baseado no volume lógico (LVM). Esta configuração cria um volume LVM para cada contêiner sob demanda.</p>
@@ -391,12 +395,12 @@ Memory: 121.4M
 CGroup: /system.slice/docker.service
 </code></pre></div><p>O próximo passo é modificar o <strong><a href="">SELinux</a></strong> para permitir que o OpenShift se conecte ao <strong><a href="">NFS</a></strong> como uma fonte de armazenamento persistente.</p>
 <hr>
-<h4 id="configurando-o-selinux-em-seus-nodes">CONFIGURANDO O SELINUX EM SEUS NODES</h4>
+<h3 id="configurando-o-selinux-em-seus-nodes">CONFIGURANDO O SELINUX EM SEUS NODES</h3>
 <p>No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando <code>setsebool</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo setsebool -P virt_use_nfs <span class="m">1</span>
 sudo setsebool -P virt_sandbox_use_nfs <span class="m">1</span>
 </code></pre></div><hr>
-<h4 id="instalando-o-openshift">INSTALANDO O OPENSHIFT</h4>
+<h3 id="instalando-o-openshift">INSTALANDO O OPENSHIFT</h3>
 <p>O OpenShift é instalado usando um playbook Ansible. Isto é, uma coleção de tarefas e parâmetros necessários para executar uma tarefa. Para executar um playbook Ansible, três coisas devem estar presentes no seu servidor:</p>
 <ul>
 <li><strong>Ansible Engine</strong> - Executa o código do manual. Se você seguiu o artigo desde o início, certamente já o tem instalado.</li>
@@ -485,7 +489,7 @@ etcd
 </blockquote>
 <p>Depois de fazer qualquer edição de inventário necessária para corresponder ao seu ambiente, salve seu inventário em seu node master como <code>/root/ hosts</code>. O próximo passo é iniciar a implementação do OpenShift.</p>
 <hr>
-<h4 id="executando-o-playbook">EXECUTANDO O PLAYBOOK</h4>
+<h3 id="executando-o-playbook">EXECUTANDO O PLAYBOOK</h3>
 <p>O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para implementar o OpenShift, portanto, esse comando precisa ser executado como o usuário root no master, que possui as chaves de acesso SSH em cada node. Para executar o playbook adequado, execute o comando <code>ansible-playbook</code>, especificando o arquivo de inventário, e a implementação de playbook instalado em <code>/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># ansible-playbook -i /root/hosts \</span>
 /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
@@ -496,7 +500,7 @@ etcd
 </blockquote>
 <p>Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! Nos próximos capítulos irei aprofundar melhor nas funcionalidades da ferramenta.</p>
 <hr>
-<h4 id="criando-projetos">CRIANDO PROJETOS</h4>
+<h3 id="criando-projetos">CRIANDO PROJETOS</h3>
 <p>Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela <strong><a href="https://docs.openshift.com/container-platform/3.5/rest_api/index.html">API RESTful</a></strong>. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto <strong><a href="https://github.com/minishift/minishift">Minishift</a></strong> isto é, um projeto <strong><a href="https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/">all-in-one</a></strong>. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes.</p>
 <p>No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas por regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer definição de usuário e senha possam efetuar o login. Esta configuração inicial é chamada de <em>Allow All identity provider</em>. Isto é, cada nome de usuário é exclusivo, e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações de teste. O primeiro usuário que irei usar como exemplo neste artigo, se chamará <em>fulano</em>. Este usuário representará um usuário final do OpenShift.</p>
 <blockquote>
@@ -555,7 +559,7 @@ etcd
 <p>O método padrão de atualização de aplicativos no OpenShift é executar uma atualização sem interrupção. Os upgrades contínuos criam novas versões de um aplicativo, permitindo que novas conexões com o aplicativo acessem apenas a nova versão. À medida que o tráfego aumenta para o novo deployment, os pods do deployment antigo são removidos do sistema. Novos deployments de aplicativos podem ser acionadas automaticamente por eventos como alterações de configuração em seu aplicativo ou uma nova versão de uma imagem disponível.</p>
 <p>Esses tipos de eventos são monitorados pelo <em>image streams</em> no OpenShift.De uma forma bastante resumida, o recurso <em>image streams</em> é usado para automatizar ações no OpenShift. Eles consistem em links para uma ou mais imagens. Usando <em>image streams</em>, você poderá monitorar aplicativos e acionar novos deployments quando seus componentes forem atualizados. Agora que analisamos como os aplicativos são criados e implementados no OpenShift, vamos implementar o nosso aplicativo.</p>
 <hr>
-<h4 id="implementando-nosso-primeiro-aplicativo">IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO</h4>
+<h3 id="implementando-nosso-primeiro-aplicativo">IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO</h3>
 <p>Para fazer o deployment dos aplicativos usamos o comando <code>oc new-app</code>. Executando este comando em nosso aplicativo, no caso, o Image Uploader, será necessário fornecer três informações:</p>
 <ul>
 <li>O tipo do image stream que você deseja usar - o OpenShift envia várias imagens chamadas de <code>builder images</code> que você pode usar como ponto de partida para os aplicativos. Neste exemplo, usaremos o builder image do <a href="">Golang</a> para criar o aplicativo.</li>
@@ -614,7 +618,7 @@ Endpoints:	10.129.1.112:8080
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/apprequest.png#center" alt=""></p>
 <p>Todo este processo de deployment da nossa aplicação poderia ter sido feita pela interface web do OpenShift. No entanto, compreendo que temos mais domínio da ferramenta se optarmos pelas configurações em linha de comando. Você poderá experimentar usar a interface Web do OpenShift para fazer o mesmo ou explorar outros caminhos. A partir daquí, analisaremos mais detalhadamente o cluster do OpenShift e investigaremos como os contêineres isolam seus processos no node do aplicativo.</p>
 <hr>
-<h4 id="trabalhando-diretamente-com-docker">TRABALHANDO DIRETAMENTE COM DOCKER</h4>
+<h3 id="trabalhando-diretamente-com-docker">TRABALHANDO DIRETAMENTE COM DOCKER</h3>
 <p>O <a href="https://www.docker.com/what-docker">Docker</a> possui em uma ferramenta de linha de comando apropriadamente chamada de <code>docker</code>. Para obter as informações necessárias para aprofundar o modo como os contêineres isolam os aplicativos no OpenShift, o comando <code>docker</code> deve ser o seu ponto de partida. Para interagir diretamente com o docker, você precisa do SSH e preferencialmente executar os comandos em modo <code>root</code> no node da aplicação. A primeira coisa a percorreremos, é a lista de todos os contêineres atualmente em execução.</p>
 <p>Entre no node da aplicação e execute o comando <code>docker ps</code>. Este comando retorna uma lista de todos os contêineres atualmente em execução no node do aplicativo. Cada linha na saída do comando <code>docker ps</code> representa um contêiner em execução. O primeiro valor em cada linha é uma versão abreviada do ID desse contêiner. Você pode também confirmar com qual aplicação está lidando ao observar o nome dado ao contêiner. Se você seguiu os passos acima, certamente que a saída do <code>docker ps</code> será grande pois inclui informações sobre contêineres que hospedam o registro interno e o balanceador de carga HAProxy.</p>
 <p>A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como <em>docker.io/lobocode/golang-app:latest</em> por exemplo. Essa URL do registro pode ser dividida em quatro componentes:</p>
@@ -635,7 +639,7 @@ Endpoints:	10.129.1.112:8080
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># docker exec -it fae9e245e6a7 bash</span>
 </code></pre></div><p>A opção <code>-i</code> fornece uma sessão de usuário interativa, <code>-t</code> cria uma sessão <code>TTY</code> no contêiner e o <code>bash</code> inicia o programa terminal do shell bash no TTY que você criou no contêiner. Você entrou efetivamente no seu contêiner em execução. Em vez de apenas fornecer a saída do comando, o parâmetro interativo fornece um shell bash ativo.</p>
 <hr>
-<h4 id="compreendendo-o-processo">COMPREENDENDO O PROCESSO</h4>
+<h3 id="compreendendo-o-processo">COMPREENDENDO O PROCESSO</h3>
 <p>É de extrema importância compreender como um contêiner realmente funciona, como os sistemas são projetados e como os problemas são analisados quando eles inevitavelmente ocorrem. Então vamos partir para os conceitos básicos e definir exatamente o que é um contêiner, o que roda por trás do Openshift e os seus componentes. Um contêiner pode ser definido de diversas maneiras. No entanto, particularmente, a definição que na minha opinião define melhor o que é um contêiner, é esta: &ldquo;uma maneira mais eficaz de isolar processos em um sistema Linux&rdquo;.</p>
 <p>Quando você faz o deploy de uma aplicação no OpenShift, uma solicitação é iniciada em sua <a href="https://canaltech.com.br/software/o-que-e-api/">API</a>. Para entender realmente como os contêineres isolam os processos dentro deles, precisamos olhar clinicamente como esses serviços funcionam juntos até o deploy da aplicação. Quando o deploy de um aplicativo é feito no OpenShift, o processo começa com os services. O deploy da aplicação começa com componentes de aplicativos exclusivos do OpenShift. O processo segue da seguinte maneira:</p>
 <ol>
@@ -651,7 +655,7 @@ Endpoints:	10.129.1.112:8080
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco01.png#center" alt=""></p>
 <p>O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. Na imagem acima observe que os usuários estão sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do docker para obter o deployment do aplicativo para o usuário.</p>
 <hr>
-<h4 id="um-pouco-sobre-kubernetes">UM POUCO SOBRE KUBERNETES</h4>
+<h3 id="um-pouco-sobre-kubernetes">UM POUCO SOBRE KUBERNETES</h3>
 <p>O Kubernetes é a engine de orquestração, e é o coração do OpenShift. De muitas maneiras, um cluster do OpenShift é um cluster do Kubernetes. Se você fez o deploy da nossa aplicação de exemplo, no caso o <code>app-cli</code>, o Kubernetes criou vários componentes como:</p>
 <ul>
 <li>Replication controller - que dimensiona o aplicativo conforme necessário no Kubernetes. Esse componente também garante que o número desejado de réplicas no deployment config seja mantido em todos os momentos.</li>
@@ -663,7 +667,7 @@ Endpoints:	10.129.1.112:8080
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco02.png#center" alt=""></p>
 <p>O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do <a href="https://www.docker.com/what-docker">docker</a> para criar os contêineres das aplicações.</p>
 <hr>
-<h4 id="um-pouco-sobre-docker">UM POUCO SOBRE DOCKER</h4>
+<h3 id="um-pouco-sobre-docker">UM POUCO SOBRE DOCKER</h3>
 <p>O <a href="https://www.docker.com/what-docker">Docker</a> é um contêiner runtime. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.</p>
 <p>Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em <a href="http://cri-o.io"><a href="http://cri-o.io">http://cri-o.io</a></a>. O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o <a href="https://www.docker.com/what-docker">docker</a> usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco03.png#center" alt=""></p>
@@ -678,7 +682,7 @@ Endpoints:	10.129.1.112:8080
 <p>Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O <a href="http://www.uniriotec.br/~morganna/guia/kernel.html">kernelspace</a> é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no <a href="http://www.uniriotec.br/~morganna/guia/kernel.html">kernelspace</a>.</p>
 <p>Os aplicativos em um contêiner são executados no espaço do usuário, mas os componentes que isolam os aplicativos no contêiner são executados no <a href="http://www.uniriotec.br/~morganna/guia/kernel.html">kernelspace</a>. Isso significa que os contêineres são isolados usando componentes do kernel que não podem ser modificados de dentro do contêiner.</p>
 <hr>
-<h4 id="fluxo-de-trabalho-automatizado">FLUXO DE TRABALHO AUTOMATIZADO</h4>
+<h3 id="fluxo-de-trabalho-automatizado">FLUXO DE TRABALHO AUTOMATIZADO</h3>
 <p>O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco05.png#center" alt=""></p>
 <p>O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregue. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.</p>
@@ -725,7 +729,7 @@ Endpoints:	10.129.1.112:8080
 </blockquote>
 <p>Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo como eles aprimoram sua segurança e como eles isolam seus recursos associados. Vamos partir agora para namespaces como ponto de montagem.</p>
 <hr>
-<h4 id="o-namespace-mount">O NAMESPACE MOUNT</h4>
+<h3 id="o-namespace-mount">O NAMESPACE MOUNT</h3>
 <p>O namespace <em>mount</em> isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace <em>mount</em> para o contêiner <em>app-cli</em>, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner <em>app-cli</em> personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/namespace-mount.png#center" alt=""></p>
 <p>Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico <a href="">LVM</a> neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico <a href="">LV</a> quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando <code>lsblk</code>. O dispositivo LV que o contêiner <em>app-cli</em> usa para armazenamento é registrado nas informações do <code>docker inspect</code>. Para obter o LV para seu contêiner <em>app-cli</em>, execute o seguinte comando:</p>
@@ -752,7 +756,7 @@ drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">32</span> Sep <
 ...
 </code></pre></div><p>Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace <em>mount</em> criado para o contêiner isola seu conteúdo. Entender como os namespaces <em>mount</em> funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado. Por fim, ainda sobre o namespace <em>mount</em> pressione <code>Ctrl+D</code> para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace <em>UTS</em> .</p>
 <hr>
-<h4 id="o-namespace-uts">O NAMESPACE UTS</h4>
+<h3 id="o-namespace-uts">O NAMESPACE UTS</h3>
 <p>O namespace <em>UTS</em> ou  <em>Unix time sharing</em> permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace <em>UTS</em> não tem nada a ver com o gerenciamento do relógio do sistema. O namespace <em>UTS</em> é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando <code>uname -a</code> em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace <em>UTS</em> segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando <code>docker exec</code> com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># docker exec fae8e211e7a7 hostname</span>
 </code></pre></div><p>Se você escalar a sua aplicação, o container em cada pod terá um hostname único também. Para confirmar que cada contêiner possui um hostname exclusivo, efetue login no seu cluster como seu usuário desenvolvedor:</p>
@@ -765,13 +769,13 @@ drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">32</span> Sep <
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ oc <span class="nb">exec</span> app-cli-1-9hsz1 hostname
 </code></pre></div><p>Quando você está solucionando problemas a nível da aplicação, esse é um benefício incrivelmente útil fornecido pelo <em>namespace UTS</em>. Agora que você sabe como os hostnames funcionam nos contêineres, vamos partir para o namespace do PID.</p>
 <hr>
-<h4 id="o-namespace-pid">O NAMESPACE PID</h4>
+<h3 id="o-namespace-pid">O NAMESPACE PID</h3>
 <p>Os PIDs são como um aplicativo envia sinais e informações para outros aplicativos, isolar PIDs visíveis em um contêiner apenas para os aplicativos nele contidos é um recurso de segurança importante. Isso é feito usando o <em>namespace PID</em>. Em um servidor Linux, o comando <code>ps</code> mostra todos os processos em execução, juntamente com seus PIDs associados no host. A opção &ndash;ppid limita a saída a um único PID e a qualquer processo filho que tenha gerado.</p>
 <p>Podemos usar o comando <code>ps</code> com a opção <code>--ppid</code> para visualizarmos os processos no node da aplicação. No entanto, acaba não sendo uma boa prática caso você deseje ver todos os PID's visíveis dentro do contêiner. A melhor alternativa neste caso, é usar o comando abaixo:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ oc <span class="nb">exec</span> app-cli ps
 </code></pre></div><p>Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos próximos capítulos irei abordar sobre os services, como testar uma aplicação uma aplicação resiliente, compreender melhor o replication controller, labels e seletores, como escalar aplicações com auto-scaling e metrics, como configurar um storage persistente com nfs e lvm, operações de segurança com SElinux, quotas, cgroups, e compreender melhor sobre HAPROXY. Por fim, irei concluir este artigo com a integração de tudo isso ao Jenkins.</p>
 <hr>
-<h4 id="referncias">Referências</h4>
+<h3 id="referncias">Referências</h3>
 <ul>
 <li>OpenShift in Action - <a href="https://www.manning.com/books/openshift-in-action"><a href="https://www.manning.com/books/openshift-in-action">https://www.manning.com/books/openshift-in-action</a></a></li>
 <li>Kubernetes in Action - <a href="https://www.manning.com/books/kubernetes-in-action"><a href="https://www.manning.com/books/kubernetes-in-action">https://www.manning.com/books/kubernetes-in-action</a></a></li>
@@ -872,8 +876,6 @@ drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">32</span> Sep <
                     <span>&copy; 2020 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
                 </p>
                 <p class="footer-copyright">
-                    <span><a href="https://github.com/roryg/ghostwriter">Ghostwriter theme</a> By <a href="http://jollygoodthemes.com">JollyGoodThemes</a></span>
-                    <span>/ <a href="https://github.com/jbub/ghostwriter">Ported</a> to Hugo By <a href="https://github.com/jbub">jbub</a></span>
                 </p>
             </div>
         </footer>
