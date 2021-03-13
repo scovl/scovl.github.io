@@ -13,14 +13,14 @@ weight = 1
 
 ---
 
-#### CAPÍTULO 1 - O CONCEITO
+### CAPÍTULO 1 - O CONCEITO
 
 * **[Breve introdução](#breve-introducao)**
 * **[Plataforma em contêineres](#plataforma-em-conteineres)**
 * **[Casos de Uso](#casos-de-uso)**
 * **[Escalando Aplicações](#escalando-aplicacoes)**
 
-#### CAPÍTULO 2 - PREPARANDO O AMBIENTE
+### CAPÍTULO 2 - PREPARANDO O AMBIENTE
 
 * **[Preparando para instalar o OpenShift](#preparando-para-instalar-o-openshift)**
 * **[Configurando o NetworkManager](#configurando-o-networkmanager)**
@@ -30,13 +30,13 @@ weight = 1
 * **[Instalando o OpenShift](#instalando-o-openshift)**
 * **[Executando o Playbook](#executando-o-playbook)**
 
-#### CAPÍTULO 3 - TEST DRIVE
+### CAPÍTULO 3 - TEST DRIVE
 
 * **[Criando Projetos](#criando-projetos)**
 * **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
 * **[Trabalhando diretamente com docker](#trabalhando-diretamente-com-docker)**
 
-#### CAPÍTULO 4 - APROFUNDANDO
+### CAPÍTULO 4 - APROFUNDANDO
 
 * **[Compreendendo o processo](#compreendendo-o-processo)**
 * **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
@@ -77,11 +77,11 @@ Hoje um dos mais conhecidos LXC’s do mercado é o **[Docker](https://pt.wikipe
 
 Trata-se de uma plataforma que usa contêineres para gerar build, deploy, servir e orquestrar os aplicativos em execução dentro dele. Os contêineres contém todas as bibliotecas e códigos necessários para que as aplicações funcionem adequadamente e de maneira isolada. Existem basicamente, cinco tipos de recursos são isolados em contêineres. São eles:
 
-*   Sistemas de arquivos montados.
-*   Recursos de memória compartilhada.
-*   Hostname e nome de domínio (dns).
-*   Recursos de rede (endereço IP, endereço MAC, buffers de memória).
-*   Contadores de processo.
+* Sistemas de arquivos montados.
+* Recursos de memória compartilhada.
+* Hostname e nome de domínio (dns).
+* Recursos de rede (endereço IP, endereço MAC, buffers de memória).
+* Contadores de processo.
 
 Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalável. Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O **[OpenShift](https://www.openshift.com/)** usa o **[Kubernetes](https://kubernetes.io)** como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a **[Cloud Native Computing Foundation](http://www.cncf.io)**.
 
@@ -103,17 +103,17 @@ Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento
 
 O OpenShift usa uma solução de rede definida por software **[SDN](https://pt.wikipedia.org/wiki/Software_defined_networking)** para criptografar e modelar o tráfego de rede em um cluster. O OpenShift SDN, é uma solução que usa o **[Open vSwitch](http://openvswitch.org)** e outras tecnologias software livre, que são configuradas por padrão quando o OpenShift é implementado. Outras soluções SDN também são suportadas. O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus aplicativos em todas as fases de seu ciclo de vida:
 
-*   **Build**
+* **Build**
 
 	* A principal maneira de criar aplicativos no OpenShift é usando `build image`. Esse processo é o fluxo de trabalho padrão.
 
-*   **Deployment**
+* **Deployment**
 
 	* No fluxo de trabalho padrão no OpenShift, o deployment da aplicação é acionado automaticamente depois que a imagem do contêiner é criado e disponibilizado. O processo de deployment usa a imagem do aplicativo recém criado e a implanta em um ou mais nodes. Além dos pods dos aplicativos, um serviço é criado, junto com uma rota de DNS na camada de roteamento.
 
 ![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tl53ec9.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tl53ec9.png#center)
 
-*   **Upgrade**
+* **Upgrade**
 
 	* Os usuários podem acessar o aplicativo recém-criado através da camada de roteamento após todos os componentes terem sido implantados. As atualizações de aplicativos usam o mesmo fluxo de trabalho. Quando um upgrade é acionado, uma nova imagem de contêiner é criada e a nova versão do aplicativo é implantada. Vários processos de atualização estarão disponíveis. A baixo a visão geral do processo de deploy da aplicação:![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/aGhInY5.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/aGhInY5.png#center)
 
@@ -128,9 +128,9 @@ expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-
 
 Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta de isolar processos e serviços como os mainframes, e a revolução da virtualização onde várias máquinas virtuais podem ser executadas em um único servidor físico, podemos compreender melhor o rumo em que as tecnologias hoje tem avançado. Por exemplo, com máquinas virtuais, cada processo é isolado em sua própria máquina virtual. Como cada máquina virtual possui um sistema operacional completo e um kernel completo, ele deve ter todos os sistemas de arquivos necessários para um sistema operacional completo. Isso também significa que ele deve ser corrigido, gerenciado e tratado como uma infraestrutura tradicional. Contêineres são o próximo passo nessa evolução. Um contêiner contém tudo o que a aplicação precisa para rodar com sucesso. Como por exemplo:
 
-*   Código-fonte ou o código compilado
-*   Bibliotecas e aplicativos necessários para rodar corretamente
-*   Configurações e informações sobre como conectar-se a fontes de dados compartilhadas
+* Código-fonte ou o código compilado
+* Bibliotecas e aplicativos necessários para rodar corretamente
+* Configurações e informações sobre como conectar-se a fontes de dados compartilhadas
 
 Máquinas virtuais podem ser usadas para isolamento do processo:
 
@@ -159,9 +159,9 @@ Os contêineres são uma tecnologia revolucionária, **mas não fazem tudo por c
 
 Isso é proposital e ocorre por design para permitir que os contêineres estejam sempre stateless por padrão. Isto é, se algo der errado, um container pode ser removido completamente do seu ambiente, e um novo pode ser colocado para substituí-lo quase que instantaneamente. Em outras palavras, **contêineres foram feitos para morrer**. A idéia de um contêiner stateless é ótima. Mas em algum lugar em sua aplicação, geralmente em vários lugares, os dados precisam ser compartilhados em vários contêineres, e o estado do serviço precisa ser preservado. Aqui estão alguns exemplos dessas situações:
 
-*   Dados compartilhados que precisam estar disponíveis em vários contêineres, como imagens carregadas para um aplicativo da web.
-*   Informações do estado do usuário em um aplicativo complexo, que permite que os usuários continuem de onde pararam durante uma transação de longa duração.
-*   Informações armazenadas em bancos de dados relacionais ou não relacionais.
+* Dados compartilhados que precisam estar disponíveis em vários contêineres, como imagens carregadas para um aplicativo da web.
+* Informações do estado do usuário em um aplicativo complexo, que permite que os usuários continuem de onde pararam durante uma transação de longa duração.
+* Informações armazenadas em bancos de dados relacionais ou não relacionais.
 
 Em todas essas situações e muitas outras, você precisa ter **armazenamento persistente disponível em seus contêineres**. Esse armazenamento deve ser definido como parte do deploy da sua aplicação e deve estar disponível em todos os nodes do cluster no OpenShift. Felizmente, o OpenShift tem várias maneiras de resolver esse problema. Quando você consegue integrar efetivamente o armazenamento compartilhado aos contêineres da sua aplicação, poderá pensar em escalabilidade.
 
@@ -187,7 +187,7 @@ Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele impl
 
 ---
 
-#### PREPARANDO PARA INSTALAR O OPENSHIFT
+### PREPARANDO PARA INSTALAR O OPENSHIFT
 
 Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet. Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o `oc`, você precisará ser super usuário, ou ter acesso ao **root**. Para compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://goo.gl/9n8DbQ](https://goo.gl/9n8DbQ)** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.
 
@@ -240,7 +240,7 @@ Mais a diante irei configurar a resolução do DNS nos dois servidores, será ne
 
 ---
 
-#### CONFIGURANDO O NETWORKMANAGER
+### CONFIGURANDO O NETWORKMANAGER
 
 Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial. 
 
@@ -309,7 +309,7 @@ Active: active (running) Because Sat 2017-05-13 17:05:12 EDT; 6s ago
 
 Pós reiniciar o NetworkManager, confira se de fato o arquivo `/etc/resolv.conf` foi alterado. Se não houver o parâmetro `search`, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.
 
-##### Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:
+### Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:
 
 O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o **[HAProxy]()** para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O **[HAProxy]()** é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
 
@@ -336,7 +336,7 @@ O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domíni
 
 ---
 
-#### INSTALANDO FERRAMENTAS NO SERVIDOR MASTER
+### INSTALANDO FERRAMENTAS NO SERVIDOR MASTER
 
 Vários pacotes precisam ser instalados apenas no servidor master. O processo de instalação do OpenShift é escrito usando o Ansible. 
 Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. Para instalações mais elaboradas, existe uma documentação em **[https://goo.gl/rngdLy](https://goo.gl/rngdLy)**. O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.
@@ -377,7 +377,7 @@ A partir daquí, estaremos prontos para configurar o contêiner de armazenamento
 
 ---
 
-#### CONFIGURANDO O CONTEINER STORAGE
+### CONFIGURANDO O CONTEINER STORAGE
 
 Um aplicativo chamado `docker-storage-setup` configura o armazenamento desejado para o Docker usar quando ele cria contêineres para o OpenShift.
 
@@ -444,7 +444,7 @@ O próximo passo é modificar o **[SELinux]()** para permitir que o OpenShift se
 
 ---
 
-#### CONFIGURANDO O SELINUX EM SEUS NODES
+### CONFIGURANDO O SELINUX EM SEUS NODES
 
 No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando `setsebool`:
 
@@ -455,7 +455,7 @@ sudo setsebool -P virt_sandbox_use_nfs 1
 
 ---
 
-#### INSTALANDO O OPENSHIFT
+### INSTALANDO O OPENSHIFT
 
 O OpenShift é instalado usando um playbook Ansible. Isto é, uma coleção de tarefas e parâmetros necessários para executar uma tarefa. Para executar um playbook Ansible, três coisas devem estar presentes no seu servidor:
 
@@ -567,7 +567,7 @@ Depois de fazer qualquer edição de inventário necessária para corresponder a
 
 ---
 
-#### EXECUTANDO O PLAYBOOK
+### EXECUTANDO O PLAYBOOK
 
 O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para implementar o OpenShift, portanto, esse comando precisa ser executado como o usuário root no master, que possui as chaves de acesso SSH em cada node. Para executar o playbook adequado, execute o comando `ansible-playbook`, especificando o arquivo de inventário, e a implementação de playbook instalado em `/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml`:
 
@@ -586,7 +586,7 @@ Se você conseguir acessar a interface da figura acima, o seu Openshift foi inst
 
 ---
 
-#### CRIANDO PROJETOS 
+### CRIANDO PROJETOS 
 
 Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful](https://docs.openshift.com/container-platform/3.5/rest_api/index.html)**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[Minishift](https://github.com/minishift/minishift)** isto é, um projeto **[all-in-one](https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/)**. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes. 
 
@@ -660,7 +660,7 @@ Esses tipos de eventos são monitorados pelo _image streams_ no OpenShift.De uma
 
 ---
 
-#### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
+### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
 
 Para fazer o deployment dos aplicativos usamos o comando `oc new-app`. Executando este comando em nosso aplicativo, no caso, o Image Uploader, será necessário fornecer três informações:
 
@@ -759,7 +759,7 @@ Todo este processo de deployment da nossa aplicação poderia ter sido feita pel
 
 ---
 
-#### TRABALHANDO DIRETAMENTE COM DOCKER
+### TRABALHANDO DIRETAMENTE COM DOCKER
 
 O [Docker](https://www.docker.com/what-docker) possui em uma ferramenta de linha de comando apropriadamente chamada de `docker`. Para obter as informações necessárias para aprofundar o modo como os contêineres isolam os aplicativos no OpenShift, o comando `docker` deve ser o seu ponto de partida. Para interagir diretamente com o docker, você precisa do SSH e preferencialmente executar os comandos em modo `root` no node da aplicação. A primeira coisa a percorreremos, é a lista de todos os contêineres atualmente em execução.
 
@@ -794,7 +794,7 @@ A opção `-i` fornece uma sessão de usuário interativa, `-t` cria uma sessão
 
 ---
 
-#### COMPREENDENDO O PROCESSO
+### COMPREENDENDO O PROCESSO
 
 É de extrema importância compreender como um contêiner realmente funciona, como os sistemas são projetados e como os problemas são analisados quando eles inevitavelmente ocorrem. Então vamos partir para os conceitos básicos e definir exatamente o que é um contêiner, o que roda por trás do Openshift e os seus componentes. Um contêiner pode ser definido de diversas maneiras. No entanto, particularmente, a definição que na minha opinião define melhor o que é um contêiner, é esta: "uma maneira mais eficaz de isolar processos em um sistema Linux".
 
@@ -816,7 +816,7 @@ O build config cria uma imagem customizada específica do aplicativo usando o bu
 
 ---
 
-#### UM POUCO SOBRE KUBERNETES
+### UM POUCO SOBRE KUBERNETES
 
 O Kubernetes é a engine de orquestração, e é o coração do OpenShift. De muitas maneiras, um cluster do OpenShift é um cluster do Kubernetes. Se você fez o deploy da nossa aplicação de exemplo, no caso o `app-cli`, o Kubernetes criou vários componentes como:
 
@@ -834,7 +834,7 @@ O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. M
 
 ---
 
-#### UM POUCO SOBRE DOCKER
+### UM POUCO SOBRE DOCKER
 
 O [Docker](https://www.docker.com/what-docker) é um contêiner runtime. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.
 
@@ -857,7 +857,7 @@ Os aplicativos em um contêiner são executados no espaço do usuário, mas os c
 
 ---
 
-#### FLUXO DE TRABALHO AUTOMATIZADO
+### FLUXO DE TRABALHO AUTOMATIZADO
 
 O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:
 
@@ -915,7 +915,7 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 
 ---
 
-#### O NAMESPACE MOUNT 
+### O NAMESPACE MOUNT 
 
 O namespace _mount_ isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace _mount_ para o contêiner _app-cli_, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner _app-cli_ personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.
 
@@ -963,7 +963,7 @@ Entender como esse processo funciona e onde os artefatos são criados é importa
 
 ---
 
-#### O NAMESPACE UTS
+### O NAMESPACE UTS
 
 O namespace _UTS_ ou  _Unix time sharing_ permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace _UTS_ não tem nada a ver com o gerenciamento do relógio do sistema. O namespace _UTS_ é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando `uname -a` em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace _UTS_ segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando `docker exec` com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:
 
@@ -999,7 +999,7 @@ Quando você está solucionando problemas a nível da aplicação, esse é um be
 
 ---
 
-#### O NAMESPACE PID
+### O NAMESPACE PID
 
 Os PIDs são como um aplicativo envia sinais e informações para outros aplicativos, isolar PIDs visíveis em um contêiner apenas para os aplicativos nele contidos é um recurso de segurança importante. Isso é feito usando o _namespace PID_. Em um servidor Linux, o comando `ps` mostra todos os processos em execução, juntamente com seus PIDs associados no host. A opção --ppid limita a saída a um único PID e a qualquer processo filho que tenha gerado. 
 
@@ -1013,7 +1013,7 @@ Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos pró
 
 ---
 
-#### Referências
+### Referências
 
 * OpenShift in Action - [https://www.manning.com/books/openshift-in-action](https://www.manning.com/books/openshift-in-action)
 * Kubernetes in Action - [https://www.manning.com/books/kubernetes-in-action](https://www.manning.com/books/kubernetes-in-action)
