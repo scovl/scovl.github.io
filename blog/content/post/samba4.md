@@ -4,7 +4,8 @@ description = "Um novo horizonte"
 date = 2020-04-19T17:31:45-03:00
 tags = ["linux,samba,fedora"]
 draft = false
-weight = 2
+weight = 3
+author = "Vitor Lobo Ramos"
 +++
 
 > **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**lobocode@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.

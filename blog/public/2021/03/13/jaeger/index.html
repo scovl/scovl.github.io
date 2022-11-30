@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Jaeger &middot; Vitor Lobo</title>
+        <meta name="description" content="Open source, end-to-end distributed tracing - [PT-BR]">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.60.0" />
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Jaeger">
+<meta property="og:description" content="Open source, end-to-end distributed tracing - [PT-BR]">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lobocode.github.io/2021/03/13/jaeger/">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="https://lobocode.github.io/img/favicon.ico">
+    </head>
+    <body>
+        
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1>
+                                <a title="lobocode" href="https://lobocode.github.io">$ /home/lobocode_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
+                        
+                            <a class="button-square button-social hint--top" data-hint="Twitter" title="Twitter" href="https://twitter.com/loboriseup" rel="me" target="_blank">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/lobocode" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@fedoraproject.org">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Jaeger</h1>
+    
+        <p class="post-description" itemprop="description">Open source, end-to-end distributed tracing - [PT-BR]</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2021-03-13" itemprop="datePublished">Sat, Mar 13, 2021</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 11 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <h3 id="introduo">Introdução</h3>
+<p>Antes de introduzir ao Jaeger especificamente, é importante fortalecer alguns conceitos como por exemplo: o que é a observabilidade, o desafio da Observabilidade no contexto dos microsserviços, a diferença entre as ferramentas de monitoramento com o tracing distribuído.</p>
+<h4 id="o-que--a-observabilidade">O que é a Observabilidade?</h4>
+<p>Emprestado da teoria de controle, o termo observabilidade significa formalmente que os estados internos de um sistema podem ser inferidos a partir de suas saídas externas. Isso se tornou necessário dentro dessas organizações à medida que a complexidade de seus sistemas crescia tanto - e o número de pessoas responsáveis por gerenciá-los permanecia relativamente pequeno - que eles precisavam de uma maneira de simplificar o espaço do problema.</p>
+<p>Além disso, como parte das organizações de engenharia de confiabilidade de site (SRE), muitos dos engenheiros responsáveis pela observabilidade não estavam trabalhando no software diretamente, mas na infraestrutura responsável por operá-lo e torná-lo confiável. Como tal, um modelo para entender o desempenho do software a partir de um conjunto de sinais externos era atraente e, em última análise, necessário. Apesar de uma definição formal, a observabilidade continua a iludir a compreensão de muitos profissionais. Para muitos, o termo é igualado às ferramentas usadas para observar sistemas de software: métricas, logs e o rastreamento distribuído. Essas três ferramentas ficaram conhecidas como os “três pilares da observabilidade”, cada uma delas uma parte necessária para a compreensão do comportamento do sistema.</p>
+<p>Para que você entenda o que é Observabilidade, recomendo que assista a <strong><a href="">este vídeo que produzí no youtube</a></strong>. Em resumo, métricas, logs e traces podem ser usados para gerar dados dos aplicativos que servirão como insumos para investigar o comportamento das aplicações e sistema ou a causa raiz de problemas. Na Observabilidade usamos ferramentas e a nossa experiência profissional afim de depurar aplicações.</p>
+<h4 id="o-desafio-da-observabilidade-no-contexto-dos-microsservios">O desafio da Observabilidade no contexto dos microsserviços</h4>
+<p>Apesar dos benefícios e da rápida adoção por empresas, os microsserviços apresentam seus próprios desafios e complexidade. <strong><a href="">Yuri Shkuro</a></strong> no livro <strong><a href="">Mastering Distributed Tracing</a></strong> exemplifica bem a complexidade em administrar microsserviços ao mostrar uma representação visual de um subconjunto de microsserviços na arquitetura de microsserviços do Uber renderizada no Jaeger. A imagem é semelhante a esta abaixo:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/blog/content/post/images/jaeger/microsservices.png#center" alt=""></p>
+<p>Na imagem acima, os círculos representam diferentes microsserviços. As arestas são desenhadas entre os nodes que se comunicam entre si. O diâmetro dos nodes é proporcional ao número de outros microsserviços que se conectam a eles e a largura de uma borda é proporcional ao volume do tráfego que passsa por essa borda. Em suma, a imagem acima é tão complexa que nem mesmo temos espaço para incluir os nomes dos serviços. Para executar esses microsserviços em produção, precisamos de uma plataforma de orquestração avançada como o Kubernetes. Para se comunicar, os microsserviços precisam saber como se encontrar na rede, como rotear em torno de áreas problemáticas, como realizar o balanceamento de carga e assim por diante. Quando observamos que algumas solicitações estão lentas ou falhando, desejamos que nossas práticas e ferramentas de Observabilidade gere insumos para que possamos entender o que está ocorrendo com estas solicitações. Pensando nesta abordagem, podemos refletir a cerca de algumas perguntas como:</p>
+<ul>
+<li>Por quais serviços a solicitação passou?</li>
+<li>O que cada microsserviço fez ao processar a solicitação?</li>
+<li>Se a solicitação está lenta, onde estão os gargalos?</li>
+<li>Se a solicitação falhou, onde ocorreu o erro?</li>
+<li>Quão diferente foi a execução da solicitação no sistema?</li>
+<li>Qual foi o caminho crítico da solicitação?</li>
+</ul>
+<p>As ferramentas de monitoramento tradicionais foram projetadas para sistemas monolíticos observando a saúde e o comportamento de uma única instância de aplicativo. Eles podem nos contar uma história sobre aquela única instância, mas não foi projetado para nos revelar dados a cerca de transações distribuídas que passaram por ela. Estas ferramentas não guardam o contexto da solicitação. Para além das ferramentas tradicionais, existem também outras ferramentas que atuam em microsserviços mas não respondem às perguntas acima. Um exemplo disso são as Métricas e o Logs. Métricas são medidas numéricas registradas pelos aplicativos e são baratas de coletar, pois os valores numéricos podem ser facilmente agregados para reduzir a sobrecarga de transmissão desses dados para o sistema de monitoramento. Eles também são bastante precisos, razão pela qual são muito úteis para o monitoramento real e alertas. No entanto, a mesma capacidade de agregação é o que torna as métricas inadequadas para explicar o comportamento patológico do aplicativo. Ao agregar dados, estamos jogando fora todo o contexto que tínhamos sobre as transações individuais.</p>
+<p>Ferramentas de Logs são ainda mais básicas do que as de métricas. Os logs não funcionam muito bem com microsserviços porque cada fluxo de log nos fala apenas sobre uma única instância de um serviço. Observar o comportamento dos sistemas a partir dos logs é muito difícil, a menos que anotemos todos os logs com algum tipo de id único representando a solicitação em vez do thread, uma técnica que realmente nos aproxima de como o rastreamento distribuído funciona. Por fim, os microsserviços introduziram o que podemos chamar de &ldquo;simultaneidade distribuída&rdquo;. Não apenas a execução de uma única solicitação pode pular entre threads, mas também pode pular entre processos, quando um microsserviço faz uma chamada de rede para outro.</p>
+<p>Precisamos saber o que acontece com as solicitações de ponta a ponta, se quisermos entender como um sistema está se comportando. Em outras palavras, primeiro precisamos de uma visão macro e ao mesmo tempo uma visão micro do que exatamente aconteceu com aquela solicitação naquele componente. O tracing distribuído tem uma visão centrada na solicitação. Ele captura a execução detalhada de atividades causalmente relacionadas realizadas pelos componentes de um sistema distribuído, uma vez que processa um determinado pedido. Ao assumir uma visão centrada na solicitação, o trace ajuda a descobrir diferentes comportamentos do sistema. Ao contrário da maioria das ferramentas que monitoram apenas componentes individuais da arquitetura, como um processo ou um servidor, o tracing desempenha uma função exclusiva por ser capaz de observar a execução ponta a ponta de solicitações individuais ou transações, acompanhando-as através dos limites do processo e da rede.</p>
+<hr>
+<h3 id="opentracing-e-opencensus">OpenTracing e OpenCensus</h3>
+<p>O OpenTracing/OpenCensus são especificações de tracing que são usados através de APIs, frameworks ou bibliotecas que implementaram a especificação e documentação para o projeto. Em suma, o OpenTracing/OpenCensus permitem que os desenvolvedores adicionem instrumentação ao código da aplicação usando APIs. Eles incluem APIs de tracing padrão em várias das principais linguagens de programação e mantém mais de 100 módulos que fornecem instrumentação para várias estruturas populares open-source.</p>
+<hr>
+<h3 id="opentelemetry">OpenTelemetry</h3>
+<p>Embora o processo real de coleta e geração de telemetria de um serviço seja conceitualmente simples, a implementação desse processo de uma forma de alto desempenho que também pode obter a adesão de um grupo diversificado de usuários é extremamente desafiador. A principal razão é que, por mais que quaisquer dois pedaços de software tenham em comum, eles provavelmente serão muito diferentes. Embora isso possa ser um tanto reducionista, é uma coisa útil ter em mente ao discutir os desafios de escrever bibliotecas de instrumentação para um público em geral. No entanto, há vários bons motivos para você preferir uma biblioteca de instrumentação de uso geral em vez de uma personalizada:</p>
+<ul>
+<li>Uma biblioteca de uso geral terá mais probabilidade de apresentar melhor desempenho no caso de uso geral.</li>
+<li>É mais provável que os autores da biblioteca de uso geral tenham considerado casos extremos e outras situações.</li>
+<li>Usar uma biblioteca de uso geral pode economizar meses de dores de cabeça de manutenção na adaptação, extensão e uso de uma biblioteca personalizada.</li>
+</ul>
+<p>À medida que seu software se torna mais complexo e os ciclos de desenvolvimento ficam mais tensos, a base lógica para a biblioteca de uso geral aumenta. Você provavelmente não tem tempo ou desejo para implementar seu próprio coletor de telemetria ou API. Você pode não ter a experiência para criar ou manter bibliotecas de telemetria sob medida em todos os idiomas usados por seu aplicativo ou pode achar que a dinâmica organizacional de criar um padrão interno é intransponível. Finalmente, você provavelmente não quer ter que reinventar a roda em termos de geração de dados de telemetria de suas dependências - estruturas RPC, bibliotecas HTTP, etc. OpenTelemetry resolve esses problemas e uma série de outros para você. O objetivo principal do OpenTelemetry é fornecer um único conjunto de APIs, bibliotecas, agentes e coletores que você pode usar para capturar rastreamento distribuído e telemetria métrica de seu aplicativo. Ao fazer isso, a OpenTelemetry imagina um mundo onde dados de telemetria portáteis e de alta qualidade são um recurso integrado do software nativo da nuvem.</p>
+<p>OpenTelemetry foi formalmente anunciado em 2019 como o <strong>grande lançamento do OpenTracing e do OpenCensus</strong>. Esses dois projetos tinham objetivos semelhantes, mas maneiras diferentes de alcançá-los. As sementes do OpenTelemetry foram plantadas no outono de 2018 em vários tópicos de amplo espectro no Twitter que cristalizaram o principal obstáculo enfrentado por ambos os projetos - o surgimento de uma “guerra de padrões” entre os dois. Os autores de projetos de código aberto, vendo que havia dois padrões incompatíveis para instrumentação, adiariam a adição de rastreio a suas bibliotecas e estruturas na ausência de consenso sobre no qual deveriam se concentrar.</p>
+<p>Essas e outras divergências levaram a negociações e discussões secundárias entre os fundadores de cada projeto junto com um mediador neutro. Uma pequena equipe técnica foi formada para criar o protótipo de uma API mesclada, que se tornou o protótipo inicial do OpenTelemetry. A primavera de 2019 viu o trabalho continuar no protótipo, junto com os esforços para codificar a nova estrutura de governança, tirando lições de outros projetos de código aberto bem-sucedidos, como o Kubernetes. Após o anúncio em maio, colaboradores de uma ampla variedade de empresas, incluindo Microsoft, Google, Lightstep e Datadog, trabalharam em conjunto para formalizar a especificação, interface de programação de aplicativo (API), kit de desenvolvimento de software (SDK) e outros componentes.</p>
+<hr>
+<h3 id="jaeger">Jaeger</h3>
+<p>Jaeger é um fork do <strong>OpenZipkin</strong> que é sistema de rastreamento distribuído desenvolvido pelo Twitter usado para monitorar e solucionar problemas de sistemas distribuídos baseados em microsserviços. O Twitter desenvolveu o Zipkin e o lançou para a comunidade de open-source em 2012. Grande parte da terminologia usada no Zipkin é portátil para outros sistemas de tracing, devido à herança compartilhada do whitepaper do Dapper. O <strong>Dapper</strong> é um artigo escrito pelo Google sobre tracing para uso interno. Ele foi escrito em 2010 e ainda está em uso e seguindo como referência para implementação de tracing.</p>
+<p>Saindo um pouco do teórico, vamos então ter uma primeira experimentação usando o Jaeger. Nesse caso, lhe encorajo como primeira experiência a usar a imagem docker all-in-one (todos os componentes juntos) do Jaeger:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ docker run -d --name jaeger <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">COLLECTOR_ZIPKIN_HTTP_PORT</span><span class="o">=</span><span class="m">9411</span> <span class="se">\
+</span><span class="se"></span>  -p 5775:5775/udp <span class="se">\
+</span><span class="se"></span>  -p 6831:6831/udp <span class="se">\
+</span><span class="se"></span>  -p 6832:6832/udp <span class="se">\
+</span><span class="se"></span>  -p 5778:5778 <span class="se">\
+</span><span class="se"></span>  -p 16686:16686 <span class="se">\
+</span><span class="se"></span>  -p 14268:14268 <span class="se">\
+</span><span class="se"></span>  -p 14250:14250 <span class="se">\
+</span><span class="se"></span>  -p 9411:9411 <span class="se">\
+</span><span class="se"></span>  jaegertracing/all-in-one:latest
+</code></pre></div><p>Após rodar o container acima, você poderá usar a interface do Jaeger através do <strong><a href="http://localhost:16686/">http://localhost:16686/</a></strong>. Para popular o Jaeger com SPANS, dados aleatórios para que você possa ter uma experiência próxima do real, rode a aplicação HOTROD Ride da seguinte maneira:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">$ docker run --rm -it <span class="se">\
+</span><span class="se"></span>  --link jaeger <span class="se">\
+</span><span class="se"></span>  -p8080-8083:8080-8083 <span class="se">\
+</span><span class="se"></span>  -e <span class="nv">JAEGER_AGENT_HOST</span><span class="o">=</span><span class="s2">&#34;jaeger&#34;</span> <span class="se">\
+</span><span class="se"></span>  jaegertracing/example-hotrod:latest <span class="se">\
+</span><span class="se"></span>  all
+</code></pre></div><p>Após rodar o container acima, você poderá usar a interface web do HotROD através da url <strong><a href="http://localhost:8080">http://localhost:8080/</a></strong>. Abaixo uma explicação de como funciona esta primeira experiencia usando o HotROD e o Jaeger:</p>
+<hr>
+<h3 id="componentes">Componentes</h3>
+<p>O Jaeger é composto por quatro componentes. São eles:</p>
+<ul>
+<li><strong>Jaeger Agent</strong> - é um <strong><a href="">daemon de rede</a></strong> que detecta <strong>SPANS</strong> enviados por meio do protocolo UDP, os agrupa e envia para o collector. O agent deve estar no mesmo host da aplicação, e poderá ser implementado por meio de um sidecar com o collector ao invés de componentes separados.</li>
+<li><strong>Jaeger Collector</strong> - recebe os spans e os coloca em uma fila para processamento.</li>
+<li><strong>Jaeger Ingester</strong> - é um serviço que lê o tópico do Kafka e grava em outro backend de armazenamento (Cassandra ou Elasticsearch).</li>
+<li><strong>Jaeger Query</strong> - é um serviço que recupera os dados armazenados e hospeda uma interface para exibi-los.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/blog/content/post/images/jaeger/arq1.png#center" alt=""></p>
+<h4 id="o-que-so-spans">O que são SPANS?</h4>
+<p>O Jaeger apresenta as solicitações de execução como traces, que mostram os dados/caminhos de execução através de um sistema. Um trace é formado por um ou mais spans, que são as <strong>unidades de trabalho lógicas do Jaeger</strong>. Cada span inclui o nome da operação, a data/hora de início e a duração. Os spans podem estar aninhados e ordenados. Os componentes do Jaeger funcionam juntos para coletar, armazenar e visualizar spans e traces.</p>
+<p>Dito de maneira ainda mais simples, um SPAN representa duas coisas:</p>
+<ol>
+<li>O intervalo de tempo em que seu serviço estava funcionando.</li>
+<li>O mecanismo pelo qual os dados são transportados de seu serviço para algum sistema de análise capaz de processá-los e interpretá-los.</li>
+</ol>
+<p>Basicamente os SPANS criam períodos eficazes que revelam insights sobre o comportamento do seu serviço. Os SPANS são uma abstração do trabalho de um serviço.</p>
+<p>Agora que você já compreende melhor os componentes do Jaeger, rode-os separadamente usando o <code>docker-compose</code>:</p>
+<hr>
+<h3 id="montando-um-cluster-jaeger-no-k8s">Montando um cluster jaeger no k8s</h3>
+<hr>
+<h3 id="melhores-prticas-de-instrumentao">Melhores práticas de instrumentação</h3>
+<hr>
+<h3 id="tracing-no--uma-bala-de-prata">Tracing não é uma bala de prata</h3>
+<p><strong>Limitações do tracing distribuído</strong>:</p>
+<hr>
+<h3 id="referncias">Referências:</h3>
+<ul>
+<li><strong><a href="">Mastering Distributed Tracing</a></strong></li>
+<li><strong><a href="">Distributed Tracing in Action</a></strong></li>
+<li><strong><a href="https://www.martinfowler.com/articles/microservices.html">Microservices: a definition of this new architectural term</a></strong></li>
+<li><strong><a href="https://eng.uber.com/distributed-tracing/">Evolving Distributed Tracing at Uber Engineering</a></strong></li>
+<li><strong><a href="https://opentracing.io/">The OpenTracing Project</a></strong></li>
+<li><strong><a href="https://opencensus.io/">The OpenCensus Project</a></strong></li>
+<li><strong><a href="https://medium.com/jaegertracing/deployment-strategies-for-the-jaeger-agent-1d6f91796d09">Juraci Paixão Kröhling. Running Jaeger Agent on bare metal</a></strong></li>
+<li><strong><a href="https://medium.com/jaegertracing/deployment-strategies-for-the-jaeger-agent-1d6f91796d09">Juraci Paixão Kröhling. Protecting Jaeger UI with an OAuth sidecar Proxy</a></strong></li>
+</ul>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/default/">default</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Jaeger&url=https%3a%2f%2flobocode.github.io%2f2021%2f03%2f13%2fjaeger%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flobocode.github.io%2f2021%2f03%2f13%2fjaeger%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flobocode.github.io%2f2021%2f03%2f13%2fjaeger%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Jaeger&url=https%3a%2f%2flobocode.github.io%2f2021%2f03%2f13%2fjaeger%2f&summary=Open%20source%2c%20end-to-end%20distributed%20tracing%20-%20%5bPT-BR%5d"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lobocode-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lobocode" href="https://lobocode.github.io">lobocode</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2021 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lobocode.github.iojs/jquery-1.11.3.min.js"></script>
+        <script src="https://lobocode.github.iojs/jquery.fitvids.js"></script>
+        <script src="https://lobocode.github.iojs/scripts.js"></script>
+    </body>
+</html>
+

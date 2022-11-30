@@ -4,7 +4,6 @@ author = "Vitor Lobo"
 +++
 
 
-* **E-mail**: lobocode@fedoraproject.org
+* **E-mail**: lobocode@gmail.com
 * **Linkedin**: [https://linkedin.com/in/vitor-lobo/](https://linkedin.com/in/vitor-lobo/)
-* **Twitter**: [https://twitter.com/loboriseup/](https://twitter.com/loboriseup/)
-* **Telegram**: @lobocode
+* **Mastodon**: [https://bolha.us/@lobocode](https://bolha.us/@lobocode)
