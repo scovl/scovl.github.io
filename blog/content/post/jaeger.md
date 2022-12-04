@@ -4,7 +4,7 @@ description = "Open source, end-to-end distributed tracing - [PT-BR]"
 date = 2021-03-13T17:39:09-03:00
 tags = ["default"]
 weight = 1
-draft = false
+draft = true
 +++
 
 
