@@ -1,5 +1,5 @@
 +++
-title = "OpenShift"
+title = "Ops - OpenShift"
 description = "Arrumando a casa - [PT-BR]"
 date = 2019-06-08T19:47:57-03:00 
 tags = [

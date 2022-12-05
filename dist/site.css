@@ -7,11 +7,16 @@ figcaption, figure, main { display: block; }
 figure { margin: 1em 40px; }
 hr { box-sizing: content-box; height: 0; overflow: visible; }
 a { color: #175db5; text-decoration: none; }
-p { font-family: 'Roboto', sans-serif; }
-h3 { font-family: 'Amatic SC', cursive; font-size: 45px; }
+p { font-family: 'Lora', serif;
+    font-size: 20px;
+    line-height: 1.5em; }
+h3 {font-family: 'Lora', cursive;
+    font-size: 28px; }
 ul, ol { line-height: 1.4; margin: 0 0 20px; }
 ul ul, ul ol, ol ul, ol ol { margin: 10px 0 0 20px; }
-ul li, ol li { margin: 0 0 2px; font-family: 'Coming Soon', cursive; cursive; font-size: 22px; }
+ul li, ol li {margin: 0 0 2px;
+    font-family: 'lora', cursive;
+    font-size: 22px; }
 ul li:last-of-type, ol li:last-of-type { margin-bottom: 0; }
 blockquote { border-left: 0.3rem solid #175db5;; margin: 40px 0; padding: 5px 30px; }
 blockquote p { color: #151212; display: block; font-style: italic; margin: 0; width: 100%; }
@@ -42,7 +47,9 @@ img[src$='#floatright']
     /* whatever else styles you fancy here */
 }
 pre { background: #232323; border: 1px solid #dddbcc; border-radius: 3px; margin: 0 0 20px; overflow-x: auto; padding: 10px; font-size: 16px; }
-pre code { padding: 0; }
+pre code { padding: 0; 
+    font-family: 'Fira Code';
+    font-size: 18px;}
 hr { border: none; border-bottom: 1px dotted #303030; margin: 45px 0; }
 table { margin-bottom: 40px; width: 100%; }
 table tbody > tr:nth-child(odd) > td, table tbody > tr:nth-child(odd) > th { background-color: #f7f7f3; }
@@ -59,7 +66,7 @@ table tr { border-bottom: 1px dotted #151212; }
 #wrapper:after { content: ""; display: block; height: 265px; }
 .button { background: #303030; border: none; border-radius: 3px; color: #fefefe; font-size: 14px; font-weight: 700; padding: 10px 12px; text-transform: uppercase; }
 .button:hover { background: #175db5; }
-.button-square { background: #175db5; color: #fff; float: left; font-size: 17px; margin: 0 5px 0 5px; padding: 3px 8px 4px; font-family: "PT Sans", Helvetica, Arial, sans-serif; }
+.button-square { background: #175db5; color: #fff; float: left; font-size: 17px; margin: -1px -11px -15px 18px; padding: 3px 8px 4px; font-family: "PT Sans", Helvetica, Arial, sans-serif; }
 .button-square:hover { background: #303030; }
 .error { text-align: center; }
 .comments { margin-top: 10px; }
@@ -84,12 +91,14 @@ table tr { border-bottom: 1px dotted #151212; }
     border-bottom: 1px dotted #303030;
     margin: 0;
     position: relative;
-    font-family: "PT Sans", Helvetica, Arial, sans-serif;
+    font-family: "Lora";
+    font-size: 24px;
+    font-weight: bold;
 }
 .post-stub a:hover {
     background: #f5f8fc;
     color: #175db5;
-    padding: 20px 12px;
+    padding: 10px 12px;
 }
 .post-stub-title {
     display: inline-block;
@@ -102,7 +111,7 @@ table tr { border-bottom: 1px dotted #151212; }
     transition: all .2s ease-in-out;
     display: block;
     color: #424242;
-    padding: 20px 5px;
+    padding: 10px 5px;
 }
 .post-stub-date {
     font-family: monospace;
