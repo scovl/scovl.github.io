@@ -10,13 +10,13 @@ author = "Vitor Lobo Ramos"
 
 > **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**lobocode@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.
 
-#### Capítulo 1 - História
+### Capítulo 1 - História
 
 * **[Introdução](#introducao)**
 * **[A origem do nome samba](#a-origem-do-nome-samba)**
 * **[Histórico de versões](#historico-de-versoes)**
 
-#### Capítulo 2 - Conceitos iniciais
+### Capítulo 2 - Conceitos iniciais
 
 * **[Conceitos iniciais](#conceitos-iniciais)**
 * **[Compartilhamento de arquivos](#compartilhamento-de-arquivos)**
@@ -24,7 +24,7 @@ author = "Vitor Lobo Ramos"
 * **[Estrutura do Active Directory](#estrutura-do-active-directory)**
 * **[Protocolos do Active Directory](#protocolos-do-active-directory)**
 
-#### Capítulo 3 - Samba como AD
+### Capítulo 3 - Samba como AD
 
 * **[Codigo fonte do Samba](#codigo-fonte-do-samba)**
 * **[Instalando o Samba](#instalando-o-samba)**
@@ -37,7 +37,7 @@ author = "Vitor Lobo Ramos"
 * **[Migrando um samba3 PDC para Samba 4 AD](#migrando-um-samba3-pdc-para-samba-4-ad)**
 * **[Samba Tool](#samba-tool)**
 
-#### Capítulo 4 - Ingressando clientes no domínio Windows
+### Capítulo 4 - Ingressando clientes no domínio Windows
 
 * **[RSAT Ferramenta de administracao remota](#rsat-ferramenta-de-administracao-remota)**
 * **[Configurando perfil nomade](#configurando-perfil-nomade)**
@@ -47,11 +47,11 @@ author = "Vitor Lobo Ramos"
 * **[Samba como servidor secundario](#samba-como-servidor-secundario )**
 * **[Testes de replicacao de diretorios](#testes-de-replicacao-de-diretorios)**
 
-#### Extras 
+### Extras 
 
 * **[Automatizando o provisionamento do samba com Ansible](#)**
 
-#### Introdução
+### Introdução
 
 Tudo começou em 1983, quando a **[IBM](www.ibm.com)** e a Sytec co-desenvolveram um sistema de rede simples projetado para a construção de pequenas redes locais. O sistema era baseado numa API para comunicação em redes chamada **[NetBIOS](https://pt.wikipedia.org/wiki/NetBIOS)**, ou **Net**work **B**asic **I**nput **O**utput **S**ystem, isto é, **Sistema Básico de Rede de Entrada/Saída**.
 
