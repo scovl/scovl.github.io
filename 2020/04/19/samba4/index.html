@@ -112,13 +112,13 @@
     <blockquote>
 <p><strong>Esta é uma documentação não oficial</strong> do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (<strong><a href="mailto:lobocode@gmail.com">lobocode@gmail.com</a></strong>), ou me mande um <strong>pull request</strong> no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em <strong>constante atualização</strong>.</p>
 </blockquote>
-<h4 id="capítulo-1---história">Capítulo 1 - História</h4>
+<h3 id="capítulo-1---história">Capítulo 1 - História</h3>
 <ul>
 <li><strong><a href="#introducao">Introdução</a></strong></li>
 <li><strong><a href="#a-origem-do-nome-samba">A origem do nome samba</a></strong></li>
 <li><strong><a href="#historico-de-versoes">Histórico de versões</a></strong></li>
 </ul>
-<h4 id="capítulo-2---conceitos-iniciais">Capítulo 2 - Conceitos iniciais</h4>
+<h3 id="capítulo-2---conceitos-iniciais">Capítulo 2 - Conceitos iniciais</h3>
 <ul>
 <li><strong><a href="#conceitos-iniciais">Conceitos iniciais</a></strong></li>
 <li><strong><a href="#compartilhamento-de-arquivos">Compartilhamento de arquivos</a></strong></li>
@@ -126,7 +126,7 @@
 <li><strong><a href="#estrutura-do-active-directory">Estrutura do Active Directory</a></strong></li>
 <li><strong><a href="#protocolos-do-active-directory">Protocolos do Active Directory</a></strong></li>
 </ul>
-<h4 id="capítulo-3---samba-como-ad">Capítulo 3 - Samba como AD</h4>
+<h3 id="capítulo-3---samba-como-ad">Capítulo 3 - Samba como AD</h3>
 <ul>
 <li><strong><a href="#codigo-fonte-do-samba">Codigo fonte do Samba</a></strong></li>
 <li><strong><a href="#instalando-o-samba">Instalando o Samba</a></strong></li>
@@ -139,7 +139,7 @@
 <li><strong><a href="#migrando-um-samba3-pdc-para-samba-4-ad">Migrando um samba3 PDC para Samba 4 AD</a></strong></li>
 <li><strong><a href="#samba-tool">Samba Tool</a></strong></li>
 </ul>
-<h4 id="capítulo-4---ingressando-clientes-no-domínio-windows">Capítulo 4 - Ingressando clientes no domínio Windows</h4>
+<h3 id="capítulo-4---ingressando-clientes-no-domínio-windows">Capítulo 4 - Ingressando clientes no domínio Windows</h3>
 <ul>
 <li><strong><a href="#rsat-ferramenta-de-administracao-remota">RSAT Ferramenta de administracao remota</a></strong></li>
 <li><strong><a href="#configurando-perfil-nomade">Configurando perfil nomade</a></strong></li>
@@ -149,11 +149,11 @@
 <li><strong><a href="#samba-como-servidor-secundario">Samba como servidor secundario</a></strong></li>
 <li><strong><a href="#testes-de-replicacao-de-diretorios">Testes de replicacao de diretorios</a></strong></li>
 </ul>
-<h4 id="extras">Extras</h4>
+<h3 id="extras">Extras</h3>
 <ul>
 <li><strong><a href="#">Automatizando o provisionamento do samba com Ansible</a></strong></li>
 </ul>
-<h4 id="introdução">Introdução</h4>
+<h3 id="introdução">Introdução</h3>
 <p>Tudo começou em 1983, quando a <strong><a href="www.ibm.com">IBM</a></strong> e a Sytec co-desenvolveram um sistema de rede simples projetado para a construção de pequenas redes locais. O sistema era baseado numa API para comunicação em redes chamada <strong><a href="https://pt.wikipedia.org/wiki/NetBIOS">NetBIOS</a></strong>, ou <strong>Net</strong>work <strong>B</strong>asic <strong>I</strong>nput <strong>O</strong>utput <strong>S</strong>ystem, isto é, <strong>Sistema Básico de Rede de Entrada/Saída</strong>.</p>
 <p>Foi incluso no NetBIOS um esquema de endereçamento que usava nomes de 16 bytes para identificar estações de trabalho e aplicações habilitadas para rede. Em seguida, a <strong><a href="www.microsoft.com">Microsoft</a></strong> adicionou recursos para o DOS que permitia o disco I/O ser redirecionado para a interface NetBIOS, <strong>o que permitiu que o espaço em disco fosse compartilhável através da LAN</strong>. O protocolo de compartilhamento de arquivos ficou conhecido como <strong><a href="https://pt.wikipedia.org/wiki/Server_Message_Block">SMB</a></strong>, e agora <strong><a href="http://www.webopedia.com/TERM/C/CIFS.html">CIFS</a></strong>.</p>
 <p>Em 1985, o protocolo foi expandido, dando origem ao protocolo <strong><a href="https://pt.wikipedia.org/wiki/NetBEUI">NetBEUI</a></strong>, que foi durante muito tempo o principal protocolo usado em redes locais, antes da popularização do TCP/IP. O <strong><a href="https://pt.wikipedia.org/wiki/Server_Message_Block">SMB</a></strong> (Server Message Block) veio mais tarde, junto com o Windows 3.11. O protocolo SMB faz o compartilhamento de arquivos e impressoras em redes Microsoft, incluindo a navegação na rede, o estabelecimento de conexões e a transferência de dados. Ele utiliza o NetBIOS para a troca de mensagens entre os hosts e inclui uma versão atualizada do protocolo, que roda sobre o TCP/IP.</p>
