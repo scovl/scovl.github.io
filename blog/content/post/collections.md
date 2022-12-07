@@ -3,7 +3,7 @@ title = "Java#Core - Collections"
 description = "Usando lists e maps"
 date = 2022-12-05T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
-draft = true
+draft = false
 weight = 1
 author = "Vitor Lobo Ramos"
 +++
