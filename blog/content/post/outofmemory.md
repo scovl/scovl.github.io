@@ -1,5 +1,5 @@
 +++
-title = "#Java - java.lang.OutOfMemoryError"
+title = "Java - java.lang.OutOfMemoryError"
 description = "Como simular o java.lang.OutOfMemoryError"
 date = 2020-04-19T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]

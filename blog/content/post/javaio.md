@@ -1,5 +1,5 @@
 +++
-title = "#Java - Read and Write"
+title = "Java - Read and Write"
 description = "Leitura e escrita de arquivos em Java"
 date = 2020-04-19T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]

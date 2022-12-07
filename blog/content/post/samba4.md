@@ -4,7 +4,7 @@ description = "Um novo horizonte"
 date = 2020-04-19T17:31:45-03:00
 tags = ["linux,samba,fedora"]
 draft = false
-weight = 3
+weight = 4
 author = "Vitor Lobo Ramos"
 +++
 
