@@ -266,13 +266,13 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 <p>Consulte os <strong><a href="https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements">requisitos oficiais de hardware</a></strong> para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/qAChvCm.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/qAChvCm.png#center"></p>
 <p>Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório <strong><a href="">Extra Packages for Enterprise Linux - EPEL</a></strong> e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum -y install epel-release centos-release-openshift-origin36
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo yum -y install epel-release centos-release-openshift-origin36
 </span></span></code></pre></div><p>Em seguida, alguns pacotes adicionais:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum -y install origin origin-clients vim-enhanced atomic-openshift-utils 
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo yum -y install origin origin-clients vim-enhanced atomic-openshift-utils 
 </span></span></code></pre></div><p>Agora o NetworkManager e o certificado:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum -y install NetworkManager python-rhsm-certificates
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo yum -y install NetworkManager python-rhsm-certificates
 </span></span></code></pre></div><p>Com esses pacotes instalados, precisaremos iniciar o NetworkManager pois o OpenShift usa o NetworkManager para gerenciar as configurações de rede de todos os servidores no cluster:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> NetworkManager --now
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl <span class="nb">enable</span> NetworkManager --now
 </span></span></code></pre></div><p>Mais a diante irei configurar a resolução do DNS nos dois servidores, será necessário configurar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux, e de fato instalar o OpenShift com a criação de Playbooks no Ansible. Ou seja, bastante trabalho pela frente.</p>
 <hr>
 <h3 id="configurando-o-networkmanager">CONFIGURANDO O NETWORKMANAGER</h3>
@@ -283,52 +283,52 @@ expande as funcionalidades do Kubernetes, visite <strong><a href="http://www.ope
 <p>Vamos então editar o  client DNS do CentOs através do arquivo <code>/etc/resolv.conf</code>, que foi gerado quando instalamos o NetworkManager. O parâmetro <code>nameserver</code> se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros <code>nameserver</code> listados no resolv.conf. O outro parâmetro padrão do <code>resolv.conf</code>, é o <code>search</code>. O valor do <code>search</code> é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.</p>
 <p>Caso não esteja familiarizado com a abreviação FQDN,  acesse <strong><a href="https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html">https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html</a></strong> para saber mais. Usando o domínio <strong><a href="">nip.io</a></strong>, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o <strong><a href="">nip.io</a></strong> de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso <strong><a href="">registro intergrado</a></strong>. Sendo assim, o recomendado é editar o parâmetro <code>search</code> para ter apenas o domínio de nível superior (no caso, <strong><a href="nip.io">nip.io</a></strong>), conforme mostrado seguir:</p>
 <p>Editando o <code>/etc/resolv.conf</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Generated by NetworkManager</span>
-</span></span><span class="line"><span class="cl">search nip.io
-</span></span><span class="line"><span class="cl">nameserver 8.8.8.8
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Generated by NetworkManager</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">search nip.io
+</span></span><span class="line"><span class="ln">3</span><span class="cl">nameserver 8.8.8.8
 </span></span></code></pre></div><p>Esta configuração, no entanto, só permanecerá assim até você reiniciar os servidores. Isso ocorre porque o NetworkManager controla o <code>/etc/resolv.conf</code> e naturalmente adicionará ao parâmetro <code>search</code> que retornará o valor anterior à reset da máquina. Para impedir que isso aconteça, você precisa configurar o NetworkManager para não fazer mais alterações no <code>/etc/resolv.conf</code>. No CentOS 7, o arquivo de configuração do NetworkManager está localizado em <code>/etc/NetworkManager/NetworkManager.conf</code>.</p>
 <p>Exemplo do <code>/etc/NetworkManager/NetworkManager.conf</code> padrão:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Configuration file for NetworkManager.</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># See &#34;man 5 NetworkManager.conf&#34; for details.</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># The directory /etc/NetworkManager/conf.d/ can contain additional configuration</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># snippets. Those snippets override the settings from this main file.</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># The files within conf.d/ directory are read in asciibetical order.</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># If two files define the same key, the one that is read afterwards will overwrite</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># the previous one.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>main<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">plugins</span><span class="o">=</span>ifcfg-rh
-</span></span><span class="line"><span class="cl"><span class="o">[</span>logging<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#level=DEBUG</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#domains=ALL</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1"># Configuration file for NetworkManager.</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># See &#34;man 5 NetworkManager.conf&#34; for details.</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1"># The directory /etc/NetworkManager/conf.d/ can contain additional configuration</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"># snippets. Those snippets override the settings from this main file.</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"># The files within conf.d/ directory are read in asciibetical order.</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"># If two files define the same key, the one that is read afterwards will overwrite</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"># the previous one.</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="o">[</span>main<span class="o">]</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="nv">plugins</span><span class="o">=</span>ifcfg-rh
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="o">[</span>logging<span class="o">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1">#level=DEBUG</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1">#domains=ALL</span>
 </span></span></code></pre></div><p>Você precisa adicionar uma linha à seção <code>[main]</code> para que o NetworkManager não altere o arquivo <code>/etc/resolv.conf</code>. Desta maneira:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>main<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">plugins</span><span class="o">=</span>ifcfg-rh
-</span></span><span class="line"><span class="cl"><span class="nv">dns</span><span class="o">=</span>none
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>main<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">plugins</span><span class="o">=</span>ifcfg-rh
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">dns</span><span class="o">=</span>none
 </span></span></code></pre></div><p>Depois que você reiniciar o NetworkManager, a alteração feita no <code>/etc/resolv.conf</code> persistirá nas reinicializações do servidor. Para reiniciar o NetworkManager, execute o seguinte comando systemctl:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl restart NetworkManager
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart NetworkManager
 </span></span></code></pre></div><p>Depois de concluído, confirme se o NetworkManager está sendo executado usando o status do systemctl:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">systemctl status NetworkManager
-</span></span><span class="line"><span class="cl">? NetworkManager.service - Network Manager
-</span></span><span class="line"><span class="cl">Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/NetworkManager.service<span class="p">;</span> enabled<span class="p">;</span>
-</span></span><span class="line"><span class="cl">➥ vendor preset: enabled<span class="o">)</span>
-</span></span><span class="line"><span class="cl">Active: active <span class="o">(</span>running<span class="o">)</span> Because Sat 2017-05-13 17:05:12 EDT<span class="p">;</span> 6s ago
-</span></span><span class="line"><span class="cl">...
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">systemctl status NetworkManager
+</span></span><span class="line"><span class="ln">2</span><span class="cl">? NetworkManager.service - Network Manager
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/NetworkManager.service<span class="p">;</span> enabled<span class="p">;</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">➥ vendor preset: enabled<span class="o">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">Active: active <span class="o">(</span>running<span class="o">)</span> Because Sat 2017-05-13 17:05:12 EDT<span class="p">;</span> 6s ago
+</span></span><span class="line"><span class="ln">6</span><span class="cl">...
 </span></span></code></pre></div><p>Pós reiniciar o NetworkManager, confira se de fato o arquivo <code>/etc/resolv.conf</code> foi alterado. Se não houver o parâmetro <code>search</code>, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.</p>
 <h3 id="uma-visão-mais-aprofundada-dos-subdomínios-curinga-e-do-openshift">Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:</h3>
 <p>O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o <strong><a href="">HAProxy</a></strong> para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O <strong><a href="">HAProxy</a></strong> é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ dig +short *.apps.jeduncan.com
-</span></span><span class="line"><span class="cl">12.207.21.2
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ dig +short *.apps.jeduncan.com
+</span></span><span class="line"><span class="ln">2</span><span class="cl">12.207.21.2
 </span></span></code></pre></div><p>Observe que se você procurar qualquer outro registro terminado em .apps.jeduncan.com, e ele retornará o mesmo IP:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ dig +short app1.apps.jeduncan.com
-</span></span><span class="line"><span class="cl">12.207.21.2
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ dig +short app1.apps.jeduncan.com
+</span></span><span class="line"><span class="ln">2</span><span class="cl">12.207.21.2
 </span></span></code></pre></div><p>ou</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ dig +short someother.apps.jeduncan.com
-</span></span><span class="line"><span class="cl">12.207.21.2
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ dig +short someother.apps.jeduncan.com
+</span></span><span class="line"><span class="ln">2</span><span class="cl">12.207.21.2
 </span></span></code></pre></div><p>O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domínio curinga criado. Dessa forma, todas as entradas do DNS para seus aplicativos funcionam sem qualquer configuração adicional.</p>
 <hr>
 <h3 id="instalando-ferramentas-no-servidor-master">INSTALANDO FERRAMENTAS NO SERVIDOR MASTER</h3>
@@ -338,15 +338,15 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <p>NOTA: Precisamos nos preocupar apenas com Ansible no servidor master. Isso porque não há agente nos nodes. O Ansible não usa um agente nos sistemas que está controlando; em vez disso, ele usa o SSH como um mecanismo de transporte e para executar comandos remotos.</p>
 </blockquote>
 <p>Inicie este processo executando o seguinte comando yum:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum -y install httpd-tools gcc python-devel python-pip
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo yum -y install httpd-tools gcc python-devel python-pip
 </span></span></code></pre></div><p>O pacote python-pip instala o gerenciador de pacotes de aplicativos Python chamado pip. Ele é usado para instalar aplicativos escritos em Python e disponíveis no Índice de pacotes do Python (<a href="https://www.pypi.org">www.pypi.org</a>). Com pip instalado, você pode usá-lo para instalar o Ansible e garantir que você instale a versão 2.2.2.0, que é a usada com o OpenShift 3.6:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip -v install <span class="nv">ansible</span><span class="o">==</span>2.2.2.0
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">pip -v install <span class="nv">ansible</span><span class="o">==</span>2.2.2.0
 </span></span></code></pre></div><p>Para que o instalador do OpenShift funcione corretamente, você precisa criar um par de chaves SSH no seu servidor master e distribuir a chave pública para o seu node. Para criar um novo par de chaves SSH em seu servidor master, você pode usar o comando <code>ssh-keygen</code> como neste exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N <span class="s1">&#39;&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N <span class="s1">&#39;&#39;</span>
 </span></span></code></pre></div><p>Esse comando cria um par de chaves SSH no diretório inicial do usuário <code>/root</code>, na subpasta <code>.ssh</code>. No Linux, esse é o local padrão para as chaves SSH de um usuário. Em seguida, execute o seguinte comando <code>ssh-copy-id</code> para distribuir sua chave pública SSH recém-criada para o seu node OpenShift (se você usou endereços IP diferentes para seu mestre e node, ajuste o comando de acordo):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">for</span> i in 192.168.100.1 192.168.100.2<span class="p">;</span><span class="k">do</span> ssh-copy-id root@<span class="nv">$i</span><span class="p">;</span><span class="k">done</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">for</span> i in 192.168.100.1 192.168.100.2<span class="p">;</span><span class="k">do</span> ssh-copy-id root@<span class="nv">$i</span><span class="p">;</span><span class="k">done</span>
 </span></span></code></pre></div><p>Este comando adicionará a chave pública SSH ao arquivo authorized_keys em <code>/root/.ssh</code> no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote <code>libcgroup-tools</code> fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo yum -y install docker libcgroup-tools
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo yum -y install docker libcgroup-tools
 </span></span></code></pre></div><p>A partir daquí, estaremos prontos para configurar o contêiner de armazenamento de dados do OpenShift.</p>
 <hr>
 <h3 id="configurando-o-conteiner-storage">CONFIGURANDO O CONTEINER STORAGE</h3>
@@ -359,44 +359,44 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <p>NOTA: Dependendo da sua distribuição Linux, o nome do particionamento de disco <code>/dev /vdb em nosso exemplo</code> pode variar, mas a operação não.</p>
 </blockquote>
 <p>Criando o arquivo de configuração do <code>docker-storage-setup</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; /etc/sysconfig/docker-storage-setup
-</span></span></span><span class="line"><span class="cl"><span class="s">DEVS=/dev/vdb 
-</span></span></span><span class="line"><span class="cl"><span class="s">VG=docker-vg
-</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cat <span class="s">&lt;&lt;EOF &gt; /etc/sysconfig/docker-storage-setup
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="s">DEVS=/dev/vdb 
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="s">VG=docker-vg
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></div><p>Perceba que o particionamento <code>/dev/vdb</code>, trata-se do volume de 20 GB que você criou para os nodes.</p>
 <blockquote>
 <p>NOTA: Se você não tiver certeza sobre o nome do disco a ser usado para o armazenamento em contêiner, o comando <code>lsblk</code> fornecerá uma lista de todos os discos em seu servidor. A saída está em um diagrama de árvore fácil de entender.</p>
 </blockquote>
 <p>Depois de criar o arquivo <code>/etc/sysconfig/docker-storage-setup</code>, execute o <code>docker-storage-setup</code> que deverá gerar uma saída parecida com esta:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker-storage-setup
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Checking that no-one is using this disk right now ...
-</span></span><span class="line"><span class="cl">OK
-</span></span><span class="line"><span class="cl">Disk /dev/vdb: <span class="m">41610</span> cylinders, <span class="m">16</span> heads, <span class="m">63</span> sectors/track
-</span></span><span class="line"><span class="cl">...
-</span></span><span class="line"><span class="cl">Rounding up size to full physical extent 24.00 MiB
-</span></span><span class="line"><span class="cl">Logical volume <span class="s2">&#34;docker-pool&#34;</span> created.
-</span></span><span class="line"><span class="cl">Logical volume docker-vg/docker-pool changed.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">docker-storage-setup
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Checking that no-one is using this disk right now ...
+</span></span><span class="line"><span class="ln">4</span><span class="cl">OK
+</span></span><span class="line"><span class="ln">5</span><span class="cl">Disk /dev/vdb: <span class="m">41610</span> cylinders, <span class="m">16</span> heads, <span class="m">63</span> sectors/track
+</span></span><span class="line"><span class="ln">6</span><span class="cl">...
+</span></span><span class="line"><span class="ln">7</span><span class="cl">Rounding up size to full physical extent 24.00 MiB
+</span></span><span class="line"><span class="ln">8</span><span class="cl">Logical volume <span class="s2">&#34;docker-pool&#34;</span> created.
+</span></span><span class="line"><span class="ln">9</span><span class="cl">Logical volume docker-vg/docker-pool changed.
 </span></span></code></pre></div><p>Com o contêiner storage configurado, é hora de iniciar o serviço do docker no node do OpenShift. Observe que este é o tempo de execução médio que os serviços irão iniciar daquí em diante usando o OpenShift:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> docker.service --now
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl <span class="nb">enable</span> docker.service --now
 </span></span></code></pre></div><p>Agora verifique se o serviço docker iniciou corretamente:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl status docker
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl status docker
 </span></span></code></pre></div><p>A saída esperada do comando acima, será algo semelhante a isto:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">? docker.service - Docker Application Container Engine
-</span></span><span class="line"><span class="cl">Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/docker.service<span class="p">;</span> enabled<span class="p">;</span> vendor preset: disabled<span class="o">)</span>
-</span></span><span class="line"><span class="cl">Drop-In: /etc/systemd/system/docker.service.d
-</span></span><span class="line"><span class="cl">??custom.conf
-</span></span><span class="line"><span class="cl">Active: active <span class="o">(</span>running<span class="o">)</span> since Fri 2017-11-10 18:45:12 UTC<span class="p">;</span> <span class="m">12</span> secs ago
-</span></span><span class="line"><span class="cl">Docs: http://docs.docker.com
-</span></span><span class="line"><span class="cl">Main PID: <span class="m">2352</span> <span class="o">(</span>dockerd-current<span class="o">)</span>
-</span></span><span class="line"><span class="cl">Memory: 121.4M
-</span></span><span class="line"><span class="cl">CGroup: /system.slice/docker.service
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">? docker.service - Docker Application Container Engine
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Loaded: loaded <span class="o">(</span>/usr/lib/systemd/system/docker.service<span class="p">;</span> enabled<span class="p">;</span> vendor preset: disabled<span class="o">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Drop-In: /etc/systemd/system/docker.service.d
+</span></span><span class="line"><span class="ln">4</span><span class="cl">??custom.conf
+</span></span><span class="line"><span class="ln">5</span><span class="cl">Active: active <span class="o">(</span>running<span class="o">)</span> since Fri 2017-11-10 18:45:12 UTC<span class="p">;</span> <span class="m">12</span> secs ago
+</span></span><span class="line"><span class="ln">6</span><span class="cl">Docs: http://docs.docker.com
+</span></span><span class="line"><span class="ln">7</span><span class="cl">Main PID: <span class="m">2352</span> <span class="o">(</span>dockerd-current<span class="o">)</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">Memory: 121.4M
+</span></span><span class="line"><span class="ln">9</span><span class="cl">CGroup: /system.slice/docker.service
 </span></span></code></pre></div><p>O próximo passo é modificar o <strong><a href="">SELinux</a></strong> para permitir que o OpenShift se conecte ao <strong><a href="">NFS</a></strong> como uma fonte de armazenamento persistente.</p>
 <hr>
 <h3 id="configurando-o-selinux-em-seus-nodes">CONFIGURANDO O SELINUX EM SEUS NODES</h3>
 <p>No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando <code>setsebool</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo setsebool -P virt_use_nfs <span class="m">1</span>
-</span></span><span class="line"><span class="cl">sudo setsebool -P virt_sandbox_use_nfs <span class="m">1</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo setsebool -P virt_use_nfs <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo setsebool -P virt_sandbox_use_nfs <span class="m">1</span>
 </span></span></code></pre></div><hr>
 <h3 id="instalando-o-openshift">INSTALANDO O OPENSHIFT</h3>
 <p>O OpenShift é instalado usando um playbook Ansible. Isto é, uma coleção de tarefas e parâmetros necessários para executar uma tarefa. Para executar um playbook Ansible, três coisas devem estar presentes no seu servidor:</p>
@@ -406,30 +406,30 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <li><strong>Inventário</strong> - A lista de hosts onde os playbooks serão executados. Os inventários podem ser divididos em grupos, e conter quaisquer variáveis necessárias para executar os playbooks nos hosts.</li>
 </ul>
 <p>O inventário Ansible para o OpenShift contém informações sobre seus dois hosts e especifica quais funções cada node terá em seu cluster. Se você estiver usando os endereços IP e os hostnames que estamos usando neste artigo, poderá fazer o download de um inventário preparado para o seu node master a seguir:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo curl -o /root/hosts https://raw.githubusercontent.com/OpenShiftInAction/AppendixA/master/hosts
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo curl -o /root/hosts https://raw.githubusercontent.com/OpenShiftInAction/AppendixA/master/hosts
 </span></span></code></pre></div><p>Para aqueles que desejam personalizar a instalação, vamos analisar os componentes do inventário e como eles são projetados. Inventários fatíveis são divididos em grupos. Cada grupo consiste em hosts que são definidos pelo hostname ou pelo endereço IP. Em um inventário, um grupo também pode ser definido listando os grupos filho usando a sintaxe <code>:children</code>. No exemplo a seguir, o grupo <code>master_group</code> é formado pelos hosts no grupo1 e group2:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>master_group:children<span class="o">]</span>
-</span></span><span class="line"><span class="cl">group1
-</span></span><span class="line"><span class="cl">group2
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>group1<span class="o">]</span>
-</span></span><span class="line"><span class="cl">host1
-</span></span><span class="line"><span class="cl">host2
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>group2<span class="o">]</span>
-</span></span><span class="line"><span class="cl">host3
-</span></span><span class="line"><span class="cl">host4
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>group3<span class="o">]</span>
-</span></span><span class="line"><span class="cl">host5
-</span></span><span class="line"><span class="cl">host6
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="o">[</span>master_group:children<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">group1
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">group2
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="o">[</span>group1<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">host1
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">host2
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="o">[</span>group2<span class="o">]</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">host3
+</span></span><span class="line"><span class="ln">11</span><span class="cl">host4
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="o">[</span>group3<span class="o">]</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">host5
+</span></span><span class="line"><span class="ln">15</span><span class="cl">host6
 </span></span></code></pre></div><p>Outra capacidade dos inventários é que você pode definir variáveis para os hosts, e grupos de hosts. Você pode definir variáveis para um grupo inteiro usando um cabeçalho de grupo e a sintaxe <code>:vars</code>. Para definir uma variável para um único host, adicione-a à mesma linha usada para definir o host em um grupo. Por exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>group1<span class="o">]</span>
-</span></span><span class="line"><span class="cl">host1 <span class="nv">var2</span><span class="o">=</span>False <span class="nv">var3</span><span class="o">=</span><span class="m">42</span>
-</span></span><span class="line"><span class="cl">host1 <span class="nv">foo</span><span class="o">=</span>bar
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>group1:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">var1</span><span class="o">=</span>True
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>group1<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">host1 <span class="nv">var2</span><span class="o">=</span>False <span class="nv">var3</span><span class="o">=</span><span class="m">42</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">host1 <span class="nv">foo</span><span class="o">=</span>bar
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="o">[</span>group1:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nv">var1</span><span class="o">=</span>True
 </span></span></code></pre></div><p>Seu inventário inicial no OpenShift usa vários grupos e muitas variáveis:</p>
 <ul>
 <li><strong>OSEv3</strong> - O grupo que representa seu cluster inteiro. É composto pelos nós de grupos secundários, mestres, nfs e etcd.</li>
@@ -439,49 +439,49 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <li><strong>etcd</strong> - Os nós onde o etcd será implantado. O etcd é o banco de dados do Kubernetes e do OpenShift. Seu cluster usará o servidor master para abrigar o banco de dados do etcd. Para clusters maiores, o etcd pode ser separado em seus próprios nós do cluster.</li>
 </ul>
 <p>Para os grupos de nodes e masters, você desabilitará algumas das verificações do sistema que o manual de implantação executa antes da implantação. Essas verificações verificam a quantidade de espaço livre e memória disponível no sistema; Para um cluster inicial, você poderá usar valores menores que as recomendações que são apontadas por um dessas verificações. (Você poderá aprender mais sobre essas tais verificações em <strong><a href="https://goo.gl/8C65s7">https://goo.gl/8C65s7</a></strong>. Para desabilitar as verificações, você define variáveis para cada um desses grupos:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>nodes:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>masters:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>nodes:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+</span></span><span class="line"><span class="ln">3</span><span class="cl">
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="o">[</span>masters:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
 </span></span></code></pre></div><p>Os comandos acima desativam as verificações de armazenamento e memória para o grupo masters.</p>
 <p>Seu inventário poderá conter definições de variáveis para a maioria dos hosts. A variável <code>ansible_connection</code> informa ao mecanismo Ansible para se conectar ao host a partir do sistema local onde o playbook está sendo executado. Variáveis Ansible adicionais são discutidas em <strong><a href="https://goo.gl/kAvqKz">https://goo.gl/kAvqKz</a></strong>.</p>
 <blockquote>
 <p>NOTA: Os endereços IP e os hostnames usados neste inventário são específicos para um exemplo de cluster. Se seus endereços IP e hostnames forem diferentes, você precisará alterá-los no inventário para implementar o OpenShift com êxito.</p>
 </blockquote>
 <p>As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>OSEv3:children<span class="o">]</span>
-</span></span><span class="line"><span class="cl">nodes
-</span></span><span class="line"><span class="cl">nfs
-</span></span><span class="line"><span class="cl">masters
-</span></span><span class="line"><span class="cl">etcd
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>OSEv3:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_master_cluster_public_hostname</span><span class="o">=</span>None
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_master_default_subdomain</span><span class="o">=</span>apps.192.168.100.2.nip.io
-</span></span><span class="line"><span class="cl"><span class="nv">ansible_ssh_user</span><span class="o">=</span>root
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_master_cluster_hostname</span><span class="o">=</span>None
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_override_hostname_check</span><span class="o">=</span><span class="nb">true</span>
-</span></span><span class="line"><span class="cl"><span class="nv">deployment_type</span><span class="o">=</span>origin
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>nodes:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>masters:vars<span class="o">]</span>
-</span></span><span class="line"><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>nodes<span class="o">]</span>
-</span></span><span class="line"><span class="cl">192.168.122.100 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_schedulable</span><span class="o">=</span>False <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
-</span></span><span class="line"><span class="cl">192.168.100.2 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp2.192.168.100.2.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp2.192.168.100.2.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_node_labels</span><span class="o">=</span><span class="s2">&#34;{&#39;region&#39;: &#39;infra&#39;}&#34;</span> <span class="nv">openshift_schedulable</span><span class="o">=</span>True
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
-</span></span><span class="line"><span class="cl">192.168.100.1 <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>masters<span class="o">]</span>
-</span></span><span class="line"><span class="cl">192.168.100.1 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">[</span>etcd<span class="o">]</span>
-</span></span><span class="line"><span class="cl">192.168.100.1  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="o">[</span>OSEv3:children<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">nodes
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">nfs
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">masters
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">etcd
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="o">[</span>OSEv3:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="nv">openshift_master_cluster_public_hostname</span><span class="o">=</span>None
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nv">openshift_master_default_subdomain</span><span class="o">=</span>apps.192.168.100.2.nip.io
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="nv">ansible_ssh_user</span><span class="o">=</span>root
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nv">openshift_master_cluster_hostname</span><span class="o">=</span>None
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="nv">openshift_override_hostname_check</span><span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="nv">deployment_type</span><span class="o">=</span>origin
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="o">[</span>nodes:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="o">[</span>masters:vars<span class="o">]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="nv">openshift_disable_check</span><span class="o">=</span>disk_availability,memory_availability,docker_storage
+</span></span><span class="line"><span class="ln">20</span><span class="cl">
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="o">[</span>nodes<span class="o">]</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">192.168.122.100 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_schedulable</span><span class="o">=</span>False <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">192.168.100.2 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp2.192.168.100.2.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp2.192.168.100.2.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.2 <span class="nv">openshift_node_labels</span><span class="o">=</span><span class="s2">&#34;{&#39;region&#39;: &#39;infra&#39;}&#34;</span> <span class="nv">openshift_schedulable</span><span class="o">=</span>True
+</span></span><span class="line"><span class="ln">24</span><span class="cl">
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="o">[</span>nfs<span class="o">]</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">192.168.100.1 <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="o">[</span>masters<span class="o">]</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">192.168.100.1 <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">
+</span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="o">[</span>etcd<span class="o">]</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">192.168.100.1  <span class="nv">openshift_public_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_ip</span><span class="o">=</span>192.168.100.1 <span class="nv">openshift_public_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">openshift_hostname</span><span class="o">=</span>ocp1.192.168.100.1.nip.io <span class="nv">connect_to</span><span class="o">=</span>192.168.100.1 <span class="nv">ansible_connection</span><span class="o">=</span><span class="nb">local</span>
 </span></span></code></pre></div><blockquote>
 <p>NOTA: O node ocp1 possui uma variável chamada <code>openshift_node_labels</code>. Os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante o nosso deployment, <code>region = infra</code>, por exemplo, informa ao OpenShift os componentes de infraestrutura como o router, o registro integrado, métricas etc..</p>
 </blockquote>
@@ -489,8 +489,8 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <hr>
 <h3 id="executando-o-playbook">EXECUTANDO O PLAYBOOK</h3>
 <p>O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para implementar o OpenShift, portanto, esse comando precisa ser executado como o usuário root no master, que possui as chaves de acesso SSH em cada node. Para executar o playbook adequado, execute o comando <code>ansible-playbook</code>, especificando o arquivo de inventário, e a implementação de playbook instalado em <code>/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># ansible-playbook -i /root/hosts \</span>
-</span></span><span class="line"><span class="cl">/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># ansible-playbook -i /root/hosts \</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 </span></span></code></pre></div><p>Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a Internet, o deploy pode levar cerca de 30 a 45 minutos. Se tudo for bem sucedido, a saída indicará que o processo foi concluído com sucesso. Do contrário, observe o erro que estará em vermelho no terminal e busque debuga-lo. Quando a instalação estiver concluída, você poderá acessar seu host <code>https://ocp1.192.168.1.100.nip.io:8443</code>:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tela.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tela.png#center"></p>
 <blockquote>
@@ -505,7 +505,7 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <p>NOTA: Este método de autenticação é sensível a maiúsculas e minúsculas. Isto é, embora as senhas possam ser qualquer coisa, <em>fulano</em> e Fulano são usuários diferentes.</p>
 </blockquote>
 <p>Usando a linha de comando, execute o comando <code>oc login</code>, usando <em>fulano</em> para o nome de usuário e senha, e a URL da API do servidor master. Abaixo a sintaxe para efetuar login incluindo o nome de usuário, a senha e a URL para o OpenShift Master API server:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc login -u fulano -p fulano https://ocp-1.192.168.100.1.nip.io:8443
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc login -u fulano -p fulano https://ocp-1.192.168.100.1.nip.io:8443
 </span></span></code></pre></div><p>Os parâmetros usados acima para login com o comando <code>oc</code> são:</p>
 <ul>
 <li>-u, o nome de usuário para efetuar login.</li>
@@ -513,7 +513,7 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <li>URL da API do servidor master. Por padrão, roda em HTTPS na porta TCP 8443.</li>
 </ul>
 <p>No OpenShift as aplicações são organizadas em projetos. Os projetos permitem que os usuários agrupem seus aplicativos em grupos lógicos. Eles também servem outras funções úteis relacionadas à segurança. Para especificar um comando a ser executado em um projeto específico, independentemente do seu projeto atual, use o parâmetro <code>-n</code> com o nome do projeto. Essa é uma opção útil quando você está escrevendo scripts que usam o comando <code>oc</code> e atuam em vários projetos. Também é uma boa prática em geral. Para criar um projeto, você precisa executar o comando <code>oc new-project</code> e fornecer um nome para o projeto. Para o seu primeiro projeto, use <code>image-uploader</code> como o nome do projeto:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc new-project image-uploader --display-name<span class="o">=</span><span class="s1">&#39;Image Uploader Project&#39;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc new-project image-uploader --display-name<span class="o">=</span><span class="s1">&#39;Image Uploader Project&#39;</span>
 </span></span></code></pre></div><blockquote>
 <p>NOTA: Você poderá encontrar na documentação todos os recursos do comando <code>oc</code> em <strong><a href="https://goo.gl/Y3soGH">https://goo.gl/Y3soGH</a></strong>.</p>
 </blockquote>
@@ -565,51 +565,51 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <li>O local onde estará o código-fonte do aplicativo - o OpenShift pegará esse código-fonte e o combinará com o <code>builder image</code> Golang para criar uma imagem personalizada.</li>
 </ul>
 <p>Seguindo as informações acima vamos organizar como será o projeto:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc new-app <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>&gt; --image-stream<span class="o">=</span>golang <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>&gt; --code<span class="o">=</span>https://github.com/lobocode/image-uploader.git <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>&gt; --name<span class="o">=</span>app-cli
-</span></span><span class="line"><span class="cl">...
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc new-app <span class="se">\
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="se"></span>&gt; --image-stream<span class="o">=</span>golang <span class="se">\
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="se"></span>&gt; --code<span class="o">=</span>https://github.com/lobocode/image-uploader.git <span class="se">\
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="se"></span>&gt; --name<span class="o">=</span>app-cli
+</span></span><span class="line"><span class="ln">5</span><span class="cl">...
 </span></span></code></pre></div><p>A saída prevista será algo mais ou menos assim:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">--&gt; Success
-</span></span><span class="line"><span class="cl">Build scheduled, use <span class="s1">&#39;oc logs -f bc/cli-app&#39;</span> to track its progress.
-</span></span><span class="line"><span class="cl">Run <span class="s1">&#39;oc status&#39;</span> to view your app.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">--&gt; Success
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Build scheduled, use <span class="s1">&#39;oc logs -f bc/cli-app&#39;</span> to track its progress.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Run <span class="s1">&#39;oc status&#39;</span> to view your app.
 </span></span></code></pre></div><p>Agora que implementamos o aplicativo, precisaremos acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado <em>service</em>, que é vinculado para fornecer acesso do aplicativo aos usuários:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/deployanapplication.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/deployanapplication.png#center"></p>
 <p>Um <em>service</em> usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você poderá visualizar informações sobre o service app-cli executando o comando <code>oc describe svc/app-cli</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc describe svc/app-cli
-</span></span><span class="line"><span class="cl">Name:	app-cli
-</span></span><span class="line"><span class="cl">Namespace:	image-uploader
-</span></span><span class="line"><span class="cl">Labels:	<span class="nv">app</span><span class="o">=</span>app-cli
-</span></span><span class="line"><span class="cl">Selector:	<span class="nv">app</span><span class="o">=</span>app-cli,deploymentconfig<span class="o">=</span>app-cli
-</span></span><span class="line"><span class="cl">Type:	ClusterIP
-</span></span><span class="line"><span class="cl">IP:	172.30.90.167
-</span></span><span class="line"><span class="cl">Port:	8080-tcp	8080/TCP
-</span></span><span class="line"><span class="cl">Endpoints:
-</span></span><span class="line"><span class="cl">Session Affinity:	None
-</span></span><span class="line"><span class="cl">No events.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">$ oc describe svc/app-cli
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">Name:	app-cli
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">Namespace:	image-uploader
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">Labels:	<span class="nv">app</span><span class="o">=</span>app-cli
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">Selector:	<span class="nv">app</span><span class="o">=</span>app-cli,deploymentconfig<span class="o">=</span>app-cli
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">Type:	ClusterIP
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">IP:	172.30.90.167
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">Port:	8080-tcp	8080/TCP
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">Endpoints:
+</span></span><span class="line"><span class="ln">10</span><span class="cl">Session Affinity:	None
+</span></span><span class="line"><span class="ln">11</span><span class="cl">No events.
 </span></span></code></pre></div><p>Cada service recebe um endereço IP que só pode ser roteado a partir do cluster OpenShift. Outras informações mantidas incluem o endereço IP do service e as portas TCP para se conectar ao pod. A maioria dos componentes no OpenShift tem uma abreviação que pode ser usada em linha de comando para economizar tempo, e evitar nomes de componentes com erros ortográficos. O comando anterior usa <code>svc/app-cli</code> para obter informações sobre o service do aplicativo <code>app-cli</code>. As configurações do builder podem ser acessados com <code>bc/&lt;app-name&gt;</code> e as configurações de deployment com <code>dc/&lt;app-name&gt;</code>. Você pode encontrar todas as outras referências de comandos para o service na documentação do oc em <a href="https://docs.openshift.org/latest/cli_reference/get_started_cli.html">https://docs.openshift.org/latest/cli_reference/get_started_cli.html)</a>.</p>
 <p>Os services fornecem um gateway consistente para o deployment de seu aplicativo. Mas o endereço IP de um service estará disponível apenas no cluster do OpenShift. Para conectar os usuários aos seus aplicativos e fazer o DNS funcionar corretamente, você precisa de mais um componente no aplicativo. Em seguida, criaremos uma rota para expor o <code>app-cli</code> externamente no seu cluster. Quando você instala seu cluster, um dos serviços criados é o <a href="https://en.wikipedia.org/wiki/HAProxy">HAProxy</a> que fica em execução em um contêiner. O HAProxy é um software open-source de balanceamento de carga. Para criar uma rota para o nosso aplicativo <code>app-cli</code>, execute o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">oc expose svc/app-cli
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">oc expose svc/app-cli
 </span></span></code></pre></div><p>A URL de cada aplicativo usa o seguinte formato:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">&lt;application-name&gt;-&lt;project-name&gt;.&lt;cluster-app-domain&gt;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">&lt;application-name&gt;-&lt;project-name&gt;.&lt;cluster-app-domain&gt;
 </span></span></code></pre></div><p>Neste artigo, especificamente na instalação do OpenShift, especificamos o domínio <code>aplicativo.192,168.100.2.nip.io</code>. Por padrão, todos os aplicativos no OpenShift estarão disponíveis usando o protocolo HTTP. Quando você coloca tudo isso junto, a URL do <code>app-cli</code> deve ser o seguinte:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http://app-cli-image-uploader.apps.192.168.100.2.nip.io
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">http://app-cli-image-uploader.apps.192.168.100.2.nip.io
 </span></span></code></pre></div><p>Você poderá obter mais informações sobre a rota que acabou de criar, executando o comando <code>oc describe route/app-cli</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc describe route/app-cli
-</span></span><span class="line"><span class="cl">Name:		app-cli
-</span></span><span class="line"><span class="cl">Namespace:		image-uploader
-</span></span><span class="line"><span class="cl">Created:		About an hour ago
-</span></span><span class="line"><span class="cl">Labels:		<span class="nv">app</span><span class="o">=</span>app-cli
-</span></span><span class="line"><span class="cl">Annotations:		openshift.io/host.generated<span class="o">=</span><span class="nb">true</span>
-</span></span><span class="line"><span class="cl">Requested Host:		app-cli-image-uploader.apps.192.168.100.2.nip.io
-</span></span><span class="line"><span class="cl">Path:					&lt;none&gt;
-</span></span><span class="line"><span class="cl">TLS Termination:		&lt;none&gt;
-</span></span><span class="line"><span class="cl">Insecure Policy:		&lt;none&gt;
-</span></span><span class="line"><span class="cl">Endpoint Port:		8080-tcp
-</span></span><span class="line"><span class="cl">Service:		app-cli
-</span></span><span class="line"><span class="cl">Weight:		<span class="m">100</span> <span class="o">(</span>100%<span class="o">)</span>
-</span></span><span class="line"><span class="cl">Endpoints:	10.129.1.112:8080
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">$ oc describe route/app-cli
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">Name:		app-cli
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">Namespace:		image-uploader
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">Created:		About an hour ago
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">Labels:		<span class="nv">app</span><span class="o">=</span>app-cli
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">Annotations:		openshift.io/host.generated<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">Requested Host:		app-cli-image-uploader.apps.192.168.100.2.nip.io
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">Path:					&lt;none&gt;
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">TLS Termination:		&lt;none&gt;
+</span></span><span class="line"><span class="ln">10</span><span class="cl">Insecure Policy:		&lt;none&gt;
+</span></span><span class="line"><span class="ln">11</span><span class="cl">Endpoint Port:		8080-tcp
+</span></span><span class="line"><span class="ln">12</span><span class="cl">Service:		app-cli
+</span></span><span class="line"><span class="ln">13</span><span class="cl">Weight:		<span class="m">100</span> <span class="o">(</span>100%<span class="o">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">Endpoints:	10.129.1.112:8080
 </span></span></code></pre></div><p>A saída informa as configurações de host adicionadas ao HAProxy, o service associado à rota, e os endpoints para o service se conectar às solicitações para a rota. Agora que criamos a rota para o aplicativo, verificaremos se está funcional em um navegador Web:</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/imageuploader1.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/imageuploader1.png#center"></p>
 <p>No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar os aplicativos:</p>
@@ -631,10 +631,10 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 </blockquote>
 <p>O valor <em>latest</em> se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash <a href="https://en.wikipedia.org/wiki/SHA-2">SHA256</a> exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash <a href="https://en.wikipedia.org/wiki/SHA-2">SHA256</a> é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes <a href="https://en.wikipedia.org/wiki/SHA-2">SHA256</a> são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.</p>
 <p>O comando <code>docker inspect</code> exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o <code>docker inspect</code> retornará uma longa lista de informações sobre o contêiner no formato <a href="https://pt.wikipedia.org/wiki/JSON">JSON</a>. Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o <code>docker ps</code>, é possível também obter o PID do contêiner app-cli usando o <code>docker inspect</code>, conforme demonstrado no exemplo a seguir:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># docker inspect -f &#39;{{ .State.Pid }}&#39; fae9e245e6a7 4470</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># docker inspect -f &#39;{{ .State.Pid }}&#39; fae9e245e6a7 4470</span>
 </span></span></code></pre></div><p>O <code>Property accessors</code> é uma maneira de descrever e acessar uma parte específica de dados em um conjunto de dados JSON. (Você pode aprender mais sobre em <a href="https://goo.gl/ZY9vNt">https://goo.gl/ZY9vNt</a>.) É possível executar o docker inspect &lt;ID do contêiner&gt; no node do aplicativo para ver todos os dados disponíveis no Docker sobre um contêiner em execução.</p>
 <p>Se você excluir o pode app-cli ou parar o contêiner usando o docker diretamente, o OpenShift criará um novo contêiner usando a mesma imagem e configuração, mas terá um PID diferente. O PID também será alterado se você reiniciar o node do aplicativo ou fizer redeploy dos seus aplicativos. De forma semelhante, o ID do contêiner será alterado nas mesmas circunstâncias. Estes não são valores permanentes no seu node. Para iniciar uma sessão de shell interativa em um contêiner em execução, edite o seguinte comando para fazer referência ao ID do seu contêiner:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># docker exec -it fae9e245e6a7 bash</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># docker exec -it fae9e245e6a7 bash</span>
 </span></span></code></pre></div><p>A opção <code>-i</code> fornece uma sessão de usuário interativa, <code>-t</code> cria uma sessão <code>TTY</code> no contêiner e o <code>bash</code> inicia o programa terminal do shell bash no TTY que você criou no contêiner. Você entrou efetivamente no seu contêiner em execução. Em vez de apenas fornecer a saída do comando, o parâmetro interativo fornece um shell bash ativo.</p>
 <hr>
 <h3 id="compreendendo-o-processo">COMPREENDENDO O PROCESSO</h3>
@@ -701,14 +701,14 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <li>Os namespaces são semelhantes aos espelhos bidirecionais. De dentro do contêiner, apenas os recursos no namespace estão disponíveis. Mas com o ferramental adequado, você pode ver o que há em um namespace do sistema host.</li>
 </ul>
 <p>O exemplo a seguir lista todos os namespaces de app-cli com <code>lsns</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># lsns -p 4470</span>
-</span></span><span class="line"><span class="cl">   	NS TYPE NPROCS PID USER COMMAND
-</span></span><span class="line"><span class="cl"><span class="m">4026531837</span> user	254	<span class="m">1</span> root	/usr/lib/systemd/systemd --	switched-root --system --deserialize <span class="m">20</span>
-</span></span><span class="line"><span class="cl"><span class="m">4026532211</span> mnt	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
-</span></span><span class="line"><span class="cl"><span class="m">4026532212</span> uts	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
-</span></span><span class="line"><span class="cl"><span class="m">4026532213</span> pid	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
-</span></span><span class="line"><span class="cl"><span class="m">4026532420</span> ipc	<span class="m">13</span> <span class="m">3476</span> 1001	/usr/bin/pod
-</span></span><span class="line"><span class="cl"><span class="m">4026532423</span> net	<span class="m">13</span> <span class="m">3476</span> 1001	/usr/bin/pod
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># lsns -p 4470</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">   	NS TYPE NPROCS PID USER COMMAND
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="m">4026531837</span> user	254	<span class="m">1</span> root	/usr/lib/systemd/systemd --	switched-root --system --deserialize <span class="m">20</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="m">4026532211</span> mnt	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="m">4026532212</span> uts	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="m">4026532213</span> pid	<span class="m">12</span> <span class="m">4470</span> <span class="m">1000080000</span> httpd -D FOREGROUND
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="m">4026532420</span> ipc	<span class="m">13</span> <span class="m">3476</span> 1001	/usr/bin/pod
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="m">4026532423</span> net	<span class="m">13</span> <span class="m">3476</span> 1001	/usr/bin/pod
 </span></span></code></pre></div><p>Como você pode ver, os cinco namespaces que o OpenShift usa para isolar aplicativos são:</p>
 <ul>
 <li>Mount - garante que apenas o conteúdo correto esteja disponível para os aplicativos no contêiner</li>
@@ -731,46 +731,46 @@ Para instalar o OpenShift, você criará um arquivo de configuração escrito em
 <p>O namespace <em>mount</em> isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace <em>mount</em> para o contêiner <em>app-cli</em>, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner <em>app-cli</em> personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.</p>
 <p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/namespace-mount.png#center" alt="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/namespace-mount.png#center"></p>
 <p>Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico <a href="">LVM</a> neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico <a href="">LV</a> quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando <code>lsblk</code>. O dispositivo LV que o contêiner <em>app-cli</em> usa para armazenamento é registrado nas informações do <code>docker inspect</code>. Para obter o LV para seu contêiner <em>app-cli</em>, execute o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker inspect -f <span class="s1">&#39;{{ .GraphDriver.Data.DeviceName }}&#39;</span> fae8e211e7a7
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">docker inspect -f <span class="s1">&#39;{{ .GraphDriver.Data.DeviceName }}&#39;</span> fae8e211e7a7
 </span></span></code></pre></div><p>Você receberá um valor semelhante ao <code>docker-253: 1-10125-8bd64caed0421039e83ee4f1cdcbcf25708e3da97081d43a99b6d20a3eb09c98</code>. Esse é o nome do LV que está sendo usado como o sistema de arquivos <em>root</em> do contêiner <em>app-cli</em>. O namespace <em>mount</em> para os contêineres das suas aplicações é criado em um namespace de montagem diferente do sistema operacional do node. Quando o daemon do docker é iniciado, ele cria seu próprio namespace <em>mount</em> para conter o conteúdo do sistema de arquivos para os contêineres que cria. Você pode confirmar isso executando <code>lsns</code> para o processo docker. Para obter o PID do processo docker principal, execute o seguinte comando <code>pgrep</code> (o processo <code>dockerd-current</code> é o nome do processo principal do daemon do docker):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># pgrep -f dockerd-current</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># pgrep -f dockerd-current</span>
 </span></span></code></pre></div><p>Depois de ter o PID do daemon do docker, você pode usar o comando <code>lsns</code> para visualizar seus namespaces. Você pode também usar uma ferramenta de linha de comando chamada <code>nsenter</code> caso deseje inserir um namespace ativo para outro aplicativo. É uma ótima ferramenta para usar quando você precisa solucionar problemas de um contêiner que não está funcionando como deveria. Para usar o <code>nsenter</code>, você dá a ele um PID para o container com a opção <code>--target</code> e, em seguida, instrui-o a respeito de quais namespaces você deseja inserir para esse PID:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ nsenter --target <span class="m">2385</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ nsenter --target <span class="m">2385</span>
 </span></span></code></pre></div><p>De dentro do namespace <em>mount</em> do docker, a saída do comando <code>mount</code> inclui o ponto de montagem do sistema de arquivos root do app-cli. O LV que o docker criou para o app-cli é montado no node do aplicativo em <code>/var/lib/docker/devicemapper/mnt/8bd64cae...</code>. Vá para esse diretório enquanto estiver no namespace <em>mount</em> do daemon do docker e você encontrará um diretório chamado <em>rootfs</em>. Este diretório é o sistema de arquivos da sua aplicação app-cli no contêiner:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># ls -al rootfs</span>
-</span></span><span class="line"><span class="cl">-rw-r--r--. 	 <span class="m">1</span> root root <span class="m">15759</span> Aug <span class="m">1</span> 17:24 anaconda-post.log
-</span></span><span class="line"><span class="cl">lrwxrwxrwx. 	 <span class="m">1</span> root root <span class="m">7</span> Aug <span class="m">1</span> 17:23 bin -&gt; usr/bin
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	 <span class="m">3</span> root root <span class="m">18</span> Sep <span class="m">14</span> 22:18 boot
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">43</span> Sep <span class="m">21</span> 23:19 dev
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	<span class="m">53</span> root root <span class="m">4096</span> Sep <span class="m">21</span> 23:19 etc
-</span></span><span class="line"><span class="cl">-rw-r--r--. 	 <span class="m">1</span> root root <span class="m">7388</span> Sep <span class="m">14</span> 22:16 help.1
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	 <span class="m">2</span> root	root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> home
-</span></span><span class="line"><span class="cl">lrwxrwxrwx.      <span class="m">1</span> root root <span class="m">7</span> Aug <span class="m">1</span> 17:23 lib -&gt; usr/lib
-</span></span><span class="line"><span class="cl">lrwxrwxrwx. 	 <span class="m">1</span> root root <span class="m">9</span> Aug <span class="m">1</span> 17:23 lib64 -&gt; usr/lib64
-</span></span><span class="line"><span class="cl">drwx------. 	 <span class="m">2</span> root root <span class="m">6</span> Aug <span class="m">1</span> 17:23 lost+found
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	 <span class="m">2</span> root root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> media
-</span></span><span class="line"><span class="cl">drwxr-xr-x.      <span class="m">2</span> root root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> mnt
-</span></span><span class="line"><span class="cl">drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">32</span> Sep <span class="m">14</span> 22:05 opt
-</span></span><span class="line"><span class="cl">...
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1"># ls -al rootfs</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">-rw-r--r--. 	 <span class="m">1</span> root root <span class="m">15759</span> Aug <span class="m">1</span> 17:24 anaconda-post.log
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">lrwxrwxrwx. 	 <span class="m">1</span> root root <span class="m">7</span> Aug <span class="m">1</span> 17:23 bin -&gt; usr/bin
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">drwxr-xr-x. 	 <span class="m">3</span> root root <span class="m">18</span> Sep <span class="m">14</span> 22:18 boot
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">43</span> Sep <span class="m">21</span> 23:19 dev
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">drwxr-xr-x. 	<span class="m">53</span> root root <span class="m">4096</span> Sep <span class="m">21</span> 23:19 etc
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">-rw-r--r--. 	 <span class="m">1</span> root root <span class="m">7388</span> Sep <span class="m">14</span> 22:16 help.1
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">drwxr-xr-x. 	 <span class="m">2</span> root	root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> home
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">lrwxrwxrwx.      <span class="m">1</span> root root <span class="m">7</span> Aug <span class="m">1</span> 17:23 lib -&gt; usr/lib
+</span></span><span class="line"><span class="ln">10</span><span class="cl">lrwxrwxrwx. 	 <span class="m">1</span> root root <span class="m">9</span> Aug <span class="m">1</span> 17:23 lib64 -&gt; usr/lib64
+</span></span><span class="line"><span class="ln">11</span><span class="cl">drwx------. 	 <span class="m">2</span> root root <span class="m">6</span> Aug <span class="m">1</span> 17:23 lost+found
+</span></span><span class="line"><span class="ln">12</span><span class="cl">drwxr-xr-x. 	 <span class="m">2</span> root root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> media
+</span></span><span class="line"><span class="ln">13</span><span class="cl">drwxr-xr-x.      <span class="m">2</span> root root <span class="m">6</span> Nov <span class="m">5</span> <span class="m">2016</span> mnt
+</span></span><span class="line"><span class="ln">14</span><span class="cl">drwxr-xr-x. 	 <span class="m">4</span> root root <span class="m">32</span> Sep <span class="m">14</span> 22:05 opt
+</span></span><span class="line"><span class="ln">15</span><span class="cl">...
 </span></span></code></pre></div><p>Entender como esse processo funciona e onde os artefatos são criados é importante quando você usa contêineres todos os dias. Do ponto de vista dos aplicativos em execução no contêiner app-cli, tudo o que está disponível para eles é o que está no diretório rootfs, porque o namespace <em>mount</em> criado para o contêiner isola seu conteúdo. Entender como os namespaces <em>mount</em> funcionam em um node e saber como inserir um namespace de contêiner manualmente é uma ferramenta inestimável para solucionar um problema de uma contêiner que não está funcionando como foi projetado. Por fim, ainda sobre o namespace <em>mount</em> pressione <code>Ctrl+D</code> para sair dele e retornar ao namespace padrão do node. A seguir vamos conhecer o namespace <em>UTS</em> .</p>
 <hr>
 <h3 id="o-namespace-uts">O NAMESPACE UTS</h3>
 <p>O namespace <em>UTS</em> ou  <em>Unix time sharing</em> permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace <em>UTS</em> não tem nada a ver com o gerenciamento do relógio do sistema. O namespace <em>UTS</em> é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando <code>uname -a</code> em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace <em>UTS</em> segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando <code>docker exec</code> com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># docker exec fae8e211e7a7 hostname</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># docker exec fae8e211e7a7 hostname</span>
 </span></span></code></pre></div><p>Se você escalar a sua aplicação, o container em cada pod terá um hostname único também. Para confirmar que cada contêiner possui um hostname exclusivo, efetue login no seu cluster como seu usuário desenvolvedor:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">oc login -u developer -p developer https://ocp1.192.168.100.1.nip.io:8443
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">oc login -u developer -p developer https://ocp1.192.168.100.1.nip.io:8443
 </span></span></code></pre></div><p>A ferramenta de linha de comando <code>oc</code> tem uma funcionalidade semelhante ao <code>docker exec</code>. Em vez de passar o ID para o contêiner, no entanto, você pode passar o pod no qual deseja executar o comando. Depois de efetuar login no seu cliente oc, dimensione sua aplicação para dois pods com o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">oc scale dc/app-cli --replicas<span class="o">=</span><span class="m">2</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">oc scale dc/app-cli --replicas<span class="o">=</span><span class="m">2</span>
 </span></span></code></pre></div><p>Isso causará uma atualização no deployment config da aplicação e acionará a criação de um novo pod. Você pode obter o nome do novo grupo executando o comando <code>oc get pods --show-all=false</code>. A opção <code>--show-all=false</code> impede a saída de pods em um estado Concluído, portanto, você vê apenas pods ativos na saída:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc get pods --show-all<span class="o">=</span><span class="nb">false</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc get pods --show-all<span class="o">=</span><span class="nb">false</span>
 </span></span></code></pre></div><p>Para obter o hostname de seu novo pod, use o comando <code>oc exec</code>. É semelhante ao <code>docker exec</code>, mas, em vez do ID de um contêiner, você usa o nome do pod para especificar onde deseja que o comando seja executado. O hostname do novo pod corresponde ao nome do pod, assim como o seu pod original:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc <span class="nb">exec</span> app-cli-1-9hsz1 hostname
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc <span class="nb">exec</span> app-cli-1-9hsz1 hostname
 </span></span></code></pre></div><p>Quando você está solucionando problemas a nível da aplicação, esse é um benefício incrivelmente útil fornecido pelo <em>namespace UTS</em>. Agora que você sabe como os hostnames funcionam nos contêineres, vamos partir para o namespace do PID.</p>
 <hr>
 <h3 id="o-namespace-pid">O NAMESPACE PID</h3>
 <p>Os PIDs são como um aplicativo envia sinais e informações para outros aplicativos, isolar PIDs visíveis em um contêiner apenas para os aplicativos nele contidos é um recurso de segurança importante. Isso é feito usando o <em>namespace PID</em>. Em um servidor Linux, o comando <code>ps</code> mostra todos os processos em execução, juntamente com seus PIDs associados no host. A opção &ndash;ppid limita a saída a um único PID e a qualquer processo filho que tenha gerado.</p>
 <p>Podemos usar o comando <code>ps</code> com a opção <code>--ppid</code> para visualizarmos os processos no node da aplicação. No entanto, acaba não sendo uma boa prática caso você deseje ver todos os PID&rsquo;s visíveis dentro do contêiner. A melhor alternativa neste caso, é usar o comando abaixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc <span class="nb">exec</span> app-cli ps
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ oc <span class="nb">exec</span> app-cli ps
 </span></span></code></pre></div><p>Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos próximos capítulos irei abordar sobre os services, como testar uma aplicação uma aplicação resiliente, compreender melhor o replication controller, labels e seletores, como escalar aplicações com auto-scaling e metrics, como configurar um storage persistente com nfs e lvm, operações de segurança com SElinux, quotas, cgroups, e compreender melhor sobre HAPROXY. Por fim, irei concluir este artigo com a integração de tudo isso ao Jenkins.</p>
 <hr>
 <h3 id="referências">Referências</h3>
