@@ -10,7 +10,7 @@ author = "Vitor Lobo Ramos"
 
 ![Samba](https://cdn-icons-png.flaticon.com/512/1183/1183618.png#center)
 
-Streams foram adicionadas no Java 8 complicando substancialmente a tarefa de escolher o tipo de retorno mais adequado para um método que retornasse uma sequência. Afinal, agora podemos usar as streams para retornar uma sequência de elementos. No entanto, escrever um bom código exige uma combinação sensata de streams e iterações. Outro ponto é que utilizar excessivamente as streams faz com que os programas fiquem difíceis de se ler e de fazer manutenção. Se uma API retornar apenas uma stream e alguns usuários quiserem fazer iterações sobre a sequência retornando com um loop `for-each`, eles ficarão bem chateados, visto que a interface Stream falha em não estender a `Iterable`. Infelizmente, não existe uma solução paliativa boa para esse problema. À primeira vista, pode parecer que passar referência de método para o método iterator da `Stream` poderia funcionar. Vamos ver essa gambeta de perto:
+Streams foram adicionadas no Java 8 complicando substancialmente a tarefa de escolher o tipo de retorno mais adequado para um método que retornasse uma sequência. Afinal, agora podemos usar as streams para retornar uma sequência de elementos. No entanto, escrever um bom código exige uma combinação sensata de streams e iterações. Outro ponto é que utilizar excessivamente as streams faz com que os programas fiquem difíceis de se ler e de fazer manutenção. Se uma API retornar apenas uma stream e alguns usuários quiserem fazer iterações sobre a sequência retornando com um loop `for-each`, eles ficarão bem chateados visto que a interface Stream falha em não estender a `Iterable`. Infelizmente, não existe uma solução paliativa boa para esse problema. À primeira vista, pode parecer que passar referência de método para o método iterator da `Stream` poderia funcionar. Vamos ver essa gambeta de perto:
 
 ```java
 // Nao compilará por causa das limitações de inferência de tipo do Java
@@ -28,7 +28,7 @@ for (ProcessHandle ph : (Iterable<ProcessHandle>)){
 }
 ```
 
-O código acima funciona, a mão da gambiarra treme quando desejamos forçar seu funcionamento do código ainda que seja pouco transparente e de fácil leitura e compreensão de seu funcionamento. Para resolver melhor o código acima, vamos pelo caminho feliz usando a interface Collection. A interface Collection é um subtipo da `Iterable` e tem um método stream , portanto, possibilita tanto a iteração como o acesso em stream. À vista disso, a Collection ou um subtipo apropriado é geralmente o melhor tipo de retorno para um método público que retorne uma sequência . Os arrays também possibilitam uma iteração fácil e um acesso em stream a partir dos métodos `Arrays.asList` e `Stream.of`. Se a sequência que você está retornando for pequena o bastante para se encaixar facilmente na memória, provavelmente é melhor você retornar uma das implementações padrões da coleção, tais como a `ArrayList` ou `HashSet` . Porém, não armazene uma sequência grande na memória somente para a retornar como uma coleção .
+O código acima funciona, e a mão invisível da gambiarra treme quando desejamos forçar seu funcionamento. O problema é que o código fica muito pouco legível, fica bem porco mesmo. Então a sugestão que indico é ir pelo caminho feliz usando a interface Collection. A interface Collection é um subtipo da `Iterable` e tem um método stream , portanto, possibilita tanto a iteração como o acesso em stream. À vista disso, a Collection ou um subtipo apropriado é geralmente o melhor tipo de retorno para um método público que retorne uma sequência. Os arrays também possibilitam uma iteração fácil e um acesso em stream a partir dos métodos `Arrays.asList` e `Stream.of`. Se a sequência que você está retornando for pequena o bastante para se encaixar facilmente na memória, provavelmente é melhor você retornar uma das implementações padrões da coleção, tais como a `ArrayList` ou `HashSet` . Porém, não armazene uma sequência grande na memória somente para a retornar como uma coleção .
 
 
 ![Samba](https://d1k5j68ob7clqb.cloudfront.net/processed/thumb/L83YqX0Y7RbK4Rogb0.png#floatleft)
@@ -436,15 +436,15 @@ Abaixo selecionei alguma perguntas e respostas em entrevistas relacionadas ao as
 
 **LinkedList** é a implementação de lista duplamente vinculada da interface de lista, pode ser iterado na direção reversa usando `descendingIterator()` e pode conter elementos duplicados. Além disso o `LinkedList` mantém a ordem de inserção, não é sincronizado e a manipulação de `LinkedList` é rápida porque nenhum deslocamento precisa ocorrer. E por fim, `LinkedList` pode ser usado como lista, pilha ou fila.
 
-## 2. Quais são as vantagens e desvantagens das listas encadeadas?
+## 2. Quais são as vantagens e desvantagens das LinkedList?
 
-**Vantagens das listas encadeadas em Java:**
+**Vantagens das LinkedList em Java:**
 
-As listas encadeadas têm operação de inserção e exclusão de tempo constante em qualquer posição. Arrays requerem tempo `O(n)O(n)` para fazer a mesma coisa, porque você teria que "deslocar" todos os itens subseqüentes em 1 índice. As listas encadeadas podem continuar a se expandir enquanto houver espaço na máquina. Arrays (em linguagens de baixo nível) devem ter seu tamanho especificado com antecedência. Mesmo se o array for dinâmico como ArrayLists que se redimensionam automaticamente quando ficam sem espaço, a operação para redimensionar um array dinâmico tem um alto custo que pode tornar uma única inserção inesperadamente cara. 
+As LinkedList têm operação de inserção e exclusão em qualquer posição. Arrays requerem tempo `O(n)O(n)` para fazer a mesma coisa, porque você teria que "deslocar" todos os itens subseqüentes em 1 índice. As LinkedList podem continuar a se expandir enquanto houver espaço na máquina. Arrays (em linguagens de baixo nível) devem ter seu tamanho especificado com antecedência. Mesmo se o array for dinâmico como é o caso das `ArrayLists` que se redimensionam automaticamente quando ficam sem espaço, a operação para redimensionar um array dinâmico tem um alto custo que pode tornar uma única inserção inesperadamente cara. 
 
-**Desvantagens das listas encadeadas em Java:**
+**Desvantagens das LinkedList em Java:**
 
-Para acessar ou editar um item em uma lista encadeada, você deve levar `O(i)O(i)` tempo para caminhar do início da lista até o iésimo item (a menos, é claro, que você já tenha um ponteiro direto para esse item) . As matrizes têm pesquisas e edições de tempo constante no item iith. 
+Para acessar ou editar um item em uma lista encadeada, você deve levar `O(i)O(i)` de tempo para caminhar do início da lista até o iésimo item (a menos, é claro, que você já tenha um ponteiro direto para esse item). 
 
 ## 3. Quantos tipos de LinkedLists existem?
 
@@ -458,15 +458,15 @@ As LinkedLists podem ser categorizadas em três tipos:
 
 ## 4. Como descobrir se a LinkedList tem um loop?
 
-Se mantivermos dois ponteiros e incrementarmos um ponteiro após processar dois nós e outro após processar cada nó. É provável que encontremos uma situação em que ambos os ponteiros estarão apontando para o mesmo nó. Isso só acontecerá se a lista encadeada tiver um loop.
+Se mantivermos dois ponteiros e incrementarmos um ponteiro após processar dois nodes e outro após processar cada node. É provável que encontremos uma situação em que ambos os ponteiros estarão apontando para o mesmo node. Isso só acontecerá se a lista encadeada tiver um loop.
 
 ## 5. Qual é a diferença entre Singly Linked List e Doubly Linked List no Java?
 
-A principal diferença entre uma lista vinculada individualmente e uma lista duplamente vinculada é a capacidade de percorrer. Em uma única lista vinculada, o nó aponta apenas para o próximo nó e não há ponteiro para o nó anterior. O que significa que você não pode voltar em uma lista encadeada individualmente. Por outro lado, a lista duplamente vinculada mantém dois ponteiros, para o nó seguinte e anterior, o que permite navegar em ambas as direções em qualquer lista vinculada.
+A principal diferença entre uma Singly Linked List e uma Doubly Linked List é a capacidade de percorrer de cada uma delas. Em uma Singly Linked List, o node aponta apenas para o próximo node e não há ponteiro para o node anterior. O que significa que você não pode voltar em uma Singly Linked List. Por outro lado, a Doubly Linked List mantém dois ponteiros, para o nó seguinte e anterior, o que permite navegar em ambas as direções em qualquer lista vinculada.
 
-## 6. Quais interfaces são implementadas por Linked List em Java?
+## 6. Quais interfaces são implementadas por LinkedList em Java?
 
-As seguintes interfaces são implementadas por Linked lists:
+As seguintes interfaces são implementadas por Linkedlists:
 
 * Serializable - 
 * Queue - 
@@ -477,17 +477,17 @@ As seguintes interfaces são implementadas por Linked lists:
 * Iterable - 
 
 ## 7. Qual a diferença entre LinkedList e Array?
-* **Tamanho:** Como os dados só podem ser armazenados em blocos contíguos de memória em um array, seu tamanho não pode ser alterado em tempo de execução devido ao risco de sobrescrever outros dados. No entanto, em uma LinkedList, cada nó aponta para o próximo, de modo que os dados possam existir em endereços dispersos (não contíguos); isso permite um tamanho dinâmico que pode mudar em tempo de execução. 
-* **Alocação de memória:** Para arrays em tempo de compilação e em tempo de execução para LinkedList. mas uma matriz alocada dinamicamente também aloca memória em tempo de execução. 
-* **Eficiência de memória:** Para o mesmo número de elementos, as LinkedList usam mais memória, pois uma referência ao próximo nó também é armazenada junto com os dados. No entanto, a flexibilidade de tamanho em listas encadeadas pode fazer com que usem menos memória geral; isso é útil quando há incerteza sobre o tamanho ou há grandes variações no tamanho dos elementos de dados; A memória equivalente ao limite superior do tamanho deve ser alocada (mesmo que nem toda ela esteja sendo usada) durante o uso de arrays, enquanto as listas encadeadas podem aumentar seus tamanhos passo a passo proporcionalmente à quantidade de dados.
-* **Tempo de execução:** Qualquer elemento em uma matriz pode ser acessado diretamente com seu índice. No entanto, no caso de uma LinkedList, todos os elementos anteriores devem ser percorridos para chegar a qualquer elemento. Além disso, uma melhor localidade de cache em arrays (devido à alocação de memória contígua) pode melhorar significativamente o desempenho. Como resultado, algumas operações (como modificar um determinado elemento) são mais rápidas em arrays, enquanto outras (como inserir/excluir um elemento nos dados) são mais rápidas em listas encadeadas.
-* **Inserção:** Em uma matriz, a operação de inserção leva mais tempo, mas em uma LinkedList essas operações são rápidas. Por exemplo, se quisermos inserir um elemento na matriz na posição final da matriz e a matriz estiver cheia, copiamos a matriz em outra matriz e podemos adicionar um elemento, enquanto se a lista vinculada estiver cheia, encontramos o último nó e torná-lo ao lado do novo nó.
-* **Dependência:** Em uma matriz, os valores são independentes uns dos outros, mas no caso de LinkedList, os nós são dependentes uns dos outros. um nó é dependente de seu nó anterior. Se o nó anterior for perdido, não poderemos encontrar os próximos nós subsequentes. 
+* **Tamanho:** Como os dados só podem ser armazenados em blocos contíguos de memória em um array, seu tamanho não pode ser alterado em tempo de execução devido ao risco de sobrescrever outros dados. No entanto, em uma `LinkedList`, cada nó aponta para o próximo, de modo que os dados possam existir em endereços dispersos (não contíguos); isso permite um tamanho dinâmico que pode mudar em tempo de execução. 
+* **Alocação de memória:** Para arrays em tempo de compilação e em tempo de execução para `LinkedList`. mas uma matriz alocada dinamicamente também aloca memória em tempo de execução. 
+* **Eficiência de memória:** Para o mesmo número de elementos, as `LinkedList` usam mais memória, pois uma referência ao próximo nó também é armazenada junto com os dados. No entanto, a flexibilidade de tamanho em listas encadeadas pode fazer com que usem menos memória geral; isso é útil quando há incerteza sobre o tamanho ou há grandes variações no tamanho dos elementos de dados; A memória equivalente ao limite superior do tamanho deve ser alocada (mesmo que nem toda ela esteja sendo usada) durante o uso de arrays, enquanto as listas encadeadas podem aumentar seus tamanhos passo a passo proporcionalmente à quantidade de dados.
+* **Tempo de execução:** Qualquer elemento em uma matriz pode ser acessado diretamente com seu índice. No entanto, no caso de uma `LinkedList`, todos os elementos anteriores devem ser percorridos para chegar a qualquer elemento. Além disso, uma melhor localidade de cache em arrays (devido à alocação de memória contígua) pode melhorar significativamente o desempenho. Como resultado, algumas operações (como modificar um determinado elemento) são mais rápidas em arrays, enquanto outras (como inserir/excluir um elemento nos dados) são mais rápidas em listas encadeadas.
+* **Inserção:** Em uma matriz, a operação de inserção leva mais tempo, mas em uma `LinkedList` essas operações são rápidas. Por exemplo, se quisermos inserir um elemento na matriz na posição final da matriz e a matriz estiver cheia, copiamos a matriz em outra matriz e podemos adicionar um elemento, enquanto se a lista vinculada estiver cheia, encontramos o último nó e torná-lo ao lado do novo nó.
+* **Dependência:** Em uma matriz, os valores são independentes uns dos outros, mas no caso de `LinkedList`, os nós são dependentes uns dos outros. um nó é dependente de seu nó anterior. Se o nó anterior for perdido, não poderemos encontrar os próximos nós subsequentes. 
 
 ## 8. Qual a diferença entre LinkedList e Array List?
 
 * **No LinkedList**, as operações de inserção, adição e remoção são mais rápidas em comparação com os ArrayLists porque não há necessidade de redimensionar o LinkedList.
-* **LinkedList** é baseado na implementação dupla de LinkedList, por outro lado, os ArrayLists são baseados em arrays redimensionáveis dinamicamente.
+* **LinkedList** é baseado na implementação dupla de `LinkedList`, por outro lado, os ArrayLists são baseados em arrays redimensionáveis dinamicamente.
 * **LinkedList** consome mais memória do que ArrayList.
-* **ArrayList** fornece acesso aleatório a qualquer item, enquanto LinkedList fornece acesso sequencial aos itens.
-* **Em ArrayList**, o processo de manipulação é um pouco lento em comparação com LinkedList porque em ArrayList, quando um item é removido, várias alterações (mudança de itens) ocorrem.
+* **ArrayList** fornece acesso aleatório a qualquer item, enquanto `LinkedList` fornece acesso sequencial aos itens.
+* **Em ArrayList**, o processo de manipulação é um pouco lento em comparação com `LinkedList` porque em `ArrayList`, quando um item é removido, várias alterações (mudança de itens) ocorrem.
