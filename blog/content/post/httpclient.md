@@ -1,6 +1,6 @@
 +++
-title = "Java#Core - java.lang.OutOfMemoryError"
-description = "Como simular o java.lang.OutOfMemoryError"
+title = "Java#Core - HTTPClient"
+description = "Java HTTPClient raiz"
 date = 2022-12-08T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
 draft = true
