@@ -3,7 +3,7 @@ title = "Java#Core - Read and Write"
 description = "Leitura e escrita de arquivos em Java"
 date = 2022-12-08T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
-draft = true
+draft = false
 weight = 2
 author = "Vitor Lobo Ramos"
 +++
