@@ -47,9 +47,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 	at com.mkyong.JavaEatMemory.main(JavaEatMemory.java:20)
 ```
 
-Qual a utilidade de propositalmente gerar estes erros!? A de configurar a JVM para gerar um DUMP do erro e o analisar afim de escobrir onde e porque o erro foi estourado exatamente considerando que estamos tratando de uma aplicação consideravelmente grande. 
-
-Embora os dumps de heap sejam gerados apenas em resposta a um vazamento de memória detectado, você deve entender que gerar dumps de heap pode ter um impacto de desempenho grave em servidores. Ao gerar vários dumps do heap manualmente para análise de fuga de memória, certifique-se de que objetos significativos sejam deixados de fora entre os dois dumps do heap. Essa abordagem permite que as que você garanta a origem da fuga de memória. Heap dumps, que são snapshots da memória, guardam todo o conteúdo da memória em um arquivo .hprof. Podemos gerar este arquivo adicionando o seguinte parâmetro na JVM:
+A finalidade de simular este erro é a de configurar a JVM para gerar um DUMP do erro e o analisar.  Embora os dumps de heap sejam gerados apenas em resposta a um vazamento de memória detectado, você deve entender que gerar dumps de heap pode ter um impacto de desempenho grave em servidores. Ao gerar vários dumps do heap manualmente para análise de fuga de memória, certifique-se de que objetos significativos sejam deixados de fora entre os dois dumps do heap. Essa abordagem permite que as que você garanta a origem da fuga de memória. Heap dumps, que são snapshots da memória, guardam todo o conteúdo da memória em um arquivo .hprof. Podemos gerar este arquivo adicionando o seguinte parâmetro na JVM:
 
 ```bash
 -XX:+HeapDumpOnOutOfMemoryError
