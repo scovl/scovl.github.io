@@ -8,7 +8,7 @@ weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
-![Samba](https://cdn-icons-png.flaticon.com/512/1183/1183618.png#center)
+![Java](https://cdn-icons-png.flaticon.com/512/1183/1183618.png#center)
 
 Streams foram adicionadas no Java 8 complicando substancialmente a tarefa de escolher o tipo de retorno mais adequado para um método que retornasse uma sequência. Afinal, agora podemos usar as streams para retornar uma sequência de elementos. No entanto, escrever um bom código exige uma combinação sensata de streams e iterações. Outro ponto é que utilizar excessivamente as streams faz com que os programas fiquem difíceis de se ler e de fazer manutenção. Se uma API retornar apenas uma stream e alguns usuários quiserem fazer iterações sobre a sequência retornando com um loop `for-each`, eles ficarão bem chateados visto que a interface Stream falha em não estender a `Iterable`. Infelizmente, não existe uma solução paliativa boa para esse problema. À primeira vista, pode parecer que passar referência de método para o método iterator da `Stream` poderia funcionar. Vamos ver essa gambeta de perto:
 
@@ -31,7 +31,7 @@ for (ProcessHandle ph : (Iterable<ProcessHandle>)){
 O código acima funciona, e a mão invisível da gambiarra treme quando desejamos forçar seu funcionamento. O problema é que o código fica muito pouco legível, fica bem porco mesmo. Então a sugestão que indico é ir pelo caminho feliz usando a interface Collection. A interface Collection é um subtipo da `Iterable` e tem um método stream , portanto, possibilita tanto a iteração como o acesso em stream. À vista disso, a Collection ou um subtipo apropriado é geralmente o melhor tipo de retorno para um método público que retorne uma sequência. Os arrays também possibilitam uma iteração fácil e um acesso em stream a partir dos métodos `Arrays.asList` e `Stream.of`. Se a sequência que você está retornando for pequena o bastante para se encaixar facilmente na memória, provavelmente é melhor você retornar uma das implementações padrões da coleção, tais como a `ArrayList` ou `HashSet` . Porém, não armazene uma sequência grande na memória somente para a retornar como uma coleção .
 
 
-![Samba](https://d1k5j68ob7clqb.cloudfront.net/processed/thumb/L83YqX0Y7RbK4Rogb0.png#floatleft)
+![Java](https://d1k5j68ob7clqb.cloudfront.net/processed/thumb/L83YqX0Y7RbK4Rogb0.png#floatleft)
 
 Arrays não mudam automaticamente o tamanho em tempo de execução para acomodar elementos adicionais. Já a classe `ArrayList<T>` (pacote **[java.util]()**) fornece uma solução conveniente para esse problema — ela pode alterar dinamicamente seu tamanho para acomodar mais elementos. O T (por convenção) é um espaço reservado — ao declarar um novo `ArrayList`, substitua-o pelo tipo dos elementos que você deseja que o `ArrayList` armazene. Diferentemente de arrays convencionais que servem para armazenar diversos objetos e que é inicializado com um tamanho predefinido durante a instanciação, as collections são estruturas que processam um conjunto de dados que são encapsulados e os dados só são acessados por meio de métodos. Por exemplo, imagine que sua aplicação salva os dados em um objeto do tipo Pessoas. Você poderá armazenar vários objetos Pessoas em uma collection. O Java normalmente fornece uma interface, como `List` e uma ou várias implementações para essa interface, por exemplo, a classe `ArrayList` e `LinkedList`. Uma classe ou interface cuja declaração tem um ou mais parâmetros de tipo, é uma classe ou interface genérica. 
 
