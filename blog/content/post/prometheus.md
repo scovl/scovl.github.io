@@ -16,7 +16,7 @@ Time Series Database - banco de dados de série temporal (TSDB), é um banco de 
 
 Como a São Paulo recebe em média maior de chuvas por ano do que a de Pernambuco, nesse cenário parece que viajar em dezembro é uma boa a melhor escolha. Então você decide viajar em Dezembro, pega o avião, vai pra Pernambuco e ao chegar ao local, se surpreende com uma chuvarada que perdura por quatro dias seguidos. Com isso, você conclui que a probabilidade de escolher um destino ensolarado para dezembro poderia ter sido maior se você tivesse considerado as medições de chuva registradas ao longo do ano em vez de se basear apenas em uma média anual. Desta forma um padrão de chuvas seria revelado, conforme mostrado na imagem abaixo. 
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/tsdb1.png#center)
+![img#center](./content/post/images/tsdb/tsdb1.png)
 
 Com esse tipo de coleta de dados ao longo do tempo (em série temporal), você poderia facilmente ver que em dezembro era muito provável que tivesse férias ensolaradas em São Paulo do que em Pernambuco, embora isso certamente não fosse verdade para uma viagem em setembro. Os gráficos acima mostram as medições de precipitação mensal de Pernambuco e de São Paulo. Observe a redução acentuada nas chuvas em São Paulo, indo de setembro a outubro e de dezembro a janeiro. Apesar de uma precipitação média anual mais alta em São Paulo, seus meses de inverno de dezembro e janeiro são geralmente mais secos do que aqueles meses em Pernambuco. Essa analogia sugere insights úteis quando certos tipos de dados são registrados ao longo do tempo. A variedade de situações em que as séries temporais são úteis é ampla e crescente, especialmente à medida que novas tecnologias estão produzindo mais dados desse tipo e novas ferramentas tornam viável o uso de dados de séries temporais em grande escala e em novas aplicações.
 
@@ -131,7 +131,7 @@ O que está ocorrendo aqui?
 
 ### Arquitetura
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/arch.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/prometheus/arch.png#center)
 
 O Prometheus é composto por diversos componentes mas que boa parte deles sao opcionais.Seu principal método de coleta de dados, consiste em extrair métricas de aplicativos e serviços instrumentados, que expõem métricas em um formato de texto simples por meio de endpoints HTTP. A arquitetura do Prometheus facilita a descoberta e a extração de dados em diferentes endpoints. O servidor Prometheus lida com a raspagem e o armazenamento de métricas. O servidor gerencia o agendamento de trabalhos de monitoramento – consultando fontes de dados (chamadas “instâncias”) em uma frequência de pesquisa predefinida. Os trabalhos de monitoramento são configurados por meio de uma ou mais diretivas “scrape config”, gerenciadas por meio de um arquivo de configuração YAML que pode ser recarregado ao vivo usando um SIGHUP ou a API de gerenciamento.
 
