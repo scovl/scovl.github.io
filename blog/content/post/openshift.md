@@ -215,6 +215,7 @@ Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/i
 
 Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório **[Extra Packages for Enterprise Linux - EPEL]()** e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:
 
+
 ```bash
 sudo yum -y install epel-release centos-release-openshift-origin36
 ```

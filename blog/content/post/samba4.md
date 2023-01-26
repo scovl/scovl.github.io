@@ -1,7 +1,7 @@
 +++
 title = "Ops - Samba 4"
-description = "Um novo horizonte"
-date = 2020-04-19T17:31:45-03:00
+description = "Um novo horizonte [ATUALIZADO]"
+date = 2023-01-01T00:00:00Z
 tags = ["linux,samba,fedora"]
 draft = false
 weight = 5
@@ -80,7 +80,7 @@ Nasce o **[Samba 4.0](https://www.samba.org/samba/history/samba-4.0.0.html)**. O
 
 ![Samba](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/samba4.png#center)
 
-Possibilidades com Samba4:
+Possibilidades com Samba 4:
 
 * Criar um AD Completo
 * Criar um controlador de domínio Principal
@@ -275,11 +275,11 @@ Abaixo temos uma figura para demonstrar todos os recursos que o Active Directory
 
 A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco de dados, este banco é conhecido com **NTDS.dit** e esta localizado na pasta %SystemRoot%\NTDS\ntds.dit em uma instalação default do AD. Este diretório chamado de NTDS apenas existirá nos servidores que tenham a função de Domain Controllers (DC’s). Neste diretório existirão os arquivos relacionados abaixo. Durante o processo de instalação do Active Directory **da Microsoft**, são criados cinco arquivos:
 
-* Ntds.dit - Arquivo de banco de dados do AD
-* Edb.log - Arquivo onde são armazenados todas as informações de log das transações feitas no AD.
-* Edb.chk - Arquivo de checkpoint controla transações no arquivo Edb.log já foram comitadas no arquivo Ntds.dit.
-* Res1.log - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.
-* Res2.log - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.
+* **Ntds.dit** - Arquivo onde são armazenadas todas as informações do AD.
+* **Edb.log** - Arquivo de log onde são armazenadas todas as transações que estão sendo realizadas no arquivo Ntds.dit.
+* **Edb.chk** - Arquivo de verificação de integridade do arquivo Ntds.dit.
+* **Res1.log** - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.
+* **Res2.log** - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.
 
 Bem, agora sabemos que a estrutura lógica do AD é gravada em uma base de dados física chamada de Ntds.dit, porém Domain Controller é Active Directory? **Claro que não**, no desenho abaixo demonstramos claramente a diferença entre AD (estrutura lógica do AD) e DC (Servidor que contém uma cópia do NTDS.dit do AD). No desenho abaixo imaginemos uma construção, estamos construindo um grande salão de festas. Imaginem que nosso teto (retângulo azul) é nosso Active Directory, porém precisamos apoiar este teto em pilares (cilindros vermelhos), caso contrário nosso teto irá desabar, certo?
 
@@ -380,8 +380,8 @@ Lista de abreviaturas e siglas:
 * **LDAP**: Lightweight Directory Access Protocol (ou Protocolo Leve de Acesso a
 Diretórios).
 * **AD**: Active Directory (ou Diretório Ativo).
-* **DC**: Domain Controler.
-* **RFC**: Request for Comments (ou Pedido para Comentários).
+* **DC**: Domain Controller (ou Controlador de Domínio).
+* **RFC**: Request for Comments (ou Pedido de Comentários).
 * **DFS**: Distributed File System (ou Sistema de Arquivo Distribuído).
 * **DNS**: Domain Name System (ou Sistema de Nomes de Domínio).
 * **NetBIOS**: Network Basic Input/Output System (ou Sistema Básico de Entrada/Saída
@@ -440,7 +440,7 @@ Instale o pacote Samba usando o comando:
 sudo apt-get install samba
 ```
 
-Configure o arquivo de configuração do Samba. O arquivo de configuração padrão é o /etc/samba/smb.conf. Pode ser necessário fazer algumas modificações neste arquivo dependendo da sua configuração de rede.
+Configure o arquivo de configuração do Samba. O arquivo de configuração padrão é o `/etc/samba/smb.conf`. Pode ser necessário fazer algumas modificações neste arquivo dependendo da sua configuração de rede.
 
 Adicione usuários ao samba com o comando:
 ```bash
@@ -740,6 +740,7 @@ Domain=[TESTE] OS=[Unix] Server=[Samba 4.1.17-Debian]
 ---
 
 ### Compartilhamento com o servidor de impressao
+
 Você poderá compartilhar as impressoras já configurados com o CUPS mas, tenha em mente que o Samba comunica com o CUPS via soquetes, portanto, você não precisa configurar qualquer permissão especial, além de uma diretiva Listen para o socket CUPS. Criaremos um diretório de **[spool](https://pt.wikipedia.org/wiki/Spooling)** de impressão, e definir as permissões corretamente. Este é destino onde o Samba irá armazenar arquivos temporários relacionados para imprimir documentos:
 
 ```bash
@@ -773,6 +774,7 @@ sudo mkdir -p /usr/local/samba/var/print/{COLOR,IA64,W32ALPHA,W32MIPS,W32PPC,W32
 ```
 
 E novamente configurar no smb.conf:
+
 ```bash
 [print$]
     comment = Point and Print Printer Drivers
@@ -781,6 +783,7 @@ E novamente configurar no smb.conf:
 ```
 
 Explicando as opções acima:
+
 * **[print$]** é o nome do compartilhamento de impressão.
 * **path = /usr/local/samba/var/print** - é o diretório onde o Samba irá armazenar os arquivos temporários.
 * **read only = No** - significa que os clientes do Windows podem imprimir para este compartilhamento.
@@ -852,7 +855,7 @@ Agora vamos à explicação de cada variável a cima:
 
 ---
 
-# Auditando acessos 
+## Auditando acessos 
 
 O Samba oferece também um recurso de geração de log. Ele pode ser ativado adicionando as opções abaixo na seção [global] do smb.conf:
 
@@ -1234,10 +1237,10 @@ sudo samba-tool domain classicupgrade --dbdir=root/backup/var/lib/samba/ --use-x
 
 Entendendo um pouco o faz cada parâmetro:
 
-* **classicupgrade**:  A intenção desta função é a de fazer uma substituição completa de um domínio do Samba em estilo NT4 existente. É possível fazer a conversão e os usuários e máquinas vão simplesmente re-conectar à nova instalação AD Samba sem a necessidade manual deste procedimento.
-* **--dbdir**: Caminho para o diretório que contém os arquivos de banco de dados tdb.
-* **--use-xattr**: Usar o suporte ao sistema de arquivos subjacente para atributos estendidos.
-* **--realm**: Você pode especificar o domínio na linha de comando, se ele já não estiver especificado no arquivo smb.conf do Samba3, no final adicionamos a localização do arquivo smb.conf.
+* **classicupgrade**:  O comando classicupgrade é usado para migrar um domínio Samba3 para um domínio Samba4. O comando classicupgrade é usado para migrar um domínio Samba3 para um domínio Samba4.
+* **--dbdir**: O diretório onde o banco de dados do Samba3 está localizado.
+* **--use-xattr**: O Samba4 usa xattr para armazenar metadados de arquivos. O Samba3 não suporta xattr, então você deve usar o parâmetro --use-xattr=yes para habilitar o suporte a xattr no Samba4.
+* **--realm**: O domínio do Samba3.
 * **--dns-backend**: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em **[Samba como um controlador de dominio](ihttp://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**.
 
 Apos migrar o domínio tive um problema na senha do meu usuário administrator com isso tive que setar a senha do mesmo novamente:
@@ -1534,13 +1537,17 @@ sudo vim /etc/samba/smb.conf
 E edite com as seguintes linhas:
 
 ```bash
-{% highlight bash %}
 [Profiles]
 path = /userprofiles
 read only = no
 valid users = lobo
-{% endhighlight %}
 ```
+
+Expliquei o que cada linha faz:
+* **[Profiles]**: Nome do compartilhamento.
+* **path**: Caminho do diretório.
+* **read only = no**: Permite que o usuário possa alterar o conteúdo do diretório.
+* **valid users = lobo**: Define o usuário que poderá acessar o diretório.
 
 Reinicie o samba:
 
@@ -1702,7 +1709,9 @@ Vamos supor que você já tenha um domínio primário configurado (que pode ser 
 192.168.1.6
 hostname: test.dominio.com
 ```
+
 **Controlador de domínio secundário:**
+
 ```bash
 192.168.1.5
 hostname: test1.dominio.com
@@ -1720,6 +1729,14 @@ Para preparar seu servidor de domínio secundário, você terá que configurar o
 ```bash
 sudo samba-tool domain join dominio.com DC -Uadministrator --realm=dominio.com --use-ntvfs
 ```
+
+Explicando o comando acima:
+* **samba-tool domain join** - Comando para promover o servidor ao domínio.
+* **dominio.com** - Nome do domínio.
+* **DC** - Tipo de servidor a ser promovido. Neste caso, um controlador de domínio.
+* **-Uadministrator** - Usuário com privilégios de administrador.
+* **--realm=dominio.com** - Nome do domínio.
+* **--use-ntvfs** - Modo de replicação. Neste caso, o NTFS.
 
 Assim, conseguiremos unir o servidor primário com o secundário. Agora, o próximo passo consiste em certificar que seu hostname do domínio secundário é resolúvel:
 
@@ -1832,11 +1849,11 @@ Aqui você deve ser capaz de ver os seus controladores de domínio disponíveis 
 
 Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em **[Samba tool](http://lobocode.github.io/2015/09/11/samba4.html#samba-tool)**. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.
 
-**Referências:**
-<dl>
-<dt><a href="https://www.packtpub.com/web-development/implementing-samba-4">Implementing Samba 4</a></dt>
-<dt><a href="http://www.amazon.com/Active-Directory-Cookbook-Cookbooks-OReilly/dp/1449361420">Active Directory Cookbook</a></dt>
-<dt><a href="https://openlibrary.org/books/OL12369507M/The_Definitive_Guide_to_Samba_4">The Definitive Guide to Samba 4</a></dt>
-<br/>
-</dl>
+---
+
+### Referências:
+
+* **[Implementing Samba 4](https://www.packtpub.com/web-development/implementing-samba-4)**
+* **[Active Directory Cookbook](http://www.amazon.com/Active-Directory-Cookbook-Cookbooks-OReilly/dp/1449361420)**
+* **[The Definitive Guide to Samba 4](https://openlibrary.org/books/OL12369507M/The_Definitive_Guide_to_Samba_4)**
 
