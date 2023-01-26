@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Ops - Samba 4 &middot; Vitor Lobo</title>
+        <meta name="description" content="Um novo horizonte [ATUALIZADO]">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.107.0">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Ops - Samba 4">
+<meta property="og:description" content="Um novo horizonte [ATUALIZADO]">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lobocode.github.io/2023/01/01/samba4/">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="https://lobocode.github.io/img/favicon.ico">
+    </head>
+    <body>
+        
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="lobocode-title">
+                                <a title="lobocode" href="https://lobocode.github.io">$ /home/lobocode_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/lobocode" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Ops - Samba 4</h1>
+    
+        <p class="post-description" itemprop="description">Um novo horizonte [ATUALIZADO]</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2023-01-01" itemprop="datePublished">dom., jan. 1, 2023</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo Ramos</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 71 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <blockquote>
+<p><strong>Esta é uma documentação não oficial</strong> do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (<strong><a href="mailto:lobocode@gmail.com">lobocode@gmail.com</a></strong>), ou me mande um <strong>pull request</strong> no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em <strong>constante atualização</strong>.</p>
+</blockquote>
+<h3 id="capítulo-1---história">Capítulo 1 - História</h3>
+<ul>
+<li><strong><a href="#introducao">Introdução</a></strong></li>
+<li><strong><a href="#a-origem-do-nome-samba">A origem do nome samba</a></strong></li>
+<li><strong><a href="#historico-de-versoes">Histórico de versões</a></strong></li>
+</ul>
+<h3 id="capítulo-2---conceitos-iniciais">Capítulo 2 - Conceitos iniciais</h3>
+<ul>
+<li><strong><a href="#conceitos-iniciais">Conceitos iniciais</a></strong></li>
+<li><strong><a href="#compartilhamento-de-arquivos">Compartilhamento de arquivos</a></strong></li>
+<li><strong><a href="#protocolos-smb-e-cifs">Protocolos SMB e CIFS</a></strong></li>
+<li><strong><a href="#estrutura-do-active-directory">Estrutura do Active Directory</a></strong></li>
+<li><strong><a href="#protocolos-do-active-directory">Protocolos do Active Directory</a></strong></li>
+</ul>
+<h3 id="capítulo-3---samba-como-ad">Capítulo 3 - Samba como AD</h3>
+<ul>
+<li><strong><a href="#instalando-o-samba">Instalando o Samba</a></strong></li>
+<li><strong><a href="#samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</a></strong></li>
+<li><strong><a href="#compartilhamento-com-o-servidor-de-impressao">Compartilhamento com o servidor de impressao</a></strong></li>
+<li><strong><a href="#lixeira-do-samba">Lixeira do samba</a></strong></li>
+<li><strong><a href="#auditando-acessos">Auditando acessos</a></strong></li>
+<li><strong><a href="#auditando-acessos">Rotacionamento de logs</a></strong></li>
+<li><strong><a href="#auditando-acessos">Acls para permissões avançadas no Linux</a></strong></li>
+<li><strong><a href="#migrando-um-samba3-pdc-para-samba-4-ad">Migrando um samba3 PDC para Samba 4 AD</a></strong></li>
+<li><strong><a href="#samba-tool">Samba Tool</a></strong></li>
+</ul>
+<h3 id="capítulo-4---ingressando-clientes-no-domínio-windows">Capítulo 4 - Ingressando clientes no domínio Windows</h3>
+<ul>
+<li><strong><a href="#rsat-ferramenta-de-administracao-remota">RSAT Ferramenta de administracao remota</a></strong></li>
+<li><strong><a href="#configurando-perfil-nomade">Configurando perfil nomade</a></strong></li>
+<li><strong><a href="#adicionando-unidades-organizacionais">Adicionando unidades organizacionais</a></strong></li>
+<li><strong><a href="#implementando-group-policies">Implementando Group Policies</a></strong></li>
+<li><strong><a href="#backup-e-recovery-do-samba-ad">Backup e recovery do samba AD</a></strong></li>
+<li><strong><a href="#samba-como-servidor-secundario">Samba como servidor secundario</a></strong></li>
+<li><strong><a href="#testes-de-replicacao-de-diretorios">Testes de replicacao de diretorios</a></strong></li>
+</ul>
+<h3 id="extras">Extras</h3>
+<ul>
+<li><strong><a href="#">Automatizando o provisionamento do samba com Ansible</a></strong></li>
+</ul>
+<h3 id="introdução">Introdução</h3>
+<p>Tudo começou em 1983, quando a <strong><a href="www.ibm.com">IBM</a></strong> e a Sytec co-desenvolveram um sistema de rede simples projetado para a construção de pequenas redes locais. O sistema era baseado numa API para comunicação em redes chamada <strong><a href="https://pt.wikipedia.org/wiki/NetBIOS">NetBIOS</a></strong>, ou <strong>Net</strong>work <strong>B</strong>asic <strong>I</strong>nput <strong>O</strong>utput <strong>S</strong>ystem, isto é, <strong>Sistema Básico de Rede de Entrada/Saída</strong>.</p>
+<p>Foi incluso no NetBIOS um esquema de endereçamento que usava nomes de 16 bytes para identificar estações de trabalho e aplicações habilitadas para rede. Em seguida, a <strong><a href="www.microsoft.com">Microsoft</a></strong> adicionou recursos para o DOS que permitia o disco I/O ser redirecionado para a interface NetBIOS, <strong>o que permitiu que o espaço em disco fosse compartilhável através da LAN</strong>. O protocolo de compartilhamento de arquivos ficou conhecido como <strong><a href="https://pt.wikipedia.org/wiki/Server_Message_Block">SMB</a></strong>, e agora <strong><a href="http://www.webopedia.com/TERM/C/CIFS.html">CIFS</a></strong>.</p>
+<p>Em 1985, o protocolo foi expandido, dando origem ao protocolo <strong><a href="https://pt.wikipedia.org/wiki/NetBEUI">NetBEUI</a></strong>, que foi durante muito tempo o principal protocolo usado em redes locais, antes da popularização do TCP/IP. O <strong><a href="https://pt.wikipedia.org/wiki/Server_Message_Block">SMB</a></strong> (Server Message Block) veio mais tarde, junto com o Windows 3.11. O protocolo SMB faz o compartilhamento de arquivos e impressoras em redes Microsoft, incluindo a navegação na rede, o estabelecimento de conexões e a transferência de dados. Ele utiliza o NetBIOS para a troca de mensagens entre os hosts e inclui uma versão atualizada do protocolo, que roda sobre o TCP/IP.</p>
+<p><strong><a href="https://pt.wikipedia.org/wiki/Andrew_Tridgell">Andrew Tridgell</a></strong>, um australiano que na época era estudante do curso de PhD em Ciências da Computação da <strong><a href="www.anu.edu.au">Universidade Nacional da Austrália</a></strong>, precisava rodar um software chamado <strong><a href="http://www.hpl.hp.com/hpjournal/dtj/vol4num1/vol4num1art7.pdf">&ldquo;eXcursion&rdquo;</a></strong>, no <strong><a href="https://en.wikipedia.org/wiki/Digital_Equipment_Corporation">DEC</a></strong>, empresa que trabalhava, para interagir com o <strong><a href="https://en.wikipedia.org/wiki/Pathworks">Patchworks</a></strong>, um software de compartilhamento de arquivos. O <strong><a href="https://en.wikipedia.org/wiki/Pathworks">Patchworks</a></strong> era um software proprietário, que utilizava um protocolo obscuro, sobre o qual não existiam muitas informações disponíveis.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/andrew.jpg#center" alt="Samba"></p>
+<p>Como todo bom hacker Andrew_tridgell decidiu estudar o protocolo e assim desenvolver um servidor que pudesse rodar em seu PC. Ele desenvolveu então um <strong><a href="https://pt.wikipedia.org/wiki/Sniffing">sniffer</a></strong> chamado <strong>clockspy</strong> que era capaz de examinar o tráfego da rede e fez engenharia reversa no protocolo SMB e o implementou no Unix. Isso fez com que no servidor Unix aparecesse como um servidor de arquivos Windows em seu PC com DOS. Com isso, ele foi rapidamente capaz de implementar o suporte às principais chamadas e a desenvolver um programa servidor que era capaz de conversar com os clientes rodando o Patchworks. O objetivo desta primeira versão era apenas resolver um problema doméstico: interligar um computador rodando o MS-DOS ao servidor rodando o <strong><a href="https://pt.wikipedia.org/wiki/Solaris">Solaris</a></strong>.</p>
+<p>O projeto começou a se tornar popular a partir da versão 1.6.09, que foi a primeira a trazer suporte ao controle de acesso com base nos logins de usuário (assim como o Windows NT), enquanto as versões anteriores suportavam apenas o controle de acesso com base no compartilhamento (assim como no Windows 3.11 e 95), onde a única opção de segurança era usar uma senha de acesso para os compartilhamentos. Para a época, foi um avanço extraordinário visto que tudo o que o samba oferecia, supria os serviços oferecidos pela Microsoft.</p>
+<p>No entanto, em 1999 a Microsoft lançou o Active Directory que é implementado pela primeira vez no <strong><a href="https://pt.wikipedia.org/wiki/Windows_2000">Microsoft Windows 2000 Server Edition</a></strong> e com melhorias significativas no Microsoft Windows Server 2003 e 2003 R2 e mais tarde no Windows Server 2008 e 2008 R2.</p>
+<blockquote>
+<p>Com isto, surgiu o desafio da comunidade que desenvolvia o Samba na época (e que desenvolve até hoje), a criar uma implementação de serviço de diretório usando um protocolo compatível com o <strong><a href="https://pt.wikipedia.org/wiki/LDAP">LDA</a></strong> que armazenasse informações sobre objetos na rede e ao mesmo tempo disponibilizasse essas informações a usuários e administradores da mesma rede.</p>
+</blockquote>
+<p>O problema é que não havia interesse por parte da Microsoft em compartilhar o <strong><a href="https://pt.wikipedia.org/wiki/Request_for_Comments">RFC</a></strong> (Request for Comments), isto é, o documento que descreve os padrões de cada protocolo de Internet antes de serem considerados de fato um padrão como fora feito com o protocolo LDAP por exemplo. Com isto, a comunidade que desenvolve o Samba não fazia ideia de como o AD funcionava. Basicamente, teriam que pesquisar anos a fio e colocar mais sniffers em rede, fazer engenharia reversa e mais uma vez demorar anos e anos em desenvolvimento para criar uma solução alternativa ao <strong><a href="https://pt.wikipedia.org/wiki/Active_Directory">AD</a></strong>.</p>
+<p>Usando destes recursos então a comunidade começa a escrever uma nova versão pós a 3.6 do Samba em 2011. A <strong><a href="https://www.samba.org/samba/history/samba-3.6.25.html">versão 3.6</a></strong> já trabalhava com o protocolo LDAP usando o <strong><a href="https://pt.wikipedia.org/wiki/OpenLDAP">OpenLDAP</a></strong> e o <strong><a href="https://pt.wikipedia.org/wiki/Kerberos">Kerberos</a></strong> em separado para alimentar as funcionalidades do Samba para que pudessem obter funcionalidades próximas ao AD.</p>
+<p>Depois de anos de desenvolvimento, a o que seria supostamente a versão 3.7 do Samba não chega nem a ser lançado e é descontinuado visto que em 2012, momento em que o Samba ainda estava em desenvolvimento, a Microsoft libera o RFC 1823 do LDAP, e o RFC 2307,3062,4533 e a comunidade desiste do desenvolvimento da nova versão do Samba e resolvem reescreve-lo do zero.</p>
+<p>Nasce o <strong><a href="https://www.samba.org/samba/history/samba-4.0.0.html">Samba 4.0</a></strong>. O Samba 4 compreende um servidor de diretório LDAP, um servidor de autenticação Kerberos, um servidor DNS dinâmico e implementações de todas as chamadas de procedimento remoto necessários para o Active Directory. Ele fornece tudo que é necessário para servir como um Active Directory Domain Controler compatível com todas as versões de clientes Microsoft Windows atualmente suportados pela Microsoft, incluindo o Windows 8. O Samba agora permite implementar mecanismos de compartilhamento de arquivos e impressoras, sendo assim possível o acesso a recursos do Windows a partir do GNU/Linux.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/samba4.png#center" alt="Samba"></p>
+<p>Possibilidades com Samba 4:</p>
+<ul>
+<li>Criar um AD Completo</li>
+<li>Criar um controlador de domínio Principal</li>
+<li>Criar um Controlador de domínio somente leitura (RODC)</li>
+<li>Criar um Controlador de domínio Adicional</li>
+<li>Pode ser administrado usando interface Gráfica do próprio Windows , como Usuários e computadores do Active Directory.</li>
+<li>Posso Migrar de forma fácil de AD Windows para um AD Linux e vice versa.</li>
+<li>É possível trabalhar com perfil móvel</li>
+<li>Trabalhar com Pasta Base</li>
+<li>Lixeira de Servidor de Arquivos (Tipo copia de Sombra)</li>
+<li>Auditoria de Acesso</li>
+<li>Trabalhar com permissões como a do Windows</li>
+<li><strong>Trabalhar com GPO</strong></li>
+<li>Fazer replicação de Servidores  (TIPO DFS)</li>
+<li>Trabalhar com dados em camadas</li>
+<li>Triagem de Arquivos  (Proibir gravação de arquivos pela extensão)</li>
+<li>Não precisa de CALs de acesso para as estações</li>
+<li>Posso fazer o SAMBA 4 trabalhar como controlador de domínio adicional do Windows server e vice versa.</li>
+<li>Já vem com DNS , kerberos, LDAP integrado.</li>
+<li>Posso fazer a integração do SAMBA 4 com o proxy Squid, pfSense e etc</li>
+<li>Adicionar usuários e configurações via linha de comando de maneira muito mais interativa e rápida.</li>
+</ul>
+<hr>
+<h3 id="a-origem-do-nome-samba">A origem do nome Samba</h3>
+<blockquote>
+<p>O nome &ldquo;Samba&rdquo; surgiu a partir de uma simples busca dentro do dicionário <strong><a href="https://en.wikipedia.org/wiki/Ispell">Ispell</a></strong> por palavras que possuíssem as letras S, M e B, de &ldquo;Server Message Blocks&rdquo;, posicionadas nessa ordem. A busca retornou apenas as palavras &ldquo;salmonberry&rdquo;, &ldquo;samba&rdquo;, &ldquo;sawtimber&rdquo; e &ldquo;scramble&rdquo;, de forma que a escolha do nome acabou sendo óbvia.</p>
+</blockquote>
+<p>O comando que foi usado para consultar o dicionário Ispell no sistema:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo grep -i <span class="s1">&#39;^s.*m.*b&#39;</span> /usr/share/dict/words
+</span></span></code></pre></div><hr>
+<h3 id="historico-de-versoes">Historico de Versoes</h3>
+<p>A primeira versão a usar o nome Samba, foi a 1.6.05, que foi a sucessora imediata do &ldquo;smbserver 1.6.4&rdquo;. O projeto anteriormente fora apresentado por <strong><a href="https://pt.wikipedia.org/wiki/Andrew_Tridgell">Andrew Tridgell</a></strong> com o nome de <strong><a href="http://ftp.samba.org/ftp/samba/old-versions/server-05.tar.Z">nbserver 0.5</a></strong> que foi o início do projeto que veio a tornar-se Samba mais tarde. Ao todo se considerar-mos os patches, o Samba contém mais de 50 versões até chegar a versão atual. Sem os patches e\ou versões no estilo <strong><a href="https://pt.wikipedia.org/wiki/CVS">CVS</a></strong>, o Samba tem exatamente 4 versões desde a 1.x.x até a recente 4.x.x que podem ser vistos no <strong><a href="https://www.samba.org/samba/history/">histórico de versões do samba</a></strong>. O registro da primeira versão do que seria o samba hoje, foi anunciado por Andrew na <a href="https://en.wikipedia.org/wiki/Usenet">Usenet</a> (hoje arquivada em no Google Groups) e ainda pode ser visto <strong><a href="https://groups.google.com/forum/#!msg/vmsnet.networks.desktop.pathworks/EmyZEGd5ZRA/nJtBfp6ak30J">aqui</a></strong>.</p>
+<p>O importante aqui é destacar as mudanças mais significativas entre as versões até chegar no Samba4. Por exemplo:</p>
+<ul>
+<li><strong>1.6.09</strong> Foi a primeira versão a apoiar a segurança a nivel de usuário (o que fez do Samba um concorrente muito mais sério para o uso corporativo na época).</li>
+<li><strong>1.7</strong> Suportava a desconfiguração de nomes de arquivos para clientes mais antigos, bem como também foi a primeira versão a ter um FAQ.</li>
+<li><strong>1.8</strong> Esta versão foi a primeira a adicionar suporte primitivo para línguas estrangeiras.</li>
+<li><strong>1.9</strong> Suporte de navegação mais aprimorado.</li>
+<li><strong>1.9.16</strong> Foi quando foi adotado o <strong><a href="https://pt.wikipedia.org/wiki/CVS">CVS</a></strong> o que permitiu que o Samba fosse desenvolvido mais rapidamente.</li>
+<li><strong>2.0</strong> O Samba se tornou ainda mais popular e acessível aos usuários finais. Neste mesmo ano 1999, fora lançado o <strong><a href="https://www.samba.org/samba/docs/using_samba/ch00.html">primeiro livro sobre o Samba</a></strong> que hoje faz parte da documentação oficial do mesmo.</li>
+<li><strong>2.2</strong> Esta se torna a primeira versão estável do Samba. Nesta versão, já é possível criar um domínio primário para <strong><a href="https://en.wikipedia.org/wiki/Windows_NT_4.0">NT4</a></strong>, suporta Windows 2000 e é melhorada a parte de infra-Estrutura para impressão <strong>(graças ao apoio da HP)</strong> e comunidade.</li>
+<li><strong>3.0</strong> O principal diferencial da Samba 3.0 é que ele inclui suporte para autenticação Kerberos 5 e LDAP, que são obrigados a agir como clientes em um domínio do Active Directory. Outra característica que apareceu no Samba 3.0 é o suporte a Unicode, o que simplifica muito apoio às línguas internacionais.</li>
+</ul>
+<blockquote>
+<p>A diferença é que os serviços LDAP, Kerberos e outros, não estão integrados ao Samba nesta versão como está na 4.Segundo Bartlett (2005, p. 57), o SAMBA 3.0 possuía a capacidade de entrar como usuário em uma rede operando com Active Directory. Esta funcionalidade foi o início dos trabalhos com Active Directory, que vieram a tona de forma mais convincente no SAMBA 4.</p>
+</blockquote>
+<ul>
+<li><strong>4.0</strong> Esta versão introduz o aguardado suporte para a tecnologia Microsoft Active Directory através da implementação de uma combinação de um servidor de diretório LDAP, um servidor de autenticação Heimdal Kerberos, um serviço DNS dinâmico (através do seu próprio servidor DNS ou plugin BIND) e todo o procedimento de chamadas remotas necessárias para cumprir a função de um controlador de domínio do Active Directory (Active Directory Domain Controller) de todas as versões suportadas do Windows, incluindo o Windows 8.</li>
+</ul>
+<p>O Samba 4 fornece políticas de grupo (<strong>G</strong>roup <strong>P</strong>olicies <strong>O</strong>bject), perfis móveis (Roaming Profiles) e outros recursos para administrar sistemas em um domínio do Windows, bem como integração com servidores Exchange e alternativas compatíveis em código aberto. O suporte do Samba ao Active Directory é completamente transparente para os clientes, o que significa que um controlador de domínio baseado em Samba pode ser integrado a domínios do Active Directory existentes.</p>
+<p>Scripts de atualização são fornecidos pelos desenvolvedores do Samba para ajudar com uma migração “suave” de um recurso de controlador de domínio Windows NT no Samba 3.x.</p>
+<p>Os recursos de compatibilidade do Active Directory no Samba 4 foram criados com a ajuda da documentação oficial e testes de interoperabilidade da Microsoft. “Estamos satisfeitos que os laboratórios de documentação e de interoperabilidade fornecidos pela Microsoft tenham sido fundamentais no desenvolvimento do Samba 4.0 Active Directory. A Microsoft está empenhada em apoiar a interoperabilidade entre as plataformas”, disse <strong><a href="https://www.linkedin.com/pub/thomas-pfenning/a/153/163">Thomas Pfenning</a></strong>, diretor de desenvolvimento do Windows Server.</p>
+<hr>
+<h3 id="conceitos-iniciais">Conceitos iniciais</h3>
+<p>Das muitas tecnologias de redes, uma das mais conhecidas para redes de computadores, especialmente aquelas que usam de forma homogênea o sistema operacional Windows, é o <strong><a href="https://pt.wikipedia.org/wiki/Active_Directory">Active Directory</a></strong>. Por questões de praticidade e segurança, muitas redes de computadores que rodam o Windows, são configuradas com AD, mas isso originalmente implicava na utilização única e exclusiva de sistemas operacionais em toda a rede envolvida ou pelo menos no servidor cujas licenças sempre foram muito mais onerosas do que as versões de Windows para estações de trabalho. O SAMBA sempre buscou a interoperabilidade na comunicação entre sistemas heterogêneos.</p>
+<p>Segundo a Microsoft, o Active Directory (AD) é um serviço de diretório desenvolvido pela empresa para o domínio das redes Windows e está incluído na maioria dos sistemas operacionais Windows Server como um conjunto de processos e serviços. Esta tecnologia permite aos usuários de uma rede de computadores trabalharem usando entradas personalizadas de usuário e senha, não importando se o usuário decidir usar outro computador, suas configurações e arquivos pessoais poderão ser acessados, desde que tais máquinas estejam dentro de um mesmo domínio controlado por um servidor.</p>
+<p>AD é um controlador de domínio que autentica e autoriza todos os usuários e computadores em uma rede de tipo domínio do Windows, atribui e aplica as políticas de segurança para todos os computadores autenticados, como instalação e atualizações de software. O AD é usado em empresas com redes Windows, nas quais os administradores de redes escolheram utilizar este recurso como forma de centralizar a administração dos recursos, bem como da segurança.</p>
+<p>Como facilidade, ele armazena centralmente os dados de usuários e computadores, permitindo que os usuários tenham apenas uma senha para acessar todos os recursos disponíveis na rede. O diretório também pode ser utilizado para compartilhamento de arquivos, impressoras, gerenciamento de atualizações de estações de trabalho através do <strong>WSUS (Windows Server Update Services)</strong>, tudo em um console simples e gerenciável.</p>
+<p>Quando um usuário faz logon em um computador que faz parte de um domínio de rede, o AD verifica a senha apresentada e determina se o usuário é um administrador de
+sistema ou um utilizador normal. Uma instância do AD consiste em um banco de dados e o correspondente código executável responsável pelo atendimento de pedidos e a manutenção do banco de dados. A parte executável é chamada de Directory System Agent (DSA), que é uma coleção de serviços do Windows e processos que são executados no Windows 2000 e versões posteriores.</p>
+<p>Os objetos no bancos de dados do AD podem ser acessados através do protocolo LDAP, o ADSI (interface dos COMs (Component Object Model) ) e dos serviços da APIs de
+mensagens e o Gerenciador de Contas de Segurança.</p>
+<p>No Active Directory são encontrados objetos, florestas, arvores, domínios, partiçoes, esquemas e unidades organizacionais (similares a pastas). Uma estrutura de AD é um arranjo de informações sobre objetos. Os objetos se dividem em duas categorias principais:</p>
+<ul>
+<li>Recursos: Hardware em uma rede ex.: Impressoras</li>
+<li>Entidades de segurança: Entidades puramente lógicas ex.: Contas de usuário ou grupos.</li>
+</ul>
+<p>Para cada entidade de segurança são atribuídos security identifiers (SIDs) únicos. Cada objeto representa uma única entidade: um usuário, um computador, uma impressora ou um grupo e seus atributos, e certos objetos podem conter outros objetos.</p>
+<p>Dentro de uma implantação, os objetos são agrupados em domínios. Os objetos para um único domínio são armazenados em uma única base de dados (que podem ser replicados).
+Os domínios são identificados pelo seu o namespace (nome no DNS). Um domínio é definido como um grupo lógico de objetos de rede (usuários, dispositivos) que compartilham o mesmo banco de dados AD.</p>
+<p>Uma árvore é uma coleção de um ou mais domínios, e árvores de domínio em um namespace contínuo, vinculados em uma hierarquia de confiança transitiva. Uma floresta é uma coleção de árvores que compartilham um catálogo global comum, esquemas de diretório, estruturas lógicas e a configuração do diretório. A floresta representa o limite de segurança dentro do qual os usuários, computadores, grupos e outros objetos são acessíveis.</p>
+<p>O banco de dados do AD está organizado em partições, cada um armazenando tipos de objetos específicos e seguindo um padrão de replicação. A partição schema contém a definição de classes de objetos e atributos dentro da Floresta. A partição Configuration contém informações sobre a estrutura física e de configuração da floresta (como a topologia física). Ambos replicam para todos os domínios da floresta. A partição do domínio detém todos os objetos criados nesse domínio e replica somente dentro de seu próprio domínio.</p>
+<p>Os objetos mantidos dentro de um domínio podem ser agrupados em Organizational Units (OUs). OUs é o nível recomendado de a aplicação de políticas de grupo, que são objetos do AD chamados formalmente <strong>Group Policy Objects (GPOs)</strong>, embora as políticas também podem ser aplicadas a domínios ou sites. A UO é o nível em que os poderes administrativos são comumente delegados, mas a delegação pode ser executada com os objetos individuais ou com os atributos também.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/gpo.gif#center" alt="Samba"></p>
+<p>Não é possível, criar contas de usuários com um nome de usuário idêntico em OUs separadas. Isto é assim porque o atributo de objeto de usuário (sAMAccountName), deve ser exclusivo dentro do domínio. Dois usuários em diferentes OUs podem ter o mesmo Common Name (o nome sob o qual eles são armazenados no próprio diretório).</p>
+<p>A razão para este problema de nomes duplicados através de diretórios hierárquicos, é que a Microsoft baseia-se nos princípios do NetBIOS, que é um método de gerenciamento de objetos de redes de arquivos simples, que vem desde o Windows NT 3.1 e MS-DOS LAN Manager. Permitir a duplicação de nomes de objetos no diretório, ou remover completamente o uso de nomes de NetBIOS, impediria a compatibilidade com softwares e equipamentos legados.</p>
+<p><strong>O Volume de Sistema (SYSVOL)</strong> que é um diretório compartilhado que armazena a cópia do servidor de arquivos de domínio público, que deve ser compartilhado para acesso e replicação em domínios comuns. Ela contém:</p>
+<ul>
+<li>O Logon de rede compartilhado. Hospedam scripts de logon e objetos de diretiva
+dos computadores clientes.</li>
+<li>Scripts de logon de usuário, para os domínios em que o administrador usa as
+opções “Usuários e Computadores” do Active Directory.</li>
+<li>Diretivas de grupo do Windows.</li>
+<li>Os arquivos de transferências, das pastas e arquivos que devem estar disponíveis e
+sincronizados entre os controladores dos domínios de serviço de replicação (FRS).</li>
+<li>Junções de sistema de arquivo. Segundo a Microsoft, o recomendável é instalar esses 3 em locais distintos, preferencialmente em HDs separados, para facilitar a recuperação do sistema em caso de falha de hardware. Se a floresta está no nível de funcionalidade do Windows Server 2008 ou Windows Server 2008 R2, o sistema de replicação de SYSVOL deixa de ser o NT File Replication.</li>
+<li>Service (NTFRS) e passa a ser o Distributed File System Replication (DFSR), o que termina criando uma dependência de uma versão específica de sistema operacional Windows.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/sysvol.gif#center" alt="Samba"></p>
+<p>Depois de 10 anos de trabalho e 6 anos da liberação da última versão principal, os desenvolvedores do Samba anunciaram o lançamento do Samba 4.0, a versão mais recente da implementação em software livre do protocolo Server Message Block (SMB).  Outras características do Samba 4 incluem a primeira implementação em software livre da versão 2.1 do protocolo SMB de compartilhamento de arquivos da Microsoft e uma implementação inicial do SMB3 que será desenvolvido em versões futuras da ramificação do Samba 4.</p>
+<p>Por padrão, o servidor smbd do Samba 3 é utilizado para todos os serviço de arquivos. Para casos de uso como um controlador de domínio do Active Directory, o servidor de arquivos NTVFS é fornecido da forma como foi utilizado nos primeiros betas do Samba 4 e é mais recomendável para esta tarefa. A integração segura e incorporada ao NTP fornece <strong><a href="https://pt.wikipedia.org/wiki/Marca_temporal">timestamps</a></strong> mais precisos para clientes Windows.</p>
+<hr>
+<h3 id="compartilhamento-de-arquivos">Compartilhamento de arquivos</h3>
+<p>Uma das características mais poderosas do Samba é a sua capacidade de compartilhar arquivos e pastas entre o servidor e o cliente. De forma simplificada, para compartilharmos uma pasta e\ou arquivo no Samba4, basta criar-mos alguns parâmetros simples no smb.conf e\ou usar algum client gráfico, ambiente facilitador para tal. No entanto, como este artigo é focado em administradores, logo, <strong>faremos tudo por linha de comando</strong>:</p>
+<p>Crie uma pasta qualquer</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">mkdir ~/pasta
+</span></span></code></pre></div><p>Abra o arquivo de configuração smb.conf, e crie as seguintes linhas:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Crie as seguintes linhas:</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="o">[</span>PASTA<span class="o">]</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">comment</span> <span class="o">=</span> Pasta teste
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nv">path</span> <span class="o">=</span> ~/pasta
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span></code></pre></div><p>Por fim, reinicie as configurações do samba</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbcontrol all reload-config
+</span></span></code></pre></div><p>Neste momento, já podemos acessar o diretório usando o Microsoft Windows em nosso domínio (por exemplo, como administrador) e configurar todas as permissões que quisermos. Além disso, usuários e grupos podem diretamente acessar o compartilhamento criado. Como Samba 4 é compatível com o Active Directory, não precisa usar qualquer modelo antigo para restringir o acesso do usuário no arquivo smb.conf. Mais a frente nesta documentação, veremos detalhadamente como é feito o compartilhamento entre diretórios, arquivos, impressoras, com permissões e muito mais.</p>
+<hr>
+<h3 id="protocolos-smb-e-cifs">Protocolos SMB e CIFS</h3>
+<p>O protocolo SMB foi desenvolvido inicialmente por <strong><a href="https://www.linkedin.com/in/barryfeigenbaum">Barry Feigenbaum</a></strong> na IBM, na década de 80. Exigia, nessa época, uma camada de API (Application Programming Interface), denominada Network Basic Input/Output System isto é, o <strong>(NetBIOS)</strong>. O NetBIOS fornecia serviços tais como resolução de nome e navegação de rede que posteriormente foi implementado, ou adotado, pela Microsoft em função da expansão de seus produtos na década de 90 que era focado em rede de computadores.</p>
+<p>Na evolução do desenvolvimento do SMB, pela Microsoft, criou-se uma versão chamada CIFS <strong>(Common Internet File System)</strong> para padronizar com a <strong><a href="https://pt.wikipedia.org/wiki/Internet_Engineering_Task_Force">Internet Engineering Task Force - IETF</a></strong> recebendo o nome final de <strong>SMB/CIFS</strong> (tecnicamente um &ldquo;dialeto&rdquo; do SMB) em 1996.
+O Windows for WorkGroups foi o primeiro sistema da Microsoft a adotar o SMB/CIFS. Como o protocolo predominante foi o TCP/IP e para a resolução de nomes a Microsoft teve que adotar o DNS (Domain Name System) e com que SMB tivesse que ser executado diretamente sobre o protocolo TCP/IP na modalidade denominada <strong>hosting direto</strong> (utiliza-se TCP e UDP na porta 445). Portanto, em redes Windows, o SMB/CIFS se transformou em um padrão para a manipulação de arquivos entre máquinas.</p>
+<p>O SMB, que significa Server Message Block, é um protocolo para compartilhamento de arquivos, impressoras, portas seriais e abstrações de comunicação. O SMB é um protocolo cliente-servidor. O diagrama a baixo, ilustra a maneira pela qual funciona SMB. Os servidores disponibilizam sistemas de arquivos e outros recursos (impressoras, processadores de mensagens, pipes) disponíveis para os clientes da rede. Os computadores clientes podem ter seus próprios discos rígidos, mas eles também querem o acesso aos sistemas de arquivos compartilhados e impressoras nos servidores.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/smb1.png#center" alt="SMB"></p>
+<p>Basicamente o cliente se conecta ao servidor que utiliza o protocolo TCP/IP (na verdade, se conecta ao NetBIOS sobre o TCP/IP, conforme especificado no <strong><a href="http://tools.ietf.org/html/rfc1001">RFC1001</a></strong> e <strong><a href="http://tools.ietf.org/html/rfc1002">RFC1002</a></strong>), NetBEUI ou IPX/SPX. Depois de terem estabelecido uma conexão, o cliente pode, em seguida, enviar comandos (SMBs) para o servidor o que lhe permite abrir arquivos, ler e escrever. É possível fazer todo o tipo de coisa dentro de um servidor de arquivos. No entanto, no caso do SMB, estas coisas são feitas através da rede.</p>
+<p>O protocolo SMB embora tenha outras funções associadas a ele, primordialmente tem como funcionalidade o compartilhamento de arquivos. Mas é possível também o compartilhamento de impressoras e definir níveis de segurança e autenticação. Por ser muito usado nos sistemas operacionais da Microsoft a versão do SMB, denominado SMB/CIFS, é um protocolo muito comum em diversos tipos de máquinas e sistemas para o compartilhamento de arquivos.</p>
+<blockquote>
+<p>O SMB pela perspectiva do Modelo OSI está na <strong>camada de aplicação</strong> e utiliza nomes de até 15 caracteres para definir endereços de máquina em uma rede. A Microsoft chegou ainda a desenvolver o SMB2 juntamente com o lançamento do Windows Vista.</p>
+</blockquote>
+<p>Andrew Tridgell utilizando da engenharia reversa em cima do protocolo SMB implementou no sistema operacional Unix e fazendo com que o servidor Unix aparecesse como sendo um servidor de arquivos Windows em seu computador com DOS. O Samba foi viabilizado por meio do protocolo <strong><a href="https://pt.wikipedia.org/wiki/NetBIOS">NBT</a></strong>, de 1987, que emula redes locais NetBIOS sobre redes TCP/IP. O NBNS (mais conhecido tecnicamente por WINS - Windows Internet Name Server, ou ainda NBT) cria praticamente uma lista cruzada de endereços IP e nomes NetBios facilitando dessa forma a comunicação entre máquinas e sistemas distintos.</p>
+<hr>
+<h3 id="estrutura-do-active-directory">Estrutura do Active Directory</h3>
+<p>Um serviço de diretório pode se explicado com várias ilustrações, mas a ilustração que, em minha opinião, mais demonstra o verdadeiro sentido de um serviço de diretório é a figura de uma lista telefônica ou uma agenda pessoal. Em nossa agenda podemos organizar, dias, semanas, meses e até anos, passando por pessoas, nomes, sobrenomes, datas de aniversário, dados importantes dentre outros.</p>
+<p>O serviço de diretório tem exatamente o mesmo sentido, o sentido de organizar e principalmente ter um local centralizado para a busca de informações necessárias no dia a dia, para nossos trabalhos.</p>
+<p>Quando criamos um novo usuário, estamos utilizando o serviço de diretório, nesta base de dados (agenda), estamos guardando, nomes, sobrenomes, endereços, logins, senhas, grupos, ao qual o usuário pertence dentre outras tantas opções que podemos cadastrar, tudo isto ficará disponível dentro de uma base de dados, esta base de dados poderá ser utilizada pelos nossos servidores para vários trabalhos. Vamos citar três soluções de serviço de diretório:</p>
+<ul>
+<li>Open Ldap para Sistemas Open Source.</li>
+<li>EDirectory para Sistemas Novell.</li>
+<li>Active Directory para Sistemas Microsoft e com suporte para todos acima citados.</li>
+</ul>
+<p>No mercado de hoje nossos negócios precisam ter informações rápidas, de fácil atualização, alta disponibilidade e principalmente muita segurança e o Active Directory pode nos oferecer todos estes atributos e muito mais&hellip;</p>
+<p>O Active Directory assumiu o mercado de serviços de diretório pelo seu desempenho, segurança e principalmente disponibilidade, o Active Directory esta no mercado desde o lançamento do Windows 2000 Server, após o seu nascimento assumiu a liderança dos serviços de diretório, utilizando como base o LDAP e a comunicação através de replicação lançou vários atributos e principalmente ferramentas para facilitar o gerenciamento de informações nas empresas.</p>
+<p>Hoje quando criamos um usuário para logar no domínio de nossa empresa, estamos utilizando um serviço de diretório e por consequência usando o Active Directory.
+Abaixo temos uma figura para demonstrar todos os recursos que o Active Directory pode utilizar como serviço de diretório de sua empresa:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad1.png#center" alt="SMB"></p>
+<p>A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco de dados, este banco é conhecido com <strong>NTDS.dit</strong> e esta localizado na pasta %SystemRoot%\NTDS\ntds.dit em uma instalação default do AD. Este diretório chamado de NTDS apenas existirá nos servidores que tenham a função de Domain Controllers (DC’s). Neste diretório existirão os arquivos relacionados abaixo. Durante o processo de instalação do Active Directory <strong>da Microsoft</strong>, são criados cinco arquivos:</p>
+<ul>
+<li><strong>Ntds.dit</strong> - Arquivo onde são armazenadas todas as informações do AD.</li>
+<li><strong>Edb.log</strong> - Arquivo de log onde são armazenadas todas as transações que estão sendo realizadas no arquivo Ntds.dit.</li>
+<li><strong>Edb.chk</strong> - Arquivo de verificação de integridade do arquivo Ntds.dit.</li>
+<li><strong>Res1.log</strong> - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.</li>
+<li><strong>Res2.log</strong> - Arquivo de reserva assegura que alterações sejam gravadas na base(Ntds.dit) no caso de falta de espaço em disco.</li>
+</ul>
+<p>Bem, agora sabemos que a estrutura lógica do AD é gravada em uma base de dados física chamada de Ntds.dit, porém Domain Controller é Active Directory? <strong>Claro que não</strong>, no desenho abaixo demonstramos claramente a diferença entre AD (estrutura lógica do AD) e DC (Servidor que contém uma cópia do NTDS.dit do AD). No desenho abaixo imaginemos uma construção, estamos construindo um grande salão de festas. Imaginem que nosso teto (retângulo azul) é nosso Active Directory, porém precisamos apoiar este teto em pilares (cilindros vermelhos), caso contrário nosso teto irá desabar, certo?</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad2.png#center" alt="SMB"></p>
+<p>É isto mesmo, o Active Directory é a estrutura lógica (teto), e os DC’s são servidores fisicos (pilares), por isto a necessidade de termos muitos DC’s espalhados. Assim nosso AD mesmo na falha de um DC (pilar) ou vários DC’s ainda conseguirá responder as solicitações e pedidos de nossa infraestrutura.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad3.png#center" alt="SMB"></p>
+<p>Isto só é possível porque cada servidor quando recebe a função de Domain Controller, herda a criação do diretório %SystemRoot%\NTDS\ e toda a estrutura comentada acima. Todos os dados criados originalmente são replicados para o novo DC criado. Assim em um AD (domínio) com três DC’s como na figura abaixo, todos os Dc’s estão atualizados com todos os dados igualmente, isto recebe o nome de replicação do Active Directory.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad4.png#center" alt="SMB"></p>
+<p>O Serviço de Diretório do AD é divido em duas estruturas a estrutura lógica e a estrutura física, o conhecimento pleno sobre a estrutura do AD é muito importante, principalmente quando maior for sua estrutura. Nestas explicações informaremos algumas ferramentas que podem auxiliar na verificação deste processo, vale lembrar que estamos focando as explicações no Active Directory do Windows Server 2008 R2, porém estas explicações poderão ser utilizadas em qualquer uma das versões de Active Directory, nos próximos artigos falaremos das evoluções para as futuras versões.</p>
+<p>Quando falamos de estrutura lógica do Active Directory, muitos termos são falados, a estrutura lógica do AD consiste em Objetos, Unidades Organizacionais, Domínio, Árvores de Domínio e Floresta. Utilizamos a estrutura lógica do AD para podermos gerenciar os objetos dentro da organização. Já os objetos, são os componentes mais básicos da estrutura lógica e representam, usuários, computadores e impressoras.</p>
+<p>No caso do OU (Unidades Organizacionais), é um objeto de container, utilizado para organizar outros objetos. A organização pode ser feita de várias formas.
+Geográfica – Onde as OU’s representam Estadas ou Cidades de sua estrutura física Exemplo: OU SP - OU RJ Setorial – Onde as OU’s representam setores da estrutura física da empresa, por unidade de negócio. Exemplo: OU Administrativo – OU Produção Departamental – Onde as OU’s representam setores da estrutura física da empresa por departamento. Exemplo: OU RH – OU DP – OU Caldeira Híbrido – Modelo onde podemos interagir todos os modelos acima, na Figura abaixo temos um modelo disto.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad5.png#center" alt="SMB"></p>
+<p>O domínio é a estrutura mais importante do Active Directory e tem 2 funções principais.</p>
+<ul>
+<li>Fecham um limite administrativo para objetos. “Quem esta fora não entra, quem esta dentro não sai”, claro que esta regra pode sofrer alteração media/sambante permissões de entrada e saída, como relações de confiança.</li>
+<li>Gerenciam a segurança de contas e recursos dentro do Active Directory</li>
+</ul>
+<p>Vale lembrar que um domínio do Active Directory compartilham:</p>
+<ul>
+<li>Mesmo banco de dados Ntds.dit com cada Domain Controller dentro deste domínio.</li>
+<li>Diretivas de segurança.</li>
+<li>Relações de Confiança com outros domínios.</li>
+</ul>
+<p>Quando precisamos criar um segundo domínio, na maioria das vezes por necessidades no processo de segurança temos o que chamamos de domínios filhos. Quando temos um domínio pai com seus domínios filhos, chamamos de árvore de domínio, pois dividem o mesmo sufixo DNS, porém em distribuição hierárquica. Abaixo colocamos um exemplo para ilustrar nossa explicação.</p>
+<p>Criamos o domínio livemotion.local (Figura esquerda abaixo), para podermos configurar diretivas de segurança, em um dado momento, precisamos criar um domínio novo, que tenha acesso aos recursos do domínio livemotion.local, porém tenha suas próprias necessidades de segurança (Figura direita abaixo).</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad6.png#center" alt="SMB"></p>
+<p>Conforme as figuras acima, podemos ver que quando temos um domínio filho, imedia/sambatamente estamos vinculados a um domínio pai, e esta divisão hierárquica de nome chamamos de Árvore de Domínios.O primeiro domínio de uma Floresta, chamamos de Root Domain, a Floresta receberá o nome deste domínio, a floresta pode ser feita de um único domínio com também estar dividida com várias árvores dentro da mesma floresta.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad7.png#center" alt="SMB"></p>
+<p>Quando falamos de estrutura física do Active Directory, alguns termos são utilizados, a estrutura física do AD consiste em Domain Controllers e Sites.
+A estrutura física do AD é totalmente independente da estrutura lógica do AD. A estrutura física é responsável por otimizar o tráfego de rede e manter segurança em locais físicos distintos. Um Domain Controller ou DC tem a função de executar o Active Directory e também armazenar a base do Active Directory bem como Replicar esta base “alterações” com outros DC’s.</p>
+<p>Quando falamos de Árvores de Domínio ou até mesmo Floresta, vale lembrar que um DC pode apenas suportar um único domínio. Para criar uma disponibilidade do Active Directory podemos ter mais de um DC, sendo assim num exemplo de 2 Dc’s temos a base do Active Directory sendo replicada de forma perfeita entre os dois Dc’s.
+A base do Active Directory o NTDS.dit é divido em partições, conforme a figura demonstrada abaixo:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad8.png#center" alt="SMB"></p>
+<p>Estas partições formam o arquivo NTDS.dit, este é replicado entre cada um dos DC’s de seu domínio, consequentemente o arquivo é replicado para cada DC, tendo todos os Dc’s sincronizados logo teremos um Active Directory saudável e que pode suprir a falha de um DC, sem afetar o serviço de diretório do domínio.</p>
+<hr>
+<h3 id="protocolos-do-active-directory">Protocolos do Active Directory</h3>
+<ul>
+<li><strong>LDAP</strong>
+− O protocolo LDAP é um protocolo de comunicação desenvolvido para uso em redes TCP/IP. O protocolo LDAP define a forma como um cliente de diretório pode acessar um servidor de diretório e a forma como o cliente pode executar as operações de diretório e compartilhar dados de diretório. Os padrões LDAP são estabelecidos por grupos de trabalho da equipe Internet Engineering Task Force (IETF). O Active Directory implementa as especificações de rascunho de atributos LDAP e os padrões IETF para o LDAP versões 2 e 3.</li>
+</ul>
+<p>Como está implícito em seu nome, o LDAP foi desenvolvido como um método eficaz para o acesso a serviços de diretório sem a complexidade de outros protocolos de serviços de diretório. Como o LDAP define as operações que podem ser executadas para consultar e modificar informações em um diretório, e a forma como as informações em um diretório podem ser acessadas com segurança, você pode usá-lo para localizar ou enumerar objetos de diretório e para consultar ou administrar o Active Directory.</p>
+<p>O projeto OpenLDAP foi iniciado em 1998 por <strong><a href="http://www.openldap.org/project/kurt/">Kurt Zeilenga</a></strong>. O projeto começou como um fork do projeto LDAP a partir da Universidade de Michigan.</p>
+<p>O <strong>clapd</strong> é um simples daemon LDAP Connectionless, escrito como parte do esforço de pesquisa da IBM e concebido para responder às solicitações básicas que um cliente Windows faz. O clapd foi reescrito no Samba4.</p>
+<ul>
+<li><strong>DNS</strong></li>
+</ul>
+<p>− O Domain Name System ( DNS ) é um sistema de gerenciamento de nomes hierárquico e distribuído para computadores, serviços ou qualquer recurso conectado à Internet ou em uma rede privada. Ele baseia-se em nomes hierárquicos e permite a inscrição de vários dados digitados além do nome do host e seu IP. Em virtude do banco de dados de DNS ser distribuído, seu tamanho é ilimitado e o desempenho não degrada tanto quando se adiciona mais servidores nele. Este tipo de servidor usa como porta padrão a 53. A implementação do DNS-Berkeley, foi desenvolvido originalmente para o sistema operacional BSD UNIX 4.3.</p>
+<p>Um domínio do Active Directory é fortemente baseado em um domínio DNS, particularmente devido à forte integração entre o Kerberos e DNS, e o fato de que este permite uma mudança para a hierarquia de nomes.</p>
+<p>O servidor DNS traduz nomes para os endereços IP e endereços IP para nomes respectivos, e permitindo a localização de hosts em um domínio determinado. Num sistema livre o serviço é implementado pelo software BIND. Esse serviço geralmente se encontra localizado no servidor DNS primário. O servidor DNS secundário é uma espécie de cópia de segurança do servidor DNS primário. Assim, ele se torna parte necessária para quem que usar a internet de uma forma mais fácil e evita que hackers roubem seus dados pessoais.</p>
+<ul>
+<li>
+<p><strong>SNTP</strong>
+−  O NTP é um protocolo para sincronização dos relógios dos computadores baseado no UDP para sincronização do relógio de um conjunto de computadores em redes de dados com latência variável. O NTP permite manter o relógio de um computador com a hora sempre certa e com grande exatidão. Originalmente idealizado por David L. Mills da Universidade do Delaware e ainda hoje mantido por si e por uma equipa de voluntários, o NTP foi utilizado pela primeira vez antes de 1985, sendo ainda hoje muito popular e um dos mais antigos protocolos da internet.</p>
+</li>
+<li>
+<p><strong>Kerberos</strong>
+−  Kerberos é o nome de um Protocolo de rede, que permite comunicações individuais seguras e identificadas, em uma rede insegura. O protocolo Kerberos previne Eavesdropping e Replay attack, e ainda garante a integridade dos dados. Seus projetistas inicialmente o modelaram na arquitetura cliente-servidor, e é possível a autenticação mutua entre o cliente e o servidor, permitindo assim que ambos se autentiquem.</p>
+</li>
+</ul>
+<blockquote>
+<p>O Kerberos necessita que os relógios internos dos clientes estejam sincronizados com o dele. Na configuração padrão, é necessário que os relógios dos clientes não tenham uma diferença maior do que 10 minutos. Na prática, servidores NTP são utilizados para manter os relógios do servidor e dos clientes sincronizados.</p>
+</blockquote>
+<blockquote>
+<p>Heimdal Kerberos é uma implementação open source do protocolo Kerberos.</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>SMB/CIFS</strong>
+− O SMB/CIFS (Server Message Block/Common Internet File System) é um protocolo de redes cujo o uso mais comum como foi dito anteriormente é o compartilhamento de arquivos em uma LAN. Para mais detalhes sobre este protocolo, vá em <strong><a href="#protocolos-smb-e-cifs">Protocolos SMB e CIFS</a></strong>.</p>
+</li>
+<li>
+<p><strong>NetBIOS</strong>
+−  É uma API que fornece serviços relacionados com a camada de sessão do modelo OSI, permitindo que os aplicativos em computadores separados se comuniquem em uma rede local, não podendo ser confundido, portanto, como um protocolo de rede.</p>
+</li>
+</ul>
+<p>Sistemas operacionais mais antigos executavam o NetBIOS sobre o IEEE 802.2 e o IPX/SPX usando os protocolos NetBIOS Frames (NBF) e NetBIOS sobre IPX/SPX (NBX), respectivamente. Em redes modernas, o NetBIOS normalmente é executado sobre TCP/IP através do protocolo NetBIOS sobre TCP/IP (NBT). Isso resulta que cada computador na rede possua um endereço IP e um nome NetBIOS correspondente a um (possivelmente diferente) nome de hospedeiro.</p>
+<ul>
+<li><strong>DCE/RPC</strong>
+− DCE-RPC é um padrão estabelecido há muito tempo para o funcionamento de chamadas de procedimento remoto (RPC), e é publicado de forma gratuita pelo Open Group. O DCE-RPC descreve não só o formato para as chamadas de função, mas também um número de transportes de rede.</li>
+</ul>
+<p>Lista de abreviaturas e siglas:</p>
+<ul>
+<li><strong>LDAP</strong>: Lightweight Directory Access Protocol (ou Protocolo Leve de Acesso a
+Diretórios).</li>
+<li><strong>AD</strong>: Active Directory (ou Diretório Ativo).</li>
+<li><strong>DC</strong>: Domain Controller (ou Controlador de Domínio).</li>
+<li><strong>RFC</strong>: Request for Comments (ou Pedido de Comentários).</li>
+<li><strong>DFS</strong>: Distributed File System (ou Sistema de Arquivo Distribuído).</li>
+<li><strong>DNS</strong>: Domain Name System (ou Sistema de Nomes de Domínio).</li>
+<li><strong>NetBIOS</strong>: Network Basic Input/Output System (ou Sistema Básico de Entrada/Saída
+de Rede).</li>
+<li><strong>UCL</strong>: User Account Control (ou Controle de Conta de Usuário).</li>
+<li><strong>PDC</strong>: Primary Domain Controller (ou Controlador Primário de Domínio).</li>
+<li><strong>GPO</strong>: Group Policy Objects.</li>
+<li><strong>CN</strong>: Common Name.</li>
+<li><strong>NFS</strong>: Network File System.</li>
+<li><strong>NTP</strong>: Network Time Protocol.</li>
+<li><strong>PDC</strong>: Primary Domain Controller.</li>
+<li><strong>SMB</strong>: Server Message Block.</li>
+<li><strong>NMBD</strong>: Cuida da resolução de nomes nos PC&rsquo;s em seus endereços de IP.</li>
+<li><strong>smbclient</strong>: Cliente SMB para GNU/Linux, permite Pcs GNU/Linux acessarem Pc&rsquo;s GNU/Linux e servidores SAMBA.</li>
+<li><strong>testpam</strong>: Testa o arquivo de configuração SAMBA caso tenha algum erro no smb.conf.</li>
+<li><strong>smbclient</strong>: Listará as conexões ativas com o servidor e dará o status do serviço.</li>
+<li><strong>smbpasswd</strong>: Permite alterar e adicionar senhas compatíveis com o padrão SMB.</li>
+<li><strong>Snap-in</strong>: Ferramentas administrativas, aplicações modulares de outros aplicativos.</li>
+</ul>
+<hr>
+<h3 id="requisitos-e-preparacao-do-sistema-operacional">Requisitos e Preparacao do Sistema Operacional</h3>
+<p>Por conveniência, irei trabalhar com Debian por tratar-se da distribuição GNU/Linux mais usada em servidores. Quanto à versão do Debian, é recomendado neste caso sempre a versão <strong>Stable</strong> visto que o ciclo de atualização do sistema Stable é diferente das versões unstable. Por exemplo, em sistemas stable, só haverá atualização de pacotes e sistema, caso já tenham esgotado todos os possíveis problemas, bugs relacionados.</p>
+<blockquote>
+<p><strong>Nota:</strong> Para detalhes de compatibilidade com sua respectiva arquitetura no Debian, basta acessar a documentação <strong><a href="https://www.debian.org/releases/stable/installmanual">https://www.debian.org/releases/stable/installmanual</a></strong>.</p>
+</blockquote>
+<hr>
+<h3 id="samba4-como-ad">Samba4 como AD</h3>
+<p>Uma dúvida bastante frequente entre os administradores de sistemas, é quanto à instalação do Samba com relação a forma de instalação se por código-fonte (source-code), ou do repositório através de pacotes pré-compilados no formato &ldquo;.deb&rdquo;. Geralmente recomendo que procure os formatos pré-compilados pois, as vezes pode tornar-se uma dor de cabeça &ldquo;atualizar ou remover&rdquo; programas compilados diretamente no código-fonte. Mas se você se garante tanto com um, quanto com outro, então é irrelevante.</p>
+<p>O que iremos instalar a partir de agora:</p>
+<ul>
+<li><strong>attr</strong> - Utilitários para manipulação de atributos estendidos do sistemas de arquivos.</li>
+<li><strong>acl</strong> - Utilitários da lista de controle de acesso.</li>
+<li><strong>krb5-user</strong> - Programas básicos para autenticar usando o Kerberos.</li>
+<li><strong>ntp</strong> - Daemon e programas utilitários do &ldquo;Network Time Protocol&rdquo;.</li>
+<li><strong>samba</strong> - Servidor de login, impressão e arquivos SMB/CIFS para Unix.</li>
+<li><strong>smbclient</strong> - Clientes SMB/CIFS em linha de comando para Unix.</li>
+</ul>
+<hr>
+<h3 id="instalando-o-samba">Instalando o Samba</h3>
+<p>Para instalar o Samba no Debian, siga os seguintes passos:</p>
+<p>Atualize o sistema operacional usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get update
+</span></span></code></pre></div><p>Instale o pacote Samba usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install samba
+</span></span></code></pre></div><p>Configure o arquivo de configuração do Samba. O arquivo de configuração padrão é o <code>/etc/samba/smb.conf</code>. Pode ser necessário fazer algumas modificações neste arquivo dependendo da sua configuração de rede.</p>
+<p>Adicione usuários ao samba com o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbpasswd -a &lt;username&gt;
+</span></span></code></pre></div><p>Inicie o serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl start smbd
+</span></span></code></pre></div><p>Verifique o status do serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl status smbd
+</span></span></code></pre></div><p>Configure o firewall para permitir acesso ao serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo ufw allow samba
+</span></span></code></pre></div><p>A instalação do <strong>smbclient</strong> é opcional, utilizaremos apenas para testar as configurações adiante. Por padrão o Debian não vem com suporte a ACL (Controle de Acesso Baseado em Listas) então é necessário instalar os pacotes <code>attr</code>,<code>acl</code>, e configurar o sistema de arquivos para usar esses recursos. Instale os pacotes attr e acl usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install attr acl
+</span></span></code></pre></div><p>Configure o sistema de arquivos para usar o suporte a ACL. Isso pode ser feito adicionando as opções <code>acl</code> e <code>user_xattr</code> no arquivo <code>/etc/fstab</code> para o sistema de arquivos desejado. Por exemplo, para habilitar o suporte a ACL no sistema de arquivos raiz, adicione as seguintes linhas ao arquivo <code>etc/fstab</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">/dev/sda1 / ext4 defaults,acl,user_xattr <span class="m">0</span> <span class="m">1</span>
+</span></span></code></pre></div><p>Agora reinicie o sistema para que as alterações tenham efeito. A partir de agora é possível usar os comandos <code>getfacl</code> e <code>setfacl</code> para gerenciar os controles de acesso em arquivos e pastas. Em outras distribuições ou sistemas de arquivos pode ser necessário configurar de forma diferente, mas esses passos são uma boa base para habilitar o suporte a ACL no Debian.</p>
+<p>Agora verifique se o seu Kernel tem compatibilidade com ACL caso seu sistema de arquivos seja ext3 ou ext4 com o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cat /proc/filesystems
+</span></span></code></pre></div><p>Se você ver &ldquo;ext3&rdquo; e &ldquo;ext4&rdquo; na lista, então o suporte a ACL está habilitado. Consulte a <strong><a href="https://wiki.debian.org/ACL">documentação oficial</a></strong> caso você não veja esses sistemas de arquivos na lista e não saiba como habilitar o suporte a ACL. Agora vamos configurar o arquivo de hosts. Para isto, adicione esta linha no arquivo /etc/hosts:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo <span class="nb">echo</span> <span class="s2">&#34;192.168.1.100 debian.seudominio.com.br debian&#34;</span> &gt;&gt; /etc/hosts
+</span></span></code></pre></div><p>Agora configure a interface de rede que no debian 8, é através do arquivo <code>/etc/network/interfaces</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1"># Conexão automatica das interfaces no startup do S.O</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">auto eth0
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">iface eth0 inet static
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1"># coloque o ip correspondente a sua rede local</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">address 192.168.1.100 
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">netmask 255.255.255.0
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"># verifique seu gateway e coloque aqui</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">gateway 192.168.1.1
+</span></span><span class="line"><span class="ln">11</span><span class="cl">dns-nameserver 192.168.1.1
+</span></span><span class="line"><span class="ln">12</span><span class="cl">dns-search seudominio.com.br
+</span></span></code></pre></div><p>Reinicie a interface:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart networking
+</span></span></code></pre></div><p>Configure o DNS client através da sua interface de rede <code>sudo nmtui</code>, ou pelo <code>/etc/resolv.conf</code> que é gerado pelo Network Manager, e acrescente as seguintes linhas:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">domain seudominio.com.br
+</span></span><span class="line"><span class="ln">2</span><span class="cl">search seudominio.com.br
+</span></span><span class="line"><span class="ln">3</span><span class="cl">nameserver 192.168.1.100
+</span></span><span class="line"><span class="ln">4</span><span class="cl">nameserver 192.168.1.1
+</span></span></code></pre></div><p>O nameserver 192.168.1.100 será utilizado pelo samba, enquanto o 192.168.1.1 é o serviço de DNS da rede local, pode ser modificado para outro de sua escolha (ex: 8.8.8.8 - google). Agora temos que configurar serviço de NTP (atualização de data/hora), que se encontra em <code>/etc/ntp.conf</code>. Gere um backup do arquivo <code>/etc/ntp.conf</code> por segurança e edite o arquivo da seguinte maneira:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">server 127.127.1.0
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">fudge 127.127.1.0 stratum <span class="m">10</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">server a.ntp.br iburst prefer
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">server 0.pool.ntp.org iburst prefer
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">server 1.pool.ntp.org iburst prefer
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">driftfile /var/lib/ntp/ntp.drift
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">logfile /var/log/ntp
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">ntpsigndsocket /var/lib/samba/ntp_signd/
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">restrict default kod nomodify notrap nopeer mssntp
+</span></span><span class="line"><span class="ln">10</span><span class="cl">restrict 127.0.0.1
+</span></span><span class="line"><span class="ln">11</span><span class="cl">restrict a.ntp.br mask 255.255.255.255 nomodify notrap nopeer noquery
+</span></span><span class="line"><span class="ln">12</span><span class="cl">restrict 0.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery
+</span></span><span class="line"><span class="ln">13</span><span class="cl">restrict 1.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery
+</span></span></code></pre></div><p>Cada um dos comandos acima significa o seguinte:</p>
+<ul>
+<li><strong>server 127.127.1.0</strong> - define o servidor de NTP local.</li>
+<li><strong>fudge 127.127.1.0</strong> stratum 10 - define o nível de prioridade do servidor de NTP local.</li>
+<li><strong>server a.ntp.br iburst prefer</strong> - define o servidor de NTP a.ntp.br como preferencial.</li>
+<li><strong>server 0.pool.ntp.org iburst prefer</strong> - define o servidor de NTP 0.pool.ntp.org como preferencial.</li>
+<li><strong>server 1.pool.ntp.org iburst prefer</strong> - define o servidor de NTP 1.pool.ntp.org como preferencial.</li>
+<li><strong>driftfile /var/lib/ntp/ntp.drift</strong> - define o arquivo de drift do NTP.</li>
+<li><strong>logfile /var/log/ntp</strong> - define o arquivo de log do NTP.</li>
+<li><strong>ntpsigndsocket</strong> /var/lib/samba/ntp_signd/ - define o socket do NTP.</li>
+<li><strong>restrict default kod nomodify notrap nopeer mssntp</strong> - define as restrições padrão do NTP.</li>
+<li><strong>restrict 127.0.0.1</strong> - define a restrição para o servidor de NTP local.</li>
+<li><strong>restrict a.ntp.br mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP a.ntp.br.</li>
+<li><strong>restrict 0.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP 0.pool.ntp.org.</li>
+<li><strong>restrict 1.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP 1.pool.ntp.org.</li>
+</ul>
+<blockquote>
+<p><strong>Nota:</strong> <strong><a href="https://pt.wikipedia.org/wiki/Network_Time_Protocol">O Network Time Protocol (NTP)</a></strong> é um protocolo de rede para sincronização do relógio entre sistemas e computadores além de  medir a latência da rede basicamente.</p>
+</blockquote>
+<p>Dê um reboot no sistema e quando retornar, por favor teste se há conexão com a internet. Se houver conexão, está tudo em ordem. Se não, algo deu errado (provavelmente na configuração do ip no /etc/network/interfaces.) Mas não se preocupe. Se isso acontecer, sugiro que você verifique o problema no <code>syslog</code> do S.O:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo tail -n <span class="m">500</span> /var/log/syslog <span class="p">|</span>grep networking
+</span></span></code></pre></div><p>Seja qual for o erro,só avance se tudo estiver funcionando até aqui.</p>
+<hr>
+<h3 id="samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</h3>
+<p>O Samba também pode atuar como um controlador de domínio, permitindo que os usuários sejam autenticados e autorizados usando as contas de usuário e grupos do Windows e fornecendo recursos de gerenciamento de contas de usuário e grupos semelhantes aos encontrados em um controlador de domínio Windows. Para isso, precisamos instalar o pacote <code>samba-dc</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install samba-dc
+</span></span></code></pre></div><p>Aguarde a instalação do pacote. Quando terminar, vamos fazer um backup do arquivo <code>smb.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bkp
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota</strong>: Neste caso, poderíamos ter usado o <strong>cp</strong> ao invés do <strong>mv</strong> para fazer o backup do smb.conf. No entanto, a intenção aqui é justamente remover o smb.conf criado a partir do apt. Agora iremos configurar o samba como controlador de domínio:</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">samba-tool domain provision --use-rfc2307 --realm<span class="o">=</span>SEUDOMINIO.COM.BR --domain<span class="o">=</span>SEUDOMINIO
+</span></span><span class="line"><span class="ln">2</span><span class="cl">--server-role<span class="o">=</span>dc --dns-backend<span class="o">=</span>SAMBA_INTERNAL --adminpass<span class="o">=</span><span class="s1">&#39;S@mb4s3rveR!&#39;</span>
+</span></span></code></pre></div><p>Se der tudo certo, certamente que irá gerar uma saída longa. No entanto, a parte importante a se destacar é esta a baixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">Server Role:	active directory domain controller
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Hostname:		debian
+</span></span><span class="line"><span class="ln">3</span><span class="cl">NetBIOS Domain:	SEUDOMINIO
+</span></span><span class="line"><span class="ln">4</span><span class="cl">DNS Domain:		seudominio.com.br
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> É de suma importância que a senha do &ndash;adminpass seja segura (com números,letras e caracteres especiais). Caso contrário, retornará um erro e não irá promover o samba. Dei preferência ao SAMBA_INTERNAL como sistema de configuração do DNS. Se você prefere usar o BIND9, dê uma estudada em <strong><a href="https://wiki.samba.org/index.php/Configure_BIND_as_backend_for_Samba_AD">Configure BIND as backend for SAMBA AD</a></strong>.</p>
+</blockquote>
+<p>Uma breve explicação dos parâmetros usados:</p>
+<ul>
+<li><strong>domain provision</strong> - comando usado para provisionar o samba como controlador de domínio.</li>
+<li><strong>&ndash;use-rfc2307</strong> - Usado para habilitar o suporte RFC2307 para o LDAP.</li>
+<li><strong>&ndash;realm</strong> - Nome do domínio em maiúsculas. Comprimento máximo do nome: 255 caracteres.</li>
+<li><strong>&ndash;domain</strong> - Nome do domínio em minúsculas. Comprimento máximo do nome: 15 caracteres.</li>
+<li><strong>&ndash;server-role</strong> - Aqui você escolhe o papel do servidor. Pode ser: dc, member server, standalone server.</li>
+<li><strong>&ndash;dns-backend</strong> - Aqui você escolhe o backend do DNS. Pode ser: SAMBA_INTERNAL, BIND9_FLATFILE, BIND9_DLZ.</li>
+<li><strong>&ndash;adminpass</strong> - Senha do administrador do samba.</li>
+</ul>
+<p>Ajuste os parâmetros conforme suas necessidades, especialmente o realm, domain e adminpass. Agora vamos copiar a configuração do Kerberos gerada pelo samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp /var/lib/samba/private/krb5.conf /etc/
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Criamos uma cópia do krb5.conf na pasta /etc/ porque é a pasta padrão da configuração do Kerberos para com o Samba 4.</p>
+</blockquote>
+<p>Inicie o samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl start samba
+</span></span></code></pre></div><p>Desative a política de atualização de senha para administrador (opcional):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user setexpiry administrator --noexpiry
+</span></span></code></pre></div><p>Ajuste as configurações do samba, conforme suas necessidades no arquivo <code>/etc/samba/smb.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="o">[</span>global<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">        <span class="nv">workgroup</span> <span class="o">=</span> seudominio
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">        <span class="nv">realm</span> <span class="o">=</span> seudominio.COM.BR
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">        netbios <span class="nv">name</span> <span class="o">=</span> DEBIAN
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">        server <span class="nv">role</span> <span class="o">=</span> active directory domain controller
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        dns <span class="nv">forwarder</span> <span class="o">=</span> 192.168.1.1
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        idmap_ldb:use <span class="nv">rfc2307</span> <span class="o">=</span> yes
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">        <span class="c1"># logs</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        log <span class="nv">file</span> <span class="o">=</span> /var/log/samba/log.%m
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        max log <span class="nv">size</span> <span class="o">=</span> <span class="m">50</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl">
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">[</span>netlogon<span class="o">]</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="nv">path</span> <span class="o">=</span> /var/lib/samba/sysvol/domarques.com.br/scripts
+</span></span><span class="line"><span class="ln">16</span><span class="cl">        <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="o">[</span>sysvol<span class="o">]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">        <span class="nv">path</span> <span class="o">=</span> /var/lib/samba/sysvol
+</span></span><span class="line"><span class="ln">20</span><span class="cl">        <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="o">[</span>home<span class="o">]</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">        <span class="nv">path</span> <span class="o">=</span> /var/sambausers/
+</span></span><span class="line"><span class="ln">24</span><span class="cl">        <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> no
+</span></span><span class="line"><span class="ln">25</span><span class="cl">        <span class="nv">browseable</span> <span class="o">=</span> no
+</span></span></code></pre></div><p>Outra maneira de fazer o mesmo processo, é apenas digitando <strong>testparm</strong> no terminal. Esta é uma ferramenta do samba-tool e serve para fazer análise da sintaxe do smb.conf. Caso não exista smb.conf, ele gera um novo e baseando o workgroup nas configurações existentes do sistema. Crie o diretório dos arquivos dos usuários e aplique as novas configurações:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir -p /var/sambausers
+</span></span></code></pre></div><p>Para aplicar novas configurações:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbcontrol all reload-config 
+</span></span></code></pre></div><p>Caso não saiba como configurar seu <code>smb.conf</code>, consulte o site <strong><a href="http://www.sloop.net/smb.conf.html">http://www.sloop.net/smb.conf.html</a></strong>. Depois de tudo a cima feito, vamos testar as configurações. Verifique versão do samba e smbclient:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba -V
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo smbclient -V
+</span></span></code></pre></div><p>Agora reboot a máquina e teste o Kerberos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo reboot
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo kinit administrator@seudominio.COM.BR
+</span></span></code></pre></div><p>É muito comum após este comando aparecer o seguinte erro:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">kinit cannot contact any kdc <span class="k">for</span> realm
+</span></span></code></pre></div><p>kinit cannot contact any kdc for realm significa que o Kerberos não conseguiu se comunicar com o controlador de domínio. Caso você esteja usando o samba como controlador de domínio, verifique se o samba está rodando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl status samba
+</span></span></code></pre></div><p>Caso o erro persista, sugiro que você investigue no <code>/var/log/syslog</code> ou journaling:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">tail -n <span class="m">500</span> /var/log/syslog <span class="p">|</span>grep kinit
+</span></span></code></pre></div><p>Em caso positivo, irá retornar algo semelhante a isto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">warning: Your password will expire in <span class="m">41</span> days on Sex <span class="m">29</span> Jan <span class="m">2016</span> 12:18:08 BRST
+</span></span></code></pre></div><p>Teste também as configurações de DNS do samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo host -t SRV _ldap._tcp.seudominio.com.br
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo host -t SRV _kerberos._udp.seudominio.com.br
+</span></span><span class="line"><span class="ln">3</span><span class="cl">sudo host -t A debian.seudominio.com.br.
+</span></span></code></pre></div><p>Caso ocorra tudo nos conformes, irá retornar algo semelhante a isto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">_ldap._tcp.teste.com.br has SRV record <span class="m">0</span> <span class="m">100</span> <span class="m">389</span> debpdc.teste.com.br
+</span></span><span class="line"><span class="ln">2</span><span class="cl">_kerberos._udp.teste.com.br has SRV record <span class="m">0</span> <span class="m">100</span> <span class="m">88</span> debpdc.teste.com.br
+</span></span><span class="line"><span class="ln">3</span><span class="cl">debpdc.teste.com.br has address 192.168.1.100
+</span></span></code></pre></div><p>Teste a conectividade com o samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbclient -k //debian.seudominio.com.br/netlogon -c <span class="s1">&#39;ls&#39;</span>
+</span></span></code></pre></div><p>E por fim teremos algo semelhante a isto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">Domain</span><span class="o">=[</span>TESTE<span class="o">]</span> <span class="nv">OS</span><span class="o">=[</span>Unix<span class="o">]</span> <span class="nv">Server</span><span class="o">=[</span>Samba 4.1.17-Debian<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">.   D		   <span class="m">0</span>  Fri Dec <span class="m">18</span> 11:16:51 <span class="m">2015</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">..	D		   <span class="m">0</span>  Fri Dec <span class="m">18</span> 11:21:12 <span class="m">2015</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">	<span class="m">49788</span> blocks of size 524288. <span class="m">44277</span> blocks available
+</span></span></code></pre></div><hr>
+<h3 id="compartilhamento-com-o-servidor-de-impressao">Compartilhamento com o servidor de impressao</h3>
+<p>Você poderá compartilhar as impressoras já configurados com o CUPS mas, tenha em mente que o Samba comunica com o CUPS via soquetes, portanto, você não precisa configurar qualquer permissão especial, além de uma diretiva Listen para o socket CUPS. Criaremos um diretório de <strong><a href="https://pt.wikipedia.org/wiki/Spooling">spool</a></strong> de impressão, e definir as permissões corretamente. Este é destino onde o Samba irá armazenar arquivos temporários relacionados para imprimir documentos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir /usr/local/samba/var/spool
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo chmod <span class="m">1777</span> /usr/local/samba/var/spool
+</span></span></code></pre></div><p>A permissão 1777 é uma permissão especial que permite que qualquer usuário possa criar arquivos e diretórios dentro dele. O Samba irá criar arquivos temporários dentro deste diretório, e o CUPS irá ler e imprimir os arquivos. Configurando o <code>/etc/samba/smb.conf</code> para ler o diretório de spooling adicionando o seguinte:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>printers<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nv">comment</span> <span class="o">=</span> All Printers
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nv">path</span> <span class="o">=</span> /usr/local/samba/var/spool
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nv">browseable</span> <span class="o">=</span> Yes
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="nv">printable</span> <span class="o">=</span> Yes
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[printers]</strong> é o nome do compartilhamento de impressão.</li>
+<li><strong>comment = All Printers</strong> - é um comentário para o compartilhamento.</li>
+<li><strong>path = /usr/local/samba/var/spool</strong> - é o diretório onde o Samba irá armazenar os arquivos temporários.</li>
+<li><strong>browseable = Yes</strong> - significa que o compartilhamento será visível para os clientes do Windows.</li>
+<li><strong>read only = No</strong> - significa que os clientes do Windows podem imprimir para este compartilhamento.</li>
+<li><strong>printable = Yes</strong> - significa que o Samba irá oferecer suporte para impressão para este compartilhamento.</li>
+</ul>
+<p>Por uma questão de conveniência, os clientes do Windows podem consultar o servidor que está compartilhando uma impressora para um driver de impressão. Para habilitar essa funcionalidade no Samba, temos de criar uma impressora especial de compartilhamento de arquivos. Vamos então criar um diretório de compartimento de impressão, e arquitetura de sub-diretórios:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir -p /usr/local/samba/var/print/<span class="o">{</span>COLOR,IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64<span class="o">}</span>
+</span></span></code></pre></div><p>E novamente configurar no smb.conf:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>print$<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nv">comment</span> <span class="o">=</span> Point and Print Printer Drivers
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nv">path</span> <span class="o">=</span> /usr/local/samba/var/print
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[print$]</strong> é o nome do compartilhamento de impressão.</li>
+<li><strong>path = /usr/local/samba/var/print</strong> - é o diretório onde o Samba irá armazenar os arquivos temporários.</li>
+<li><strong>read only = No</strong> - significa que os clientes do Windows podem imprimir para este compartilhamento.</li>
+</ul>
+<p>Reinicie as configurações do samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbcontrol all reload-config
+</span></span></code></pre></div><p>A partir de agora efetue login como um administrador de domínio em um computador cliente Windows e clique em Iniciar -&gt; Executar &ldquo;\samba&quot;. Na lista de ações, clique duas vezes &ldquo;Impressoras e faxes&rdquo; e em seguida, clique em Arquivo -&gt; Propriedades do Servidor. Na guia Drivers, clique em &ldquo;Adicionar …&rdquo;, em seguida, em &ldquo;Next&rdquo;. Em seguida escolha o driver que você gostaria de instalar e clique em “Avançar”, escolha as arquiteturas dos drivers que você deseja instalar.</p>
+<hr>
+<h1 id="lixeira-do-samba">Lixeira do Samba</h1>
+<p>O Active Directory fornece recursos muito úteis para recuperação objetos excluídos. Dependendo de como você configurou o seu domínio, é possível restaurar um conjunto de atributos e dados com este recurso habilitado. Sempre que um objeto é excluído do Active Directory, ele é movido para um container escondido, chamado &ldquo;Objetos Excluídos (CN = Deleted Objects, DC = samdom, DC = exemplo, DC = com). E estes objetos se mantém neste lugar por um determinado período (e é configurável). Após esse período, os objetos serão definitivamente excluídos (mas podem ser recuperados).</p>
+<h3 id="o-que-não-pode-ser-recuperado">O que <strong>NÃO</strong> pode ser recuperado?</h3>
+<p>Se você não tiver habilitado este recurso antes e posteriormente optar por habilitar, obviamente que tudo o que vem antes de ativar o recurso não pode ser recuperado (porque está fora da política do recurso). Ou ainda objetos renomeados também não poderão ser recuperados.
+Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>share<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">path</span> <span class="o">=</span> /data/share
+</span></span><span class="line"><span class="ln">3</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> recycle
+</span></span><span class="line"><span class="ln">4</span><span class="cl">recycle:repository <span class="o">=</span> .recycle
+</span></span><span class="line"><span class="ln">5</span><span class="cl">recycle:keeptree <span class="o">=</span> yes
+</span></span><span class="line"><span class="ln">6</span><span class="cl">recycle:versions <span class="o">=</span> yes
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[share]</strong> é o nome do compartilhamento.</li>
+<li><strong>path = /data/share</strong> é o diretório que será compartilhado.</li>
+<li><strong>vfs objects = recycle</strong> é o módulo do vfs que será usado.</li>
+<li><strong>recycle:repository = .recycle</strong> é o diretório onde os arquivos serão movidos.</li>
+<li><strong>recycle:keeptree = yes</strong> é para manter a estrutura de diretórios.</li>
+<li><strong>recycle:versions = yes</strong> é para manter as versões dos arquivos.</li>
+</ul>
+<p>Isto é, qualquer item deletado neste compartilhamento vai para o diretório .recycle. Podemos também implementar mais recursos para esta tarefa. Por exemplo, experimente adicionar as seguints linhas em seu [global] no <code>/etc/samba/smb.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> recycle
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">recycle:facility <span class="o">=</span> LOCAL1
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">recycle:priority <span class="o">=</span> NOTICE
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">recycle:maxsize <span class="o">=</span> <span class="m">0</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">recycle:directory_mode <span class="o">=</span> <span class="m">0774</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">recycle:subdir_mode <span class="o">=</span> <span class="m">0774</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">recycle:keeptree <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">recycle:touch <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">recycle:versions <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">recycle:repository <span class="o">=</span> /srv/samba/Recycle/
+</span></span><span class="line"><span class="ln">11</span><span class="cl">recycle:exclude <span class="o">=</span> *.tmp, *.log, *.obj, ~*.*, *.bak, *.exe, *.bin
+</span></span><span class="line"><span class="ln">12</span><span class="cl">recycle:exclude_dir <span class="o">=</span> tmp, temp, cache
+</span></span><span class="line"><span class="ln">13</span><span class="cl">create <span class="nv">mask</span> <span class="o">=</span> <span class="m">0774</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">directory <span class="nv">mask</span> <span class="o">=</span> <span class="m">0774</span>
+</span></span></code></pre></div><p>Agora vamos à explicação de cada variável a cima:</p>
+<ul>
+<li><strong>vfs recycle</strong> - É o módulo do vfs que será usado. VFS é um conjunto de módulos que podem ser carregados dinamicamente pelo Samba. Eles podem ser usados ​​para adicionar funcionalidades ao Samba, como por exemplo, o módulo de lixeira.</li>
+<li><strong>recycle:facility = LOCAL1 e recycle:priority = NOTICE</strong> - Aqui é definido o nível de log que será usado para registrar as ações de lixeira.</li>
+<li><strong>recycle:maxsize = 0</strong> - Aqui é definido o tamanho máximo do arquivo que será armazenado na lixeira.</li>
+<li><strong>recycle:repository = /srv/samba/Recycle/</strong> - Aqui é definido o diretório onde os arquivos serão movidos.</li>
+<li><strong>recycle:directory_mode = 0774, recycle:subdir_mode = 0774,recycle:keeptree = true,recycle:touch = tryyue</strong> - Aqui é definido o modo de diretório, subdiretório, se a estrutura de diretório será mantida e se o arquivo será tocado.</li>
+<li>**recycle:exclude = *.tmp, *.temp, *.log, *.ldb, <em>.o, <em>.obj, ~</em>.</em>, <em>.bak, <em>.iso e recycle:exclude_dir = tmp, temp, cache</em></em> - Aqui é definido os arquivos e diretórios que serão excluídos da lixeira.</li>
+<li><strong>recycle:versions = Yes</strong> - Aqui é definido se as versões dos arquivos serão mantidas.</li>
+</ul>
+<hr>
+<h2 id="auditando-acessos">Auditando acessos</h2>
+<p>O Samba oferece também um recurso de geração de log. Ele pode ser ativado adicionando as opções abaixo na seção [global] do smb.conf:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">log <span class="nv">level</span> <span class="o">=</span> <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">log <span class="nv">file</span> <span class="o">=</span> /var/log/samba/log.%m
+</span></span><span class="line"><span class="ln">3</span><span class="cl">max log <span class="nv">size</span> <span class="o">=</span> <span class="m">50</span>
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>log level = 1</strong> é o nível das mensagens (de 0 a 10), sendo que o nível 0 mostra apenas mensagens críticas, o nível 1 mostra alguns detalhes sobre os acessos e os demais mostram diversos níveis de informações de debug, úteis a desenvolvedores.</li>
+<li><strong>log file = /var/log/samba/log.%m</strong> é o arquivo onde ele será gerado.</li>
+<li><strong>max log size = 50</strong> é o tamanho máximo do arquivo de log.</li>
+</ul>
+<blockquote>
+<p><strong>NOTA</strong>: A partir do Samba 3.04 foi incluído um módulo de auditoria, que permite logar os acessos e as modificações feitas de uma forma muito mais completa que o log tradicional. Isso é feito através do módulo <strong>&ldquo;full_audit&rdquo;</strong>, que (do ponto de vista técnico) funciona de forma similar ao módulo &ldquo;recycle&rdquo; usado pela lixeira.</p>
+</blockquote>
+<p>O primeiro passo é ativar o módulo no <code>/etc/smb.conf</code> e em [global] como mostra a baixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> full_audit
+</span></span></code></pre></div><p>O próximo passo é definir quais operações devem ser logadas através da opção <strong>&ldquo;full_audit:success&rdquo;</strong>, como em:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">full_audit:success <span class="o">=</span> open, opendir, write, unlink, rename, mkdir, rmdir, chmod, chown
+</span></span></code></pre></div><p>As opções que incluí no exemplo são open (ler um arquivo), opendir (ver os arquivos dentro de uma pasta), write (alterar um arquivo), unlink (deletar um arquivo), rename (renomear um arquivo), mkdir (criar um diretório), rmdir (remover um diretório), chmod (alterar as permissões de acesso de um arquivo) e chown (mudar o dono de um arquivo). Continuando a configuração, especificamos as informações que desejamos que sejam incluídas no log, usando a opção <strong>&ldquo;full_audit:prefix&rdquo;</strong>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">full_audit:prefix <span class="o">=</span> %u<span class="p">|</span>%I<span class="p">|</span>%S
+</span></span></code></pre></div><p>Por padrão, o módulo loga não apenas os acessos e modificações, mas também um grande volume de mensagens de alerta e erros gerados durante a operação. A opção <strong>&ldquo;full_audit:failure = none&rdquo;</strong> evita que estas mensagens sejam logadas, fazendo com que o log fique muito mais limpo e seja mais fácil encontrar as opções que realmente interessam:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">full_audit:failure <span class="o">=</span> none
+</span></span></code></pre></div><p>Concluindo, especificamos o nível dos alertas, entre os suportados pelo syslog, como em <strong>full_audit:facility = local1, e full_audit:priority = notice</strong>. Juntando tudo, temos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> full_audit
+</span></span><span class="line"><span class="ln">2</span><span class="cl">full_audit:success <span class="o">=</span> open, opendir, write, unlink, rename, mkdir, rmdir, chmod, chown
+</span></span><span class="line"><span class="ln">3</span><span class="cl">full_audit:prefix <span class="o">=</span> %u<span class="p">|</span>%I<span class="p">|</span>%S
+</span></span><span class="line"><span class="ln">4</span><span class="cl">full_audit:failure <span class="o">=</span> none
+</span></span><span class="line"><span class="ln">5</span><span class="cl">full_audit:facility <span class="o">=</span> LOCAL1
+</span></span><span class="line"><span class="ln">6</span><span class="cl">full_audit:priority <span class="o">=</span> notice
+</span></span></code></pre></div><p>Em full_audit:prefix, adicionei %u, %I e %S que indicam o <strong>usuário (%u)</strong> que realizou a operação, o <strong>endereço IP (%I)</strong> do usuário e o <strong>compartilhamento acesso (%S)</strong>. Na diretiva full_audit:failure: none estamos indicando que não será registrada nenhuma operação (none) que tenha obtido como status de execução alguma falha.</p>
+<p>A penúltima linha <strong>full_audit:facility = LOCAL1</strong> indica que iremos rotular as mensagens de log do Samba (especificamente do módulo VFS full_audit) para que sejam consideradas mensagens que são originadas do recurso de sistema chamado local1.</p>
+<p>Esta configuração pode ser tanto incluída dentro da seção [global] (de forma que o log inclua os acessos e as alterações feitas em todos os compartilhamentos) quanto ser incluída apenas na configuração de um compartilhamento específico. Com isso, o Samba vai passar a gerar os eventos referentes aos acessos. Falta agora configurar o sysklogd (o serviço responsável pela geração dos logs do sistema), para logar os eventos, gerando o arquivo de log que poderá ser consultado. Para isso, abra o arquivo &ldquo;/etc/syslog.conf&rdquo; e adicione a linha abaixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">local1.notice /var/log/samba-full_audit.log
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> O &ldquo;local1.notice&rdquo; corresponde aos valores informados nas opções &ldquo;full_audit:facility&rdquo; e &ldquo;full_audit:priority&rdquo;, enquanto o &ldquo;/var/log/samba-full_audit.log&rdquo; é o arquivo de log que será gerado. Depois de concluída a configuração, reinicie os serviços e o log passará a ser gerado imedia/sambatamente:</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart samba
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo systemctl restart sysklogd
+</span></span></code></pre></div><p>Dentro do arquivo, você verá entradas contendo a data e hora, o nome da máquina, o usuário, o IP da máquina, o nome do compartilhamento, a operação realizada e o nome do arquivo ou pasta onde ela foi realizada, como em:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">Dec <span class="m">23</span> 15:21:15 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>opendir<span class="p">|</span>ok<span class="p">|</span>.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Dec <span class="m">23</span> 15:21:29 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>open<span class="p">|</span>ok<span class="p">|</span>r<span class="p">|</span>addr.txt
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Dec <span class="m">23</span> 15:21:34 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>mkdir<span class="p">|</span>ok<span class="p">|</span>trabalho
+</span></span><span class="line"><span class="ln">4</span><span class="cl">Dec <span class="m">23</span> 15:21:36 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>opendir<span class="p">|</span>ok<span class="p">|</span>trabalho
+</span></span><span class="line"><span class="ln">5</span><span class="cl">Dec <span class="m">23</span> 15:21:43 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>open<span class="p">|</span>ok<span class="p">|</span>w<span class="p">|</span>trabalho/Samba.sxw
+</span></span><span class="line"><span class="ln">6</span><span class="cl">Dec <span class="m">23</span> 15:21:44 m1 smbd_audit: lobo<span class="p">|</span>192.168.1.100<span class="p">|</span>arquivos<span class="p">|</span>open<span class="p">|</span>ok<span class="p">|</span>w<span class="p">|</span>trabalho/foto.jpg#center
+</span></span></code></pre></div><p>O log conterá entradas referentes a todos os usuários e máquinas, mas é fácil ver apenas as entradas referentes a um determinado usuário, compartilhamento, endereço IP ou outro parâmetro qualquer ao listar o arquivo pelo terminal usando o grep, que permite mostrar apenas as linhas contendo determinados trechos. Mais opções e parâmetros usados para verificação de logs através do vfs full audit você poderá conferir na <strong><a href="https://www.samba.org/samba/docs/man/manpages-3/vfs_full_audit.8.html">manpage do vfs_full_audit</a></strong>.</p>
+<h3 id="rotacionamento-de-logs">Rotacionamento de logs</h3>
+<p>Para completar a configuração iremos implementar a política de rotacionamento de logs. Rotacionamento de logs é uma tarefa que é realizada pela ferramenta logrotate, e possui grande importância em servidores. A maioria dos arquivos de log em sistema Unix utilizam formato plain text e dependendo da demanda de usuários e recursos (arquivos/diretórios) acessados, bem como o período em que isto está ocorrendo, estes arquivos de texto irão crescer ao ponto de ocupar centenas a milhares de Megabytes, ao ponto de utilizar todo os espaço disponível para esta finalidade.</p>
+<p>O rotacionamento de logs permite que, de acordo com a política empregada, um arquivo possa ser segmentado, bem como seus segmentos mais antigos serem compactados <strong>(de modo a reduzir o espaço utilizado)</strong>. Dentro de uma política de log, além de considerar o espaço em disco disponível, deve-se observar o período em que deseja-se armazenar estes arquivos. No caso do arquivo audit.log que estamos definindo como ponto para registrar as ações realizadas em cada arquivo/diretório, precisamos definir quantos dias, meses ou anos estes registros estarão disponíveis ou quantos segmentos irão existir do arquivo e que período (diariamente, semanalmente, etc) estes segmentos serão criados.</p>
+<p>No caso vamos criar um arquivo de parâmetros que irá criar até 32 segmentos, e parte destes segmentos serão compactados. Já em relação ao período de criação destes segmentos ele será diário, bem como estes arquivos serão segmentos considerando que o segmento mais recente tenha atingido pelo menos 2 Megabytes, para que as entradas mais antigas destes arquivo sejam movidas para outro arquivo de segmento.</p>
+<p>Crie um arquivo audit_samba.conf em /etc/logrotate.d com o seguinte conteúdo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">/var/log/samba/audit.log <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"> dayly
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"> rotate <span class="m">32</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"> minsize 2M
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"> notifempty
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"> missingok
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"> sharedscripts
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"> copytruncate
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"> compress
+</span></span><span class="line"><span class="ln">10</span><span class="cl"> delaycompress
+</span></span><span class="line"><span class="ln">11</span><span class="cl"> postrotate
+</span></span><span class="line"><span class="ln">12</span><span class="cl"> /bin/kill -HUP <span class="sb">`</span>cat /var/run/smbd.pid /var/run/nmbd.pid 2&gt; /dev/null<span class="sb">`</span> 2&gt; /dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"> endscript
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>Os elementos mais importantes deste arquivo são:</p>
+<ul>
+<li><strong>dayly</strong> - irá criar um segmento diário;</li>
+<li><strong>rotate 32</strong> - irá criar até 32 segmentos;</li>
+<li><strong>minsize 2M</strong> - irá criar um segmento quando o segmento mais recente atingir 2 Megabytes;</li>
+<li><strong>compress</strong> - irá compactar os segmentos mais antigos;</li>
+<li><strong>delaycompress</strong> - irá compactar os segmentos mais antigos após o término do processo de rotacionamento;</li>
+</ul>
+<p>Entretanto, ainda falta alterar um arquivo de políticas do logrotate chamado <code>/etc/logrotate.d/samba</code>.</p>
+<p>Este arquivo contém uma política de rotacionamento que será aplicada a todos os arquivos com extensão log existentes em <code>/var/log/samba</code>, entretanto, como temos um arquivo de política já especifico para o arquivo <code>audit_samba.log</code> (que irá expandir muito mais rapidamente que qualquer outro arquivo de logs do samba), vamos adaptar o arquivo de políticas de rotacionamento padrão para não aplicar estas políticas no arquivo <code>audit_samba.log</code>.</p>
+<p>Alterar o arquivo /etc/logrotate.d/samba, onde existe:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">/var/log/samba/*.log
+</span></span></code></pre></div><p>Altere para:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">/var/log/samba/<span class="o">[</span>b-z<span class="o">]</span>*.log
+</span></span></code></pre></div><p>Diferente de outros utilitários do sistema, o logrotate <strong>não é executado em background como um serviço, ele é executado media/sambante as políticas de agendamento de tarefas definidas no cron</strong>, sendo assim, o utilitário logrotate será executado todos os dias a 4:02 da manhã de arquivo com o arquivo /etc/crontab e existência do arquivo de agendamento em /etc/cron.daily.</p>
+<hr>
+<h3 id="usando-acls-para-permissoes-avancadas-no-linux">Usando acls para permissoes avancadas no Linux</h3>
+<p>As ACLs (Access Control Lists) nos fornecem um controle mais refinado sobre quais usuários podem acessar diretórios e arquivos específicos do que as permissões tradicionais do GNU/Linux. Usando as ACLs, podemos especificar as formas nas quais cada um dos usuários podem acessar um diretório ou um arquivo. Se eu quiser dar uma permissão apenas para mais uma pessoa, por exemplo, a minha opção com chmod, seria criar um grupo de apenas uma pessoa e autorizar este grupo a acessar o arquivo ou diretório. Enfim, fica muito complicado quando precisamos regular o acesso de uma maneira mais detalhada.</p>
+<p>Existem dois tipos de ACLs: regras de acesso <strong>(access ACLs)</strong> e regras padrão <strong>(default ACLs)</strong>. Uma regra de acesso especifica informações de acesso para um único arquivo ou diretório. Já uma regra padrão é aplicada apenas a diretórios, e especifica informações de acesso padrões para todos os arquivos no diretório que não possuam uma ACL explícita aplicada. Como vimos no capítulo 4 em <strong><a href="http://lobocode.github.io/2015/09/11/samba4.html#instalando-o-samba">Instalando o Samba</a></strong>, note que instalamos também as ACL&rsquo;s e ajustamos o particionamento para aceitar a acl no /etc/fstab. De agora em diante vamos trabalhar com uma maneira diferente de lidar com permissões além do já conhecido chmod.</p>
+<p>Para usar este tipo de permissão, é bastante simples apesar de haver inúmeros parâmetros. Por exemplo, crie uma pasta chamada testes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">mkdir testes
+</span></span></code></pre></div><p>Em seguida, vamos setar o acesso a leitura, escrita e gravação &ldquo;apenas&rdquo; para o usuário &ldquo;lobo&rdquo; (o meu usuário por exemplo):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo setfacl -m u:lobo:rwx testes
+</span></span></code></pre></div><p>O comando que define as permissões chama-se <strong>setfacl (set file access control list)</strong>. Os parâmetros fornecidos também são de fácil compreensão:</p>
+<ul>
+<li><strong>-m</strong> - Modifica as permissões de acesso.</li>
+<li><strong>u</strong> - Usuário que receberá as permissões de acesso.</li>
+<li><strong>lobo</strong> - Nome do usuário que receberá as permissões de acesso.</li>
+<li><strong>rwx</strong> - Permissões de acesso que serão concedidas ao usuário.</li>
+<li><strong>testes</strong> - Nome do arquivo ou diretório que receberá as permissões de acesso.</li>
+</ul>
+<p>Uma vez emitido o comando, vamos verificar se está tudo correto. Para isto usamos o comando <code>getfacl</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ getfacl testes
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="c1"># file: testes</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># owner: root</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"># group: root</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">user::rwx
+</span></span><span class="line"><span class="ln">6</span><span class="cl">user:lobo:rwx
+</span></span><span class="line"><span class="ln">7</span><span class="cl">group::r-x
+</span></span><span class="line"><span class="ln">8</span><span class="cl">mask::rwx
+</span></span><span class="line"><span class="ln">9</span><span class="cl">other::r-x
+</span></span></code></pre></div><p>Como podemos ver, o dono do arquivo é o super usuário (root) e o usuário lobo recebeu permissões de leitura, escrita e execução neste arquivo (user:lobo:rwx). Para saber se um arquivo ou diretório possui uma lista de acesso, digite:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">ls -l testes
+</span></span></code></pre></div><p>E teremos algo semelhante a isto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">-rw-rwxr--+ <span class="m">1</span> root root <span class="m">0</span> Dec  <span class="m">4</span> 19:06 testes
+</span></span></code></pre></div><p>Observe o sinal de &ldquo;+&rdquo; em -rw-rwxr&ndash;+. Este sinal indica que o arquivo possui uma lista de acesso <strong>(acl)</strong> definida. Se emitirmos o mesmo comando para um diretório teremos um resultado diferente. Para explorar mais das acl&rsquo;s, sugiro que dêem uma lida neste artigo escrito por <strong><a href="http://www.hardware.com.br/dicas/acl-linux.html">Luis Felipe Silveira</a></strong>.</p>
+<p>Para que o samba consiga interpretar corretamente as ACL&rsquo;s, adicione o parâmetro <strong>map acl inherit = Yes</strong> no compartilhamento no qual você deseja ativar ACL (ou na pasta compartilhada que você alterou permissões e deseja efetivar as ACL) no smb.conf:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>compartilhado<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">comment</span> <span class="o">=</span> compartilhado
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">path</span> <span class="o">=</span> /compartilhado
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
+</span></span><span class="line"><span class="ln">5</span><span class="cl">create <span class="nv">mask</span> <span class="o">=</span> <span class="m">0777</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">force create <span class="nv">mode</span> <span class="o">=</span> <span class="m">0777</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">directory <span class="nv">mask</span> <span class="o">=</span> <span class="m">0777</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">force directory <span class="nv">mode</span> <span class="o">=</span> <span class="m">0777</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl">map acl <span class="nv">inherit</span> <span class="o">=</span> Yes
+</span></span></code></pre></div><p>Não esqueça depois de alterar as ACL de reiniciar o samba para que ele aplique as configurações corretas:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart samba
+</span></span></code></pre></div><hr>
+<h3 id="migrando-um-samba3-pdc-para-samba-4-ad">Migrando um samba3 PDC para Samba 4 AD</h3>
+<p>Recomendo fazer exaustivos teste em um ambiente virtual antes de fazer a migração no ambiente de produção. Para ter um ambiente de teste confiável apos criar as máquinas Virtuais ingressei as duas no meu domínio antigo em produção (Samba3+ldap) e me loguei em cada uma delas com pelo menos 4 usuários do domínio, diferente em cada maquina Totalizando 7 ( Um usuário em comum nas duas maquina para teste ). Você poderá criar uma situação similar para testes também. Acesse seu servidor samba3 e nele vamos fazer <strong>Backup</strong> de algumas pastas e arquivos de configurações que serão necessários para a migração:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir -p /root/backup/var/lib/
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo mkdir -p /root/backup/etc/
+</span></span></code></pre></div><p>Parando o servidor ldap do samba3 para fazer backup:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl stop ldap
+</span></span></code></pre></div><p>Fazendo Backup do servidor ldap</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">suddo slapcat &gt; /root/backup/backup.ldif
+</span></span></code></pre></div><p>Iniciando o servidor Ldap (Para que seus usuários possam voltar a logar):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl start ldap
+</span></span></code></pre></div><p>Copiar arquivo as pastas do samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp -r /etc/samba/ /root/backup/etc/
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo cp -r /var/lib/samba /root/backup/var/lib/
+</span></span></code></pre></div><p>Copiando pasta de configuração do ldap</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp -r /etc/openldap /root/backup/etc/
+</span></span></code></pre></div><p>No meu caso o ldap usa conexão segura TLS por isso precisei dos certificados também. Para facilitar copiei toda as pasta /etc/ssl:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp -r /etc/ssl /root/backup/etc/
+</span></span></code></pre></div><p>Copiei a pasta Backup do servidor samba3 para o servidor samba4:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo scp -r /root/backup root@servidorsamba4:/root/
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Você poderá usar o filezila em ambiente gráfico se um dos servidores tiver o servidor X, ou qualquer outro recurso de ftp caso não saiba usar o <strong>scp</strong>.</p>
+</blockquote>
+<p>Ligue as duas maquinas em rede (Samba3 e Samba4) recomendo que o teste de migração sejam feito numa rede separada simulando um cenário real (onde o samba4 tem o mesmo ip do antigo samba3). A instalação do Servidor openldap será apenas para a migração visto que já existe um servidor openldap embutido no samab4. Portanto, pós migração iremos remove-lo.</p>
+<p>Antes de Instalar o ldap e fazer o dump dos usuários, verifique se existem usuários com sid duplicado e se existem grupos que tenha o mesmo nome que o de usuários.
+Instalar servidor ldap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt install -y libldap-2.4-2 slapd ldap-utils
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Quando for solicitado senha pode deixar em branco.</p>
+</blockquote>
+<p>Parar o daemon do servidor ldap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl stop slapd
+</span></span></code></pre></div><p>Fazer copia da pasta padrão do servidor ldap (criada na instalação do servidor ldap):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mv /etc/ldap /etc/ldap.padrao
+</span></span></code></pre></div><p>Copiar a pasta do servidor ldap antigo ( Samba3 ) da qual fora feito o backup temporário:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp -r /root/backup/etc/ldap /etc/ldap
+</span></span></code></pre></div><p>Mudando Permissões na pasta ldap</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo chmod <span class="m">777</span> -R /etc/ldap
+</span></span></code></pre></div><p>Agora precisamos editar o arquivo <code>/etc/ldap/slapd.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1"># See slapd.conf(5) for details on configuration options.</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"># This file should NOT be world readable.</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">include /etc/ldap/schema/core.schema
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">include /etc/ldap/schema/cosine.schema
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">include /etc/ldap/schema/inetorgperson.schema
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">include /etc/ldap/schema/nis.schema
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">include /etc/ldap/schema/yast.schema
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">include /etc/ldap/schema/samba.schema
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">pidfile /var/run/slapd/slapd.pid
+</span></span><span class="line"><span class="ln">10</span><span class="cl">argsfile /var/run/slapd/slapd.args
+</span></span><span class="line"><span class="ln">11</span><span class="cl">modulepath /usr/lib/ldap/modules
+</span></span><span class="line"><span class="ln">12</span><span class="cl">access to <span class="nv">attrs</span><span class="o">=</span>SambaLMPassword,SambaNTPassword
+</span></span><span class="line"><span class="ln">13</span><span class="cl">by <span class="nv">dn</span><span class="o">=</span><span class="s2">&#34;cn=Administrator,dc=empresa,dc=casa&#34;</span> write
+</span></span><span class="line"><span class="ln">14</span><span class="cl">by * none
+</span></span><span class="line"><span class="ln">15</span><span class="cl">access to dn.base<span class="o">=</span><span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">by * <span class="nb">read</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">access to dn.base<span class="o">=</span><span class="s2">&#34;cn=Subschema&#34;</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">by * <span class="nb">read</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">access to <span class="nv">attrs</span><span class="o">=</span>userPassword,userPKCS12
+</span></span><span class="line"><span class="ln">20</span><span class="cl">by self write
+</span></span><span class="line"><span class="ln">21</span><span class="cl">by * auth
+</span></span><span class="line"><span class="ln">22</span><span class="cl">access to <span class="nv">attrs</span><span class="o">=</span>shadowLastChange
+</span></span><span class="line"><span class="ln">23</span><span class="cl">by self write
+</span></span><span class="line"><span class="ln">24</span><span class="cl">by * <span class="nb">read</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">access to *
+</span></span><span class="line"><span class="ln">26</span><span class="cl">by * <span class="nb">read</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="c1"># BDB database definitions</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">
+</span></span><span class="line"><span class="ln">30</span><span class="cl">allow bind_v2
+</span></span><span class="line"><span class="ln">31</span><span class="cl">loglevel <span class="m">1024</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">TLSCertificateFile /etc/ssl/servercerts/servercert.pem
+</span></span><span class="line"><span class="ln">33</span><span class="cl">TLSCACertificatePath /etc/ssl/certs/
+</span></span><span class="line"><span class="ln">34</span><span class="cl">TLSCertificateKeyFile /etc/ssl/servercerts/serverkey.pem
+</span></span><span class="line"><span class="ln">35</span><span class="cl">database bdb
+</span></span><span class="line"><span class="ln">36</span><span class="cl">suffix <span class="s2">&#34;dc=empresa,dc=casa,&#34;</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">rootdn <span class="s2">&#34;cn=Administrator,dc=empresa,dc=casa&#34;</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">directory /var/lib/ldap
+</span></span><span class="line"><span class="ln">39</span><span class="cl">checkpoint <span class="m">1024</span> <span class="m">5</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">cachesize <span class="m">10000</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">index objectClass,uidNumber,gidNumber eq
+</span></span><span class="line"><span class="ln">42</span><span class="cl">index member,mail eq,pres
+</span></span><span class="line"><span class="ln">43</span><span class="cl">index cn,displayname,uid,sn,givenname sub,eq,pres
+</span></span><span class="line"><span class="ln">44</span><span class="cl">index sambaSID eq
+</span></span><span class="line"><span class="ln">45</span><span class="cl">index sambaPrimaryGroupSID eq
+</span></span><span class="line"><span class="ln">46</span><span class="cl">index sambaDomainName eq
+</span></span><span class="line"><span class="ln">47</span><span class="cl">moduleload back_bdb.la
+</span></span></code></pre></div><p>O meu servidor ldap usa conexão segura TLS com isso temos que copiar os certificados:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp -r /root/backup/etc/ssl /etc/
+</span></span></code></pre></div><p>Permissão na pasta ssl:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo chmod <span class="m">777</span> -R /etc/ssl/
+</span></span></code></pre></div><p>Adicionando a base ldap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo slapadd -l /root/backup.ldif
+</span></span></code></pre></div><p>Inciando o servidor ldap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemcctl start slapd
+</span></span></code></pre></div><p>Testando o Servidor ldap:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo ldapsearch -x -h 127.0.0.1
+</span></span></code></pre></div><p>Pronto já temos um servidor ldap com nossa base de usuários. Lembre-se que o samba4 já tem um servidor ldap interno só estamos usando esse servidor ldap temporariamente para que possamos migrar as contas de usuários do samba3 (que usava ldap) para o samba4.
+Fazendo a Migração:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool domain classicupgrade --dbdir<span class="o">=</span>root/backup/var/lib/samba/ --use-xattrs<span class="o">=</span>yes 
+</span></span><span class="line"><span class="ln">2</span><span class="cl">--dns-backend<span class="o">=</span>SAMBA_INTERNAL --realm<span class="o">=</span>empresa /root/backup/etc/samba/smb.conf
+</span></span></code></pre></div><p>Entendendo um pouco o faz cada parâmetro:</p>
+<ul>
+<li><strong>classicupgrade</strong>:  O comando classicupgrade é usado para migrar um domínio Samba3 para um domínio Samba4. O comando classicupgrade é usado para migrar um domínio Samba3 para um domínio Samba4.</li>
+<li><strong>&ndash;dbdir</strong>: O diretório onde o banco de dados do Samba3 está localizado.</li>
+<li><strong>&ndash;use-xattr</strong>: O Samba4 usa xattr para armazenar metadados de arquivos. O Samba3 não suporta xattr, então você deve usar o parâmetro &ndash;use-xattr=yes para habilitar o suporte a xattr no Samba4.</li>
+<li><strong>&ndash;realm</strong>: O domínio do Samba3.</li>
+<li><strong>&ndash;dns-backend</strong>: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em <strong><a href="ihttp://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</a></strong>.</li>
+</ul>
+<p>Apos migrar o domínio tive um problema na senha do meu usuário administrator com isso tive que setar a senha do mesmo novamente:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user setpassword Administrator
+</span></span></code></pre></div><p>Removendo o servidor ldap do samba 4:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo aptitude purge slapd ldap-utils -y
+</span></span></code></pre></div><p>Permissão na pasta dns do samba</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo chmod <span class="m">777</span> -R /opt/samba/private/dns
+</span></span></code></pre></div><p>Por fim, no samba4 faça alguns testes do kerberos e do próprio samba4 que já foram descritos os passos no capítulo 4 em <strong><a href="http://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</a></strong>, a partir de <strong>Teste o Kerberos&hellip;</strong>.</p>
+<blockquote>
+<p><strong>Nota:</strong> Caso você tenha problemas com SID duplicados, por favor acessar a documentação do Samba em <strong><a href="https://goo.gl/m1lyQJ">Prevent failure due to duplicate SID&rsquo;s</a></strong>. Isto é, lá contém um script em python que ajuda a resolver este problema.</p>
+</blockquote>
+<p>Caso o script da documentação não funcione, você poderá verificar os SID duplicados antes de fazer o dump de usuários com o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cat /root/backup/backup.ldif <span class="p">|</span> grep sambaSID <span class="p">|</span> sort <span class="p">|</span> uniq -d
+</span></span></code></pre></div><p>Com isso, saberá quais os SID duplicados e poderá remover a todos manualmente em /etc/backup/backup.ldif tranquilamente. Caso você já tenha feito o dump de usuários, poderá usar o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo slapcat <span class="p">|</span> grep sambaSID <span class="p">|</span> sort <span class="p">|</span> uniq -d
+</span></span></code></pre></div><p>Você poderá usar um interface gráfica para remover usuários do ldap como por exemplo, o <strong>ldap-acount-manager - LAM</strong> ou phpldapadmin.</p>
+<hr>
+<h3 id="samba-tool">Samba-Tool</h3>
+<p>Samba-tool é a principal ferramenta de administração de usuários e contas do samba server. Com ela, poderemos adicionar, remover, editar, gerar parâmetros de expiração de senha, limitar usuário a uma determinada tarefa, criar grupos, lidar com grupos, criar um shellscript facilitador, usar por meio de um ambiente gráfico facilitador e muito mais. Como por exemplo:</p>
+<p>Trocar senha do usuário:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo amba-tool user setpassword lobo --newpassword<span class="o">=</span>1234.Mudar.Senha
+</span></span></code></pre></div><p>Trocar senha do usuário e forca a troca no Próximo Login:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user setpassword lobo --newpassword<span class="o">=</span>1234.Mudar.Senha --must-change-at-next-login
+</span></span></code></pre></div><p>Deletar Usuário:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user delete lobo
+</span></span></code></pre></div><p>Deletar Usuário e Deletar a sua pasta Home:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user delete lobo <span class="o">&amp;&amp;</span> rm -r /home/samba/lobo
+</span></span></code></pre></div><p>Listar Todos os Usuários do samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user list
+</span></span></code></pre></div><p>Desabilitar o Usuário com essa opção a conta não pode ser utilizada, mas permanece no servidor:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user disable lobo
+</span></span></code></pre></div><p>Habilitar Usuário:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user <span class="nb">enable</span> lobo
+</span></span></code></pre></div><p>A expiração de senha para todos os usuários do domínio e feita com outro comando essa altera somente do usuário especificado (bom para ser usado em certas exceções como por exemplo aquele diretor que insiste em ser uma exceção a regra) 10 e o numero de dias em que a senha ira expirar:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user setexpiry lobo --days<span class="o">=</span><span class="m">10</span>
+</span></span></code></pre></div><p>Desabilitar a expiração de senha:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool user setexpiry lobo --noexpiry
+</span></span></code></pre></div><p>Criar um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group add diretoria
+</span></span></code></pre></div><p>Adicionar Vários Grupos de uma vez:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group add <span class="s2">&#34;diretoria diretoria_ead&#34;</span>
+</span></span></code></pre></div><p>Criar um grupo e adicionar um descrição ao grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group add diretoria --description<span class="o">=</span><span class="s2">&#34;Grupo da diretoria&#34;</span>
+</span></span></code></pre></div><p>Adicionar um membro a um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group addmembers diretoria lobo
+</span></span></code></pre></div><p>No samba4 podemos adicionar um grupos dentro de outro isso é muito útil</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group addmembers diretoria diretoria_ead
+</span></span></code></pre></div><p>Adicionar Vários Membros a um grupo de uma vez só:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group addmembers diretoria <span class="s2">&#34;lobo,lobo2&#34;</span>
+</span></span></code></pre></div><p>Remover um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group delete diretoria
+</span></span></code></pre></div><p>Removendo Vários grupos de uma vez:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group delete <span class="s2">&#34;diretoria diretoria_ead&#34;</span>
+</span></span></code></pre></div><p>Remover um membro de um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group removemembers diretoria lobo
+</span></span></code></pre></div><p>Remover Membros de um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group removemembers diretoria <span class="s2">&#34;lobo,lobo2&#34;</span>
+</span></span></code></pre></div><p>Listar todos os grupos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group list
+</span></span></code></pre></div><p>Listar Usuários pertencente a um grupo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool group listmembers diretoria
+</span></span></code></pre></div><p>Mais sobre o Samba-Tool na <strong><a href="https://www.samba.org/samba/docs/man/manpages/samba-tool.8.html">documentação oficial</a></strong>.</p>
+<hr>
+<h3 id="ingressando-clientes-no-dominio-windows">Ingressando clientes no dominio Windows</h3>
+<p>Como o Windows 10 ainda é recente e o 8 não é tão prático quanto o 7, vamos nos focar no 7 para a configuração de domínio do samba. Lembrando que você poderá aplicar o mesmo no 8 e 10 que deverá funcionar. Acesse as propriedades do sistemas e em computador, clique no botão &ldquo;Alterar&rdquo;. Informe o nome do domínio e clique em &ldquo;OK&rdquo;. Será solicitado um nome e senha de um usuário do domínio, neste caso, iremos utilizar a conta de administrador do Samba, visto que ainda não criamos nenhum usuário comum. Será solicitado que o computador seja reiniciado como nos exemplos a baixo:
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad1.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad2.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad3.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad4.png#center" alt="Windows"></p>
+<p>Ao efetuar este procedimento, o computador será automaticamente registrado no samba. Computadores com S.O. até o Windows XP serão registrados de forma diferente aos clientes com Windows Vista em diante, por conta das diferentes versões do protocolo SMB utilizadas. Reinicie o computador e troque o usuário para o administrador do domínio.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad5.png#center" alt="Windows"></p>
+<blockquote>
+<p><strong>Nota:</strong> Caso não apareça &ldquo;Fazer logon em: DOMÍNIO&rdquo;, informe o login como: DOMÍNIO\administrator.</p>
+</blockquote>
+<hr>
+<h3 id="rsat-ferramenta-de-administracao-remota">RSAT Ferramenta de administracao remota</h3>
+<p>Para administrar o samba pode-se utilizar o samba-tool, no entanto, recomenda-se a ferramenta <strong><a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7D2F6AD7-656B-4313-A005-4E344E43997D&amp;displaylang=en">Remote Server Admininstration Tools - RSAT da Microsoft</a></strong>. Após instalar, habilite as ferramentas necessárias para a administração do Samba, vá em painel de controle, &ldquo;Programas e Recursos&rdquo; e cliquem em &ldquo;Ativar ou desativar recursos do Windows&rdquo; (aba lateral esquerda)e selecione as ferramentas:</p>
+<ul>
+<li>Ferramentas de Serviços da Área de Trabalho Remota;</li>
+<li>Ferramentas de Servidor DNS;</li>
+<li>Ferramentas do AD DS e AD LDS;</li>
+<li>Ferramentas de Servidor de NIS;</li>
+<li>Módulo do Active Directory para Windows PowerShell; e</li>
+<li>Ferramentas de Gerenciamento de Diretiva de Grupo.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad6.png#center" alt="Windows"></p>
+<p>A principal ferramenta de administração do Samba da RSAT, é a &ldquo;Usuários e Computadores do Active Diretory&rdquo;. Acessível em: &ldquo;Painel de Controle&rdquo; &gt; &ldquo;Ferramentas Administrativas&rdquo;. Ao executá-la, habilite a opção &ldquo;Recursos avançados&rdquo; para exibição plena dos recursos de administração.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad7.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad8.png#center" alt="Windows"></p>
+<p>Para outras versões do Microsoft Windows, consulte a <strong><a href="https://wiki.samba.org/index.php/Installing_RSAT_on_Windows_for_AD_Management">instalação do RSAT na documentação do samba</a></strong>. Ao instalar e configurar o Samba, fora definido um compartilhamento denominado &ldquo;home&rdquo;, que destina-se ao uso pessoal dos usuários. Não se trata da função de perfil remoto, mas apenas um diretório onde o usuário poderá utilizar para armazenar arquivos pessoais e acessar em qualquer computador do domínio.
+É necessário ajustar algumas permissões diretamente no Samba. Para isso, efetue o login do usuário administrator no Windows e acesse &ldquo;Gerenciamento do computador&rdquo;. Vá no menu &ldquo;Ação&rdquo; &gt; &ldquo;Conectar a outro computador&hellip;&rdquo; e informe o nome do servidor samba, neste caso &ldquo;debian&rdquo;.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad9.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad10.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad11.png#center" alt="Windows"></p>
+<p>Ao conectar no servidor, vá em &ldquo;Ferramentas do sistema&rdquo; &gt; &ldquo;Pastas Compartilhadas&rdquo; &gt; &ldquo;home&rdquo;. Configure nas abas &ldquo;Permissões de compartilhamento&rdquo; e &ldquo;Segurança&rdquo; os seguintes nomes e grupos de usuários:</p>
+<p><strong>Permissões de compartilhamento:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">Usuários autenticados    Controle Total
+</span></span><span class="line"><span class="ln">2</span><span class="cl">SISTEMA                  Controle Total
+</span></span><span class="line"><span class="ln">3</span><span class="cl">Domain Admins            Controle Total
+</span></span></code></pre></div><p><strong>Segurança:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">PROPRIETÁRIO CRIADOR    Controle Total
+</span></span><span class="line"><span class="ln">2</span><span class="cl">Usuários autenticados   Ler <span class="p">&amp;</span> executar, Listar conteúdo da pasta e Leitura
+</span></span><span class="line"><span class="ln">3</span><span class="cl">SISTEMA                 Controle Total
+</span></span><span class="line"><span class="ln">4</span><span class="cl">Administrator           Controle Total
+</span></span><span class="line"><span class="ln">5</span><span class="cl">Domain Admins           Controle Total
+</span></span></code></pre></div><p>Você poderá customizar essas permissões de acordo com suas necessidades.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad12.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad13.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad14.png#center" alt="Windows"></p>
+<p>Clique em &ldquo;OK&rdquo; para salvar.</p>
+<p>Através da RSAT iremos criar um usuário comum, sem privilégios de administrador. Abra a ferramenta &ldquo;Usuários e Computadores do Active Diretory&rdquo;. Em seguida vá no menu &ldquo;Ação&rdquo; &gt; &ldquo;Novo&rdquo; &gt; &ldquo;Uusuário&rdquo;. Informe os dados do usuário, como nome, sobrenome, logon e senha. As senhas deverão atender a política de senhas do Samba, por padrão requer caracteres maiúsculos, minúsculos e números.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad15.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad16.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad17.png#center" alt="Windows"></p>
+<p>Após criá-lo, consulte-o em &ldquo;Usuários&rdquo; e configure o compatilhamento &ldquo;home&rdquo;, conforme:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad18.png#center" alt="Windows">
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad19.png#center" alt="Windows"></p>
+<p>Ao concluir, basta efetuar o login com o novo usuário criado:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad20.png#center" alt="Windows"></p>
+<hr>
+<h3 id="configurando-perfil-nomade">Configurando perfil nomade</h3>
+<p>O Roaming Profile (Perfil Nomade) ou móvel, é criado pelo administrador do sistema e armazenado em um Servidor. Esse perfil está disponível sempre que você faz logon em qualquer computador na rede. Qualquer alteração feita no perfil Roaming Profile será atualizada no Servidor. Se o usuário efetuar logon em outra máquina, todas as configurações e preferências do Desktop (Área de trabalho), como por exemplo, impressoras, papel de parede, configurações de vídeo, etc, estarão disponível para o usuário.
+Antes de iniciar-mos o processo, é interessante verificar algumas coisas como por exemplo, se o processo samba está rodando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">ps -ef <span class="p">|</span>grep samba
+</span></span></code></pre></div><p>Identificar em quais portas e interfaces o samba está escutando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">netstat -tunlp <span class="p">|</span>grep samba
+</span></span></code></pre></div><p>Agora crie um diretório chamado &ldquo;userprofiles&rdquo; dentro do &ldquo;/&rdquo; no servidor samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">mkdir /userprofiles
+</span></span></code></pre></div><p>Forneça permissão total ao diretório:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">chmod <span class="m">777</span> /userprofiles
+</span></span></code></pre></div><p>Agora configure o diretório que acabamos de criar no smb.conf:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo vim /etc/samba/smb.conf
+</span></span></code></pre></div><p>E edite com as seguintes linhas:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>Profiles<span class="o">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">path</span> <span class="o">=</span> /userprofiles
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> no
+</span></span><span class="line"><span class="ln">4</span><span class="cl">valid <span class="nv">users</span> <span class="o">=</span> lobo
+</span></span></code></pre></div><p>Expliquei o que cada linha faz:</p>
+<ul>
+<li><strong>[Profiles]</strong>: Nome do compartilhamento.</li>
+<li><strong>path</strong>: Caminho do diretório.</li>
+<li><strong>read only = no</strong>: Permite que o usuário possa alterar o conteúdo do diretório.</li>
+<li><strong>valid users = lobo</strong>: Define o usuário que poderá acessar o diretório.</li>
+</ul>
+<p>Reinicie o samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbcontrol all reload-config
+</span></span></code></pre></div><p>Teste o kerberos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo kinit administrator@seudominio.com.br
+</span></span></code></pre></div><p>Verifique se o diretório compartilhado está disponível:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbclient -L localhost -U%
+</span></span></code></pre></div><p>Agora vá para o computador com Windows onde você instalou a ferramenta de administração remota (AD) para o seu servidor de domínio e defina os usuários a quem você deseja definir como perfil nomade. Abra o cmd e digite <strong>dsa.msc</strong>, ou run e digite <strong>dsa.msc</strong> para abrir console do Active Directory e em seguida defina o caminho do usuário:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad23.png#center" alt="Windows"></p>
+<p>Vá para o usuário para o qual você deseja implementar perfil nomade e adicione o caminho seguido pelo nome do usuário do diretório do perfil no <strong>profile path</strong> da seção de propriedades como mostra abaixo:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad24.png#center" alt="Windows"></p>
+<p>Daqui em diante você apenas acompanha se o perfil nomade está funcionando ou não. Uma forma de fazer isto, é acessando o usuário no Windows, fazer modificações de arquivos e pastas e acompanhar modificações na pasta /userprofiles no samba.</p>
+<blockquote>
+<p><strong>Nota:</strong> Certifique-se de que o usuário estará logando em máquinas onde o Sistema Operacional se mantém o mesmo. Isto é, que ele esteja logando em máquinas do Windows 7 ao invés de outras versões. Pois, pode ser que não funcione caso o usuário fique transitando entre uma versão e outra do mesmo sistema. Caso ainda tenha dificuldades em operar com perfil nomade no windows7, dê uma olhada <strong><a href="http://samba.org/tridge/Samba4Demo/s4demo3.ogv">neste vídeo</a></strong>. Recomendo que tenha o VLC player instalado na máquina.</p>
+</blockquote>
+<hr>
+<h3 id="adicionando-unidades-organizacionais">Adicionando unidades organizacionais</h3>
+<p>Para trabalharmos com o unidades organizacionais (UO) no samba, poderemos fazer isto usando o <strong><a href="https://msdn.microsoft.com/en-us/library/bb742437.aspx#EEAA">snap-in</a></strong> do Windows, ou até mesmo o Zentyal, GOsa2, Webmin, Smb4k, o Lam, SMB2WWW, gnomba, Jabs, Komba2, Smb Web client e muitos outros. No entanto, como a maioria dos administradores de sistemas estão mais acostumados a trabalhar com o <strong><a href="https://msdn.microsoft.com/en-us/library/bb742437.aspx#EEAA">snap-in</a></strong> do Windows, a este darei preferência por enquanto. Mais a frente farei uma abordagem ao GOsa2 e outras tecnologias.</p>
+<p>Este costuma ser um procedimento bastante simples como mostra a seguir:</p>
+<ul>
+<li>Menu iniciar &gt; iniciar &gt; dsc.msc.</li>
+<li>Clique com o botão direito do mouse em seu domínio.</li>
+<li>Escolha a opção new ou (novo), e vá em organizational unit (unidade organizacional).</li>
+<li>Em type, coloque o nome &lsquo;OU Demo&rsquo; por exemplo.</li>
+<li>Em seguida será exibida uma unidade organizacional chamada &lsquo;OU Demo&rsquo;.</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad25.png#center" alt="Windows"></p>
+<p>A partir de agora, você poderá mudar o lugar onde criou a unidade organizacional ou simplesmente criar sub unidades organizacionais.</p>
+<blockquote>
+<p><strong>Nota:</strong> Normalmente nós criamos UO baseado na configuração dodepartamento de sua organização. Tenha cuidado para não confundir grupos e unidades organizacionais, grupos são usados para controlar permissões, <strong>OU são utilizados para as configurações de implantação para todos os usuários/computadores dentro da UO</strong>.</p>
+</blockquote>
+<hr>
+<h3 id="implementando-group-policies">Implementando Group Policies</h3>
+<p>Assim como para criar unidades organizacionais usando o snap-in do Windows, para criar GPO&rsquo;s também é bastante simples. Veja os exemplos a baixo:</p>
+<ul>
+<li>Clique em Iniciar, Ferramentas Administrativas e Diretivas de Grupos.
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad26.png#center" alt="Windows"></li>
+<li>Clique sobre com botão direito e  Criar um GPO neste domínio e …
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad27.png#center" alt="Windows"></li>
+<li>Nome da GPO será “Exemplo_GPO” e OK.
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad28.png#center" alt="Windows"></li>
+<li>Sobre a nova GPO clique com botão direito,  clique em  editar:
+<img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad29.png#center" alt="Windows"></li>
+<li>Para bloquear o acesso ao Painel de Controle vai em, Configurações do Usuário, Diretivas, Modelos Administrativos, Painel de Controle e  Proibir acesso ao Painel de Controle:</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad30.png#center" alt="Windows"></p>
+<p>Duplo clique sobre a diretiva e marque a opção  “Habilitado” de OK. Pronto, GPO criada com sucesso. Caso ainda existam dúvidas a respeito da criação de GPO&rsquo;s, dê uma olhada neste <strong><a href="http://samba.org/tridge/Samba4Demo/s4demo2.ogv">video da documentação oficial</a></strong>.</p>
+<hr>
+<h3 id="backup-e-recovery-do-samba-ad">Backup e recovery do Samba AD</h3>
+<p>Aqui vai uma dica bacana para quem instalou o samba a partir de pacotes pré compilados via apt-get, dentro do source code, existe uma pasta que contém um script de backup chamado samba_backup que se encontra exatamente em ../source4/scripting/bin/samba_backup e vamos usar ele para este propósito. Copie este script para /usr/sbin/, mudar o proprietário, e em seguida a licença:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp ..../source4/scripting/bin/samba_backup /usr/sbin
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo chown root:root /usr/sbin/samba_backup
+</span></span><span class="line"><span class="ln">3</span><span class="cl">sudo chmod <span class="m">750</span> /usr/sbin/samba_backup
+</span></span></code></pre></div><p>Dentro do script backup_samba ajuste as variáveis de acordo com suas necessidades:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">FROMWHERE</span><span class="o">=</span>/usr/local/samba
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nv">WHERE</span><span class="o">=</span>/usr/local/backups
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">DAYS</span><span class="o">=</span><span class="m">90</span>
+</span></span></code></pre></div><p>Configure a pasta destino para onde será realizado o backup <strong>dentro da variável WHERE=</strong>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir /usr/local/backups
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo chmod <span class="m">750</span> /usr/local/backups
+</span></span></code></pre></div><p>Faça um tste de execução do script:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">suddo /usr/sbin/samba_backup
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Se ocorrer algum erro, verifique se na pasta destino se encontra três arquivos. São eles: etc.{Timestamp}.tar.bz2, samba4_private.{Timestamp}.tar.bz2 e sysvol.{Timestamp}.tar.bz2. Em caso de não haver, busque pelos três no source code e coloque-os lá.</p>
+</blockquote>
+<p>E em caso de sucesso, agora só nos falta adicionar o script ao crontab:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo crontan -e 
+</span></span></code></pre></div><p>E a rotina de backup. Por exemplo para ele rodar sempre as 2am</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="m">0</span> <span class="m">2</span> * * * /usr/sbin/samba_backup
+</span></span></code></pre></div><p>Para restaurar o backup, ou melhor, fazer o recovery, é tão simples quanto os passos a cima. Primeiro vamos remover algumas pastas do samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo rm -rf /usr/local/samba/etc
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo rm -rf /usr/local/samba/private
+</span></span><span class="line"><span class="ln">3</span><span class="cl">sudo rm -rf /usr/local/samba/var/locks/sysvol
+</span></span></code></pre></div><p>Lembra dos três arquivos citados na <strong>nota</strong> a cima? Vamos usalos agora:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nb">cd</span> /usr/local/backups
+</span></span><span class="line"><span class="ln">2</span><span class="cl">sudo tar -jxf etc.<span class="o">{</span>Timestamp<span class="o">}</span>.tar.bz2 -C /usr/local/samba/
+</span></span><span class="line"><span class="ln">3</span><span class="cl">sudo tar -jxf samba4_private.<span class="o">{</span>Timestamp<span class="o">}</span>.tar.bz2 -C /usr/local/samba/
+</span></span><span class="line"><span class="ln">4</span><span class="cl">sudo tar -jxf sysvol.<span class="o">{</span>Timestamp<span class="o">}</span>.tar.bz2 -C /usr/local/samba/
+</span></span></code></pre></div><p>Renomeie os arquivos .ldb.bak gerados para .ldb .Para tal, usaremos o find:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo find /usr/local/samba/private/ -type f -name <span class="s1">&#39;.ldb.bak&#39;</span> -print0 <span class="p">|</span> <span class="k">while</span> <span class="nb">read</span> -d <span class="s1">$&#39;\0&#39;</span> f <span class="p">;</span> 
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="k">do</span> mv <span class="s2">&#34;</span><span class="nv">$f</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">f</span><span class="p">%.bak</span><span class="si">}</span><span class="s2">&#34;</span> <span class="p">;</span> <span class="k">done</span>
+</span></span></code></pre></div><p>Agora faça um upgrade no samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba_upgradedns --dns-backend<span class="o">=</span>SAMBA_INTERNAL
+</span></span></code></pre></div><p>Recovery efetuado com sucesso.</p>
+<hr>
+<h1 id="samba-como-servidor-secundario">Samba como servidor secundario</h1>
+<p>Vamos supor que você já tenha um domínio primário configurado (que pode ser Samba4 ou Windows Server 2008 AD). Mas você precisa criar um domínio secundário e migrar toda a base de dados do primário para o secundário (para dividir tarefas, <strong>replicar a base de dados em outro servidor de domínio</strong>, ou simplesmente corrigir algum problema do servidor primário). Vou então criar uma situação hipotética para ficar mais fácil explicar como funciona. São eles os domínios:
+<strong>Controlador de domínio primário:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">192.168.1.6
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hostname: test.dominio.com
+</span></span></code></pre></div><p><strong>Controlador de domínio secundário:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">192.168.1.5
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hostname: test1.dominio.com
+</span></span></code></pre></div><p>Com seu controlador primário já configurado, vá ao secundário em <strong>/etc/resolv.conf</strong> e mude o DNS para o do servidor primário:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">search dominio.com
+</span></span><span class="line"><span class="ln">2</span><span class="cl">nameserver 192.168.1.6
+</span></span></code></pre></div><p>Para preparar seu servidor de domínio secundário, você terá que configurar o Samba 4 em seu servidor atual também. Para tal, basta seguir normalmente a instalação já abordada nesta documentação quanto ao Samba 4. No entanto, você irá mudar somente o modo com que <strong>promove</strong> o samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo samba-tool domain join dominio.com DC -Uadministrator --realm<span class="o">=</span>dominio.com --use-ntvfs
+</span></span></code></pre></div><p>Explicando o comando acima:</p>
+<ul>
+<li><strong>samba-tool domain join</strong> - Comando para promover o servidor ao domínio.</li>
+<li><strong>dominio.com</strong> - Nome do domínio.</li>
+<li><strong>DC</strong> - Tipo de servidor a ser promovido. Neste caso, um controlador de domínio.</li>
+<li><strong>-Uadministrator</strong> - Usuário com privilégios de administrador.</li>
+<li><strong>&ndash;realm=dominio.com</strong> - Nome do domínio.</li>
+<li><strong>&ndash;use-ntvfs</strong> - Modo de replicação. Neste caso, o NTFS.</li>
+</ul>
+<p>Assim, conseguiremos unir o servidor primário com o secundário. Agora, o próximo passo consiste em certificar que seu hostname do domínio secundário é resolúvel:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">nslookup test1.dominio.com 
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Neste caso, depende muito do servidor DNS que você está adontando. Isto é, o BIND9 ou o Samba_internal.</p>
+</blockquote>
+<p>Caso o seu DNS não esteja resolúvel, então vamos fazer a entrada  para o mesmo no servidor DNS do samba. Edite o arquivo <code>/etc/local/samba/private/dns/dominio.com</code> e adicione a seguinte linha:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">test1 IN A 192.168.1.5
+</span></span></code></pre></div><p>Salve, saia e reinicie o serviço (caso seja BIND9):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart named
+</span></span></code></pre></div><p>E tente novamente testar o DNS:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">nslookup test1.dominio.com
+</span></span></code></pre></div><p>Teste também se o objectGUID é resolúvel:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">ldbsearch -H /usr/local/samba/private/sam.ldb <span class="s1">&#39;(invocationid= * )&#39;</span> --cross-ncs objectguid 
+</span></span></code></pre></div><p>Se tudo correr bem, deverá aparecer algo semelhante a isto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># record 1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">dn: <span class="nv">CN</span><span class="o">=</span>NTDS Settings,CN<span class="o">=</span>TEST,CN<span class="o">=</span>Servers,CN<span class="o">=</span>Default-First-Site-Name,CN<span class="o">=</span>Sites,CN<span class="o">=</span>Configuration,
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">DC</span><span class="o">=</span>dominio,DC<span class="o">=</span>com
+</span></span><span class="line"><span class="ln">4</span><span class="cl">objectGUID: 74b975bc-c25c-4ce7-9773-fe3f6eb1b903
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="c1"># record 2</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">dn: <span class="nv">CN</span><span class="o">=</span>NTDS Settings,CN<span class="o">=</span>TEST1,CN<span class="o">=</span>Servers,CN<span class="o">=</span>Default-First-Site-Name,CN<span class="o">=</span>Sites,CN<span class="o">=</span>Configuration,
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="nv">DC</span><span class="o">=</span>dominio,DC<span class="o">=</span>com
+</span></span><span class="line"><span class="ln">8</span><span class="cl">objectGUID: 607bc2dc-0754-49e3-aa37-9be403d0cc33
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Observe o <strong>objectGUID</strong> para o test1, isto é, para o servidor secundário.</p>
+</blockquote>
+<p>Agora, este objectGUID deve ser também resolúvel:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">host -t CNAME 607bc2dc-0754-49e3-aa37- 9be403d0cc33._msdcs.example.com
+</span></span></code></pre></div><p>Se não estiver, você poderá atualizar o registro DNS usando o comando a baixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">samba-tool dns add IP-of-your-DNS _msdcs.samdom.dominio.com607bc2dc-0754-49e3-aa37-9be403d0cc
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="m">33</span> CNAME test1.dominio.com -Uadministrator
+</span></span></code></pre></div><p>Se ocorrer algum erro, tente novamente configurar manualmente no dns do samba editando o arquivo <code>/usr/local/samba/private/dns/dominio.com.zone</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">607bc2dc-0754-49e3-aa37-9be403d0cc33._msdcs.example.com. IN CNAME test1
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Não copie e cole estes comandos visto que cada objectGUID se difere de máquina para máquina. Observe o seu e use o exemplo a cima apenas como base.</p>
+</blockquote>
+<p>Reinicie o named:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart named
+</span></span></code></pre></div><blockquote>
+<p><strong>Nota:</strong> Novamente, se estiver usando o Samba_Internal, estes passos para com o teste do DNS são descartáveis e provavelmente ocorra tudo na mais perfeita ordem.</p>
+</blockquote>
+<p>Agora tente novamente o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">host -t CNAME 607bc2dc-0754-49e3-aa37-9be403d0cc33._msdcs.example.com
+</span></span></code></pre></div><p>E provavelmente dê tudo certo.</p>
+<p>Finalmente atualize o IP do seu servidor de domínio secundário editando o arquivo <code>/etc/resolv.conf</code> do mesmo servidor que para o nosso caso é 192.168.1.5:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">search dominio.com
+</span></span><span class="line"><span class="ln">2</span><span class="cl">nameserver 192.168.1.6
+</span></span><span class="line"><span class="ln">3</span><span class="cl">nameserver 192.168.1.5
+</span></span></code></pre></div><h3 id="testes-de-replicacao-de-diretorios">Testes de replicacao de diretorios</h3>
+<p>Agora é hora de ver se a replicação está funcionando para ambos os controladores de domínio. Assim que se você fizer qualquer alteração em um dos dc o mesmo deve refletir sobre o outro dc. Para verificar isto basta usar o comando a baixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">samba-tool drs showrepl
+</span></span></code></pre></div><p>Na máquina com Windows Server, caso você deseje gerenciar o servidor secundário a partir do <strong>snap-in</strong> do AD do Windows, abra o <strong>Console de gerenciamento do Active Directory</strong>, vá em <strong>Ação</strong> e selecione <strong>Alterar controlador de domínio</strong> como mostra a baixo:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad31.png#center" alt="Windows"></p>
+<p>Aqui você deve ser capaz de ver os seus controladores de domínio disponíveis e seus status como mostrado abaixo:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad32.png#center" alt="Windows"></p>
+<p>Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em <strong><a href="http://lobocode.github.io/2015/09/11/samba4.html#samba-tool">Samba tool</a></strong>. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.</p>
+<hr>
+<h3 id="referências">Referências:</h3>
+<ul>
+<li><strong><a href="https://www.packtpub.com/web-development/implementing-samba-4">Implementing Samba 4</a></strong></li>
+<li><strong><a href="http://www.amazon.com/Active-Directory-Cookbook-Cookbooks-OReilly/dp/1449361420">Active Directory Cookbook</a></strong></li>
+<li><strong><a href="https://openlibrary.org/books/OL12369507M/The_Definitive_Guide_to_Samba_4">The Definitive Guide to Samba 4</a></strong></li>
+</ul>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/linuxsambafedora/">linux,samba,fedora</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Ops%20-%20Samba%204&url=https%3a%2f%2flobocode.github.io%2f2023%2f01%2f01%2fsamba4%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flobocode.github.io%2f2023%2f01%2f01%2fsamba4%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flobocode.github.io%2f2023%2f01%2f01%2fsamba4%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Ops%20-%20Samba%204&url=https%3a%2f%2flobocode.github.io%2f2023%2f01%2f01%2fsamba4%2f&summary=Um%20novo%20horizonte%20%5bATUALIZADO%5d"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lobocode-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lobocode" href="https://lobocode.github.io">lobocode</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2023 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lobocode.github.iojs/jquery-1.11.3.min.js"></script>
+        <script src="https://lobocode.github.iojs/jquery.fitvids.js"></script>
+        <script src="https://lobocode.github.iojs/scripts.js"></script>
+    </body>
+</html>
+
