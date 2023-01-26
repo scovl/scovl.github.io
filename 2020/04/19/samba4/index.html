@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 69 min</span>
+            <span>Estimated reading time: 70 min</span>
         </p>
     
 </header>
@@ -128,7 +128,6 @@
 </ul>
 <h3 id="capítulo-3---samba-como-ad">Capítulo 3 - Samba como AD</h3>
 <ul>
-<li><strong><a href="#codigo-fonte-do-samba">Codigo fonte do Samba</a></strong></li>
 <li><strong><a href="#instalando-o-samba">Instalando o Samba</a></strong></li>
 <li><strong><a href="#samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</a></strong></li>
 <li><strong><a href="#compartilhamento-com-o-servidor-de-impressao">Compartilhamento com o servidor de impressao</a></strong></li>
@@ -436,29 +435,29 @@ de Rede).</li>
 <li><strong>smbclient</strong> - Clientes SMB/CIFS em linha de comando para Unix.</li>
 </ul>
 <hr>
-<h3 id="codigo-fonte-do-samba">Codigo fonte do Samba</h3>
-<p>Tratando-se de código fonte, tanto faz se para Debian, CentOs ou outra distribuição. O importante é você saber baixar a versão mais recente e ao mesmo tempo compilar caso deseje prosseguir com este tipo de instalação:</p>
-<p><strong><a href="https://www.samba.org/samba/download/">Instalação do Samba pelo código-fonte</a></strong></p>
-<p>Caso você deseje simplificar as coisas, sugiro que pule esta parte bem como da instalação através do código fonte propriamente.</p>
-<hr>
 <h3 id="instalando-o-samba">Instalando o Samba</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt install attr acl krb5-user ntp
-</span></span></code></pre></div><p>Deixe as respostas padrão na configuração do Kerberos. Apenas atentando para a primeira pergunta &ldquo;Reino por omissão do Kerberos&rdquo;, informe seu domínio em letras maiúsculas.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install -y samba smbclient
-</span></span></code></pre></div><p>A instalação do <strong>smbclient</strong> é opcional, utilizaremos apenas para testar as configurações adiante. Por padrão o Debian não vem com suporte a ACL então refina isto na partição <strong>/</strong> através do comando a baixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo vim /etc/fstab 
-</span></span></code></pre></div><p>É interessante reconfigurar o seu sistema de arquivos caso seja ext3 ou ext4 para rodar o samba com compatibilidade com as acls, sistema de segurança contra falhas de sobrecarga entre outros. Para isso, altere sua configuração de modo parecido com o abaixo (não copie e cole esta linha pois, cada máquina tem uma configuração de UUID diferente). Localize a variável <strong>errors</strong> na área <strong>pass</strong>, e acrescente o user_xattr, acl,barrier como a baixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">UUID</span><span class="o">=</span>3e0fbcf1-4eb5-4654-a5de-4775de85fc09 / ext4    user_xattr,acl,barrier<span class="o">=</span>1,errors<span class="o">=</span>remount-ro <span class="m">0</span>       <span class="m">1</span>
-</span></span></code></pre></div><p>O disco utilizado não apresenta partições separadas, apenas o /. Ajuste se necessário. Os parâmetros user_xattr, acl e barrier devem ser definidos na partição <strong>onde os arquivos dos usuários serão alocados</strong>.</p>
-<blockquote>
-<p><strong>Nota:</strong> As opções acl e user_xattr são necessários, a fim de utilizar os recursos de arquivos POSIX. Preste atenção caso tenha definido a partição em Logical Volume Management (LVM). Pois, LVM não suporta a variável &ldquo;barrier&rdquo;. O barrier serve para adicionar um sistema de segurança contra falhas de energia em formatações ext3 ou ext4.</p>
-</blockquote>
-<p>Aplicar mudanças no fstab:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mount -o remount,rw /
-</span></span></code></pre></div><blockquote>
-<p><strong>Nota:</strong> O parâmetro -o, vem de &ndash;option e o rw vem de read/write. Consulte a manpage de cada comando para compreender do que se trata.</p>
-</blockquote>
-<p>Agora vamos configurar o arquivo de hosts. Para isto, adicione esta linha no arquivo /etc/hosts:</p>
+<p>Para instalar o Samba no Debian, siga os seguintes passos:</p>
+<p>Atualize o sistema operacional usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get update
+</span></span></code></pre></div><p>Instale o pacote Samba usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install samba
+</span></span></code></pre></div><p>Configure o arquivo de configuração do Samba. O arquivo de configuração padrão é o /etc/samba/smb.conf. Pode ser necessário fazer algumas modificações neste arquivo dependendo da sua configuração de rede.</p>
+<p>Adicione usuários ao samba com o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbpasswd -a &lt;username&gt;
+</span></span></code></pre></div><p>Inicie o serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl start smbd
+</span></span></code></pre></div><p>Verifique o status do serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl status smbd
+</span></span></code></pre></div><p>Configure o firewall para permitir acesso ao serviço Samba:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo ufw allow samba
+</span></span></code></pre></div><p>A instalação do <strong>smbclient</strong> é opcional, utilizaremos apenas para testar as configurações adiante. Por padrão o Debian não vem com suporte a ACL (Controle de Acesso Baseado em Listas) então é necessário instalar os pacotes <code>attr</code>,<code>acl</code>, e configurar o sistema de arquivos para usar esses recursos. Instale os pacotes attr e acl usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install attr acl
+</span></span></code></pre></div><p>Configure o sistema de arquivos para usar o suporte a ACL. Isso pode ser feito adicionando as opções <code>acl</code> e <code>user_xattr</code> no arquivo <code>/etc/fstab</code> para o sistema de arquivos desejado. Por exemplo, para habilitar o suporte a ACL no sistema de arquivos raiz, adicione as seguintes linhas ao arquivo <code>etc/fstab</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">/dev/sda1 / ext4 defaults,acl,user_xattr <span class="m">0</span> <span class="m">1</span>
+</span></span></code></pre></div><p>Agora reinicie o sistema para que as alterações tenham efeito. A partir de agora é possível usar os comandos <code>getfacl</code> e <code>setfacl</code> para gerenciar os controles de acesso em arquivos e pastas. Em outras distribuições ou sistemas de arquivos pode ser necessário configurar de forma diferente, mas esses passos são uma boa base para habilitar o suporte a ACL no Debian.</p>
+<p>Agora verifique se o seu Kernel tem compatibilidade com ACL caso seu sistema de arquivos seja ext3 ou ext4 com o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cat /proc/filesystems
+</span></span></code></pre></div><p>Se você ver &ldquo;ext3&rdquo; e &ldquo;ext4&rdquo; na lista, então o suporte a ACL está habilitado. Consulte a <strong><a href="https://wiki.debian.org/ACL">documentação oficial</a></strong> caso você não veja esses sistemas de arquivos na lista e não saiba como habilitar o suporte a ACL. Agora vamos configurar o arquivo de hosts. Para isto, adicione esta linha no arquivo /etc/hosts:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo <span class="nb">echo</span> <span class="s2">&#34;192.168.1.100 debian.seudominio.com.br debian&#34;</span> &gt;&gt; /etc/hosts
 </span></span></code></pre></div><p>Agora configure a interface de rede que no debian 8, é através do arquivo <code>/etc/network/interfaces</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1"># Conexão automatica das interfaces no startup do S.O</span>
@@ -473,18 +472,14 @@ de Rede).</li>
 </span></span><span class="line"><span class="ln">10</span><span class="cl">gateway 192.168.1.1
 </span></span><span class="line"><span class="ln">11</span><span class="cl">dns-nameserver 192.168.1.1
 </span></span><span class="line"><span class="ln">12</span><span class="cl">dns-search seudominio.com.br
-</span></span></code></pre></div><blockquote>
-<p><strong>Nota</strong>: Caso tenha dificuldade para compreender como funciona a interface de rede, dê uma lida neste <strong><a href="http://www.profissionaisti.com.br/2011/07/configuracao-da-interface-de-rede-no-linux/">material configuração da interface de rede no linux</a></strong>.</p>
-</blockquote>
-<p>Reinicie a interface:</p>
+</span></span></code></pre></div><p>Reinicie a interface:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart networking
 </span></span></code></pre></div><p>Configure o DNS client através da sua interface de rede <code>sudo nmtui</code>, ou pelo <code>/etc/resolv.conf</code> que é gerado pelo Network Manager, e acrescente as seguintes linhas:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">domain seudominio.com.br
 </span></span><span class="line"><span class="ln">2</span><span class="cl">search seudominio.com.br
 </span></span><span class="line"><span class="ln">3</span><span class="cl">nameserver 192.168.1.100
 </span></span><span class="line"><span class="ln">4</span><span class="cl">nameserver 192.168.1.1
-</span></span></code></pre></div><p>O nameserver 192.168.1.100 será utilizado pelo samba, enquanto o 192.168.1.1 é o serviço de DNS da rede local, pode ser modificado para outro de sua escolha (ex: 8.8.8.8 - google). Agora temos que configurar serviço de NTP (atualização de data/hora), que se encontra em <code>/etc/ntp.conf</code>:</p>
-<p>Gere um backup do arquivo <code>/etc/ntp.conf</code>, e coloque as seguintes linhas no arquivo:</p>
+</span></span></code></pre></div><p>O nameserver 192.168.1.100 será utilizado pelo samba, enquanto o 192.168.1.1 é o serviço de DNS da rede local, pode ser modificado para outro de sua escolha (ex: 8.8.8.8 - google). Agora temos que configurar serviço de NTP (atualização de data/hora), que se encontra em <code>/etc/ntp.conf</code>. Gere um backup do arquivo <code>/etc/ntp.conf</code> por segurança e edite o arquivo da seguinte maneira:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">server 127.127.1.0
 </span></span><span class="line"><span class="ln"> 2</span><span class="cl">fudge 127.127.1.0 stratum <span class="m">10</span>
 </span></span><span class="line"><span class="ln"> 3</span><span class="cl">server a.ntp.br iburst prefer
@@ -498,7 +493,22 @@ de Rede).</li>
 </span></span><span class="line"><span class="ln">11</span><span class="cl">restrict a.ntp.br mask 255.255.255.255 nomodify notrap nopeer noquery
 </span></span><span class="line"><span class="ln">12</span><span class="cl">restrict 0.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery
 </span></span><span class="line"><span class="ln">13</span><span class="cl">restrict 1.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery
-</span></span></code></pre></div><p>Para instalar o samba, bastava apenas ter digitado <code>sudo apt install -y samba</code> como mostra no início. No entanto, preferí deixar algumas coisas prontas antes de prosseguir-mos.</p>
+</span></span></code></pre></div><p>Cada um dos comandos acima significa o seguinte:</p>
+<ul>
+<li><strong>server 127.127.1.0</strong> - define o servidor de NTP local.</li>
+<li><strong>fudge 127.127.1.0</strong> stratum 10 - define o nível de prioridade do servidor de NTP local.</li>
+<li><strong>server a.ntp.br iburst prefer</strong> - define o servidor de NTP a.ntp.br como preferencial.</li>
+<li><strong>server 0.pool.ntp.org iburst prefer</strong> - define o servidor de NTP 0.pool.ntp.org como preferencial.</li>
+<li><strong>server 1.pool.ntp.org iburst prefer</strong> - define o servidor de NTP 1.pool.ntp.org como preferencial.</li>
+<li><strong>driftfile /var/lib/ntp/ntp.drift</strong> - define o arquivo de drift do NTP.</li>
+<li><strong>logfile /var/log/ntp</strong> - define o arquivo de log do NTP.</li>
+<li><strong>ntpsigndsocket</strong> /var/lib/samba/ntp_signd/ - define o socket do NTP.</li>
+<li><strong>restrict default kod nomodify notrap nopeer mssntp</strong> - define as restrições padrão do NTP.</li>
+<li><strong>restrict 127.0.0.1</strong> - define a restrição para o servidor de NTP local.</li>
+<li><strong>restrict a.ntp.br mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP a.ntp.br.</li>
+<li><strong>restrict 0.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP 0.pool.ntp.org.</li>
+<li><strong>restrict 1.pool.ntp.org mask 255.255.255.255 nomodify notrap nopeer noquery</strong> - define a restrição para o servidor de NTP 1.pool.ntp.org.</li>
+</ul>
 <blockquote>
 <p><strong>Nota:</strong> <strong><a href="https://pt.wikipedia.org/wiki/Network_Time_Protocol">O Network Time Protocol (NTP)</a></strong> é um protocolo de rede para sincronização do relógio entre sistemas e computadores além de  medir a latência da rede basicamente.</p>
 </blockquote>
@@ -507,12 +517,13 @@ de Rede).</li>
 </span></span></code></pre></div><p>Seja qual for o erro,só avance se tudo estiver funcionando até aqui.</p>
 <hr>
 <h3 id="samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</h3>
-<p>Você deve ter ouvido falar que sempre antes de começar a configurar um sistema apartir de um arquivo, é interessante que você faça a cópia do mesmo para fins de segurança. Pois bem, faremos o mesmo para com o arquivo <code>smb.conf</code>:</p>
+<p>O Samba também pode atuar como um controlador de domínio, permitindo que os usuários sejam autenticados e autorizados usando as contas de usuário e grupos do Windows e fornecendo recursos de gerenciamento de contas de usuário e grupos semelhantes aos encontrados em um controlador de domínio Windows. Para isso, precisamos instalar o pacote <code>samba-dc</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo apt-get install samba-dc
+</span></span></code></pre></div><p>Aguarde a instalação do pacote. Quando terminar, vamos fazer um backup do arquivo <code>smb.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bkp
 </span></span></code></pre></div><blockquote>
-<p><strong>Nota</strong>: Neste caso, poderíamos ter usado o <strong>cp</strong> ao invés do <strong>mv</strong> para fazer o backup do smb.conf. No entanto, a intenção aqui é justamente remover o smb.conf criado a partir do apt.</p>
+<p><strong>Nota</strong>: Neste caso, poderíamos ter usado o <strong>cp</strong> ao invés do <strong>mv</strong> para fazer o backup do smb.conf. No entanto, a intenção aqui é justamente remover o smb.conf criado a partir do apt. Agora iremos configurar o samba como controlador de domínio:</p>
 </blockquote>
-<p>Agora iremos configurar o samba como controlador de domínio:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">samba-tool domain provision --use-rfc2307 --realm<span class="o">=</span>SEUDOMINIO.COM.BR --domain<span class="o">=</span>SEUDOMINIO
 </span></span><span class="line"><span class="ln">2</span><span class="cl">--server-role<span class="o">=</span>dc --dns-backend<span class="o">=</span>SAMBA_INTERNAL --adminpass<span class="o">=</span><span class="s1">&#39;S@mb4s3rveR!&#39;</span>
 </span></span></code></pre></div><p>Se der tudo certo, certamente que irá gerar uma saída longa. No entanto, a parte importante a se destacar é esta a baixo:</p>
@@ -525,13 +536,13 @@ de Rede).</li>
 </blockquote>
 <p>Uma breve explicação dos parâmetros usados:</p>
 <ul>
-<li><strong>domain provision</strong> - Promover o primeiro controlador de domínio AD/DC (ou um existente).</li>
-<li><strong>&ndash;use-rfc2307</strong> - Ativa extensões NIS. Eles permitem uma gestão central do Unix atributos (UIDs, escudos, GIDs, etc.) dentro do Active Directory. Recomenda-se sempre habilitar esse recurso durante o provisionamento. Não há desvantagens em não usá-lo.</li>
-<li><strong>&ndash;realm</strong> - Usado para você setar o kerberos real name do dominio (sempre em MAIÚSCULO).</li>
-<li><strong>&ndash;domain</strong> -nome de domínio NT4 NetBIOS em maiúsculas utilizados pelo AD por razões de compatibilidade. Comprimento nome máxima: 15 caracteres.</li>
-<li><strong>&ndash;server-role</strong> - Define como controlador de domínio</li>
-<li><strong>&ndash;dns-backend</strong> - Aqui você escolhe o servidor se bind9 ou samba_internal.</li>
-<li><strong>&ndash;adminpass</strong> - Senha do administrador do AD/DC.</li>
+<li><strong>domain provision</strong> - comando usado para provisionar o samba como controlador de domínio.</li>
+<li><strong>&ndash;use-rfc2307</strong> - Usado para habilitar o suporte RFC2307 para o LDAP.</li>
+<li><strong>&ndash;realm</strong> - Nome do domínio em maiúsculas. Comprimento máximo do nome: 255 caracteres.</li>
+<li><strong>&ndash;domain</strong> - Nome do domínio em minúsculas. Comprimento máximo do nome: 15 caracteres.</li>
+<li><strong>&ndash;server-role</strong> - Aqui você escolhe o papel do servidor. Pode ser: dc, member server, standalone server.</li>
+<li><strong>&ndash;dns-backend</strong> - Aqui você escolhe o backend do DNS. Pode ser: SAMBA_INTERNAL, BIND9_FLATFILE, BIND9_DLZ.</li>
+<li><strong>&ndash;adminpass</strong> - Senha do administrador do samba.</li>
 </ul>
 <p>Ajuste os parâmetros conforme suas necessidades, especialmente o realm, domain e adminpass. Agora vamos copiar a configuração do Kerberos gerada pelo samba:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo cp /var/lib/samba/private/krb5.conf /etc/
@@ -580,7 +591,9 @@ de Rede).</li>
 </span></span><span class="line"><span class="ln">2</span><span class="cl">sudo kinit administrator@seudominio.COM.BR
 </span></span></code></pre></div><p>É muito comum após este comando aparecer o seguinte erro:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">kinit cannot contact any kdc <span class="k">for</span> realm
-</span></span></code></pre></div><p>Caso ocorra tal erro, sugiro que você investigue no <code>/var/log/syslog</code> ou journaling:</p>
+</span></span></code></pre></div><p>kinit cannot contact any kdc for realm significa que o Kerberos não conseguiu se comunicar com o controlador de domínio. Caso você esteja usando o samba como controlador de domínio, verifique se o samba está rodando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl status samba
+</span></span></code></pre></div><p>Caso o erro persista, sugiro que você investigue no <code>/var/log/syslog</code> ou journaling:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">tail -n <span class="m">500</span> /var/log/syslog <span class="p">|</span>grep kinit
 </span></span></code></pre></div><p>Em caso positivo, irá retornar algo semelhante a isto:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">warning: Your password will expire in <span class="m">41</span> days on Sex <span class="m">29</span> Jan <span class="m">2016</span> 12:18:08 BRST
@@ -604,29 +617,38 @@ de Rede).</li>
 <p>Você poderá compartilhar as impressoras já configurados com o CUPS mas, tenha em mente que o Samba comunica com o CUPS via soquetes, portanto, você não precisa configurar qualquer permissão especial, além de uma diretiva Listen para o socket CUPS. Criaremos um diretório de <strong><a href="https://pt.wikipedia.org/wiki/Spooling">spool</a></strong> de impressão, e definir as permissões corretamente. Este é destino onde o Samba irá armazenar arquivos temporários relacionados para imprimir documentos:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir /usr/local/samba/var/spool
 </span></span><span class="line"><span class="ln">2</span><span class="cl">sudo chmod <span class="m">1777</span> /usr/local/samba/var/spool
-</span></span></code></pre></div><blockquote>
-<p><strong>Nota:</strong> Você deve estar se perguntando o que significa este 1777 certo? A permissão 1777, este “1” a frente significa bitstickc. Em termos práticos, quer dizer exatamente isto <strong>não deixe ninguém excluir esta pasta ou mudar a permissão”</strong>.</p>
-</blockquote>
-<p>Configurando o /etc/samba/smb.conf para ler o diretório de spooling adicionando o seguinte:</p>
+</span></span></code></pre></div><p>A permissão 1777 é uma permissão especial que permite que qualquer usuário possa criar arquivos e diretórios dentro dele. O Samba irá criar arquivos temporários dentro deste diretório, e o CUPS irá ler e imprimir os arquivos. Configurando o <code>/etc/samba/smb.conf</code> para ler o diretório de spooling adicionando o seguinte:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>printers<span class="o">]</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nv">comment</span> <span class="o">=</span> All Printers
 </span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nv">path</span> <span class="o">=</span> /usr/local/samba/var/spool
 </span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nv">browseable</span> <span class="o">=</span> Yes
 </span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
 </span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="nv">printable</span> <span class="o">=</span> Yes
-</span></span></code></pre></div><p>Por uma questão de conveniência, os clientes do Windows podem consultar o servidor que está compartilhando uma impressora para um driver de impressão. Para habilitar essa funcionalidade no Samba, temos de criar uma impressora especial de compartilhamento de arquivos. Vamos então criar um diretório de compartimento de impressão, e arquitetura de sub-diretórios:</p>
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[printers]</strong> é o nome do compartilhamento de impressão.</li>
+<li><strong>comment = All Printers</strong> - é um comentário para o compartilhamento.</li>
+<li><strong>path = /usr/local/samba/var/spool</strong> - é o diretório onde o Samba irá armazenar os arquivos temporários.</li>
+<li><strong>browseable = Yes</strong> - significa que o compartilhamento será visível para os clientes do Windows.</li>
+<li><strong>read only = No</strong> - significa que os clientes do Windows podem imprimir para este compartilhamento.</li>
+<li><strong>printable = Yes</strong> - significa que o Samba irá oferecer suporte para impressão para este compartilhamento.</li>
+</ul>
+<p>Por uma questão de conveniência, os clientes do Windows podem consultar o servidor que está compartilhando uma impressora para um driver de impressão. Para habilitar essa funcionalidade no Samba, temos de criar uma impressora especial de compartilhamento de arquivos. Vamos então criar um diretório de compartimento de impressão, e arquitetura de sub-diretórios:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo mkdir -p /usr/local/samba/var/print/<span class="o">{</span>COLOR,IA64,W32ALPHA,W32MIPS,W32PPC,W32X86,WIN40,x64<span class="o">}</span>
 </span></span></code></pre></div><p>E novamente configurar no smb.conf:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">[</span>print$<span class="o">]</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nv">comment</span> <span class="o">=</span> Point and Print Printer Drivers
 </span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nv">path</span> <span class="o">=</span> /usr/local/samba/var/print
 </span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nb">read</span> <span class="nv">only</span> <span class="o">=</span> No
-</span></span></code></pre></div><p>Reinicie as configurações do samba:</p>
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[print$]</strong> é o nome do compartilhamento de impressão.</li>
+<li><strong>path = /usr/local/samba/var/print</strong> - é o diretório onde o Samba irá armazenar os arquivos temporários.</li>
+<li><strong>read only = No</strong> - significa que os clientes do Windows podem imprimir para este compartilhamento.</li>
+</ul>
+<p>Reinicie as configurações do samba:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo smbcontrol all reload-config
 </span></span></code></pre></div><p>A partir de agora efetue login como um administrador de domínio em um computador cliente Windows e clique em Iniciar -&gt; Executar &ldquo;\samba&quot;. Na lista de ações, clique duas vezes &ldquo;Impressoras e faxes&rdquo; e em seguida, clique em Arquivo -&gt; Propriedades do Servidor. Na guia Drivers, clique em &ldquo;Adicionar …&rdquo;, em seguida, em &ldquo;Next&rdquo;. Em seguida escolha o driver que você gostaria de instalar e clique em “Avançar”, escolha as arquiteturas dos drivers que você deseja instalar.</p>
-<blockquote>
-<p><strong>Nota:</strong> Mais a frente estarei mostrando a melhor forma de interagir com o samba no Windows com printscreen, imagens etc&hellip; Por hora, vamos focar nas configurações.</p>
-</blockquote>
 <hr>
 <h1 id="lixeira-do-samba">Lixeira do Samba</h1>
 <p>O Active Directory fornece recursos muito úteis para recuperação objetos excluídos. Dependendo de como você configurou o seu domínio, é possível restaurar um conjunto de atributos e dados com este recurso habilitado. Sempre que um objeto é excluído do Active Directory, ele é movido para um container escondido, chamado &ldquo;Objetos Excluídos (CN = Deleted Objects, DC = samdom, DC = exemplo, DC = com). E estes objetos se mantém neste lugar por um determinado período (e é configurável). Após esse período, os objetos serão definitivamente excluídos (mas podem ser recuperados).</p>
@@ -639,7 +661,16 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 </span></span><span class="line"><span class="ln">4</span><span class="cl">recycle:repository <span class="o">=</span> .recycle
 </span></span><span class="line"><span class="ln">5</span><span class="cl">recycle:keeptree <span class="o">=</span> yes
 </span></span><span class="line"><span class="ln">6</span><span class="cl">recycle:versions <span class="o">=</span> yes
-</span></span></code></pre></div><p>Isto é, qualquer item deletado neste compartilhamento vai para o diretório .recycle. Podemos também implementar mais recursos para esta tarefa. Por exemplo, experimente adicionar as seguints linhas em seu [global] no <code>/etc/samba/smb.conf</code>:</p>
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>[share]</strong> é o nome do compartilhamento.</li>
+<li><strong>path = /data/share</strong> é o diretório que será compartilhado.</li>
+<li><strong>vfs objects = recycle</strong> é o módulo do vfs que será usado.</li>
+<li><strong>recycle:repository = .recycle</strong> é o diretório onde os arquivos serão movidos.</li>
+<li><strong>recycle:keeptree = yes</strong> é para manter a estrutura de diretórios.</li>
+<li><strong>recycle:versions = yes</strong> é para manter as versões dos arquivos.</li>
+</ul>
+<p>Isto é, qualquer item deletado neste compartilhamento vai para o diretório .recycle. Podemos também implementar mais recursos para esta tarefa. Por exemplo, experimente adicionar as seguints linhas em seu [global] no <code>/etc/samba/smb.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> recycle
 </span></span><span class="line"><span class="ln"> 2</span><span class="cl">recycle:facility <span class="o">=</span> LOCAL1
 </span></span><span class="line"><span class="ln"> 3</span><span class="cl">recycle:priority <span class="o">=</span> NOTICE
@@ -656,13 +687,13 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 </span></span><span class="line"><span class="ln">14</span><span class="cl">directory <span class="nv">mask</span> <span class="o">=</span> <span class="m">0774</span>
 </span></span></code></pre></div><p>Agora vamos à explicação de cada variável a cima:</p>
 <ul>
-<li><strong>vfs recycle</strong> - intercepta pedidos de remoção e move os arquivos afetados para um repositório temporário ao invés de removê-los imedia/sambatamente. É basicamente o mesmo efeito que o delete no Windows. Ou seja, ele não remove completamente. Ao invés, é direcionado à lixeira.</li>
-<li><strong>recycle:facility = LOCAL1 e recycle:priority = NOTICE</strong> - Voce está indicando que usará um arquivo de log para registrar a movimentação dessa lixeira, isso será feito por meio do syslogd do sistema.</li>
-<li><strong>recycle:maxsize = 0</strong> - É definido em bytes o tamanho máximo de um arquivo que é destinado a lixeira, zero significa sem limites.</li>
-<li><strong>recycle:repository = /srv/samba/Recycle/</strong> - Aqui é definido o local, pasta onde serão armazenados os dados da lixeira.</li>
-<li><strong>recycle:directory_mode = 0774, recycle:subdir_mode = 0774,recycle:keeptree = true,recycle:touch = tryyue</strong> - Essas variáveis determinam as permissões dos diretórios, se é para guardar o nome da pasta de onde o arquivo fora excluído (keeptree), se a data do arquivo eliminado pode ser trocado pela data da exclusão (touch).</li>
-<li>**recycle:exclude = *.tmp, *.temp, *.log, *.ldb, <em>.o, <em>.obj, ~</em>.</em>, <em>.bak, <em>.iso e recycle:exclude_dir = tmp, temp, cache</em></em> - Determina respectivamente nome de arquivos e diretorios que deverão ser ignorados pela lixeira, isto é, se alguém excluir um .bak, ele terá sido excluido definitivamente.</li>
-<li><strong>recycle:versions = Yes</strong> - Aqui você determina se haverá controle de versão, isto é, se um arquivo for sobregravado então a cópia antiga será enviada para a lixeira e se novamente sobregravar o mesmo arquivo, outra cópia será enviada para a lixeira.</li>
+<li><strong>vfs recycle</strong> - É o módulo do vfs que será usado. VFS é um conjunto de módulos que podem ser carregados dinamicamente pelo Samba. Eles podem ser usados ​​para adicionar funcionalidades ao Samba, como por exemplo, o módulo de lixeira.</li>
+<li><strong>recycle:facility = LOCAL1 e recycle:priority = NOTICE</strong> - Aqui é definido o nível de log que será usado para registrar as ações de lixeira.</li>
+<li><strong>recycle:maxsize = 0</strong> - Aqui é definido o tamanho máximo do arquivo que será armazenado na lixeira.</li>
+<li><strong>recycle:repository = /srv/samba/Recycle/</strong> - Aqui é definido o diretório onde os arquivos serão movidos.</li>
+<li><strong>recycle:directory_mode = 0774, recycle:subdir_mode = 0774,recycle:keeptree = true,recycle:touch = tryyue</strong> - Aqui é definido o modo de diretório, subdiretório, se a estrutura de diretório será mantida e se o arquivo será tocado.</li>
+<li>**recycle:exclude = *.tmp, *.temp, *.log, *.ldb, <em>.o, <em>.obj, ~</em>.</em>, <em>.bak, <em>.iso e recycle:exclude_dir = tmp, temp, cache</em></em> - Aqui é definido os arquivos e diretórios que serão excluídos da lixeira.</li>
+<li><strong>recycle:versions = Yes</strong> - Aqui é definido se as versões dos arquivos serão mantidas.</li>
 </ul>
 <hr>
 <h1 id="auditando-acessos">Auditando acessos</h1>
@@ -670,10 +701,15 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">log <span class="nv">level</span> <span class="o">=</span> <span class="m">1</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl">log <span class="nv">file</span> <span class="o">=</span> /var/log/samba/log.%m
 </span></span><span class="line"><span class="ln">3</span><span class="cl">max log <span class="nv">size</span> <span class="o">=</span> <span class="m">50</span>
-</span></span></code></pre></div><blockquote>
-<p><strong>Nota:</strong> O log file e max log size já estava configurado nos passos a cima em <strong><a href="http://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio">Samba como um controlador de dominio</a></strong>. Apenas adicionei o <strong>log level</strong>.</p>
+</span></span></code></pre></div><p>Explicando as opções acima:</p>
+<ul>
+<li><strong>log level = 1</strong> é o nível das mensagens (de 0 a 10), sendo que o nível 0 mostra apenas mensagens críticas, o nível 1 mostra alguns detalhes sobre os acessos e os demais mostram diversos níveis de informações de debug, úteis a desenvolvedores.</li>
+<li><strong>log file = /var/log/samba/log.%m</strong> é o arquivo onde ele será gerado.</li>
+<li><strong>max log size = 50</strong> é o tamanho máximo do arquivo de log.</li>
+</ul>
+<blockquote>
+<p><strong>NOTA</strong>: A partir do Samba 3.04 foi incluído um módulo de auditoria, que permite logar os acessos e as modificações feitas de uma forma muito mais completa que o log tradicional. Isso é feito através do módulo <strong>&ldquo;full_audit&rdquo;</strong>, que (do ponto de vista técnico) funciona de forma similar ao módulo &ldquo;recycle&rdquo; usado pela lixeira.</p>
 </blockquote>
-<p>A opção <strong>&ldquo;log level&rdquo;</strong> indica o nível das mensagens (de 0 a 10), sendo que o nível 0 mostra apenas mensagens críticas, o nível 1 mostra alguns detalhes sobre os acessos e os demais mostram diversos níveis de informações de debug, úteis a desenvolvedores. A opção <strong>&ldquo;log file&rdquo;</strong> indica o arquivo onde ele será gerado e a <strong>&ldquo;max log size&rdquo;</strong> indica o tamanho máximo, em kbytes. A partir do Samba 3.04 foi incluído um módulo de auditoria, que permite logar os acessos e as modificações feitas de uma forma muito mais completa que o log tradicional. Isso é feito através do módulo <strong>&ldquo;full_audit&rdquo;</strong>, que (do ponto de vista técnico) funciona de forma similar ao módulo &ldquo;recycle&rdquo; usado pela lixeira.</p>
 <p>O primeiro passo é ativar o módulo no <code>/etc/smb.conf</code> e em [global] como mostra a baixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">vfs <span class="nv">objects</span> <span class="o">=</span> full_audit
 </span></span></code></pre></div><p>O próximo passo é definir quais operações devem ser logadas através da opção <strong>&ldquo;full_audit:success&rdquo;</strong>, como em:</p>
@@ -694,9 +730,8 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 <p>Esta configuração pode ser tanto incluída dentro da seção [global] (de forma que o log inclua os acessos e as alterações feitas em todos os compartilhamentos) quanto ser incluída apenas na configuração de um compartilhamento específico. Com isso, o Samba vai passar a gerar os eventos referentes aos acessos. Falta agora configurar o sysklogd (o serviço responsável pela geração dos logs do sistema), para logar os eventos, gerando o arquivo de log que poderá ser consultado. Para isso, abra o arquivo &ldquo;/etc/syslog.conf&rdquo; e adicione a linha abaixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">local1.notice /var/log/samba-full_audit.log
 </span></span></code></pre></div><blockquote>
-<p><strong>Nota:</strong> O &ldquo;local1.notice&rdquo; corresponde aos valores informados nas opções &ldquo;full_audit:facility&rdquo; e &ldquo;full_audit:priority&rdquo;, enquanto o &ldquo;/var/log/samba-full_audit.log&rdquo; é o arquivo de log que será gerado.</p>
+<p><strong>Nota:</strong> O &ldquo;local1.notice&rdquo; corresponde aos valores informados nas opções &ldquo;full_audit:facility&rdquo; e &ldquo;full_audit:priority&rdquo;, enquanto o &ldquo;/var/log/samba-full_audit.log&rdquo; é o arquivo de log que será gerado. Depois de concluída a configuração, reinicie os serviços e o log passará a ser gerado imedia/sambatamente:</p>
 </blockquote>
-<p>Depois de concluída a configuração, reinicie os serviços e o log passará a ser gerado imedia/sambatamente:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo systemctl restart samba
 </span></span><span class="line"><span class="ln">2</span><span class="cl">sudo systemctl restart sysklogd
 </span></span></code></pre></div><p>Dentro do arquivo, você verá entradas contendo a data e hora, o nome da máquina, o usuário, o IP da máquina, o nome do compartilhamento, a operação realizada e o nome do arquivo ou pasta onde ela foi realizada, como em:</p>
@@ -728,14 +763,14 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 </span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">}</span>
 </span></span></code></pre></div><p>Os elementos mais importantes deste arquivo são:</p>
 <ul>
-<li><strong>dayly</strong> - realiza o rotacionamento/segmentação do arquivo diariamente);</li>
-<li><strong>rotate 32</strong> - irá rotacionar e manter no máximo 32 segmentos (os segmentos mais antigos serão descartados);</li>
-<li><strong>minsize 2M</strong> - somente irá rotacionar que o arquivo de segmento mais recente conter no mínimo 2M, do contrário não será segmento no dia presente;</li>
-<li><strong>compress</strong> - como o próprio nome já diz, os segmentos serão compactados (por padrão utilizando o utilitário gzip, entretanto, este comportamento pode ser alterado com o parâmetro compresscmd);</li>
-<li><strong>delaycompress</strong> - atrasa a compressão para o próximo rotacionamento, ou seja, teremos arquivos de segmento compactados a partir do antepenúltimo segmento mais recente até o segmento mais antigo.</li>
+<li><strong>dayly</strong> - irá criar um segmento diário;</li>
+<li><strong>rotate 32</strong> - irá criar até 32 segmentos;</li>
+<li><strong>minsize 2M</strong> - irá criar um segmento quando o segmento mais recente atingir 2 Megabytes;</li>
+<li><strong>compress</strong> - irá compactar os segmentos mais antigos;</li>
+<li><strong>delaycompress</strong> - irá compactar os segmentos mais antigos após o término do processo de rotacionamento;</li>
 </ul>
-<p>Entretanto, ainda falta alterar um arquivo de políticas do logrotate chamado /etc/logrotate.d/samba.</p>
-<p>Este arquivo contém uma política de rotacionamento que será aplicada a todos os arquivos com extensão log existentes em /var/log/samba, entretanto, como temos um arquivo de política já especifico para o arquivo audit_samba.log (que irá expandir muito mais rapidamente que qualquer outro arquivo de logs do samba), vamos adaptar o arquivo de políticas de rotacionamento padrão para não aplicar estas políticas no arquivo audit_samba.log.</p>
+<p>Entretanto, ainda falta alterar um arquivo de políticas do logrotate chamado <code>/etc/logrotate.d/samba</code>.</p>
+<p>Este arquivo contém uma política de rotacionamento que será aplicada a todos os arquivos com extensão log existentes em <code>/var/log/samba</code>, entretanto, como temos um arquivo de política já especifico para o arquivo <code>audit_samba.log</code> (que irá expandir muito mais rapidamente que qualquer outro arquivo de logs do samba), vamos adaptar o arquivo de políticas de rotacionamento padrão para não aplicar estas políticas no arquivo <code>audit_samba.log</code>.</p>
 <p>Alterar o arquivo /etc/logrotate.d/samba, onde existe:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">/var/log/samba/*.log
 </span></span></code></pre></div><p>Altere para:</p>
@@ -751,11 +786,11 @@ Adicione estas linhas no <code>/etc/samba/smb.conf</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sudo setfacl -m u:lobo:rwx testes
 </span></span></code></pre></div><p>O comando que define as permissões chama-se <strong>setfacl (set file access control list)</strong>. Os parâmetros fornecidos também são de fácil compreensão:</p>
 <ul>
-<li><strong>-m</strong> - Modifica as permissões de acesso do arquivo ou diretório.</li>
-<li><strong>u</strong> - Modificações se aplicam a um usuário.</li>
-<li><strong>lobo</strong> - Usuário que receberá as permissões de acesso.</li>
-<li><strong>rwx</strong> - Estão sendo concedidas permissões de leitura (r), gravação (w) e execução (x).</li>
-<li><strong>testes</strong> - Nome do diretório que somente o usuário &ldquo;lobo&rdquo; terá acesso.</li>
+<li><strong>-m</strong> - Modifica as permissões de acesso.</li>
+<li><strong>u</strong> - Usuário que receberá as permissões de acesso.</li>
+<li><strong>lobo</strong> - Nome do usuário que receberá as permissões de acesso.</li>
+<li><strong>rwx</strong> - Permissões de acesso que serão concedidas ao usuário.</li>
+<li><strong>testes</strong> - Nome do arquivo ou diretório que receberá as permissões de acesso.</li>
 </ul>
 <p>Uma vez emitido o comando, vamos verificar se está tudo correto. Para isto usamos o comando <code>getfacl</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ getfacl testes
