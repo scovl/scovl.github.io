@@ -107,7 +107,7 @@ Neste exemplo, temos uma variável compartilhada ready e uma variável compartil
 
 A implementação HotSpot que projetada para melhorar o desempenho da JVM, e isso inclui uma série de técnicas avançadas de gerenciamento de memória. A equipe de desenvolvimento do HotSpot continua melhorando o gerenciamento de memória da JVM para torná-lo mais eficiente e escalável. Em resumo, o gerenciamento de memória da JVM é um aspecto fundamental do ambiente Java que é administrado pela JVM e pelo HotSpot, e ajuda a manter aplicativos Java executando de forma eficiente e sem erros relacionados à memória. O gerenciamento de memória e a memória cache são conceitos importantes para entender a performance de um sistema computacional. As técnicas de gerenciamento de memória da JVM incluem:
 
-### Garbage Collection
+### Garbage Collector
 
 A coleta de lixo é uma das características mais reconhecidas do ambiente Java. No passado, houve resistência a esta característica, pois a linguagem Java não oferecia meios de controlar o comportamento da coleta de lixo. No entanto, atualmente é amplamente aceito que o compilador e o tempo de execução controlam adequadamente o gerenciamento de memória, e não o programador.
 
@@ -517,6 +517,14 @@ scrape_configs:
 ```
 
 Neste exemplo, estamos configurando dois trabalhos diferentes, um para coletar métricas JVM padrão (jvm) e outro para coletar métricas da aplicação Java (jvm_app). A frequência de varredura para ambos é de 5 segundos, e o intervalo de verificação global é de 15 segundos. Para coletar métricas JVM, usamos o Prometheus JVM Client e especificamos o alvo como localhost:9253. Para coletar métricas da aplicação, usamos o JMX Exporter e especificamos o alvo como localhost:7071.
+
+O Prometheus JVM Client fornece uma série de métricas que podem ser usadas para monitorar a JVM. Aqui estão alguns exemplos:
+
+* **Uso da memória**: O uso da memória heap e non-heap podem ser monitorados através de métricas como `jvm_memory_bytes_used`, `jvm_memory_bytes_committed`, e `jvm_memory_pool_bytes_used`.
+* **Garbage Collection**: As informações sobre o tempo de coleta de lixo e o número de coletas podem ser monitoradas através de métricas como `jvm_gc_collection_seconds_sum`, `jvm_gc_collection_seconds_count`, `jvm_gc_memory_promoted_bytes_sum`, entre outras.
+* **Threads**: O número de threads ativos e o número total de threads podem ser monitorados através de métricas como `jvm_threads_current`, `jvm_threads_peak`, `jvm_threads_daemon`.
+* **Classes**: O número total de classes carregadas, o número de classes novas por minuto e o número de classes descarregadas podem ser monitorados através de métricas como `jvm_classes_loaded`, `jvm_classes_loaded_total`, `jvm_classes_unloaded_total`.
+* **CPU**: O tempo total de CPU usado pela JVM e o número de contextos de troca de CPU podem ser monitorados através de métricas como `jvm_cpu_load` e `jvm_threads_cpu_time_seconds_sum`.
 
 Observe que você deve ajustar as configurações de acordo com as necessidades da sua aplicação e ambiente. Para mais informações acesse a página do **[Java_client](https://github.com/prometheus/client_java)**.
 
