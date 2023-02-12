@@ -128,9 +128,9 @@ Como veremos, o log do GC não tem sobrecarga observável, então ele deve estar
 
 ### Concurrent Mark Sweep
 
-O CMS (Collector de Lixo Concorrente) é um coletor de lixo para a JVM (Máquina Virtual Java) que é projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. É uma forma alternativa de coletar lixo em comparação com o coletor de lixo padrão, que é o coletor de lixo serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante a coleta de lixo. Ao contrário do coletor de lixo serial, que pausa a execução do aplicativo durante a coleta de lixo, o CMS tenta coletar lixo de forma concorrente, ou seja, sem interromper a execução do aplicativo. Isso é feito executando a coleta de lixo em segundo plano, enquanto o aplicativo continua a ser executado. O CMS também tenta minimizar o impacto da coleta de lixo no desempenho do aplicativo, garantindo que a coleta de lixo não consuma mais de um determinado percentual da CPU.
+O CMS (Collector de Lixo Concorrente) é um GC para a JVM (Máquina Virtual Java) que é projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. É uma forma alternativa de coletar lixo em comparação com o GC padrão, que é o GC serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante a coleta de lixo. Ao contrário do GC serial, que pausa a execução do aplicativo durante a coleta de lixo, o CMS tenta coletar lixo de forma concorrente, ou seja, sem interromper a execução do aplicativo. Isso é feito executando a coleta de lixo em segundo plano, enquanto o aplicativo continua a ser executado. O CMS também tenta minimizar o impacto da coleta de lixo no desempenho do aplicativo, garantindo que a coleta de lixo não consuma mais de um determinado percentual da CPU.
 
-Em resumo, o CMS é uma opção viável para desenvolvedores que precisam garantir um desempenho consistente de seus aplicativos Java em ambientes de múltiplos processadores, e que não podem tolerar pausas longas na execução do aplicativo durante a coleta de lixo. Para usar o CMS, você precisará configurar a JVM para usá-lo como o coletor de lixo padrão. Isso pode ser feito por meio da adição de uma opção de linha de comando na hora de iniciar a aplicação Java. A opção é -XX:+UseConcMarkSweepGC:
+Em resumo, o CMS é uma opção viável para desenvolvedores que precisam garantir um desempenho consistente de seus aplicativos Java em ambientes de múltiplos processadores, e que não podem tolerar pausas longas na execução do aplicativo durante a coleta de lixo. Para usar o CMS, você precisará configurar a JVM para usá-lo como o GC padrão. Isso pode ser feito por meio da adição de uma opção de linha de comando na hora de iniciar a aplicação Java. A opção é -XX:+UseConcMarkSweepGC:
 
 ```java
 java -XX:+UseConcMarkSweepGC MyJavaApp
@@ -142,31 +142,43 @@ Observe que a configuração do CMS também pode ser feita através de arquivos 
 
 O HotSpot é uma implementação da JVM (Java Virtual Machine) que gerencia a memória de forma eficiente através de arenas. Essas arenas são gerenciadas diretamente pelo HotSpot, sem necessidade de interação com o sistema operacional. O gerenciamento de memória é controlado por duas variáveis importantes: taxa de alocação (a quantidade de memória utilizada por objetos recentemente criados) e vida útil do objeto (o tempo que um objeto existe antes de sua memória ser liberada).
 
-O HotSpot aplica a hipótese fraca de geração, que sugere que a maioria dos objetos tem vida curta, o que é usado para otimizar o desempenho do coletor de lixo. Em nível baixo, valores Java são representados como bits que correspondem a valores primitivos ou endereços de objetos, que são representados na memória como "oops". O tamanho da pilha é gerenciado pelo código de usuário e não depende de chamadas ao sistema.
+O HotSpot aplica a hipótese fraca de geração, que sugere que a maioria dos objetos tem vida curta, o que é usado para otimizar o desempenho do GC. Em nível baixo, valores Java são representados como bits que correspondem a valores primitivos ou endereços de objetos, que são representados na memória como "oops". O tamanho da pilha é gerenciado pelo código de usuário e não depende de chamadas ao sistema.
 
-O gerenciamento de memória no HotSpot está habilitado por padrão na JVM e é gerenciado automaticamente e otimizado com técnicas como o coletor de lixo e a alocação dinâmica de memória. No entanto, as configurações do HotSpot podem ser ajustadas para atender às necessidades do usuário, como definir o tamanho máximo da heap (-Xmx) ou habilitar um algoritmo de coletor de lixo específico (-XX:+UseConcMarkSweepGC). A documentação da JVM fornece uma lista completa das opções de linha de comando disponíveis.
+O gerenciamento de memória no HotSpot está habilitado por padrão na JVM e é gerenciado automaticamente e otimizado com técnicas como o GC e a alocação dinâmica de memória. No entanto, as configurações do HotSpot podem ser ajustadas para atender às necessidades do usuário, como definir o tamanho máximo da heap (-Xmx) ou habilitar um algoritmo de GC específico (-XX:+UseConcMarkSweepGC). A documentação da JVM fornece uma lista completa das opções de linha de comando disponíveis.
 
 ### Garbage First
 
-O Garbage First (G1) é um coletor de lixo muito diferente dos coletores paralelos ou do CMS. Ele foi introduzido pela primeira vez em uma forma altamente experimental e instável no Java 6, mas foi extensivamente reescrito ao longo da vida útil do Java 7 e só se tornou estável e pronto para produção com o lançamento do Java 8u40. O G1 foi originalmente projetado para ser um coletor de baixa pausa que fosse: muito mais fácil de afinar do que o CMS, menos suscetível à promoção prematura, capaz de melhorar o comportamento de escalabilidade (especialmente o tempo de pausa) em pilhas grandes e capaz de eliminar (ou reduzir significativamente a necessidade de recorrer a) coletas completas STW. No entanto, com o tempo, o G1 evoluiu para ser pensado como mais um coletor de propósito geral que tinha melhores tempos de pausa em pilhas maiores (que cada vez mais são consideradas "o novo normal").
+O Garbage First (G1) é um GC muito diferente dos coletores paralelos ou do CMS. Ele foi introduzido pela primeira vez em uma forma altamente experimental e instável no Java 6, mas foi extensivamente reescrito ao longo da vida útil do Java 7 e só se tornou estável e pronto para produção com o lançamento do Java 8u40. O G1 foi originalmente projetado para ser um coletor de baixa pausa que fosse: muito mais fácil de afinar do que o CMS, menos suscetível à promoção prematura, capaz de melhorar o comportamento de escalabilidade (especialmente o tempo de pausa) em pilhas grandes e capaz de eliminar (ou reduzir significativamente a necessidade de recorrer a) coletas completas STW. No entanto, com o tempo, o G1 evoluiu para ser pensado como mais um coletor de propósito geral que tinha melhores tempos de pausa em pilhas maiores (que cada vez mais são consideradas "o novo normal").
 
-O coletor G1 tem um design que repensa a noção de gerações que já encontramos. Ao contrário dos coletores paralelos ou do CMS, o G1 não tem espaços de memória contíguos dedicados por geração. Além disso, ele não segue o layout da pilha hemisférica, como veremos. A pilha G1 é baseada no conceito de regiões. Estas são áreas que são, por padrão, de 1 MB de tamanho (mas são maiores em pilhas maiores). O uso de regiões permite gerações não contíguas e torna possível ter um coletor que não precisa coletar todo o lixo em cada execução. O layout da pilha G1 baseado em regiões pode ser visto no algoritmo G1, que permite regiões de 1, 2, 4, 8, 16, 32 ou 64 MB. Por padrão, ele espera entre 2.048 e 4.095 regiões na pilha e ajustará o tamanho da região para atingir isso. 
+O coletor G1 tem um design que repensa a noção de gerações que já encontramos. Ao contrário dos coletores paralelos ou do CMS, o G1 não tem espaços de memória contíguos dedicados por geração. Além disso, ele não segue o layout da pilha hemisférica. A pilha G1 é baseada no conceito de regiões. Estas são áreas que são, por padrão, de 1 MB de tamanho (mas são maiores em pilhas maiores). O uso de regiões permite gerações não contíguas e torna possível ter um coletor que não precisa coletar todo o lixo em cada execução. O layout da pilha G1 baseado em regiões pode ser visto no algoritmo G1, que permite regiões de 1, 2, 4, 8, 16, 32 ou 64 MB. Por padrão, ele espera entre 2.048 e 4.095 regiões na pilha e ajustará o tamanho da região para atingir isso. 
 
-Para calcular o tamanho da região, calculamos este valor: `<Tamanho da Pilha> / 2048` e, em seguida, arredondamos para o valor mais próximo permitido de tamanho de região. Então, o número de regiões pode ser calculado: Número de regiões = `<Tamanho da Pilha> / <Tamanho da Região>`Como de costume , ele seguirá o valor de tamanho de região que garanta entre 2.048 e 4.095 regiões. Este cálculo é importante porque o tamanho da região afeta a eficiência da memória e o desempenho geral do sistema. É importante ter o número correto de regiões para garantir o uso eficiente da memória e evitar desperdício ou falta de memória. Além disso, ajustar o tamanho da região pode ajudar a evitar problemas de segmentação e proteção de memória, melhorando a estabilidade do sistema. O Garbage First (G1) é habilitado especificando o -XX:+UseG1GC opção de linha de comando durante a inicialização do Java. Por exemplo:
+O Garbage First G1 é o GC padrão na versão 7u4 e tornou-se padrão no Java 9. Ele é otimizado para aplicações que exigem tempo de resposta previsível, além de ser escalável em sistemas com muita memória. Aqui estão alguns exemplos de comandos de linha que podem ser usados para fazer o tuning do Garbage First G1:
 
-```java
-java -XX:+UseG1GC MyMainClass
-```
-
-
-Além disso, você pode ajustar algumas configurações adicionais do G1, como o tamanho do heap, o número de regiões, o tamanho das regiões, entre outras, usando as opções de linha de comando correspondentes. Aqui está um exemplo de como definir o tamanho do heap como 8 GB:
+Configuração do número de regiões do heap: Por padrão, o G1 divide o heap em regiões de tamanho igual. Você pode usar a opção -XX:G1HeapRegionSize para definir o tamanho da região de heap. Por exemplo:
 
 ```java
-java -XX:+UseG1GC -Xmx8g MyMainClass
+java -XX:G1HeapRegionSize=32m MyMainClass
 ```
 
-Recomendo ler a documentação oficial da Oracle sobre as opções de linha de comando do G1 para obter mais informações e exemplos sobre como configurá-lo de acordo com suas necessidades.
+Configuração de porcentagem de heap destinada à coleta de lixo: Você pode usar a opção -XX:G1NewSizePercent e -XX:G1MaxNewSizePercent para definir a porcentagem de heap destinada à coleta de lixo. Por exemplo:
 
+```java
+java -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=50 MyMainClass
+```
+
+Configuração do tamanho da política de humilhação: O G1 usa a política de humilhação para definir a quantidade de espaço que será liberado em cada coleta de lixo. Você pode usar a opção -XX:G1ReservePercent para definir o tamanho da política de humilhação. Por exemplo:
+
+```java
+java -XX:G1ReservePercent=10 MyMainClass
+```
+
+Configuração do nível de humilhação: O nível de humilhação é usado para determinar quantas regiões de heap serão liberadas em cada coleta de lixo. Você pode usar a opção -XX:G1ConfidencePercent para definir o nível de humilhação. Por exemplo:
+
+```java
+java -XX:G1ConfidencePercent=75 MyMainClass
+```
+
+Estes são apenas alguns exemplos de comandos de linha que você pode usar para fazer o tuning do Garbage First G1. É importante notar que o tuning do Garbage First G1 pode ser complexo e que o desempenho ideal pode variar de acordo com a
 
 ### Object Allocation
 
@@ -414,8 +426,8 @@ Além disso, é possível especificar a quantidade de tempo de CPU, memória e o
 
 * **-Xmx**: define o tamanho máximo da memória heap que a JVM alocará para a aplicação. Exemplo: -Xmx1024m
 * **-Xms**: define o tamanho inicial da memória heap que a JVM alocará para a aplicação. Exemplo: -Xms512m
-* **-XX:+UseG1GC**: habilita o coletor de lixo G1 (Garbage First). Este é o padrão a partir da versão Java 9.
-* **-XX:+PrintGCDetails**: habilita a saída detalhada do coletor de lixo durante a execução da aplicação.
+* **-XX:+UseG1GC**: habilita o GC G1 (Garbage First). Este é o padrão a partir da versão Java 9.
+* **-XX:+PrintGCDetails**: habilita a saída detalhada do GC durante a execução da aplicação.
 * **-XX:-UseBiasedLocking**: desabilita o bloqueio inclinado, que é uma técnica de otimização de desempenho.
 * **-XX:+HeapDumpOnOutOfMemoryError**: gera um dump do heap em caso de erro de falta de memória.
 * **-XX:+AggressiveOpts**: habilita as otimizações agressivas da JVM, que são ajustes automáticos de configurações de desempenho que a JVM pode fazer com base na arquitetura do sistema e no uso da aplicação.
