@@ -56,7 +56,7 @@ Ao contrário de outras linguagens como C++, que seguem o princípio de "zero so
 
 ## Gerenciamento de memória da JVM
 
-O gerenciamento de memória na JVM é uma das suas principais características e um dos motivos pelo qual é tão popular entre os desenvolvedores. Em contraste com linguagens como C, C++ e Objective-C, onde é responsabilidade do programador gerenciar a alocação e liberação de memória, a JVM foi projetada para aliviar a carga do desenvolvedor nesta tarefa ao introduzir o gerenciamento de memória de heap automatizado através da coleta de lixo (Garbage Collector). O objetivo do garbage collector é recuperar e reutilizar memória que não é mais necessária, o que significa que o desenvolvedor não precisa se preocupar com a liberação de memória manualmente. Aqui está um exemplo simples de gerenciamento de memória na JVM:
+O gerenciamento de memória na JVM é uma das suas principais características e um dos motivos pelo qual é tão popular entre os desenvolvedores. Em contraste com linguagens como C, C++ e Objective-C, onde é responsabilidade do programador gerenciar a alocação e liberação de memória, a JVM foi projetada para aliviar a carga do desenvolvedor nesta tarefa ao introduzir o gerenciamento de memória de heap automatizado através do GC (Garbage Collector). O objetivo do garbage collector é recuperar e reutilizar memória que não é mais necessária, o que significa que o desenvolvedor não precisa se preocupar com a liberação de memória manualmente. Aqui está um exemplo simples de gerenciamento de memória na JVM:
 
 ```java
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class MemoryManagementExample {
 }
 ```
 
-Neste exemplo, estamos alocando objetos de tipo String em uma lista, em um loop que adiciona um milhão de objetos. Depois disso, a referência à lista é definida como null, o que torna os objetos alocados nela não mais acessíveis. Finalmente, invocamos o método System.gc() para forçar a coleta de lixo na JVM. A JVM é inerentemente multithreaded e permite aos desenvolvedores criarem novos segmentos de execução, o que adiciona complexidade ao comportamento do programa. Cada thread de aplicação Java corresponde a uma thread dedicada do sistema operacional e todas as threads de aplicação Java compartilham a mesma heap, que é coletada pelo GC comum. O Java Memory Model (JMM) é um modelo formal de memória que explica como as threads de execução veem mudanças nos valores contidos em objetos. Por exemplo:
+Neste exemplo, estamos alocando objetos de tipo String em uma lista, em um loop que adiciona um milhão de objetos. Depois disso, a referência à lista é definida como null, o que torna os objetos alocados nela não mais acessíveis. Finalmente, invocamos o método System.gc() para forçar o GC na JVM. A JVM é inerentemente multithreaded e permite aos desenvolvedores criarem novos segmentos de execução, o que adiciona complexidade ao comportamento do programa. Cada thread de aplicação Java corresponde a uma thread dedicada do sistema operacional e todas as threads de aplicação Java compartilham a mesma heap, que é coletada pelo GC comum. O Java Memory Model (JMM) é um modelo formal de memória que explica como as threads de execução veem mudanças nos valores contidos em objetos. Por exemplo:
 
 ```java
 public class MemoryModelExample {
@@ -109,11 +109,11 @@ A implementação HotSpot que projetada para melhorar o desempenho da JVM, e iss
 
 ### Garbage Collector
 
-A coleta de lixo é uma das características mais reconhecidas do ambiente Java. No passado, houve resistência a esta característica, pois a linguagem Java não oferecia meios de controlar o comportamento da coleta de lixo. No entanto, atualmente é amplamente aceito que o compilador e o tempo de execução controlam adequadamente o gerenciamento de memória, e não o programador.
+O GC (Garbage Collector) ou coletor de lixo é uma das características mais reconhecidas do ambiente Java. No passado, houve resistência a esta característica, pois a linguagem Java não oferecia meios de controlar o comportamento do GC. No entanto, atualmente é amplamente aceito que o compilador e o tempo de execução controlam adequadamente o gerenciamento de memória, e não o programador.
 
-A coleta de lixo no Java funciona da seguinte maneira: o tempo de execução automaticamente controla os objetos e descarta aqueles que já não são necessários, permitindo a reutilização da memória liberada. Existem duas regras importantes que todas as implementações devem seguir: coletar todo o lixo e nunca coletar um objeto que ainda está sendo usado. O Java tem uma abordagem gerenciada, o que significa que os programadores podem se concentrar em soluções de alto nível, enquanto as ferramentas e bibliotecas cuidam dos detalhes de baixo nível, como alocação de memória, gerenciamento de threads e segurança. Além disso, a máquina virtual Java ajuda a garantir a portabilidade da aplicação.
+O GC no Java funciona da seguinte maneira: o tempo de execução automaticamente controla os objetos e descarta aqueles que já não são necessários, permitindo a reutilização da memória liberada. Existem duas regras importantes que todas as implementações devem seguir: coletar todo o lixo e nunca coletar um objeto que ainda está sendo usado. O Java tem uma abordagem gerenciada, o que significa que os programadores podem se concentrar em soluções de alto nível, enquanto as ferramentas e bibliotecas cuidam dos detalhes de baixo nível, como alocação de memória, gerenciamento de threads e segurança. Além disso, a máquina virtual Java ajuda a garantir a portabilidade da aplicação.
 
-Em resumo, a abordagem gerenciada do Java torna mais fácil e rápido o desenvolvimento de aplicativos, pois permite que os programadores escrevam código de alto nível sem se preocupar com muitos detalhes de baixo nível. Embora o Java tenha uma coleta de lixo, as especificações da linguagem e da VM não ditam como ela deve ser implementada, resultando em várias implementações diferentes, como o CMS (Concurrent Mark Sweep).Como Fonte de Informação, o Log do Garbage Collector (GC) é extremamente útil. Ele é especialmente útil para análises de problemas de desempenho, como fornecer algum insight sobre por que uma falha ocorreu. Ele permite que o analista trabalhe mesmo sem um processo de aplicação ao vivo para diagnosticar. Toda aplicação séria deve sempre:
+Em resumo, a abordagem gerenciada do Java torna mais fácil e rápido o desenvolvimento de aplicativos, pois permite que os programadores escrevam código de alto nível sem se preocupar com muitos detalhes de baixo nível. Embora o Java tenha umo GC, as especificações da linguagem e da VM não ditam como ela deve ser implementada, resultando em várias implementações diferentes, como o CMS (Concurrent Mark Sweep).Como Fonte de Informação, o Log do Garbage Collector (GC) é extremamente útil. Ele é especialmente útil para análises de problemas de desempenho, como fornecer algum insight sobre por que uma falha ocorreu. Ele permite que o analista trabalhe mesmo sem um processo de aplicação ao vivo para diagnosticar. Toda aplicação séria deve sempre:
 
 * Gerar um log do GC.
 * Mantê-lo em um arquivo separado da saída da aplicação. Isso é especialmente verdadeiro para aplicações de produção.
@@ -123,14 +123,14 @@ Como veremos, o log do GC não tem sobrecarga observável, então ele deve estar
 * **Xloggc:gc.log**: esta opção especifica o arquivo para logar informações sobre coletas de lixo. O arquivo "gc.log" neste caso será o arquivo onde as informações serão armazenadas.
 * **XX: +PrintGCDetails**: esta opção ativa a geração de informações detalhadas sobre coletas de lixo, incluindo informações sobre a quantidade de memória alocada e liberada durante a coleta, a duração da coleta, entre outras informações.
 * **XX: +PrintTenuringDistribution**: esta opção ativa a geração de informações sobre a distribuição de objetos entre as diferentes faixas de idade dentro do heap de tenuração. Essas informações podem ser úteis para entender a evolução do heap de tenuração ao longo do tempo.
-* **XX: +PrintGCTimeStamps**: esta opção ativa a geração de informações sobre a hora em que cada coleta de lixo ocorreu. Essas informações podem ser úteis para compreender a frequência das coletas de lixo e a relação entre elas e outros eventos na aplicação.
-* **XX: +PrintGCDateStamps**: esta opção ativa a geração de informações sobre a data em que cada coleta de lixo ocorreu. Essas informações podem ser úteis para compreender a evolução das coletas de lixo ao longo do tempo e para agrupar coletas de lixo relacionadas.
+* **XX: +PrintGCTimeStamps**: esta opção ativa a geração de informações sobre a hora em que cado GC ocorreu. Essas informações podem ser úteis para compreender a frequência das coletas de lixo e a relação entre elas e outros eventos na aplicação.
+* **XX: +PrintGCDateStamps**: esta opção ativa a geração de informações sobre a data em que cado GC ocorreu. Essas informações podem ser úteis para compreender a evolução das coletas de lixo ao longo do tempo e para agrupar coletas de lixo relacionadas.
 
 ### Concurrent Mark Sweep
 
-O CMS (Collector de Lixo Concorrente) é um GC para a JVM (Máquina Virtual Java) que é projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. É uma forma alternativa de coletar lixo em comparação com o GC padrão, que é o GC serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante a coleta de lixo. Ao contrário do GC serial, que pausa a execução do aplicativo durante a coleta de lixo, o CMS tenta coletar lixo de forma concorrente, ou seja, sem interromper a execução do aplicativo. Isso é feito executando a coleta de lixo em segundo plano, enquanto o aplicativo continua a ser executado. O CMS também tenta minimizar o impacto da coleta de lixo no desempenho do aplicativo, garantindo que a coleta de lixo não consuma mais de um determinado percentual da CPU.
+O CMS (Collector de Lixo Concorrente) é um GC para a JVM (Máquina Virtual Java) que é projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. É uma forma alternativa de coletar lixo em comparação com o GC padrão, que é o GC serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante o GC. Ao contrário do GC serial, que pausa a execução do aplicativo durante o GC, o CMS tenta coletar lixo de forma concorrente, ou seja, sem interromper a execução do aplicativo. Isso é feito executando o GC em segundo plano, enquanto o aplicativo continua a ser executado. O CMS também tenta minimizar o impacto do GC no desempenho do aplicativo, garantindo que o GC não consuma mais de um determinado percentual da CPU.
 
-Em resumo, o CMS é uma opção viável para desenvolvedores que precisam garantir um desempenho consistente de seus aplicativos Java em ambientes de múltiplos processadores, e que não podem tolerar pausas longas na execução do aplicativo durante a coleta de lixo. Para usar o CMS, você precisará configurar a JVM para usá-lo como o GC padrão. Isso pode ser feito por meio da adição de uma opção de linha de comando na hora de iniciar a aplicação Java. A opção é -XX:+UseConcMarkSweepGC:
+Em resumo, o CMS é uma opção viável para desenvolvedores que precisam garantir um desempenho consistente de seus aplicativos Java em ambientes de múltiplos processadores, e que não podem tolerar pausas longas na execução do aplicativo durante o GC. Para usar o CMS, você precisará configurar a JVM para usá-lo como o GC padrão. Isso pode ser feito por meio da adição de uma opção de linha de comando na hora de iniciar a aplicação Java. A opção é -XX:+UseConcMarkSweepGC:
 
 ```java
 java -XX:+UseConcMarkSweepGC MyJavaApp
@@ -166,13 +166,13 @@ Configuração de porcentagem de heap destinada à coleta de lixo: Você pode us
 java -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=50 MyMainClass
 ```
 
-Configuração do tamanho da política de humilhação: O G1 usa a política de humilhação para definir a quantidade de espaço que será liberado em cada coleta de lixo. Você pode usar a opção -XX:G1ReservePercent para definir o tamanho da política de humilhação. Por exemplo:
+Configuração do tamanho da política de humilhação: O G1 usa a política de humilhação para definir a quantidade de espaço que será liberado em cado GC. Você pode usar a opção -XX:G1ReservePercent para definir o tamanho da política de humilhação. Por exemplo:
 
 ```java
 java -XX:G1ReservePercent=10 MyMainClass
 ```
 
-Configuração do nível de humilhação: O nível de humilhação é usado para determinar quantas regiões de heap serão liberadas em cada coleta de lixo. Você pode usar a opção -XX:G1ConfidencePercent para definir o nível de humilhação. Por exemplo:
+Configuração do nível de humilhação: O nível de humilhação é usado para determinar quantas regiões de heap serão liberadas em cado GC. Você pode usar a opção -XX:G1ConfidencePercent para definir o nível de humilhação. Por exemplo:
 
 ```java
 java -XX:G1ConfidencePercent=75 MyMainClass
@@ -321,7 +321,7 @@ A JVM é responsável por monitorar o uso da memória heap e otimizá-lo de acor
 
 ### Incremental Garbage Collection
 
-Em geral, a coleta de lixo incremental divide a coleta de lixo em pequenas etapas, intercaladas com o tempo de execução do aplicativo, ao invés de executar a coleta de lixo em uma única etapa, o que pode interromper o desempenho do aplicativo. Aqui está um exemplo hipotético de como o Java poderia implementar a técnica de coleta de lixo incremental:
+Em geral, o GC incremental divide o GC em pequenas etapas, intercaladas com o tempo de execução do aplicativo, ao invés de executar o GC em uma única etapa, o que pode interromper o desempenho do aplicativo. Aqui está um exemplo hipotético de como o Java poderia implementar a técnica de coleta de lixo incremental:
 
 ```java
 public class IncrementalGarbageCollector {
@@ -340,7 +340,7 @@ public class IncrementalGarbageCollector {
 
       // Verificar se a etapa de coleta de lixo levou mais tempo do que o permitido
       if (endTime - startTime > MAX_PAUSE_TIME) {
-        // Se sim, interromper a execução do aplicativo e executar uma coleta de lixo completa
+        // Se sim, interromper a execução do aplicativo e executar umo GC completa
         runFullGarbageCollection();
       }
     }
@@ -355,16 +355,16 @@ public class IncrementalGarbageCollector {
   }
 
   private static void runFullGarbageCollection() {
-    // Aqui é onde o código da coleta de lixo completa seria inserido
+    // Aqui é onde o código do GC completa seria inserido
   }
 }
 ```
 
-Este é apenas um exemplo hipotético, e a implementação real da técnica de coleta de lixo incremental varia de acordo com a implementação da JVM. Além disso, é importante destacar que a coleta de lixo é geralmente realizada pela própria JVM, portanto, não é necessário escrever código para implementa-la.
+Este é apenas um exemplo hipotético, e a implementação real da técnica de coleta de lixo incremental varia de acordo com a implementação da JVM. Além disso, é importante destacar que o GC é geralmente realizada pela própria JVM, portanto, não é necessário escrever código para implementa-la.
 
 ### Parallel Garbage Collection
 
-O Java permite que a coleta de lixo seja executada em múltiplos threads, o que pode aumentar a velocidade da coleta de lixo. A seguir, um exemplo hipotético de como você pode influenciar a JVM a usar este recurso:
+O Java permite que o GC seja executada em múltiplos threads, o que pode aumentar a velocidade do GC. A seguir, um exemplo hipotético de como você pode influenciar a JVM a usar este recurso:
 
 ```java
 import java.lang.System;
@@ -378,13 +378,13 @@ public class ParallelGCExample {
 }
 ```
 
-Neste exemplo, a chamada a System.gc() força a JVM a executar uma coleta de lixo. A propriedade java.compiler.parallelGC é consultada para verificar se a coleta de lixo paralela está habilitada. Se a coleta de lixo paralela estiver habilitada, o valor retornado será "true".
+Neste exemplo, a chamada a System.gc() força a JVM a executar umo GC. A propriedade java.compiler.parallelGC é consultada para verificar se o GC paralela está habilitada. Se o GC paralela estiver habilitada, o valor retornado será "true".
 
-Observe que o habilitação ou desabilitação da coleta de lixo paralela é feita pela JVM, não pelo código Java. A JVM pode optar por usar a coleta de lixo paralela ou não, dependendo das condições do sistema e do tamanho da heap. Além disso, é possível configurar a JVM para usar a coleta de lixo paralela especificamente, definindo a propriedade -XX:+UseParallelGC na linha de comando ao iniciar a JVM.
+Observe que o habilitação ou desabilitação do GC paralela é feita pela JVM, não pelo código Java. A JVM pode optar por usar o GC paralela ou não, dependendo das condições do sistema e do tamanho da heap. Além disso, é possível configurar a JVM para usar o GC paralela especificamente, definindo a propriedade -XX:+UseParallelGC na linha de comando ao iniciar a JVM.
 
 ### Manual Memory Management
 
-O Java possui uma coleta de lixo automática que cuida da gestão da memória, o que significa que os desenvolvedores não precisam se preocupar em liberar manualmente a memória. No entanto, em alguns casos, é possível usar o "Manual Memory Management" para otimizar o uso da memória e aumentar o desempenho.Em Java, é possível utilizar a API de gerenciamento de memória direto, como por exemplo a classe java.nio.ByteBuffer, para alocar, gerenciar e liberar manualmente a memória. Aqui está um exemplo:
+O Java possui umo GC automática que cuida da gestão da memória, o que significa que os desenvolvedores não precisam se preocupar em liberar manualmente a memória. No entanto, em alguns casos, é possível usar o "Manual Memory Management" para otimizar o uso da memória e aumentar o desempenho.Em Java, é possível utilizar a API de gerenciamento de memória direto, como por exemplo a classe java.nio.ByteBuffer, para alocar, gerenciar e liberar manualmente a memória. Aqui está um exemplo:
 
 ```java
 import java.nio.ByteBuffer;
@@ -414,7 +414,7 @@ public class ManualMemoryManagementExample {
 }
 ```
 
-Neste exemplo, o objeto ByteBuffer é usado para alocar manualmente 1024 bytes de memória. Em seguida, são escritos dados no buffer e, em seguida, lidos. Por fim, a memória é liberada manualmente usando o método clear(). Observe que a utilização direta da API de gerenciamento de memória exige mais cuidado dos desenvolvedores, pois é necessário liberar manualmente a memória após o uso. Além disso, o código também fica mais complexo e menos legível. Por essas razões, é recomendável usar a coleta de lixo automática do Java na maioria das situações.
+Neste exemplo, o objeto ByteBuffer é usado para alocar manualmente 1024 bytes de memória. Em seguida, são escritos dados no buffer e, em seguida, lidos. Por fim, a memória é liberada manualmente usando o método clear(). Observe que a utilização direta da API de gerenciamento de memória exige mais cuidado dos desenvolvedores, pois é necessário liberar manualmente a memória após o uso. Além disso, o código também fica mais complexo e menos legível. Por essas razões, é recomendável usar o GC automática do Java na maioria das situações.
 
 ---
 
