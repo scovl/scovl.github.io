@@ -1,6 +1,6 @@
 +++
 title = "JVM"
-description = ""
+description = "Gerenciamento de memória da JVM"
 date = 2022-12-05T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
 draft = true
@@ -12,13 +12,9 @@ author = "Vitor Lobo Ramos"
 
 Java é uma das maiores plataformas tecnológicas do mundo, com aproximadamente 9 a 10 milhões de desenvolvedores, de acordo com a Oracle. Embora muitos desenvolvedores não precisem conhecer os detalhes de baixo nível da plataforma na qual trabalham, é importante que os desenvolvedores interessados em desempenho compreendam os conceitos básicos da JVM (Java Virtual Machine). Entender a JVM permite que os desenvolvedores escrevam um software mais eficiente e fornece o conhecimento teórico necessário para investigar problemas relacionados ao desempenho. Neste artigo, exploraremos a forma como a JVM executa o Java, bem como os conceitos básicos da JVM.
 
-## Executando Bytecode
+O processo começa com o código que você escreve em Java. Esse código é convertido em arquivos `.class`, que são chamados de bytecodes. O bytecode é uma forma intermediária do código em Java e pode ser usado em qualquer lugar, independentemente da máquina que está sendo usada. O arquivo `.class` tem uma estrutura definida, que precisa ser seguida para ser executado na JVM. Se não estiver de acordo, a JVM imediatamente imprime um erro. Além disso, o arquivo `.class` também tem informações adicionais, como métodos, que podem ser vistos usando a ferramenta `javap`. E o compilador `javac` adiciona um construtor padrão automaticamente, mesmo se você não escrever um. Finalmente, a JVM executa o bytecode, convertendo-o em instruções que a máquina entenda e pode executar.
 
-O processo de execução de código Java começa com o código fonte escrito em Java, que é compilado pelo compilador javac em arquivos .class que contêm bytecode. O bytecode é uma representação intermediária do código Java e é desacoplado da arquitetura de máquina específica, o que permite a portabilidade e a execução em qualquer plataforma suportada pela JVM. Cada arquivo de classe tem uma estrutura muito bem definida especificada pela especificação da VM e é verificado para atender a esse formato antes de ser permitido executar pela JVM. Ele começa com um número mágico 0xCAFEBABE que indica conformidade com o formato do arquivo de classe e as próximas 4 bytes representam as versões menor e maior usadas para compilar o arquivo de classe. Se essas versões não forem compatíveis, a JVM lançará um erro UnsupportedClassVersionError em tempo de execução.
-
-O arquivo de classe também contém informações adicionais, como métodos, que podem ser visualizados com a ferramenta javap com a opção -v. Além disso, o javac adiciona automaticamente um construtor padrão à classe, mesmo que ele não tenha sido fornecido no arquivo de origem. A JVM executa o bytecode, interpretando-o e convertendo-o em instruções de máquina específicas para a plataforma em que está sendo executado. 
-
-Isso fornece a abstração da linguagem Java e permite a execução de software desenvolvido em Java em uma ampla gama de sistemas operacionais e arquiteturas de hardware. Além disso, a JVM é uma plataforma para outras linguagens, permitindo a execução de código em qualquer linguagem que possa produzir um arquivo de classe válido. Quando você usa o comando "javap" no terminal ou no prompt de comando, você está gerando uma saída desmontada do bytecode gerado pela JVM para a classe Java que você especificou. O "javap" é uma ferramenta da JVM que permite visualizar o bytecode gerado a partir do código Java. No exemplo abaixo, podemos tomar como base um simples HelloWorld:
+Isso fornece a abstração da linguagem Java e permite a execução de software desenvolvido em Java em uma ampla gama de sistemas operacionais e arquiteturas de hardware. Além disso, a JVM é uma plataforma para outras linguagens, permitindo a execução de código em qualquer linguagem que possa produzir um arquivo de classe válido. Quando você usa o comando `javap` no terminal ou no prompt de comando, você está gerando uma saída desmontada do bytecode gerado pela JVM para a classe Java que você especificou. O `javap` é uma ferramenta da JVM que permite visualizar o bytecode gerado a partir do código Java. No exemplo abaixo, podemos tomar como base um simples HelloWorld:
 
 ```java
 public class HelloWorld {
@@ -36,23 +32,25 @@ public class HelloWorld {
   public HelloWorld();
     Code:
        0: aload_0
-       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       1: invokespecial #1                  // Método java/lang/Object."<init>":()V
        4: return
 
   public static void main(java.lang.String[]);
     Code:
        0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
        3: ldc           #3                  // String Hello, World!
-       5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       5: invokevirtual #4                  // Método java/io/PrintStream.println:(Ljava/lang/String;)V
        8: return
 }
 ```
 
-Nesta saída, é possível ver que o bytecode da JVM é representado como uma série de instruções que são compostas de opcodes (instruções) e operandos (argumentos dessas instruções). Por exemplo, a instrução "ldc #3" carrega o valor constante na pilha (neste caso, a string "Hello, World!"), e a instrução "invokevirtual #4" chama o método "println" da classe java.io.PrintStream. O "javap" também fornece comentários para ajudar a interpretar o bytecode, como o número de linha correspondente no código Java e o nome completo do método ou campo referenciado. Esta informação pode ser útil para entender como o código Java é executado na JVM.
+Nesta saída, é possível ver que o bytecode da JVM é representado como uma série de instruções que são compostas de opcodes (instruções) e operandos (argumentos dessas instruções). Por exemplo, a instrução `ldc #3` carrega o valor constante na pilha (neste caso, a string "Hello, World!"), e a instrução `invokevirtual #4` chama o método `println` da classe `java.io.PrintStream`. O `javap` também fornece comentários para ajudar a interpretar o bytecode, como o número de linha correspondente no código Java e o nome completo do método ou campo referenciado. Esta informação pode ser útil para entender como o código Java é executado na JVM.
 
 A JVM fornece uma camada de abstração para que o código Java possa ser executado em diferentes sistemas operacionais sem a necessidade de mudanças ou adaptações. Além disso, a JVM inclui a funcionalidade HotSpot, que é uma das principais mudanças em termos de desempenho introduzidas pela Sun em 1999. O HotSpot é uma tecnologia de compilação Just-in-Time (JIT) que monitora a aplicação enquanto ela está sendo executada e identifica as partes do código mais frequentemente utilizadas. Quando um método atinge um determinado limiar, o HotSpot compila e otimiza esse trecho do código, melhorando o desempenho da aplicação. Isso permite que os desenvolvedores escrevam código Java idiomático e sigan boas práticas de design, sem se preocupar com o desempenho.
 
 Ao contrário de outras linguagens como C++, que seguem o princípio de "zero sobrecarga", o HotSpot não prioriza o desempenho bruto e em vez disso, aplica otimizações inteligentes com base nas informações capturadas durante a análise. O objetivo é permitir que os desenvolvedores escrevam código Java de forma clara e eficiente, sem precisar lidar com as complexidades da máquina virtual.
+
+Além de fornecer uma camada de abstração e otimização de desempenho, a JVM também gerencia a memória de forma eficiente. A JVM divide a memória em várias áreas, como a pilha, a área de armazenamento de objetos e a área de armazenamento de metadados, cada uma com suas próprias funções e características. A JVM também realiza a gestão automática da memória por meio do garbage collector (coletor de lixo), que verifica o estado da memória e libera objetos que não estão mais sendo utilizados. Isso significa que os desenvolvedores não precisam se preocupar com problemas de vazamento de memória ou com a alocação manual de recursos, como é o caso de outras linguagens de programação. Em suma, a JVM permite que os desenvolvedores se concentrem na implementação do negócio, sem precisar lidar com as complexidades da gestão de memória.
 
 ## Gerenciamento de memória da JVM
 
@@ -79,7 +77,7 @@ public class MemoryManagementExample {
 }
 ```
 
-Neste exemplo, estamos alocando objetos de tipo String em uma lista, em um loop que adiciona um milhão de objetos. Depois disso, a referência à lista é definida como null, o que torna os objetos alocados nela não mais acessíveis. Finalmente, invocamos o método System.gc() para forçar o GC na JVM. A JVM é inerentemente multithreaded e permite aos desenvolvedores criarem novos segmentos de execução, o que adiciona complexidade ao comportamento do programa. Cada thread de aplicação Java corresponde a uma thread dedicada do sistema operacional e todas as threads de aplicação Java compartilham a mesma heap, que é coletada pelo GC comum. O Java Memory Model (JMM) é um modelo formal de memória que explica como as threads de execução veem mudanças nos valores contidos em objetos. Por exemplo:
+Neste exemplo, estamos alocando objetos de tipo String em uma lista, em um loop que adiciona um milhão de objetos. Depois disso, a referência à lista é definida como `null`, o que torna os objetos alocados nela não mais acessíveis. Finalmente, invocamos o método `System.gc()` para forçar o GC na JVM. A JVM é inerentemente multithreaded e permite aos desenvolvedores criarem novos segmentos de execução, o que adiciona complexidade ao comportamento do programa. Cada thread de aplicação Java corresponde a uma thread dedicada do sistema operacional e todas as threads de aplicação Java compartilham a mesma heap, que é coletada pelo GC comum. O Java Memory Model (JMM) é um modelo formal de memória que explica como as threads de execução veem mudanças nos valores contidos em objetos. Por exemplo:
 
 ```java
 public class MemoryModelExample {
@@ -103,7 +101,7 @@ public class MemoryModelExample {
 }
 ```
 
-Neste exemplo, temos uma variável compartilhada ready e uma variável compartilhada number. A thread ReaderThread executa em loop até que ready seja definido como true, então ela imprime o valor de number. De acordo com o JMM, a JVM garante que a escrita em ready seja visível para a thread ReaderThread após a escrita em number ter sido concluída. Isso significa que a thread ReaderThread deve imprimir 42.
+Neste exemplo, temos uma variável compartilhada `ready` e uma variável compartilhada `number`. A `thread ReaderThread` executa em loop até que ready seja definido como true, então ela imprime o valor de number. De acordo com o JMM (Java Memory Model), a JVM garante que a escrita em ready seja visível para a `thread ReaderThread` após a escrita em number ter sido concluída. Isso significa que a `thread ReaderThread` deve imprimir 42.
 
 A implementação HotSpot que projetada para melhorar o desempenho da JVM, e isso inclui uma série de técnicas avançadas de gerenciamento de memória. A equipe de desenvolvimento do HotSpot continua melhorando o gerenciamento de memória da JVM para torná-lo mais eficiente e escalável. Em resumo, o gerenciamento de memória da JVM é um aspecto fundamental do ambiente Java que é administrado pela JVM e pelo HotSpot, e ajuda a manter aplicativos Java executando de forma eficiente e sem erros relacionados à memória. O gerenciamento de memória e a memória cache são conceitos importantes para entender a performance de um sistema computacional. As técnicas de gerenciamento de memória da JVM incluem:
 
@@ -113,46 +111,17 @@ O GC (Garbage Collector) ou coletor de lixo é uma das características mais rec
 
 O GC no Java funciona da seguinte maneira: o tempo de execução automaticamente controla os objetos e descarta aqueles que já não são necessários, permitindo a reutilização da memória liberada. Existem duas regras importantes que todas as implementações devem seguir: coletar todo o lixo e nunca coletar um objeto que ainda está sendo usado. O Java tem uma abordagem gerenciada, o que significa que os programadores podem se concentrar em soluções de alto nível, enquanto as ferramentas e bibliotecas cuidam dos detalhes de baixo nível, como alocação de memória, gerenciamento de threads e segurança. Além disso, a máquina virtual Java ajuda a garantir a portabilidade da aplicação.
 
-Em resumo, a abordagem gerenciada do Java torna mais fácil e rápido o desenvolvimento de aplicativos, pois permite que os programadores escrevam código de alto nível sem se preocupar com muitos detalhes de baixo nível. Embora o Java tenha umo GC, as especificações da linguagem e da VM não ditam como ela deve ser implementada, resultando em várias implementações diferentes, como o CMS (Concurrent Mark Sweep).Como Fonte de Informação, o Log do Garbage Collector (GC) é extremamente útil. Ele é especialmente útil para análises de problemas de desempenho, como fornecer algum insight sobre por que uma falha ocorreu. Ele permite que o analista trabalhe mesmo sem um processo de aplicação ao vivo para diagnosticar. Toda aplicação séria deve sempre:
-
-* Gerar um log do GC.
-* Mantê-lo em um arquivo separado da saída da aplicação. Isso é especialmente verdadeiro para aplicações de produção.
-
-Como veremos, o log do GC não tem sobrecarga observável, então ele deve estar sempre ligado para qualquer processo JVM importante. A primeira coisa a fazer é adicionar algumas opções ao início da aplicação. Essas opções são melhores pensadas como as "opções obrigatórias de log do GC", que devem estar ligadas para qualquer aplicação Java/JVM (exceto, talvez, aplicativos desktop). As opções são:
-
-* **Xloggc:gc.log**: esta opção especifica o arquivo para logar informações sobre coletas de lixo. O arquivo "gc.log" neste caso será o arquivo onde as informações serão armazenadas.
-* **XX: +PrintGCDetails**: esta opção ativa a geração de informações detalhadas sobre coletas de lixo, incluindo informações sobre a quantidade de memória alocada e liberada durante a coleta, a duração da coleta, entre outras informações.
-* **XX: +PrintTenuringDistribution**: esta opção ativa a geração de informações sobre a distribuição de objetos entre as diferentes faixas de idade dentro do heap de tenuração. Essas informações podem ser úteis para entender a evolução do heap de tenuração ao longo do tempo.
-* **XX: +PrintGCTimeStamps**: esta opção ativa a geração de informações sobre a hora em que cado GC ocorreu. Essas informações podem ser úteis para compreender a frequência das coletas de lixo e a relação entre elas e outros eventos na aplicação.
-* **XX: +PrintGCDateStamps**: esta opção ativa a geração de informações sobre a data em que cado GC ocorreu. Essas informações podem ser úteis para compreender a evolução das coletas de lixo ao longo do tempo e para agrupar coletas de lixo relacionadas.
+Em resumo, a abordagem gerenciada do Java torna mais fácil e rápido o desenvolvimento de aplicativos, pois permite que os programadores escrevam código de alto nível sem se preocupar com muitos detalhes de baixo nível. Embora o Java tenha umo GC, as especificações da linguagem e da VM não ditam como ela deve ser implementada, resultando em várias implementações diferentes, como o CMS (Concurrent Mark Sweep).
 
 ### Concurrent Mark Sweep
 
-O CMS (Collector de Lixo Concorrente) é um GC para a JVM (Máquina Virtual Java) que é projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. É uma forma alternativa de coletar lixo em comparação com o GC padrão, que é o GC serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante o GC. Ao contrário do GC serial, que pausa a execução do aplicativo durante o GC, o CMS tenta coletar lixo de forma concorrente, ou seja, sem interromper a execução do aplicativo. Isso é feito executando o GC em segundo plano, enquanto o aplicativo continua a ser executado. O CMS também tenta minimizar o impacto do GC no desempenho do aplicativo, garantindo que o GC não consuma mais de um determinado percentual da CPU.
+O CMS (Collector de Lixo Concorrente) é um GC para a JVM (Máquina Virtual Java) que foi projetado para melhorar o desempenho de aplicações Java em ambientes de múltiplos processadores. Era uma forma alternativa ao GC padrão, que era o GC serial. O CMS é projetado para ser usado em sistemas com restrições de tempo de execução, onde é importante minimizar as pausas de tempo de execução que ocorrem durante o GC. No entanto, o CMS foi depreciado a partir da versão Java 11.
 
-Em resumo, o CMS é uma opção viável para desenvolvedores que precisam garantir um desempenho consistente de seus aplicativos Java em ambientes de múltiplos processadores, e que não podem tolerar pausas longas na execução do aplicativo durante o GC. Para usar o CMS, você precisará configurar a JVM para usá-lo como o GC padrão. Isso pode ser feito por meio da adição de uma opção de linha de comando na hora de iniciar a aplicação Java. A opção é -XX:+UseConcMarkSweepGC:
-
-```java
-java -XX:+UseConcMarkSweepGC MyJavaApp
-```
-
-Observe que a configuração do CMS também pode ser feita através de arquivos de configuração externos, como o arquivo de configuração de sua aplicação ou o arquivo de configuração da JVM. Além disso, é importante considerar que o CMS pode não ser a melhor opção para todas as aplicações Java e pode ser necessário experimentar diferentes configurações ou considerar o uso de outros coletores de lixo, dependendo das necessidades da sua aplicação.
-
-### HotSpot
-
-O HotSpot é uma implementação da JVM (Java Virtual Machine) que gerencia a memória de forma eficiente através de arenas. Essas arenas são gerenciadas diretamente pelo HotSpot, sem necessidade de interação com o sistema operacional. O gerenciamento de memória é controlado por duas variáveis importantes: taxa de alocação (a quantidade de memória utilizada por objetos recentemente criados) e vida útil do objeto (o tempo que um objeto existe antes de sua memória ser liberada).
-
-O HotSpot aplica a hipótese fraca de geração, que sugere que a maioria dos objetos tem vida curta, o que é usado para otimizar o desempenho do GC. Em nível baixo, valores Java são representados como bits que correspondem a valores primitivos ou endereços de objetos, que são representados na memória como "oops". O tamanho da pilha é gerenciado pelo código de usuário e não depende de chamadas ao sistema.
-
-O gerenciamento de memória no HotSpot está habilitado por padrão na JVM e é gerenciado automaticamente e otimizado com técnicas como o GC e a alocação dinâmica de memória. No entanto, as configurações do HotSpot podem ser ajustadas para atender às necessidades do usuário, como definir o tamanho máximo da heap (-Xmx) ou habilitar um algoritmo de GC específico (-XX:+UseConcMarkSweepGC). A documentação da JVM fornece uma lista completa das opções de linha de comando disponíveis.
+A Oracle decidiu remover o GC CMS devido a suas limitações de desempenho e ao seu baixo desempenho em aplicações com memórias mais modernas. Hoje o Garbage Collector padrão do java, ao menos a partir da versão 9, é o G1. O G1 (Garbage First) é mais eficiente em termos de desempenho, escalabilidade, tempo de coleta lixo e uso de memória. Ele é um GC baseado em diversos algoritmos de marcação e limpeza. Ele usa marcação paralela para marcar os objetos que estão sendo usados ​​na memória e limpeza paralela para limpar os objetos não usados da memória. O G1 também possui um algoritmo de compactação para melhorar o desempenho de acesso à memória. Ele é otimizado para sistemas com múltiplos núcleos e usa várias threads para marcar e limpar a memória, o que significa que ele é altamente eficiente e rápido.
 
 ### Garbage First
 
-O Garbage First (G1) é um GC muito diferente dos coletores paralelos ou do CMS. Ele foi introduzido pela primeira vez em uma forma altamente experimental e instável no Java 6, mas foi extensivamente reescrito ao longo da vida útil do Java 7 e só se tornou estável e pronto para produção com o lançamento do Java 8u40. O G1 foi originalmente projetado para ser um coletor de baixa pausa que fosse: muito mais fácil de afinar do que o CMS, menos suscetível à promoção prematura, capaz de melhorar o comportamento de escalabilidade (especialmente o tempo de pausa) em pilhas grandes e capaz de eliminar (ou reduzir significativamente a necessidade de recorrer a) coletas completas STW. No entanto, com o tempo, o G1 evoluiu para ser pensado como mais um coletor de propósito geral que tinha melhores tempos de pausa em pilhas maiores (que cada vez mais são consideradas "o novo normal").
-
-O coletor G1 tem um design que repensa a noção de gerações que já encontramos. Ao contrário dos coletores paralelos ou do CMS, o G1 não tem espaços de memória contíguos dedicados por geração. Além disso, ele não segue o layout da pilha hemisférica. A pilha G1 é baseada no conceito de regiões. Estas são áreas que são, por padrão, de 1 MB de tamanho (mas são maiores em pilhas maiores). O uso de regiões permite gerações não contíguas e torna possível ter um coletor que não precisa coletar todo o lixo em cada execução. O layout da pilha G1 baseado em regiões pode ser visto no algoritmo G1, que permite regiões de 1, 2, 4, 8, 16, 32 ou 64 MB. Por padrão, ele espera entre 2.048 e 4.095 regiões na pilha e ajustará o tamanho da região para atingir isso. 
-
-O Garbage First G1 é o GC padrão na versão 7u4 e tornou-se padrão no Java 9. Ele é otimizado para aplicações que exigem tempo de resposta previsível, além de ser escalável em sistemas com muita memória. Aqui estão alguns exemplos de comandos de linha que podem ser usados para fazer o tuning do Garbage First G1:
+O G1 é o único GC nativo que suporta a configuração de tamanho de memória de acordo com as necessidades de carga de trabalho do aplicativo. Ao contrário de outros GCs, o G1 divide a memória em menores unidades chamadas regiões, que são administradas de forma independente. Ao usar um algoritmo de coleta de lixo incremental, as regiões podem ser coletadas de forma individual, permitindo maior controle sobre o uso de memória e o desempenho da coleta de lixo. Além disso, o G1 usa um sistema de previsão para determinar quais regiões devem ser coletadas com base na previsão de uso de memória. Aqui estão alguns exemplos de comandos de linha que podem ser usados para fazer o tuning do Garbage First G1:
 
 Configuração do número de regiões do heap: Por padrão, o G1 divide o heap em regiões de tamanho igual. Você pode usar a opção -XX:G1HeapRegionSize para definir o tamanho da região de heap. Por exemplo:
 
@@ -179,6 +148,14 @@ java -XX:G1ConfidencePercent=75 MyMainClass
 ```
 
 Estes são apenas alguns exemplos de comandos de linha que você pode usar para fazer o tuning do Garbage First G1. É importante notar que o tuning do Garbage First G1 pode ser complexo e que o desempenho ideal pode variar de acordo com a
+
+### HotSpot
+
+O HotSpot é uma implementação da JVM (Java Virtual Machine) que gerencia a memória de forma eficiente através de arenas. Essas arenas são gerenciadas diretamente pelo HotSpot, sem necessidade de interação com o sistema operacional. O gerenciamento de memória é controlado por duas variáveis importantes: taxa de alocação (a quantidade de memória utilizada por objetos recentemente criados) e vida útil do objeto (o tempo que um objeto existe antes de sua memória ser liberada).
+
+O HotSpot aplica a hipótese fraca de geração, que sugere que a maioria dos objetos tem vida curta, o que é usado para otimizar o desempenho do GC. Em nível baixo, valores Java são representados como bits que correspondem a valores primitivos ou endereços de objetos, que são representados na memória como "oops". O tamanho da pilha é gerenciado pelo código de usuário e não depende de chamadas ao sistema.
+
+O gerenciamento de memória no HotSpot está habilitado por padrão na JVM e é gerenciado automaticamente e otimizado com técnicas como o GC e a alocação dinâmica de memória. No entanto, as configurações do HotSpot podem ser ajustadas para atender às necessidades do usuário, como definir o tamanho máximo da heap (-Xmx) ou habilitar um algoritmo de GC específico (-XX:+UseConcMarkSweepGC). A documentação da JVM fornece uma lista completa das opções de linha de comando disponíveis.
 
 ### Object Allocation
 
