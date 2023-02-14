@@ -24,6 +24,10 @@ Esta é uma ferramenta que permite criar macros a partir do teclado e mouse. Al�
 * **[loofahsd](https://github.com/lobocode/loofahsd)** 
 
 Esta é uma ferramenta que busca por drivers desatualizados no sistema e os lista em um arquivo `.properties`. Depois de listar os drivers, ele os instala de forma segura.
+
+* **[HackerRank](https://www.hackerrank.com/lobocode)** 
+
+Fiz todos os desafios de Java do HackerRank e adquiri o badge Gold 5 estrelas. O HackerRank é uma plataforma online que oferece desafios de programação, testes de habilidades e competições de programação para desenvolvedores e empresas. É usado por candidatos a empregos para praticar e aprimorar suas habilidades de programação, bem como por recrutadores de empresas para avaliar o desempenho dos candidatos. A plataforma também oferece recursos de aprendizado e prática para uma ampla variedade de linguagens de programação, além de permitir que os usuários resolvam problemas de programação em um ambiente de teste seguro e controlado.
   
 
 ## Os que ajudei a evoluir 
