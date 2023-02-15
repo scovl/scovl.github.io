@@ -27,7 +27,7 @@ Esta é uma ferramenta que busca por drivers desatualizados no sistema e os list
 
 * **[HackerRank](https://www.hackerrank.com/lobocode)** 
 
-Fiz todos os desafios de Java do HackerRank e adquiri o badge Gold 5 estrelas. O HackerRank é uma plataforma online que oferece desafios de programação, testes de habilidades e competições de programação para desenvolvedores e empresas. É usado por candidatos a empregos para praticar e aprimorar suas habilidades de programação, bem como por recrutadores de empresas para avaliar o desempenho dos candidatos. A plataforma também oferece recursos de aprendizado e prática para uma ampla variedade de linguagens de programação, além de permitir que os usuários resolvam problemas de programação em um ambiente de teste seguro e controlado.
+Fiz todos os desafios de Java do HackerRank e adquiri o badge Gold 5 estrelas e saí do rank 221580 para o rank 1. O HackerRank é uma plataforma online que oferece desafios de programação, testes de habilidades e competições de programação para desenvolvedores e empresas. É usado por candidatos a empregos para praticar e aprimorar suas habilidades de programação, bem como por recrutadores de empresas para avaliar o desempenho dos candidatos. A plataforma também oferece recursos de aprendizado e prática para uma ampla variedade de linguagens de programação, além de permitir que os usuários resolvam problemas de programação em um ambiente de teste seguro e controlado.
   
 
 ## Os que ajudei a evoluir 
@@ -36,11 +36,6 @@ Fiz todos os desafios de Java do HackerRank e adquiri o badge Gold 5 estrelas. O
   
 O Spring Boot ajuda você a criar aplicativos e serviços de nível de produção com tecnologia Spring com o mínimo de confusão. É necessária uma visão opinativa da plataforma Spring para que usuários novos e existentes possam acessar rapidamente os bits de que precisam. Basicamente ajudei a resolver xpto bugs do projeto assim como a refatorar e implementar novas funcionalidades como você pode acompanhar a seguir:
 
-
-
-* **[Kubernetes Java Client](https://github.com/kubernetes-client/java)** 
-
-Este é o client oficial do Kubernetes para Java. Basicamente ajudei a resolver xpto bugs do projeto assim como a refatorar e implementar novas funcionalidades como você pode acompanhar a seguir:
 
 * **[Quarkus](https://github.com/quarkusio/quarkus)** 
 
