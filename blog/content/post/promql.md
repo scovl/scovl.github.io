@@ -469,9 +469,13 @@ Aqui estão algumas armadilhas comuns que você deve estar ciente ao trabalhar c
 * **Combinando condições de alerta**: ao definir condições de alerta, é importante considerar como as condições se combinam. Por exemplo, se você tiver duas condições, uma para o valor da métrica acima de um limite e outra para o valor da métrica abaixo de outro limite, isso poderá resultar em alertas falsos se a métrica flutuar em torno do valor limite.
 * **Encontrando grandes métricas**: se você tiver muitas métricas em seu sistema, pode ser difícil encontrar as métricas mais importantes para monitorar. Uma abordagem comum é classificar as métricas por importância ou impacto no sistema. Isso pode ser feito usando uma combinação de critérios, como frequência de uso, tamanho do impacto e criticidade para o sistema.
 
+### Conclusão
+
+Neste artigo, explorei diversas expressões e conceitos importantes do PromQL, a linguagem de consulta utilizada no Prometheus. Com exemplos práticos e uma abordagem didática, vimos como utilizar operadores, funções, cláusulas e técnicas de seleção para construir consultas eficazes e precisas. Espero que este material seja útil para desenvolvedores, devops e SREs que utilizam o Prometheus como ferramenta de monitoramento e que desejam aprimorar seus conhecimentos. 
+
 ---
 
-## Referências
+### Referências
 
 * **Documentação oficial do Prometheus**: https://prometheus.io/docs/prometheus/latest/querying/basics/
 * **Livro "Prometheus**: Up & Running" de Brian Brazil (O'Reilly Media, 2018)
