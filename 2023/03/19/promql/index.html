@@ -237,23 +237,19 @@
 <ul>
 <li>Selecionar a taxa de transferência média nos últimos 5 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
-</span></span><span class="line"><span class="ln">2</span><span class="cl">rate<span class="o">(</span>my_metric_total<span class="o">[</span>5m<span class="o">])</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>my_metric_total<span class="o">[</span>5m<span class="o">])</span>
 </span></span></code></pre></div><ul>
 <li>Selecionar a média das taxas de transferência por hora para as últimas 24 horas:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
-</span></span><span class="line"><span class="ln">2</span><span class="cl">avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric_total<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric_total<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
 </span></span></code></pre></div><ul>
 <li>Selecionar o valor médio da métrica my_metric para o último dia:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
-</span></span><span class="line"><span class="ln">2</span><span class="cl">avg_over_time<span class="o">(</span>my_metric<span class="o">[</span>1d<span class="o">])</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>my_metric<span class="o">[</span>1d<span class="o">])</span>
 </span></span></code></pre></div><ul>
 <li>Selecionar a métrica my_metric para um período específico:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
-</span></span><span class="line"><span class="ln">2</span><span class="cl">my_metric<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;prometheus&#34;</span>, <span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;localhost&#34;</span><span class="o">}[</span>start_time, end_time<span class="o">]</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">my_metric<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;prometheus&#34;</span>, <span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;localhost&#34;</span><span class="o">}[</span>start_time, end_time<span class="o">]</span>
 </span></span></code></pre></div><h3 id="counter-range-vectors-aggregating-across-time-e-subqueries">Counter Range Vectors, Aggregating Across Time e Subqueries</h3>
 <p>Counter Range Vectors são um tipo de vetor que contém uma série de pontos de dados que representam a contagem de eventos que ocorreram ao longo do tempo. Em outras palavras, os Counter Range Vectors fornecem informações sobre a taxa de eventos que ocorreram em um intervalo de tempo específico. Por exemplo, podemos usar um Counter Range Vector para acompanhar a quantidade de solicitações HTTP que um servidor recebe a cada segundo. Ao longo do tempo, podemos acumular esses dados em uma série temporal, que pode ser usada para análises posteriores.</p>
 <p>Para agregarmos os dados de um Counter Range Vector, podemos usar funções de agregação que operam sobre um intervalo de tempo, como <code>rate()</code> e <code>irate()</code>. Essas funções calculam a taxa de variação da contagem de eventos dentro do intervalo de tempo especificado. Além disso, PromQL também permite a realização de subconsultas, ou Subqueries. Isso permite que consultas mais avançadas sejam realizadas, onde uma consulta é realizada dentro de outra consulta. Por exemplo, podemos usar uma subconsulta para calcular a média de uma série temporal ao longo de um intervalo de tempo específico, que é então usado como entrada para uma consulta principal.</p>
