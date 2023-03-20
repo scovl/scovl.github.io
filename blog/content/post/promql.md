@@ -207,28 +207,24 @@ Exemplos de consultas usando Timestamps e Time and Dates:
 - Selecionar a taxa de transferência média nos últimos 5 minutos:
 
 ```bash
-
 rate(my_metric_total[5m])
 ```
 
 - Selecionar a média das taxas de transferência por hora para as últimas 24 horas:
 
 ```bash
-
 avg_over_time(rate(my_metric_total[1h]))[24h:1h]
 ```
 
 - Selecionar o valor médio da métrica my_metric para o último dia:
 
 ```bash
-
 avg_over_time(my_metric[1d])
 ```
 
 - Selecionar a métrica my_metric para um período específico:
 
 ```bash
-
 my_metric{job="prometheus", instance="localhost"}[start_time, end_time]
 ```
 
