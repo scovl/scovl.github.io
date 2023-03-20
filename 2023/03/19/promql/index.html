@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 24 min</span>
+            <span>Estimated reading time: 26 min</span>
         </p>
     
 </header>
@@ -201,16 +201,80 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">memory_usage unless absent_over_time<span class="o">(</span>memory_usage<span class="o">[</span>2m<span class="o">])</span>
 </span></span></code></pre></div><h2 id="funções">Funções</h2>
 <h3 id="functions-math-functions-e-clamping">Functions, Math Functions e Clamping</h3>
-<p>As funções permitem manipular e processar métricas. Elas podem ser usadas para realizar cálculos matemáticos, agregações, transformações e outras operações em métricas. Entre as funções mais comuns em PromQL estão as Math Functions, que são funções matemáticas usadas para realizar operações aritméticas em métricas. Essas funções incluem operações básicas, como soma, subtração, multiplicação e divisão, bem como funções mais avançadas, como exponenciação e raiz quadrada. Por exemplo, podemos usar a função <code>sum()</code> para somar os valores de uma métrica em um determinado intervalo de tempo. Podemos usar a função <code>rate()</code> para calcular a taxa de variação de uma métrica em um intervalo de tempo, ou a função <code>max()</code> para encontrar o valor máximo de uma métrica em um intervalo de tempo. Além das Math Functions, outra função útil em PromQL é a Clamping Function. Essa função é usada para limitar o valor de uma métrica a um determinado intervalo. Por exemplo, podemos usar a função <code>clamp_min()</code> para garantir que o valor de uma métrica não seja inferior a um determinado limite mínimo, ou a função <code>clamp_max()</code> para garantir que o valor não seja superior a um determinado limite máximo.</p>
-<p>Em resumo, as Functions são ferramentas poderosas em PromQL que permitem manipular e processar métricas. As Math Functions são usadas para realizar cálculos matemáticos em métricas, enquanto a Clamping Function é usada para limitar o valor de uma métrica a um determinado intervalo. O conhecimento dessas funções pode ajudar a realizar consultas mais avançadas e obter insights mais precisos a partir dos dados coletados.</p>
+<p>As funções permitem manipular e processar métricas. Elas podem ser usadas para realizar cálculos matemáticos, agregações, transformações e outras operações em métricas. Entre as funções mais comuns em PromQL estão as Math Functions, que são funções matemáticas usadas para realizar operações aritméticas em métricas. Essas funções incluem operações básicas, como soma, subtração, multiplicação e divisão, bem como funções mais avançadas, como exponenciação e raiz quadrada. Por exemplo, podemos usar a função <code>sum()</code> para somar os valores de uma métrica em um determinado intervalo de tempo. Podemos usar a função <code>rate()</code> para calcular a taxa de variação de uma métrica em um intervalo de tempo, ou a função <code>max()</code> para encontrar o valor máximo de uma métrica em um intervalo de tempo. Além das Math Functions, outra função útil em PromQL é a Clamping Function. Essa função é usada para limitar o valor de uma métrica a um determinado intervalo. Por exemplo, podemos usar a função <code>clamp_min()</code> para garantir que o valor de uma métrica não seja inferior a um determinado limite mínimo, ou a função <code>clamp_max()</code> para garantir que o valor não seja superior a um determinado limite máximo. Exemplo:</p>
+<ul>
+<li>Para calcular a média dos valores de uma métrica nos últimos 5 minutos:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>metric_name<span class="o">[</span>5m<span class="o">])</span>
+</span></span></code></pre></div><ul>
+<li>Para calcular a soma dos valores de uma métrica nos últimos 10 minutos:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum_over_time<span class="o">(</span>metric_name<span class="o">[</span>10m<span class="o">])</span>
+</span></span></code></pre></div><ul>
+<li>Para calcular o máximo valor de uma métrica em um intervalo de tempo específico:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">max_over_time<span class="o">(</span>metric_name<span class="o">{</span><span class="nv">label</span><span class="o">=</span><span class="s2">&#34;value&#34;</span><span class="o">}[</span>1h<span class="o">])</span>
+</span></span></code></pre></div><p>Em resumo, as Functions são ferramentas poderosas em PromQL que permitem manipular e processar métricas. As Math Functions são usadas para realizar cálculos matemáticos em métricas, enquanto a Clamping Function é usada para limitar o valor de uma métrica a um determinado intervalo. O conhecimento dessas funções pode ajudar a realizar consultas mais avançadas e obter insights mais precisos a partir dos dados coletados.</p>
 <h3 id="timestamps-e-time-and-dates">Timestamps e Time and Dates</h3>
 <p>Em PromQL, Timestamps são valores numéricos que representam o tempo em segundos desde o início da época Unix (1º de janeiro de 1970, 00:00:00 UTC). Os Timestamps são usados para indicar quando uma métrica foi coletada ou para especificar um intervalo de tempo em uma consulta. Por exemplo, podemos usar um Timestamp para especificar uma janela de tempo em uma consulta usando a função <code>time()</code>. A função <code>time()</code> retorna o Timestamp atual no momento da execução da consulta. Podemos usar esse valor para definir um intervalo de tempo a ser considerado na consulta. Além disso, PromQL também oferece suporte para lidar com Time and Dates (tempo e datas). Isso é feito através do uso de funções como <code>hour()</code>, <code>day_of_week()</code> e <code>month()</code>, que permitem extrair informações específicas sobre o tempo e a data de uma métrica. Por exemplo, podemos usar a função <code>hour()</code> para extrair a hora do dia em que uma métrica foi coletada, ou a função <code>day_of_week()</code> para extrair o dia da semana em que a métrica foi coletada. Essas informações podem ser usadas para realizar análises mais precisas e identificar padrões sazonais ou diários em nossos dados.</p>
-<h3 id="counter-range-vectors-aggregating-across-time-e-subqueries">Counter Range Vectors, Aggregating Across Time e Subqueries</h3>
+<p>Exemplos de consultas usando Timestamps e Time and Dates:</p>
+<ul>
+<li>Selecionar a taxa de transferência média nos últimos 5 minutos:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
+</span></span><span class="line"><span class="ln">2</span><span class="cl">rate<span class="o">(</span>my_metric_total<span class="o">[</span>5m<span class="o">])</span>
+</span></span></code></pre></div><ul>
+<li>Selecionar a média das taxas de transferência por hora para as últimas 24 horas:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
+</span></span><span class="line"><span class="ln">2</span><span class="cl">avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric_total<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
+</span></span></code></pre></div><ul>
+<li>Selecionar o valor médio da métrica my_metric para o último dia:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
+</span></span><span class="line"><span class="ln">2</span><span class="cl">avg_over_time<span class="o">(</span>my_metric<span class="o">[</span>1d<span class="o">])</span>
+</span></span></code></pre></div><ul>
+<li>Selecionar a métrica my_metric para um período específico:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">
+</span></span><span class="line"><span class="ln">2</span><span class="cl">my_metric<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;prometheus&#34;</span>, <span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;localhost&#34;</span><span class="o">}[</span>start_time, end_time<span class="o">]</span>
+</span></span></code></pre></div><h3 id="counter-range-vectors-aggregating-across-time-e-subqueries">Counter Range Vectors, Aggregating Across Time e Subqueries</h3>
 <p>Counter Range Vectors são um tipo de vetor que contém uma série de pontos de dados que representam a contagem de eventos que ocorreram ao longo do tempo. Em outras palavras, os Counter Range Vectors fornecem informações sobre a taxa de eventos que ocorreram em um intervalo de tempo específico. Por exemplo, podemos usar um Counter Range Vector para acompanhar a quantidade de solicitações HTTP que um servidor recebe a cada segundo. Ao longo do tempo, podemos acumular esses dados em uma série temporal, que pode ser usada para análises posteriores.</p>
 <p>Para agregarmos os dados de um Counter Range Vector, podemos usar funções de agregação que operam sobre um intervalo de tempo, como <code>rate()</code> e <code>irate()</code>. Essas funções calculam a taxa de variação da contagem de eventos dentro do intervalo de tempo especificado. Além disso, PromQL também permite a realização de subconsultas, ou Subqueries. Isso permite que consultas mais avançadas sejam realizadas, onde uma consulta é realizada dentro de outra consulta. Por exemplo, podemos usar uma subconsulta para calcular a média de uma série temporal ao longo de um intervalo de tempo específico, que é então usado como entrada para uma consulta principal.</p>
-<h3 id="histograms-switching-types-altering-labels-e-sorting">Histograms, Switching Types, Altering Labels e Sorting</h3>
+<p>A seguir, estão alguns exemplos de expressões PromQL envolvendo Counter Range Vectors, Aggregating Across Time e Subqueries:</p>
+<ul>
+<li>Selecionar a taxa de transferência média nos últimos 5 minutos para uma métrica my_metric que é um contador:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>my_metric<span class="o">[</span>5m<span class="o">])</span>
+</span></span></code></pre></div><p>Selecionar a soma das taxas de transferência por hora para as últimas 24 horas para uma métrica my_metric que é um contador:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>rate<span class="o">(</span>my_metric<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
+</span></span></code></pre></div><ul>
+<li>Selecionar a métrica my_metric para um período específico e calcular a soma cumulativa usando uma subconsulta:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>my_metric - my_metric offset 1d<span class="o">)</span>
+</span></span></code></pre></div><ul>
+<li>Selecionar a média das taxas de transferência por hora para as últimas 24 horas para uma métrica my_metric que é um contador e calcular a diferença entre os valores em intervalos de 6 horas:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">delta<span class="o">(</span>avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric<span class="o">[</span>1h<span class="o">]))[</span>24h:6h<span class="o">])</span>
+</span></span></code></pre></div><h3 id="histograms-switching-types-altering-labels-e-sorting">Histograms, Switching Types, Altering Labels e Sorting</h3>
 <p>Histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Eles são úteis para analisar a distribuição de valores em uma métrica, por exemplo, para determinar quantas solicitações HTTP foram concluídas em diferentes intervalos de tempo de resposta. Em PromQL, um Histograma é representado como um vetor com várias séries temporais, cada uma correspondendo a um intervalo (bucket) de valores. Para calcular a contagem total de observações em um Histograma, podemos usar a função <code>sum()</code>.</p>
 <p>Quando trabalhamos com Histogramas, também podemos alternar o tipo de dados entre o Histograma original e sua versão sumarizada (Summary). Isso pode ser feito usando a função <code>histogram_quantile()</code>, que calcula a distribuição de quantis do Histograma. Podemos então usar a função <code>sum()</code> em cima do resultado dessa função para obter uma versão sumarizada do Histograma. Outra funcionalidade importante em PromQL é a capacidade de alterar labels em uma consulta. Podemos usar as funções <code>label_replace()</code> e <code>label_map()</code> para adicionar, alterar ou remover labels de uma métrica. Isso pode ser útil para transformar métricas existentes em formatos mais úteis para nossos objetivos de análise. Finalmente, em PromQL, podemos classificar os resultados de uma consulta usando a função <code>sort()</code>. Isso permite que os resultados da consulta sejam ordenados em ordem crescente ou decrescente com base em um label ou valor específico. Em resumo, Histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Em PromQL, podemos alternar o tipo de dados entre o Histograma original e sua versão sumarizada, alterar labels em uma consulta usando funções como <code>label_replace()</code> e <code>label_map()</code>, e classificar os resultados de uma consulta usando a função <code>sort()</code>.</p>
+<p>A seguir, estão alguns exemplos de expressões PromQL envolvendo Histograms, Switching Types, Altering Labels e Sorting:</p>
+<ul>
+<li>Exemplo de consulta para exibir a contagem de observações em um intervalo de tempo para um histograma:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>rate<span class="o">(</span>my_histogram_bucket<span class="o">[</span>5m<span class="o">]))</span> by <span class="o">(</span>le<span class="o">)</span>
+</span></span></code></pre></div><p>Essa consulta irá exibir a contagem de observações para cada intervalo de tempo do histograma, representado pelos valores de &ldquo;le&rdquo; (menor ou igual). A função &ldquo;rate&rdquo; é usada para calcular a taxa de mudança do número de observações por segundo, e o operador &ldquo;sum&rdquo; é usado para adicionar as observações em cada intervalo de tempo.</p>
+<ul>
+<li>Exemplo de consulta para converter um tipo de dados em outro:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">histogram_quantile<span class="o">(</span>0.9, sum<span class="o">(</span>rate<span class="o">(</span>my_histogram_bucket<span class="o">[</span>5m<span class="o">]))</span> by <span class="o">(</span>le<span class="o">))</span>
+</span></span></code></pre></div><p>Essa consulta converte um histograma em uma série de quantis, especificamente extraindo o quantil de 90% dos valores registrados no histograma. A função &ldquo;histogram_quantile&rdquo; é usada para calcular o quantil com base no histograma, e o operador &ldquo;sum&rdquo; é usado para agrupar as observações por intervalo de tempo.</p>
+<ul>
+<li>Exemplo de consulta para alterar o rótulo de uma métrica:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">label_replace<span class="o">(</span>my_metric, <span class="s2">&#34;new_label&#34;</span>, <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>, <span class="s2">&#34;old_label&#34;</span>, <span class="s2">&#34;(.*)&#34;</span><span class="o">)</span>
+</span></span></code></pre></div><p>Essa consulta substitui o valor de um rótulo existente em uma métrica por um novo valor. A função &ldquo;label_replace&rdquo; é usada para especificar o rótulo existente e o novo valor, e o argumento &ldquo;$1&rdquo; é usado para capturar o valor existente do rótulo. A expressão regular &ldquo;(.*)&rdquo; é usada para corresponder a qualquer valor de rótulo existente.</p>
 <h3 id="missing-values">Missing values</h3>
 <p>Valores ausentes (Missing Values) podem ser um problema em consultas PromQL, pois podem afetar a precisão das análises e visualizações dos dados. Felizmente, PromQL tem uma maneira de lidar com valores ausentes, usando a função <code>absent()</code>. Essa função retorna 1 se uma série temporal estiver ausente em um determinado intervalo de tempo ou 0 caso contrário.</p>
 <h2 id="agregadores-e-operadores">Agregadores e Operadores</h2>
@@ -290,6 +354,13 @@
 <li><strong>Limite a partir de uma métrica</strong>: ao definir um limite com base em uma métrica, é importante considerar a natureza do valor da métrica. Por exemplo, se você estiver monitorando a latência de uma solicitação HTTP e quiser definir um limite com base nessa métrica, poderá estar interessado apenas nos valores acima de um determinado limiar. No entanto, se a métrica incluir valores negativos (o que pode acontecer devido a flutuações aleatórias), o limite não será eficaz.</li>
 <li><strong>Combinando condições de alerta</strong>: ao definir condições de alerta, é importante considerar como as condições se combinam. Por exemplo, se você tiver duas condições, uma para o valor da métrica acima de um limite e outra para o valor da métrica abaixo de outro limite, isso poderá resultar em alertas falsos se a métrica flutuar em torno do valor limite.</li>
 <li><strong>Encontrando grandes métricas</strong>: se você tiver muitas métricas em seu sistema, pode ser difícil encontrar as métricas mais importantes para monitorar. Uma abordagem comum é classificar as métricas por importância ou impacto no sistema. Isso pode ser feito usando uma combinação de critérios, como frequência de uso, tamanho do impacto e criticidade para o sistema.</li>
+</ul>
+<hr>
+<h2 id="referências">Referências</h2>
+<ul>
+<li><strong>Documentação oficial do Prometheus</strong>: <a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">https://prometheus.io/docs/prometheus/latest/querying/basics/</a></li>
+<li><strong>Livro &ldquo;Prometheus</strong>: Up &amp; Running&rdquo; de Brian Brazil (O&rsquo;Reilly Media, 2018)</li>
+<li><strong>Curso online &ldquo;Monitoring and Alerting with Prometheus&rdquo; da Udemy</strong>: <a href="https://www.udemy.com/course/monitoring-and-alerting-with-prometheus/">https://www.udemy.com/course/monitoring-and-alerting-with-prometheus/</a></li>
 </ul>
 
 </div>
