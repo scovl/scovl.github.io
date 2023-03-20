@@ -17,6 +17,24 @@ author = "Vitor Lobo Ramos"
 
 PromQL é uma linguagem de consulta de métricas do Prometheus. Ela é baseada em expressões regulares e permite que você faça consultas de métricas e alertas. A linguagem PromQL permite que os usuários escrevam expressões que definem cálculos em cima dos dados de métricas coletados, como contar o número de requisições HTTP por segundo ou calcular a média das taxas de utilização da CPU por servidor. PromQL também suporta funções matemáticas, operações booleanas, operações de comparação, agrupamento de dados e agregações. Ele também possui recursos avançados como subconsultas e funções de séries temporais. Os usuários podem executar consultas PromQL usando a interface web do Prometheus ou por meio de APIs e bibliotecas de clientes. Além disso, é possível criar gráficos e painéis de visualização dos dados de métricas usando ferramentas de visualização de dados, como o Grafana.
 
+### Time series database
+
+O Prometheus armazena dados em um formato binário chamado TSDB (Time Series Database). O TSDB é um banco de dados de séries temporais que é otimizado para armazenar dados de métricas. Ele é escrito em Go e é um projeto de código aberto hospedado no GitHub. Para simplificar o entendimento a cerca de um banco de dados de série temporal, imagine que você tem um diário onde você registra a temperatura do ar todos os dias, às mesmas horas, assim como a velocidade do vento, pressão atmosférica, entre outras informações. Essas informações são armazenadas em ordem cronológica, ou seja, por ordem de tempo, e é possível consultá-las para ver como esses dados variam ao longo do tempo. É uma forma de armazenar e consultar dados que possuem uma dimensão temporal. Monitorar métricas a partir de um banco de dados em série temporal tem várias vantagens. Algumas das principais vantagens incluem:
+
+* **Análise histórica:** Um banco de dados em série temporal armazena dados em ordem cronológica, o que permite a análise de tendências e padrões ao longo do tempo. Isso é útil para entender como o desempenho do sistema evoluiu e identificar tendências que possam indicar problemas futuros.
+* **Identificação de problemas:** Armazenando dados em ordem cronológica, é possível investigar problemas usando dados históricos. Isso permite identificar a causa raiz de problemas de desempenho e disponibilidade.
+* **Alertas baseados no tempo:** Com dados armazenados em ordem cronológica, é possível criar alertas baseados no tempo, como alertas de desempenho abaixo do normal em horários específicos ou alertas de tendências preocupantes.
+* **Armazenamento escalável:** Banco de dados em série temporal são projetados para lidar com grandes volumes de dados e escalar horizontalmente, permitindo que as métricas sejam armazenadas sem perda de desempenho.
+* **Integração com outras ferramentas:** A maioria das ferramentas de monitoramento e análise de dados suportam a coleta de dados de banco de dados em série temporal, o que permite a integração com outras ferramentas de monitoramento e análise.
+
+Em resumo, usar um banco de dados em série temporal permite coletar, armazenar e analisar dados de métricas de desempenho ao longo do tempo, permitindo a identificação de problemas, tendências e padrões, criação de alertas baseados no tempo, escalabilidade e integração com outras ferramentas de monitoramento e análise. PromQL (Prometheus Query Language) é a linguagem de consulta usada para extrair dados de métricas armazenadas em Prometheus. Ele permite que os usuários criem consultas complexas para analisar os dados de métricas.PromQL é baseado em expressões, que podem ser combinadas para criar consultas mais complexas. As expressões mais comuns incluem:
+
+* **Funções de agregação:** Essas funções, como média, soma e máximo, permitem agregar dados de métricas ao longo de um período de tempo específico. Por exemplo, a função de média pode ser usada para calcular a média de uma métrica ao longo de um período de tempo.
+* **Funções de filtragem:** Essas funções permitem filtrar os dados de métricas para incluir ou excluir dados específicos. Por exemplo, a função "igual" pode ser usada para selecionar apenas os dados de uma métrica específica.
+* **Funções de transformação:** Essas funções permitem transformar os dados de métricas. Por exemplo, a função "diferença" pode ser usada para calcular a diferença entre dois valores de uma métrica.
+
+PromQL também suporta operações matemáticas básicas, como adição, subtração, multiplicação e divisão, que podem ser usadas para combinar diferentes métricas e expressões. PromQL também suporta a utilização de operadores lógicos, como "and" e "or", para combinar expressões e criar consultas mais complexas. Além disso, PromQL também oferece recursos avançados, como suporte a rótulos, que permitem selecionar dados específicos de métricas baseadas em rótulos associados a essas métricas. PromQL é uma linguagem poderosa e flexível, que permite aos usuários criar consultas complexas para analisar os dados de métricas armazenadas em Prometheus. Isso permite a identificação de problemas, tendências e padrões, criação de alertas baseados no tempo e integração com outras ferramentas de monitoramento e análise.
+
 ### Seletores
 
 Os Selectors em PromQL são como filtros que nos permitem escolher uma ou mais métricas específicas para consultas. Existem dois tipos de seletores: o primeiro é o seletor de nome de métrica, que seleciona métricas pelo seu nome, como por exemplo `http_requests_total`. O segundo é o seletor de label, que seleciona métricas pelo label associado a elas. Por exemplo, podemos ter uma métrica `http_requests_total` com os labels `method` e `handler`, e com valores `GET` e `/api/v1/users`, respectivamente. Usando o seletor de label, podemos escolher as métricas com label `method` igual a `GET` e `handler` igual a `/api/v1/users`. Os seletores são combinados com operadores de correspondência para selecionar um conjunto específico de séries de métricas. Esses operadores incluem `=, !=, =~` e `!~`, e são usados para comparar valores ou expressões regulares. Combinando os seletores com os operadores de correspondência, podemos selecionar as métricas exatas que desejamos. Exemplo:
@@ -292,6 +310,38 @@ Os Operadores Aritméticos são usados para executar operações matemáticas em
 
 PromQL também tem a funcionalidade de Simple Binary Operator Matching, que permite que um operador binário seja aplicado a todas as combinações possíveis de pares de séries temporais com o mesmo conjunto de labels. Por exemplo, a expressão `foo + bool` bar adicionará todas as combinações de foo e bar que têm o mesmo conjunto de labels. Em resumo, PromQL tem uma variedade de operadores que podem ser usados para combinar ou comparar séries temporais e seus valores. Os Operadores Aritméticos são usados para executar operações matemáticas, os Operadores Lógicos são usados para combinar ou comparar séries temporais com base em valores booleanos, e os Operadores de Comparação são usados para comparar valores em séries temporais e produzir valores booleanos como resultado Podemos usar a sintaxe PromQL adequada para aplicar esses operadores e também podemos usar a funcionalidade de Simple Binary Operator Matching para aplicar um operador binário a todas as combinações possíveis de pares de séries temporais.
 
+Aqui estão alguns exemplos práticos de expressões PromQL usando operadores, aritmética e correspondência de operadores binários simples:
+
+- Somando valores de duas métricas
+
+```bash
+sum(metric1) + sum(metric2)
+```
+
+- Subtraindo valores de duas métricas
+
+```bash
+sum(metric1) - sum(metric2)
+```
+
+- Multiplicando valores de duas métricas
+
+```bash
+sum(metric1) * sum(metric2)
+```
+
+- Dividindo valores de duas métricas
+
+```bash
+sum(metric1) / sum(metric2)
+```
+
+- Usando o operador de comparação "maior que"
+
+```bash
+sum(metric1) > 10
+```
+
 ### Matching Your Time Series, Many to One e Comparison Operators
 
 Uma das tarefas mais comuns em PromQL é combinar séries temporais com base em seus labels. Isso pode ser feito usando a função match, que permite selecionar séries temporais com base em seus labels. A função match pode ser usada para selecionar séries temporais com base em um ou mais labels. Por exemplo, a expressão `match(foo{bar="baz"})` selecionará todas as séries temporais que tiverem o label bar definido como baz na métrica foo. Podemos usar operadores de comparação, como `==`, `!=`,`>`, `<`, `>=` e `<=`, para filtrar ainda mais as séries temporais com base em seus valores. Além disso, podemos combinar várias séries temporais em uma única série temporal usando funções de agregação, como `sum`, `avg`, `max`, `min`, `count`, entre outras. Essas funções permitem que várias séries temporais sejam agrupadas em uma única série temporal com base em um label em comum.
@@ -302,7 +352,29 @@ Em resumo, PromQL permite combinar séries temporais com base em seus labels usa
 
 ### Bool vs Filtering
 
-No PromQL, podemos usar operadores booleanos para comparar valores de séries temporais e criar expressões condicionais. Os operadores booleanos incluem and, or e unless. Podemos usar esses operadores para criar filtros em nossas consultas. Por exemplo, a expressão `foo > 0 and bar == "baz"` selecionará todas as séries temporais que tiverem a métrica foo com valores maiores que 0 e o label bar com valor "baz". Outra forma de filtrar séries temporais é usando a cláusula where em uma função de agregação. Por exemplo, a expressão `sum(foo) where bar = "baz"` calculará a soma de todas as séries temporais da métrica foo que tiverem o label bar com valor "baz". A diferença entre o uso de operadores booleanos e a cláusula `where` é que os operadores booleanos são usados para filtrar séries temporais antes da aplicação de funções de agregação, enquanto a cláusula where é usada para filtrar séries temporais após a aplicação de funções de agregação. Além disso, os operadores booleanos podem ser usados em qualquer lugar em uma expressão, enquanto a cláusula where só pode ser usada em funções de agregação.
+No PromQL, podemos usar operadores booleanos para comparar valores de séries temporais e criar expressões condicionais. Os operadores booleanos incluem `and`, `or` e `unless`. Podemos usar esses operadores para criar filtros em nossas consultas. Por exemplo, a expressão `foo > 0 and bar == "baz"` selecionará todas as séries temporais que tiverem a métrica foo com valores maiores que 0 e a label bar com valor "baz". Por exemplo:
+
+- Selecionando métricas que correspondem a uma condição específica utilizando a função sum() e a expressão ==:
+
+```bash
+sum(up{job="node"} == 1)
+```
+
+Essa expressão irá retornar o número de instâncias que correspondem à condição `up{job="node"} == 1`, ou seja, o número de instâncias que estão atualmente em execução.
+
+- Selecionando métricas que correspondem a várias condições utilizando a função `or()`:
+
+```bash
+sum(up{job="node"} == 1 or up{job="db"} == 1)
+```
+
+Essa expressão irá retornar o número de instâncias que correspondem a uma das duas condições especificadas, ou seja, o número total de instâncias que estão atualmente em execução em qualquer um dos trabalhos "node" ou "db".
+
+- Filtrando métricas usando a função topk() e a expressão =~:
+
+```bash
+topk(5, sum(rate(http_requests_total{status_code=~"5.*"}[5m])) by (job))
+``` 
 
 Em resumo, o PromQL permite filtrar séries temporais usando operadores booleanos e a cláusula where. Os operadores booleanos são usados para filtrar séries temporais antes da aplicação de funções de agregação, enquanto a cláusula where é usada para filtrar séries temporais após a aplicação de funções de agregação.
 
@@ -408,3 +480,5 @@ Aqui estão algumas armadilhas comuns que você deve estar ciente ao trabalhar c
 * **Documentação oficial do Prometheus**: https://prometheus.io/docs/prometheus/latest/querying/basics/
 * **Livro "Prometheus**: Up & Running" de Brian Brazil (O'Reilly Media, 2018)
 * **Curso online "Monitoring and Alerting with Prometheus" da Udemy**: https://www.udemy.com/course/monitoring-and-alerting-with-prometheus/
+* **Blog da empresa Robust Perception**: https://www.robustperception.io/blog/
+* **Documentação do Grafana, que utiliza PromQL para consultas**: https://grafana.com/docs/grafana/latest/datasources/prometheus/
