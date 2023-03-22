@@ -12,6 +12,7 @@ author = "Vitor Lobo Ramos"
 * **[Funções](#funções)**
 * **[Agregadores e Operadores](#agregadores-e-operadores)**
 * **[PromQL na prática](#promql-na-prática)**
+* **[Erros comuns](#erros-comuns)**
 
 ## Introdução
 
@@ -505,7 +506,41 @@ Aqui estão algumas armadilhas comuns que você deve estar ciente ao trabalhar c
 * **Combinando condições de alerta**: ao definir condições de alerta, é importante considerar como as condições se combinam. Por exemplo, se você tiver duas condições, uma para o valor da métrica acima de um limite e outra para o valor da métrica abaixo de outro limite, isso poderá resultar em alertas falsos se a métrica flutuar em torno do valor limite.
 * **Encontrando grandes métricas**: se você tiver muitas métricas em seu sistema, pode ser difícil encontrar as métricas mais importantes para monitorar. Uma abordagem comum é classificar as métricas por importância ou impacto no sistema. Isso pode ser feito usando uma combinação de critérios, como frequência de uso, tamanho do impacto e criticidade para o sistema.
 
-### Conclusão
+## Erros comuns
+
+* **Erro 1**: Cardinalidade alta
+
+Um erro comum é criar consultas que resultam em alta cardinalidade, ou seja, um grande número de séries temporais únicas. Isso pode sobrecarregar o Prometheus e causar problemas de desempenho ou falta de memória. Exemplo:
+
+```bash
+rate(http_requests_total{user_id!=""}[5m])
+```
+
+Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada usuário individualmente. Se houver um grande número de usuários, isso resultará em alta cardinalidade e potenciais problemas de desempenho. Para evitar esse problema, você pode agregar métricas em dimensões de menor cardinalidade, como por exemplo, por região ou grupo de usuários.
+
+* **Erro 2**: Granularidade desnecessária
+
+Outro erro comum é selecionar uma granularidade muito alta para consultas de intervalo, o que pode gerar muitos dados e prejudicar o desempenho. Por exemplo:
+
+```bash
+rate(http_requests_total[1s])
+```
+
+Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada segundo. Se você não precisa de uma granularidade tão alta, isso resultará em uma consulta desnecessariamente pesada. Para evitar esse problema, selecione uma granularidade apropriada às suas necessidades, como por exemplo, 1 minuto ou 5 minutos.
+
+* **Erro 3**: Ignorar o uso de funções de agregação
+
+Às vezes, as pessoas esquecem de usar funções de agregação em suas consultas, o que pode resultar em uma grande quantidade de dados ou gráficos confusos. Por exemplo:
+
+```bash
+rate(http_requests_total[5m])
+```
+
+Neste exemplo, a consulta calcula a taxa de solicitações HTTP, mas não agrega os dados por qualquer dimensão. Isso pode resultar em um gráfico difícil de entender ou interpretar. Para evitar esse problema, use funções de agregação adequadas, como `sum()`, `avg()`, `min()`, `max()` ou `count()`, e agrupe os dados por dimensões relevantes.
+
+> **Observação**: A dica de ouro é que se você está tendo problema de desempenho em trazer métricas, provavelmente há algo errado com a sua query.
+
+## Conclusão
 
 Neste artigo, explorei diversas expressões e conceitos importantes do PromQL, a linguagem de consulta utilizada no Prometheus. Com exemplos práticos e uma abordagem didática, vimos como utilizar operadores, funções, cláusulas e técnicas de seleção para construir consultas eficazes e precisas. Espero que este material seja útil para desenvolvedores, devops e SREs que utilizam o Prometheus como ferramenta de monitoramento e que desejam aprimorar seus conhecimentos. 
 
