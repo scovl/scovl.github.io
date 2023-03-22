@@ -15,7 +15,10 @@ author = "Vitor Lobo Ramos"
 
 ## Introdução
 
-PromQL é uma linguagem de consulta de métricas do Prometheus. Ela é baseada em expressões regulares e permite que você faça consultas de métricas e alertas. A linguagem PromQL permite que os usuários escrevam expressões que definem cálculos em cima dos dados de métricas coletados, como contar o número de requisições HTTP por segundo ou calcular a média das taxas de utilização da CPU por servidor. PromQL também suporta funções matemáticas, operações booleanas, operações de comparação, agrupamento de dados e agregações. Ele também possui recursos avançados como subconsultas e funções de séries temporais. Os usuários podem executar consultas PromQL usando a interface web do Prometheus ou por meio de APIs e bibliotecas de clientes. Além disso, é possível criar gráficos e painéis de visualização dos dados de métricas usando ferramentas de visualização de dados, como o Grafana.
+PromQL, a linguagem de consulta de métricas do Prometheus, é uma ferramenta poderosa baseada em expressões regulares que permite aos usuários realizar consultas e configurar alertas sobre dados coletados. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, agrupamento de dados e agregações. Além disso, conta com recursos avançados como subconsultas e funções de séries temporais. As consultas PromQL podem ser executadas através da interface web do Prometheus, APIs ou bibliotecas de clientes.
+
+A linguagem também possibilita a criação de gráficos e painéis de visualização para métricas, utilizando ferramentas de visualização de dados como o Grafana. Dessa forma, a PromQL se mostra essencial para monitorar e analisar o desempenho de sistemas com eficiência e precisão. Neste artigo, vamos explorar os principais recursos da PromQL, que incluem funções, agregadores e operadores, além de demonstrar como criar consultas complexas para analisar dados de métricas.
+
 
 ### Time series database
 
@@ -67,11 +70,44 @@ Selecionando métricas que possuem o label "app" com os valores "frontend" ou "b
 
 Em PromQL, existem vários tipos de expressões que podem ser usados ​​para manipular as métricas coletadas pelo Prometheus. Essas expressões podem ser usadas para realizar cálculos matemáticos, agrupar métricas, filtrar resultados e muito mais. Aqui estão alguns dos principais tipos de expressões em PromQL:
 
-* **Expressões aritméticas**: São usadas para realizar cálculos matemáticos em séries de métricas. Por exemplo, podemos somar ou subtrair o valor de duas métricas usando operadores como `+` e `-`, ou ainda multiplicar ou dividir pelo valor de uma constante usando `*` e `/`.
-* **Funções de agregação**: São usadas para agrupar e resumir séries de métricas. Essas funções incluem sum, avg, max e min, que permitem somar, calcular a média, obter o valor máximo e mínimo de uma série de métricas.
-* **Funções de filtro**: São usadas para filtrar séries de métricas com base em seus labels. Essas funções incluem label_values e topk, que permitem obter os valores de um label específico e selecionar as principais séries de métricas com base em um label.
-* **Funções de transformação**: São usadas para transformar séries de métricas de uma maneira específica. Essas funções incluem rate, que permite calcular a taxa de mudança entre pontos de dados, irate, que permite calcular a taxa instantânea de mudança, e delta, que permite calcular a diferença entre os valores de métricas em dois pontos de tempo diferentes.
-* **Expressões booleanas**: São usadas para avaliar se uma determinada condição é verdadeira ou falsa. Essas expressões incluem operadores como and, or e unless, que permitem combinar ou negar condições.
+* **Expressões aritméticas**: São usadas para realizar cálculos matemáticos em séries de métricas. Por exemplo, podemos somar ou subtrair o valor de duas métricas usando operadores como `+` e `-`, ou ainda multiplicar ou dividir pelo valor de uma constante usando `*` e `/`. Por exemplo:
+
+```bash
+node_cpu_seconds_total{mode="system"} / node_cpu_seconds_total{mode="idle"} * 100
+```
+Neste exemplo, estamos calculando a porcentagem de tempo que a CPU passa no modo `"system"` em relação ao modo `"idle"`.
+
+* **Funções de agregação**: São usadas para agrupar e resumir séries de métricas. Essas funções incluem sum, avg, max e min, que permitem somar, calcular a média, obter o valor máximo e mínimo de uma série de métricas. Por exemplo:
+
+```bash
+sum(rate(http_requests_total[5m])) by (job)
+```
+Neste exemplo, estamos calculando a taxa de solicitações HTTP nos últimos 5 minutos e somando os resultados por `"job"`.
+
+* **Funções de filtro**: São usadas para filtrar séries de métricas com base em seus labels. Essas funções incluem label_values e topk, que permitem obter os valores de um label específico e selecionar as principais séries de métricas com base em um label. Por exemplo:
+
+```bash
+topk(5, http_requests_total)
+```
+
+Neste exemplo, estamos selecionando as 5 séries temporais com os maiores valores de `http_requests_total`.
+
+* **Funções de transformação**: São usadas para transformar séries de métricas de uma maneira específica. Essas funções incluem rate, que permite calcular a taxa de mudança entre pontos de dados, irate, que permite calcular a taxa instantânea de mudança, e delta, que permite calcular a diferença entre os valores de métricas em dois pontos de tempo diferentes. Exemplo:
+
+```bash
+histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+```
+
+Acima, estamos calculando o percentil 95 da distribuição de latência das solicitações HTTP nos últimos 5 minutos.
+
+* **Expressões booleanas**: São usadas para avaliar se uma determinada condição é verdadeira ou falsa. Essas expressões incluem operadores como and, or e unless, que permitem combinar ou negar condições. Por exemplo:
+
+```bash
+rate(http_requests_total{status_code=~"5.."}[1m]) > rate(http_requests_total{status_code=~"2.."}[1m]) * 0.1
+```
+
+Neste exemplo, estamos verificando se a taxa de solicitações HTTP com códigos de status `5xx` nos últimos 1 minuto é maior que 10% da taxa de solicitações com códigos de status `2xx `no mesmo período.
+
 
 ### Vector vs Range Vector
 

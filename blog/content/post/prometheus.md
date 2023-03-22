@@ -259,7 +259,7 @@ promtool check rules /path/to/prometheus.yaml
 promtool check metrics /path/to/metrics.json
 ```
 
-Além disso, podemos métricas entre diferentes formatos, como JSON e texto simples. Por exemplo, para converter um arquivo de registro de métricas de formato texto para formato JSON, use o seguinte comando:
+Além disso, podemos converter métricas entre diferentes formatos, como JSON e texto simples. Por exemplo, para converter um arquivo de registro de métricas de formato texto para formato JSON, use o seguinte comando:
 
 ```bash
 $ promtool convert metrics --from=txt --to=json <arquivo_de_registro_de_metricas>
