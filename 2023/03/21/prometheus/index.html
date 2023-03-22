@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Prometheus &middot; Vitor Lobo</title>
+        <meta name="description" content="Under the hood">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.107.0">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Prometheus">
+<meta property="og:description" content="Under the hood">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lobocode.github.io/2023/03/21/prometheus/">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="https://lobocode.github.io/img/favicon.ico">
+    </head>
+    <body>
+        
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="lobocode-title">
+                                <a title="lobocode" href="https://lobocode.github.io">$ /home/lobocode_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/lobocode" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Prometheus</h1>
+    
+        <p class="post-description" itemprop="description">Under the hood</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2023-03-21" itemprop="datePublished">ter., mar. 21, 2023</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 34 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <ul>
+<li><strong><a href="#introdu%C3%A7%C3%A3o">Introdução</a></strong></li>
+<li><strong><a href="#instala%C3%A7%C3%A3o">Instalação</a></strong></li>
+<li><strong><a href="#promtool">Promtool</a></strong></li>
+<li><strong><a href="#instrumenta%C3%A7%C3%A3o">Instrumentação</a></strong></li>
+<li><strong><a href="#alertmanager">Alertmanager</a></strong></li>
+<li><strong><a href="#pushgateway">PushGateway</a></strong></li>
+<li><strong><a href="#federa%C3%A7%C3%A3o">Federação</a></strong></li>
+<li><strong><a href="#under-the-hood">Under the Hood</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<h3 id="prometheus">Prometheus</h3>
+<p>O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open-source. Foi desenvolvida com o objetivo de fornecer uma forma eficiente de coletar, armazenar e analisar métricas de desempenho de sistemas distribuídos. Ele foi projetado para ser escalável, fácil de usar e altamente personalizável. Possui sua própria linguagem de consulta, chamada PromQL, que permite aos usuários criar consultas complexas para analisar os dados de métricas. Ele também possui uma interface web para visualizar e explorar esses dados. Além disso, é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. O Prometheus também é frequentemente usado em conjunto com outras ferramentas, como Grafana, que fornece recursos avançados de visualização de dados, alertas e análise histórica de dados.</p>
+<p>A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software, SoundCloud, em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a <strong><a href="https://www.cncf.io/">Cloud Native Computing Foundation (CNCF)</a></strong>, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. A CNCF agora é a responsável pelo desenvolvimento e manutenção do projeto Prometheus.</p>
+<blockquote>
+<p><strong>NOTA</strong>: Leia mais sobre PromQL em <strong><a href="https://lobocode.github.io/2023/03/19/promql/">Aqui</a></strong>.</p>
+</blockquote>
+<h3 id="tipos-de-métricas">Tipos de métricas</h3>
+<p>O Prometheus suporta quatro tipos principais de métricas: Counter, Gauge, Histogram e Summary:</p>
+<ul>
+<li><strong>Counter:</strong> São métricas que representam um valor crescente ao longo do tempo, como o número de solicitações recebidas por um servidor. Os contadores nunca diminuem, exceto quando redefinidos manualmente. Por exemplo, você pode usar a função <code>increase()</code> para calcular a taxa de incremento de um contador.</li>
+<li><strong>Gauge</strong>: São métricas que representam um valor arbitrário em um determinado momento, como o uso de CPU. Os valores dos indicadores podem aumentar ou diminuir ao longo do tempo e não têm um valor mínimo ou máximo definido. As funções mais comuns para os indicadores são <code>sum()</code>, <code>avg()</code> e <code>min()</code> e <code>max()</code>.</li>
+<li><strong>Histogram:</strong> São métricas que calculam a distribuição de valores em um intervalo de tempo, como o tempo de resposta de uma solicitação de rede. Os histogramas são calculados a partir de contadores, em que os valores dos contadores são divididos em intervalos ou buckets de tamanho fixo. As funções <code>histogram_quantile()</code> e <code>irate()</code> são frequentemente usadas para analisar histogramas.</li>
+<li><strong>Summary</strong>: São métricas semelhantes a um histogram, mas em vez de contabilizar os valores dos contadores em baldes fixos, calcula a média, o percentil e o número total de valores em um determinado período. É indicado para o cálculo de médias, valores extremos e percentis.</li>
+</ul>
+<p>Além desses tipos de métricas, o Prometheus também suporta métricas de estado, que são usadas para indicar se um determinado recurso está <code>up</code>,<code>down</code>. Essas métricas são geralmente usadas para monitorar a disponibilidade de serviços.</p>
+<h3 id="monitoramento-pull-vs-push">Monitoramento pull vs push</h3>
+<p>Para simplificar o entendimento a cerca de monitoramento Pull vs Push, imagine que você tem um vaso de flores em sua janela. O monitoramento pull é como você ir lá todos os dias para verificar se as flores precisam de água. Você está puxando informações sobre as flores. Já o monitoramento push é como se você tivesse um sistema automático que envia uma mensagem para você quando as flores precisam de água. Neste caso, as informações estão sendo empurradas para você. Tecnicamente, o monitoramento pull é um método no qual um dispositivo ou sistema solicita periodicamente informações de outro dispositivo ou sistema. Ele &ldquo;puxa&rdquo; as informações. Por exemplo, em um sistema de monitoramento de rede, um dispositivo de monitoramento pode enviar uma solicitação de status para cada dispositivo na rede a intervalos regulares e armazenar as informações retornadas.</p>
+<p><img src="images/tsdb/prom-pullvspush.png#center" alt="img#center"></p>
+<p>Já o monitoramento push é um método no qual um dispositivo ou sistema envia automaticamente informações para outro dispositivo ou sistema sem esperar uma solicitação. Ele &ldquo;empurra&rdquo; as informações. Por exemplo, em um sistema de monitoramento de rede, cada dispositivo na rede pode ser configurado para automaticamente enviar informações de status para um dispositivo de monitoramento sempre que houver uma alteração. Em resumo, o monitoramento pull é baseado em solicitação e o monitoramento push é baseado em notificação. O Prometheus usa um sistema chamado &ldquo;Exporters&rdquo; para coletar dados de diversos sistemas e aplicativos e envia esses dados para o Prometheus para serem armazenados e analisados (monitoramento pull). O Prometheus não precisa solicitar esses dados, pois eles são enviados automaticamente pelos Exporters. Isso permite que o Prometheus colete dados em tempo real e sem sobrecarregar os sistemas e aplicativos monitorados.</p>
+<h3 id="arquitetura-do-prometheus">Arquitetura do Prometheus</h3>
+<p>A arquitetura do Prometheus torna mais fácil encontrar e obter dados de diferentes pontos de acesso. O servidor Prometheus cuida da coleta e armazenamento das métricas. Ele organiza as tarefas de monitoramento - consultando fontes de dados (conhecidas como &ldquo;instâncias&rdquo;) em intervalos de tempo predefinidos. As tarefas de monitoramento são configuradas usando uma ou mais diretrizes chamadas &ldquo;configurações de coleta&rdquo;, gerenciadas por um arquivo de configuração em formato YAML. A imagem abaixo representa a arquitetura do Prometheus:</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/prometheus/arch.png#center" alt="img#center"></p>
+<p>O ecossistema do Prometheus é composto por diversos componentes, muitos deles opcionais como por exemplo:</p>
+<ul>
+<li><strong>Servidor principal do Prometheus</strong>: é responsável por raspar (coletar) e armazenar dados de séries temporais. Ele também fornece uma interface de consulta para consultar esses dados.</li>
+<li><strong>Bibliotecas cliente</strong>: são usadas para adicionar instrumentação (métricas) ao código da aplicação, facilitando a coleta de informações pelo Prometheus.</li>
+<li><strong>Gateway de envio (Push Gateway)</strong>: permite o suporte a trabalhos de curta duração, já que o Prometheus utiliza um modelo de coleta &ldquo;pull&rdquo;. O gateway de envio recebe métricas desses trabalhos e as armazena temporariamente até que o Prometheus as colete.</li>
+<li><strong>Exportadores específicos</strong>: são programas que coletam métricas de serviços como HAProxy, StatsD, Graphite, entre outros, e as convertem para o formato compatível com o Prometheus. Isso facilita o monitoramento desses serviços.</li>
+<li><strong>Gerenciador de alertas (Alertmanager)</strong>: é responsável por tratar os alertas. O Prometheus avalia regras de alerta baseadas nas métricas coletadas e envia notificações ao Alertmanager, que agrupa, silencia e encaminha esses alertas para os canais de notificação adequados, como e-mail, Slack ou PagerDuty.</li>
+<li><strong>Ferramentas de suporte</strong>: incluem uma variedade de ferramentas que auxiliam no uso e gerenciamento do Prometheus, como painéis de visualização de dados, ferramentas de linha de comando e utilitários para análise e depuração.</li>
+</ul>
+<h3 id="labels-e-samples">Labels e Samples</h3>
+<p>Labels são como etiquetas que adicionamos às coisas para identificá-las. Por exemplo, você tem um armário com camisetas e você coloca etiquetas nas camisetas com as cores, tamanhos e tipos delas. Então, se você quer pegar uma camiseta verde, você vai olhar na etiqueta e buscar uma camiseta verde. No Prometheus, labels são usadas para identificar e agrupar diferentes dados de métricas, assim como as etiquetas nas camisetas. Por exemplo, você tem vários computadores e quer monitorar o uso de memória de cada um deles. Você pode adicionar labels como &ldquo;hostname&rdquo; e &ldquo;sistema operacional&rdquo; para cada dado de métrica, então se você quiser saber o uso de memória de um computador específico, você pode buscar pela label &ldquo;hostname&rdquo; dele. Já as Samples são como pequenas amostras de algo. Por exemplo, você está fazendo uma pesquisa sobre quantas balas as crianças gostam de comer e você pede para cada criança escolher uma amostra de 3 balas. Essas 3 balas que cada criança escolheu são as samples. No Prometheus, samples são pequenas medidas de algo que queremos monitorar, como por exemplo, a utilização de CPU de um computador. Cada vez que coletamos uma medida, é criado um sample. Esses samples são armazenados juntos com labels, permitindo que você possa ver como a medida mudou ao longo do tempo. Por exemplo, você pode ver como a utilização de CPU de um computador específico mudou ao longo de um dia.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/samples01.png#center" alt="img#center"></p>
+<h2 id="instalação">Instalação</h2>
+<p>Existem inúmeras maneiras de instalar o Prometheus, mas aqui vamos mostrar como instalar o Prometheus usando o Docker e o Docker Compose, Grafana e o PromSim um simulador de métricas para testar o Prometheus e Grafana. Crie um arquivo de configuração do Docker Compose chamado <code>docker-compose.yml</code> no mesmo diretório que o arquivo prometheus.yml. Inclua as seguintes configurações:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">prom/prometheus:latest</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">prometheus</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">      </span>- <span class="s2">&#34;9090:9090&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">      </span>- <span class="s2">&#34;./prometheus.yml:/etc/prometheus/prometheus.yml&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w">      </span>- <span class="l">promsim</span><span class="w">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="w">  </span><span class="nt">grafana</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">grafana/grafana:latest</span><span class="w">
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">grafana</span><span class="w">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="w">      </span>- <span class="s2">&#34;3000:3000&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="w">  </span><span class="nt">promsim</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">sysdigtraining/promsim:latest</span><span class="w">
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">promsim</span><span class="w">
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="w">      </span>- <span class="s2">&#34;8080:8080&#34;</span><span class="w">
+</span></span></span></code></pre></div><p>Em seguida, crie um arquivo de configuração do Prometheus chamado prometheus.yml no mesmo diretório que o arquivo docker-compose.yml. Inclua as seguintes configurações:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">global</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">  </span><span class="nt">evaluation_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;promsim&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;promsim:8080&#34;</span><span class="p">]</span><span class="w">
+</span></span></span></code></pre></div><p>No terminal, navegue até o diretório onde você salvou o docker-compose.yml e execute o seguinte comando para iniciar os serviços:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">docker-compose up -d
+</span></span></code></pre></div><p>No Grafana, você precisará adicionar o Prometheus como uma fonte de dados (datasource). Faça login no Grafana (usuário padrão: admin, senha: admin), vá para &ldquo;Configuration&rdquo; (ícone de engrenagem) e clique em &ldquo;Data Sources&rdquo;. Adicione uma nova fonte de dados com o tipo Prometheus e use a URL <strong>http://prometheus:9090</strong>. Agora você pode criar painéis no Grafana usando métricas do Prometheus e do PromSim. O PromSim irá gerar métricas simuladas que você pode usar para testar o comportamento do threshold. O PromSim é um simulador de métricas que gera métricas aleatórias para testar o Prometheus. Para mais informações sobre o PromSim, consulte a documentação oficial em <strong><a href="https://github.com/dmitsh/promsim">https://github.com/dmitsh/promsim</a></strong>.</p>
+<p>Se você quiser instalar somente o Prometheus, basta rodar <code>docker run -p 9090:9090 prom/prometheus</code>. Você pode acessar a interface web do Prometheus em <strong>http://localhost:9090</strong>. Para mais informações sobre como instalar o Prometheus, consulte a documentação oficial do Prometheus em <strong><a href="https://prometheus.io/docs/prometheus/latest/getting_started/">https://prometheus.io/docs/prometheus/latest/getting_started/</a></strong>.</p>
+<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/ui01.png#center" alt="img#center"></p>
+<p>A interface do Prometheus é composta pelos seguintes menus:</p>
+<ul>
+<li><strong>Alerts</strong>: este menu exibe todos os alertas ativos e permite visualizar o histórico de alertas. Os alertas são disparados quando uma determinada métrica ultrapassa um limite configurado.</li>
+<li><strong>Graph</strong>: este menu permite criar e visualizar gráficos de métricas coletadas pelo Prometheus. O usuário pode definir a escala do eixo X e Y, bem como personalizar a aparência do gráfico.</li>
+<li><strong>Status</strong>: este menu exibe o status atual do Prometheus, incluindo informações sobre as métricas coletadas, alertas ativos e configurações do sistema.</li>
+<li><strong>Help</strong>: este menu fornece informações úteis sobre o Prometheus, incluindo documentação, exemplos de consulta e informações de contato da equipe de suporte.</li>
+<li><strong>Classic UI</strong>: este menu oferece uma interface alternativa para visualização de métricas, com recursos adicionais em comparação com a interface padrão.</li>
+</ul>
+<p>Além disso, a interface do Prometheus contém as seguintes opções:</p>
+<ul>
+<li><strong>Use local time</strong>: essa opção permite que o usuário visualize as métricas em seu fuso horário local em vez do horário do servidor.</li>
+<li><strong>Enable query history</strong>: essa opção permite que o usuário acesse o histórico de consultas que foram executadas anteriormente.</li>
+<li><strong>Enable autocomplete</strong>: essa opção permite que o usuário obtenha sugestões de consulta enquanto digita no campo de consulta.</li>
+<li><strong>Campo de consulta</strong>: este é o campo onde o usuário pode inserir consultas PromQL para recuperar métricas específicas.</li>
+<li><strong>Campo Table e Graph</strong>: este campo permite que o usuário selecione entre exibir o resultado da consulta como uma tabela ou um gráfico.</li>
+<li><strong>Evaluation time</strong>: este campo permite que o usuário especifique o período de tempo para o qual as métricas devem ser recuperadas pela consulta.</li>
+</ul>
+<h3 id="configuração">Configuração</h3>
+<p>No geral a estrutura de diretórios do Prometheus é a seguinte:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">/opt/prometheus/
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── console_libraries/
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">│   ├── prom.lib.js
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">│   ├── react-16.8.3.production.min.js
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">│   └── ...
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">├── consoles/
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">│   ├── index.html
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">│   ├── queries_range.html
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">│   └── ...
+</span></span><span class="line"><span class="ln">10</span><span class="cl">├── prometheus
+</span></span><span class="line"><span class="ln">11</span><span class="cl">├── prometheus.yml
+</span></span><span class="line"><span class="ln">12</span><span class="cl">├── promtool
+</span></span><span class="line"><span class="ln">13</span><span class="cl">└── ...
+</span></span></code></pre></div><p>Pode variar a depender da versão, mas a estrutura acima é a mais comum. Os arquivos <code>prometheus</code> e <code>promtool</code> são os binários do Prometheus e do promtool, respectivamente. O diretório <code>console_libraries</code> contém bibliotecas JavaScript que são usadas para renderizar a interface do Prometheus. O diretório <code>consoles</code> contém arquivos HTML que são usados para renderizar a interface do Prometheus. O arquivo <code>prometheus.yaml</code> é o arquivo onde são definidas as configurações de scrape (coleta) de métricas dos alvos a serem monitorados, regras de alerta, entre outras configurações. Um exemplo de arquivo prometheus.yaml default pode ser algo parecido com isso:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">global</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;prometheus&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;localhost:9090&#39;</span><span class="p">]</span><span class="w">
+</span></span></span></code></pre></div><p>Nesse exemplo, temos duas seções no arquivo de configuração:</p>
+<ul>
+<li><strong>global</strong>: define as configurações globais do Prometheus, como a frequência de coleta de métricas (scrape_interval), que neste caso é de 15 segundos.</li>
+<li><strong>scrape_configs</strong>: define as configurações de coleta de métricas para os alvos a serem monitorados. Neste caso, temos apenas um job (trabalho) definido, chamado prometheus, que monitora o próprio servidor do Prometheus na porta 9090. Para adicionar um sistema genérico ao prometheus.yaml, é necessário criar uma nova configuração de scrape. Por exemplo, suponha que temos um sistema com a aplicação web em execução na porta 8080. Podemos adicionar essa configuração de scrape da seguinte forma:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">global</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;prometheus&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;localhost:9090&#39;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;my-app&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;my-app:8080&#39;</span><span class="p">]</span><span class="w">
+</span></span></span></code></pre></div><p>Neste exemplo, foi criado um novo job chamado <code>my-app</code> que monitora o sistema genérico na porta <code>8080</code>. O <code>static_configs</code> define os alvos a serem monitorados, que neste caso é o sistema <code>my-app</code> na porta <code>8080</code>. Caso você deseje adicionar uma ou mais máquinas, recomendo que faça isso apontando para arquivos externos <code>.json</code> ao Prometheus. Para tal, podemos utilizar o mecanismo de discovery de arquivos estáticos. O discovery de arquivos estáticos permite ao Prometheus carregar dinamicamente configurações de scrape a partir de arquivos <code>.json</code> que contêm informações sobre os alvos a serem monitorados. Por exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">global</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l">15s</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w"></span><span class="nt">scrape_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;prometheus&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">      </span>- <span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;localhost:9090&#39;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">  </span>- <span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;my-app&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">    </span><span class="nt">file_sd_configs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">      </span>- <span class="nt">files</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w">        </span>- <span class="l">/path/to/targets.json</span><span class="w">
+</span></span></span></code></pre></div><p>No exemplo acima, foi criado um novo job chamado <code>my-app</code>, que usará o discovery de arquivos estáticos para buscar os alvos a serem monitorados a partir do arquivo <code>/path/to/targets.json</code>. A seção <code>file_sd_configs</code> define as configurações para o discovery de arquivos estáticos, que neste caso é apenas o arquivo targets.json. O arquivo targets.json deve estar no seguinte formato:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">[</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">  </span>{<span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">    </span><span class="nt">&#34;labels&#34;: </span>{<span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">      </span><span class="nt">&#34;job&#34;: </span><span class="s2">&#34;my-app&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">      </span><span class="nt">&#34;env&#34;: </span><span class="s2">&#34;production&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span>}<span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">    </span><span class="nt">&#34;targets&#34;: </span><span class="p">[</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">      </span><span class="s2">&#34;my-app1:8080&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">      </span><span class="s2">&#34;my-app2:8080&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">    </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">  </span>}<span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w"></span><span class="p">]</span><span class="w">
+</span></span></span></code></pre></div><p>Cada objeto tem uma chave labels que contém um objeto com rótulos adicionais para os alvos (neste exemplo, os rótulos são job e env), e uma chave targets que contém uma lista de alvos a serem monitorados. O job my-app terá dois alvos a serem monitorados: my-app1:8080 e my-app2:8080. Esses alvos terão os rótulos job e env definidos como my-app e production, respectivamente.</p>
+<blockquote>
+<p><strong>Observação</strong>: o discovery de arquivos estáticos é apenas um dos vários mecanismos de descoberta disponíveis no Prometheus. Para obter uma lista completa de mecanismos de descoberta, consulte a documentação oficial do Prometheus.</p>
+</blockquote>
+<h2 id="promtool">Promtool</h2>
+<p>O promtool é uma ferramenta de linha de comando que fornece várias funcionalidades para ajudar a verificar a sintaxe de arquivos de configuração do Prometheus, como o arquivo prometheus.yaml. Para verificar a sintaxe de um arquivo de configuração, basta executar o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">promtool check config /path/to/prometheus.yaml
+</span></span></code></pre></div><p>O promtool também permite validar a sintaxe das regras de alerta definidas no arquivo de configuração do Prometheus. Para isso, basta usar o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">promtool check rules /path/to/prometheus.yaml
+</span></span></code></pre></div><p>É possível também validar a sintaxe dos arquivos de registro de métricas antes de serem importados pelo Prometheus. Para isso, basta usar o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">promtool check metrics /path/to/metrics.json
+</span></span></code></pre></div><p>Além disso, podemos métricas entre diferentes formatos, como JSON e texto simples. Por exemplo, para converter um arquivo de registro de métricas de formato texto para formato JSON, use o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ promtool convert metrics --from<span class="o">=</span>txt --to<span class="o">=</span>json &lt;arquivo_de_registro_de_metricas&gt;
+</span></span></code></pre></div><p>O promtool pode ser usado para validar a integridade do armazenamento de métricas, ajudando a detectar problemas comuns, como blocos de registro corrompidos. Para isso, use o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">promtool tsdb check /path/to/data/dir
+</span></span></code></pre></div><p>Essas são apenas algumas das funcionalidades do promtool. Ele pode ser uma ferramenta muito útil para garantir a qualidade do seu ambiente de monitoramento com Prometheus.</p>
+<h2 id="instrumentação">Instrumentação</h2>
+<p>A instrumentação é um processo crucial para coletar dados de desempenho e monitorar sistemas em tempo real. No contexto do Prometheus, existem dois tipos principais de instrumentação: direta e indireta.</p>
+<ul>
+<li>
+<p><strong>A instrumentação direta</strong> envolve a coleta de métricas diretamente de um aplicativo ou serviço, usando bibliotecas ou frameworks específicos. Isso permite que os desenvolvedores definam as métricas que são importantes para o seu aplicativo ou serviço e coletem informações específicas, como tempo de resposta de uma chamada de API ou a quantidade de memória usada.</p>
+</li>
+<li>
+<p><strong>A instrumentação indireta</strong> envolve a coleta de métricas de sistemas de terceiros, como servidores de banco de dados ou balanceadores de carga. Isso pode ser feito usando plugins ou exporters que se comunicam com o sistema externo e traduzem as métricas em um formato que o Prometheus possa entender.</p>
+</li>
+</ul>
+<p>Ambos os tipos de instrumentação são importantes para obter insights precisos e valiosos sobre o desempenho do sistema. A instrumentação direta fornece dados específicos e granulares sobre o desempenho do aplicativo ou serviço, enquanto a instrumentação indireta permite monitorar o sistema como um todo e identificar gargalos e problemas em componentes externos.</p>
+<h3 id="instrumentação-indireta">Instrumentação indireta</h3>
+<h3 id="exporters">Exporters</h3>
+<p>O Prometheus é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. Para coletar métricas de desempenho desses sistemas e aplicativos, você pode usar exporters, que são projetados para coletar dados de métricas de fontes específicas, como sistemas operacionais, redes e aplicativos. Isso permite que os usuários coletem métricas de diferentes fontes e as analisem de forma integrada. O Prometheus possui uma série de exporters nativos, que são projetados para coletar métricas de desempenho de sistemas e aplicativos específicos. Esses exporters são projetados para serem fáceis de usar e integrar com o Prometheus. Além disso, você pode usar exporters de terceiros para coletar métricas de desempenho de sistemas e aplicativos específicos. Para mais informações sobre exporters, consulte a documentação oficial do Prometheus em <strong><a href="https://prometheus.io/docs/instrumenting/exporters/">https://prometheus.io/docs/instrumenting/exporters/</a></strong>.</p>
+<h3 id="linux">Linux</h3>
+<p>O node_exporter é um exporter para o Prometheus que permite coletar métricas do sistema operacional Linux. Ele coleta informações sobre o uso de recursos como CPU, memória, disco, rede, entre outros. Ele fornece uma interface HTTP para expor esses dados no formato de métricas Prometheus, que podem ser coletadas pelo Prometheus Server e posteriormente visualizadas e analisadas. O node_exporter é especialmente útil para monitorar hosts Linux e obter uma visão geral do desempenho do sistema operacional.</p>
+<p>Ele pode ser usado para monitorar a utilização de recursos, identificar gargalos de desempenho, detectar problemas de saúde e criar alertas baseados em métricas específicas. O node_exporter também é uma ferramenta popular para monitorar clusters Kubernetes, pois ele pode coletar informações sobre o uso de recursos dentro dos contêineres, ajudando a identificar problemas de recursos e garantir a saúde do cluster. Para mais informações sobre o node_exporter, consulte a documentação oficial do Prometheus em <strong><a href="https://prometheus.io/docs/guides/node-exporter/">https://prometheus.io/docs/guides/node-exporter/</a></strong>.</p>
+<h3 id="windows">Windows</h3>
+<p>O Windows_exporter é um exporter para o Prometheus que permite coletar métricas do sistema operacional Windows. Ele é uma versão específica para o Windows do node_exporter. Ele coleta informações sobre o uso de recursos como CPU, memória, disco, rede, entre outros. Ele fornece uma interface HTTP para expor esses dados no formato de métricas Prometheus, que podem ser coletadas pelo Prometheus Server e posteriormente visualizadas e analisadas. Para mais informações sobre o Windows_exporter, consulte a documentação oficial do projeto em <strong><a href="https://github.com/prometheus-community/windows_exporter">https://github.com/prometheus-community/windows_exporter</a></strong>.</p>
+<h3 id="blackbox">Blackbox</h3>
+<p>O Blackbox Exporter é um componente do Prometheus que permite monitorar serviços externos a partir de uma perspectiva externa. Ele funciona realizando requisições <code>HTTP</code>, <code>TCP</code> e <code>ICMP</code> em endpoints específicos, permitindo verificar se esses serviços estão funcionando corretamente. Para mais informações sobre o Blackbox Exporter, consulte a documentação oficial do projeto em <strong><a href="https://github.com/prometheus/blackbox_exporter">https://github.com/prometheus/blackbox_exporter</a></strong>.</p>
+<h3 id="instrumentação-direta">Instrumentação direta</h3>
+<h3 id="java">Java</h3>
+<p>A instrumentação indireta no Prometheus usando Java envolve a adição de código ao seu aplicativo Java para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Java, como o <strong><a href="https://micrometer.io/">https://micrometer.io/</a></strong>. Aqui está um exemplo de como adicionar o &ldquo;Prometheus Java client&rdquo; ao seu aplicativo Java e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:</p>
+<ol>
+<li>Adicione as dependências Micrometer e Prometheus ao seu projeto. Você pode fazer isso no Maven ou Gradle, adicionando as seguintes linhas ao arquivo de configuração:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="nt">&lt;groupId&gt;</span>io.micrometer<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>micrometer-core<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="nt">&lt;version&gt;</span>1.6.6<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="nt">&lt;groupId&gt;</span>io.micrometer<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>micrometer-registry-prometheus<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="nt">&lt;version&gt;</span>1.6.6<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><ol start="2">
+<li>Crie um objeto MeterRegistry para registrar as métricas. Você pode fazer isso criando uma instância de PrometheusMeterRegistry, que é uma implementação do MeterRegistry para o Prometheus:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">MeterRegistry</span> <span class="n">registry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PrometheusMeterRegistry</span><span class="o">(</span><span class="n">PrometheusConfig</span><span class="o">.</span><span class="na">DEFAULT</span><span class="o">);</span>
+</span></span></code></pre></div><ol start="3">
+<li>Adicione contadores, temporizadores, etc. ao MeterRegistry para registrar as métricas. Por exemplo, para criar um contador:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">Counter</span> <span class="n">counter</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="na">counter</span><span class="o">(</span><span class="s">&#34;nome_do_contador&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">counter</span><span class="o">.</span><span class="na">increment</span><span class="o">();</span>
+</span></span></code></pre></div><ol start="4">
+<li>Exporte as métricas para o Prometheus. Você pode fazer isso adicionando um PrometheusMeterRegistry ao seu servidor HTTP. Por exemplo, se você estiver usando o Spring Boot, pode adicionar o seguinte código ao seu arquivo de configuração:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nd">@Bean</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="kd">public</span> <span class="n">MeterRegistryCustomizer</span><span class="o">&lt;</span><span class="n">PrometheusMeterRegistry</span><span class="o">&gt;</span> <span class="nf">prometheusRegistryCustomizer</span><span class="o">(</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">        <span class="n">PrometheusProperties</span> <span class="n">prometheusProperties</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="k">return</span> <span class="n">registry</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">        <span class="n">CollectorRegistry</span> <span class="n">collectorRegistry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CollectorRegistry</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="n">registry</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">JvmMemoryMetrics</span><span class="o">());</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="n">registry</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">JvmGcMetrics</span><span class="o">());</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="n">registry</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">ProcessorMetrics</span><span class="o">());</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">        <span class="n">registry</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">UptimeMetrics</span><span class="o">());</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        <span class="k">new</span> <span class="n">JvmThreadMetrics</span><span class="o">().</span><span class="na">bindTo</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="k">new</span> <span class="n">ClassLoaderMetrics</span><span class="o">().</span><span class="na">bindTo</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="k">new</span> <span class="n">DiskSpaceMetrics</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;/&#34;</span><span class="o">)).</span><span class="na">bindTo</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">        <span class="n">PrometheusMeterRegistry</span><span class="o">.</span><span class="na">prometheusRegistry</span> <span class="o">=</span> <span class="n">collectorRegistry</span><span class="o">;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="k">new</span> <span class="n">JvmMicrometerPrometheusExporter</span><span class="o">(</span><span class="n">collectorRegistry</span><span class="o">).</span><span class="na">register</span><span class="o">();</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="o">};</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>Isso adiciona um PrometheusMeterRegistry ao seu aplicativo Spring Boot e registra as métricas com o Prometheus. Verifique as métricas no Prometheus. Você pode acessar as métricas do seu aplicativo Java no Prometheus acessando a URL <strong><a href="http://seu_aplicativo:porta/metrics">http://seu_aplicativo:porta/metrics</a></strong>. As métricas serão exibidas no formato Prometheus, que você pode usar para criar gráficos e alertas.</p>
+<h3 id="javascriptnode">JavaScript/Node</h3>
+<p>A instrumentação indireta no Prometheus usando Node envolve a adição de código ao seu aplicativo Node.js para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Node.js, como o &ldquo;prom-client&rdquo; ou o &ldquo;node-prom-bundle&rdquo;. Aqui está um exemplo de como adicionar o &ldquo;prom-client&rdquo; ao seu aplicativo Node.js e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:</p>
+<p>Instale o &ldquo;prom-client&rdquo; usando o npm:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">npm</span> <span class="nx">install</span> <span class="nx">prom</span><span class="o">-</span><span class="nx">client</span>
+</span></span></code></pre></div><p>No código da sua classe principal, importe a biblioteca e crie um objeto &ldquo;Counter&rdquo; para armazenar as métricas de tempo de resposta:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="ln">1</span><span class="cl"><span class="kr">const</span> <span class="nx">promClient</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;prom-client&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="kr">const</span> <span class="nx">responseTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">promClient</span><span class="p">.</span><span class="nx">Counter</span><span class="p">({</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;myapp_response_time_seconds&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nx">help</span><span class="o">:</span> <span class="s1">&#39;Response time in seconds&#39;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>Na rota específica que você deseja monitorar, adicione código para medir o tempo de resposta e atualizar o contador:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&#34;/example&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="kr">const</span> <span class="nx">start</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">hrtime</span><span class="p">();</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="c1">// ... your code here ...
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"></span>    <span class="nx">responseTime</span><span class="p">.</span><span class="nx">inc</span><span class="p">({</span><span class="nx">route</span><span class="o">:</span> <span class="s1">&#39;example&#39;</span><span class="p">},</span> <span class="nx">process</span><span class="p">.</span><span class="nx">hrtime</span><span class="p">(</span><span class="nx">start</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s2">&#34;Hello, World!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>Inicie um servidor HTTP na porta 9091 para expor as métricas:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="ln">1</span><span class="cl"><span class="kr">const</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nx">res</span><span class="p">.</span><span class="nx">setHeader</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="nx">promClient</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">contentType</span><span class="p">);</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="nx">promClient</span><span class="p">.</span><span class="nx">register</span><span class="p">.</span><span class="nx">metrics</span><span class="p">());</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">}).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">9091</span><span class="p">);</span>
+</span></span></code></pre></div><p>Configure o Prometheus para &ldquo;scrape&rdquo; as métricas no endereço <strong>http://localhost:9091/metrics</strong></p>
+<p>Dessa forma, você estará coletando e fornecendo dados de métricas de tempo de resposta para o Prometheus, permitindo monitorar o desempenho da sua rota específica. É possível adicionar mais métricas como essa para monitorar outras partes do seu aplicativo, como o uso de CPU, memória, número de requisições e outros. Além disso, é importante notar que, além de coletar métricas, também é possível criar alertas no Prometheus com base nas métricas coletadas, permitindo que você seja notificado quando determinadas condições de métricas forem atingidas. Isso pode ser feito criando regras de alerta no arquivo de configuração do Prometheus, especificando quais métricas devem ser monitoradas e quais condições devem ser atendidas para disparar o alerta. É possível também usar outros sistemas como o Alertmanager para gerenciar esses alertas e notificações.</p>
+<h3 id="python">Python</h3>
+<p>A instrumentação indireta no Prometheus usando Python envolve a adição de código ao seu aplicativo Python para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Python, como o &ldquo;prometheus_client&rdquo; ou o &ldquo;py-prometheus-client&rdquo;. Aqui está um exemplo de como adicionar o &ldquo;prometheus_client&rdquo; ao seu aplicativo Python e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:</p>
+<p>Instale o &ldquo;prometheus_client&rdquo; usando o pip:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">pip</span> <span class="n">install</span> <span class="n">prometheus_client</span>
+</span></span></code></pre></div><p>No código da sua classe principal, importe a biblioteca e crie um objeto &ldquo;Counter&rdquo; para armazenar as métricas de tempo de resposta:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="kn">from</span> <span class="nn">prometheus_client</span> <span class="kn">import</span> <span class="n">Counter</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="n">response_time</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;myapp_response_time_seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;Response time in seconds&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>Na rota específica que você deseja monitorar, adicione código para medir o tempo de resposta e atualizar o contador:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&#34;/example&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="k">def</span> <span class="nf">example</span><span class="p">():</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="c1"># ... your code here ...</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="n">response_time</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="n">route</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">    <span class="k">return</span> <span class="s2">&#34;Hello, World!&#34;</span>
+</span></span></code></pre></div><p>Inicie o servidor de métricas no seu aplicativo, geralmente na porta 9090:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln">1</span><span class="cl"><span class="kn">from</span> <span class="nn">prometheus_client</span> <span class="kn">import</span> <span class="n">start_http_server</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="n">start_http_server</span><span class="p">(</span><span class="mi">9090</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></span></code></pre></div><p>Configure o Prometheus para &ldquo;scrape&rdquo; as métricas no endereço http://localhost:9090/metrics.</p>
+<p>Dessa forma, você estará coletando e fornecendo dados de métricas de tempo de resposta para o Prometheus, permitindo monitorar o desempenho da sua rota específica. É possível adicionar mais métricas como essa para monitorar outras partes do seu aplicativo, como o uso de CPU, memória, número de requisições e outros. Além disso, é importante notar que, além de coletar métricas, também é possível criar alertas no Prometheus com base nas métricas coletadas, permitindo que você seja notificado quando determinadas condições de métricas forem atingidas. Isso pode ser feito criando regras de alerta no arquivo de configuração do Prometheus, especificando quais métricas devem ser monitoradas e quais condições devem ser atendidas para disparar o alerta.</p>
+<h3 id="ferramentas-legadas-e-privadas">Ferramentas legadas e privadas</h3>
+<p>Muitas vezes temos sistemas e serviços legados ou ferramentas fechadas que não fornecem suas métricas em um formato compatível com o Prometheus. Nesses casos, existem algumas soluções possíveis para monitorá-los com o Prometheus:</p>
+<ul>
+<li><strong>Bridge</strong>: outra opção é utilizar bridges, que são programas que atuam como intermediários entre o Prometheus e as ferramentas legadas ou fechadas. O bridge coleta as métricas da ferramenta em um formato não compatível com o Prometheus e as converte para um formato compatível antes de disponibilizá-las para o Prometheus.</li>
+<li><strong>Plugins</strong>: uma terceira opção é utilizar plugins, que são programas que estendem as funcionalidades do Prometheus. Um plugin pode ser desenvolvido para coletar métricas de uma ferramenta específica e disponibilizá-las em um formato compatível com o Prometheus.</li>
+</ul>
+<h2 id="alertmanager">Alertmanager</h2>
+<p>O Alertmanager é uma ferramenta que trabalha em conjunto com o Prometheus para gerenciar alertas. Ele recebe alertas do Prometheus e os processa de acordo com regras configuradas pelo usuário, como notificações por email, Slack, PagerDuty, entre outras. Basicamente ele funciona como um servidor HTTP que aguarda as notificações de alertas enviadas pelo Prometheus. Quando o Prometheus detecta uma condição de alerta, ele envia uma notificação ao Alertmanager, que então segue as regras de roteamento de alertas configuradas pelo usuário para enviar notificações.</p>
+<p>Para configurar o Alertmanager com o Prometheus, é necessário criar um arquivo de configuração <code>alertmanager.yml</code> e especificar o endpoint do Alertmanager no arquivo de configuração <code>prometheus.yml</code>. O arquivo <code>alertmanager.yml</code> contém as regras de roteamento de alertas e configurações de notificação, como os destinatários e as plataformas de notificação. Para mais informações sobre como configurar o Alertmanager, consulte a documentação oficial em <a href="https://prometheus.io/docs/alerting/latest/configuration/">https://prometheus.io/docs/alerting/latest/configuration/</a>.</p>
+<blockquote>
+<p><strong>Observação</strong>: o Alertmanager não é um componente obrigatório do Prometheus. Ele é uma ferramenta opcional que pode ser usada para gerenciar alertas. Se você não precisar de alertas, não precisa configurar o Alertmanager. Pretendo escrever um outro artigo dedicado ao Alertmanager, então fique ligado!</p>
+</blockquote>
+<h2 id="pushgateway">PushGateway</h2>
+<p>PushGateway é um componente adicional do Prometheus que permite que aplicativos e sistemas enviem dados de métricas para o Prometheus sem precisar de um exporter ou client library. Ele funciona como uma &ldquo;ponte&rdquo; que recebe os dados enviados pelos aplicativos e os repassa para o Prometheus Server. O PushGateway é útil em situações em que os aplicativos ou sistemas não podem ser modificados para incluir suporte nativo ao Prometheus, ou quando os aplicativos são temporários e não precisam ser monitorados continuamente. Ele também é útil para coletar métricas de scripts e tarefas cron. Ao mesmo tempo, é importante notar que o <strong>PushGateway não é projetado para ser usado como solução de longo prazo para monitoramento</strong>, já que ele não armazena dados por muito tempo e não suporta a funcionalidade de alertas do Prometheus. Ele é melhor usado em conjunto com outras ferramentas de monitoramento ou como uma solução temporária.</p>
+<h2 id="federação">Federação</h2>
+<p>A Federação no Prometheus é um recurso que permite que várias instâncias do Prometheus sejam agrupadas e gerenciadas como uma única instância. Isso é útil quando você tem vários sistemas ou aplicativos que precisam ser monitorados, mas quer gerenciar esses dados de métricas de forma centralizada. A Federação funciona criando uma hierarquia de instâncias do Prometheus, onde cada instância é chamada de &ldquo;federada&rdquo; ou &ldquo;filha&rdquo; e uma instância é chamada de &ldquo;federadora&rdquo; ou &ldquo;pai&rdquo;. A instância &ldquo;federadora&rdquo; é responsável por coletar dados de métricas de todas as instâncias &ldquo;federadas&rdquo; e agrupá-los em um único local. No entanto, em alguns casos, o uso da Federação pode causar problemas. Abaixo uma melhor explicação sobre estes pontos:</p>
+<ul>
+<li><strong>Grande volume de dados</strong>: Se você estiver lidando com um grande volume de dados, a Federação pode sobrecarregar a instância central do Prometheus, já que todas as métricas são coletadas de várias instâncias e armazenadas na instância central. Isso pode levar a problemas de desempenho e latência.</li>
+<li><strong>Aumento da complexidade</strong>: A configuração e manutenção de uma estrutura federada pode ser complexa, especialmente se você tiver várias instâncias do Prometheus e hierarquias diferentes. Isso pode tornar a solução difícil de gerenciar e manter, aumentando a chance de erros e problemas de configuração.</li>
+<li><strong>Dependência de rede</strong>: A Federação exige uma conexão de rede estável e confiável entre as instâncias do Prometheus. Se a rede entre as instâncias for instável ou lenta, a coleta e consolidação das métricas pode ser afetada, causando atrasos ou perda de dados.</li>
+<li><strong>Escalabilidade limitada</strong>: A Federação pode não ser a melhor opção para ambientes de grande escala, com muitos serviços e instâncias do Prometheus. Nesse cenário, a instância central pode se tornar um gargalo e limitar a escalabilidade geral do sistema de monitoramento.</li>
+<li><strong>Segurança</strong>: A Federação requer que as instâncias do Prometheus se comuniquem entre si e compartilhem dados. Isso pode aumentar a superfície de ataque e potencialmente expor informações sensíveis, caso as medidas adequadas de segurança não sejam implementadas.</li>
+</ul>
+<blockquote>
+<p><strong>NOTA</strong>: Em um outro artigo pretendo escrever sobre como resolver o problema de federação potencializando o Prometheus com outras técnologias, fique ligado!</p>
+</blockquote>
+<h2 id="under-the-hood">Under the Hood</h2>
+<p>A pasta raiz do Prometheus contém vários arquivos de configuração e dados. Os arquivos mais comuns incluem:</p>
+<ul>
+<li><strong>prometheus.yml:</strong> Este é o arquivo de configuração principal do Prometheus. Ele contém configurações como endereços de coleta de dados, regras de alerta e configurações de armazenamento.</li>
+<li><strong>alert.rules:</strong> Este arquivo contém regras de alerta que o Prometheus usa para gerar alertas quando as métricas atenderem a certas condições.</li>
+<li><strong>scrape_configs:</strong> Este arquivo contém configurações de coleta de dados que o Prometheus usa para coletar métricas de diferentes fontes.</li>
+<li><strong>rules.yml:</strong> Este arquivo contém as regras de processamento de métricas do Prometheus. Ele especifica como o Prometheus deve processar as métricas coletadas.</li>
+<li><strong>data:</strong> Esta pasta contém os dados de métricas coletadas pelo Prometheus. Isso inclui arquivos como o banco de dados de métricas e arquivos de registro.</li>
+</ul>
+<p>Além desses arquivos, a pasta raiz do Prometheus também pode conter outros arquivos de configuração e dados, dependendo da configuração do Prometheus.  A pasta <strong>/data</strong> no Prometheus é usada para armazenar todos os dados coletados pelo Prometheus. Ela contém várias pastas, como <strong>WAL, chunks_head,</strong> que são usadas para armazenar diferentes tipos de dados. Exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">./data
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── 01BKGV7JBM69T2G1BGBGM6KB12
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">│   └── meta.json
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">├── 01BKGTZQ1SYQJTR4PB43C8PD98
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">│   ├── chunks
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">│   │   └── <span class="m">000001</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">│   ├── tombstones
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">│   ├── index
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">│   └── meta.json
+</span></span><span class="line"><span class="ln">10</span><span class="cl">├── 01BKGTZQ1HHWHV8FBJXW1Y3W0K
+</span></span><span class="line"><span class="ln">11</span><span class="cl">│   └── meta.json
+</span></span><span class="line"><span class="ln">12</span><span class="cl">├── 01BKGV7JC0RY8A6MACW02A2PJD
+</span></span><span class="line"><span class="ln">13</span><span class="cl">│   ├── chunks
+</span></span><span class="line"><span class="ln">14</span><span class="cl">│   │   └── <span class="m">000001</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">│   ├── tombstones
+</span></span><span class="line"><span class="ln">16</span><span class="cl">│   ├── index
+</span></span><span class="line"><span class="ln">17</span><span class="cl">│   └── meta.json
+</span></span><span class="line"><span class="ln">18</span><span class="cl">├── chunks_head
+</span></span><span class="line"><span class="ln">19</span><span class="cl">│   └── <span class="m">000001</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">└── wal
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    ├── <span class="m">000000002</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">    └── checkpoint.00000001
+</span></span><span class="line"><span class="ln">23</span><span class="cl">        └── <span class="m">00000000</span>
+</span></span></code></pre></div><ul>
+<li><strong>WAL</strong> - (Write Ahead Log) é o arquivo de log onde o Prometheus escreve todas as atualizações de dados antes de atualizar o banco de dados principal. Ele é usado para garantir a consistência e recuperação dos dados armazenados pelo Prometheus. Abaixo está um exemplo de como os dados são armazenados no WAL:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">prometheus
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">└── wal
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    ├── <span class="m">0</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    │   ├── index
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    │   ├── segments
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    │   ├── tombstones
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    │   └── wal
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    ├── <span class="m">1</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    │   ├── index
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    │   ├── segments
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    │   ├── tombstones
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    │   └── wal
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    └── ...  
+</span></span></code></pre></div><p>Para simplificar ainda mais, imagine que o Prometheus é um cofre, e dentro dele temos muitas coisas importantes, como números e informações sobre o seu computador ou até mesmo sobre sua casa. Agora, imagine que toda vez que você adiciona algo novo no seu cofre, como por exemplo, a temperatura da sua casa, é preciso escrever esse novo número em um diário, para sempre ter registro dele e poder acessá-lo depois. Esse diário é o que chamamos de WAL (Write Ahead Log) do Prometheus. Ele é como um diário onde o Prometheus escreve tudo o que ele coleta e guarda essas informações, para que possamos acessá-las depois. Assim como o diário precisa ser guardado em algum lugar seguro, o WAL também precisa ser guardado em um lugar seguro, para que não possa ser perdido ou danificado. Isso garante que todas as informações importantes sejam sempre salvas e possam ser acessadas quando precisarmos delas.</p>
+<ul>
+<li><strong>chunks_head</strong> - é a pasta onde o Prometheus armazena os principais dados de métricas coletadas. Ela contém pastas com nomes numéricos, cada uma corresponde a uma série de métricas. Dentro de cada pasta, encontra-se outras pastas como chunks, tombstones e arquivos como meta.json e index.</li>
+<li><strong>chunks</strong> - é a pasta onde o Prometheus armazena os dados de métricas coletadas em um formato compactado. Cada arquivo dentro dessa pasta representa um período de tempo específico.</li>
+<li><strong>tombstones</strong> - é a pasta onde o Prometheus armazena informações sobre métricas que foram removidas do banco de dados. Isso é usado para garantir que essas métricas não sejam incluídas na recuperação do banco de dados.</li>
+<li><strong>meta.json</strong> - é um arquivo que contém informações sobre a série de métricas, incluindo o nome, labels e outras informações relevantes.</li>
+<li><strong>index</strong> - é um arquivo que contém um índice dos dados de métricas armazenados no banco de dados. Isso é usado para permitir que o Prometheus localize rapidamente os dados desejados.</li>
+</ul>
+<p>Tomando a pasta <strong>01BKGTZQ1SYQJTR4PB43C8PD98</strong> como exemplo, que é um ID de bloco, observe que existe a seguinte estrutura:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">├── chunks
+</span></span><span class="line"><span class="ln">2</span><span class="cl">│   └── <span class="m">000001</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">├── tombstones
+</span></span><span class="line"><span class="ln">4</span><span class="cl">├── index
+</span></span><span class="line"><span class="ln">5</span><span class="cl">└── meta.json
+</span></span></code></pre></div><p>O arquivo meta.json é usado para armazenar metadados dos séries de dados que o Prometheus está rastreando. Ele contém informações como o nome do arquivo e o intervalo de tempo dos dados armazenados, bem como outras informações relevantes para o funcionamento interno do Prometheus. Os itens específicos dentro do arquivo meta.json podem variar dependendo da configuração específica do Prometheus e do tipo de série de dados que está sendo rastreada. Vamos aos detalhes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="s2">&#34;ulid&#34;</span>: <span class="s2">&#34;01BKGTZQ1SYQJTR4PB43C8PD98&#34;</span>,
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="s2">&#34;minTime&#34;</span>: 1602237600000,
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="s2">&#34;maxTime&#34;</span>: 1602244800000,
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="s2">&#34;stats&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">        <span class="s2">&#34;numSamples&#34;</span>: 553673232,
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="s2">&#34;numSeries&#34;</span>: 1346066,
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="s2">&#34;numChunks&#34;</span>: <span class="m">4440437</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="o">}</span>,
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="s2">&#34;compaction&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="s2">&#34;level&#34;</span>: 1,
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="s2">&#34;sources&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">            <span class="s2">&#34;01EM65SHSX4VARXBBHBF0M0FDS&#34;</span>,
+</span></span><span class="line"><span class="ln">14</span><span class="cl">            <span class="s2">&#34;01EM6GAJSYWSQQRDY782EA5ZPN&#34;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="o">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="o">}</span>,
+</span></span><span class="line"><span class="ln">17</span><span class="cl">    <span class="s2">&#34;version&#34;</span>: <span class="m">1</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>ulid:</strong> é um identificador único gerado para cada arquivo meta.json. É usado para identificar de forma única cada série de dados armazenada pelo Prometheus.</li>
+<li><strong>minTime e maxTime:</strong> são os intervalos de tempo de início e fim dos dados armazenados no arquivo meta.json. Eles são usados para determinar o período de tempo para o qual os dados armazenados no arquivo são válidos.</li>
+<li><strong>stats:</strong> é um objeto que contém estatísticas sobre o uso de memória do arquivo meta.json, incluindo o tamanho do arquivo, o número de séries de dados armazenadas e o número de amostras de dados.</li>
+<li><strong>numSamples:</strong> é o número de amostras de dados armazenadas no arquivo meta.json.</li>
+<li><strong>numSeries:</strong> é o número de séries de dados armazenadas no arquivo meta.json.</li>
+<li><strong>numChunks:</strong> é o número de chunks de dados (grupos de amostras de dados) armazenados no arquivo meta.json.</li>
+<li><strong>compaction:</strong> é um objeto que contém informações sobre a compactação dos dados armazenados no arquivo meta.json.</li>
+<li><strong>level:</strong> é o nível de compactação dos dados armazenados no arquivo meta.json.</li>
+<li><strong>sources:</strong> é um array que contém informações sobre as fontes dos dados armazenados no arquivo meta.json.</li>
+<li><strong>version:</strong> é a versão do arquivo meta.json. É usado para garantir compatibilidade com versões futuras do Prometheus.</li>
+</ul>
+<p>A pasta &ldquo;chunks&rdquo; dentro da pasta 01BKGTZQ1SYQJTR4PB43C8PD98 dentro do diretório /data do Prometheus é usada para armazenar os chunks de dados (grupos de amostras de dados) para cada série de dados que o Prometheus está rastreando. Cada arquivo dentro dessa pasta representa um chunk de dados único, e o nome do arquivo contém informações sobre o intervalo de tempo e a série de dados a qual ele pertence. Os arquivos de chunks são gerados pelo processo de compactação do Prometheus. Eles são criados quando o Prometheus precisa remover dados antigos para liberar espaço e continuar coletando novos dados.</p>
+<p>Esses chunks são usados para a recuperação dos dados e para realizar consultas no futuro. Os arquivos contidos dentro dessa pasta são codificados e compactados de forma a ocupar menos espaço e são lidos pelo Prometheus para responder consultas e exibir gráficos. Já o arquivo index, contém o índice dos chunks de dados armazenados na pasta &ldquo;chunks&rdquo; da mesma pasta. O índice é usado para permitir que o Prometheus rápida e eficientemente localize os chunks de dados relevantes para uma consulta específica. Esse arquivo contém informações sobre as séries de dados, o intervalo de tempo dos dados, o nome do arquivo de chunk correspondente, e outras informações relevantes. O Prometheus usa essas informações para saber onde procurar os dados quando uma consulta é realizada, permitindo que ele responda rapidamente.</p>
+<h3 id="gerenciamento-de-memória-pelo-prometheus">Gerenciamento de memória pelo Prometheus</h3>
+<p><img src="images/tsdb/prom-mem01.png#center" alt="img#center">
+<!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.1<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p>A imagem 1.1 acima representa o Prometheus quando usa muita memória RAM e memória em disco devido a natureza dos dados que ele coleta e armazena. Como ele armazena métricas de forma temporal (time series), ele precisa manter uma grande quantidade de dados em memória para que essas métricas possam ser consultadas rapidamente. Isso é especialmente importante quando ele precisa responder a consultas de alertas ou gráficos em tempo real. Além disso, Prometheus usa uma estratégia de sliding window para descartar métricas antigas que já não são consideradas relevantes. Isso significa que ele precisa manter uma grande quantidade de dados em memória para garantir que as métricas mais recentes possam ser acessadas rapidamente. Por outro lado, Prometheus usa muita memória em disco para armazenar esses dados de forma persistente, o que permite que os dados sejam recuperados mesmo depois de um reinício do sistema. Isso também permite que os dados sejam consultados novamente em um momento posterior, mesmo que não estejam mais disponíveis na memória. O Prometheus precisa de uma grande quantidade de memória RAM e memória em disco para garantir que os dados possam ser coletados, armazenados e consultados de forma eficiente e rápida.</p>
+<p><img src="images/tsdb/prom-mem02.png#center" alt="img#center">
+<!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.2<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p>Como bem mostra a Imagem 1.2 acima, quanto mais dias de dados são armazenados, mais memória e espaço em disco serão necessários para armazená-los. Isso pode levar a problemas de performance, pois aumenta a quantidade de dados que precisam ser carregados e processados para responder a consultas. Além disso, como os dados antigos tendem a ser menos relevantes, isso pode levar a problemas de escalabilidade, pois os dados antigos podem acabar consumindo muitos recursos de armazenamento e processamento, dificultando a capacidade de Prometheus de lidar com novos dados. Além disso, é importante considerar que o objetivo do Prometheus é fornecer uma visão em tempo real do sistema, então manter muitos dias de dados pode não ser tão útil para detectar problemas recentes ou tendências atuais no sistema, e pode acabar fazendo com que os dados relevantes sejam enterrados em meio a grande quantidade de dados antigos. Por essas razões, é recomendado manter apenas uma quantidade de dias de dados que seja suficiente para as necessidades de monitoramento do seu sistema, e não mais do que isso. É possível configurar o Prometheus para descartar dados antigos de acordo com a necessidade, e também é possível armazenar os dados históricos em outro sistema de armazenamento para análise futura.</p>
+<p><img src="images/tsdb/prom-mem03.png#center" alt="img#center">
+<!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.3<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p>Como mostra na Imagem 1.3 acima, o Prometheus utiliza a memória principal do host Linux para armazenar todas as métricas coletadas. Essas métricas são mantidas em memória para permitir uma consulta rápida e eficiente pelos usuários. Nesse processo é usado o modelo de coleta ativa, ou seja, é responsabilidade do próprio Prometheus coletar as métricas dos serviços e aplicativos em execução. Isso significa que o Prometheus precisa gerenciar as métricas de cada alvo e garantir que elas estejam disponíveis para consulta. Para manter as métricas em memória, o Prometheus utiliza um buffer de gravação em disco para evitar perda de dados. Quando a memória RAM fica cheia, as métricas mais antigas são gravadas no buffer de gravação em disco. Esse buffer é dimensionado automaticamente de acordo com a quantidade de métricas que o Prometheus está coletando. Quando o buffer de gravação em disco está cheio, o Prometheus começa a descartar as métricas mais antigas, garantindo que as mais recentes estejam sempre disponíveis. Além disso, o Prometheus também utiliza o swap do host para armazenar parte das métricas caso a memória RAM esteja completamente cheia.</p>
+<p>No que diz respeito à pilha do Prometheus, o sistema utiliza uma estrutura de dados chamada heap para armazenar as métricas. A heap é uma área de memória dinâmica onde as métricas são alocadas e liberadas durante a execução do Prometheus. O gerenciamento da heap é feito automaticamente pelo sistema operacional. Quando o Prometheus executa consultas, ele carrega todos os dados históricos em memória para processamento. Portanto, quanto mais tempo de dados históricos, mais memória é consumida. Para gerenciar esse problema, é importante definir políticas de retenção de dados sensatas para reduzir o tamanho dos dados armazenados no Prometheus. Também é importante monitorar o uso de memória do servidor e ajustar as configurações do Prometheus, como a frequência de coleta de dados, para otimizar o uso da memória.</p>
+<p>Além disso, pode ser necessário considerar o dimensionamento vertical ou horizontal do servidor para lidar com grandes volumes de dados. Já que o gerenciamento de memória do Prometheus é feito pelo sistema operacional, não há muito o que possamos fazer para otimizar o uso de memória, o recomendado é potencializar o prometheus de modo que ele se torne apenas um componente de um sistema de monitoramento mais robusto, como é o caso do Thanos, Victoriametrics, Cortex, etc. Mas esse é um papo para outro artigo.</p>
+<h2 id="conclusão">Conclusão</h2>
+<p>Neste artigo, vimos como o Prometheus funciona e como ele coleta e armazena dados de métricas. Também vimos como o Prometheus funciona internamente, como ele armazena dados em memória e em disco, e como ele gerencia a memória do host Linux. Espero que você tenha gostado do artigo e que ele tenha ajudado você a entender melhor como o Prometheus</p>
+<hr>
+<h2 id="referências">Referências</h2>
+<ul>
+<li><strong><a href="https://prometheus.io/docs/introduction/overview/">Documentação Oficial</a></strong></li>
+<li><strong><a href="https://www.robustperception.io/blog/">Site da RobustPerception</a></strong></li>
+<li><strong><a href="https://www.oreilly.com/library/view/prometheus-up/9781492034131/">Prometheus Up and Running</a></strong></li>
+</ul>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/prometheus/">Prometheus</a>, 
+            
+                <a href="/tags/grafana/">Grafana</a>, 
+            
+                <a href="/tags/monitoring/">Monitoring</a>, 
+            
+                <a href="/tags/tsdb/">TSDB</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Prometheus&url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Prometheus&url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f&summary=Under%20the%20hood"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lobocode-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lobocode" href="https://lobocode.github.io">lobocode</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2023 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lobocode.github.iojs/jquery-1.11.3.min.js"></script>
+        <script src="https://lobocode.github.iojs/jquery.fitvids.js"></script>
+        <script src="https://lobocode.github.iojs/scripts.js"></script>
+    </body>
+</html>
+
