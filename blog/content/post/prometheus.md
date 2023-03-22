@@ -297,7 +297,7 @@ O Blackbox Exporter é um componente do Prometheus que permite monitorar serviç
 
 ### Java
 
-A instrumentação indireta no Prometheus usando Java envolve a adição de código ao seu aplicativo Java para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Java, como o **[https://micrometer.io/](https://micrometer.io/)**. Aqui está um exemplo de como adicionar o "Prometheus Java client" ao seu aplicativo Java e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
+A instrumentação direta no Prometheus usando Java envolve a adição de código ao seu aplicativo Java para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Java, como o **[https://micrometer.io/](https://micrometer.io/)**. Aqui está um exemplo de como adicionar o "Prometheus Java client" ao seu aplicativo Java e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
 
 1. Adicione as dependências Micrometer e Prometheus ao seu projeto. Você pode fazer isso no Maven ou Gradle, adicionando as seguintes linhas ao arquivo de configuração:
 
