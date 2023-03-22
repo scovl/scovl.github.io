@@ -227,6 +227,16 @@ No exemplo acima, foi criado um novo job chamado `my-app`, que usará o discover
 
 Cada objeto tem uma chave labels que contém um objeto com rótulos adicionais para os alvos (neste exemplo, os rótulos são job e env), e uma chave targets que contém uma lista de alvos a serem monitorados. O job my-app terá dois alvos a serem monitorados: my-app1:8080 e my-app2:8080. Esses alvos terão os rótulos job e env definidos como my-app e production, respectivamente.
 
+Além da configuração de scrape (coleta) de dados, caso você deseje roda-lo em produção, é importante atentar para as configurações de parametros do service dele no systemd. Por exemplo, para o Prometheus, é importante definir o parâmetro `--storage.tsdb.retention.time` para um valor maior que 15 dias, para que os dados de métricas sejam armazenados por um período maior. Para isso, basta adicionar a seguinte linha no arquivo de configuração do Prometheus:
+
+```bash
+ExecStart=/opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml --storage.tsdb.retention.time=30d
+```
+
+> **NOTA**: o valor 30d define que os dados de métricas serão armazenados por 30 dias. Você pode definir um valor maior ou menor, dependendo da sua necessidade.
+
+Existem outras configurações interessantes também. Para obter uma lista completa de parâmetros, consulte a documentação oficial do Prometheus em **https://prometheus.io/docs/prometheus/latest/configuration/configuration/**.
+
 > **Observação**: o discovery de arquivos estáticos é apenas um dos vários mecanismos de descoberta disponíveis no Prometheus. Para obter uma lista completa de mecanismos de descoberta, consulte a documentação oficial do Prometheus.
 
 ## Promtool
