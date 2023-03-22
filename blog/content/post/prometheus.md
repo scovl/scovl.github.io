@@ -619,3 +619,6 @@ Neste artigo, vimos como o Prometheus funciona e como ele coleta e armazena dado
 * **[Documentação Oficial](https://prometheus.io/docs/introduction/overview/)**
 * **[Site da RobustPerception](https://www.robustperception.io/blog/)**
 * **[Prometheus Up and Running](https://www.oreilly.com/library/view/prometheus-up/9781492034131/)**
+* **[Prometheusbook de James Turnbull](https://www.prometheusbook.com/)**
+* **[Hands-On Infrastructure Monitoring with Prometheus](https://www.oreilly.com/library/view/hands-on-infrastructure-monitoring/9781789612349/)**
+* **[Monitoring Microservices and Containerized Applications](https://www.oreilly.com/library/view/monitoring-microservices-and/9781484262160/)**
