@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 34 min</span>
+            <span>Estimated reading time: 35 min</span>
         </p>
     
 </header>
@@ -277,6 +277,12 @@
 </span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">  </span>}<span class="w">
 </span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w"></span><span class="p">]</span><span class="w">
 </span></span></span></code></pre></div><p>Cada objeto tem uma chave labels que contém um objeto com rótulos adicionais para os alvos (neste exemplo, os rótulos são job e env), e uma chave targets que contém uma lista de alvos a serem monitorados. O job my-app terá dois alvos a serem monitorados: my-app1:8080 e my-app2:8080. Esses alvos terão os rótulos job e env definidos como my-app e production, respectivamente.</p>
+<p>Além da configuração de scrape (coleta) de dados, caso você deseje roda-lo em produção, é importante atentar para as configurações de parametros do service dele no systemd. Por exemplo, para o Prometheus, é importante definir o parâmetro <code>--storage.tsdb.retention.time</code> para um valor maior que 15 dias, para que os dados de métricas sejam armazenados por um período maior. Para isso, basta adicionar a seguinte linha no arquivo de configuração do Prometheus:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">ExecStart</span><span class="o">=</span>/opt/prometheus/prometheus --config.file<span class="o">=</span>/opt/prometheus/prometheus.yml --storage.tsdb.retention.time<span class="o">=</span>30d
+</span></span></code></pre></div><blockquote>
+<p><strong>NOTA</strong>: o valor 30d define que os dados de métricas serão armazenados por 30 dias. Você pode definir um valor maior ou menor, dependendo da sua necessidade.</p>
+</blockquote>
+<p>Existem outras configurações interessantes também. Para obter uma lista completa de parâmetros, consulte a documentação oficial do Prometheus em <strong><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/">https://prometheus.io/docs/prometheus/latest/configuration/configuration/</a></strong>.</p>
 <blockquote>
 <p><strong>Observação</strong>: o discovery de arquivos estáticos é apenas um dos vários mecanismos de descoberta disponíveis no Prometheus. Para obter uma lista completa de mecanismos de descoberta, consulte a documentação oficial do Prometheus.</p>
 </blockquote>
