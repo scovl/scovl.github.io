@@ -4,7 +4,7 @@ description = "Como simular o java.lang.OutOfMemoryError"
 date = 2022-12-09T05:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
 draft = false
-weight = 4
+weight = 5
 author = "Vitor Lobo Ramos"
 +++
 

@@ -4,7 +4,7 @@ description = "Usando lists e maps"
 date = 2022-12-05T17:31:45-03:00
 tags = ["java,desenvolvimento,dev,development"]
 draft = false
-weight = 2
+weight = 3
 author = "Vitor Lobo Ramos"
 +++
 

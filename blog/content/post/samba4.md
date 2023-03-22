@@ -4,7 +4,7 @@ description = "Um novo horizonte [ATUALIZADO]"
 date = 2023-01-01T00:00:00Z
 tags = ["linux,samba,fedora"]
 draft = false
-weight = 6
+weight = 7
 author = "Vitor Lobo Ramos"
 +++
 

@@ -1,9 +1,10 @@
 +++
 title = "Prometheus"
 description = "Under the hood"
-date = 2023-03-19T23:18:18-03:00
+date = 2023-03-21T23:18:18-03:00
 tags = ["Prometheus", "Grafana", "Monitoring", "TSDB"]
 draft = false
+weight = 1
 +++
 
 
