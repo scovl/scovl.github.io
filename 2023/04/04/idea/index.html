@@ -342,15 +342,20 @@
 <p>Para mais informações, acesse o seguinte <strong><a href="https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf">cheatsheet do IntelliJ IDEA</a></strong> onde contém uma lista completa de todos os hotkeys disponíveis. Além dos hotkeys listados, é possível salvar as configurações do IntelliJ IDEA em um repositório Git e sincronizar as configurações em diferentes computadores. Para isso, basta seguir os passos abaixo:</p>
 <ol>
 <li>Abra o IntelliJ IDEA e vá para <code>File &gt; Manage IDE Settings &gt; Export Settings</code> (Arquivo &gt; Gerenciar configurações do IDE &gt; Exportar configurações).</li>
-<li>Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.</li>
-<li>Crie um repositório Git em um serviço de hospedagem como o GitHub ou o GitLab.</li>
-<li>Clone o repositório Git em todos os computadores em que você deseja sincronizar as configurações do IntelliJ IDEA.</li>
+<li>Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.
+3 . Crie um repositório Git para o projeto e coloque-o no GitHub ou em qualquer outro serviço de hospedagem de repositórios Git.</li>
 <li>Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta &ldquo;.idea&rdquo; para a raiz do diretório do seu projeto Git.</li>
 <li>No IntelliJ IDEA, vá para <code>File &gt; Manage IDE Settings &gt; Import Settings</code> (Arquivo &gt; Gerenciar configurações do IDE &gt; Importar configurações) e selecione a pasta &ldquo;.idea&rdquo; que você acabou de copiar para o diretório do projeto.</li>
 <li>Selecione as configurações que deseja importar e escolha &ldquo;OK&rdquo;.</li>
 <li>As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.</li>
 </ol>
-<p>É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.</p>
+<p>Você pode também simplificar esse passos por linha de comando usando o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Exportando as configurações do IntelliJ IDEA para um arquivo ZIP</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">./idea.sh <span class="nb">export</span> -o ~/settings.zip
+</span></span></code></pre></div><p>E para importar:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Importando as configurações do IntelliJ IDEA de um arquivo ZIP</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">./idea.sh import -i ~/settings.zip
+</span></span></code></pre></div><p>Lembrando que o idea.sh se refere ao script que está na pasta bin do IntelliJ IDEA para Linux e Mac. No Windows, o script é chamado de idea.bat ou diretamente pelo binário idea.exe. É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.</p>
 <h3 id="intellij-idea-ultimate-vs-intellij-idea-community">IntelliJ IDEA Ultimate vs IntelliJ IDEA Community</h3>
 <p>O IntelliJ IDEA Ultimate é a versão completa e paga do IntelliJ IDEA, e possui recursos avançados que não estão disponíveis na versão Community. Alguns dos recursos exclusivos do IntelliJ IDEA Ultimate incluem:</p>
 <ul>
