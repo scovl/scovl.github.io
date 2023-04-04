@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 8 min</span>
+            <span>Estimated reading time: 9 min</span>
         </p>
     
 </header>
@@ -233,6 +233,21 @@
 </span></span></code></pre></div><p>Ou se preferir, você pode usar o diretório padrão que fica em <code>~/.IntelliJIdea&lt;version&gt;/config/plugins</code>. Agora execute o script <code>install-plugins.sh</code> e veja os plugins sendo instalados no IntelliJ IDEA:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./install-plugins.sh
 </span></span></code></pre></div><p>Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.</p>
+<h2 id="customizando-a-jvm-do-intellij-idea">Customizando a JVM do IntelliJ IDEA</h2>
+<p>O IntelliJ IDEA pode consumir bastante recursos no geral. Por isso, é importante que você configure a JVM corretamente para que o software funcione de forma satisfatória. Para isso, você pode ir em Help &gt; Edit Custom VM Options que irá abrir o arquivo <code>idea64.exe.vmoptions</code> ou <code>idea64.vmoptions</code> (dependendo do seu sistema operacional) no diretório de instalação do IntelliJ IDEA. Neste arquivo, você pode adicionar as seguintes configurações:</p>
+<ul>
+<li><strong>-Xms1024m</strong>: Define o tamanho inicial da memória heap do IntelliJ IDEA. O valor padrão é 256 MB.</li>
+<li><strong>-Xmx2048m</strong>: Define o tamanho máximo da memória heap do IntelliJ IDEA. O valor padrão é 750 MB.</li>
+<li><strong>-XX:ReservedCodeCacheSize=240m</strong>: Define o tamanho do cache de código reservado do IntelliJ IDEA. O valor padrão é 240 MB.</li>
+<li><strong>-XX:+UseConcMarkSweepGC</strong>: Ativa o coletor de lixo do tipo CMS (Concurrent Mark Sweep) do IntelliJ IDEA.</li>
+<li><strong>-XX:SoftRefLRUPolicyMSPerMB=50</strong>: Define a política de referência suave do IntelliJ IDEA.</li>
+<li><strong>-XX:+Use<!-- raw HTML omitted --></strong>: - Define o coletor de lixo a ser usado (G1, Parallel, ConcMarkSweep, etc.)</li>
+<li><strong>-XX:MaxGCPauseMillis=<!-- raw HTML omitted --></strong>: - Define o tempo máximo de pausa para a coleta de lixo</li>
+<li><strong>-XX:ParallelGCThreads=<!-- raw HTML omitted --></strong>: - Define o número de threads usadas pelo coletor de lixo paralelo</li>
+<li><strong>-XX:NewSize=128m</strong>: Define o tamanho inicial da memória heap do IntelliJ IDEA</li>
+<li><strong>-XX:MaxNewSize=256m</strong>: Define o tamanho máximo da memória heap do IntelliJ IDEA</li>
+</ul>
+<p>Para mais informações, acesse a documentação oficial do IntelliJ IDEA em <strong><a href="https://www.jetbrains.com/help/idea/tuning-the-ide.html">https://www.jetbrains.com/help/idea/tuning-the-ide.html</a></strong>.</p>
 
 </div>
 
