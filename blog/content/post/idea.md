@@ -175,6 +175,27 @@ $ ./install-plugins.sh
 
 Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.
 
+## Customizando a JVM do IntelliJ IDEA
+
+O IntelliJ IDEA pode consumir bastante recursos no geral. Por isso, é importante que você configure a JVM corretamente para que o software funcione de forma satisfatória. Para isso, você pode ir em Help > Edit Custom VM Options que irá abrir o arquivo `idea64.exe.vmoptions` ou `idea64.vmoptions` (dependendo do seu sistema operacional) no diretório de instalação do IntelliJ IDEA. Neste arquivo, você pode adicionar as seguintes configurações:
+
+* **-Xms1024m**: Define o tamanho inicial da memória heap do IntelliJ IDEA. O valor padrão é 256 MB.
+* **-Xmx2048m**: Define o tamanho máximo da memória heap do IntelliJ IDEA. O valor padrão é 750 MB.
+* **-XX:ReservedCodeCacheSize=240m**: Define o tamanho do cache de código reservado do IntelliJ IDEA. O valor padrão é 240 MB.
+* **-XX:+UseConcMarkSweepGC**: Ativa o coletor de lixo do tipo CMS (Concurrent Mark Sweep) do IntelliJ IDEA.
+* **-XX:SoftRefLRUPolicyMSPerMB=50**: Define a política de referência suave do IntelliJ IDEA.
+* **-XX:+Use<GC>**: - Define o coletor de lixo a ser usado (G1, Parallel, ConcMarkSweep, etc.)
+* **-XX:MaxGCPauseMillis=<value>**: - Define o tempo máximo de pausa para a coleta de lixo
+* **-XX:ParallelGCThreads=<value>**: - Define o número de threads usadas pelo coletor de lixo paralelo
+* **-XX:NewSize=128m**: Define o tamanho inicial da memória heap do IntelliJ IDEA
+* **-XX:MaxNewSize=256m**: Define o tamanho máximo da memória heap do IntelliJ IDEA
+
+Para mais informações, acesse a documentação oficial do IntelliJ IDEA em **[https://www.jetbrains.com/help/idea/tuning-the-ide.html](https://www.jetbrains.com/help/idea/tuning-the-ide.html)**.
+
+
+
+
+
 
 
 
