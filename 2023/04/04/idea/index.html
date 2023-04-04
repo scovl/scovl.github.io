@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Intellij IDEA &middot; Vitor Lobo</title>
+        <meta name="description" content="Under the hood">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.107.0">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Intellij IDEA">
+<meta property="og:description" content="Under the hood">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://lobocode.github.io/2023/04/04/idea/">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
+        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="https://lobocode.github.io/img/favicon.ico">
+    </head>
+    <body>
+        
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="lobocode-title">
+                                <a title="lobocode" href="https://lobocode.github.io">$ /home/lobocode_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/lobocode" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Intellij IDEA</h1>
+    
+        <p class="post-description" itemprop="description">Under the hood</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2023-04-04" itemprop="datePublished">ter., abr. 4, 2023</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 5 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <h2 id="introdução">Introdução</h2>
+<h3 id="pré-requisitos">Pré-requisitos</h3>
+<p>O pré-requisito para rodar bem o Intellij IDEA é ter uma máquina com pelo menos 8GB de RAM e um processador com 4 núcleos. O ideal é ter 16GB de RAM e um processador com 8 núcleos segundo o <strong><a href="https://www.jetbrains.com/help/idea/prerequisites.html#min_requirements">próprio site da JetBrains</a></strong>.</p>
+<h2 id="under-the-hood">Under the hood</h2>
+<h3 id="o-que-ocorre-quando-você-inicia-o-intellij-idea">O que ocorre quando você inicia o Intellij IDEA?</h3>
+<p>Quando você inicia o IntelliJ IDEA, uma série de processos ocorre em segundo plano para configurar o ambiente de desenvolvimento e prepará-lo para o uso. Vamos detalhar esses processos e entender o papel de cada componente no funcionamento do IntelliJ IDEA.</p>
+<h3 id="inicialização">Inicialização:</h3>
+<p>Quando você executa o IntelliJ IDEA, o aplicativo carrega sua interface gráfica e verifica a existência de atualizações e plugins. Dependendo da configuração do seu sistema, você também pode ser solicitado a selecionar um JDK (Java Development Kit) para o projeto. A JVM (Java Virtual Machine) é iniciada para executar o aplicativo e alocar a memória necessária. Se você estiver criando um novo projeto, o IntelliJ IDEA solicitará que você selecione um diretório para armazenar os arquivos do projeto. Dentro deste diretório, várias pastas serão criadas para gerenciar diferentes aspectos do projeto:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">&lt;project_name&gt;
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── .idea
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">│   ├── modules.xml
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">│   ├── workspace.xml
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">│   ├── misc.xml
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">│   └── &lt;module_name&gt;.iml
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">├── src
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">│   └── &lt;package_name&gt;
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">│       └── &lt;source_file&gt;.java
+</span></span><span class="line"><span class="ln">10</span><span class="cl">└── out
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    └── production
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        └── &lt;project_name&gt;
+</span></span><span class="line"><span class="ln">13</span><span class="cl">            └── &lt;compiled_class&gt;.class
+</span></span></code></pre></div><ul>
+<li><strong>.idea</strong>: Esta pasta contém arquivos de configuração específicos do IntelliJ IDEA, como informações do projeto e do módulo, configurações do workspace e arquivos de cache. Essa pasta geralmente não é compartilhada entre desenvolvedores. Esta pasta contém arquivos de configuração específicos do IntelliJ IDEA e é criada automaticamente para cada projeto. Ela inclui:
+<ul>
+<li><strong>modules.xml</strong>: Define os módulos do projeto e suas dependências.</li>
+<li><strong>workspace.xml</strong>: Armazena as configurações do ambiente de desenvolvimento, incluindo configurações de execução e depuração.</li>
+<li><strong>misc.xml</strong>: Contém configurações diversas, como o JDK do projeto.</li>
+<li><strong>.iml</strong>: Arquivos de configuração de módulo específicos do IntelliJ que contêm informações sobre as dependências do módulo, o SDK e o compilador.</li>
+</ul>
+</li>
+<li><strong>src</strong>: Esta pasta contém o código-fonte do seu projeto, incluindo arquivos Java, arquivos de recursos e outros arquivos relacionados.</li>
+<li><strong>out ou target</strong>: Esta pasta armazena os arquivos compilados gerados pelo IntelliJ IDEA ou por ferramentas de compilação externas, como o Maven ou o Gradle. Os arquivos nesta pasta são gerados automaticamente e geralmente não são incluídos no controle de versão.</li>
+</ul>
+<h3 id="cache-e-índices">Cache e Índices:</h3>
+<p>O IntelliJ IDEA utiliza cache e índices para acelerar a navegação, pesquisa e compilação de código. Essas informações são armazenadas no diretório de cache do sistema, que geralmente está localizado em <code>~/.cache/JetBrains/IntelliJIdea&lt;versão&gt;</code> no Linux, <code>%LOCALAPPDATA%\JetBrains\IntelliJIdea&lt;versão&gt;</code> no Windows e <code>~/Library/Caches/JetBrains/IntelliJIdea&lt;versão&gt;</code> no macOS. Os índices são usados para melhorar o desempenho de pesquisas e inspeções de código, enquanto o cache armazena dados temporários que podem ser reutilizados para acelerar a inicialização e a compilação do projeto. O IntelliJ IDEA usa o padrão de projeto Maven por padrão para organizar a estrutura do diretório do projeto e gerenciar dependências. O padrão Maven é amplamente utilizado na comunidade Java e facilita a colaboração entre desenvolvedores e a integração com outras ferramentas de desenvolvimento. No entanto, o IntelliJ IDEA também suporta outros padrões de projeto, como o Gradle. Depois de criar ou abrir um projeto, o IntelliJ IDEA configura o ambiente de desenvolvimento, incluindo a criação de uma configuração de execução e depuração, a vinculação do JDK e a configuração de outras ferramentas e plugins específicos do projeto. Essas configurações são armazenadas no arquivo <code>.idea/workspace.xml</code>.</p>
+<h3 id="customizando-o-intellij-idea">Customizando o IntelliJ IDEA</h3>
+<p>A pasta de cache do IntelliJ IDEA cresce principalmente devido ao armazenamento temporário de dados e arquivos gerados durante o uso do IDE. Esses dados incluem informações de índice, histórico de versões, arquivos compilados, configurações de execução e outros dados temporários. O cache é usado para melhorar o desempenho e a eficiência do IntelliJ IDEA, permitindo acesso rápido a informações frequentemente usadas e evitando a necessidade de regerar dados. No entanto, com o uso contínuo, a pasta de cache pode continuar a crescer e ocupar espaço significativo em disco. Isso acontece porque, em alguns casos, os arquivos temporários não são excluídos automaticamente pelo IDE. Além disso, o cache pode incluir dados de projetos que não estão mais em uso ou informações desatualizadas. Para controlar o crescimento da pasta de cache e liberar espaço em disco, você pode seguir estas etapas:</p>
+<ul>
+<li><strong>Limpar o cache do sistema</strong>: No IntelliJ IDEA, vá para <strong>File &gt; Invalidate Caches / Restart</strong>. Isso abrirá uma janela de diálogo onde você pode selecionar <strong>Invalidate and Restart</strong>. Isso limpará o cache do sistema e reiniciará o IntelliJ IDEA.</li>
+<li><strong>Excluir arquivos temporários manualmente</strong>: Navegue até a pasta de cache do IntelliJ IDEA (geralmente localizada em <code>C:\Users\&lt;username&gt;\.IntelliJIdea&lt;version&gt;\system\</code> no Windows ou <code>~/Library/Caches/JetBrains/IntelliJIdea&lt;version&gt;/</code> no macOS) e exclua os arquivos e pastas que não são mais necessários. Certifique-se de fechar o IntelliJ IDEA antes de fazer isso para evitar possíveis problemas.</li>
+<li><strong>Configure o tamanho máximo do cache</strong>: Você pode limitar o tamanho do cache ajustando as configurações do IntelliJ IDEA. Para fazer isso, vá para <strong>Help &gt; Edit Custom Properties</strong> e adicione a seguinte linha: <code>idea.max.content.cache.size=&lt;tamanho_em_MB&gt;</code>. Salve o arquivo e reinicie o IntelliJ IDEA.</li>
+</ul>
+<p>Ou se preferir, execute os scripts abaixo de acordo com cada OS:</p>
+<h3 id="linux">Linux</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">rm -rf ~/.cache/JetBrains/IntelliJIdea*/system/caches
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/.IntelliJIdea*/config/options/custom.properties
+</span></span></code></pre></div><h3 id="windows">Windows</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="c"># Remove o cache do IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nb">Remove-Item</span> <span class="n">-Path</span> <span class="s2">&#34;</span><span class="nv">$env:LOCALAPPDATA</span><span class="s2">\JetBrains\IntelliJIdea*\system\caches&#34;</span> <span class="n">-Recurse</span> <span class="n">-Force</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c"># Lembre-se de usar o valor que lhe for mais conveniente</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="s2">&#34;</span><span class="nv">$env:LOCALAPPDATA</span><span class="s2">\JetBrains\IntelliJIdea*\config\options\custom.properties&#34;</span> <span class="n">-Value</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span>
+</span></span></code></pre></div><h3 id="macos">macOS</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/Library/Preferences/JetBrains/IntelliJIdea*/options/custom.properties
+</span></span></code></pre></div>
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/java/">Java</a>, 
+            
+                <a href="/tags/ide/">IDE</a>, 
+            
+                <a href="/tags/intellij-idea/">Intellij IDEA</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Intellij%20IDEA&url=https%3a%2f%2flobocode.github.io%2f2023%2f04%2f04%2fidea%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flobocode.github.io%2f2023%2f04%2f04%2fidea%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flobocode.github.io%2f2023%2f04%2f04%2fidea%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Intellij%20IDEA&url=https%3a%2f%2flobocode.github.io%2f2023%2f04%2f04%2fidea%2f&summary=Under%20the%20hood"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="application/javascript">
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "lobocode-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lobocode" href="https://lobocode.github.io">lobocode</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2023 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lobocode.github.iojs/jquery-1.11.3.min.js"></script>
+        <script src="https://lobocode.github.iojs/jquery.fitvids.js"></script>
+        <script src="https://lobocode.github.iojs/scripts.js"></script>
+    </body>
+</html>
+
