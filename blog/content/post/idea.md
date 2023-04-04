@@ -314,14 +314,27 @@ Para mais informações, acesse o seguinte **[cheatsheet do IntelliJ IDEA](https
 
 1. Abra o IntelliJ IDEA e vá para `File > Manage IDE Settings > Export Settings` (Arquivo > Gerenciar configurações do IDE > Exportar configurações).
 2. Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.
-3. Crie um repositório Git em um serviço de hospedagem como o GitHub ou o GitLab.
-4. Clone o repositório Git em todos os computadores em que você deseja sincronizar as configurações do IntelliJ IDEA.
-5. Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta ".idea" para a raiz do diretório do seu projeto Git.
-6. No IntelliJ IDEA, vá para `File > Manage IDE Settings > Import Settings` (Arquivo > Gerenciar configurações do IDE > Importar configurações) e selecione a pasta ".idea" que você acabou de copiar para o diretório do projeto.
-7. Selecione as configurações que deseja importar e escolha "OK".
-8. As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.
+3 . Crie um repositório Git para o projeto e coloque-o no GitHub ou em qualquer outro serviço de hospedagem de repositórios Git.
+4. Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta ".idea" para a raiz do diretório do seu projeto Git.
+5. No IntelliJ IDEA, vá para `File > Manage IDE Settings > Import Settings` (Arquivo > Gerenciar configurações do IDE > Importar configurações) e selecione a pasta ".idea" que você acabou de copiar para o diretório do projeto.
+6. Selecione as configurações que deseja importar e escolha "OK".
+7. As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.
 
-É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.
+Você pode também simplificar esse passos por linha de comando usando o seguinte comando:
+
+```bash
+# Exportando as configurações do IntelliJ IDEA para um arquivo ZIP
+./idea.sh export -o ~/settings.zip
+```
+
+E para importar:
+
+```bash
+# Importando as configurações do IntelliJ IDEA de um arquivo ZIP
+./idea.sh import -i ~/settings.zip
+```
+
+Lembrando que o idea.sh se refere ao script que está na pasta bin do IntelliJ IDEA para Linux e Mac. No Windows, o script é chamado de idea.bat ou diretamente pelo binário idea.exe. É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.
 
 ### IntelliJ IDEA Ultimate vs IntelliJ IDEA Community
 
