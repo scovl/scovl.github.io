@@ -295,6 +295,3 @@ Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige ta
 
 * **[IntelliJ IDEA](https://www.jetbrains.com/pt-br/idea/)**
 * **[IntelliJ IDEA: The Java IDE for Professional Developers](https://www.jetbrains.com/pt-br/idea/features/)**
-
-
-
