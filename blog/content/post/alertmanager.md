@@ -14,11 +14,9 @@ author = "Vitor Lobo Ramos"
 
 ## Introdução
 
-O AlertManager é um componente crucial do ecossistema Prometheus, responsável pelo gerenciamento de alertas e notificações. Sua principal função é receber, agrupar e encaminhar alertas gerados a partir das regras definidas no Prometheus, possibilitando a identificação rápida e eficiente de problemas ou eventos importantes relacionados ao desempenho de sistemas e aplicações. Importante para os usuários do Prometheus, o AlertManager permite a integração com diversos sistemas de notificação, como e-mail, Slack, PagerDuty e outros, facilitando a comunicação e a tomada de ação rápida em resposta aos alertas. Além disso, ele gerencia a supressão temporária de alertas, evitando notificações duplicadas ou desnecessárias.
+O AlertManager é um componente crucial do ecossistema Prometheus, responsável pelo gerenciamento de alertas e notificações. Sua principal função é receber, agrupar e encaminhar alertas gerados a partir das regras definidas no Prometheus, possibilitando a identificação rápida e eficiente de problemas ou eventos importantes relacionados ao desempenho de sistemas e aplicações. Importante para os usuários do Prometheus, o AlertManager permite a integração com diversos sistemas de notificação, como e-mail, Slack, PagerDuty e outros, facilitando a comunicação e a tomada de ação rápida em resposta aos alertas. Além disso, ele gerencia a supressão temporária de alertas, evitando notificações duplicadas ou desnecessárias. Com o AlertManager, os usuários podem definir e personalizar regras de alerta e roteamento, garantindo que as notificações sejam enviadas para as equipes responsáveis de forma eficaz. Desse modo, o AlertManager se mostra fundamental para o monitoramento proativo e a manutenção eficiente de sistemas, contribuindo para a estabilidade e confiabilidade das infraestruturas monitoradas pelo Prometheus.
 
-Com o AlertManager, os usuários podem definir e personalizar regras de alerta e roteamento, garantindo que as notificações sejam enviadas para as equipes responsáveis de forma eficaz. Desse modo, o AlertManager se mostra fundamental para o monitoramento proativo e a manutenção eficiente de sistemas, contribuindo para a estabilidade e confiabilidade das infraestruturas monitoradas pelo Prometheus.
-
-### Arquitetura AlertManager
+## Arquitetura AlertManager
 
 
 
@@ -155,8 +153,409 @@ groups:
 
 Você pode adicionar mais grupos e regras de alerta conforme necessário. Após configurar seu arquivo `alert_rules.yml`, verifique se ele está especificado na seção rule_files do arquivo `prometheus.yml` e reinicie o Prometheus para que as alterações entrem em vigor.
 
+## Escalando o Alertmanager
+
+![img#center](images/alert/umlsns.png#center)
+
+Nesta arquitetura, o Alertmanager envia alertas para um Amazon SNS Topic. O Amazon SQS Queue está inscrito no SNS Topic para receber os alertas. A AWS Lambda Function é configurada para ser acionada quando novas mensagens chegam à fila SQS e processa os alertas conforme necessário. Aqui está um exemplo de uma função Lambda em Python para receber alertas e filtrar com base em labels. Neste exemplo, estamos usando labels aleatórias como "severity" e "team".
+
+```python
+import json
+
+def filter_alerts_by_labels(alerts, labels):
+    filtered_alerts = []
+    
+    for alert in alerts:
+        match = all(alert.get('labels', {}).get(k) == v for k, v in labels.items())
+        if match:
+            filtered_alerts.append(alert)
+    
+    return filtered_alerts
+
+def lambda_handler(event, context):
+    print("Event: ", json.dumps(event))
+
+    # Substitua estas labels pelos valores desejados
+    required_labels = {
+        "severity": "critical",
+        "team": "team1"
+    }
+
+    alerts = []
+    
+    for record in event.get("Records", []):
+        message_body = json.loads(record.get("body"))
+        alerts.extend(message_body.get("alerts", []))
+
+    filtered_alerts = filter_alerts_by_labels(alerts, required_labels)
+    
+    print("Alertas filtrados: ", json.dumps(filtered_alerts))
+
+    # Aqui você pode processar os alertas filtrados de acordo com sua necessidade
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Lambda executada com sucesso!')
+    }
+
+```
+
+Neste exemplo, a função `filter_alerts_by_labels` recebe uma lista de alertas e um dicionário de labels e retorna uma lista de alertas filtrados que correspondem às labels fornecidas. A função `lambda_handler` é a função principal que será executada quando a Lambda for acionada. Ela extrai os alertas das mensagens recebidas e, em seguida, utiliza a função `filter_alerts_by_labels` para filtrar os alertas com base nas labels desejadas. Você pode personalizar a variável `required_labels` de acordo com as labels que deseja filtrar.
+
+---
 
 ## Alertas
+
+### Hardware Linux
+
+Memory Usage
+
+```yaml
+- alert: HighMemoryUsage
+  expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High memory usage on {{ $labels.instance }}"
+    description: "Memory usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+```
+
+CPU Usage
+
+```yaml
+- alert: HighCPUUsage
+  expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High CPU usage on {{ $labels.instance }}"
+    description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+```
+
+Disk Usage
+
+```yaml
+- alert: HighDiskUsage
+  expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 20
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High disk usage on {{ $labels.instance }}"
+    description: "Disk usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+```
+
+Disk I/O
+
+```yaml
+- alert: HighDiskIO
+  expr: sum by (instance) (rate(node_disk_io_time_seconds_total[5m])) > 100
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High disk I/O on {{ $labels.instance }}"
+    description: "Disk I/O is above 100 for more than 5 minutes on {{ $labels.instance }}"
+```
+
+Network I/O
+
+```yaml
+- alert: HighNetworkIO
+  expr: sum by (instance) (rate(node_network_receive_bytes_total[5m]) + rate(node_network_transmit_bytes_total[5m])) / 2 > 1000000
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High network I/O on {{ $labels.instance }}"
+    description: "Network I/O is above 1 MB/s for more than 5 minutes on {{ $labels.instance }}"
+```
+
+High Latency
+
+```yaml
+- alert: HighLatency
+  expr: histogram_quantile(0.99, rate(node_network_transmit_queue_length{quantile="0.99"}[5m])) > 10
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High latency on {{ $labels.instance }}"
+    description: "99th percentile network latency is above 10ms for more than 5 minutes on {{ $labels.instance }}"
+```
+
+### Hardware Windows
+
+Memory Usage	
+
+```yaml
+- alert: HighMemoryUsage
+  expr: 100 * (1 - (wmi_os_free_physical_memory_bytes / wmi_cs_physical_memory_bytes)) > 90
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High memory usage on {{ $labels.instance }}"
+    description: "Memory usage is above 90% for more than 5 minutes on {{ $labels.instance }}"
+
+```
+
+CPU Usage
+
+```yaml
+- alert: HighCPUUsage
+  expr: 100 * (1 - avg_over_time(wmi_cpu_time_total{mode="idle"}[5m])) > 90
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High CPU usage on {{ $labels.instance }}"
+    description: "CPU usage is above 90% for more than 5 minutes on {{ $labels.instance }}"
+
+```
+
+Disk Usage
+
+```yaml
+- alert: HighDiskUsage
+  expr: 100 * (1 - (wmi_logical_disk_free_bytes / wmi_logical_disk_size_bytes)) > 90
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High disk usage on {{ $labels.instance }}"
+    description: "Disk usage is above 90% for more than 5
+
+```
+
+Disk I/O
+
+```yaml
+- alert: HighDiskIO
+  expr: sum by (instance) (rate(wmi_logical_disk_write_bytes_total[5m]) + rate(wmi_logical_disk_read_bytes_total[5m])) / 2 > 1000000
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High disk I/O on {{ $labels.instance }}"
+    description: "Disk I/O is above 1 MB/s for more than 5 minutes on {{ $labels.instance }}"
+
+```
+
+Network I/O
+
+```yaml
+- alert: HighNetworkIO
+  expr: sum by (instance) (rate(wmi_network_interface_bytes_received_total[5m]) + rate(wmi_network_interface_bytes_sent_total[5m])) / 2 > 1000000
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High network I/O on {{ $labels.instance }}"
+    description: "Network I/O is above 1 MB/s for more than 5 minutes on {{ $labels.instance }}"
+
+```
+
+High Latency
+
+```yaml
+- alert: HighLatency
+  expr: probe_duration_seconds{job="blackbox"} > 0.1
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    summary: "High latency on {{ $labels.instance }}"
+    description: "Network latency is above 100ms for more than 5 minutes on {{ $labels.instance }}"
+
+```
+
+### Kubernetes
+
+Pods CrashLooping
+
+```yaml
+- alert: PodCrashLooping
+  expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[5m]) * 60 > 0
+  for: 15m
+  labels:
+    severity: warning
+  annotations:
+    message: "Pod {{ $labels.namespace }}/{{ $labels.pod }} está em CrashLooping ({{ $value }} reinicializações nos últimos 5 minutos)"
+
+```
+
+Pods Not Ready
+
+```yaml
+- alert: PodNotReady
+  expr: kube_pod_status_ready{condition="false"} == 1
+  for: 10m
+  labels:
+    severity: warning
+  annotations:
+    message: "Pod {{ $labels.namespace }}/{{ $labels.pod }} não está pronto"
+
+```
+
+Pods Not Running
+
+```yaml
+- alert: PodNotRunning
+  expr: kube_pod_status_phase{phase=~"Pending|Failed"} == 1
+  for: 10m
+  labels:
+    severity: warning
+  annotations:
+    message: "Pod {{ $labels.namespace }}/{{ $labels.pod }} não está em execução (estado: {{ $labels.phase }})"
+
+```
+
+Pods Pending
+
+```yaml
+- alert: PodPending
+  expr: kube_pod_status_phase{phase="Pending"} == 1
+  for: 10m
+  labels:
+    severity: warning
+  annotations:
+    message: "Pod {{ $labels.namespace }}/{{ $labels.pod }} está pendente"
+
+```
+
+Node Not Ready
+
+```yaml
+- alert: NodeNotReady
+  expr: kube_node_status_condition{condition="Ready",status="false"} == 1
+  for: 15m
+  labels:
+    severity: warning
+  annotations:
+    message: "Nó {{ $labels.node }} não está pronto"
+
+```
+
+Node Not Schedulable
+
+```yaml
+- alert: NodeNotSchedulable
+  expr: kube_node_spec_unschedulable == 1
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Nó {{ $labels.node }} não é agendável"
+
+```
+
+Out of Disk
+
+```yaml
+- alert: NodeOutOfDisk
+  expr: kube_node_status_condition{condition="OutOfDisk",status="true"} == 1
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Nó {{ $labels.node }} está sem espaço em disco"
+
+```
+
+OOMKilled
+
+```yaml
+- alert: PodOOMKilled
+  expr: increase(kube_pod_container_status_terminated_reason{reason="OOMKilled"}[5m]) > 0
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Container no Pod {{ $labels.namespace }}/{{ $labels.pod }} foi encerrado por falta de memória (OOMKilled)"
+```
+
+### Docker
+
+As expressões de alerta para o Docker podem ser criadas usando as métricas do cAdvisor ou da API do Docker. Abaixo estão algumas expressões de alerta baseadas em métricas do cAdvisor. Supondo que você tenha o cAdvisor coletando métricas do Docker e integrado ao Prometheus:
+
+Contêineres em excesso:
+
+```yaml
+- alert: ExcessiveContainers
+  expr: sum(container_last_seen{name=~".+"}) by (instance) > 100
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Muitos contêineres em execução no host {{ $labels.instance }} ({{ $value }} contêineres)"
+
+```
+
+Alta utilização de CPU:
+
+```yaml
+- alert: HighCPUUsage
+  expr: (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project!=""}[5m]) * 100) > 90
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Alta utilização de CPU no contêiner {{ $labels.container_label_com_docker_compose_service }} ({{ $value | printf "%.2f" }}%)"
+
+```
+
+Alta utilização de memória:
+
+```yaml
+- alert: HighMemoryUsage
+  expr: (container_memory_usage_bytes{container_label_com_docker_compose_project!=""} / container_spec_memory_limit_bytes{container_label_com_docker_compose_project!=""} * 100) > 90
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Alta utilização de memória no contêiner {{ $labels.container_label_com_docker_compose_service }} ({{ $value | printf "%.2f" }}%)"
+
+```
+
+Contêineres reiniciados frequentemente:
+
+```yaml
+- alert: FrequentContainerRestarts
+  expr: increase(container_start_time_seconds{container_label_com_docker_compose_project!=""}[5m]) > 5
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Contêiner {{ $labels.container_label_com_docker_compose_service }} reiniciado frequentemente ({{ $value }} reinicializações nos últimos 5 minutos)"
+
+```
+
+Contêineres parados inesperadamente:
+
+```yaml
+- alert: UnexpectedStoppedContainers
+  expr: increase(container_tasks_state{state="stopped", container_label_com_docker_compose_project!=""}[5m]) > 0
+  for: 5m
+  labels:
+    severity: warning
+  annotations:
+    message: "Contêiner {{ $labels.container_label_com_docker_compose_service }} parou inesperadamente ({{ $value }} paradas nos últimos 5 minutos)"
+```
+
+Essas expressões de alerta devem ser incluídas no arquivo de configuração do Prometheus Alertmanager. Lembre-se de ajustar os valores e durações de acordo com as necessidades específicas do seu ambiente.
+
+### MySQL
+
+### PostgreSQL
+
+### MongoDB
+
+### Redis
+
+
 
 ---
 
