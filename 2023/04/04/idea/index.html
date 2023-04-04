@@ -256,7 +256,20 @@
 </span></span></code></pre></div><p>Ou se preferir, você pode ir em File &gt; Repair IDE. Desta forma, o IntelliJ IDEA irá reparar o software e reiniciar automaticamente.</p>
 <h2 id="definindo-estrutura-do-projeto">Definindo estrutura do projeto</h2>
 <p>É possível também definir a estrutura do projeto tudo por linha de comando. Para isso, basta executar o comando abaixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh create-project --name &lt;project_name&gt; --group &lt;group_id&gt; --artifact &lt;artifact_id&gt; --version &lt;version&gt; --package &lt;package_name&gt; --src &lt;source_directory&gt; --test &lt;test_directory&gt; --out &lt;output_directory&gt; --project &lt;project_directory&gt; --location &lt;project_location&gt; --language &lt;language&gt; --build-system &lt;build_system&gt; --jdk &lt;jdk_version&gt; --sample-code
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">./idea.sh create-project --name &lt;project_name&gt;
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">--group &lt;group_id&gt;
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">--artifact &lt;artifact_id&gt;
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">--version &lt;version&gt;
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">--package &lt;package_name&gt;
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">--src &lt;source_directory&gt;
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">--test &lt;test_directory&gt;
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">--out &lt;output_directory&gt;
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">--project &lt;project_directory&gt;
+</span></span><span class="line"><span class="ln">10</span><span class="cl">--location &lt;project_location&gt;
+</span></span><span class="line"><span class="ln">11</span><span class="cl">--language &lt;language&gt;
+</span></span><span class="line"><span class="ln">12</span><span class="cl">--build-system &lt;build_system&gt;
+</span></span><span class="line"><span class="ln">13</span><span class="cl">--jdk &lt;jdk_version&gt;
+</span></span><span class="line"><span class="ln">14</span><span class="cl">--sample-code
 </span></span></code></pre></div><p>Onde os parâmetros são:</p>
 <ul>
 <li><strong>&ndash;name</strong>: Nome do projeto.</li>
@@ -275,8 +288,21 @@
 <li><strong>&ndash;sample-code</strong>: Adiciona código de exemplo (OPCIONAL).</li>
 </ul>
 <p>Exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh create-project --name myproject --group com.example --artifact myproject --version 1.0.0 --package com.example.myproject --src src/main/java --test src/test/java --out target --project . --location ~/projects/myproject --language Java --build-system Maven --jdk <span class="m">11</span> --sample-code
-</span></span></code></pre></div><p>Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em File &gt; New &gt; Project e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">./idea.sh create-project --name myproject
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">--group com.example
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">--artifact myproject
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">--version 1.0.0
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">--package com.example.myproject
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">--src src/main/java
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">--test src/test/java
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">--out target
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">--project .
+</span></span><span class="line"><span class="ln">10</span><span class="cl">--location ~/projects/myproject
+</span></span><span class="line"><span class="ln">11</span><span class="cl">--language Java
+</span></span><span class="line"><span class="ln">12</span><span class="cl">--build-system Maven
+</span></span><span class="line"><span class="ln">13</span><span class="cl">--jdk <span class="m">11</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">--sample-code
+</span></span></code></pre></div><p>Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em <code>File &gt; New &gt; Project</code> e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:</p>
 <h2 id="tips-and-tricks">Tips and Tricks</h2>
 <p>O IntelliJ IDEA possui muitos hotkeys que podem ajudar a melhorar a produtividade no dia-a-dia. Aqui estão alguns exemplos úteis:</p>
 <ul>
@@ -314,7 +340,9 @@
 <li><strong>Refatoração de código avançada</strong>: O IntelliJ IDEA Ultimate possui várias ferramentas de refatoração de código avançadas que podem ajudar a reorganizar e simplificar o código.</li>
 <li><strong>Suporte para ambientes de desenvolvimento remoto</strong>: O IntelliJ IDEA Ultimate possui recursos avançados para trabalhar com ambientes de desenvolvimento remoto, incluindo SSH e Docker.</li>
 </ul>
-<p>** &gt; OBS **: Na minha opinião, o IntelliJ IDEA Community é mais do que suficiente na maioria casos. Particularmente não vejo muita necessidade de pagar por uma licença do IntelliJ IDEA Ultimate, pois a versão Community já oferece tudo o que eu preciso para trabalhar. Então vale a pena analisar bem se realmente vale a pena pagar por uma licença do IntelliJ IDEA Ultimate.</p>
+<blockquote>
+<p><strong>OBS</strong>: Na minha opinião, o IntelliJ IDEA Community é mais do que suficiente na maioria casos. Particularmente não vejo muita necessidade de pagar por uma licença do IntelliJ IDEA Ultimate, pois a versão Community já oferece tudo o que eu preciso para trabalhar. Então vale a pena analisar bem se realmente vale a pena pagar por uma licença do IntelliJ IDEA Ultimate.</p>
+</blockquote>
 <h2 id="conclusão">Conclusão</h2>
 <p>Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige tanto recurso quanto se espera. Por exemplo, a versão 2021.3 exige um sistema operacional de 64 bits que já é padrão hoje em dia, um processador Intel ou AMD de 2,3 GHz ou superior, pelo menos 4 GB de RAM (recomendado 8 GB ou mais), 2 GB de espaço em disco e uma placa de vídeo compatível com DirectX 11 ou posterior. Apesar do IntelliJ IDEA usar a biblioteca gráfica Swing para sua interface, já não é mais um problema para a maioria dos computadores modernos (é mais leve do que IDEs como Eclipse e NetBeans e em alguns casos até do que o próprio Visual Studio Code).</p>
 <hr>
