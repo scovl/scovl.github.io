@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 6 min</span>
+            <span>Estimated reading time: 8 min</span>
         </p>
     
 </header>
@@ -194,7 +194,45 @@
 <li><strong>idea.max.intellisense.filesize=&lt;tamanho_em_KB&gt;</strong>: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado. O valor padrão é 100 MB.</li>
 <li><strong>idea.plugins.path=&lt;caminho_do_diretório_de_plugins&gt;</strong>:</li>
 <li><strong>idea.save.files.automatically=false</strong>: Desativa o salvamento automático de arquivos.</li>
+<li><strong>idea.cycle.buffer.size=&lt;tamanho_em_KB&gt;</strong>: Define o tamanho do buffer de ciclo de vida do IntelliJ IDEA. O valor padrão é 100 MB.</li>
+<li><strong>idea.popup.weight=0.6</strong>: Define a largura máxima dos pop-ups do IntelliJ IDEA como uma fração da largura da tela.</li>
+<li><strong>idea.smooth.scrolling=true</strong>: Ativa o rolagem suave do IntelliJ IDEA.</li>
+<li><strong>idea.max.recent.projects=&lt;número_de_projetos&gt;</strong>: Define o número máximo de projetos recentes que o IntelliJ IDEA deve exibir no menu <strong>Arquivo &gt; Abrir recentemente</strong>.</li>
+<li><strong>idea.use.default.antialiasing.in.editor=true</strong>: Ativa o antialiasing padrão no editor do IntelliJ IDEA.</li>
+<li><strong>disable.process.cache=true</strong>: Desativa o cache de processos do IntelliJ IDEA. Isso pode ser útil se você estiver tendo problemas com o IntelliSense e queda de desempenho.</li>
 </ul>
+<p>Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo.</p>
+<h2 id="instalando-plugins-no-intellij-idea">Instalando plugins no IntelliJ IDEA</h2>
+<p>Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso, basta executar o comando abaixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh install-plugin &lt;plugin_name&gt;
+</span></span></code></pre></div><p>Exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ <span class="c1"># instalando o plugin github-copilot</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">$ ./idea.sh install-plugin github-copilot
+</span></span></code></pre></div><p>Agora podemos explorar isso de uma forma mais divertida. Vamos criar um script que instala uma lista de plugins no IntelliJ IDEA. Para isso, crie um arquivo chamado <code>install-plugins.sh</code> e adicione o seguinte conteúdo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Lista de plugins que serão instalados</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nv">PLUGINS</span><span class="o">=(</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="s2">&#34;github-copilot&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="s2">&#34;gitignore&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="s2">&#34;lombok&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="s2">&#34;material-theme-ui&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="s2">&#34;sonarlint&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="s2">&#34;sonarqube-community&#34;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="s2">&#34;string-manipulation&#34;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="s2">&#34;yaml&#34;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">)</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"># Instalando os plugins</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="k">for</span> plugin in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">PLUGINS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">    ./idea.sh install-plugin <span class="nv">$plugin</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="k">done</span>
+</span></span></code></pre></div><p>Agora edite o arquivo <code>idea.properties</code> e adicione o seguinte conteúdo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">idea.plugins.path<span class="o">=</span>~/plugins
+</span></span></code></pre></div><p>Ou se preferir, você pode usar o diretório padrão que fica em <code>~/.IntelliJIdea&lt;version&gt;/config/plugins</code>. Agora execute o script <code>install-plugins.sh</code> e veja os plugins sendo instalados no IntelliJ IDEA:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./install-plugins.sh
+</span></span></code></pre></div><p>Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.</p>
 
 </div>
 
