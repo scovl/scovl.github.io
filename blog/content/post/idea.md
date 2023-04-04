@@ -9,9 +9,9 @@ weight = 8
 
 ## Introdução
 
-IntelliJ IDEA é um ambiente de desenvolvimento integrado (IDE) criado pela JetBrains e é um das IDEs mais populares para desenvolvimento em Java/Kotlin/Scala e outras que rodam na JVM/GraalVM. Existem duas edições principais do IntelliJ IDEA: a Community e a Ultimate. **[A edição Community é gratuita e de código aberto](https://github.com/JetBrains/intellij-community)**, e é voltada para desenvolvedores individuais ou pequenas equipes que trabalham em projetos Java de médio porte. Ela oferece uma ampla gama de recursos, como suporte a linguagens e frameworks populares, integração com sistemas de controle de versão, depurador, refatoração de código, testes automatizados e muito mais.
+![img#center](/content/post/images/idea/idea.png#center)
 
-A edição Ultimate é paga e é voltada para empresas e equipes maiores que trabalham em projetos Java de grande porte. Ela oferece todos os recursos da edição Community, além de recursos avançados, como ferramentas de análise de código, depuração remota, suporte a tecnologias empresariais, integração com sistemas de gerenciamento de projetos e muito mais. A edição Ultimate é frequentemente usada em projetos de missão crítica, onde a produtividade e a eficiência são fundamentais para o sucesso do projeto. Ambas as edições do IntelliJ IDEA são altamente respeitadas na comunidade de desenvolvimento de software e são amplamente utilizadas em todo o mundo.
+IntelliJ IDEA é um ambiente de desenvolvimento integrado (IDE) criado pela JetBrains e é um das IDEs mais populares para desenvolvimento em Java/Kotlin/Scala e outras que rodam na JVM/GraalVM. Existem duas edições principais do IntelliJ IDEA: a Community e a Ultimate. **[A edição Community é gratuita e de código aberto](https://github.com/JetBrains/intellij-community)**, e é voltada para desenvolvedores individuais ou pequenas equipes que trabalham em projetos Java de médio porte. Ela oferece uma ampla gama de recursos, como suporte a linguagens e frameworks populares, integração com sistemas de controle de versão, depurador, refatoração de código, testes automatizados e muito mais. A edição Ultimate é paga e é voltada para empresas e equipes maiores que trabalham em projetos Java de grande porte. Ela oferece todos os recursos da edição Community, além de recursos avançados, como ferramentas de análise de código, depuração remota, suporte a tecnologias empresariais, integração com sistemas de gerenciamento de projetos e muito mais. A edição Ultimate é frequentemente usada em projetos de missão crítica, onde a produtividade e a eficiência são fundamentais para o sucesso do projeto. Ambas as edições do IntelliJ IDEA são altamente respeitadas na comunidade de desenvolvimento de software e são amplamente utilizadas em todo o mundo.
 
 ### Pré-requisitos
 
@@ -24,6 +24,8 @@ O pré-requisito para rodar bem o Intellij IDEA é ter uma máquina com pelo men
 Quando você inicia o IntelliJ IDEA, uma série de processos ocorre em segundo plano para configurar o ambiente de desenvolvimento e prepará-lo para o uso. Vamos detalhar esses processos e entender o papel de cada componente no funcionamento do IntelliJ IDEA.
 
 ### Inicialização:
+
+![img#center](/content/post/images/idea/ideainit.png#center)
 
 Quando você executa o IntelliJ IDEA, o aplicativo carrega sua interface gráfica e verifica a existência de atualizações e plugins. Dependendo da configuração do seu sistema, você também pode ser solicitado a selecionar um JDK (Java Development Kit) para o projeto. A JVM (Java Virtual Machine) é iniciada para executar o aplicativo e alocar a memória necessária. Se você estiver criando um novo projeto, o IntelliJ IDEA solicitará que você selecione um diretório para armazenar os arquivos do projeto. Dentro deste diretório, várias pastas serão criadas para gerenciar diferentes aspectos do projeto:
 
