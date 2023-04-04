@@ -97,3 +97,22 @@ rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
 echo "idea.max.content.cache.size=1024" >> ~/Library/Preferences/JetBrains/IntelliJIdea*/options/custom.properties
 ```
 
+O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Properties**, permite personalizar várias configurações do IntelliJ IDEA. Aqui estão algumas configurações úteis que você pode adicionar ou modificar neste arquivo:
+
+* **idea.max.content.cache.size**: Define o tamanho máximo do cache do IntelliJ IDEA. O valor padrão é 1024 MB.
+* **idea.max.intellisense.filesize**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado. O valor padrão é 100 MB.
+* **idea.max.intellisense.filesize.java**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado para arquivos Java. O valor padrão é 100 MB.
+* **idea.max.intellisense.filesize.xml**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado para arquivos XML. O valor padrão é 100 MB.
+
+> **Nota**: Perceba que você pode alterar o valor do intellisense para cada linguagem, como Java, XML, etc.
+
+* **idea.system.path=<caminho_do_diretório_do_sistema>**: Define o caminho do diretório do sistema do IntelliJ IDEA. O valor padrão é `~/.IntelliJIdea<version>/system`.
+* **idea.config.path=<caminho_do_diretório_de_configuração>**: Define o caminho do diretório de configuração do IntelliJ IDEA. O valor padrão é `~/.IntelliJIdea<version>/config`.
+* **idea.heap.size.initial=<tamanho_inicial_em_MB>**: Define o tamanho inicial da memória heap do IntelliJ IDEA. O valor padrão é 256 MB.
+* **idea.heap.size.maximum=<tamanho_máximo_em_MB>**: Define o tamanho máximo da memória heap do IntelliJ IDEA. O valor padrão é 750 MB.
+* **idea.max.intellisense.filesize=<tamanho_em_KB>**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado. O valor padrão é 100 MB.
+* **idea.plugins.path=<caminho_do_diretório_de_plugins>**: 
+* **idea.save.files.automatically=false**: Desativa o salvamento automático de arquivos.
+
+
+
