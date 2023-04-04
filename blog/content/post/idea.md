@@ -113,6 +113,68 @@ O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Pro
 * **idea.max.intellisense.filesize=<tamanho_em_KB>**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado. O valor padrão é 100 MB.
 * **idea.plugins.path=<caminho_do_diretório_de_plugins>**: 
 * **idea.save.files.automatically=false**: Desativa o salvamento automático de arquivos.
+* **idea.cycle.buffer.size=<tamanho_em_KB>**: Define o tamanho do buffer de ciclo de vida do IntelliJ IDEA. O valor padrão é 100 MB.
+* **idea.popup.weight=0.6**: Define a largura máxima dos pop-ups do IntelliJ IDEA como uma fração da largura da tela.
+* **idea.smooth.scrolling=true**: Ativa o rolagem suave do IntelliJ IDEA.
+* **idea.max.recent.projects=<número_de_projetos>**: Define o número máximo de projetos recentes que o IntelliJ IDEA deve exibir no menu **Arquivo > Abrir recentemente**.
+* **idea.use.default.antialiasing.in.editor=true**: Ativa o antialiasing padrão no editor do IntelliJ IDEA.
+* **disable.process.cache=true**: Desativa o cache de processos do IntelliJ IDEA. Isso pode ser útil se você estiver tendo problemas com o IntelliSense e queda de desempenho.
+
+Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo.
+
+## Instalando plugins no IntelliJ IDEA
+
+Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso, basta executar o comando abaixo:
+
+```bash
+$ ./idea.sh install-plugin <plugin_name>
+``` 
+
+Exemplo:
+
+```bash
+$ # instalando o plugin github-copilot
+$ ./idea.sh install-plugin github-copilot
+```
+
+Agora podemos explorar isso de uma forma mais divertida. Vamos criar um script que instala uma lista de plugins no IntelliJ IDEA. Para isso, crie um arquivo chamado `install-plugins.sh` e adicione o seguinte conteúdo:
+
+```bash
+#!/bin/bash
+
+# Lista de plugins que serão instalados
+
+PLUGINS=(
+    "github-copilot"
+    "gitignore"
+    "lombok"
+    "material-theme-ui"
+    "sonarlint"
+    "sonarqube-community"
+    "string-manipulation"
+    "yaml"
+)
+
+# Instalando os plugins
+for plugin in "${PLUGINS[@]}"; do
+    ./idea.sh install-plugin $plugin
+done
+```
+
+Agora edite o arquivo `idea.properties` e adicione o seguinte conteúdo:
+
+```bash
+idea.plugins.path=~/plugins
+```
+
+Ou se preferir, você pode usar o diretório padrão que fica em `~/.IntelliJIdea<version>/config/plugins`. Agora execute o script `install-plugins.sh` e veja os plugins sendo instalados no IntelliJ IDEA:
+
+```bash
+$ ./install-plugins.sh
+```
+
+Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.
+
 
 
 
