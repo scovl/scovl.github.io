@@ -55,6 +55,8 @@ Quando você executa o IntelliJ IDEA, o aplicativo carrega sua interface gráfic
 
 ### Cache e Índices:
 
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/blog/content/post/images/idea/cache.png#center)
+
 O IntelliJ IDEA utiliza cache e índices para acelerar a navegação, pesquisa e compilação de código. Essas informações são armazenadas no diretório de cache do sistema, que geralmente está localizado em `~/.cache/JetBrains/IntelliJIdea<versão>` no Linux, `%LOCALAPPDATA%\JetBrains\IntelliJIdea<versão>` no Windows e `~/Library/Caches/JetBrains/IntelliJIdea<versão>` no macOS. Os índices são usados para melhorar o desempenho de pesquisas e inspeções de código, enquanto o cache armazena dados temporários que podem ser reutilizados para acelerar a inicialização e a compilação do projeto. O IntelliJ IDEA usa o padrão de projeto Maven por padrão para organizar a estrutura do diretório do projeto e gerenciar dependências. O padrão Maven é amplamente utilizado na comunidade Java e facilita a colaboração entre desenvolvedores e a integração com outras ferramentas de desenvolvimento. No entanto, o IntelliJ IDEA também suporta outros padrões de projeto, como o Gradle. Depois de criar ou abrir um projeto, o IntelliJ IDEA configura o ambiente de desenvolvimento, incluindo a criação de uma configuração de execução e depuração, a vinculação do JDK e a configuração de outras ferramentas e plugins específicos do projeto. Essas configurações são armazenadas no arquivo `.idea/workspace.xml`.
 
 ### Customizando o IntelliJ IDEA
@@ -103,7 +105,7 @@ rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
 echo "idea.max.content.cache.size=1024" >> ~/Library/Preferences/JetBrains/IntelliJIdea*/options/custom.properties
 ```
 
-O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Properties**, permite personalizar várias configurações do IntelliJ IDEA. Aqui estão algumas configurações úteis que você pode adicionar ou modificar neste arquivo:
+O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Properties**, permite personalizar várias configurações do IntelliJ IDEA. No entanto, o recomendado é que ao invés de você editar diretamente o `idea.properties`, crie um `custom.properties`. Isso porque o `idea.properties` pode ser sobrescrito em uma atualização do IntelliJ IDEA. Aqui estão algumas configurações úteis que você pode adicionar ou modificar neste arquivo:
 
 * **idea.max.content.cache.size**: Define o tamanho máximo do cache do IntelliJ IDEA. O valor padrão é 1024 MB.
 * **idea.max.intellisense.filesize**: Define o tamanho máximo do arquivo para o qual o IntelliSense é aplicado. O valor padrão é 100 MB.
@@ -124,9 +126,33 @@ O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Pro
 * **idea.smooth.scrolling=true**: Ativa o rolagem suave do IntelliJ IDEA.
 * **idea.max.recent.projects=<número_de_projetos>**: Define o número máximo de projetos recentes que o IntelliJ IDEA deve exibir no menu **Arquivo > Abrir recentemente**.
 * **idea.use.default.antialiasing.in.editor=true**: Ativa o antialiasing padrão no editor do IntelliJ IDEA.
-* **disable.process.cache=true**: Desativa o cache de processos do IntelliJ IDEA. Isso pode ser útil se você estiver tendo problemas com o IntelliSense e queda de desempenho. 
+* **disable.process.cache=true**: Desativa o cache de processos do IntelliJ IDEA. Isso pode ser útil se você estiver tendo problemas com o IntelliSense e queda de desempenho.
 
-Para mais informações sobre as configurações do IntelliJ IDEA, consulte a **[documentação oficial](https://www.jetbrains.com/help/idea/tuning-the-ide.html#config-file)**. Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo.
+Para mais informações sobre as configurações do IntelliJ IDEA, consulte a **[documentação oficial](https://www.jetbrains.com/help/idea/tuning-the-ide.html#config-file)**. Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo. Abaixo um exemplo de customização que você poderá adotar em seu IntelliJ IDEA:
+
+```bash
+#!/bin/bash
+
+# Cria o arquivo custom.properties
+touch ~/.IntelliJIdea*/config/options/custom.properties
+
+# Definindo tamanho máximo do cache
+echo "idea.max.content.cache.size=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+
+# Definindo o heap inicial
+echo "idea.heap.size.initial=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+
+# Definindo o tamanho máximo de memória heap
+echo "idea.heap.size.maximum=2048" >> ~/.IntelliJIdea*/config/options/custom.properties
+
+# Definindo o tamanho do Buffer de ciclo de vida
+echo "idea.cycle.buffer.size=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+
+# Habilita a leitura do custom.properties no IntelliJ IDEA
+echo "idea.config.path=$HOME/.IntelliJIdea*/config" >> ~/.IntelliJIdea*/config/options/custom.properties
+```
+
+No caso do Windows, recomendo ou que você use o **[GitBash](https://gitforwindows.org/)** para execução do script acima, ou que você utilize o WSL (Windows Subsystem for Linux). Para saber mais sobre o WSL, consulte o artigo **[WSL: O que é e como instalar no Windows 10](https://www.devmedia.com.br/wsl-o-que-e-e-como-instalar-no-windows-10/40650)**.
 
 ## Instalando plugins no IntelliJ IDEA
 
@@ -284,7 +310,7 @@ O IntelliJ IDEA possui muitos hotkeys que podem ajudar a melhorar a produtividad
 * **Ctrl + D (ou Cmd + D no Mac)**: Duplica uma linha de código.
 * **Ctrl + / (ou Cmd + / no Mac)**: Comenta a linha atual ou o bloco selecionado de código.
 
-Além dos hotkeys acima, é possível salvar as configurações do IntelliJ IDEA em um repositório Git e sincronizar as configurações em diferentes computadores. Para isso, basta seguir os passos abaixo:
+Para mais informações, acesse o seguinte **[cheatsheet do IntelliJ IDEA](https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf)** onde contém uma lista completa de todos os hotkeys disponíveis. Além dos hotkeys listados, é possível salvar as configurações do IntelliJ IDEA em um repositório Git e sincronizar as configurações em diferentes computadores. Para isso, basta seguir os passos abaixo:
 
 1. Abra o IntelliJ IDEA e vá para `File > Manage IDE Settings > Export Settings` (Arquivo > Gerenciar configurações do IDE > Exportar configurações).
 2. Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.
@@ -313,7 +339,7 @@ O IntelliJ IDEA Ultimate é a versão completa e paga do IntelliJ IDEA, e possui
 
 ## Conclusão
 
-Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige tanto recurso quanto se espera. Por exemplo, a versão 2021.3 exige um sistema operacional de 64 bits que já é padrão hoje em dia, um processador Intel ou AMD de 2,3 GHz ou superior, pelo menos 4 GB de RAM (recomendado 8 GB ou mais), 2 GB de espaço em disco e uma placa de vídeo compatível com DirectX 11 ou posterior. Apesar do IntelliJ IDEA usar a biblioteca gráfica Swing para sua interface, já não é mais um problema para a maioria dos computadores modernos (é mais leve do que IDEs como Eclipse e NetBeans e em alguns casos até do que o próprio Visual Studio Code).
+Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige tanto recurso quanto se espera. Por exemplo, a versão 2021.3 exige um sistema operacional de 64 bits que já é padrão hoje em dia, um processador Intel ou AMD de 2,3 GHz ou superior, pelo menos 4 GB de RAM (recomendado 8 GB ou mais), 2 GB de espaço em disco e uma placa de vídeo compatível com DirectX 11 ou posterior. Apesar do IntelliJ IDEA usar a biblioteca gráfica Swing para sua interface, já não é mais um problema para a maioria dos computadores modernos (é mais leve do que IDEs como Eclipse e NetBeans e em alguns casos até do que o próprio Visual Studio Code). É comum encontrar a informação de que que o Java é lento por causa do uso de IDEs. Na verdade, esta é uma informação equivocada pois, a velocidade de execução de um programa em Java não é afetada pelo uso de uma IDE, mas por sua implementação e por como você configura a JVM. O uso de uma IDE, como o IntelliJ IDEA, pode até melhorar a performance do desenvolvimento fornecendo recursos avançados.
 
 ---
 
@@ -321,3 +347,4 @@ Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige ta
 
 * **[IntelliJ IDEA](https://www.jetbrains.com/pt-br/idea/)**
 * **[IntelliJ IDEA: The Java IDE for Professional Developers](https://www.jetbrains.com/pt-br/idea/features/)**
+* **[Artigo de IntelliJ IDEA da Alura](https://www.alura.com.br/artigos/dicas-e-truques-de-intellij-idea-para-quem-esta-comecando)**
