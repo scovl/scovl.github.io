@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 9 min</span>
+            <span>Estimated reading time: 16 min</span>
         </p>
     
 </header>
@@ -110,6 +110,8 @@
     
 
     <h2 id="introdução">Introdução</h2>
+<p>IntelliJ IDEA é um ambiente de desenvolvimento integrado (IDE) criado pela JetBrains e é um das IDEs mais populares para desenvolvimento em Java/Kotlin/Scala e outras que rodam na JVM/GraalVM. Existem duas edições principais do IntelliJ IDEA: a Community e a Ultimate. <strong><a href="https://github.com/JetBrains/intellij-community">A edição Community é gratuita e de código aberto</a></strong>, e é voltada para desenvolvedores individuais ou pequenas equipes que trabalham em projetos Java de médio porte. Ela oferece uma ampla gama de recursos, como suporte a linguagens e frameworks populares, integração com sistemas de controle de versão, depurador, refatoração de código, testes automatizados e muito mais.</p>
+<p>A edição Ultimate é paga e é voltada para empresas e equipes maiores que trabalham em projetos Java de grande porte. Ela oferece todos os recursos da edição Community, além de recursos avançados, como ferramentas de análise de código, depuração remota, suporte a tecnologias empresariais, integração com sistemas de gerenciamento de projetos e muito mais. A edição Ultimate é frequentemente usada em projetos de missão crítica, onde a produtividade e a eficiência são fundamentais para o sucesso do projeto. Ambas as edições do IntelliJ IDEA são altamente respeitadas na comunidade de desenvolvimento de software e são amplamente utilizadas em todo o mundo.</p>
 <h3 id="pré-requisitos">Pré-requisitos</h3>
 <p>O pré-requisito para rodar bem o Intellij IDEA é ter uma máquina com pelo menos 8GB de RAM e um processador com 4 núcleos. O ideal é ter 16GB de RAM e um processador com 8 núcleos segundo o <strong><a href="https://www.jetbrains.com/help/idea/prerequisites.html#min_requirements">próprio site da JetBrains</a></strong>.</p>
 <h2 id="under-the-hood">Under the hood</h2>
@@ -201,7 +203,7 @@
 <li><strong>idea.use.default.antialiasing.in.editor=true</strong>: Ativa o antialiasing padrão no editor do IntelliJ IDEA.</li>
 <li><strong>disable.process.cache=true</strong>: Desativa o cache de processos do IntelliJ IDEA. Isso pode ser útil se você estiver tendo problemas com o IntelliSense e queda de desempenho.</li>
 </ul>
-<p>Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo.</p>
+<p>Para mais informações sobre as configurações do IntelliJ IDEA, consulte a <strong><a href="https://www.jetbrains.com/help/idea/tuning-the-ide.html#config-file">documentação oficial</a></strong>. Se desejar agilizar o processo de customização do IntelliJ IDEA, você poderá editar as sugestões de scripts acima de acordo com seu SO e necessidade. Dessa forma, você poderá criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente, por exemplo.</p>
 <h2 id="instalando-plugins-no-intellij-idea">Instalando plugins no IntelliJ IDEA</h2>
 <p>Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso, basta executar o comando abaixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh install-plugin &lt;plugin_name&gt;
@@ -248,6 +250,79 @@
 <li><strong>-XX:MaxNewSize=256m</strong>: Define o tamanho máximo da memória heap do IntelliJ IDEA</li>
 </ul>
 <p>Para mais informações, acesse a documentação oficial do IntelliJ IDEA em <strong><a href="https://www.jetbrains.com/help/idea/tuning-the-ide.html">https://www.jetbrains.com/help/idea/tuning-the-ide.html</a></strong>.</p>
+<h2 id="reparando-o-intellij-idea">Reparando o IntelliJ IDEA</h2>
+<p>Se você estiver tendo problemas com o IntelliJ IDEA, você pode tentar reparar o software. Para isso, basta executar o comando abaixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh repair
+</span></span></code></pre></div><p>Ou se preferir, você pode ir em File &gt; Repair IDE. Desta forma, o IntelliJ IDEA irá reparar o software e reiniciar automaticamente.</p>
+<h2 id="definindo-estrutura-do-projeto">Definindo estrutura do projeto</h2>
+<p>É possível também definir a estrutura do projeto tudo por linha de comando. Para isso, basta executar o comando abaixo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh create-project --name &lt;project_name&gt; --group &lt;group_id&gt; --artifact &lt;artifact_id&gt; --version &lt;version&gt; --package &lt;package_name&gt; --src &lt;source_directory&gt; --test &lt;test_directory&gt; --out &lt;output_directory&gt; --project &lt;project_directory&gt; --location &lt;project_location&gt; --language &lt;language&gt; --build-system &lt;build_system&gt; --jdk &lt;jdk_version&gt; --sample-code
+</span></span></code></pre></div><p>Onde os parâmetros são:</p>
+<ul>
+<li><strong>&ndash;name</strong>: Nome do projeto.</li>
+<li><strong>&ndash;group</strong>: ID do grupo. Por exemplo, <code>com.example</code>.</li>
+<li><strong>&ndash;artifact</strong>: ID do artefato. Por exemplo, <code>my-project</code>.</li>
+<li><strong>&ndash;version</strong>: Versão do projeto. Por exemplo, <code>1.0-SNAPSHOT</code>.</li>
+<li><strong>&ndash;package</strong>: Nome do pacote. Por exemplo, <code>com.example.myproject</code>.</li>
+<li><strong>&ndash;src</strong>: Diretório de origem. Por exemplo, <code>src/main/java</code>.</li>
+<li><strong>&ndash;test</strong>: Diretório de testes. Por exemplo, <code>src/test/java</code>.</li>
+<li><strong>&ndash;out</strong>: Diretório de saída. Por exemplo, <code>target/classes</code>.</li>
+<li><strong>&ndash;project</strong>: Diretório do projeto. Por exemplo, <code>.</code>.</li>
+<li><strong>&ndash;location</strong>: Localização do projeto. Por exemplo, <code>.</code>.</li>
+<li><strong>&ndash;language</strong>: Linguagem do projeto. Por exemplo, <code>Java</code>.</li>
+<li><strong>&ndash;build-system</strong>: Sistema de build do projeto. Por exemplo, <code>Maven</code>.</li>
+<li><strong>&ndash;jdk</strong>: Versão do JDK. Por exemplo, <code>11</code>.</li>
+<li><strong>&ndash;sample-code</strong>: Adiciona código de exemplo (OPCIONAL).</li>
+</ul>
+<p>Exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh create-project --name myproject --group com.example --artifact myproject --version 1.0.0 --package com.example.myproject --src src/main/java --test src/test/java --out target --project . --location ~/projects/myproject --language Java --build-system Maven --jdk <span class="m">11</span> --sample-code
+</span></span></code></pre></div><p>Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em File &gt; New &gt; Project e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:</p>
+<h2 id="tips-and-tricks">Tips and Tricks</h2>
+<p>O IntelliJ IDEA possui muitos hotkeys que podem ajudar a melhorar a produtividade no dia-a-dia. Aqui estão alguns exemplos úteis:</p>
+<ul>
+<li><strong>Ctrl + Shift + T (ou Cmd + Shift + T no Mac)</strong>: Abre a caixa de diálogo &ldquo;Go to Test&rdquo; (Ir para teste), que permite navegar rapidamente entre o código de produção e o código de teste.</li>
+<li><strong>Ctrl + Shift + Alt + T (ou Cmd + Shift + Option + T no Mac)</strong>: Abre a caixa de diálogo &ldquo;Surround With&rdquo; (Cercar com), que permite cercar um bloco de código com uma estrutura específica, como um try-catch.</li>
+<li><strong>Ctrl + Shift + A (ou Cmd + Shift + A no Mac)</strong>: Abre a caixa de diálogo &ldquo;Find Action&rdquo; (Encontrar ação), que permite pesquisar rapidamente por qualquer ação, configuração ou opção no IntelliJ IDEA.</li>
+<li><strong>Ctrl + Alt + V (ou Cmd + Option + V no Mac)</strong>: Extrai uma expressão em uma variável, ajudando a evitar a repetição de código.</li>
+<li><strong>Ctrl + Alt + M (ou Cmd + Option + M no Mac)</strong>: Extrai um trecho de código em um método, tornando o código mais legível e reutilizável.</li>
+<li><strong>Ctrl + Shift + F (ou Cmd + Shift + F no Mac)</strong>: Procura por um texto específico em todo o código do projeto, incluindo arquivos não abertos.</li>
+<li><strong>Ctrl + Shift + U (ou Cmd + Shift + U no Mac)</strong>: Alterna entre letras maiúsculas e minúsculas, ajudando a corrigir erros de digitação.</li>
+<li><strong>Alt + Enter (ou Option + Enter no Mac)</strong>: Abre a janela de sugestões do IntelliJ IDEA, que oferece correções de código e outras sugestões úteis.</li>
+<li><strong>Ctrl + D (ou Cmd + D no Mac)</strong>: Duplica uma linha de código.</li>
+<li><strong>Ctrl + / (ou Cmd + / no Mac)</strong>: Comenta a linha atual ou o bloco selecionado de código.</li>
+</ul>
+<p>Além dos hotkeys acima, é possível salvar as configurações do IntelliJ IDEA em um repositório Git e sincronizar as configurações em diferentes computadores. Para isso, basta seguir os passos abaixo:</p>
+<ol>
+<li>Abra o IntelliJ IDEA e vá para <code>File &gt; Manage IDE Settings &gt; Export Settings</code> (Arquivo &gt; Gerenciar configurações do IDE &gt; Exportar configurações).</li>
+<li>Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.</li>
+<li>Crie um repositório Git em um serviço de hospedagem como o GitHub ou o GitLab.</li>
+<li>Clone o repositório Git em todos os computadores em que você deseja sincronizar as configurações do IntelliJ IDEA.</li>
+<li>Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta &ldquo;.idea&rdquo; para a raiz do diretório do seu projeto Git.</li>
+<li>No IntelliJ IDEA, vá para <code>File &gt; Manage IDE Settings &gt; Import Settings</code> (Arquivo &gt; Gerenciar configurações do IDE &gt; Importar configurações) e selecione a pasta &ldquo;.idea&rdquo; que você acabou de copiar para o diretório do projeto.</li>
+<li>Selecione as configurações que deseja importar e escolha &ldquo;OK&rdquo;.</li>
+<li>As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.</li>
+</ol>
+<p>É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.</p>
+<h3 id="intellij-idea-ultimate-vs-intellij-idea-community">IntelliJ IDEA Ultimate vs IntelliJ IDEA Community</h3>
+<p>O IntelliJ IDEA Ultimate é a versão completa e paga do IntelliJ IDEA, e possui recursos avançados que não estão disponíveis na versão Community. Alguns dos recursos exclusivos do IntelliJ IDEA Ultimate incluem:</p>
+<ul>
+<li><strong>Suporte avançado a frameworks</strong>: O IntelliJ IDEA Ultimate possui suporte completo para vários frameworks, incluindo Spring, Java EE, Grails, Play, Micronaut e outros.</li>
+<li><strong>Análise de código</strong>: O IntelliJ IDEA Ultimate possui recursos avançados de análise de código que podem detectar problemas e sugerir melhorias de código em tempo real.</li>
+<li><strong>Ferramentas de banco de dados</strong>: O IntelliJ IDEA Ultimate possui suporte integrado para vários bancos de dados e permite trabalhar com SQL diretamente na IDE.</li>
+<li><strong>Testes de desempenho</strong>: O IntelliJ IDEA Ultimate possui recursos avançados de profiling e testes de desempenho que podem ajudar a identificar gargalos de desempenho e otimizar o código.</li>
+<li><strong>Suporte a linguagens</strong>: O IntelliJ IDEA Ultimate oferece suporte a várias linguagens de programação além do Java, incluindo Kotlin, Groovy, Scala, TypeScript e outras.</li>
+<li><strong>Refatoração de código avançada</strong>: O IntelliJ IDEA Ultimate possui várias ferramentas de refatoração de código avançadas que podem ajudar a reorganizar e simplificar o código.</li>
+<li><strong>Suporte para ambientes de desenvolvimento remoto</strong>: O IntelliJ IDEA Ultimate possui recursos avançados para trabalhar com ambientes de desenvolvimento remoto, incluindo SSH e Docker.</li>
+</ul>
+<p>** &gt; OBS **: Na minha opinião, o IntelliJ IDEA Community é mais do que suficiente na maioria casos. Particularmente não vejo muita necessidade de pagar por uma licença do IntelliJ IDEA Ultimate, pois a versão Community já oferece tudo o que eu preciso para trabalhar. Então vale a pena analisar bem se realmente vale a pena pagar por uma licença do IntelliJ IDEA Ultimate.</p>
+<h2 id="conclusão">Conclusão</h2>
+<p>Do ponto de vista técnico, o IntelliJ IDEA é uma aplicação que não exige tanto recurso quanto se espera. Por exemplo, a versão 2021.3 exige um sistema operacional de 64 bits que já é padrão hoje em dia, um processador Intel ou AMD de 2,3 GHz ou superior, pelo menos 4 GB de RAM (recomendado 8 GB ou mais), 2 GB de espaço em disco e uma placa de vídeo compatível com DirectX 11 ou posterior. Apesar do IntelliJ IDEA usar a biblioteca gráfica Swing para sua interface, já não é mais um problema para a maioria dos computadores modernos (é mais leve do que IDEs como Eclipse e NetBeans e em alguns casos até do que o próprio Visual Studio Code).</p>
+<hr>
+<h2 id="referências">Referências</h2>
+<ul>
+<li><strong><a href="https://www.jetbrains.com/pt-br/idea/">IntelliJ IDEA</a></strong></li>
+<li><strong><a href="https://www.jetbrains.com/pt-br/idea/features/">IntelliJ IDEA: The Java IDE for Professional Developers</a></strong></li>
+</ul>
 
 </div>
 
