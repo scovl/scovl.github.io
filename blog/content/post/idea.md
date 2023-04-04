@@ -212,9 +212,22 @@ Ou se preferir, você pode ir em File > Repair IDE. Desta forma, o IntelliJ IDEA
 É possível também definir a estrutura do projeto tudo por linha de comando. Para isso, basta executar o comando abaixo:
 
 ```bash
-$ ./idea.sh create-project --name <project_name> --group <group_id> --artifact <artifact_id> --version <version> --package <package_name> --src <source_directory> --test <test_directory> --out <output_directory> --project <project_directory> --location <project_location> --language <language> --build-system <build_system> --jdk <jdk_version> --sample-code
-
+./idea.sh create-project --name <project_name>
+--group <group_id>
+--artifact <artifact_id>
+--version <version>
+--package <package_name>
+--src <source_directory>
+--test <test_directory>
+--out <output_directory>
+--project <project_directory>
+--location <project_location>
+--language <language>
+--build-system <build_system>
+--jdk <jdk_version>
+--sample-code
 ```
+
 Onde os parâmetros são:
 
 * **--name**: Nome do projeto.
@@ -235,11 +248,23 @@ Onde os parâmetros são:
 Exemplo:
 
 ```bash
-$ ./idea.sh create-project --name myproject --group com.example --artifact myproject --version 1.0.0 --package com.example.myproject --src src/main/java --test src/test/java --out target --project . --location ~/projects/myproject --language Java --build-system Maven --jdk 11 --sample-code
+./idea.sh create-project --name myproject
+--group com.example
+--artifact myproject
+--version 1.0.0
+--package com.example.myproject
+--src src/main/java
+--test src/test/java
+--out target
+--project .
+--location ~/projects/myproject
+--language Java
+--build-system Maven
+--jdk 11
+--sample-code
 ```
-Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em File > New > Project e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:
 
-
+Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em `File > New > Project` e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:
 
 
 ## Tips and Tricks
@@ -282,8 +307,7 @@ O IntelliJ IDEA Ultimate é a versão completa e paga do IntelliJ IDEA, e possui
 * **Refatoração de código avançada**: O IntelliJ IDEA Ultimate possui várias ferramentas de refatoração de código avançadas que podem ajudar a reorganizar e simplificar o código.
 * **Suporte para ambientes de desenvolvimento remoto**: O IntelliJ IDEA Ultimate possui recursos avançados para trabalhar com ambientes de desenvolvimento remoto, incluindo SSH e Docker.
 
-** > OBS **: Na minha opinião, o IntelliJ IDEA Community é mais do que suficiente na maioria casos. Particularmente não vejo muita necessidade de pagar por uma licença do IntelliJ IDEA Ultimate, pois a versão Community já oferece tudo o que eu preciso para trabalhar. Então vale a pena analisar bem se realmente vale a pena pagar por uma licença do IntelliJ IDEA Ultimate.
-
+> **OBS**: Na minha opinião, o IntelliJ IDEA Community é mais do que suficiente na maioria casos. Particularmente não vejo muita necessidade de pagar por uma licença do IntelliJ IDEA Ultimate, pois a versão Community já oferece tudo o que eu preciso para trabalhar. Então vale a pena analisar bem se realmente vale a pena pagar por uma licença do IntelliJ IDEA Ultimate.
 
 ## Conclusão
 
