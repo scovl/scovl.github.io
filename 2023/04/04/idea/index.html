@@ -157,14 +157,18 @@
 </ul>
 <p>Ou se preferir, execute os scripts abaixo de acordo com cada OS:</p>
 <h3 id="linux">Linux</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#!/bin/bash
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl">rm -rf ~/.cache/JetBrains/Idea*/caches/
-</span></span><span class="line"><span class="ln">5</span><span class="cl">
-</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
-</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
-</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/.IntelliJIdea*/config/options/custom.properties
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Procurando a pasta correta e usando ela como padrão</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nv">ideaPath</span><span class="o">=</span><span class="k">$(</span>find . -iname idea.properties -exec dirname <span class="o">{}</span> <span class="se">\;</span><span class="k">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">rm -rf ~/.cache/JetBrains/Idea*/caches/
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">touch ~/<span class="nv">$ideaPath</span>/custom.properties
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/<span class="nv">$ideaPath</span>/custom.properties
 </span></span></code></pre></div><h3 id="windows">Windows</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="c"># Remove o cache do IntelliJ IDEA</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nb">Remove-Item</span> <span class="n">-Path</span> <span class="s2">&#34;</span><span class="nv">$env:LOCALAPPDATA</span><span class="s2">\JetBrains\IntelliJIdea*\system\caches&#34;</span> <span class="n">-Recurse</span> <span class="n">-Force</span>
@@ -172,14 +176,17 @@
 </span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c"># Lembre-se de usar o valor que lhe for mais conveniente</span>
 </span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nb">Add-Content</span> <span class="n">-Path</span> <span class="s2">&#34;</span><span class="nv">$env:LOCALAPPDATA</span><span class="s2">\JetBrains\IntelliJIdea*\config\options\custom.properties&#34;</span> <span class="n">-Value</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span>
 </span></span></code></pre></div><h3 id="macos">macOS</h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="cp">#!/bin/bash
-</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
-</span></span><span class="line"><span class="ln">4</span><span class="cl">rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
-</span></span><span class="line"><span class="ln">5</span><span class="cl">
-</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
-</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
-</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/Library/Preferences/JetBrains/IntelliJIdea*/options/custom.properties
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Procurando a pasta correta e usando ela como padrão</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nv">ideaPath</span><span class="o">=</span><span class="k">$(</span>find . -iname idea.properties -exec dirname <span class="o">{}</span> <span class="se">\;</span><span class="k">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"># Remove o cache do IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"># Adicionando o parametro idea.max.content.cache.size no custom properties</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"># Lembre-se de usar o valor que lhe for mais conveniente</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.max.content.cache.size=1024&#34;</span> &gt;&gt; ~/<span class="nv">$ideaPath</span>/custom.properties
 </span></span></code></pre></div><p>O arquivo <code>idea.properties</code> que se encontra no caminho  <strong>Help &gt; Edit Custom Properties</strong>, permite personalizar várias configurações do IntelliJ IDEA. No entanto, o recomendado é que ao invés de você editar diretamente o <code>idea.properties</code>, crie um <code>custom.properties</code>. Isso porque o <code>idea.properties</code> pode ser sobrescrito em uma atualização do IntelliJ IDEA. Aqui estão algumas configurações úteis que você pode adicionar ou modificar neste arquivo:</p>
 <ul>
 <li><strong>idea.max.content.cache.size</strong>: Define o tamanho máximo do cache do IntelliJ IDEA. O valor padrão é 1024 MB.</li>
