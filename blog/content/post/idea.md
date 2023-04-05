@@ -159,7 +159,7 @@ echo "idea.heap.size.maximum=2048" >> ~/$ideaPath/custom.properties
 echo "idea.cycle.buffer.size=1024" >> ~/$ideaPath/custom.properties
 
 # Habilita a leitura do custom.properties no IntelliJ IDEA
-echo "idea.config.path=$HOME/.IntelliJIdea*/config" >> ~/$ideaPath/custom.properties
+echo "idea.config.path=$HOME/$ideaPath" >> ~/$ideaPath/custom.properties
 ```
 
 No caso do Windows, recomendo ou que você use o **[GitBash](https://gitforwindows.org/)** para execução do script acima, ou que você utilize o WSL (Windows Subsystem for Linux). Para saber mais sobre o WSL, consulte o artigo **[WSL: O que é e como instalar no Windows 10](https://www.devmedia.com.br/wsl-o-que-e-e-como-instalar-no-windows-10/40650)**.
