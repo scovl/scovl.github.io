@@ -166,26 +166,16 @@ No caso do Windows, recomendo ou que você use o **[GitBash](https://gitforwindo
 
 ## Instalando plugins no IntelliJ IDEA
 
-Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso, basta executar o comando abaixo:
-
-```bash
-$ ./idea.sh install-plugin <plugin_name>
-``` 
-
-Exemplo:
-
-```bash
-$ # instalando o plugin github-copilot
-$ ./idea.sh install-plugin github-copilot
-```
-
-Agora podemos explorar isso de uma forma mais divertida. Vamos criar um script que instala uma lista de plugins no IntelliJ IDEA. Para isso, crie um arquivo chamado `install-plugins.sh` e adicione o seguinte conteúdo:
+Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso crie um script shell chamado `idea-install-plugins.sh` e adicione o seguinte conteúdo:
 
 ```bash
 #!/bin/bash
 
-# Lista de plugins que serão instalados
+# Intellij Idea PATH
+# Substitua pelo caminho correto do seu IntelliJ IDEA
+IDEA_PATH_PLUGIN="/home/your_user/.IntelliJIdea2020.3/config/plugins"
 
+# Lista de Plugins
 PLUGINS=(
     "github-copilot"
     "gitignore"
@@ -197,22 +187,29 @@ PLUGINS=(
     "yaml"
 )
 
+# Baixando os plugins
+for plugin in "${PLUGINS[@]}"; do
+    wget -P $IDEA_PATH_PLUGIN/plugins/ https://plugins.jetbrains.com/pluginManager/?action=download&id=$plugin
+done
+
 # Instalando os plugins
 for plugin in "${PLUGINS[@]}"; do
-    ./idea.sh install-plugin $plugin
+    unzip -o $IDEA_PATH_PLUGIN/plugins/$plugin.zip -d $IDEA_PATH_PLUGIN/plugins/
 done
+
+# Removendo os arquivos zip
+for plugin in "${PLUGINS[@]}"; do
+    rm $IDEA_PATH_PLUGIN/plugins/$plugin.zip
+done
+
 ```
 
-Agora edite o arquivo `custom.properties` e adicione o seguinte conteúdo:
+Agora é só executar o script e aguardar a instalação dos plugins. Para executar o script, basta executar o seguinte comando:
+
 
 ```bash
-idea.plugins.path=~/plugins
-```
-
-Ou se preferir, você pode usar o diretório padrão que fica em `~/.IntelliJIdea<version>/config/plugins`. Agora execute o script `install-plugins.sh` e veja os plugins sendo instalados no IntelliJ IDEA:
-
-```bash
-$ ./install-plugins.sh
+$ # instalando plugins no IntelliJ IDEA
+$ ./idea-install-plugins.sh
 ```
 
 Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.
@@ -237,73 +234,12 @@ Para mais informações, acesse a documentação oficial do IntelliJ IDEA em **[
 
 ## Reparando o IntelliJ IDEA
 
-Se você estiver tendo problemas com o IntelliJ IDEA, você pode tentar reparar o software. Para isso, basta executar o comando abaixo:
+Se você estiver tendo problemas com o IntelliJ IDEA, você pode tentar reparar o software. Para isso, basta executar o script que se encontram no diretório de instalação do IntelliJ IDEA em `bin`:
 
 ```bash
-$ ./idea.sh repair
+$ ./repair
 ```
-
 Ou se preferir, você pode ir em File > Repair IDE. Desta forma, o IntelliJ IDEA irá reparar o software e reiniciar automaticamente. 
-
-## Definindo estrutura do projeto
-
-É possível também definir a estrutura do projeto tudo por linha de comando. Para isso, basta executar o comando abaixo:
-
-```bash
-./idea.sh create-project --name <project_name>
---group <group_id>
---artifact <artifact_id>
---version <version>
---package <package_name>
---src <source_directory>
---test <test_directory>
---out <output_directory>
---project <project_directory>
---location <project_location>
---language <language>
---build-system <build_system>
---jdk <jdk_version>
---sample-code
-```
-
-Onde os parâmetros são:
-
-* **--name**: Nome do projeto.
-* **--group**: ID do grupo. Por exemplo, `com.example`.
-* **--artifact**: ID do artefato. Por exemplo, `my-project`.
-* **--version**: Versão do projeto. Por exemplo, `1.0-SNAPSHOT`.
-* **--package**: Nome do pacote. Por exemplo, `com.example.myproject`.
-* **--src**: Diretório de origem. Por exemplo, `src/main/java`.
-* **--test**: Diretório de testes. Por exemplo, `src/test/java`.
-* **--out**: Diretório de saída. Por exemplo, `target/classes`.
-* **--project**: Diretório do projeto. Por exemplo, `.`.
-* **--location**: Localização do projeto. Por exemplo, `.`.
-* **--language**: Linguagem do projeto. Por exemplo, `Java`.
-* **--build-system**: Sistema de build do projeto. Por exemplo, `Maven`.
-* **--jdk**: Versão do JDK. Por exemplo, `11`.
-* **--sample-code**: Adiciona código de exemplo (OPCIONAL).
-
-Exemplo:
-
-```bash
-./idea.sh create-project --name myproject
---group com.example
---artifact myproject
---version 1.0.0
---package com.example.myproject
---src src/main/java
---test src/test/java
---out target
---project .
---location ~/projects/myproject
---language Java
---build-system Maven
---jdk 11
---sample-code
-```
-
-Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em `File > New > Project` e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:
-
 
 ## Tips and Tricks
 
@@ -330,21 +266,6 @@ Para mais informações, acesse o seguinte **[cheatsheet do IntelliJ IDEA](https
 6. Selecione as configurações que deseja importar e escolha "OK".
 7. As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.
 
-Você pode também simplificar esse passos por linha de comando usando o seguinte comando:
-
-```bash
-# Exportando as configurações do IntelliJ IDEA para um arquivo ZIP
-./idea.sh export -o ~/settings.zip
-```
-
-E para importar:
-
-```bash
-# Importando as configurações do IntelliJ IDEA de um arquivo ZIP
-./idea.sh import -i ~/settings.zip
-```
-
-Lembrando que o idea.sh se refere ao script que está na pasta bin do IntelliJ IDEA para Linux e Mac. No Windows, o script é chamado de idea.bat ou diretamente pelo binário idea.exe. É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.
 
 ### IntelliJ IDEA Ultimate vs IntelliJ IDEA Community
 
