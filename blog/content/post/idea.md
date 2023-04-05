@@ -75,7 +75,7 @@ Ou se preferir, execute os scripts abaixo de acordo com cada OS:
 #!/bin/bash
 
 # Remove o cache do IntelliJ IDEA
-rm -rf ~/.cache/JetBrains/IntelliJIdea*/system/caches
+rm -rf ~/.cache/JetBrains/Idea*/caches/
 
 # Adicionando o parametro idea.max.content.cache.size no custom properties
 # Lembre-se de usar o valor que lhe for mais conveniente
@@ -133,23 +133,26 @@ Para mais informações sobre as configurações do IntelliJ IDEA, consulte a **
 ```bash
 #!/bin/bash
 
+# Procurando a pasta correta e usando ela como padrão
+ideaPath=$(find . -iname idea.properties -exec dirname {} \;)
+
 # Cria o arquivo custom.properties
-touch ~/.IntelliJIdea*/config/options/custom.properties
+touch ~/$ideaPath/custom.properties
 
 # Definindo tamanho máximo do cache
-echo "idea.max.content.cache.size=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
-
+echo "idea.max.content.cache.size=1024" >> ~/$ideaPath/custom.properties
+                                                    
 # Definindo o heap inicial
-echo "idea.heap.size.initial=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+echo "idea.heap.size.initial=1024" >> ~/$ideaPath/custom.properties
 
 # Definindo o tamanho máximo de memória heap
-echo "idea.heap.size.maximum=2048" >> ~/.IntelliJIdea*/config/options/custom.properties
+echo "idea.heap.size.maximum=2048" >> ~/$ideaPath/custom.properties
 
 # Definindo o tamanho do Buffer de ciclo de vida
-echo "idea.cycle.buffer.size=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+echo "idea.cycle.buffer.size=1024" >> ~/$ideaPath/custom.properties
 
 # Habilita a leitura do custom.properties no IntelliJ IDEA
-echo "idea.config.path=$HOME/.IntelliJIdea*/config" >> ~/.IntelliJIdea*/config/options/custom.properties
+echo "idea.config.path=$HOME/.IntelliJIdea*/config" >> ~/$ideaPath/custom.properties
 ```
 
 No caso do Windows, recomendo ou que você use o **[GitBash](https://gitforwindows.org/)** para execução do script acima, ou que você utilize o WSL (Windows Subsystem for Linux). Para saber mais sobre o WSL, consulte o artigo **[WSL: O que é e como instalar no Windows 10](https://www.devmedia.com.br/wsl-o-que-e-e-como-instalar-no-windows-10/40650)**.
@@ -193,7 +196,7 @@ for plugin in "${PLUGINS[@]}"; do
 done
 ```
 
-Agora edite o arquivo `idea.properties` e adicione o seguinte conteúdo:
+Agora edite o arquivo `custom.properties` e adicione o seguinte conteúdo:
 
 ```bash
 idea.plugins.path=~/plugins
