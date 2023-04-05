@@ -74,12 +74,16 @@ Ou se preferir, execute os scripts abaixo de acordo com cada OS:
 ```bash
 #!/bin/bash
 
+# Procurando a pasta correta e usando ela como padrão
+ideaPath=$(find . -iname idea.properties -exec dirname {} \;)
+
 # Remove o cache do IntelliJ IDEA
 rm -rf ~/.cache/JetBrains/Idea*/caches/
 
 # Adicionando o parametro idea.max.content.cache.size no custom properties
 # Lembre-se de usar o valor que lhe for mais conveniente
-echo "idea.max.content.cache.size=1024" >> ~/.IntelliJIdea*/config/options/custom.properties
+touch ~/$ideaPath/custom.properties
+echo "idea.max.content.cache.size=1024" >> ~/$ideaPath/custom.properties
 ```
 
 ### Windows
@@ -97,12 +101,15 @@ Add-Content -Path "$env:LOCALAPPDATA\JetBrains\IntelliJIdea*\config\options\cust
 ```bash
 #!/bin/bash
 
+# Procurando a pasta correta e usando ela como padrão
+ideaPath=$(find . -iname idea.properties -exec dirname {} \;)
+
 # Remove o cache do IntelliJ IDEA
 rm -rf ~/Library/Caches/JetBrains/IntelliJIdea*/system/caches
 
 # Adicionando o parametro idea.max.content.cache.size no custom properties
 # Lembre-se de usar o valor que lhe for mais conveniente
-echo "idea.max.content.cache.size=1024" >> ~/Library/Preferences/JetBrains/IntelliJIdea*/options/custom.properties
+echo "idea.max.content.cache.size=1024" >> ~/$ideaPath/custom.properties
 ```
 
 O arquivo `idea.properties` que se encontra no caminho  **Help > Edit Custom Properties**, permite personalizar várias configurações do IntelliJ IDEA. No entanto, o recomendado é que ao invés de você editar diretamente o `idea.properties`, crie um `custom.properties`. Isso porque o `idea.properties` pode ser sobrescrito em uma atualização do IntelliJ IDEA. Aqui estão algumas configurações úteis que você pode adicionar ou modificar neste arquivo:
