@@ -101,7 +101,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 17 min</span>
+            <span>Estimated reading time: 16 min</span>
         </p>
     
 </header>
@@ -237,35 +237,42 @@
 </span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;idea.config.path=</span><span class="nv">$HOME</span><span class="s2">/</span><span class="nv">$ideaPath</span><span class="s2">&#34;</span> &gt;&gt; ~/<span class="nv">$ideaPath</span>/custom.properties
 </span></span></code></pre></div><p>No caso do Windows, recomendo ou que você use o <strong><a href="https://gitforwindows.org/">GitBash</a></strong> para execução do script acima, ou que você utilize o WSL (Windows Subsystem for Linux). Para saber mais sobre o WSL, consulte o artigo <strong><a href="https://www.devmedia.com.br/wsl-o-que-e-e-como-instalar-no-windows-10/40650">WSL: O que é e como instalar no Windows 10</a></strong>.</p>
 <h2 id="instalando-plugins-no-intellij-idea">Instalando plugins no IntelliJ IDEA</h2>
-<p>Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso, basta executar o comando abaixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh install-plugin &lt;plugin_name&gt;
-</span></span></code></pre></div><p>Exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ <span class="c1"># instalando o plugin github-copilot</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">$ ./idea.sh install-plugin github-copilot
-</span></span></code></pre></div><p>Agora podemos explorar isso de uma forma mais divertida. Vamos criar um script que instala uma lista de plugins no IntelliJ IDEA. Para isso, crie um arquivo chamado <code>install-plugins.sh</code> e adicione o seguinte conteúdo:</p>
+<p>Você sabia que é possível instalar plugins no IntelliJ IDEA via linha de comando? Para isso crie um script shell chamado <code>idea-install-plugins.sh</code> e adicione o seguinte conteúdo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="cp">#!/bin/bash
 </span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Lista de plugins que serão instalados</span>
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nv">PLUGINS</span><span class="o">=(</span>
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="s2">&#34;github-copilot&#34;</span>
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="s2">&#34;gitignore&#34;</span>
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="s2">&#34;lombok&#34;</span>
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="s2">&#34;material-theme-ui&#34;</span>
-</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="s2">&#34;sonarlint&#34;</span>
-</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="s2">&#34;sonarqube-community&#34;</span>
-</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="s2">&#34;string-manipulation&#34;</span>
-</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="s2">&#34;yaml&#34;</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">)</span>
-</span></span><span class="line"><span class="ln">15</span><span class="cl">
-</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"># Instalando os plugins</span>
-</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="k">for</span> plugin in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">PLUGINS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
-</span></span><span class="line"><span class="ln">18</span><span class="cl">    ./idea.sh install-plugin <span class="nv">$plugin</span>
-</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="k">done</span>
-</span></span></code></pre></div><p>Agora edite o arquivo <code>custom.properties</code> e adicione o seguinte conteúdo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">idea.plugins.path<span class="o">=</span>~/plugins
-</span></span></code></pre></div><p>Ou se preferir, você pode usar o diretório padrão que fica em <code>~/.IntelliJIdea&lt;version&gt;/config/plugins</code>. Agora execute o script <code>install-plugins.sh</code> e veja os plugins sendo instalados no IntelliJ IDEA:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./install-plugins.sh
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"># Intellij Idea PATH</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"># Substitua pelo caminho correto do seu IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nv">IDEA_PATH_PLUGIN</span><span class="o">=</span><span class="s2">&#34;/home/your_user/.IntelliJIdea2020.3/config/plugins&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"># Lista de Plugins</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="nv">PLUGINS</span><span class="o">=(</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="s2">&#34;github-copilot&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="s2">&#34;gitignore&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="s2">&#34;lombok&#34;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="s2">&#34;material-theme-ui&#34;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="s2">&#34;sonarlint&#34;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="s2">&#34;sonarqube-community&#34;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="s2">&#34;string-manipulation&#34;</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="s2">&#34;yaml&#34;</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="o">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="c1"># Baixando os plugins</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="k">for</span> plugin in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">PLUGINS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    wget -P <span class="nv">$IDEA_PATH_PLUGIN</span>/plugins/ https://plugins.jetbrains.com/pluginManager/?action<span class="o">=</span>download<span class="p">&amp;</span><span class="nv">id</span><span class="o">=</span><span class="nv">$plugin</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">
+</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"># Instalando os plugins</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="k">for</span> plugin in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">PLUGINS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">    unzip -o <span class="nv">$IDEA_PATH_PLUGIN</span>/plugins/<span class="nv">$plugin</span>.zip -d <span class="nv">$IDEA_PATH_PLUGIN</span>/plugins/
+</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">
+</span></span><span class="line"><span class="ln">29</span><span class="cl"><span class="c1"># Removendo os arquivos zip</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="k">for</span> plugin in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">PLUGINS</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">    rm <span class="nv">$IDEA_PATH_PLUGIN</span>/plugins/<span class="nv">$plugin</span>.zip
+</span></span><span class="line"><span class="ln">32</span><span class="cl"><span class="k">done</span>
+</span></span></code></pre></div><p>Agora é só executar o script e aguardar a instalação dos plugins. Para executar o script, basta executar o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ <span class="c1"># instalando plugins no IntelliJ IDEA</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">$ ./idea-install-plugins.sh
 </span></span></code></pre></div><p>Bastante prático, não é mesmo? Agora você pode criar um script para cada configuração que desejar e executá-lo sempre que precisar caso mude de ambiente.</p>
 <h2 id="customizando-a-jvm-do-intellij-idea">Customizando a JVM do IntelliJ IDEA</h2>
 <p>O IntelliJ IDEA pode consumir bastante recursos no geral. Por isso, é importante que você configure a JVM corretamente para que o software funcione de forma satisfatória. Para isso, você pode ir em Help &gt; Edit Custom VM Options que irá abrir o arquivo <code>idea64.exe.vmoptions</code> ou <code>idea64.vmoptions</code> (dependendo do seu sistema operacional) no diretório de instalação do IntelliJ IDEA. Neste arquivo, você pode adicionar as seguintes configurações:</p>
@@ -283,58 +290,9 @@
 </ul>
 <p>Para mais informações, acesse a documentação oficial do IntelliJ IDEA em <strong><a href="https://www.jetbrains.com/help/idea/tuning-the-ide.html">https://www.jetbrains.com/help/idea/tuning-the-ide.html</a></strong>.</p>
 <h2 id="reparando-o-intellij-idea">Reparando o IntelliJ IDEA</h2>
-<p>Se você estiver tendo problemas com o IntelliJ IDEA, você pode tentar reparar o software. Para isso, basta executar o comando abaixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./idea.sh repair
+<p>Se você estiver tendo problemas com o IntelliJ IDEA, você pode tentar reparar o software. Para isso, basta executar o script que se encontram no diretório de instalação do IntelliJ IDEA em <code>bin</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">$ ./repair
 </span></span></code></pre></div><p>Ou se preferir, você pode ir em File &gt; Repair IDE. Desta forma, o IntelliJ IDEA irá reparar o software e reiniciar automaticamente.</p>
-<h2 id="definindo-estrutura-do-projeto">Definindo estrutura do projeto</h2>
-<p>É possível também definir a estrutura do projeto tudo por linha de comando. Para isso, basta executar o comando abaixo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">./idea.sh create-project --name &lt;project_name&gt;
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl">--group &lt;group_id&gt;
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl">--artifact &lt;artifact_id&gt;
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">--version &lt;version&gt;
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">--package &lt;package_name&gt;
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">--src &lt;source_directory&gt;
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">--test &lt;test_directory&gt;
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">--out &lt;output_directory&gt;
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">--project &lt;project_directory&gt;
-</span></span><span class="line"><span class="ln">10</span><span class="cl">--location &lt;project_location&gt;
-</span></span><span class="line"><span class="ln">11</span><span class="cl">--language &lt;language&gt;
-</span></span><span class="line"><span class="ln">12</span><span class="cl">--build-system &lt;build_system&gt;
-</span></span><span class="line"><span class="ln">13</span><span class="cl">--jdk &lt;jdk_version&gt;
-</span></span><span class="line"><span class="ln">14</span><span class="cl">--sample-code
-</span></span></code></pre></div><p>Onde os parâmetros são:</p>
-<ul>
-<li><strong>&ndash;name</strong>: Nome do projeto.</li>
-<li><strong>&ndash;group</strong>: ID do grupo. Por exemplo, <code>com.example</code>.</li>
-<li><strong>&ndash;artifact</strong>: ID do artefato. Por exemplo, <code>my-project</code>.</li>
-<li><strong>&ndash;version</strong>: Versão do projeto. Por exemplo, <code>1.0-SNAPSHOT</code>.</li>
-<li><strong>&ndash;package</strong>: Nome do pacote. Por exemplo, <code>com.example.myproject</code>.</li>
-<li><strong>&ndash;src</strong>: Diretório de origem. Por exemplo, <code>src/main/java</code>.</li>
-<li><strong>&ndash;test</strong>: Diretório de testes. Por exemplo, <code>src/test/java</code>.</li>
-<li><strong>&ndash;out</strong>: Diretório de saída. Por exemplo, <code>target/classes</code>.</li>
-<li><strong>&ndash;project</strong>: Diretório do projeto. Por exemplo, <code>.</code>.</li>
-<li><strong>&ndash;location</strong>: Localização do projeto. Por exemplo, <code>.</code>.</li>
-<li><strong>&ndash;language</strong>: Linguagem do projeto. Por exemplo, <code>Java</code>.</li>
-<li><strong>&ndash;build-system</strong>: Sistema de build do projeto. Por exemplo, <code>Maven</code>.</li>
-<li><strong>&ndash;jdk</strong>: Versão do JDK. Por exemplo, <code>11</code>.</li>
-<li><strong>&ndash;sample-code</strong>: Adiciona código de exemplo (OPCIONAL).</li>
-</ul>
-<p>Exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">./idea.sh create-project --name myproject
-</span></span><span class="line"><span class="ln"> 2</span><span class="cl">--group com.example
-</span></span><span class="line"><span class="ln"> 3</span><span class="cl">--artifact myproject
-</span></span><span class="line"><span class="ln"> 4</span><span class="cl">--version 1.0.0
-</span></span><span class="line"><span class="ln"> 5</span><span class="cl">--package com.example.myproject
-</span></span><span class="line"><span class="ln"> 6</span><span class="cl">--src src/main/java
-</span></span><span class="line"><span class="ln"> 7</span><span class="cl">--test src/test/java
-</span></span><span class="line"><span class="ln"> 8</span><span class="cl">--out target
-</span></span><span class="line"><span class="ln"> 9</span><span class="cl">--project .
-</span></span><span class="line"><span class="ln">10</span><span class="cl">--location ~/projects/myproject
-</span></span><span class="line"><span class="ln">11</span><span class="cl">--language Java
-</span></span><span class="line"><span class="ln">12</span><span class="cl">--build-system Maven
-</span></span><span class="line"><span class="ln">13</span><span class="cl">--jdk <span class="m">11</span>
-</span></span><span class="line"><span class="ln">14</span><span class="cl">--sample-code
-</span></span></code></pre></div><p>Isso criaria um projeto Java com Maven no diretório ~/projects/myproject, com a estrutura de diretórios padrão do Maven, e com um código de exemplo. Além disso, o repositório Git seria inicializado e o primeiro commit seria feito. Você pode fazer tudo isso de forma interativa também se preferir através da interface gráfica do IntelliJ IDEA. Para isso, basta ir em <code>File &gt; New &gt; Project</code> e seguir os passos. Também é possível configurar macros diversos no IntelliJ IDEA. Por exemplo:</p>
 <h2 id="tips-and-tricks">Tips and Tricks</h2>
 <p>O IntelliJ IDEA possui muitos hotkeys que podem ajudar a melhorar a produtividade no dia-a-dia. Aqui estão alguns exemplos úteis:</p>
 <ul>
@@ -359,13 +317,6 @@
 <li>Selecione as configurações que deseja importar e escolha &ldquo;OK&rdquo;.</li>
 <li>As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.</li>
 </ol>
-<p>Você pode também simplificar esse passos por linha de comando usando o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Exportando as configurações do IntelliJ IDEA para um arquivo ZIP</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./idea.sh <span class="nb">export</span> -o ~/settings.zip
-</span></span></code></pre></div><p>E para importar:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="c1"># Importando as configurações do IntelliJ IDEA de um arquivo ZIP</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">./idea.sh import -i ~/settings.zip
-</span></span></code></pre></div><p>Lembrando que o idea.sh se refere ao script que está na pasta bin do IntelliJ IDEA para Linux e Mac. No Windows, o script é chamado de idea.bat ou diretamente pelo binário idea.exe. É importante lembrar que algumas configurações podem ser específicas do sistema operacional ou do ambiente de desenvolvimento em que você está trabalhando, então é importante verificar se as configurações exportadas são relevantes para todos os computadores em que você deseja sincronizá-las.</p>
 <h3 id="intellij-idea-ultimate-vs-intellij-idea-community">IntelliJ IDEA Ultimate vs IntelliJ IDEA Community</h3>
 <p>O IntelliJ IDEA Ultimate é a versão completa e paga do IntelliJ IDEA, e possui recursos avançados que não estão disponíveis na versão Community. Alguns dos recursos exclusivos do IntelliJ IDEA Ultimate incluem:</p>
 <ul>
