@@ -256,15 +256,18 @@ O IntelliJ IDEA possui muitos hotkeys que podem ajudar a melhorar a produtividad
 * **Ctrl + D (ou Cmd + D no Mac)**: Duplica uma linha de código.
 * **Ctrl + / (ou Cmd + / no Mac)**: Comenta a linha atual ou o bloco selecionado de código.
 
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/blog/content/post/images/idea/hk1.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/blog/content/post/images/idea/hk2.png#center)
+
 Para mais informações, acesse o seguinte **[cheatsheet do IntelliJ IDEA](https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf)** onde contém uma lista completa de todos os hotkeys disponíveis. Além dos hotkeys listados, é possível salvar as configurações do IntelliJ IDEA em um repositório Git e sincronizar as configurações em diferentes computadores. Para isso, basta seguir os passos abaixo:
 
 1. Abra o IntelliJ IDEA e vá para `File > Manage IDE Settings > Export Settings` (Arquivo > Gerenciar configurações do IDE > Exportar configurações).
 2. Selecione as configurações que deseja exportar (como hotkeys, configurações de editor, etc.) e escolha um local para salvar o arquivo ZIP que contém as configurações exportadas.
 3 . Crie um repositório Git para o projeto e coloque-o no GitHub ou em qualquer outro serviço de hospedagem de repositórios Git.
-4. Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta ".idea" para a raiz do diretório do seu projeto Git.
-5. No IntelliJ IDEA, vá para `File > Manage IDE Settings > Import Settings` (Arquivo > Gerenciar configurações do IDE > Importar configurações) e selecione a pasta ".idea" que você acabou de copiar para o diretório do projeto.
-6. Selecione as configurações que deseja importar e escolha "OK".
-7. As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.
+1. Extraia o arquivo ZIP que contém as configurações exportadas e copie a pasta ".idea" para a raiz do diretório do seu projeto Git.
+2. No IntelliJ IDEA, vá para `File > Manage IDE Settings > Import Settings` (Arquivo > Gerenciar configurações do IDE > Importar configurações) e selecione a pasta ".idea" que você acabou de copiar para o diretório do projeto.
+3. Selecione as configurações que deseja importar e escolha "OK".
+4. As configurações do IntelliJ IDEA agora estão sincronizadas em todos os computadores que clonaram o repositório Git.
 
 
 ### IntelliJ IDEA Ultimate vs IntelliJ IDEA Community
