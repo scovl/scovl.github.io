@@ -6,7 +6,7 @@ author = "Vitor Lobo"
 
 ### Olá, sejam bem-vind(x)s ao meu blog.
 
-![Foto](https://avatars.githubusercontent.com/u/1684061?v=4#floatleftavatar)
+![Foto](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/eu.jpg#floatleftavatar)
 
 Olá, pessoal! Meu nome é Vitor Lobo, também conhecido como (lobocode) na comunidade. Sou autista, Software Engineer, escritor, gamer e pesquisador independente. Trabalho com tecnologia há mais de 10 anos e sou apaixonado por arte e cultura, como literatura, cinema, música, quadrinhos, mangás, animes e até mesmo uma boa praia! Adoro andar de bike e curtir o tempo livre com minha companheira e nossos gatinhos. Além disso, também sou um entusiasta do mundo open source e estou envolvido em alguns projetos, como o **[Taverna dos Javeiros](https://youtube.com/playlist?list=PL18Eo0t4Gk5XRjRBG3YY8Hqm4tk1vVDMP)**,**[Marmota Project](https://marmotaproject.github.io)**, **[Project Atomic](https://github.com/projectatomic)**, **[Fedora Project](https://getfedora.org/pt_BR/)**.
 
