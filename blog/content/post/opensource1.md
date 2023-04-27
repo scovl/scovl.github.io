@@ -1,6 +1,6 @@
 +++
 title = "External Secrets"
-description = "Open Source contributing #1"" 
+description = "Open Source contributing" 
 date = 2023-04-04T09:18:18-03:00
 tags = ["Golang", "Kubernetes", "Open Source", "External Secrets"]
 draft = true
