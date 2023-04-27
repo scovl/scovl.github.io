@@ -9,6 +9,7 @@ weight = 8
 
 ### Parte 1 - Conhecendo o projeto
 * **[Introdução](#introdução)**
+* **[Visão geral](#visão-geral)**
 * **[Roadmap de contribuição](#roadmap-de-contribuição)**
 * **[Pré-requisitos do projeto](#pré-requisitos-do-projeto)**
 * **[Instalação do projeto](#instalação-do-projeto)**
@@ -30,15 +31,97 @@ weight = 8
 
 ![img#center](https://raw.githubusercontent.com/external-secrets/external-secrets/main/assets/eso-logo-medium.png#center)
 
-O **[External Secrets Operator](https://github.com/external-secrets/external-secrets)** é **[Kubernetes Operator](https://www.redhat.com/pt-br/topics/containers/what-is-a-kubernetes-operator)** que integra sistemas externos de gerenciamento de segredos, como o AWS Secrets Manager, o HashiCorp Vault, o Google Secrets Manager, o Azure Key Vault, o IBM Cloud Secrets Manager, o Akeyless e muitos outros. Ele lê informações das APIs externas e injeta automaticamente os valores em um Kubernetes Secret.
+O **[External Secrets Operator](https://github.com/external-secrets/external-secrets)** é **[Kubernetes Operator](https://www.redhat.com/pt-br/topics/containers/what-is-a-kubernetes-operator)** que integra sistemas externos de gerenciamento de segredos, como o **[AWS Secrets Manager](https://aws.amazon.com/secrets-manager/)**, o **[HashiCorp Vault](https://www.vaultproject.io/)**, o **[Google Secrets Manager](https://cloud.google.com/secret-manager)**, o **[Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/)**, o **[IBM Cloud Secrets Manager](https://www.ibm.com/cloud/secrets-manager)**, o Akeyless e muitos outros. Ele lê informações das APIs externas e injeta automaticamente os valores em um **[Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/)**.
 
-Muitas pessoas e organizações estão se unindo para criar uma única solução de External Secrets com base em projetos existentes. E você também pode se juntar a essa comunidade para colaborar e contribuir com sua experiência e conhecimento. Se você se interessa em contribuir de alguma forma para a evolução desta ferramenta de código aberto, está no lugar certo! Abaixo está um passo a passo de como começar a contribuir para o projeto. A forma de gerenciar secrets padrão do Kubernetes é armazenar os valores em um arquivo YAML e codificá-los em base64. Essa abordagem é muito insegura e não é recomendada para ambientes de produção. O External Secrets Operator é uma solução que resolve este problema.
+Muitas pessoas e organizações estão se unindo para criar uma única solução de External Secrets com base em projetos existentes. E você também pode se juntar a essa comunidade para colaborar e contribuir com sua experiência e conhecimento. Se você se interessa em contribuir de alguma forma para a evolução desta ferramenta de código aberto, está no lugar certo! Abaixo está um passo a passo de como começar a contribuir para o projeto. A forma padrão de gerenciar secrets no Kubernetes é armazenar os valores em um arquivo YAML e codificá-los em base64. Essa abordagem é muito insegura e não é recomendada para ambientes de produção. O External Secrets Operator é uma solução que resolve esse problema.
+
+Perceba que antes mesmo de sair contribuindo em código, existe todo um trabalho de pesquisa sobre como monta o ambiente do projeto, como ele funciona, como builda entre outras coisas. Portanto, o objetivo deste artigo é te em como pesquisar e como contribuir com projetos open source.
 
 **NOTA:** Este artigo tem como foco a contribuição em código, mas você também pode contribuir de outras formas, como, por exemplo, traduzindo a documentação, criando tutoriais etc. Todo tipo de contribuição é bem-vindo!
 
 **IMPORTANTE**: Não conhece nada sobre Kubernetes? nesse caso este projeto ainda não é para você, mas você pode começar a aprender sobre Kubernetes através do curso gratuito do **[Kubernetes.io](https://kubernetes.io/pt-br/)**. Ou no curso da LINUXtips **[Descomplicando o Kubernetes](https://www.youtube.com/watch?v=pV0nkr61XP8)**. 
 
 Independente de seu nível de conhecimento o Roadmap abaixo serve para quaisquer projetos open source. Logo, você pode começar a contribuir com qualquer projeto open source seguindo o Roadmap a seguir. Pretendo continuar essa série para outros projetos e liguagens de programação. Portanto, fiquem ligados!
+
+## Visão geral
+
+### Arquitetura
+
+![img#center](https://external-secrets.io/main/pictures/diagrams-high-level-simple.png#center)
+
+O External Secrets Operator amplia o Kubernetes com recursos personalizados, que definem onde os segredos (secrets) estão armazenados e como sincronizá-los. O controller busca as secrets de uma API externa e cria secrets no Kubernetes. Se a secret da API externa for alterada, o controller irá reconciliar o estado no cluster e atualizar as secrets de acordo. Para entender a mecânica do operator, vamos começar com o modelo de dados. O SecretStore faz referência a um conjunto de pares chave/valor. No entanto, como cada API externa é um pouco diferente, esse conjunto pode ser, por exemplo, uma instância de um **[Azure KeyVault](https://learn.microsoft.com/pt-br/azure/key-vault/general/basic-concepts)** ou um **[AWS Secrets Manager](https://docs.aws.amazon.com/pt_br/secretsmanager/latest/userguide/getting-started.html)** em uma determinada conta e região da AWS.
+
+![img#center](https://external-secrets.io/main/pictures/diagrams-resource-mapping.png#center)
+
+### Mapeamento de recursos
+
+Para entender a mecânica do operator, vamos começar com o modelo de dados. O SecretStore faz referência a um conjunto de pares chave/valor. No entanto, como cada API externa é um pouco diferente, esse conjunto pode ser, por exemplo, uma instância de um **[Azure KeyVault](https://learn.microsoft.com/pt-br/azure/key-vault/general/basic-concepts)** ou um **[AWS Secrets Manager](https://docs.aws.amazon.com/pt_br/secretsmanager/latest/userguide/getting-started.html)** em uma determinada conta e região da AWS. A ideia por trás do recurso SecretStore é separar as preocupações de autenticação/acesso e asecret real e a configuração necessária os workloads. O ExternalSecret especifica o que buscar, e o SecretStore especifica como acessar. Este recurso é compartimentado por namespace.
+
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: secretstore-sample
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: us-east-1
+      auth:
+        secretRef:
+          accessKeyIDSecretRef:
+            name: awssm-secret
+            key: access-key
+          secretAccessKeySecretRef:
+            name: awssm-secret
+            key: secret-access-key
+```
+
+O exemplo acima define um recurso SecretStore no Kubernetes, usando o External Secrets Operator para gerenciar secrets externos. Esse recurso SecretStore fornece informações sobre como acessar e autenticar um serviço de gerenciamento de secrets externos, neste caso, o AWS Secrets Manager. Um ExternalSecret declara quais dados buscar. Ele possui uma referência a um SecretStore que sabe como acessar esses dados. O controlador usa esse ExternalSecret como um modelo para criar secrets.
+
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: example
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: secretstore-sample
+    kind: SecretStore
+  target:
+    name: secret-to-be-created
+    creationPolicy: Owner
+  data:
+  - secretKey: secret-key-to-be-managed
+    remoteRef:
+      key: provider-key
+      version: provider-key-version
+      property: provider-key-property
+  dataFrom:
+  - extract:
+      key: remote-key-in-the-provider
+```
+
+O ClusterSecretStore é um SecretStore global e abrangente em todo o cluster que pode ser referenciado por todos os namespaces. Você pode usá-lo para fornecer um gateway central para o seu provedor de secrets. O External Secret Operator (ESO para abreviar) reconcilia ExternalSecrets da seguinte maneira:
+
+1. ESO usa `spec.secretStoreRef` para encontrar um SecretStore apropriado. Se não existir ou o campo `spec.controller` não corresponder, ele não processará mais este ExternalSecret.
+2. ESO instancia um cliente de API externa usando as credenciais especificadas na spec do SecretStore.
+3. ESO busca os secrets conforme solicitado pelo ExternalSecret, e decodifica os secrets se necessário.
+4. ESO cria um `Kind=Secret` com base no modelo fornecido por `ExternalSecret.target.template`. O `Secret.data` pode ser modelado usando os valores de secret da API externa.
+5. ESO garante que os valores secretos permaneçam sincronizados com a API externa.
+
+O External Secret Operator é projetado para atender às seguintes personas:
+
+1. **Cluster Operator**: O operador do cluster é responsável por configurar o External Secret Operator, gerenciar políticas de acesso e criar ClusterSecretStores.
+2. **Desenvolvedor de aplicativos**: O desenvolvedor de aplicativos é responsável por definir ExternalSecrets e a configuração do aplicativo.
+
+Cada persona mapeará aproximadamente a uma função Kubernetes RBAC. Dependendo do seu ambiente, essas funções podem ser mapeadas para um único usuário.
+
+**NOTA**: Não há um Secret Operator que lida com o ciclo de vida do secret, isso está fora do escopo do ESO. O External Secrets Operator é executado como um deployment no seu cluster com privilégios elevados. 
+
+Ele criará/lê/atualizará as secrets em todos os namespaces e terá acesso aos secrets armazenados em alguma API externa. Certifique-se de que as credenciais que você fornece dão ao ESO o mínimo de privilégio necessário. Projete seu SecretStore/ClusterSecretStore com cuidado! Certifique-se de restringir o acesso dos desenvolvedores de aplicativos para ler apenas certas chaves em um ambiente compartilhado. Você também deve considerar o uso do sistema de controle de admissão do Kubernetes (por exemplo, OPA ou Kyverno) para controle de acesso refinado. Você pode também executar vários controladores dentro do cluster. Um controlador pode ser limitado a processar apenas SecretStores com um campo spec.controller predefinido.
+
 
 ## Roadmap de contribuição
 
@@ -135,31 +218,130 @@ Ou se preferir instalar tudo manualmente, apenas sigas as instruções abaixo:
 
 ## Instalação do projeto
 
-Agora vamos usar o Kind para criar um cluster localmente. Para isso, execute o comando abaixo:
+External-secrets é executado dentro do seu cluster Kubernetes como um recurso de deployment. Ele utiliza CustomResourceDefinitions para configurar o acesso aos provedores de secret através de recursos SecretStore e gerencia os recursos secret do Kubernetes com recursos ExternalSecret.
 
-```bash
+Nota: A versão mínima suportada do Kubernetes é 1.16.0. Os usuários que ainda estão executando o Kubernetes v1.15 ou inferior devem atualizar para uma versão suportada antes de instalar o external-secrets.
+
+### Instalando com Helm
+
+As opções de instalação padrão instalarão e gerenciarão os CRDs automaticamente como parte do seu lançamento de helm. Se você não deseja que os CRDs sejam atualizados e gerenciados automaticamente, você deve definir a opção installCRDs como false. (por exemplo, --set installCRDS=false)
+
+Descomente a linha relevante nas próximas etapas para desabilitar a instalação automática de CRDs.
+
+Opção 1: Instalar a partir do repositório de gráficos
+
+```yaml
 helm repo add external-secrets https://charts.external-secrets.io
-helm repo update
-helm install external-secrets external-secrets/external-secrets
+
+helm install external-secrets \
+   external-secrets/external-secrets \
+    -n external-secrets \
+    --create-namespace \
+  # --set installCRDs=false
 ```
 
-Você também pode executar o controlador em seu sistema de host para fins de desenvolvimento:
+Opção 2: Instalar gráfico a partir da compilação local
 
-```bash
-make crds.install
-make run
+Construa e instale o gráfico Helm localmente após clonar o repositório.
+
+```yaml
+make helm.build
+
+helm install external-secrets \
+    ./bin/chart/external-secrets.tgz \
+    -n external-secrets \
+    --create-namespace \
+  # --set installCRDs=false
 ```
 
-Para remover os CRDs, execute:
+Crie um secret contendo suas credenciais da AWS
 
-```bash
-make crds.uninstall
+```yaml
+echo -n 'KEYID' > ./access-key
+echo -n 'SECRETKEY' > ./secret-access-key
+kubectl create secret generic awssm-secret --from-file=./access-key --from-file=./secret-access-key
 ```
 
-CRDs são uma extensão do Kubernetes que permite que você crie novos tipos de recursos. O External Secrets Operator usa CRDs para criar novos tipos de recursos que representam os secrets externas. Por exemplo, o External Secrets Operator usa o tipo de recurso `ExternalSecret` para representar um segredo externo. O External Secrets Operator usa o tipo de recurso `SecretStore` para representar um armazenamento de segredos externo. Para saber mais sobre CRDs, consulte a documentação **[aqui](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)**. Se você precisar testar outras integrações do k8s e precisar que o operador seja implantado no cluster real enquanto desenvolve, pode usar o seguinte fluxo de trabalho:
+Crie seu primeiro SecretStore
+
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: secretstore-sample
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: us-east-1
+      auth:
+        secretRef:
+          accessKeyIDSecretRef:
+            name: awssm-secret
+            key: access-key
+          secretAccessKeySecretRef:
+            name: awssm-secret
+            key: secret-access-key
+```
+
+Crie seu primeiro ExternalSecret
+
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: example
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: secretstore-sample
+    kind: SecretStore
+  target:
+    name: secret-to-be-created
+    creationPolicy: Owner
+  data:
+  - secretKey: secret-key-to-be-managed
+    remoteRef:
+      key: provider-key
+      version: provider-key-version
+      property: provider-key-property
+  dataFrom:
+  - extract:
+      key: remote-key-in-the-provider
+
+kubectl describe externalsecret example
+# [...]
+Name:  example
+Status:
+  Conditions:
+    Last Transition Time:  2021-02-24T16:45:23Z
+    Message:               Secret was synced
+    Reason:                SecretSynced
+    Status:                True
+    Type:                  Ready
+  Refresh Time:            2021-02-24T16:45:24Z
+Events:                    <none>
+```
+
+Instalando com OLM
+
+O External-secrets pode ser gerenciado pelo Operator Lifecycle Manager (OLM) por meio de um operador instalador. Ele está disponível através do OperatorHub.io, este método de instalação é mais adequado para o OpenShift. Consulte as instruções de instalação no pacote external-secrets-operator.
+
+Desinstalando
+
+Antes de continuar, certifique-se de que todos os recursos external-secret criados pelos usuários tenham sido excluídos. Você pode verificar se há recursos existentes com o seguinte comando:
 
 ```bash
-kind create cluster --name external
+kubectl get SecretStores,ClusterSecretStores,ExternalSecrets --all-namespaces
+```
+
+Depois que todos esses recursos forem excluídos, você estará pronto para desinstalar o external-secrets.
+Desinstalando com Helm
+
+Desinstale o lançamento de helm usando o comando delete.
+
+```bash
+helm delete external-secrets --namespace external-secrets
 ```
 
 ## Conhecendo a estrutura do projeto
@@ -216,17 +398,81 @@ Agora que entendi o padrão de commits, que observei os erros dos PRs e o que fo
 
 A primeira issue que eu escolhi foi esta aqui **[#2151](https://github.com/external-secrets/external-secrets/issues/2151)**. Agora algumas perguntas interessante a se fazer a cerca da issue que escolhí:
 
-1. **Do que se trata a issue?**
+### Do que se trata a issue?
 
-O usuário **creosonic** está pedindo para adicionar métricas em um formato semelhante à métrica já existente `externalsecret_status_condition`. A adição dessa métrica traria valor ao melhorar as capacidades de observabilidade relacionadas à verificação do status das secret stores. Com essa métrica disponível, os administradores e operadores do sistema poderão monitorar melhor a saúde e a disponibilidade de suas secret stores. Isso pode ajudar a identificar possíveis problemas e tomar medidas proativas para evitar qualquer tempo de inatividade ou perda de dados.
+O usuário **[@creosonic](https://github.com/creosonic)** está pedindo para adicionar métricas em um formato semelhante à métrica já existente `externalsecret_status_condition`. A adição dessa métrica traria valor ao melhorar as capacidades de observabilidade relacionadas à verificação do status das secret stores. Com essa métrica disponível, os administradores e operadores do sistema poderão monitorar melhor a saúde e a disponibilidade de suas secret stores. Isso pode ajudar a identificar possíveis problemas e tomar medidas proativas para evitar qualquer tempo de inatividade ou perda de dados.
 
 Em resumo, a Issue propõe adicionar duas novas métricas no caso a métrica `SecretStore` e `ClusterSecretStore` ao Prometheus para melhorar as capacidades de Observabilidade e a monitoração das secret stores. No projeto, abra o arquivo `docs/api/metrics.md`. O objetivo desta documentação é explicar como expor essas métricas através do Prometheus e como monitorar o desempenho da ferramenta. Além disso, são apresentados alguns indicadores de nível de serviço (SLIs) que podem ser usados para avaliar a eficiência e qualidade da ferramenta. A documentação também inclui um painel do Grafana para visualização das métricas. Caso queira entender mais sobre o que é SLI, SLO e SLA, recomendo a leitura do artigo **[SLI's, SLA's e SLO's](https://www.nanoshots.com.br/2019/12/sre-slo-slis-nao-sabe-por-onde-comecar.html)** escrito pelo saudoso **[Matheus Fidelis](https://www.linkedin.com/in/msfidelis/)**. Caso não conheça o Prometheus, **[recomendo a leitura do artigo que escrevi a cerca do prometheus aqui no blog](https://lobocode.github.io/2023/03/21/prometheus/)**.
 
-Agora que você entende melhor a sugestão da issue, vamos entender melhor o que é necessário para resolve-la. Abra o arquivo em `pkg/provider/metrics/metrics.go`. Nele você encontrará as métricas já existentes. Para adicionar as novas métricas, você precisará adicionar as seguintes linhas de código:
+Agora que você entende melhor a sugestão da issue, vamos entender melhor o que é necessário para resolve-la. Abra o arquivo em `pkg/provider/metrics/metrics.go`. O arquivo em questão implementa um conjunto de métricas para monitorar o uso de secrets de providers em um sistema. As constantes no início definem as diferentes operações que podem ser executadas nas secrets dos providers suportados. O que eu queria encontrar aqui, basicamente, é onde as métricas estão sendo definidas. E pude perceber que este pacote é usado no arquivo `pkg/controllers/externalsecret/esmetrics/esmetrics.go`. No código em questão, as métricas do External Secrets Operator são definidas na função `SetUpMetrics()`.
+
+Nesta função, as variáveis `NonConditionMetricLabelNames` e `ConditionMetricLabelNames` são definidas, juntamente com as variáveis `NonConditionMetricLabels` e `ConditionMetricLabels`, que são usadas posteriormente para definir as (labels) de cada métrica. As métricas que são definidas na função `SetUpMetrics()` são:
+
+* **syncCallsTotal**: Contagem total de chamadas de sincronização de secretos externos (External Secrets);
+* **syncCallsError**: Contagem total de erros durante as chamadas de sincronização de secretos externos;
+* **externalSecretCondition**: Condição de status de um External Secret específico;
+* **externalSecretReconcileDuration**: Duração para reconciliar o External Secret.
+
+Além disso, a função `UpdateExternalSecretCondition()` atualiza a condição de um External Secret específico para os valores desejados.A métrica pela qual vamos nos basear e que foi citada pelo **[@creosonic](https://github.com/creosonic)** é a `externalSecretCondition` que é definida na linha 96 do código:
 
 ```go
+// Linha 96
+externalSecretCondition := prometheus.NewGaugeVec(prometheus.GaugeOpts{
+   Subsystem: ExternalSecretSubsystem,
+   Name:      ExternalSecretStatusConditionKey,
+   Help:      "The status condition of a specific External Secret",
+}, ConditionMetricLabelNames)
+```
+
+A definição usa a função `prometheus.NewGaugeVec()` para criar um novo `GaugeVec` com a opção `GaugeOpts` especificada, que define o nome, subsistema e a descrição da métrica. As labels da métrica são definidas na variável `ConditionMetricLabelNames`, que é definida na linha 38:
+
+```go
+var (
+	NonConditionMetricLabelNames = make([]string, 0)
+	ConditionMetricLabelNames = make([]string, 0) // Linha 38
+	NonConditionMetricLabels = make(map[string]string)
+	ConditionMetricLabels = make(map[string]string)
+)
+```
+
+Um `GaugeVec` é um tipo de métrica do Prometheus que representa uma métrica que pode aumentar ou diminuir. Essa métrica é usada para medir valores no tempo, como uso de memória ou tamanho de fila. Cada valor do `GaugeVec` tem um conjunto de labels associados que indicam a origem do valor, por exemplo, o nome do pod ou a região onde o recurso está localizado. Diferente de uma métrica Counter, que é incrementada em cada ocorrência, o GaugeVec pode aumentar ou diminuir ao longo do tempo, o que o torna mais adequado para medir valores que flutuam. Por exemplo, um `GaugeVec` pode ser usado para medir a quantidade de memória usada por um contêiner em um pod.
+
+Já o `GaugeOpts` é um tipo de estrutura de dados que define as opções de configuração para a criação de um Gauge ou GaugeVec no Prometheus. As opções de configuração incluem o nome da métrica, o subsistema, a ajuda (descrição) da métrica e as labels a serem associados à métrica. Beleza, tenho todo o levantamento de onde está o código e o que preciso fazer. Então, vamos para o próximo passo.
+
+## Resolvendo a Issue
+
+Agora que já sabemos onde está o código e o que precisamos fazer, vamos para a parte prática. Primeiro, vamos adicionar as métricas `SecretStore` no arquivo `pkg/controllers/externalsecret/esmetrics/esmetrics.go`. Para isso, vamos adicionar as seguintes linhas de código no arquivo:
+
+```go
+const SecretStoreStatusConditionKey = "secret_store_condition"
+var secretStoreCondition *prometheus.GaugeVec = nil
+
+func SetUpMetrics(addKubeStandardLabels bool) {
+	//...
+	secretStoreCondition = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Subsystem: ExternalSecretSubsystem,
+		Name:      SecretStoreStatusConditionKey,
+		Help:      "The status condition of a specific Secret Store",
+	}, []string{"name", "namespace"})
+	//...
+	gaugeVecMetrics[SecretStoreStatusConditionKey] = secretStoreCondition
+}
+
+func UpdateSecretStoreCondition(secretName string, namespace string, condition string, status string, value float64) {
+	labels := prometheus.Labels{
+		"name":      secretName,
+		"namespace": namespace,
+		"condition": condition,
+		"status":    status,
+	}
+	secretStoreCondition.With(labels).Set(value)
+}
+
 
 ```
+
+
+Beleza, adicionei as duas métricas sugeridas. E agora? Como eu testo isso? Como eu sei que está funcionando? Para isso, vamos para o próximo passo.
 
 ## Testes e Build do projeto
 
