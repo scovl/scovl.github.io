@@ -4,7 +4,7 @@ description = "Art of Chaos Engineering"
 date = 2023-06-01T17:31:45-03:00
 tags = ["chaos, chaosengineering, observability, sre, developers, devops, cloud, kubernetes, k8s, microservices, cloudnative, cloudnativebrasil, cloudnativebr, cloudnativebrasil, cloud"]
 draft = false
-weight = 3
+weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
@@ -129,7 +129,7 @@ Em resumo, a observabilidade é uma parte essencial da engenharia do caos, pois 
 
 A Engenharia do Caos não é uma solução milagrosa que conserta automaticamente seu sistema, cura o câncer ou garante a perda de peso. Na verdade, pode nem mesmo ser aplicável ao seu caso de uso ou projeto. Um equívoco comum é pensar que a Engenharia do Caos envolve destruir coisas aleatoriamente. Embora a aleatoriedade possa ser uma ferramenta poderosa, você deve controlar as variáveis com as quais está interagindo o máximo possível.
 
-A Engenharia do Caos não se resume a ferramentas como Chaos Monkey, Chaos Toolkit ou PowerfulSeal. Essas ferramentas facilitam a implementação de certos tipos de experimentos, mas a verdadeira dificuldade está em aprender a analisar criticamente os sistemas e prever onde podem estar os pontos frágeis. É importante entender que a Engenharia do Caos não substitui outros métodos de teste, como testes unitários ou de integração. Em vez disso, ela os complementa, assim como os airbags são testados isoladamente e depois com o restante do carro em um teste de colisão. Cada sistema é diferente e, embora examinaremos cenários comuns juntos, você precisará entender profundamente as fraquezas do seu sistema para criar experimentos úteis de Engenharia do Caos. O valor que você obtém dos experimentos de Engenharia do Caos dependerá do seu sistema, do quão bem você o compreende, da profundidade dos testes e da qualidade da sua observabilidade. Embora a Engenharia do Caos deva ser executada em produção, essa não é a única situação em que se aplica. Há valor em aplicar os princípios da Engenharia do Caos e realizar experimentos em outros ambientes também. Por fim, embora exista alguma sobreposição, a Engenharia do Caos não se origina da teoria do caos em matemática e física. Com essas ressalvas, vamos experimentar a Engenharia do Caos com um pequeno estudo de caso. A Engenharia do Caos também é frequentemente confundido com "quebrar coisas em produção" e Antifragilidade. No entanto, esses conceitos são diferentes:
+A Engenharia do Caos não se resume a ferramentas como **[Chaos Monkey](https://netflix.github.io/chaosmonkey/)**, **[Chaos Toolkit](https://chaostoolkit.org/)** ou **[PowerfulSeal](https://powerfulseal.github.io/powerfulseal/)**. Essas ferramentas facilitam a implementação de certos tipos de experimentos, mas a verdadeira dificuldade está em aprender a analisar criticamente os sistemas e prever onde podem estar os pontos frágeis. É importante entender que a Engenharia do Caos não substitui outros métodos de teste, como testes unitários ou de integração. Em vez disso, ela os complementa, assim como os airbags são testados isoladamente e depois com o restante do carro em um teste de colisão. Cada sistema é diferente e, embora examinaremos cenários comuns juntos, você precisará entender profundamente as fraquezas do seu sistema para criar experimentos úteis de Engenharia do Caos. O valor que você obtém dos experimentos de Engenharia do Caos dependerá do seu sistema, do quão bem você o compreende, da profundidade dos testes e da qualidade da sua observabilidade. Embora a Engenharia do Caos deva ser executada em produção, essa não é a única situação em que se aplica. Há valor em aplicar os princípios da Engenharia do Caos e realizar experimentos em outros ambientes também. Por fim, embora exista alguma sobreposição, a Engenharia do Caos não se origina da teoria do caos em matemática e física. Com essas ressalvas, vamos experimentar a Engenharia do Caos com um pequeno estudo de caso. A Engenharia do Caos também é frequentemente confundido com "quebrar coisas em produção" e Antifragilidade. No entanto, esses conceitos são diferentes:
 
 * **Quebrar coisas em produção**: Embora pareça interessante, essa descrição não é apropriada para organizações de grande escala. Chaos Engineering é melhor caracterizado como "consertar coisas em produção". O objetivo é melhorar proativamente a disponibilidade e a segurança de sistemas complexos, enquanto outras ferramentas e disciplinas lidam com a resposta reativa a incidentes. Chaos Engineering se concentra em melhorar a segurança de forma proativa.
 
@@ -176,7 +176,7 @@ Um outro exemplo mais avançado é o uso do Chaosmesh para simular queda de pods
 ### Pré-requisitos:
 
 * Um cluster Kubernetes configurado e funcionando.
-* O ChaosMesh instalado no cluster Kubernetes. Se você ainda não tiver o ChaosMesh instalado, siga as instruções em **https://chaos-mesh.org/docs/installation/quick-start/** para instalá-lo.
+* O ChaosMesh instalado no cluster Kubernetes. Se você ainda não tiver o ChaosMesh instalado, siga as instruções em **[Chaosmesh installation quick-start](https://chaos-mesh.org/docs/installation/quick-start/)** para instalá-lo.
 
 1. Configurando a experimentação de queda de pods
 
@@ -229,13 +229,13 @@ kubectl get pods -l app.kubernetes.io/name=app-name
 kubectl logs <pod-name>
 ```
 
-No exemplo acima, mostrei como usar o ChaosMesh para realizar experimentos de falhas em pods Kubernetes. Ao realizar esses experimentos, você pode identificar e corrigir problemas antes que eles ocorram em um ambiente de produção real. Para mais informações sobre o ChaosMesh, consulte **https://chaos-mesh.org/**
+No exemplo acima, mostrei como usar o ChaosMesh para realizar experimentos de falhas em pods Kubernetes. Ao realizar esses experimentos, você pode identificar e corrigir problemas antes que eles ocorram em um ambiente de produção real. Para mais informações sobre o ChaosMesh, consulte **[https://chaos-mesh.org/](https://chaos-mesh.org/)**.
 
 ### Engenharia do Caos em Microsserviços
 
 ![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo02.png#center)
 
-Vamos usar o framework de testes de integração "RestAssured" e o framework de engenharia do caos "Chaos Monkey for Spring Boot" para implementar o teste de latência de requisições com injeção de falhas. Antes de começarmos, certifique-se de que o Maven e o Java estejam instalados em sua máquina.
+Vamos usar o framework de testes de integração "**[RestAssured](https://rest-assured.io/)**" e o framework de engenharia do caos "**[Chaos Monkey for Spring Boot](https://codecentric.github.io/chaos-monkey-spring-boot/)**" para implementar o teste de latência de requisições com injeção de falhas. Antes de começarmos, certifique-se de que o Maven e o Java estejam instalados em sua máquina.
 
 1. Crie um projeto Spring Boot
 
@@ -339,7 +339,7 @@ Após a execução, você poderá ver no console a saída do Chaos Monkey injeta
 2023-03-23 10:31:55.047  INFO 95920 --- [    Test worker] c.n.chaos.monkey.component.ChaosMonkey  : Exception injected for method sayHello
 ```
 
-Além disso, ao executar o teste novamente, você poderá ver o aumento do tempo de resposta devido à injeção de atraso. O relatório de teste também indicará se houve algum erro durante a execução do teste. Com isso, você pode ver como é fácil usar o Chaos Monkey e o Spring Boot para testar a resiliência de seus microsserviços em relação a falhas. Para mais informações sobre o Chaos Monkey, consulte **https://codecentric.github.io/chaos-monkey-spring-boot/**.
+Além disso, ao executar o teste novamente, você poderá ver o aumento do tempo de resposta devido à injeção de atraso. O relatório de teste também indicará se houve algum erro durante a execução do teste. Com isso, você pode ver como é fácil usar o Chaos Monkey e o Spring Boot para testar a resiliência de seus microsserviços em relação a falhas. Para mais informações sobre o Chaos Monkey, consulte **[Chaos Monkey for Spring Boot](https://codecentric.github.io/chaos-monkey-spring-boot/)**.
 
 ## Blast Radius
 
@@ -378,7 +378,7 @@ class Pedido {
 }
 ```
 
-Neste exemplo, um erro ocorre no método `calcularDesconto()`, onde uma divisão por zero pode acontecer se o cliente tiver apenas um pedido (quantidadeTotal - 1 == 0). O "blast radius" refere-se à extensão dos impactos desse erro no resto do sistema. No caso do nosso exemplo, o erro pode ter um impacto nos seguintes pontos:
+Neste exemplo, um erro ocorre no método `calcularDesconto()`, onde uma divisão por zero pode acontecer se o cliente tiver apenas um pedido `(quantidadeTotal - 1 == 0)`. O "blast radius" refere-se à extensão dos impactos desse erro no resto do sistema. No caso do nosso exemplo, o erro pode ter um impacto nos seguintes pontos:
 
 * O método `processar()` captura a exceção, mas não lida adequadamente com ela, o que significa que o pedido não é processado corretamente.
 * O método `aplicarDesconto()` pode não ser chamado devido ao erro, fazendo com que o desconto não seja aplicado aos itens do pedido.
@@ -388,7 +388,7 @@ Para minimizar o "blast radius" neste exemplo, poderíamos aplicar práticas de 
 * Utilizar um tratamento de exceções mais específico e talvez aplicar um desconto padrão se o cálculo do desconto falhar.
 * Separar o cálculo e a aplicação do desconto em componentes independentes e monitorar cada etapa cuidadosamente.
 
-Dessa forma, um erro em uma parte do código teria um impacto menor em outras partes do sistema, reduzindo o "raio de impacto" e melhorando a resiliência geral do sistema. Para mais informações sobre o conceito de blast radius, consulte **https://en.wikipedia.org/wiki/Blast_radius**.
+Dessa forma, um erro em uma parte do código teria um impacto menor em outras partes do sistema, reduzindo o "raio de impacto" e melhorando a resiliência geral do sistema. Para mais informações sobre o conceito de blast radius, consulte **[Blast Radius](https://en.wikipedia.org/wiki/Blast_radius)**.
 
 ## Complexidade dos sistemas modernos
 
