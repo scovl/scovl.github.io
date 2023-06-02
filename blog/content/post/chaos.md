@@ -13,6 +13,7 @@ author = "Vitor Lobo Ramos"
 * **[Como funciona a Engenharia do Caos?](#como-funciona-a-engenharia-do-caos)**
 * **[Observabilidade](#observabilidade)**
 * **[O que a Engenharia do Caos não é](#o-que-a-engenharia-do-caos-não-é)**
+* **[Histórias púbicas de Engenharia do Caos](#histórias-púbicas-de-engenharia-do-caos)**
 * **[Exemplos práticos](#exemplos-práticos)**
 * **[Blast Radius](#blast-radius)**
 * **[Complexidade dos sistemas modernos](#complexidade-dos-sistemas-modernos)**
@@ -22,7 +23,7 @@ author = "Vitor Lobo Ramos"
 * **[Falhas notórias](#falhas-notórias)**
 * **[Benefícios](#benefícios)**
 * **[Ferramentas e frameworks](#ferramentas-e-frameworks)**
-* **[Desafio e estratégias na adoção](#desafio-e-estratégias-na-adoção)**
+* **[Desafios e estratégias na adoção](#desafios-e-estratégias-na-adoção)**
 * **[Conclusão](#conclusão)**
 
 
@@ -32,9 +33,10 @@ author = "Vitor Lobo Ramos"
 
 A Engenharia do Caos é uma abordagem inovadora para melhorar a resiliência e a confiabilidade dos sistemas. Ela começou na **[Netflix]()**, uma das maiores empresas de streaming de vídeo do mundo, por volta de 2010. Nessa época, a Netflix enfrentava o desafio de garantir a disponibilidade e o desempenho de seus serviços em uma infraestrutura complexa e distribuída em nuvem. A dor que a Netflix experimentava era a necessidade de manter seus serviços funcionando continuamente e sem interrupções, mesmo diante de falhas e incidentes inesperados. Eles perceberam que, para abordar essa questão de forma eficaz, precisavam adotar uma abordagem proativa, em vez de reativa, para gerenciar a resiliência de seus sistemas.
 
-A disciplina da Engenharia do Caos ajudou com a solução deste problema introduzindo falhas deliberadas e estresse em seu ambiente de produção, permitindo que a equipe identificasse e corrigisse pontos fracos antes que se tornassem problemas reais. Isso permitiu à empresa melhorar a resiliência de seus sistemas e garantir uma experiência de usuário consistente e confiável. A proposta central da Engenharia do Caos é a ideia de que, ao testar intencionalmente a capacidade de um sistema de lidar com falhas e estresse, as equipes possam aprender mais sobre a resiliência de seus sistemas e trabalhar para melhorá-los continuamente. Em vez de esperar por falhas reais e correr o risco de interrupções significativas nos serviços, a Engenharia do Caos defende a experimentação proativa e o aprendizado contínuo. Desde sua criação na Netflix, a disciplina de Engenharia do Caos tem evoluído e ganhado popularidade em toda a indústria de tecnologia. Empresas como Google, Amazon, Microsoft e Facebook também adotaram a prática para aprimorar a confiabilidade de seus próprios sistemas. Além disso, uma série de ferramentas e frameworks, como **[Chaos Monkey]()**, **[Gremlin]()** e **[Litmus]()**, foram desenvolvidos para facilitar a implementação da Engenharia do Caos em diversos ambientes.
+A disciplina da Engenharia do Caos ajudou com a solução deste problema introduzindo falhas deliberadas e estresse em seu ambiente de produção, permitindo que a equipe identificasse e corrigisse pontos fracos antes que se tornassem problemas reais. Isso permitiu à empresa melhorar a resiliência de seus sistemas e garantir uma experiência de usuário consistente e confiável. A proposta central da Engenharia do Caos é a ideia de que, ao testar intencionalmente a capacidade de um sistema de lidar com falhas e estresse, as equipes possam aprender mais sobre a resiliência de seus sistemas e trabalhar para melhorá-los continuamente. Em vez de esperar por falhas reais e correr o risco de interrupções significativas nos serviços, a Engenharia do Caos defende a experimentação proativa e o aprendizado contínuo. Desde sua criação na Netflix, a disciplina de Engenharia do Caos tem evoluído e ganhado popularidade em toda a indústria de tecnologia. Empresas como Google, Amazon, Microsoft e Facebook também adotaram a prática para aprimorar a confiabilidade de seus próprios sistemas. Além disso, uma série de ferramentas e frameworks, como **[Chaos Monkey](https://netflix.github.io/chaosmonkey/)**, **[Gremlin](https://www.gremlin.com/site-reliability-engineering/)** e **[Litmus](https://litmuschaos.io/)**, foram desenvolvidos para facilitar a implementação da Engenharia do Caos em diversos ambientes.
 
 Nora Jones e Casey Rosenthal, em seu livro "**[Chaos Engineering: System Resiliency in Practice](https://www.oreilly.com/library/view/chaos-engineering/9781491988459/)**", a Engenharia do Caos é baseada na premissa de que falhas e interrupções são inevitáveis em sistemas complexos. Em vez de esperar por esses incidentes acontecerem em produção, a abordagem proativa da Engenharia do Caos visa introduzir essas falhas e estresse controlados em ambientes de produção, com o objetivo de identificar e corrigir fragilidades antes que elas se tornem problemas reais. Ambos os autores ressaltam que esta disciplina não é deve ser uma prática isolada, mas deve ser integrada aos processos de desenvolvimento, teste e operação contínua. Ela exige uma cultura organizacional que valorize a aprendizagem, a colaboração e a transparência. Além disso, as equipes devem estabelecer métricas claras e definir limites para os experimentos, garantindo que a segurança e a estabilidade do sistema sejam preservadas.
+
 
 ## Motivação
 
@@ -137,6 +139,18 @@ A Engenharia do Caos não se resume a ferramentas como **[Chaos Monkey](https://
 * **Antifragility**: Introduzido por Nassim Taleb, refere-se a sistemas que se tornam mais fortes quando expostos a estresses aleatórios. A principal distinção entre Chaos Engineering e Antifragilidade é que o primeiro educa os operadores humanos sobre o caos já presente no sistema, tornando a equipe mais resiliente. A Antifragilidade, por outro lado, adiciona caos ao sistema na esperança de que ele se torne mais forte. Embora ambos lidem com caos e sistemas complexos, Antifragilidade não compartilha o mesmo embasamento empírico e fundamentação teórica que o Chaos Engineering.
 
 Portanto, Chaos Engineering e Antifragilidade são conceitos distintos, embora ambos lidem com a complexidade e o caos em sistemas. O Chaos Engineering foca em educar os operadores sobre o caos existente e melhorar a resiliência, enquanto a Antifragilidade visa tornar os sistemas mais fortes ao adicionar caos a eles.
+
+## Histórias púbicas de Engenharia do Caos
+
+* **[Nationwide Building Society](https://aws.amazon.com/pt/blogs/industries/automating-and-scaling-chaos-engineering-using-aws-fault-injection-simulator/)** - A utilização da Engenharia do Caos na Nationwide permitiu a realização de "Gamedays" em grande escala em seus ambientes inferiores para criar confiança em designs de sistemas e infraestrutura semelhantes à produção. A Nationwide planeja expandir a Engenharia do Caos por meio da automação de "Gamedays" estendidos, integração de ferramentas de terceiros e expansão das soluções de monitoramento para incorporar modelos de aprendizado de máquina (ML) e detecção de anomalias, a fim de localizar e investigar possíveis falhas futuras antes que elas ocorram. Por meio de serviços adicionais da AWS, como o AWS Resilience Hub, a detecção de anomalias do CloudWatch e o Amazon QuickSight, a Nationwide deseja desenvolver um painel abrangente que se conecte a outras soluções de monitoramento. Além disso, aprenderam a realizar melhorias e construir confiança por meio da Engenharia do Caos, tornando-a o mais simples possível. Isso cria uma equidade entre as equipes, permitindo que as mesmas ferramentas e processos sejam utilizados, em vez de métodos complexos múltiplos. Além disso, isso resulta em economia de custos, redução de até 90% no MTTR (tempo médio para reparo) e equipes com experiência em diversos modos/cenários de falha que podem corrigir ou modificar proativamente configurações.
+
+* **[Banco Itaú](https://grafana.com/blog/2022/11/28/how-banco-itau-tracks-1.5b-daily-metrics-on-prem-and-in-aws-with-grafana-and-observability/)** - Com uma grande quantidade de operações digitais e uma infraestrutura extensa, o Banco Itaú utiliza ferramentas como Thanos, Prometheus e Grafana para monitorar métricas, Splunk para logs, Yaeger para rastreamento e AppDynamics para monitoramento de desempenho de aplicativos. Além disso, eles incorporam a Engenharia do Caos em produção para melhor se proteger contra problemas futuros. Para saber mais detalhes, é possível assistir à palestra completa do Banco Itaú no **[ObservabilityCON](https://www.tabnews.com.br/MateusVP/artigo-traducao-como-o-banco-itau-rastreia-1-5-bilhao-de-metricas-diarias-localmente-e-na-aws-com-o-uso-do-grafana-e-observabilidade)**.
+
+* **[Starling Bank](https://www.infoq.com/articles/chaos-testing-starling-bank/)** - No Starling Bank, eles começaram a implementar o caos removendo os riscos ignoráveis. Eles criaram seu próprio "chaos daemon" simples em 2016, visando a simplicidade. Isso permitiu que eles construíssem um sistema que esperava falhas e uma organização de desenvolvimento que estava preparada para isso. Eles criaram o próprio "chaos daemon" simples e utiliza logs para evidenciar requisitos de auditoria relacionados a recuperação de desastres. É importante mostrar que um servidor pode falhar sem prejudicar o que é importante para o negócio.
+* **[iFood](https://www.youtube.com/watch?v=t8F0FAw6K6E&t=625s)** - O iFood começou a praticar a engenharia do caos de forma humilde, realizando testes durante os horários de menor demanda. No entanto, essa abordagem envolvia muitas pessoas e tarefas manuais propensas a erros, o que não era escalável. Foi então que decidiram implementar a engenharia do caos em escala e encontraram a ferramenta LitmusChaos, que oferecia uma ampla gama de experimentos controlados de forma simples. 
+* **[Amazon Prime](https://aws.amazon.com/pt/blogs/opensource/building-resilient-services-at-prime-video-with-chaos-engineering/)** - A equipe da Amazon Prime utilizaram a abordagem de injeção de falhas em sistemas distribuídos utilizando o Amazon EC2 e o Amazon ECS. Essa abordagem envolve a geração de carga de tráfego contra o sistema, a adição de latência às chamadas de rede para o banco de dados subjacente e a validação de timeouts e retries. Eles desenvolveram uma biblioteca chamada **[AWSSSMChaosRunner](https://github.com/amzn/awsssmchaosrunner)** que facilita a criação de documentos e a execução de experimentos de falhas. A Amazon Prime usou essa biblioteca para evitar falhas que poderiam impactar os clientes no serviço Prime Video.
+
+---
 
 ## Exemplos práticos
 
@@ -450,7 +464,9 @@ A Engenharia do Caos é uma abordagem de engenharia de software que visa melhora
 * **Monitoramento e observabilidade**: É fundamental monitorar o sistema e coletar informações detalhadas sobre seu comportamento para que as equipes possam tomar decisões informadas e corrigir problemas rapidamente.
 * **Aprender com os resultados dos experimentos**: Os resultados dos experimentos devem ser compartilhados e discutidos entre as equipes, e as lições aprendidas devem ser aplicadas para melhorar continuamente a resiliência do sistema.
 
-## Práticas da Engenharia do Caos:
+---
+
+## Práticas da Engenharia do Caos
 
 ### GameDay
 
@@ -522,7 +538,7 @@ Aqui estão algumas das principais ferramentas e frameworks de Engenharia do Cao
 
 Essas ferramentas e frameworks são projetados para ajudar as organizações a testar e melhorar a resiliência de seus sistemas através de experimentos de Engenharia do Caos. Ao utilizar essas soluções, as equipes de engenharia podem identificar e corrigir problemas potenciais antes que causem interrupções no ambiente de produção.
 
-## Desafio e estratégias na adoção
+## Desafios e estratégias na adoção
 
 Existem vários desafios na adoção da Engenharia do Caos. Um deles é a cultura organizacional, que requer uma mudança na mentalidade para aceitar e abraçar a ideia de introduzir falhas intencionais nos sistemas. Muitas organizações ainda são resistentes a essa abordagem e podem ter dificuldades em adotá-la. Outro desafio é a falta de conhecimento e experiência com as práticas e ferramentas de Engenharia do Caos. Isso pode dificultar a implementação bem-sucedida de experimentos de caos, pois as equipes podem não saber como planejar, executar e analisar experimentos corretamente.
 
