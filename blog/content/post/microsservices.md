@@ -1,3 +1,12 @@
++++
+title = "Microservices"
+description = "Microservices"
+date = 2023-04-04T09:18:18-03:00
+tags = ["microservices", "arquitetura", "arquitetura de software"]
+draft = true
+weight = 8
++++
+
 # CAPÍTULO 1
 
 ## O que são Microservices?
