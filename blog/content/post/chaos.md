@@ -1,10 +1,10 @@
 +++
 title = "Chaos Engineering"
 description = "Art of Chaos Engineering"
-date = 2023-03-19T17:31:45-03:00
+date = 2023-06-01T17:31:45-03:00
 tags = ["chaos, chaosengineering, observability, sre, developers, devops, cloud, kubernetes, k8s, microservices, cloudnative, cloudnativebrasil, cloudnativebr, cloudnativebrasil, cloud"]
 draft = false
-weight = 2
+weight = 3
 author = "Vitor Lobo Ramos"
 +++
 
@@ -26,7 +26,7 @@ author = "Vitor Lobo Ramos"
 * **[Conclusão](#conclusão)**
 
 
-![img#center](images/chaos/monkey.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/monkey.png#center)
 
 ## Introdução
 
@@ -34,21 +34,21 @@ A Engenharia do Caos é uma abordagem inovadora para melhorar a resiliência e a
 
 A disciplina da Engenharia do Caos ajudou com a solução deste problema introduzindo falhas deliberadas e estresse em seu ambiente de produção, permitindo que a equipe identificasse e corrigisse pontos fracos antes que se tornassem problemas reais. Isso permitiu à empresa melhorar a resiliência de seus sistemas e garantir uma experiência de usuário consistente e confiável. A proposta central da Engenharia do Caos é a ideia de que, ao testar intencionalmente a capacidade de um sistema de lidar com falhas e estresse, as equipes possam aprender mais sobre a resiliência de seus sistemas e trabalhar para melhorá-los continuamente. Em vez de esperar por falhas reais e correr o risco de interrupções significativas nos serviços, a Engenharia do Caos defende a experimentação proativa e o aprendizado contínuo. Desde sua criação na Netflix, a disciplina de Engenharia do Caos tem evoluído e ganhado popularidade em toda a indústria de tecnologia. Empresas como Google, Amazon, Microsoft e Facebook também adotaram a prática para aprimorar a confiabilidade de seus próprios sistemas. Além disso, uma série de ferramentas e frameworks, como **[Chaos Monkey]()**, **[Gremlin]()** e **[Litmus]()**, foram desenvolvidos para facilitar a implementação da Engenharia do Caos em diversos ambientes.
 
+Nora Jones e Casey Rosenthal, em seu livro "**[Chaos Engineering: System Resiliency in Practice](https://www.oreilly.com/library/view/chaos-engineering/9781491988459/)**", a Engenharia do Caos é baseada na premissa de que falhas e interrupções são inevitáveis em sistemas complexos. Em vez de esperar por esses incidentes acontecerem em produção, a abordagem proativa da Engenharia do Caos visa introduzir essas falhas e estresse controlados em ambientes de produção, com o objetivo de identificar e corrigir fragilidades antes que elas se tornem problemas reais. Ambos os autores ressaltam que esta disciplina não é deve ser uma prática isolada, mas deve ser integrada aos processos de desenvolvimento, teste e operação contínua. Ela exige uma cultura organizacional que valorize a aprendizagem, a colaboração e a transparência. Além disso, as equipes devem estabelecer métricas claras e definir limites para os experimentos, garantindo que a segurança e a estabilidade do sistema sejam preservadas.
+
 ## Motivação
 
-A Engenharia do Caos é uma estratégia pra deixar sistemas complexos mais confiáveis e resilientes. Com essa abordagem, dá pra estimar riscos, definir metas de desempenho e garantir que tudo funcione bem. É tipo testar o sistema todo, não só partes isoladas, pra ver se ele aguenta situações adversas e falhas previsíveis. E o legal é que a Engenharia do Caos ainda lhe ajuda a descobrir problemas inesperados que surgem quando componentes interagem entre si. Assim, dá pra resolver essas tretas e melhorar a confiabilidade e resiliência do sistema.
-
-Se tivessem usado essa abordagem antes, vários desastres poderiam ter sido evitados. Olha só alguns exemplos práticos:
+A Engenharia do Caos é uma estratégia pra deixar sistemas complexos mais confiáveis e resilientes. Com essa abordagem, dá pra estimar riscos, definir metas de desempenho e garantir que tudo funcione bem. É tipo testar o sistema todo, não só partes isoladas, pra ver se ele aguenta situações adversas e falhas previsíveis. E o legal é que a Engenharia do Caos ainda lhe ajuda a descobrir problemas inesperados que surgem quando componentes interagem entre si. Assim, dá pra resolver essas tretas e melhorar a confiabilidade e resiliência do sistema. Se tivessem usado essa abordagem antes, vários desastres poderiam ter sido evitados. Olha só alguns exemplos práticos:
 
 * **Knight Capital Group** - em 2012, um erro de software fez a empresa perder US$ 440 milhões em menos de uma hora. Com a Engenharia do Caos, isso poderia ter sido evitado.
 * **Lembra quando o Healthcare.gov deu ruim em 2013?** - o site do governo dos EUA pro Obamacare falhou por causa de problemas de software e capacidade. A Engenharia do Caos poderia ter ajudado a evitar essa catástrofe.
 * **E o ataque WannaCry em 2017?** - foi um ransomware que se aproveitou de falhas no Windows e afetou uma galera pelo mundo todo. Com a Engenharia do Caos, dava pra reforçar a segurança e evitar esse transtorno.
 
-Esses são só alguns exemplos, mas dá pra sacar que a Engenharia do Caos é uma jogada inteligente pra prevenir problemas e garantir que tudo funcione de boa. É tipo dar um tapa na confiabilidade dos sistemas complexos e distribuídos.
+Esses são só alguns exemplos, mas dá pra sacar que a Engenharia do Caos é uma jogada inteligente pra prevenir problemas e garantir que tudo funcione de boa. É tipo dar um tapa na confiabilidade dos sistemas complexos e distribuídos. Como mencionado pelo autor do livro "**[Chaos Engineering: Crash Test Your Applications](https://www.manning.com/books/chaos-engineering)**", Mikolaj Pawlikowski, a Engenharia do Caos é uma abordagem que permite aos engenheiros de software explorar os limites de seus sistemas e aprender com eles. Ao realizar testes e experimentos controlados, é possível descobrir fragilidades e falhas, permitindo que sejam corrigidas antes de se tornarem problemas reais. Através desse aprendizado contínuo, os sistemas podem ser aprimorados e tornados mais confiáveis e resilientes ao longo do tempo.
 
 ## Como funciona a Engenharia do Caos?
 
-![img#center](images/chaos/geo01.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo01.png#center)
 
 A Engenharia do Caos é realizada por meio de experimentos de caos, que são as unidades básicas desse tipo de engenharia. Em um experimento de caos, você investiga como um sistema de computador reage a eventos adversos, focando em provar ou refutar suas suposições sobre como o sistema será afetado por determinada condição. Vamos considerar um exemplo: você possui um site popular e um datacenter inteiro. É necessário garantir que seu site continue funcionando mesmo em caso de queda de energia. Para isso, você instala duas fontes de energia independentes no datacenter. Mesmo assim, muita coisa pode dar errado, como falhas na troca automática entre as fontes ou a insuficiência de uma única fonte para todos os servidores. A Engenharia do Caos pode ajudá-lo a identificar esses problemas. Você pode projetar um experimento de caos simples para descobrir o que acontece quando uma das fontes de energia falha. Siga estes quatro passos para cada fonte de energia, uma de cada vez:
 
@@ -69,7 +69,8 @@ O processo pode parecer simples e óbvio, mas é eficiente. Dado um sistema de c
 * **Hipótese:** transforme sua intuição em uma hipótese que possa ser provada ou refutada, usando os dados que você pode coletar de maneira confiável (observabilidade). Um exemplo simples pode ser: "Desligar uma das máquinas não afeta a latência média do serviço."
 * **Execução do experimento:** realize o experimento, fazendo as medições para concluir se sua hipótese estava correta. Curiosamente, é bom estar errado, porque é com os erros que você aprende mais. Repita o processo quantas vezes for necessário. Quanto mais simples for o experimento, geralmente melhor. Não há pontos extras para designs elaborados, a menos que essa seja a melhor maneira de provar a hipótese.
 
-Lembre-se de que o objetivo dos experimentos de caos é compreender como seu sistema se comporta diante de eventos adversos, assegurando sua confiabilidade e resiliência. A chave para o sucesso é projetar experimentos simples e eficazes que permitam aprender e melhorar continuamente seu sistema.
+Autores como **[Mikolaj Pawlikowski](https://mikolajpawlikowski.com/)**, **[Nora Jones](https://www.linkedin.com/in/norajones1/)**, **[Casey Rosenthal](https://www.linkedin.com/in/caseyrosenthal)** e **[John Allspaw](https://www.linkedin.com/in/jallspaw/)** enfatizam que a Engenharia do Caos é uma abordagem sistemática para testar e melhorar a resiliência e confiabilidade do sistema em situações de estresse. Isso é feito criando cenários de falha controlados e observando como o sistema responde a eles. Lembre-se de que o objetivo dos experimentos de caos é compreender como seu sistema se comporta diante de eventos adversos, assegurando sua confiabilidade e resiliência. A chave para o sucesso é projetar experimentos simples e eficazes que permitam aprender e melhorar continuamente seu sistema.
+
 
 ### Definindo um estado estável
 
@@ -81,7 +82,7 @@ Você pode se aprofundar muito nesse assunto. A boa notícia é que muitas vezes
 
 ### Formulando uma hipótese
 
-![img#center](images/chaos/geo03.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo03.png#center)
 
 Agora chegamos à parte realmente divertida onde você transforma seus palpites em hipóteses como por exemplo: Ele continuará funcionando? Vai desacelerar? Quanto? Na vida real, essas perguntas geralmente são motivadas por incidentes (problemas não planejados que você descobre quando as coisas param de funcionar), mas quanto melhor você se torna neste jogo, mais você pode (e deve) antecipar. No início deste capítulo, listei alguns exemplos do que tende a dar errado. Esses eventos podem ser amplamente categorizados da seguinte forma:
 
@@ -111,7 +112,7 @@ Finalmente, você executa o experimento, mede os resultados e conclui se estava 
 
 ## Observabilidade
 
-![img#center](images/chaos/geo04.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo04.png#center)
 
 Observabilidade, no contexto da engenharia do caos, refere-se à capacidade de entender o estado interno de um sistema a partir de suas saídas externas, como métricas, registros e rastreamentos. A observabilidade é fundamental para identificar problemas, diagnosticar falhas e melhorar a resiliência de um sistema. Vamos explicar isso de forma didática utilizando um exemplo simples:
 
@@ -165,6 +166,8 @@ sudo sysctl vm.drop_caches=3
 ```
 
 Em seguida, podemos verificar a quantidade de memória disponível no sistema com o comando `free -m`. Se a quantidade de memória disponível aumentar, isso indica que a ação foi eficaz em aumentar a memória disponível. Podemos continuar experimentando diferentes combinações de variáveis ​​e ações para entender como elas afetam o comportamento do sistema. Ao fazer isso, podemos descobrir soluções mais eficazes e eficientes para lidar com problemas de gerenciamento de memória no sistema Linux. Em resumo, a engenharia do caos pode ser uma abordagem útil para entender e prever comportamentos complexos em sistemas. Ao identificar variáveis ​​importantes e experimentar diferentes ações, podemos descobrir soluções mais eficazes para problemas de gerenciamento de memória em sistemas Linux.
+
+---
 
 ### Kubernetes - ChaosMesh
 
@@ -230,7 +233,7 @@ No exemplo acima, mostrei como usar o ChaosMesh para realizar experimentos de fa
 
 ### Engenharia do Caos em Microsserviços
 
-![img#center](images/chaos/geo02.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo02.png#center)
 
 Vamos usar o framework de testes de integração "RestAssured" e o framework de engenharia do caos "Chaos Monkey for Spring Boot" para implementar o teste de latência de requisições com injeção de falhas. Antes de começarmos, certifique-se de que o Maven e o Java estejam instalados em sua máquina.
 
@@ -340,7 +343,7 @@ Além disso, ao executar o teste novamente, você poderá ver o aumento do tempo
 
 ## Blast Radius
 
-![img#center](images/chaos/geo05.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo05.png#center)
 
 O conceito de blast radius (ou raio de impacto em tradução livre) na engenharia do caos refere-se ao impacto que uma falha ou problema em um sistema ou componente específico pode ter sobre o sistema como um todo. É uma medida de quão longe o "estrago" causado por uma falha pode se espalhar, afetando outras partes do sistema. Para explicar de forma didática, imagine um sistema como uma cidade, e os componentes individuais são os edifícios. Se um edifício (componente) sofre um desastre, como uma explosão, o "blast radius" seria a área ao redor do edifício afetada pelos danos causados pela explosão. Em um sistema bem projetado, o objetivo é minimizar o blast radius de falhas, de modo que um único problema não leve a uma falha generalizada do sistema. Imagine um sistema de pedidos online que possui várias classes, como Pedido, Cliente e Item. Em uma situação específica, um erro ocorre no processamento de um pedido, o que pode afetar outros componentes do sistema. Vamos analisar um trecho de código em Java que exemplifica isso:
 
@@ -389,7 +392,7 @@ Dessa forma, um erro em uma parte do código teria um impacto menor em outras pa
 
 ## Complexidade dos sistemas modernos
 
-![img#center](images/chaos/geo06.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo06.png#center)
 
 Para decidir se a Engenharia do Caos faz sentido em seu sistema, é necessário entender a diferença entre sistemas simples e complexos. Sistemas simples são geralmente lineares, onde uma mudança na entrada resulta em uma mudança correspondente na saída. Já os sistemas complexos são não lineares, apresentando resultados imprevisíveis e interações complexas entre suas partes. Sistemas complexos possuem tantas partes móveis ou mudanças rápidas que é impossível para uma pessoa compreender tudo. Isso torna difícil simular ou modelar o comportamento desses sistemas. No mundo do software, muitos sistemas são complexos e tendem a aumentar sua complexidade com o tempo.
 
@@ -462,7 +465,7 @@ A confiabilidade dos produtos do Google não é mágica, mas sim resultado de um
 
 ### Chaos Monkey e Simian Army
 
-![img#center](images/chaos/monkeys.png#center)
+![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/monkeys.png#center)
 
 O Chaos Monkey é um aplicativo simples usado pela Netflix para melhorar a resiliência de seus sistemas. Ele seleciona aleatoriamente uma instância em um cluster e a desativa durante o horário comercial, simulando falhas reais. Isso força os engenheiros a solucionar problemas de disponibilidade do serviço, já que precisam lidar com as interrupções causadas pelo Chaos Monkey. Eventualmente, a ferramenta se tornou popular e foi adotada por outras equipes.
 
@@ -526,7 +529,9 @@ Além disso, a coordenação entre equipes é crucial para o sucesso da Engenhar
 
 ## Conclusão
 
-A Engenharia do Caos é uma prática importante e valiosa que visa melhorar a resiliência e a confiabilidade dos sistemas e infraestruturas de TI. Por meio da introdução intencional de falhas e da realização de experimentos controlados, as organizações podem identificar e corrigir problemas antes que causem interrupções ou impactos negativos. No entanto, a adoção da Engenharia do Caos não está isenta de desafios, como a resistência à mudança na cultura organizacional, a falta de conhecimento e experiência, e a necessidade de colaboração entre equipes. Para superar esses obstáculos, é crucial que as organizações invistam na educação e no treinamento das equipes, bem como na implementação de processos e ferramentas adequados para facilitar a colaboração e a comunicação eficaz. Além disso, o estudo de falhas notórias em sistemas e infraestruturas de TI pode fornecer insights valiosos sobre as áreas em que a Engenharia do Caos pode ser aplicada para evitar problemas semelhantes no futuro. Ao aprender com esses casos e aplicar os princípios e práticas da Engenharia do Caos, as organizações podem aumentar a resiliência de seus sistemas e estar melhor preparadas para enfrentar as inevitáveis falhas e desafios que surgem no mundo dinâmico e complexo da tecnologia da informação.
+A Engenharia do Caos é uma prática importante e valiosa que visa melhorar a resiliência e a confiabilidade dos sistemas e infraestruturas de TI. Por meio da introdução intencional de falhas e da realização de experimentos controlados, as organizações podem identificar e corrigir problemas antes que causem interrupções ou impactos negativos. No entanto, a adoção da Engenharia do Caos não está isenta de desafios, como a resistência à mudança na cultura organizacional, a falta de conhecimento e experiência, e a necessidade de colaboração entre equipes. 
+
+Para superar esses obstáculos, é crucial que as organizações invistam na educação e no treinamento das equipes, bem como na implementação de processos e ferramentas adequados para facilitar a colaboração e a comunicação eficaz. Além disso, o estudo de falhas notórias em sistemas e infraestruturas de TI pode fornecer insights valiosos sobre as áreas em que a Engenharia do Caos pode ser aplicada para evitar problemas semelhantes no futuro. Ao aprender com esses casos e aplicar os princípios e práticas da Engenharia do Caos, as organizações podem aumentar a resiliência de seus sistemas e estar melhor preparadas para enfrentar as inevitáveis falhas e desafios que surgem no mundo dinâmico e complexo da tecnologia da informação.
 
 ---
 
