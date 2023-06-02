@@ -3,7 +3,7 @@ title = "Chaos Engineering"
 description = "Art of Chaos Engineering"
 date = 2023-03-19T17:31:45-03:00
 tags = ["chaos, chaosengineering, observability, sre, developers, devops, cloud, kubernetes, k8s, microservices, cloudnative, cloudnativebrasil, cloudnativebr, cloudnativebrasil, cloud"]
-draft = true
+draft = false
 weight = 2
 author = "Vitor Lobo Ramos"
 +++
@@ -36,28 +36,15 @@ A disciplina da Engenharia do Caos ajudou com a solução deste problema introdu
 
 ## Motivação
 
-A Engenharia do Caos é uma abordagem importante para melhorar a confiabilidade e a resiliência de sistemas complexos e distribuídos. As principais motivações para implementar a Engenharia do Caos incluem:
+A Engenharia do Caos é uma estratégia pra deixar sistemas complexos mais confiáveis e resilientes. Com essa abordagem, dá pra estimar riscos, definir metas de desempenho e garantir que tudo funcione bem. É tipo testar o sistema todo, não só partes isoladas, pra ver se ele aguenta situações adversas e falhas previsíveis. E o legal é que a Engenharia do Caos ainda lhe ajuda a descobrir problemas inesperados que surgem quando componentes interagem entre si. Assim, dá pra resolver essas tretas e melhorar a confiabilidade e resiliência do sistema.
 
-* **Estimar riscos e custos, e definir SLIs, SLOs e SLAs**: A Engenharia do Caos permite equilibrar os custos de operação do sistema com os objetivos do negócio, estimando riscos e custos associados a diferentes cenários. Ao definir indicadores, objetivos e acordos de nível de serviço adequados (**[SLIs, SLOs e SLAs]()**), você garante que o sistema atenda às expectativas de desempenho e confiabilidade.
+Se tivessem usado essa abordagem antes, vários desastres poderiam ter sido evitados. Olha só alguns exemplos práticos:
 
-* **Testar o sistema como um todo**: Diferente de testes isolados, a Engenharia do Caos se concentra no sistema como um todo, simulando condições adversas e falhas esperadas. Isso verifica se o sistema ainda fornece a resposta correta dentro do tempo esperado, ajudando a garantir a resiliência e a confiabilidade do sistema em condições reais.
+* **Knight Capital Group** - em 2012, um erro de software fez a empresa perder US$ 440 milhões em menos de uma hora. Com a Engenharia do Caos, isso poderia ter sido evitado.
+* **Lembra quando o Healthcare.gov deu ruim em 2013?** - o site do governo dos EUA pro Obamacare falhou por causa de problemas de software e capacidade. A Engenharia do Caos poderia ter ajudado a evitar essa catástrofe.
+* **E o ataque WannaCry em 2017?** - foi um ransomware que se aproveitou de falhas no Windows e afetou uma galera pelo mundo todo. Com a Engenharia do Caos, dava pra reforçar a segurança e evitar esse transtorno.
 
-* **Encontrar propriedades emergentes desconhecidas**: Sistemas complexos podem exibir propriedades emergentes não intencionais devido às interações entre seus componentes. A Engenharia do Caos ajuda a descobrir como falhas simples podem levar a problemas maiores e inesperados. Identificando esses problemas, é possível resolvê-los e melhorar a confiabilidade e a resiliência do sistema.
-
-A Engenharia do Caos é uma abordagem proativa para melhorar a confiabilidade e a resiliência de sistemas complexos e distribuídos, auxiliando na estimativa de riscos, no teste do sistema como um todo e na descoberta de propriedades emergentes não intencionais que podem afetar negativamente o desempenho e a estabilidade do sistema. A Engenharia do Caos pode ajudar a identificar e mitigar problemas antes que eles ocorram em sistemas de produção. Aqui estão 10 desastres de software e hardware ocorridos a partir de 2011 que poderiam ter sido evitados se a Engenharia do Caos tivesse sido aplicada:
-
-* **Colapso do Knight Capital Group (2012)**: Um erro de software em um sistema de negociação de ações resultou em uma perda de US$ 440 milhões em apenas 45 minutos.
-* **Falha no lançamento do Healthcare.gov (2013)**: O lançamento do site do governo dos EUA para a inscrição no Affordable Care Act (Obamacare) foi prejudicado por problemas de software e capacidade. 
-* **Ataque WannaCry (2017)**: Um ataque de ransomware que explorou vulnerabilidades no software do sistema operacional Windows afetou centenas de milhares de computadores em todo o mundo.
-* **Erro do AWS S3 (2017)**: Uma interrupção em um datacenter da Amazon Web Services (AWS) causou falhas em muitos sites e serviços populares.
-* **Desastre do Boeing 737 MAX (2018-2019)**: Problemas de software nos sistemas de controle de voo resultaram em dois acidentes fatais, levando ao aterramento mundial da frota do Boeing 737 MAX.
-* **Falha do TSB Bank (2018)**: Problemas na migração de sistemas de TI do banco britânico TSB resultaram em clientes sendo bloqueados de suas contas e outros problemas operacionais.
-* **Incidente da GitLab (2017)**: Um erro humano durante a manutenção dos sistemas de banco de dados da GitLab levou à perda de dados, afetando muitos usuários do serviço.
-* **Interrupção da Cloudflare (2019)**: Um problema de software em um sistema de segurança da Cloudflare resultou em uma interrupção global que afetou muitos sites populares.
-* **Incidente do Garmin Connect (2020)**: Um ataque de ransomware levou a uma interrupção prolongada do serviço Garmin Connect, impactando milhões de usuários em todo o mundo.
-* **Incidente do Fastly (2021)**: Uma falha de configuração em uma rede de distribuição de conteúdo global da Fastly causou uma interrupção generalizada, afetando sites e serviços em todo o mundo.
-
-Embora seja impossível afirmar com certeza que a Engenharia do Caos teria evitado todos esses desastres, sua aplicação poderia ter ajudado a identificar e corrigir muitos dos problemas subjacentes antes que causassem danos significativos.
+Esses são só alguns exemplos, mas dá pra sacar que a Engenharia do Caos é uma jogada inteligente pra prevenir problemas e garantir que tudo funcione de boa. É tipo dar um tapa na confiabilidade dos sistemas complexos e distribuídos.
 
 ## Como funciona a Engenharia do Caos?
 
