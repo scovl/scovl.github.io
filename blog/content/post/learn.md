@@ -1,7 +1,7 @@
 +++
 title = "Learning anything"
 description = ""
-date = 2023-06-01T17:31:45-03:00
+date = 2023-09-09T18:00:45-03:00
 tags = ["learn, everything, learn everything"]
 draft = false
 weight = 1
