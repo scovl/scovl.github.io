@@ -6,7 +6,7 @@ author = "Vitor Lobo"
 
 ![Foto](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/eu.jpg#floatleftavatar)
 
-Hello, my name is Vitor Lobo, too know as (neurodev) in the community. I'm autistic, Software Engineer, writer, gamer and independent researcher. I've been working with technology for over 10 years and I'm passionate about art and culture, such as literature, cinema, music, comics, manga, anime and even a good beach! I love riding my bike and enjoying my free time with my partner and our cats. In addition, I'm also an open source enthusiast and I'm involved in some projects, such as:
+Hello, my name is Vitor Lobo, also known as (neurodev) in the community. I'm autistic, a Software Engineer, a writer, a gamer and an independent researcher. I've been working with technology for over 10 years and I'm passionate about art and culture, such as literature, cinema, music, comics, manga, anime and even a good beach! I love riding my bike and enjoying my free time with my wife and our cats. In addition, I'm also an open-source enthusiast. I'm involved in some projects, such as:
 
 * **[Kubernetes-client](https://github.com/kubernetes-client/java)** - Kubernetes client for java.
 * **[Marmota Project](https://marmotaproject.github.io)** - A project from who needs to learn Golang.
