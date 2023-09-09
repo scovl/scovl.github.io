@@ -1,5 +1,5 @@
 +++
-title = "Ops - Samba 4"
+title = "Samba 4"
 description = "Um novo horizonte [ATUALIZADO]"
 date = 2023-01-01T00:00:00Z
 tags = ["linux,samba,fedora"]

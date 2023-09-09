@@ -1,6 +1,6 @@
 +++
-title = "Ops - OpenShift"
-description = "Arrumando a casa - [PT-BR]"
+title = "OpenShift"
+description = "Arrumando a casa"
 date = 2019-06-08T19:47:57-03:00 
 tags = [
     "fedora",

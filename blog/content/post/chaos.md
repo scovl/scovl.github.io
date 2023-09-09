@@ -3,7 +3,7 @@ title = "Chaos Engineering"
 description = "Art of Chaos Engineering"
 date = 2023-06-01T17:31:45-03:00
 tags = ["chaos, chaosengineering, observability, sre, developers, devops, cloud, kubernetes, k8s, microservices, cloudnative, cloudnativebrasil, cloudnativebr, cloudnativebrasil, cloud"]
-draft = false
+draft = true
 weight = 1
 author = "Vitor Lobo Ramos"
 +++
