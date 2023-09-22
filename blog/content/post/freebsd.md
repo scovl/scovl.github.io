@@ -3,7 +3,7 @@ title = "FreeBSD"
 description = "FreeBSD for developers"
 date = 2023-06-01T17:31:45-03:00
 tags = ["freebsd"]
-draft = false
+draft = true
 weight = 1
 author = "Vitor Lobo Ramos"
 +++
