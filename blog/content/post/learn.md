@@ -38,6 +38,11 @@ If you use any social media platform like Instagram, Twitter, Mastodon, Facebook
 4. Choose the challenge and the project you'll work on.
 5. Select a roadmap to guide you in the challenge.
 
+### Organize your brain
+
+Another good tip, or strategy to keep focus is to read any literary book that is not a technical book. This will help you to relax and keep your mind fresh. I recommend reading a book for 30 minutes before going to sleep. This will help you to sleep better and to keep your mind fresh.
+
+
 ## Roadmaps
 
 There is a website called **[roadmap.sh](https://roadmap.sh/)** that has a lot of roadmaps for different areas of technology. I recommend that you choose a roadmap and follow it. If you don't like the roadmap, you can create your own. If the content provided on the roadmap isn't sufficient, you can use platforms like Youtube to search for topics related to what you want to learn.
@@ -63,8 +68,6 @@ Finished the roadmap and want to keep learning? Visite the website **[https://co
 2. Now that you know how to contribute and what to focus on, go to **Issues** and look for issues you can solve. Typically, issues labelled `good first issue` are issues you can tackle without much effort. These issues are designed for beginners interested in helping to solve the project's problems.
 3. Study the issue report and try to solve it based on your understanding of the project and what you've learned in the roadmap.
 
-
 Another website that can help you find open-source projects is **[https://www.firsttimersonly.com/](https://www.firsttimersonly.com/)**. This website has a list of open-source projects that are friendly to beginners.
-
 
 > **Note**: Avoid projects that don't have issues categorized as `good first issue`. This indicates that the project is not prepared to receive contributions from beginners. If you have no experience with open-source projects, you're likely to struggle with projects that don't have issues labelled `good first issue`.
