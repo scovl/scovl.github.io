@@ -45,9 +45,7 @@ Another good tip, or strategy to keep focus is to read any literary book that is
 
 ## Roadmaps
 
-There is a website called **[roadmap.sh](https://roadmap.sh/)** that has a lot of roadmaps for different areas of technology. I recommend that you choose a roadmap and follow it. If you don't like the roadmap, you can create your own. If the content provided on the roadmap isn't sufficient, you can use platforms like Youtube to search for topics related to what you want to learn.
-
-Roadmaps are a great way to guide your learning. They are also a great way to track your progress. If you don't like the roadmap, you can create your own. If the content provided on the roadmap isn't sufficient, you can use platforms like Youtube to search for topics related to what you want to learn.
+There is a website called **[roadmap.sh](https://roadmap.sh/)** that has a lot of roadmaps for different areas of technology. I recommend that you choose a roadmap and follow it. Roadmaps are a great way to guide your learning. They are also a great way to track your progress. If you don't like the roadmap, you can create your own. If the content provided on the roadmap isn't sufficient, you can use platforms like Youtube to search for topics related to what you want to learn.
 
 ## Learn Git
 
@@ -62,7 +60,7 @@ Learning git by command line is a good way to learn git, but if you prefer a mor
 
 ## Next Step
 
-Finished the roadmap and want to keep learning? Visite the website **[https://codetriage.com](https://codetriage.com)**. Codetriage is a platform that helps you find open-source projects that need help. You can filter projects by programming language. This step is extremely important for maintaining your learning. Let's say you chose the `Java` language and the `quarkus` project. Now what? Click on the project, then click on the page that will redirect you to the project's Github repository. From there, follow these steps:
+Have you finished the roadmap and want to keep learning? Visite the website **[https://codetriage.com](https://codetriage.com)**. Codetriage is a platform that helps you find open-source projects that need help. You can filter projects by programming language. This step is extremely important for maintaining your learning. Let's say you chose the `Java` language and the `quarkus` project. Now what? Click on the project, then click on the page that will redirect you to the project's Github repository. From there, follow these steps:
 
 1. Every open-source project has a file called `Readme.md` that contains information about the project. In this file, you'll find information on how to contribute to the project. Read the `Readme.md` file and follow the instructions to contribute to the project. Usually, information on how to contribute is in a file called `Contributing.md` or in the project's documentation.
 2. Now that you know how to contribute and what to focus on, go to **Issues** and look for issues you can solve. Typically, issues labelled `good first issue` are issues you can tackle without much effort. These issues are designed for beginners interested in helping to solve the project's problems.
