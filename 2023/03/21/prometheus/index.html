@@ -13,9 +13,9 @@
         <meta property="og:title" content="Prometheus">
 <meta property="og:description" content="Under the hood">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://lobocode.github.io/2023/03/21/prometheus/">
-        <link rel="stylesheet" href="https://lobocode.github.io/dist/site.css">
-        <link rel="stylesheet" href="https://lobocode.github.io/dist/syntax.css">
+<meta property="og:url" content="https://neur0dev.github.io/2023/03/21/prometheus/">
+        <link rel="stylesheet" href="https://neur0dev.github.io/dist/site.css">
+        <link rel="stylesheet" href="https://neur0dev.github.io/dist/syntax.css">
         <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet"> 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
         <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -27,7 +27,7 @@
         
         
         
-        <link rel="shortcut icon" href="https://lobocode.github.io/img/favicon.ico">
+        <link rel="shortcut icon" href="https://neur0dev.github.io/img/favicon.ico">
     </head>
     <body>
         
@@ -38,15 +38,15 @@
                     <div class="site-title-wrapper">
                         
                             <h1 class="neurodev-title">
-                                <a title="neurodev" href="https://lobocode.github.io">$ /home/neurodev_</a>
+                                <a title="neurodev" href="https://neur0dev.github.io">$ /home/neurodev_</a>
                             </h1>
                         
-                        <a class="button-square" href="https://lobocode.github.io/index.xml"><i class="fa fa-rss"></i></a>
+                        <a class="button-square" href="https://neur0dev.github.io/index.xml"><i class="fa fa-rss"></i></a>
                         
                         
                         
                         
-                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/lobocode" rel="me" target="_blank">
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/neur0dev" rel="me" target="_blank">
                                 <i class="fa fa-github-alt"></i>
                             </a>
                         
@@ -124,7 +124,7 @@
 <p>O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open-source. Foi desenvolvida com o objetivo de fornecer uma forma eficiente de coletar, armazenar e analisar métricas de desempenho de sistemas distribuídos. Ele foi projetado para ser escalável, fácil de usar e altamente personalizável. Possui sua própria linguagem de consulta, chamada PromQL, que permite aos usuários criar consultas complexas para analisar os dados de métricas. Ele também possui uma interface web para visualizar e explorar esses dados. Além disso, é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. O Prometheus também é frequentemente usado em conjunto com outras ferramentas, como Grafana, que fornece recursos avançados de visualização de dados, alertas e análise histórica de dados.</p>
 <p>A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software, SoundCloud, em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a <strong><a href="https://www.cncf.io/">Cloud Native Computing Foundation (CNCF)</a></strong>, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. A CNCF agora é a responsável pelo desenvolvimento e manutenção do projeto Prometheus.</p>
 <blockquote>
-<p><strong>NOTA</strong>: Leia mais sobre PromQL em <strong><a href="https://lobocode.github.io/2023/03/19/promql/">Aqui</a></strong>.</p>
+<p><strong>NOTA</strong>: Leia mais sobre PromQL em <strong><a href="https://neur0dev.github.io/2023/03/19/promql/">Aqui</a></strong>.</p>
 </blockquote>
 <h3 id="tipos-de-métricas">Tipos de métricas</h3>
 <p>O Prometheus suporta quatro tipos principais de métricas: Counter, Gauge, Histogram e Summary:</p>
@@ -137,11 +137,11 @@
 <p>Além desses tipos de métricas, o Prometheus também suporta métricas de estado, que são usadas para indicar se um determinado recurso está <code>up</code>,<code>down</code>. Essas métricas são geralmente usadas para monitorar a disponibilidade de serviços.</p>
 <h3 id="monitoramento-pull-vs-push">Monitoramento pull vs push</h3>
 <p>Para simplificar o entendimento a cerca de monitoramento Pull vs Push, imagine que você tem um vaso de flores em sua janela. O monitoramento pull é como você ir lá todos os dias para verificar se as flores precisam de água. Você está puxando informações sobre as flores. Já o monitoramento push é como se você tivesse um sistema automático que envia uma mensagem para você quando as flores precisam de água. Neste caso, as informações estão sendo empurradas para você. Tecnicamente, o monitoramento pull é um método no qual um dispositivo ou sistema solicita periodicamente informações de outro dispositivo ou sistema. Ele &ldquo;puxa&rdquo; as informações. Por exemplo, em um sistema de monitoramento de rede, um dispositivo de monitoramento pode enviar uma solicitação de status para cada dispositivo na rede a intervalos regulares e armazenar as informações retornadas.</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-pullvspush.png#center" alt="img#center"></p>
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-pullvspush.png#center" alt="img#center"></p>
 <p>Já o monitoramento push é um método no qual um dispositivo ou sistema envia automaticamente informações para outro dispositivo ou sistema sem esperar uma solicitação. Ele &ldquo;empurra&rdquo; as informações. Por exemplo, em um sistema de monitoramento de rede, cada dispositivo na rede pode ser configurado para automaticamente enviar informações de status para um dispositivo de monitoramento sempre que houver uma alteração. Em resumo, o monitoramento pull é baseado em solicitação e o monitoramento push é baseado em notificação. O Prometheus usa um sistema chamado &ldquo;Exporters&rdquo; para coletar dados de diversos sistemas e aplicativos e envia esses dados para o Prometheus para serem armazenados e analisados (monitoramento pull). O Prometheus não precisa solicitar esses dados, pois eles são enviados automaticamente pelos Exporters. Isso permite que o Prometheus colete dados em tempo real e sem sobrecarregar os sistemas e aplicativos monitorados.</p>
 <h3 id="arquitetura-do-prometheus">Arquitetura do Prometheus</h3>
 <p>A arquitetura do Prometheus torna mais fácil encontrar e obter dados de diferentes pontos de acesso. O servidor Prometheus cuida da coleta e armazenamento das métricas. Ele organiza as tarefas de monitoramento - consultando fontes de dados (conhecidas como &ldquo;instâncias&rdquo;) em intervalos de tempo predefinidos. As tarefas de monitoramento são configuradas usando uma ou mais diretrizes chamadas &ldquo;configurações de coleta&rdquo;, gerenciadas por um arquivo de configuração em formato YAML. A imagem abaixo representa a arquitetura do Prometheus:</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/prometheus/arch.png#center" alt="img#center"></p>
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/prometheus/arch.png#center" alt="img#center"></p>
 <p>O ecossistema do Prometheus é composto por diversos componentes, muitos deles opcionais como por exemplo:</p>
 <ul>
 <li><strong>Servidor principal do Prometheus</strong>: é responsável por raspar (coletar) e armazenar dados de séries temporais. Ele também fornece uma interface de consulta para consultar esses dados.</li>
@@ -153,7 +153,7 @@
 </ul>
 <h3 id="labels-e-samples">Labels e Samples</h3>
 <p>Labels são como etiquetas que adicionamos às coisas para identificá-las. Por exemplo, você tem um armário com camisetas e você coloca etiquetas nas camisetas com as cores, tamanhos e tipos delas. Então, se você quer pegar uma camiseta verde, você vai olhar na etiqueta e buscar uma camiseta verde. No Prometheus, labels são usadas para identificar e agrupar diferentes dados de métricas, assim como as etiquetas nas camisetas. Por exemplo, você tem vários computadores e quer monitorar o uso de memória de cada um deles. Você pode adicionar labels como &ldquo;hostname&rdquo; e &ldquo;sistema operacional&rdquo; para cada dado de métrica, então se você quiser saber o uso de memória de um computador específico, você pode buscar pela label &ldquo;hostname&rdquo; dele. Já as Samples são como pequenas amostras de algo. Por exemplo, você está fazendo uma pesquisa sobre quantas balas as crianças gostam de comer e você pede para cada criança escolher uma amostra de 3 balas. Essas 3 balas que cada criança escolheu são as samples. No Prometheus, samples são pequenas medidas de algo que queremos monitorar, como por exemplo, a utilização de CPU de um computador. Cada vez que coletamos uma medida, é criado um sample. Esses samples são armazenados juntos com labels, permitindo que você possa ver como a medida mudou ao longo do tempo. Por exemplo, você pode ver como a utilização de CPU de um computador específico mudou ao longo de um dia.</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/samples01.png#center" alt="img#center"></p>
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/samples01.png#center" alt="img#center"></p>
 <h2 id="instalação">Instalação</h2>
 <p>Existem inúmeras maneiras de instalar o Prometheus, mas aqui vamos mostrar como instalar o Prometheus usando o Docker e o Docker Compose, Grafana e o PromSim um simulador de métricas para testar o Prometheus e Grafana. Crie um arquivo de configuração do Docker Compose chamado <code>docker-compose.yml</code> no mesmo diretório que o arquivo prometheus.yml. Inclua as seguintes configurações:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3&#34;</span><span class="w">
@@ -193,7 +193,7 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">docker-compose up -d
 </span></span></code></pre></div><p>No Grafana, você precisará adicionar o Prometheus como uma fonte de dados (datasource). Faça login no Grafana (usuário padrão: admin, senha: admin), vá para &ldquo;Configuration&rdquo; (ícone de engrenagem) e clique em &ldquo;Data Sources&rdquo;. Adicione uma nova fonte de dados com o tipo Prometheus e use a URL <strong>http://prometheus:9090</strong>. Agora você pode criar painéis no Grafana usando métricas do Prometheus e do PromSim. O PromSim irá gerar métricas simuladas que você pode usar para testar o comportamento do threshold. O PromSim é um simulador de métricas que gera métricas aleatórias para testar o Prometheus. Para mais informações sobre o PromSim, consulte a documentação oficial em <strong><a href="https://github.com/dmitsh/promsim">https://github.com/dmitsh/promsim</a></strong>.</p>
 <p>Se você quiser instalar somente o Prometheus, basta rodar <code>docker run -p 9090:9090 prom/prometheus</code>. Você pode acessar a interface web do Prometheus em <strong>http://localhost:9090</strong>. Para mais informações sobre como instalar o Prometheus, consulte a documentação oficial do Prometheus em <strong><a href="https://prometheus.io/docs/prometheus/latest/getting_started/">https://prometheus.io/docs/prometheus/latest/getting_started/</a></strong>.</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/ui01.png#center" alt="img#center"></p>
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/ui01.png#center" alt="img#center"></p>
 <p>A interface do Prometheus é composta pelos seguintes menus:</p>
 <ul>
 <li><strong>Alerts</strong>: este menu exibe todos os alertas ativos e permite visualizar o histórico de alertas. Os alertas são disparados quando uma determinada métrica ultrapassa um limite configurado.</li>
@@ -538,13 +538,13 @@
 <p>A pasta &ldquo;chunks&rdquo; dentro da pasta 01BKGTZQ1SYQJTR4PB43C8PD98 dentro do diretório /data do Prometheus é usada para armazenar os chunks de dados (grupos de amostras de dados) para cada série de dados que o Prometheus está rastreando. Cada arquivo dentro dessa pasta representa um chunk de dados único, e o nome do arquivo contém informações sobre o intervalo de tempo e a série de dados a qual ele pertence. Os arquivos de chunks são gerados pelo processo de compactação do Prometheus. Eles são criados quando o Prometheus precisa remover dados antigos para liberar espaço e continuar coletando novos dados.</p>
 <p>Esses chunks são usados para a recuperação dos dados e para realizar consultas no futuro. Os arquivos contidos dentro dessa pasta são codificados e compactados de forma a ocupar menos espaço e são lidos pelo Prometheus para responder consultas e exibir gráficos. Já o arquivo index, contém o índice dos chunks de dados armazenados na pasta &ldquo;chunks&rdquo; da mesma pasta. O índice é usado para permitir que o Prometheus rápida e eficientemente localize os chunks de dados relevantes para uma consulta específica. Esse arquivo contém informações sobre as séries de dados, o intervalo de tempo dos dados, o nome do arquivo de chunk correspondente, e outras informações relevantes. O Prometheus usa essas informações para saber onde procurar os dados quando uma consulta é realizada, permitindo que ele responda rapidamente.</p>
 <h3 id="gerenciamento-de-memória-pelo-prometheus">Gerenciamento de memória pelo Prometheus</h3>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem01.png#center" alt="img#center">
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem01.png#center" alt="img#center">
 <!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.1<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 <p>A imagem 1.1 acima representa o Prometheus quando usa muita memória RAM e memória em disco devido a natureza dos dados que ele coleta e armazena. Como ele armazena métricas de forma temporal (time series), ele precisa manter uma grande quantidade de dados em memória para que essas métricas possam ser consultadas rapidamente. Isso é especialmente importante quando ele precisa responder a consultas de alertas ou gráficos em tempo real. Além disso, Prometheus usa uma estratégia de sliding window para descartar métricas antigas que já não são consideradas relevantes. Isso significa que ele precisa manter uma grande quantidade de dados em memória para garantir que as métricas mais recentes possam ser acessadas rapidamente. Por outro lado, Prometheus usa muita memória em disco para armazenar esses dados de forma persistente, o que permite que os dados sejam recuperados mesmo depois de um reinício do sistema. Isso também permite que os dados sejam consultados novamente em um momento posterior, mesmo que não estejam mais disponíveis na memória. O Prometheus precisa de uma grande quantidade de memória RAM e memória em disco para garantir que os dados possam ser coletados, armazenados e consultados de forma eficiente e rápida.</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem02.png#center" alt="img#center">
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem02.png#center" alt="img#center">
 <!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.2<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 <p>Como bem mostra a Imagem 1.2 acima, quanto mais dias de dados são armazenados, mais memória e espaço em disco serão necessários para armazená-los. Isso pode levar a problemas de performance, pois aumenta a quantidade de dados que precisam ser carregados e processados para responder a consultas. Além disso, como os dados antigos tendem a ser menos relevantes, isso pode levar a problemas de escalabilidade, pois os dados antigos podem acabar consumindo muitos recursos de armazenamento e processamento, dificultando a capacidade de Prometheus de lidar com novos dados. Além disso, é importante considerar que o objetivo do Prometheus é fornecer uma visão em tempo real do sistema, então manter muitos dias de dados pode não ser tão útil para detectar problemas recentes ou tendências atuais no sistema, e pode acabar fazendo com que os dados relevantes sejam enterrados em meio a grande quantidade de dados antigos. Por essas razões, é recomendado manter apenas uma quantidade de dias de dados que seja suficiente para as necessidades de monitoramento do seu sistema, e não mais do que isso. É possível configurar o Prometheus para descartar dados antigos de acordo com a necessidade, e também é possível armazenar os dados históricos em outro sistema de armazenamento para análise futura.</p>
-<p><img src="https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem03.png#center" alt="img#center">
+<p><img src="https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem03.png#center" alt="img#center">
 <!-- raw HTML omitted --><!-- raw HTML omitted -->Imagem 1.3<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 <p>Como mostra na Imagem 1.3 acima, o Prometheus utiliza a memória principal do host Linux para armazenar todas as métricas coletadas. Essas métricas são mantidas em memória para permitir uma consulta rápida e eficiente pelos usuários. Nesse processo é usado o modelo de coleta ativa, ou seja, é responsabilidade do próprio Prometheus coletar as métricas dos serviços e aplicativos em execução. Isso significa que o Prometheus precisa gerenciar as métricas de cada alvo e garantir que elas estejam disponíveis para consulta. Para manter as métricas em memória, o Prometheus utiliza um buffer de gravação em disco para evitar perda de dados. Quando a memória RAM fica cheia, as métricas mais antigas são gravadas no buffer de gravação em disco. Esse buffer é dimensionado automaticamente de acordo com a quantidade de métricas que o Prometheus está coletando. Quando o buffer de gravação em disco está cheio, o Prometheus começa a descartar as métricas mais antigas, garantindo que as mais recentes estejam sempre disponíveis. Além disso, o Prometheus também utiliza o swap do host para armazenar parte das métricas caso a memória RAM esteja completamente cheia.</p>
 <p>No que diz respeito à pilha do Prometheus, o sistema utiliza uma estrutura de dados chamada heap para armazenar as métricas. A heap é uma área de memória dinâmica onde as métricas são alocadas e liberadas durante a execução do Prometheus. O gerenciamento da heap é feito automaticamente pelo sistema operacional. Quando o Prometheus executa consultas, ele carrega todos os dados históricos em memória para processamento. Portanto, quanto mais tempo de dados históricos, mais memória é consumida. Para gerenciar esse problema, é importante definir políticas de retenção de dados sensatas para reduzir o tamanho dos dados armazenados no Prometheus. Também é importante monitorar o uso de memória do servidor e ajustar as configurações do Prometheus, como a frequência de coleta de dados, para otimizar o uso da memória.</p>
@@ -583,7 +583,7 @@
 
     <div class="share">
         
-            <a class="icon-twitter" href="https://twitter.com/share?text=Prometheus&url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+            <a class="icon-twitter" href="https://twitter.com/share?text=Prometheus&url=https%3a%2f%2fneur0dev.github.io%2f2023%2f03%2f21%2fprometheus%2f"
                 onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
                 <i class="fa fa-twitter"></i>
                 <span class="hidden">Twitter</span>
@@ -591,7 +591,7 @@
         
 
         
-            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fneur0dev.github.io%2f2023%2f03%2f21%2fprometheus%2f"
                 onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
                 <i class="fa fa-facebook"></i>
                 <span class="hidden">Facebook</span>
@@ -599,14 +599,14 @@
         
 
         
-            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f"
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2fneur0dev.github.io%2f2023%2f03%2f21%2fprometheus%2f"
               onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
               <i class="fa fa-google-plus"></i>
                 <span class="hidden">Google+</span>
             </a>
         
         
-            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Prometheus&url=https%3a%2f%2flobocode.github.io%2f2023%2f03%2f21%2fprometheus%2f&summary=Under%20the%20hood"
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Prometheus&url=https%3a%2f%2fneur0dev.github.io%2f2023%2f03%2f21%2fprometheus%2f&summary=Under%20the%20hood"
                onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
                <i class="fa fa-linkedin"></i>
                <span class="hidden">LinkedIn</span>
@@ -630,7 +630,7 @@
             return;
         }
         var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "lobocode-github-io" + '.disqus.com/embed.js';
+        s.src = '//' + "neur0dev-github-io" + '.disqus.com/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
     })();
@@ -649,7 +649,7 @@
             <div class="container">
                 <div class="site-title-wrapper">
                     <h1 class="site-title">
-                        <a title="neurodev" href="https://lobocode.github.io">neurodev</a>
+                        <a title="neurodev" href="https://neur0dev.github.io">neurodev</a>
                     </h1>
                     <a class="button-square button-jump-top js-jump-top" href="#">
                         <i class="fa fa-angle-up"></i>
@@ -664,9 +664,9 @@
             </div>
         </footer>
 
-        <script src="https://lobocode.github.iojs/jquery-1.11.3.min.js"></script>
-        <script src="https://lobocode.github.iojs/jquery.fitvids.js"></script>
-        <script src="https://lobocode.github.iojs/scripts.js"></script>
+        <script src="https://neur0dev.github.iojs/jquery-1.11.3.min.js"></script>
+        <script src="https://neur0dev.github.iojs/jquery.fitvids.js"></script>
+        <script src="https://neur0dev.github.iojs/scripts.js"></script>
     </body>
 </html>
 
