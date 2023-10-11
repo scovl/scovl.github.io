@@ -8,7 +8,7 @@ weight = 7
 author = "Vitor Lobo Ramos"
 +++
 
-> **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**lobocode@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.
+> **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**neur0dev@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.
 
 ### Capítulo 1 - História
 
@@ -60,7 +60,7 @@ Em 1985, o protocolo foi expandido, dando origem ao protocolo **[NetBEUI](https:
 
 **[Andrew Tridgell](https://pt.wikipedia.org/wiki/Andrew_Tridgell)**, um australiano que na época era estudante do curso de PhD em Ciências da Computação da **[Universidade Nacional da Austrália](www.anu.edu.au)**, precisava rodar um software chamado **["eXcursion"](http://www.hpl.hp.com/hpjournal/dtj/vol4num1/vol4num1art7.pdf)**, no **[DEC](https://en.wikipedia.org/wiki/Digital_Equipment_Corporation)**, empresa que trabalhava, para interagir com o **[Patchworks](https://en.wikipedia.org/wiki/Pathworks)**, um software de compartilhamento de arquivos. O **[Patchworks](https://en.wikipedia.org/wiki/Pathworks)** era um software proprietário, que utilizava um protocolo obscuro, sobre o qual não existiam muitas informações disponíveis.
 
-![Samba](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/andrew.jpg#center)
+![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/andrew.jpg#center)
 
 Como todo bom hacker Andrew_tridgell decidiu estudar o protocolo e assim desenvolver um servidor que pudesse rodar em seu PC. Ele desenvolveu então um **[sniffer](https://pt.wikipedia.org/wiki/Sniffing)** chamado **clockspy** que era capaz de examinar o tráfego da rede e fez engenharia reversa no protocolo SMB e o implementou no Unix. Isso fez com que no servidor Unix aparecesse como um servidor de arquivos Windows em seu PC com DOS. Com isso, ele foi rapidamente capaz de implementar o suporte às principais chamadas e a desenvolver um programa servidor que era capaz de conversar com os clientes rodando o Patchworks. O objetivo desta primeira versão era apenas resolver um problema doméstico: interligar um computador rodando o MS-DOS ao servidor rodando o **[Solaris](https://pt.wikipedia.org/wiki/Solaris)**.
 
@@ -78,7 +78,7 @@ Depois de anos de desenvolvimento, a o que seria supostamente a versão 3.7 do S
 
 Nasce o **[Samba 4.0](https://www.samba.org/samba/history/samba-4.0.0.html)**. O Samba 4 compreende um servidor de diretório LDAP, um servidor de autenticação Kerberos, um servidor DNS dinâmico e implementações de todas as chamadas de procedimento remoto necessários para o Active Directory. Ele fornece tudo que é necessário para servir como um Active Directory Domain Controler compatível com todas as versões de clientes Microsoft Windows atualmente suportados pela Microsoft, incluindo o Windows 8. O Samba agora permite implementar mecanismos de compartilhamento de arquivos e impressoras, sendo assim possível o acesso a recursos do Windows a partir do GNU/Linux.
 
-![Samba](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/samba4.png#center)
+![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/samba4.png#center)
 
 Possibilidades com Samba 4:
 
@@ -176,7 +176,7 @@ O banco de dados do AD está organizado em partições, cada um armazenando tipo
 
 Os objetos mantidos dentro de um domínio podem ser agrupados em Organizational Units (OUs). OUs é o nível recomendado de a aplicação de políticas de grupo, que são objetos do AD chamados formalmente **Group Policy Objects (GPOs)**, embora as políticas também podem ser aplicadas a domínios ou sites. A UO é o nível em que os poderes administrativos são comumente delegados, mas a delegação pode ser executada com os objetos individuais ou com os atributos também.
 
-![Samba](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/gpo.gif#center)
+![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/gpo.gif#center)
 
 Não é possível, criar contas de usuários com um nome de usuário idêntico em OUs separadas. Isto é assim porque o atributo de objeto de usuário (sAMAccountName), deve ser exclusivo dentro do domínio. Dois usuários em diferentes OUs podem ter o mesmo Common Name (o nome sob o qual eles são armazenados no próprio diretório).
 
@@ -194,7 +194,7 @@ sincronizados entre os controladores dos domínios de serviço de replicação (
 * Junções de sistema de arquivo. Segundo a Microsoft, o recomendável é instalar esses 3 em locais distintos, preferencialmente em HDs separados, para facilitar a recuperação do sistema em caso de falha de hardware. Se a floresta está no nível de funcionalidade do Windows Server 2008 ou Windows Server 2008 R2, o sistema de replicação de SYSVOL deixa de ser o NT File Replication. 
 * Service (NTFRS) e passa a ser o Distributed File System Replication (DFSR), o que termina criando uma dependência de uma versão específica de sistema operacional Windows.
 
-![Samba](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/sysvol.gif#center)
+![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/sysvol.gif#center)
 
 Depois de 10 anos de trabalho e 6 anos da liberação da última versão principal, os desenvolvedores do Samba anunciaram o lançamento do Samba 4.0, a versão mais recente da implementação em software livre do protocolo Server Message Block (SMB).  Outras características do Samba 4 incluem a primeira implementação em software livre da versão 2.1 do protocolo SMB de compartilhamento de arquivos da Microsoft e uma implementação inicial do SMB3 que será desenvolvido em versões futuras da ramificação do Samba 4. 
 
@@ -240,7 +240,7 @@ O Windows for WorkGroups foi o primeiro sistema da Microsoft a adotar o SMB/CIFS
 
 O SMB, que significa Server Message Block, é um protocolo para compartilhamento de arquivos, impressoras, portas seriais e abstrações de comunicação. O SMB é um protocolo cliente-servidor. O diagrama a baixo, ilustra a maneira pela qual funciona SMB. Os servidores disponibilizam sistemas de arquivos e outros recursos (impressoras, processadores de mensagens, pipes) disponíveis para os clientes da rede. Os computadores clientes podem ter seus próprios discos rígidos, mas eles também querem o acesso aos sistemas de arquivos compartilhados e impressoras nos servidores.
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/smb1.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/smb1.png#center)
 
 Basicamente o cliente se conecta ao servidor que utiliza o protocolo TCP/IP (na verdade, se conecta ao NetBIOS sobre o TCP/IP, conforme especificado no **[RFC1001](http://tools.ietf.org/html/rfc1001)** e **[RFC1002](http://tools.ietf.org/html/rfc1002)**), NetBEUI ou IPX/SPX. Depois de terem estabelecido uma conexão, o cliente pode, em seguida, enviar comandos (SMBs) para o servidor o que lhe permite abrir arquivos, ler e escrever. É possível fazer todo o tipo de coisa dentro de um servidor de arquivos. No entanto, no caso do SMB, estas coisas são feitas através da rede.
 
@@ -271,7 +271,7 @@ O Active Directory assumiu o mercado de serviços de diretório pelo seu desempe
 Hoje quando criamos um usuário para logar no domínio de nossa empresa, estamos utilizando um serviço de diretório e por consequência usando o Active Directory.
 Abaixo temos uma figura para demonstrar todos os recursos que o Active Directory pode utilizar como serviço de diretório de sua empresa:
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad1.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad1.png#center)
 
 A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco de dados, este banco é conhecido com **NTDS.dit** e esta localizado na pasta %SystemRoot%\NTDS\ntds.dit em uma instalação default do AD. Este diretório chamado de NTDS apenas existirá nos servidores que tenham a função de Domain Controllers (DC’s). Neste diretório existirão os arquivos relacionados abaixo. Durante o processo de instalação do Active Directory **da Microsoft**, são criados cinco arquivos:
 
@@ -283,15 +283,15 @@ A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco d
 
 Bem, agora sabemos que a estrutura lógica do AD é gravada em uma base de dados física chamada de Ntds.dit, porém Domain Controller é Active Directory? **Claro que não**, no desenho abaixo demonstramos claramente a diferença entre AD (estrutura lógica do AD) e DC (Servidor que contém uma cópia do NTDS.dit do AD). No desenho abaixo imaginemos uma construção, estamos construindo um grande salão de festas. Imaginem que nosso teto (retângulo azul) é nosso Active Directory, porém precisamos apoiar este teto em pilares (cilindros vermelhos), caso contrário nosso teto irá desabar, certo?
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad2.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad2.png#center)
 
 É isto mesmo, o Active Directory é a estrutura lógica (teto), e os DC’s são servidores fisicos (pilares), por isto a necessidade de termos muitos DC’s espalhados. Assim nosso AD mesmo na falha de um DC (pilar) ou vários DC’s ainda conseguirá responder as solicitações e pedidos de nossa infraestrutura.
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad3.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad3.png#center)
 
 Isto só é possível porque cada servidor quando recebe a função de Domain Controller, herda a criação do diretório %SystemRoot%\NTDS\ e toda a estrutura comentada acima. Todos os dados criados originalmente são replicados para o novo DC criado. Assim em um AD (domínio) com três DC’s como na figura abaixo, todos os Dc’s estão atualizados com todos os dados igualmente, isto recebe o nome de replicação do Active Directory.
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad4.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad4.png#center)
 
 O Serviço de Diretório do AD é divido em duas estruturas a estrutura lógica e a estrutura física, o conhecimento pleno sobre a estrutura do AD é muito importante, principalmente quando maior for sua estrutura. Nestas explicações informaremos algumas ferramentas que podem auxiliar na verificação deste processo, vale lembrar que estamos focando as explicações no Active Directory do Windows Server 2008 R2, porém estas explicações poderão ser utilizadas em qualquer uma das versões de Active Directory, nos próximos artigos falaremos das evoluções para as futuras versões.
 
@@ -300,7 +300,7 @@ Quando falamos de estrutura lógica do Active Directory, muitos termos são fala
 No caso do OU (Unidades Organizacionais), é um objeto de container, utilizado para organizar outros objetos. A organização pode ser feita de várias formas.
 Geográfica – Onde as OU’s representam Estadas ou Cidades de sua estrutura física Exemplo: OU SP - OU RJ Setorial – Onde as OU’s representam setores da estrutura física da empresa, por unidade de negócio. Exemplo: OU Administrativo – OU Produção Departamental – Onde as OU’s representam setores da estrutura física da empresa por departamento. Exemplo: OU RH – OU DP – OU Caldeira Híbrido – Modelo onde podemos interagir todos os modelos acima, na Figura abaixo temos um modelo disto.
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad5.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad5.png#center)
 
 O domínio é a estrutura mais importante do Active Directory e tem 2 funções principais.
 
@@ -317,11 +317,11 @@ Quando precisamos criar um segundo domínio, na maioria das vezes por necessidad
 
 Criamos o domínio livemotion.local (Figura esquerda abaixo), para podermos configurar diretivas de segurança, em um dado momento, precisamos criar um domínio novo, que tenha acesso aos recursos do domínio livemotion.local, porém tenha suas próprias necessidades de segurança (Figura direita abaixo).
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad6.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad6.png#center)
 
 Conforme as figuras acima, podemos ver que quando temos um domínio filho, imedia/sambatamente estamos vinculados a um domínio pai, e esta divisão hierárquica de nome chamamos de Árvore de Domínios.O primeiro domínio de uma Floresta, chamamos de Root Domain, a Floresta receberá o nome deste domínio, a floresta pode ser feita de um único domínio com também estar dividida com várias árvores dentro da mesma floresta.
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad7.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad7.png#center)
 
 Quando falamos de estrutura física do Active Directory, alguns termos são utilizados, a estrutura física do AD consiste em Domain Controllers e Sites.
 A estrutura física do AD é totalmente independente da estrutura lógica do AD. A estrutura física é responsável por otimizar o tráfego de rede e manter segurança em locais físicos distintos. Um Domain Controller ou DC tem a função de executar o Active Directory e também armazenar a base do Active Directory bem como Replicar esta base “alterações” com outros DC’s.
@@ -329,7 +329,7 @@ A estrutura física do AD é totalmente independente da estrutura lógica do AD.
 Quando falamos de Árvores de Domínio ou até mesmo Floresta, vale lembrar que um DC pode apenas suportar um único domínio. Para criar uma disponibilidade do Active Directory podemos ter mais de um DC, sendo assim num exemplo de 2 Dc’s temos a base do Active Directory sendo replicada de forma perfeita entre os dois Dc’s.
 A base do Active Directory o NTDS.dit é divido em partições, conforme a figura demonstrada abaixo:
 
-![SMB](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/ad8.png#center)
+![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad8.png#center)
 
 Estas partições formam o arquivo NTDS.dit, este é replicado entre cada um dos DC’s de seu domínio, consequentemente o arquivo é replicado para cada DC, tendo todos os Dc’s sincronizados logo teremos um Active Directory saudável e que pode suprir a falha de um DC, sem afetar o serviço de diretório do domínio.
 
@@ -989,7 +989,7 @@ Diferente de outros utilitários do sistema, o logrotate **não é executado em 
 
 As ACLs (Access Control Lists) nos fornecem um controle mais refinado sobre quais usuários podem acessar diretórios e arquivos específicos do que as permissões tradicionais do GNU/Linux. Usando as ACLs, podemos especificar as formas nas quais cada um dos usuários podem acessar um diretório ou um arquivo. Se eu quiser dar uma permissão apenas para mais uma pessoa, por exemplo, a minha opção com chmod, seria criar um grupo de apenas uma pessoa e autorizar este grupo a acessar o arquivo ou diretório. Enfim, fica muito complicado quando precisamos regular o acesso de uma maneira mais detalhada. 
 
-Existem dois tipos de ACLs: regras de acesso **(access ACLs)** e regras padrão **(default ACLs)**. Uma regra de acesso especifica informações de acesso para um único arquivo ou diretório. Já uma regra padrão é aplicada apenas a diretórios, e especifica informações de acesso padrões para todos os arquivos no diretório que não possuam uma ACL explícita aplicada. Como vimos no capítulo 4 em **[Instalando o Samba](http://lobocode.github.io/2015/09/11/samba4.html#instalando-o-samba)**, note que instalamos também as ACL's e ajustamos o particionamento para aceitar a acl no /etc/fstab. De agora em diante vamos trabalhar com uma maneira diferente de lidar com permissões além do já conhecido chmod.
+Existem dois tipos de ACLs: regras de acesso **(access ACLs)** e regras padrão **(default ACLs)**. Uma regra de acesso especifica informações de acesso para um único arquivo ou diretório. Já uma regra padrão é aplicada apenas a diretórios, e especifica informações de acesso padrões para todos os arquivos no diretório que não possuam uma ACL explícita aplicada. Como vimos no capítulo 4 em **[Instalando o Samba](http://neur0dev.github.io/2015/09/11/samba4.html#instalando-o-samba)**, note que instalamos também as ACL's e ajustamos o particionamento para aceitar a acl no /etc/fstab. De agora em diante vamos trabalhar com uma maneira diferente de lidar com permissões além do já conhecido chmod.
 
 Para usar este tipo de permissão, é bastante simples apesar de haver inúmeros parâmetros. Por exemplo, crie uma pasta chamada testes:
 
@@ -1241,7 +1241,7 @@ Entendendo um pouco o faz cada parâmetro:
 * **--dbdir**: O diretório onde o banco de dados do Samba3 está localizado.
 * **--use-xattr**: O Samba4 usa xattr para armazenar metadados de arquivos. O Samba3 não suporta xattr, então você deve usar o parâmetro --use-xattr=yes para habilitar o suporte a xattr no Samba4.
 * **--realm**: O domínio do Samba3.
-* **--dns-backend**: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em **[Samba como um controlador de dominio](ihttp://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**.
+* **--dns-backend**: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em **[Samba como um controlador de dominio](ihttp://neur0dev.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**.
 
 Apos migrar o domínio tive um problema na senha do meu usuário administrator com isso tive que setar a senha do mesmo novamente:
 
@@ -1262,7 +1262,7 @@ Permissão na pasta dns do samba
 sudo chmod 777 -R /opt/samba/private/dns
 ```
 
-Por fim, no samba4 faça alguns testes do kerberos e do próprio samba4 que já foram descritos os passos no capítulo 4 em **[Samba como um controlador de dominio](http://lobocode.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**, a partir de **Teste o Kerberos...**.
+Por fim, no samba4 faça alguns testes do kerberos e do próprio samba4 que já foram descritos os passos no capítulo 4 em **[Samba como um controlador de dominio](http://neur0dev.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**, a partir de **Teste o Kerberos...**.
 
 > **Nota:** Caso você tenha problemas com SID duplicados, por favor acessar a documentação do Samba em **[Prevent failure due to duplicate SID's](https://goo.gl/m1lyQJ)**. Isto é, lá contém um script em python que ajuda a resolver este problema.
 
@@ -1419,14 +1419,14 @@ Mais sobre o Samba-Tool na **[documentação oficial](https://www.samba.org/samb
 ### Ingressando clientes no dominio Windows
 
 Como o Windows 10 ainda é recente e o 8 não é tão prático quanto o 7, vamos nos focar no 7 para a configuração de domínio do samba. Lembrando que você poderá aplicar o mesmo no 8 e 10 que deverá funcionar. Acesse as propriedades do sistemas e em computador, clique no botão "Alterar". Informe o nome do domínio e clique em "OK". Será solicitado um nome e senha de um usuário do domínio, neste caso, iremos utilizar a conta de administrador do Samba, visto que ainda não criamos nenhum usuário comum. Será solicitado que o computador seja reiniciado como nos exemplos a baixo:
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad1.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad2.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad3.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad4.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad1.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad2.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad3.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad4.png#center)
 
 Ao efetuar este procedimento, o computador será automaticamente registrado no samba. Computadores com S.O. até o Windows XP serão registrados de forma diferente aos clientes com Windows Vista em diante, por conta das diferentes versões do protocolo SMB utilizadas. Reinicie o computador e troque o usuário para o administrador do domínio.
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad5.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad5.png#center)
 
 > **Nota:** Caso não apareça "Fazer logon em: DOMÍNIO", informe o login como: DOMÍNIO\administrator.
 
@@ -1443,19 +1443,19 @@ Para administrar o samba pode-se utilizar o samba-tool, no entanto, recomenda-se
 * Módulo do Active Directory para Windows PowerShell; e
 * Ferramentas de Gerenciamento de Diretiva de Grupo.
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad6.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad6.png#center)
 
 A principal ferramenta de administração do Samba da RSAT, é a "Usuários e Computadores do Active Diretory". Acessível em: "Painel de Controle" > "Ferramentas Administrativas". Ao executá-la, habilite a opção "Recursos avançados" para exibição plena dos recursos de administração.
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad7.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad8.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad7.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad8.png#center)
 
 Para outras versões do Microsoft Windows, consulte a **[instalação do RSAT na documentação do samba](https://wiki.samba.org/index.php/Installing_RSAT_on_Windows_for_AD_Management)**. Ao instalar e configurar o Samba, fora definido um compartilhamento denominado "home", que destina-se ao uso pessoal dos usuários. Não se trata da função de perfil remoto, mas apenas um diretório onde o usuário poderá utilizar para armazenar arquivos pessoais e acessar em qualquer computador do domínio.
 É necessário ajustar algumas permissões diretamente no Samba. Para isso, efetue o login do usuário administrator no Windows e acesse "Gerenciamento do computador". Vá no menu "Ação" > "Conectar a outro computador..." e informe o nome do servidor samba, neste caso "debian".
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad9.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad10.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad11.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad9.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad10.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad11.png#center)
 
 Ao conectar no servidor, vá em "Ferramentas do sistema" > "Pastas Compartilhadas" > "home". Configure nas abas "Permissões de compartilhamento" e "Segurança" os seguintes nomes e grupos de usuários:
 
@@ -1479,26 +1479,26 @@ Domain Admins           Controle Total
 
 Você poderá customizar essas permissões de acordo com suas necessidades.
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad12.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad13.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad14.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad12.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad13.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad14.png#center)
 
 Clique em "OK" para salvar.
 
 Através da RSAT iremos criar um usuário comum, sem privilégios de administrador. Abra a ferramenta "Usuários e Computadores do Active Diretory". Em seguida vá no menu "Ação" > "Novo" > "Uusuário". Informe os dados do usuário, como nome, sobrenome, logon e senha. As senhas deverão atender a política de senhas do Samba, por padrão requer caracteres maiúsculos, minúsculos e números.
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad15.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad16.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad17.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad15.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad16.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad17.png#center)
 
 Após criá-lo, consulte-o em "Usuários" e configure o compatilhamento "home", conforme:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad18.png#center)
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad19.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad18.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad19.png#center)
 
 Ao concluir, basta efetuar o login com o novo usuário criado:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad20.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad20.png#center)
 
 ---
 
@@ -1569,11 +1569,11 @@ sudo smbclient -L localhost -U%
 
 Agora vá para o computador com Windows onde você instalou a ferramenta de administração remota (AD) para o seu servidor de domínio e defina os usuários a quem você deseja definir como perfil nomade. Abra o cmd e digite **dsa.msc**, ou run e digite **dsa.msc** para abrir console do Active Directory e em seguida defina o caminho do usuário:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad23.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad23.png#center)
 
 Vá para o usuário para o qual você deseja implementar perfil nomade e adicione o caminho seguido pelo nome do usuário do diretório do perfil no **profile path** da seção de propriedades como mostra abaixo:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad24.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad24.png#center)
 
 Daqui em diante você apenas acompanha se o perfil nomade está funcionando ou não. Uma forma de fazer isto, é acessando o usuário no Windows, fazer modificações de arquivos e pastas e acompanhar modificações na pasta /userprofiles no samba. 
 
@@ -1593,7 +1593,7 @@ Este costuma ser um procedimento bastante simples como mostra a seguir:
 * Em type, coloque o nome 'OU Demo' por exemplo.
 * Em seguida será exibida uma unidade organizacional chamada 'OU Demo'. 
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad25.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad25.png#center)
 
 A partir de agora, você poderá mudar o lugar onde criou a unidade organizacional ou simplesmente criar sub unidades organizacionais.
 
@@ -1606,16 +1606,16 @@ A partir de agora, você poderá mudar o lugar onde criou a unidade organizacion
 Assim como para criar unidades organizacionais usando o snap-in do Windows, para criar GPO's também é bastante simples. Veja os exemplos a baixo:
 
 * Clique em Iniciar, Ferramentas Administrativas e Diretivas de Grupos.
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad26.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad26.png#center)
 * Clique sobre com botão direito e  Criar um GPO neste domínio e …
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad27.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad27.png#center)
 * Nome da GPO será “Exemplo_GPO” e OK.
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad28.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad28.png#center)
 * Sobre a nova GPO clique com botão direito,  clique em  editar:
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad29.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad29.png#center)
 * Para bloquear o acesso ao Painel de Controle vai em, Configurações do Usuário, Diretivas, Modelos Administrativos, Painel de Controle e  Proibir acesso ao Painel de Controle:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad30.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad30.png#center)
 
 Duplo clique sobre a diretiva e marque a opção  “Habilitado” de OK. Pronto, GPO criada com sucesso. Caso ainda existam dúvidas a respeito da criação de GPO's, dê uma olhada neste **[video da documentação oficial](http://samba.org/tridge/Samba4Demo/s4demo2.ogv)**.
 
@@ -1841,13 +1841,13 @@ samba-tool drs showrepl
 
 Na máquina com Windows Server, caso você deseje gerenciar o servidor secundário a partir do **snap-in** do AD do Windows, abra o **Console de gerenciamento do Active Directory**, vá em **Ação** e selecione **Alterar controlador de domínio** como mostra a baixo:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad31.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad31.png#center)
 
 Aqui você deve ser capaz de ver os seus controladores de domínio disponíveis e seus status como mostrado abaixo:
 
-![Windows](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/samba/win7ad32.png#center)
+![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad32.png#center)
 
-Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em **[Samba tool](http://lobocode.github.io/2015/09/11/samba4.html#samba-tool)**. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.
+Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em **[Samba tool](http://neur0dev.github.io/2015/09/11/samba4.html#samba-tool)**. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.
 
 ---
 

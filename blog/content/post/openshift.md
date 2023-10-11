@@ -10,7 +10,7 @@ weight = 6
 draft = false
 +++
 
-> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no [github](https://github.com/lobocode/lobocode.github.io/blob/master/_posts/2018-06-25-openshift.md). As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
+> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no [github](https://github.com/neur0dev/neur0dev.github.io/blob/master/_posts/2018-06-25-openshift.md). As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
 
 ---
 
@@ -58,7 +58,7 @@ Você contém diversos servidores rodando diversas aplicações em produção e 
 
 Além de tudo isso, este sistema inteligente é capaz de prolongar a vida útil dos servidores por entrar em estado IDLE quando nenhuma requisição estiver rodando, e retornar ao estado normal a partir da primeira requisição. E tudo de maneira automática. Este sistema também é capaz de fazer canary teste, para descobrir a aceitação em produção de um determinado sistema. Imaginou o cenário? Pois bem, é sobre esta tecnologia que irei escrever aqui. Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o **[LXC](https://en.wikipedia.org/wiki/LXC)**.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/lxc.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/lxc.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/lxc.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/lxc.png#center)
 
 O Linux Container ou **[LXC](https://en.wikipedia.org/wiki/LXC)** como é mais conhecido, foi lançado em 2008 e é uma tecnologia que permite a criação de múltiplas instâncias isoladas de um determinado Sistema Operacional dentro de um único host. É uma maneira de virtualizar aplicações dentro de um servidor Linux. O conceito é simples e antigo sendo o comando **[chroot](https://en.wikipedia.org/wiki/Chroot)** seu precursor mais famoso que foi lançado em 1979 pelo **[Unix V7](https://en.wikipedia.org/wiki/Version_7_Unix)** com o intuito de segregar acessos a diretórios e evitar que o usuário pudesse ter acesso à estrutura raiz (“/” ou root). Esse conceito evoluiu alguns anos mais tarde com o lançamento do **[jail](https://www.freebsd.org/cgi/man.cgi?query=jail&amp;sektion=8&amp;manpath=freebsd-release-ports)**, no sistema operacional FreeBSD 4.
 
@@ -66,7 +66,7 @@ Essa implementação já introduzia a ideia de segregação de rede e limitaçã
 
 Nas distribuições Linux o chroot era uma maneira fácil de criar uma jail para as conexões dos servidores FTP, mas acabou ficando mais conhecido pela sua vulnerabilidade do que pela sua segurança. Mais tarde o chroot acabou ajudando a cunhar um termo **[jailbreak](https://pt.wikipedia.org/wiki/Jailbreak_(iOS))**. A grande diferença entre o chroot e o LXC é o nível de segurança que se pode alcançar. Com relação à virtualização, a diferença está no fato do LXC não necessitar de uma camada de sistema operacional para cada aplicação. Ao comparar com a virtualização tradicional, fica mais claro que uma aplicação sendo executada em um LXC demanda muito menos recursos, consumindo menos espaço em disco, e com um nível de portabilidade difícil de ser alcançado por outras plataformas. Mas não foi só a adoção de desenvolvedores e administradores de sistemas que tornou essa tecnologia tão popular. A consolidação da virtualização no mercado e a crescente demanda por computação em nuvem criaram o ambiente perfeito para o LXC se espalhar rapidamente. Aplicações podem ser portadas direto do laptop do desenvolvedor, para o servidor de produção, ou ainda para uma instância virtual em uma nuvem pública ou privada.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/docker.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/docker.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/docker.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/docker.png#center)
 
 Hoje um dos mais conhecidos LXC’s do mercado é o **[Docker](https://pt.wikipedia.org/wiki/Docker_(programa))**, escrito em **[GO](https://golang.org/)**, que nasceu como um projeto open source da **[DotCloud](https://cloud.docker.com/)**, uma empresa de **[PaaS (Platform as a Service)](https://pt.wikipedia.org/wiki/Plataforma_como_servi%C3%A7o)** que apesar de estar mais interessada em utilizar LXC apenas em suas aplicações, acabou desenvolvendo um produto que foi muito bem aceito pelo mercado. Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de extender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift.
 
@@ -88,7 +88,7 @@ Embora o docker engine gerencie contêineres facilitando os recursos do kernel d
 
 O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubernetes mantêm as informações sobre o cluster de servidores e os nodes executam as cargas de trabalho reais do aplicativo. A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. A baixo uma visão geral da arquitetura do Kubernetes:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/2wzeZJt.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/2wzeZJt.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/2wzeZJt.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/2wzeZJt.png#center)
 
 > NOTA: Um NODE é uma máquina de trabalho no OpenShift, anteriormente conhecida como minion no Kubernetes. Um node pode ser uma máquina virtual ou física, dependendo do cluster. Cada node tem os serviços necessários para executar pods e é gerenciado pelos componentes principais. Os serviços em um node incluem [Docker](https://www.docker.com/what-docker), [kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) e [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/). Consulte a seção sobre nodes do Kubernetes no [documento de design da arquitetura](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/architecture/architecture.md#the-kubernetes-node) para obter mais detalhes.
 
@@ -100,7 +100,7 @@ Um service é um proxy que conecta vários pods e os mapeia para um endereço IP
 
 Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/o3uoJ12.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/o3uoJ12.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/o3uoJ12.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/o3uoJ12.png#center)
 
 O OpenShift usa uma solução de rede definida por software **[SDN](https://pt.wikipedia.org/wiki/Software_defined_networking)** para criptografar e modelar o tráfego de rede em um cluster. O OpenShift SDN, é uma solução que usa o **[Open vSwitch](http://openvswitch.org)** e outras tecnologias software livre, que são configuradas por padrão quando o OpenShift é implementado. Outras soluções SDN também são suportadas. O OpenShift possui fluxos de trabalho projetados para ajudá-lo a gerenciar seus aplicativos em todas as fases de seu ciclo de vida:
 
@@ -112,11 +112,11 @@ O OpenShift usa uma solução de rede definida por software **[SDN](https://pt.w
 
 	* No fluxo de trabalho padrão no OpenShift, o deployment da aplicação é acionado automaticamente depois que a imagem do contêiner é criado e disponibilizado. O processo de deployment usa a imagem do aplicativo recém criado e a implanta em um ou mais nodes. Além dos pods dos aplicativos, um serviço é criado, junto com uma rota de DNS na camada de roteamento.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tl53ec9.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tl53ec9.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tl53ec9.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tl53ec9.png#center)
 
 * **Upgrade**
 
-	* Os usuários podem acessar o aplicativo recém-criado através da camada de roteamento após todos os componentes terem sido implantados. As atualizações de aplicativos usam o mesmo fluxo de trabalho. Quando um upgrade é acionado, uma nova imagem de contêiner é criada e a nova versão do aplicativo é implantada. Vários processos de atualização estarão disponíveis. A baixo a visão geral do processo de deploy da aplicação:![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/aGhInY5.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/aGhInY5.png#center)
+	* Os usuários podem acessar o aplicativo recém-criado através da camada de roteamento após todos os componentes terem sido implantados. As atualizações de aplicativos usam o mesmo fluxo de trabalho. Quando um upgrade é acionado, uma nova imagem de contêiner é criada e a nova versão do aplicativo é implantada. Vários processos de atualização estarão disponíveis. A baixo a visão geral do processo de deploy da aplicação:![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/aGhInY5.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/aGhInY5.png#center)
 
 É assim que o OpenShift funciona em alto nível. Para obter uma lista mais abrangente de como o OpenShift se integra e
 expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-platform/kubernetes.html](http://www.openshift.com/container-platform/kubernetes.html)**.
@@ -135,11 +135,11 @@ Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta 
 
 Máquinas virtuais podem ser usadas para isolamento do processo:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/FsyZT7m.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/FsyZT7m.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/FsyZT7m.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/FsyZT7m.png#center)
 
 Casos de uso para plataformas que trabalham com contêineres:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/MTIhnmV.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/MTIhnmV.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/MTIhnmV.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/MTIhnmV.png#center)
 
 Os contêineres usam um único kernel para servir aplicações economizando espaço, e recursos e fornecendo plataformas de aplicações flexíveis. No entanto, é bom frizar que **o que os contêineres não contêm, é igualmente importante**. Ao contrário das máquinas virtuais, todos os contêineres são executados em um único kernel Linux compartilhado. Para isolar os aplicativos, os contêineres usam componentes dentro do kernel. Como os contêineres não precisam incluir um kernel completo para atender a aplicação a ser implementada, além de todas as dependências de um sistema operacional, eles tendem a ser muito menores do que as máquinas virtuais, tanto em suas necessidades de armazenamento, quanto no consumo de recursos.
 
@@ -152,7 +152,7 @@ As tecnologias por trás dos contêineres fornecem vários benefícios técnicos
 
 Comparando máquinas virtuais e contêineres, podemos ver, por exemplo, que os contêineres fornecem uma melhor utilização dos recursos do servidor:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/IP1wCV7.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/IP1wCV7.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/IP1wCV7.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/IP1wCV7.png#center)
 
 No entanto, mesmo que os contêineres sejam ótimas ferramentas, nem sempre são a melhor ferramenta para todos os trabalhos. Por exemplo, se você tiver um aplicativo legado complexo, tenha cuidado ao decidir dividi-lo e convertê-lo em uma série de contêineres. Se a aplicação em questão trata-se de um modelo monolítico muito grande, e com diversos recursos, com um banco de dados relacional enorme, e esta aplicação fizer parte de todo um ecossistema de outras aplicações onde compartilha recursos, executa-lo em um contêiner não fará muito sentido e poderá ser um desafio bastante cansativo de tentar implementa-lo em contêineres.
 
@@ -176,13 +176,13 @@ Se seus aplicativos forem stateful, o que significa que eles precisam armazenar 
 
 À medida que você começa a separar os aplicativos tradicionais e monolíticos em serviços menores que funcionam de forma eficaz em contêineres, você começará a visualizar suas necessidades de dados de uma maneira diferente. Esse processo é geralmente chamado de design de aplicativos como microsserviços. Integrando aplicativos stateful e stateless:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/cG69vhp.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/cG69vhp.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/cG69vhp.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/cG69vhp.png#center)
 
 O OpenShift pode integrar e gerenciar plataformas de armazenamento externo e garantir que o volume de armazenamento de melhor ajuste seja correspondido com os aplicativos que precisam dele. Para qualquer aplicação, você terá serviços que precisam ser informativos e outros sem estado. Por exemplo, o serviço que fornece conteúdo da web estático pode ser sem estado, enquanto o serviço que processa a autenticação do usuário precisa poder gravar informações no armazenamento persistente.
 
 Como cada serviço é executado em seu próprio contêiner, os serviços podem ser ampliados e desativados independentemente. Em vez de precisar ampliar toda a sua base de código, com os contêineres, você dimensiona apenas os serviços em seu aplicativo que precisam processar cargas de trabalho adicionais. Além disso, como apenas os contêineres que precisam de acesso ao armazenamento persistente o contêm, os dados que entram no contêiner são mais seguros. No exemplo abaixo, se houvesse uma vulnerabilidade no serviço B, um processo comprometido teria dificuldade em obter acesso aos dados armazenados no armazenamento persistente. Ilustrandoas diferenças entre aplicativos tradicionais e de microsserviço: os aplicativos de microsserviço escalam seus componentes de forma independente, criando melhor desempenho e utilização de recursos:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/8sPOhGu.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/8sPOhGu.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/8sPOhGu.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/8sPOhGu.png#center)
 
 Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o docker e o Kubernetes. Osbenefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.
 
@@ -194,7 +194,7 @@ Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser execu
 
 Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/SH20A4i.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/SH20A4i.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/SH20A4i.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/SH20A4i.png#center)
 
 No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso permite que o tráfego criptografado rede entre os nodes funcione corretamente. Basicamente você precisará configurar um **[registro DNS curinga](https://tools.ietf.org/html/rfc4592)** que apontará para o seu cluster afim de acessar os aplicativos que você implementar futuramente. Se você já tem um servidor DNS já resolve a questão. Caso contrário, você poderá usar o domínio **[nip.io](nip.io)**.
 
@@ -202,7 +202,7 @@ No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso p
 
 O domínio **[nip.io](http://nip.io/)** quebra um galho enorme neste aspecto. Em vez de configurar e gerenciar um servidor DNS, você poderá criar registros DNS que resolvam qualquer endereço IP escolhido. A única desvantagem do **[nip.io](http://nip.io/)** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/)**.  A baixo, um exemplo do que poderemos configurar como modelo:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/LKIgIoQ.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/LKIgIoQ.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/LKIgIoQ.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/LKIgIoQ.png#center)
 
 O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS e os hostnames configurados funcionem de maneira consistente. Se você não usasse endereço IP estático, seria necessário gerenciar um servidor DHCP em seu ambiente o que de todo modo não é uma boa prática.
 
@@ -210,7 +210,7 @@ O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS 
 
 Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements)** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/qAChvCm.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/qAChvCm.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/qAChvCm.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/qAChvCm.png#center)
 
 
 Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório **[Extra Packages for Enterprise Linux - EPEL]()** e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:
@@ -580,7 +580,7 @@ O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para i
 
 Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a Internet, o deploy pode levar cerca de 30 a 45 minutos. Se tudo for bem sucedido, a saída indicará que o processo foi concluído com sucesso. Do contrário, observe o erro que estará em vermelho no terminal e busque debuga-lo. Quando a instalação estiver concluída, você poderá acessar seu host `https://ocp1.192.168.1.100.nip.io:8443`:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tela.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tela.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tela.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tela.png#center)
 
 > NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
 
@@ -629,7 +629,7 @@ Todos esses componentes trabalham juntos para atender as aplicações dos usuár
 
 Por exemplo, o _builder image_ do [Golang]() pode conter servidor da web, e as principais bibliotecas da linguagem. O processo de construção da imagem integra seu código-fonte e cria uma imagem customizada que será usada para o deploy do aplicativo em um contêiner. Uma vez criadas todas as imagens juntamente com todas as _builder images_, serão então armazenados no registro integrado do OpenShift. Cada aplicativo implementado cria componentes no cluster do OpenShift. Este fluxo de trabalho é totalmente automatizado e personalizável:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/novoprojeto.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/novoprojeto.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/novoprojeto.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/novoprojeto.png#center)
 
 Uma _build config_ contém todas as informações necessárias para construir um aplicativo usando seu código-fonte. Isso inclui todas as informações necessárias para criar a imagem do aplicativo que irá gerar o contêiner. Por exemplo:
 
@@ -675,7 +675,7 @@ Seguindo as informações acima vamos organizar como será o projeto:
 ```bash
 $ oc new-app \
 > --image-stream=golang \
-> --code=https://github.com/lobocode/image-uploader.git \
+> --code=https://github.com/neur0dev/image-uploader.git \
 > --name=app-cli
 ...
 ```
@@ -690,7 +690,7 @@ Run 'oc status' to view your app.
 
 Agora que implementamos o aplicativo, precisaremos acessar o pod recém-implementado. A imagem abaixo mostra o pod associado a um componente chamado _service_, que é vinculado para fornecer acesso do aplicativo aos usuários: 
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/deployanapplication.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/deployanapplication.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/deployanapplication.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/deployanapplication.png#center)
 
 Um _service_ usa os rótulos aplicados aos pods quando eles são criados, para acompanhar todos os pods associados a um determinado aplicativo. Isso permite que um service atue como um proxy interno para o aplicativo. Você poderá visualizar informações sobre o service app-cli executando o comando `oc describe svc/app-cli`:
 
@@ -749,12 +749,12 @@ Endpoints:	10.129.1.112:8080
 
 A saída informa as configurações de host adicionadas ao HAProxy, o service associado à rota, e os endpoints para o service se conectar às solicitações para a rota. Agora que criamos a rota para o aplicativo, verificaremos se está funcional em um navegador Web:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/imageuploader1.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/imageuploader1.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/imageuploader1.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/imageuploader1.png#center)
 
 
 No OpenShift, vários componentes trabalham em conjunto para criar, implantar e gerenciar os aplicativos:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/apprequest.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/apprequest.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/apprequest.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/apprequest.png#center)
 
 Todo este processo de deployment da nossa aplicação poderia ter sido feita pela interface web do OpenShift. No entanto, compreendo que temos mais domínio da ferramenta se optarmos pelas configurações em linha de comando. Você poderá experimentar usar a interface Web do OpenShift para fazer o mesmo ou explorar outros caminhos. A partir daquí, analisaremos mais detalhadamente o cluster do OpenShift e investigaremos como os contêineres isolam seus processos no node do aplicativo.
 
@@ -767,14 +767,14 @@ O [Docker](https://www.docker.com/what-docker) possui em uma ferramenta de linha
 
 Entre no node da aplicação e execute o comando `docker ps`. Este comando retorna uma lista de todos os contêineres atualmente em execução no node do aplicativo. Cada linha na saída do comando `docker ps` representa um contêiner em execução. O primeiro valor em cada linha é uma versão abreviada do ID desse contêiner. Você pode também confirmar com qual aplicação está lidando ao observar o nome dado ao contêiner. Se você seguiu os passos acima, certamente que a saída do `docker ps` será grande pois inclui informações sobre contêineres que hospedam o registro interno e o balanceador de carga HAProxy. 
 
-A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como _docker.io/lobocode/golang-app:latest_ por exemplo. Essa URL do registro pode ser dividida em quatro componentes:
+A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como _docker.io/neur0dev/golang-app:latest_ por exemplo. Essa URL do registro pode ser dividida em quatro componentes:
 
 * docker.io - URL do registro. Nesse caso, o Docker Hub.
-* lobocode - conta de usuário para o registro. Neste caso, lobocode, a minha conta pessoal.
+* neur0dev - conta de usuário para o registro. Neste caso, neur0dev, a minha conta pessoal.
 * golang-app - Nome da imagem do contêiner para download.
 * latest - Tag ou versão específica da imagem do contêiner.
 
-> NOTA: A URL _docker.io/lobocode/golang-app:latest_, é meramente ilustrativa. Sinta-se livre para testar quaisquer aplicações consultando o [Dockerhub](https://hub.docker.com/).
+> NOTA: A URL _docker.io/neur0dev/golang-app:latest_, é meramente ilustrativa. Sinta-se livre para testar quaisquer aplicações consultando o [Dockerhub](https://hub.docker.com/).
 
 O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes [SHA256](https://en.wikipedia.org/wiki/SHA-2) são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
 
@@ -812,7 +812,7 @@ Quando você faz o deploy de uma aplicação no OpenShift, uma solicitação é 
 
 A imagem abaixo mostra como esses componentes estão interligados. Quando um desenvolvedor cria um código-fonte de um aplicativo e aciona um novo deployment (neste caso, usando a ferramenta de linha de comando `oc`), o OpenShift cria os componentes como o deployment config, o image stream e o build config.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco01.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco01.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco01.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco01.png#center)
 
 O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. Na imagem acima observe que os usuários estão sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do docker para obter o deployment do aplicativo para o usuário. 
 
@@ -830,7 +830,7 @@ Normalmente, um único pod é composto por um único contêiner. Mas, em algumas
 
 O relacionamento entre o deployment e os replication controllers pode ser explicado na forma como é feito o deployment dos aplicativos, como são dimensionados e atualizados. Quando são feitas alterações em uma configuração de deployment, um novo deploy é criado, o que, por sua vez, cria um novo replication controller. O replication controller, em seguida, cria o número desejado de pods dentro do cluster, que é onde realmente ocorre o deployment do aplicativo.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco02.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco02.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco02.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco02.png#center)
 
 O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do [docker](https://www.docker.com/what-docker) para criar os contêineres das aplicações.
 
@@ -842,7 +842,7 @@ O [Docker](https://www.docker.com/what-docker) é um contêiner runtime. Isto é
 
 Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em [http://cri-o.io](http://cri-o.io). O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o [docker](https://www.docker.com/what-docker) usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco03.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco03.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco03.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco03.png#center)
 
 O Docker usa três componentes do kernel Linux para isolar os aplicativos em execução nos contêineres que são criados e limita seu acesso aos recursos no host. São eles:
 
@@ -851,7 +851,7 @@ O Docker usa três componentes do kernel Linux para isolar os aplicativos em exe
 * SELinux contexts - Impede que os aplicativos em um contêiner acessem indevidamente recursos no host ou em outros contêineres. Um SELinux context é um rótulo exclusivo do aplicado aos recursos de um contêiner no node. Esse rótulo exclusivo impede que o contêiner acesse qualquer coisa que não tenha um marcador correspondente no host. 
 
 O [daemon](https://pt.wikipedia.org/wiki/Daemon_(computa%C3%A7%C3%A3o)) do docker cria esses recursos do kernel dinamicamente quando o contêiner é criado. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco04.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco04.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco04.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco04.png#center)
 
 Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html) é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html).
 
@@ -863,7 +863,7 @@ Os aplicativos em um contêiner são executados no espaço do usuário, mas os c
 
 O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco05.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/appco05.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco05.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/appco05.png#center)
 
 O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregue. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.
 
@@ -921,7 +921,7 @@ Discutiremos os cinco namespaces usados pelo OpenShift com exemplos, incluindo c
 
 O namespace _mount_ isola o conteúdo do sistema de arquivos, garantindo que o conteúdo atribuído ao contêiner pelo OpenShift seja o único conteúdo disponível para os processos em execução no contêiner. O namespace _mount_ para o contêiner _app-cli_, por exemplo, permite que os aplicativos no contêiner acessem apenas o conteúdo na imagem do contêiner _app-cli_ personalizada e qualquer informação armazenada no volume persistente associado à declaração de volume persistente (PVC) para app-cli.
 
-![https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/namespace-mount.png#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/namespace-mount.png#center)
+![https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/namespace-mount.png#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/namespace-mount.png#center)
 
 Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico [LVM]() neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico [LV]() quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando `lsblk`. O dispositivo LV que o contêiner _app-cli_ usa para armazenamento é registrado nas informações do `docker inspect`. Para obter o LV para seu contêiner _app-cli_, execute o seguinte comando: 
 

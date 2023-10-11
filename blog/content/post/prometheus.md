@@ -25,7 +25,7 @@ O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open-s
 
 A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software, SoundCloud, em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)**, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. A CNCF agora é a responsável pelo desenvolvimento e manutenção do projeto Prometheus.
 
-> **NOTA**: Leia mais sobre PromQL em **[Aqui](https://lobocode.github.io/2023/03/19/promql/)**.
+> **NOTA**: Leia mais sobre PromQL em **[Aqui](https://neur0dev.github.io/2023/03/19/promql/)**.
 
 ### Tipos de métricas
 
@@ -42,7 +42,7 @@ Além desses tipos de métricas, o Prometheus também suporta métricas de estad
 
 Para simplificar o entendimento a cerca de monitoramento Pull vs Push, imagine que você tem um vaso de flores em sua janela. O monitoramento pull é como você ir lá todos os dias para verificar se as flores precisam de água. Você está puxando informações sobre as flores. Já o monitoramento push é como se você tivesse um sistema automático que envia uma mensagem para você quando as flores precisam de água. Neste caso, as informações estão sendo empurradas para você. Tecnicamente, o monitoramento pull é um método no qual um dispositivo ou sistema solicita periodicamente informações de outro dispositivo ou sistema. Ele "puxa" as informações. Por exemplo, em um sistema de monitoramento de rede, um dispositivo de monitoramento pode enviar uma solicitação de status para cada dispositivo na rede a intervalos regulares e armazenar as informações retornadas.
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-pullvspush.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-pullvspush.png#center)
 
 Já o monitoramento push é um método no qual um dispositivo ou sistema envia automaticamente informações para outro dispositivo ou sistema sem esperar uma solicitação. Ele "empurra" as informações. Por exemplo, em um sistema de monitoramento de rede, cada dispositivo na rede pode ser configurado para automaticamente enviar informações de status para um dispositivo de monitoramento sempre que houver uma alteração. Em resumo, o monitoramento pull é baseado em solicitação e o monitoramento push é baseado em notificação. O Prometheus usa um sistema chamado "Exporters" para coletar dados de diversos sistemas e aplicativos e envia esses dados para o Prometheus para serem armazenados e analisados (monitoramento pull). O Prometheus não precisa solicitar esses dados, pois eles são enviados automaticamente pelos Exporters. Isso permite que o Prometheus colete dados em tempo real e sem sobrecarregar os sistemas e aplicativos monitorados.
 
@@ -50,7 +50,7 @@ Já o monitoramento push é um método no qual um dispositivo ou sistema envia a
 
 A arquitetura do Prometheus torna mais fácil encontrar e obter dados de diferentes pontos de acesso. O servidor Prometheus cuida da coleta e armazenamento das métricas. Ele organiza as tarefas de monitoramento - consultando fontes de dados (conhecidas como "instâncias") em intervalos de tempo predefinidos. As tarefas de monitoramento são configuradas usando uma ou mais diretrizes chamadas "configurações de coleta", gerenciadas por um arquivo de configuração em formato YAML. A imagem abaixo representa a arquitetura do Prometheus:
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/prometheus/arch.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/prometheus/arch.png#center)
 
 O ecossistema do Prometheus é composto por diversos componentes, muitos deles opcionais como por exemplo:
 
@@ -65,7 +65,7 @@ O ecossistema do Prometheus é composto por diversos componentes, muitos deles o
 
 Labels são como etiquetas que adicionamos às coisas para identificá-las. Por exemplo, você tem um armário com camisetas e você coloca etiquetas nas camisetas com as cores, tamanhos e tipos delas. Então, se você quer pegar uma camiseta verde, você vai olhar na etiqueta e buscar uma camiseta verde. No Prometheus, labels são usadas para identificar e agrupar diferentes dados de métricas, assim como as etiquetas nas camisetas. Por exemplo, você tem vários computadores e quer monitorar o uso de memória de cada um deles. Você pode adicionar labels como "hostname" e "sistema operacional" para cada dado de métrica, então se você quiser saber o uso de memória de um computador específico, você pode buscar pela label "hostname" dele. Já as Samples são como pequenas amostras de algo. Por exemplo, você está fazendo uma pesquisa sobre quantas balas as crianças gostam de comer e você pede para cada criança escolher uma amostra de 3 balas. Essas 3 balas que cada criança escolheu são as samples. No Prometheus, samples são pequenas medidas de algo que queremos monitorar, como por exemplo, a utilização de CPU de um computador. Cada vez que coletamos uma medida, é criado um sample. Esses samples são armazenados juntos com labels, permitindo que você possa ver como a medida mudou ao longo do tempo. Por exemplo, você pode ver como a utilização de CPU de um computador específico mudou ao longo de um dia.
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/samples01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/samples01.png#center)
 
 ## Instalação
 
@@ -122,7 +122,7 @@ No Grafana, você precisará adicionar o Prometheus como uma fonte de dados (dat
 
 Se você quiser instalar somente o Prometheus, basta rodar `docker run -p 9090:9090 prom/prometheus`. Você pode acessar a interface web do Prometheus em **http://localhost:9090**. Para mais informações sobre como instalar o Prometheus, consulte a documentação oficial do Prometheus em **https://prometheus.io/docs/prometheus/latest/getting_started/**.
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/ui01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/ui01.png#center)
 
 A interface do Prometheus é composta pelos seguintes menus:
 
@@ -598,17 +598,17 @@ Esses chunks são usados para a recuperação dos dados e para realizar consulta
 
 ### Gerenciamento de memória pelo Prometheus
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem01.png#center)
 <small style="text-align:center;"><b>Imagem 1.1</b></small>
 
 A imagem 1.1 acima representa o Prometheus quando usa muita memória RAM e memória em disco devido a natureza dos dados que ele coleta e armazena. Como ele armazena métricas de forma temporal (time series), ele precisa manter uma grande quantidade de dados em memória para que essas métricas possam ser consultadas rapidamente. Isso é especialmente importante quando ele precisa responder a consultas de alertas ou gráficos em tempo real. Além disso, Prometheus usa uma estratégia de sliding window para descartar métricas antigas que já não são consideradas relevantes. Isso significa que ele precisa manter uma grande quantidade de dados em memória para garantir que as métricas mais recentes possam ser acessadas rapidamente. Por outro lado, Prometheus usa muita memória em disco para armazenar esses dados de forma persistente, o que permite que os dados sejam recuperados mesmo depois de um reinício do sistema. Isso também permite que os dados sejam consultados novamente em um momento posterior, mesmo que não estejam mais disponíveis na memória. O Prometheus precisa de uma grande quantidade de memória RAM e memória em disco para garantir que os dados possam ser coletados, armazenados e consultados de forma eficiente e rápida.
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem02.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem02.png#center)
 <small style="text-align:center;"><b>Imagem 1.2</b></small>
 
 Como bem mostra a Imagem 1.2 acima, quanto mais dias de dados são armazenados, mais memória e espaço em disco serão necessários para armazená-los. Isso pode levar a problemas de performance, pois aumenta a quantidade de dados que precisam ser carregados e processados para responder a consultas. Além disso, como os dados antigos tendem a ser menos relevantes, isso pode levar a problemas de escalabilidade, pois os dados antigos podem acabar consumindo muitos recursos de armazenamento e processamento, dificultando a capacidade de Prometheus de lidar com novos dados. Além disso, é importante considerar que o objetivo do Prometheus é fornecer uma visão em tempo real do sistema, então manter muitos dias de dados pode não ser tão útil para detectar problemas recentes ou tendências atuais no sistema, e pode acabar fazendo com que os dados relevantes sejam enterrados em meio a grande quantidade de dados antigos. Por essas razões, é recomendado manter apenas uma quantidade de dias de dados que seja suficiente para as necessidades de monitoramento do seu sistema, e não mais do que isso. É possível configurar o Prometheus para descartar dados antigos de acordo com a necessidade, e também é possível armazenar os dados históricos em outro sistema de armazenamento para análise futura.
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/tsdb/prom-mem03.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/tsdb/prom-mem03.png#center)
 <small style="text-align:center;"><b>Imagem 1.3</b></small>
 
 Como mostra na Imagem 1.3 acima, o Prometheus utiliza a memória principal do host Linux para armazenar todas as métricas coletadas. Essas métricas são mantidas em memória para permitir uma consulta rápida e eficiente pelos usuários. Nesse processo é usado o modelo de coleta ativa, ou seja, é responsabilidade do próprio Prometheus coletar as métricas dos serviços e aplicativos em execução. Isso significa que o Prometheus precisa gerenciar as métricas de cada alvo e garantir que elas estejam disponíveis para consulta. Para manter as métricas em memória, o Prometheus utiliza um buffer de gravação em disco para evitar perda de dados. Quando a memória RAM fica cheia, as métricas mais antigas são gravadas no buffer de gravação em disco. Esse buffer é dimensionado automaticamente de acordo com a quantidade de métricas que o Prometheus está coletando. Quando o buffer de gravação em disco está cheio, o Prometheus começa a descartar as métricas mais antigas, garantindo que as mais recentes estejam sempre disponíveis. Além disso, o Prometheus também utiliza o swap do host para armazenar parte das métricas caso a memória RAM esteja completamente cheia.

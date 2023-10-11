@@ -441,19 +441,19 @@ Acesse o https://prometheus.demo.do.prometheus.io/ onde contém um servidor Prom
 avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTotal_bytes[10m])))
 ```
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/ui01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/ui01.png#center)
 
 O Prometheus acima está coletando métricas de diversos **[targets](https://prometheus.demo.do.prometheus.io/targets)**. A métrica acima, se refere ao **[Node_Exporter](http://demo.do.prometheus.io:9100/metrics)**. Isto é, sao métricas de Sistema Operacional e Hardware Linux. A Query está registrando o consumo médio de memória. Com a interface do Prometheus aberta em seu navegador, vá até a aba **GRAPH**. O Prometheus é focado no que está acontecendo agora em vez de rastrear dados ao longo de semanas ou meses. Isso se baseia na premissa de que a maioria das consultas e alertas de monitoramento são gerados a partir de dados recentes, geralmente, com menos de um dia. O Prometheus é responsável por armazenar suas métricas como dados de séries temporais, isto é, ao longo do tempo:
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/timeseries01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/timeseries01.png#center)
 
 As métricas são armazenadas com o registro de data/hora, juntamente com pares de valores-chave opcionais chamados labels. Entenda labels como filtros que você aplica para trazer dados mais precisos a cerca de um ou mais endpoints. As métricas desempenham um papel importante para entender o comportamento da sua aplicação. Métricas são medidas de componentes de software ou hardware. Para tornar uma métrica útil, acompanhamos seu estado, geralmente registrando data points ao longo do tempo. Esses data points ou pontos de dados, são chamados de **observations** como mostra a imagem a seguir:
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/observation.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/observation.png#center)
 
 Um observation (o potinho no gráfico), consiste em um registro de data/hora bastante preciso em milissegundos e um valor float64. Uma coleção de observations registrados ao longo do tempo, é o que é denominado de série temporal. Um ou mais quadros atuais, ou seja, as séries temporais que voce está analizando atualmente, por sua vez, é chamado de **samples**:
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/master/post/images/tsdb/samples01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/samples01.png#center)
 
 Experimente executar cada uma das métricas abaixo em seu devido contexto:
 

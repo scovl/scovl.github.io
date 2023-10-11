@@ -27,7 +27,7 @@ author = "Vitor Lobo Ramos"
 * **[Conclusão](#conclusão)**
 
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/monkey.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/monkey.png#center)
 
 ## Introdução
 
@@ -50,7 +50,7 @@ Esses são só alguns exemplos, mas dá pra sacar que a Engenharia do Caos é um
 
 ## Como funciona a Engenharia do Caos?
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo01.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo01.png#center)
 
 A Engenharia do Caos é realizada por meio de experimentos nos quais se investiga como um sistema reage a eventos adversos, com o objetivo de provar ou refutar suposições sobre seu comportamento. Por exemplo, em um cenário com um site popular e um datacenter, é essencial garantir que o site continue funcionando mesmo em caso de queda de energia. Para isso, instala-se duas fontes de energia independentes no datacenter. No entanto, falhas na troca automática entre as fontes ou a insuficiência de uma única fonte podem ocorrer. Por meio de experimentos de caos, é possível identificar problemas potenciais. No experimento proposto, segue-se um processo simples em quatro etapas para cada fonte de energia:
 
@@ -85,7 +85,7 @@ A ideia principal é que, ao definir o que é considerado normal e ao considerar
 
 ### Formulando uma hipótese
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo03.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo03.png#center)
 
 Agora chegamos à parte realmente divertida onde você transforma seus palpites em hipóteses como por exemplo: Ele continuará funcionando? Vai desacelerar? Quanto? Na vida real, essas perguntas geralmente são motivadas por incidentes (problemas não planejados que você descobre quando as coisas param de funcionar), mas quanto melhor você se torna neste jogo, mais você pode (e deve) antecipar. No início deste capítulo, listei alguns exemplos do que tende a dar errado. Esses eventos podem ser amplamente categorizados da seguinte forma:
 
@@ -115,7 +115,7 @@ Finalmente, você executa o experimento, mede os resultados e conclui se estava 
 
 ## Observabilidade
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo04.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo04.png#center)
 
 Observabilidade, no contexto da Engenharia do Caos, é a capacidade de compreender o estado interno de um sistema por meio de suas saídas externas, como métricas, registros e rastreamentos. É fundamental para identificar problemas, diagnosticar falhas e melhorar a resiliência de um sistema.
 
@@ -248,7 +248,7 @@ No exemplo acima, mostrei como usar o ChaosMesh para realizar experimentos de fa
 
 ### Engenharia do Caos em Microsserviços
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo02.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo02.png#center)
 
 Vamos usar o framework de testes de integração "**[RestAssured](https://rest-assured.io/)**" e o framework de engenharia do caos "**[Chaos Monkey for Spring Boot](https://codecentric.github.io/chaos-monkey-spring-boot/)**" para implementar o teste de latência de requisições com injeção de falhas. Antes de começarmos, certifique-se de que o Maven e o Java estejam instalados em sua máquina.
 
@@ -358,7 +358,7 @@ Além disso, ao executar o teste novamente, você poderá ver o aumento do tempo
 
 ## Blast Radius
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo05.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo05.png#center)
 
 O conceito de blast radius (ou raio de impacto em tradução livre) na engenharia do caos refere-se ao impacto que uma falha ou problema em um sistema ou componente específico pode ter sobre o sistema como um todo. É uma medida de quão longe o "estrago" causado por uma falha pode se espalhar, afetando outras partes do sistema. Para explicar de forma didática, imagine um sistema como uma cidade, e os componentes individuais são os edifícios. Se um edifício (componente) sofre um desastre, como uma explosão, o "blast radius" seria a área ao redor do edifício afetada pelos danos causados pela explosão. Em um sistema bem projetado, o objetivo é minimizar o blast radius de falhas, de modo que um único problema não leve a uma falha generalizada do sistema. Imagine um sistema de pedidos online que possui várias classes, como Pedido, Cliente e Item. Em uma situação específica, um erro ocorre no processamento de um pedido, o que pode afetar outros componentes do sistema. Vamos analisar um trecho de código em Java que exemplifica isso:
 
@@ -407,7 +407,7 @@ Dessa forma, um erro em uma parte do código teria um impacto menor em outras pa
 
 ## Complexidade dos sistemas modernos
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/geo06.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo06.png#center)
 
 Para decidir se a Engenharia do Caos faz sentido em seu sistema, é necessário entender a diferença entre sistemas simples e complexos. Sistemas simples são geralmente lineares, onde uma mudança na entrada resulta em uma mudança correspondente na saída. Já os sistemas complexos são não lineares, apresentando resultados imprevisíveis e interações complexas entre suas partes. Sistemas complexos possuem tantas partes móveis ou mudanças rápidas que é impossível para uma pessoa compreender tudo. Isso torna difícil simular ou modelar o comportamento desses sistemas. No mundo do software, muitos sistemas são complexos e tendem a aumentar sua complexidade com o tempo.
 
@@ -482,7 +482,7 @@ A confiabilidade dos produtos do Google não é mágica, mas sim resultado de um
 
 ### Chaos Monkey e Simian Army
 
-![img#center](https://raw.githubusercontent.com/lobocode/lobocode.github.io/main/post/images/chaos/monkeys.png#center)
+![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/monkeys.png#center)
 
 O Chaos Monkey é um aplicativo simples usado pela Netflix para melhorar a resiliência de seus sistemas. Ele seleciona aleatoriamente uma instância em um cluster e a desativa durante o horário comercial, simulando falhas reais. Isso força os engenheiros a solucionar problemas de disponibilidade do serviço, já que precisam lidar com as interrupções causadas pelo Chaos Monkey. Eventualmente, a ferramenta se tornou popular e foi adotada por outras equipes.
 
