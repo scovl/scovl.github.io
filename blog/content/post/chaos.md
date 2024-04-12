@@ -27,7 +27,7 @@ author = "Vitor Lobo Ramos"
 * **[Conclusão](#conclusão)**
 
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/monkey.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/monkey.png#center)
 
 ## Introdução
 
@@ -50,7 +50,7 @@ Esses são só alguns exemplos, mas dá pra sacar que a Engenharia do Caos é um
 
 ## Como funciona a Engenharia do Caos?
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo01.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo01.png#center)
 
 A Engenharia do Caos é realizada por meio de experimentos nos quais se investiga como um sistema reage a eventos adversos, com o objetivo de provar ou refutar suposições sobre seu comportamento. Por exemplo, em um cenário com um site popular e um datacenter, é essencial garantir que o site continue funcionando mesmo em caso de queda de energia. Para isso, instala-se duas fontes de energia independentes no datacenter. No entanto, falhas na troca automática entre as fontes ou a insuficiência de uma única fonte podem ocorrer. Por meio de experimentos de caos, é possível identificar problemas potenciais. No experimento proposto, segue-se um processo simples em quatro etapas para cada fonte de energia:
 
@@ -85,7 +85,7 @@ A ideia principal é que, ao definir o que é considerado normal e ao considerar
 
 ### Formulando uma hipótese
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo03.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo03.png#center)
 
 Agora chegamos à parte realmente divertida onde você transforma seus palpites em hipóteses como por exemplo: Ele continuará funcionando? Vai desacelerar? Quanto? Na vida real, essas perguntas geralmente são motivadas por incidentes (problemas não planejados que você descobre quando as coisas param de funcionar), mas quanto melhor você se torna neste jogo, mais você pode (e deve) antecipar. No início deste capítulo, listei alguns exemplos do que tende a dar errado. Esses eventos podem ser amplamente categorizados da seguinte forma:
 
@@ -115,7 +115,7 @@ Finalmente, você executa o experimento, mede os resultados e conclui se estava 
 
 ## Observabilidade
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo04.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo04.png#center)
 
 Observabilidade, no contexto da Engenharia do Caos, é a capacidade de compreender o estado interno de um sistema por meio de suas saídas externas, como métricas, registros e rastreamentos. É fundamental para identificar problemas, diagnosticar falhas e melhorar a resiliência de um sistema.
 
@@ -147,7 +147,7 @@ Portanto, Chaos Engineering e Antifragilidade são conceitos distintos, embora a
 * **[Banco Itaú](https://grafana.com/blog/2022/11/28/how-banco-itau-tracks-1.5b-daily-metrics-on-prem-and-in-aws-with-grafana-and-observability/)** - Com uma grande quantidade de operações digitais e uma infraestrutura extensa, o Banco Itaú utiliza ferramentas como Thanos, Prometheus e Grafana para monitorar métricas, Splunk para logs, Yaeger para rastreamento e AppDynamics para monitoramento de desempenho de aplicativos. Além disso, eles incorporam a Engenharia do Caos em produção para melhor se proteger contra problemas futuros. Para saber mais detalhes, é possível assistir à palestra completa do Banco Itaú no **[ObservabilityCON](https://www.tabnews.com.br/MateusVP/artigo-traducao-como-o-banco-itau-rastreia-1-5-bilhao-de-metricas-diarias-localmente-e-na-aws-com-o-uso-do-grafana-e-observabilidade)**.
 
 * **[Starling Bank](https://www.infoq.com/articles/chaos-testing-starling-bank/)** - No Starling Bank, eles começaram a implementar o caos removendo os riscos ignoráveis. Eles criaram seu próprio "chaos daemon" simples em 2016, visando a simplicidade. Isso permitiu que eles construíssem um sistema que esperava falhas e uma organização de desenvolvimento que estava preparada para isso. Eles criaram o próprio "chaos daemon" simples e utiliza logs para evidenciar requisitos de auditoria relacionados a recuperação de desastres. É importante mostrar que um servidor pode falhar sem prejudicar o que é importante para o negócio.
-* **[iFood](https://www.youtube.com/watch?v=t8F0FAw6K6E&t=625s)** - O iFood começou a praticar a engenharia do caos de forma humilde, realizando testes durante os horários de menor demanda. No entanto, essa abordagem envolvia muitas pessoas e tarefas manuais propensas a erros, o que não era escalável. Foi então que decidiram implementar a engenharia do caos em escala e encontraram a ferramenta LitmusChaos, que oferecia uma ampla gama de experimentos controlados de forma simples. 
+* **[iFood](https://www.youtube.com/watch?v=t8F0FAw6K6E&t=625s)** - O iFood começou a praticar a engenharia do caos de forma humilde, realizando testes durante os horários de menor demanda. No entanto, essa abordagem envolvia muitas pessoas e tarefas manuais propensas a erros, o que não era escalável. Foi então que decidiram implementar a engenharia do caos em escala e encontraram a ferramenta LitmusChaos, que oferecia uma ampla gama de experimentos controlados de forma simples.
 * **[Amazon Prime](https://aws.amazon.com/pt/blogs/opensource/building-resilient-services-at-prime-video-with-chaos-engineering/)** - A equipe da Amazon Prime utilizaram a abordagem de injeção de falhas em sistemas distribuídos utilizando o Amazon EC2 e o Amazon ECS. Essa abordagem envolve a geração de carga de tráfego contra o sistema, a adição de latência às chamadas de rede para o banco de dados subjacente e a validação de timeouts e retries. Eles desenvolveram uma biblioteca chamada **[AWSSSMChaosRunner](https://github.com/amzn/awsssmchaosrunner)** que facilita a criação de documentos e a execução de experimentos de falhas. A Amazon Prime usou essa biblioteca para evitar falhas que poderiam impactar os clientes no serviço Prime Video.
 
 ---
@@ -248,7 +248,7 @@ No exemplo acima, mostrei como usar o ChaosMesh para realizar experimentos de fa
 
 ### Engenharia do Caos em Microsserviços
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo02.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo02.png#center)
 
 Vamos usar o framework de testes de integração "**[RestAssured](https://rest-assured.io/)**" e o framework de engenharia do caos "**[Chaos Monkey for Spring Boot](https://codecentric.github.io/chaos-monkey-spring-boot/)**" para implementar o teste de latência de requisições com injeção de falhas. Antes de começarmos, certifique-se de que o Maven e o Java estejam instalados em sua máquina.
 
@@ -358,7 +358,7 @@ Além disso, ao executar o teste novamente, você poderá ver o aumento do tempo
 
 ## Blast Radius
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo05.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo05.png#center)
 
 O conceito de blast radius (ou raio de impacto em tradução livre) na engenharia do caos refere-se ao impacto que uma falha ou problema em um sistema ou componente específico pode ter sobre o sistema como um todo. É uma medida de quão longe o "estrago" causado por uma falha pode se espalhar, afetando outras partes do sistema. Para explicar de forma didática, imagine um sistema como uma cidade, e os componentes individuais são os edifícios. Se um edifício (componente) sofre um desastre, como uma explosão, o "blast radius" seria a área ao redor do edifício afetada pelos danos causados pela explosão. Em um sistema bem projetado, o objetivo é minimizar o blast radius de falhas, de modo que um único problema não leve a uma falha generalizada do sistema. Imagine um sistema de pedidos online que possui várias classes, como Pedido, Cliente e Item. Em uma situação específica, um erro ocorre no processamento de um pedido, o que pode afetar outros componentes do sistema. Vamos analisar um trecho de código em Java que exemplifica isso:
 
@@ -407,7 +407,7 @@ Dessa forma, um erro em uma parte do código teria um impacto menor em outras pa
 
 ## Complexidade dos sistemas modernos
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/geo06.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/geo06.png#center)
 
 Para decidir se a Engenharia do Caos faz sentido em seu sistema, é necessário entender a diferença entre sistemas simples e complexos. Sistemas simples são geralmente lineares, onde uma mudança na entrada resulta em uma mudança correspondente na saída. Já os sistemas complexos são não lineares, apresentando resultados imprevisíveis e interações complexas entre suas partes. Sistemas complexos possuem tantas partes móveis ou mudanças rápidas que é impossível para uma pessoa compreender tudo. Isso torna difícil simular ou modelar o comportamento desses sistemas. No mundo do software, muitos sistemas são complexos e tendem a aumentar sua complexidade com o tempo.
 
@@ -470,7 +470,7 @@ A Engenharia do Caos é uma abordagem de engenharia de software que visa melhora
 
 ### GameDay
 
-GameDay é um evento planejado no qual as equipes de engenharia, operações e outros membros da organização se reúnem para testar a resiliência de um sistema e a eficácia dos processos de resposta a incidentes. Para organizar e aplicar um Gameday, algumas etapas são seguidas. Inicialmente, é importante definir os objetivos do evento, que podem incluir a identificação de pontos fracos no sistema, o teste da eficácia dos processos de resposta a incidentes e a melhoria da comunicação entre as equipes. Em seguida, com os objetivos em mente, a equipe responsável pelo Gameday deve criar um cenário de teste realista, projetado para simular falhas ou problemas que possam ocorrer no sistema. As equipes envolvidas no Gameday devem ser informadas sobre o evento com antecedência e receber informações detalhadas sobre o cenário, as expectativas e os objetivos. 
+GameDay é um evento planejado no qual as equipes de engenharia, operações e outros membros da organização se reúnem para testar a resiliência de um sistema e a eficácia dos processos de resposta a incidentes. Para organizar e aplicar um Gameday, algumas etapas são seguidas. Inicialmente, é importante definir os objetivos do evento, que podem incluir a identificação de pontos fracos no sistema, o teste da eficácia dos processos de resposta a incidentes e a melhoria da comunicação entre as equipes. Em seguida, com os objetivos em mente, a equipe responsável pelo Gameday deve criar um cenário de teste realista, projetado para simular falhas ou problemas que possam ocorrer no sistema. As equipes envolvidas no Gameday devem ser informadas sobre o evento com antecedência e receber informações detalhadas sobre o cenário, as expectativas e os objetivos.
 
 Além disso, é importante garantir que todos os recursos necessários estejam disponíveis, como ferramentas de monitoramento, ambientes de teste e acesso a sistemas críticos. No dia do evento, as equipes executam o cenário planejado e monitoram de perto o comportamento do sistema e a eficácia das respostas aos incidentes. Durante o Gameday, é importante que as equipes se comuniquem de forma eficaz e documentem todas as ações tomadas e observações feitas. Após a conclusão do Gameday, a equipe responsável deve analisar os resultados e identificar áreas de melhoria. O aprendizado obtido durante o evento deve ser compartilhado entre todas as equipes envolvidas para que possam aplicar as melhorias necessárias ao sistema e aos processos. As vantagens dos Gamedays são diversas, incluindo a identificação de pontos fracos no sistema antes que causem problemas reais aos usuários, a melhoria dos processos de resposta a incidentes e a promoção da colaboração e comunicação entre as equipes. Além disso, os Gamedays ajudam a criar uma cultura de conscientização sobre a importância da resiliência e da preparação para lidar com falhas e problemas. Essa abordagem proativa pode resultar em sistemas mais estáveis e confiáveis, melhorando a experiência do usuário e reduzindo o tempo de inatividade do sistema. Para mais informações sobre GameDay, consulte o artigo **[Chaos Gamedays: A Step-by-Step Guide to Chaos](https://dzone.com/articles/chaos-gamedays-a-step-by-step-guide-to-chaos)**.
 
@@ -482,7 +482,7 @@ A confiabilidade dos produtos do Google não é mágica, mas sim resultado de um
 
 ### Chaos Monkey e Simian Army
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/main/post/images/chaos/monkeys.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/chaos/monkeys.png#center)
 
 O Chaos Monkey é um aplicativo simples usado pela Netflix para melhorar a resiliência de seus sistemas. Ele seleciona aleatoriamente uma instância em um cluster e a desativa durante o horário comercial, simulando falhas reais. Isso força os engenheiros a solucionar problemas de disponibilidade do serviço, já que precisam lidar com as interrupções causadas pelo Chaos Monkey. Eventualmente, a ferramenta se tornou popular e foi adotada por outras equipes.
 
@@ -546,7 +546,7 @@ Além disso, a coordenação entre equipes é crucial para o sucesso da Engenhar
 
 ## Conclusão
 
-A Engenharia do Caos é uma prática importante e valiosa que visa melhorar a resiliência e a confiabilidade dos sistemas e infraestruturas de TI. Por meio da introdução intencional de falhas e da realização de experimentos controlados, as organizações podem identificar e corrigir problemas antes que causem interrupções ou impactos negativos. No entanto, a adoção da Engenharia do Caos não está isenta de desafios, como a resistência à mudança na cultura organizacional, a falta de conhecimento e experiência, e a necessidade de colaboração entre equipes. 
+A Engenharia do Caos é uma prática importante e valiosa que visa melhorar a resiliência e a confiabilidade dos sistemas e infraestruturas de TI. Por meio da introdução intencional de falhas e da realização de experimentos controlados, as organizações podem identificar e corrigir problemas antes que causem interrupções ou impactos negativos. No entanto, a adoção da Engenharia do Caos não está isenta de desafios, como a resistência à mudança na cultura organizacional, a falta de conhecimento e experiência, e a necessidade de colaboração entre equipes.
 
 Para superar esses obstáculos, é crucial que as organizações invistam na educação e no treinamento das equipes, bem como na implementação de processos e ferramentas adequados para facilitar a colaboração e a comunicação eficaz. Além disso, o estudo de falhas notórias em sistemas e infraestruturas de TI pode fornecer insights valiosos sobre as áreas em que a Engenharia do Caos pode ser aplicada para evitar problemas semelhantes no futuro. Ao aprender com esses casos e aplicar os princípios e práticas da Engenharia do Caos, as organizações podem aumentar a resiliência de seus sistemas e estar melhor preparadas para enfrentar as inevitáveis falhas e desafios que surgem no mundo dinâmico e complexo da tecnologia da informação.
 
@@ -560,4 +560,3 @@ Para superar esses obstáculos, é crucial que as organizações invistam na edu
 * **[Principles of Chaos Engineering](https://principlesofchaos.org/)** - Este site apresenta os princípios fundamentais da Engenharia do Caos e fornece informações adicionais sobre como aplicá-los na prática.
 * **[The Art of Capacity Planning](https://principlesofchaos.org/)** - Escrito por John Allspaw, este livro explora a importância do planejamento de capacidade e monitoramento de sistemas para garantir escalabilidade e resiliência, aspectos relacionados à Engenharia do Caos.
 * **[Chaos and Resilience - A Collection of Chaos Engineering Resources](https://github.com/dastergon/awesome-chaos-engineering)** - Este repositório GitHub, mantido por Vassilis Georgitzikis, é uma coleção abrangente de recursos e links relacionados à Engenharia do Caos, incluindo artigos, apresentações, ferramentas e estudos de caso.
-

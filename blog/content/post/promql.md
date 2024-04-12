@@ -115,8 +115,8 @@ Neste exemplo, estamos verificando se a taxa de solicitações HTTP com códigos
 Em PromQL, há dois tipos principais de vetores que podemos usar em nossas consultas: Vector e Range Vector.
 
 * **Vector**: É um conjunto de pontos de dados com os mesmos labels, representando a série temporal de uma única métrica. Por exemplo, o vector `up{job="prometheus"}` representa o tempo em que o serviço Prometheus estava em execução ou não, com o label `job="prometheus"`.
-* **Range Vector**: É um conjunto de pontos de dados com os mesmos labels, mas que representa um intervalo de tempo em vez de um único ponto no tempo. Os dados em um Range Vector são coletados ao longo do tempo e armazenados em uma janela deslizante. Por exemplo, o range vector `up{job="prometheus"}[5m]` representa o tempo em que o serviço Prometheus estava em execução ou não nos últimos 5 minutos. 
- 
+* **Range Vector**: É um conjunto de pontos de dados com os mesmos labels, mas que representa um intervalo de tempo em vez de um único ponto no tempo. Os dados em um Range Vector são coletados ao longo do tempo e armazenados em uma janela deslizante. Por exemplo, o range vector `up{job="prometheus"}[5m]` representa o tempo em que o serviço Prometheus estava em execução ou não nos últimos 5 minutos.
+
 Exemplos de consultas PromQL usando vetores e range vectors:
 
 - Selecionando o valor atual da métrica `cpu_usage` para a instância "webserver-1":
@@ -156,14 +156,14 @@ Um exemplo de um Selector inseguro é o uso de uma expressão de correspondênci
 Exemplos de Selectors seguros e inseguros:
 
 - Selecionando o valor atual da métrica "http_requests_total" para qualquer instância, sem usar um seletor não seguro:
-    
+
 ```bash
 http_requests_total{job="webserver"}
 
 ```
 
 - Selecionando o valor atual da métrica "cpu_usage" para todas as instâncias, usando um seletor seguro:
-    
+
 ```bash
 cpu_usage * on(instance) group_left(instance) {job="webserver"}
 
@@ -407,7 +407,7 @@ Essa expressão irá retornar o número de instâncias que correspondem a uma da
 
 ```bash
 topk(5, sum(rate(http_requests_total{status_code=~"5.*"}[5m])) by (job))
-``` 
+```
 
 Em resumo, o PromQL permite filtrar séries temporais usando operadores booleanos e a cláusula where. Os operadores booleanos são usados para filtrar séries temporais antes da aplicação de funções de agregação, enquanto a cláusula where é usada para filtrar séries temporais após a aplicação de funções de agregação.
 
@@ -437,23 +437,23 @@ Por exemplo, a expressão `sum by (instance) (foo)` irá agrupar todas as série
 Acesse o https://prometheus.demo.do.prometheus.io/ onde contém um servidor Prometheus hospedado pela comunidade. Em seguida, execute a seguinte Query:
 
 ```bash
-100 * (1 - ((avg_over_time(node_memory_MemFree_bytes[10m]) + avg_over_time(node_memory_Cached_bytes[10m]) + 
+100 * (1 - ((avg_over_time(node_memory_MemFree_bytes[10m]) + avg_over_time(node_memory_Cached_bytes[10m]) +
 avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTotal_bytes[10m])))
 ```
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/ui01.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png#center)
 
 O Prometheus acima está coletando métricas de diversos **[targets](https://prometheus.demo.do.prometheus.io/targets)**. A métrica acima, se refere ao **[Node_Exporter](http://demo.do.prometheus.io:9100/metrics)**. Isto é, sao métricas de Sistema Operacional e Hardware Linux. A Query está registrando o consumo médio de memória. Com a interface do Prometheus aberta em seu navegador, vá até a aba **GRAPH**. O Prometheus é focado no que está acontecendo agora em vez de rastrear dados ao longo de semanas ou meses. Isso se baseia na premissa de que a maioria das consultas e alertas de monitoramento são gerados a partir de dados recentes, geralmente, com menos de um dia. O Prometheus é responsável por armazenar suas métricas como dados de séries temporais, isto é, ao longo do tempo:
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/timeseries01.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/timeseries01.png#center)
 
 As métricas são armazenadas com o registro de data/hora, juntamente com pares de valores-chave opcionais chamados labels. Entenda labels como filtros que você aplica para trazer dados mais precisos a cerca de um ou mais endpoints. As métricas desempenham um papel importante para entender o comportamento da sua aplicação. Métricas são medidas de componentes de software ou hardware. Para tornar uma métrica útil, acompanhamos seu estado, geralmente registrando data points ao longo do tempo. Esses data points ou pontos de dados, são chamados de **observations** como mostra a imagem a seguir:
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/observation.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/observation.png#center)
 
 Um observation (o potinho no gráfico), consiste em um registro de data/hora bastante preciso em milissegundos e um valor float64. Uma coleção de observations registrados ao longo do tempo, é o que é denominado de série temporal. Um ou mais quadros atuais, ou seja, as séries temporais que voce está analizando atualmente, por sua vez, é chamado de **samples**:
 
-![img#center](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/tsdb/samples01.png#center)
+![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/samples01.png#center)
 
 Experimente executar cada uma das métricas abaixo em seu devido contexto:
 
@@ -542,7 +542,7 @@ Neste exemplo, a consulta calcula a taxa de solicitações HTTP, mas não agrega
 
 ## Conclusão
 
-Neste artigo, explorei diversas expressões e conceitos importantes do PromQL, a linguagem de consulta utilizada no Prometheus. Com exemplos práticos e uma abordagem didática, vimos como utilizar operadores, funções, cláusulas e técnicas de seleção para construir consultas eficazes e precisas. Espero que este material seja útil para desenvolvedores, devops e SREs que utilizam o Prometheus como ferramenta de monitoramento e que desejam aprimorar seus conhecimentos. 
+Neste artigo, explorei diversas expressões e conceitos importantes do PromQL, a linguagem de consulta utilizada no Prometheus. Com exemplos práticos e uma abordagem didática, vimos como utilizar operadores, funções, cláusulas e técnicas de seleção para construir consultas eficazes e precisas. Espero que este material seja útil para desenvolvedores, devops e SREs que utilizam o Prometheus como ferramenta de monitoramento e que desejam aprimorar seus conhecimentos.
 
 ---
 

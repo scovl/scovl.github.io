@@ -8,7 +8,7 @@ weight = 7
 author = "Vitor Lobo Ramos"
 +++
 
-> **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**neur0dev@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.
+> **Esta é uma documentação não oficial** do Samba 4 que fora elaborada através de um estudo pessoal e experiências práticas que tenho tido com o Samba em ambiente de produção. Se houver por minha parte alguma informação errada, por favor, entre em contato para que eu possa corrigir através do meu e-mail (**lobocode@gmail.com**), ou me mande um **pull request** no github. As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Documentação em **constante atualização**.
 
 ### Capítulo 1 - História
 
@@ -46,7 +46,7 @@ author = "Vitor Lobo Ramos"
 * **[Samba como servidor secundario](#samba-como-servidor-secundario )**
 * **[Testes de replicacao de diretorios](#testes-de-replicacao-de-diretorios)**
 
-### Extras 
+### Extras
 
 * **[Automatizando o provisionamento do samba com Ansible](#)**
 
@@ -60,7 +60,7 @@ Em 1985, o protocolo foi expandido, dando origem ao protocolo **[NetBEUI](https:
 
 **[Andrew Tridgell](https://pt.wikipedia.org/wiki/Andrew_Tridgell)**, um australiano que na época era estudante do curso de PhD em Ciências da Computação da **[Universidade Nacional da Austrália](www.anu.edu.au)**, precisava rodar um software chamado **["eXcursion"](http://www.hpl.hp.com/hpjournal/dtj/vol4num1/vol4num1art7.pdf)**, no **[DEC](https://en.wikipedia.org/wiki/Digital_Equipment_Corporation)**, empresa que trabalhava, para interagir com o **[Patchworks](https://en.wikipedia.org/wiki/Pathworks)**, um software de compartilhamento de arquivos. O **[Patchworks](https://en.wikipedia.org/wiki/Pathworks)** era um software proprietário, que utilizava um protocolo obscuro, sobre o qual não existiam muitas informações disponíveis.
 
-![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/andrew.jpg#center)
+![Samba](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/andrew.jpg#center)
 
 Como todo bom hacker Andrew_tridgell decidiu estudar o protocolo e assim desenvolver um servidor que pudesse rodar em seu PC. Ele desenvolveu então um **[sniffer](https://pt.wikipedia.org/wiki/Sniffing)** chamado **clockspy** que era capaz de examinar o tráfego da rede e fez engenharia reversa no protocolo SMB e o implementou no Unix. Isso fez com que no servidor Unix aparecesse como um servidor de arquivos Windows em seu PC com DOS. Com isso, ele foi rapidamente capaz de implementar o suporte às principais chamadas e a desenvolver um programa servidor que era capaz de conversar com os clientes rodando o Patchworks. O objetivo desta primeira versão era apenas resolver um problema doméstico: interligar um computador rodando o MS-DOS ao servidor rodando o **[Solaris](https://pt.wikipedia.org/wiki/Solaris)**.
 
@@ -68,17 +68,17 @@ O projeto começou a se tornar popular a partir da versão 1.6.09, que foi a pri
 
 No entanto, em 1999 a Microsoft lançou o Active Directory que é implementado pela primeira vez no **[Microsoft Windows 2000 Server Edition](https://pt.wikipedia.org/wiki/Windows_2000)** e com melhorias significativas no Microsoft Windows Server 2003 e 2003 R2 e mais tarde no Windows Server 2008 e 2008 R2.
 
-> Com isto, surgiu o desafio da comunidade que desenvolvia o Samba na época (e que desenvolve até hoje), a criar uma implementação de serviço de diretório usando um protocolo compatível com o **[LDA](https://pt.wikipedia.org/wiki/LDAP)** que armazenasse informações sobre objetos na rede e ao mesmo tempo disponibilizasse essas informações a usuários e administradores da mesma rede. 
+> Com isto, surgiu o desafio da comunidade que desenvolvia o Samba na época (e que desenvolve até hoje), a criar uma implementação de serviço de diretório usando um protocolo compatível com o **[LDA](https://pt.wikipedia.org/wiki/LDAP)** que armazenasse informações sobre objetos na rede e ao mesmo tempo disponibilizasse essas informações a usuários e administradores da mesma rede.
 
 O problema é que não havia interesse por parte da Microsoft em compartilhar o **[RFC](https://pt.wikipedia.org/wiki/Request_for_Comments)** (Request for Comments), isto é, o documento que descreve os padrões de cada protocolo de Internet antes de serem considerados de fato um padrão como fora feito com o protocolo LDAP por exemplo. Com isto, a comunidade que desenvolve o Samba não fazia ideia de como o AD funcionava. Basicamente, teriam que pesquisar anos a fio e colocar mais sniffers em rede, fazer engenharia reversa e mais uma vez demorar anos e anos em desenvolvimento para criar uma solução alternativa ao **[AD](https://pt.wikipedia.org/wiki/Active_Directory)**.
 
-Usando destes recursos então a comunidade começa a escrever uma nova versão pós a 3.6 do Samba em 2011. A **[versão 3.6](https://www.samba.org/samba/history/samba-3.6.25.html)** já trabalhava com o protocolo LDAP usando o **[OpenLDAP](https://pt.wikipedia.org/wiki/OpenLDAP)** e o **[Kerberos](https://pt.wikipedia.org/wiki/Kerberos)** em separado para alimentar as funcionalidades do Samba para que pudessem obter funcionalidades próximas ao AD. 
+Usando destes recursos então a comunidade começa a escrever uma nova versão pós a 3.6 do Samba em 2011. A **[versão 3.6](https://www.samba.org/samba/history/samba-3.6.25.html)** já trabalhava com o protocolo LDAP usando o **[OpenLDAP](https://pt.wikipedia.org/wiki/OpenLDAP)** e o **[Kerberos](https://pt.wikipedia.org/wiki/Kerberos)** em separado para alimentar as funcionalidades do Samba para que pudessem obter funcionalidades próximas ao AD.
 
 Depois de anos de desenvolvimento, a o que seria supostamente a versão 3.7 do Samba não chega nem a ser lançado e é descontinuado visto que em 2012, momento em que o Samba ainda estava em desenvolvimento, a Microsoft libera o RFC 1823 do LDAP, e o RFC 2307,3062,4533 e a comunidade desiste do desenvolvimento da nova versão do Samba e resolvem reescreve-lo do zero.
 
 Nasce o **[Samba 4.0](https://www.samba.org/samba/history/samba-4.0.0.html)**. O Samba 4 compreende um servidor de diretório LDAP, um servidor de autenticação Kerberos, um servidor DNS dinâmico e implementações de todas as chamadas de procedimento remoto necessários para o Active Directory. Ele fornece tudo que é necessário para servir como um Active Directory Domain Controler compatível com todas as versões de clientes Microsoft Windows atualmente suportados pela Microsoft, incluindo o Windows 8. O Samba agora permite implementar mecanismos de compartilhamento de arquivos e impressoras, sendo assim possível o acesso a recursos do Windows a partir do GNU/Linux.
 
-![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/samba4.png#center)
+![Samba](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/samba4.png#center)
 
 Possibilidades com Samba 4:
 
@@ -120,29 +120,29 @@ sudo grep -i '^s.*m.*b' /usr/share/dict/words
 
 A primeira versão a usar o nome Samba, foi a 1.6.05, que foi a sucessora imediata do "smbserver 1.6.4". O projeto anteriormente fora apresentado por **[Andrew Tridgell](https://pt.wikipedia.org/wiki/Andrew_Tridgell)** com o nome de **[nbserver 0.5](http://ftp.samba.org/ftp/samba/old-versions/server-05.tar.Z)** que foi o início do projeto que veio a tornar-se Samba mais tarde. Ao todo se considerar-mos os patches, o Samba contém mais de 50 versões até chegar a versão atual. Sem os patches e\ou versões no estilo **[CVS](https://pt.wikipedia.org/wiki/CVS)**, o Samba tem exatamente 4 versões desde a 1.x.x até a recente 4.x.x que podem ser vistos no **[histórico de versões do samba](https://www.samba.org/samba/history/)**. O registro da primeira versão do que seria o samba hoje, foi anunciado por Andrew na [Usenet](https://en.wikipedia.org/wiki/Usenet) (hoje arquivada em no Google Groups) e ainda pode ser visto **[aqui](https://groups.google.com/forum/#!msg/vmsnet.networks.desktop.pathworks/EmyZEGd5ZRA/nJtBfp6ak30J)**.
 
-O importante aqui é destacar as mudanças mais significativas entre as versões até chegar no Samba4. Por exemplo: 
+O importante aqui é destacar as mudanças mais significativas entre as versões até chegar no Samba4. Por exemplo:
 
-* **1.6.09** Foi a primeira versão a apoiar a segurança a nivel de usuário (o que fez do Samba um concorrente muito mais sério para o uso corporativo na época). 
-* **1.7** Suportava a desconfiguração de nomes de arquivos para clientes mais antigos, bem como também foi a primeira versão a ter um FAQ. 
+* **1.6.09** Foi a primeira versão a apoiar a segurança a nivel de usuário (o que fez do Samba um concorrente muito mais sério para o uso corporativo na época).
+* **1.7** Suportava a desconfiguração de nomes de arquivos para clientes mais antigos, bem como também foi a primeira versão a ter um FAQ.
 * **1.8** Esta versão foi a primeira a adicionar suporte primitivo para línguas estrangeiras.
 * **1.9** Suporte de navegação mais aprimorado.
 * **1.9.16** Foi quando foi adotado o **[CVS](https://pt.wikipedia.org/wiki/CVS)** o que permitiu que o Samba fosse desenvolvido mais rapidamente.
 * **2.0** O Samba se tornou ainda mais popular e acessível aos usuários finais. Neste mesmo ano 1999, fora lançado o **[primeiro livro sobre o Samba](https://www.samba.org/samba/docs/using_samba/ch00.html)** que hoje faz parte da documentação oficial do mesmo.
 * **2.2** Esta se torna a primeira versão estável do Samba. Nesta versão, já é possível criar um domínio primário para **[NT4](https://en.wikipedia.org/wiki/Windows_NT_4.0)**, suporta Windows 2000 e é melhorada a parte de infra-Estrutura para impressão **(graças ao apoio da HP)** e comunidade.
-* **3.0** O principal diferencial da Samba 3.0 é que ele inclui suporte para autenticação Kerberos 5 e LDAP, que são obrigados a agir como clientes em um domínio do Active Directory. Outra característica que apareceu no Samba 3.0 é o suporte a Unicode, o que simplifica muito apoio às línguas internacionais. 
+* **3.0** O principal diferencial da Samba 3.0 é que ele inclui suporte para autenticação Kerberos 5 e LDAP, que são obrigados a agir como clientes em um domínio do Active Directory. Outra característica que apareceu no Samba 3.0 é o suporte a Unicode, o que simplifica muito apoio às línguas internacionais.
 
 > A diferença é que os serviços LDAP, Kerberos e outros, não estão integrados ao Samba nesta versão como está na 4.Segundo Bartlett (2005, p. 57), o SAMBA 3.0 possuía a capacidade de entrar como usuário em uma rede operando com Active Directory. Esta funcionalidade foi o início dos trabalhos com Active Directory, que vieram a tona de forma mais convincente no SAMBA 4.
 
 * **4.0** Esta versão introduz o aguardado suporte para a tecnologia Microsoft Active Directory através da implementação de uma combinação de um servidor de diretório LDAP, um servidor de autenticação Heimdal Kerberos, um serviço DNS dinâmico (através do seu próprio servidor DNS ou plugin BIND) e todo o procedimento de chamadas remotas necessárias para cumprir a função de um controlador de domínio do Active Directory (Active Directory Domain Controller) de todas as versões suportadas do Windows, incluindo o Windows 8.
 
 
-O Samba 4 fornece políticas de grupo (**G**roup **P**olicies **O**bject), perfis móveis (Roaming Profiles) e outros recursos para administrar sistemas em um domínio do Windows, bem como integração com servidores Exchange e alternativas compatíveis em código aberto. O suporte do Samba ao Active Directory é completamente transparente para os clientes, o que significa que um controlador de domínio baseado em Samba pode ser integrado a domínios do Active Directory existentes. 
+O Samba 4 fornece políticas de grupo (**G**roup **P**olicies **O**bject), perfis móveis (Roaming Profiles) e outros recursos para administrar sistemas em um domínio do Windows, bem como integração com servidores Exchange e alternativas compatíveis em código aberto. O suporte do Samba ao Active Directory é completamente transparente para os clientes, o que significa que um controlador de domínio baseado em Samba pode ser integrado a domínios do Active Directory existentes.
 
 Scripts de atualização são fornecidos pelos desenvolvedores do Samba para ajudar com uma migração “suave” de um recurso de controlador de domínio Windows NT no Samba 3.x.
 
-Os recursos de compatibilidade do Active Directory no Samba 4 foram criados com a ajuda da documentação oficial e testes de interoperabilidade da Microsoft. “Estamos satisfeitos que os laboratórios de documentação e de interoperabilidade fornecidos pela Microsoft tenham sido fundamentais no desenvolvimento do Samba 4.0 Active Directory. A Microsoft está empenhada em apoiar a interoperabilidade entre as plataformas”, disse **[Thomas Pfenning](https://www.linkedin.com/pub/thomas-pfenning/a/153/163)**, diretor de desenvolvimento do Windows Server. 
+Os recursos de compatibilidade do Active Directory no Samba 4 foram criados com a ajuda da documentação oficial e testes de interoperabilidade da Microsoft. “Estamos satisfeitos que os laboratórios de documentação e de interoperabilidade fornecidos pela Microsoft tenham sido fundamentais no desenvolvimento do Samba 4.0 Active Directory. A Microsoft está empenhada em apoiar a interoperabilidade entre as plataformas”, disse **[Thomas Pfenning](https://www.linkedin.com/pub/thomas-pfenning/a/153/163)**, diretor de desenvolvimento do Windows Server.
 
---- 
+---
 
 ### Conceitos iniciais
 
@@ -152,31 +152,31 @@ Segundo a Microsoft, o Active Directory (AD) é um serviço de diretório desenv
 
 AD é um controlador de domínio que autentica e autoriza todos os usuários e computadores em uma rede de tipo domínio do Windows, atribui e aplica as políticas de segurança para todos os computadores autenticados, como instalação e atualizações de software. O AD é usado em empresas com redes Windows, nas quais os administradores de redes escolheram utilizar este recurso como forma de centralizar a administração dos recursos, bem como da segurança.
 
-Como facilidade, ele armazena centralmente os dados de usuários e computadores, permitindo que os usuários tenham apenas uma senha para acessar todos os recursos disponíveis na rede. O diretório também pode ser utilizado para compartilhamento de arquivos, impressoras, gerenciamento de atualizações de estações de trabalho através do **WSUS (Windows Server Update Services)**, tudo em um console simples e gerenciável. 
+Como facilidade, ele armazena centralmente os dados de usuários e computadores, permitindo que os usuários tenham apenas uma senha para acessar todos os recursos disponíveis na rede. O diretório também pode ser utilizado para compartilhamento de arquivos, impressoras, gerenciamento de atualizações de estações de trabalho através do **WSUS (Windows Server Update Services)**, tudo em um console simples e gerenciável.
 
 Quando um usuário faz logon em um computador que faz parte de um domínio de rede, o AD verifica a senha apresentada e determina se o usuário é um administrador de
 sistema ou um utilizador normal. Uma instância do AD consiste em um banco de dados e o correspondente código executável responsável pelo atendimento de pedidos e a manutenção do banco de dados. A parte executável é chamada de Directory System Agent (DSA), que é uma coleção de serviços do Windows e processos que são executados no Windows 2000 e versões posteriores.
 
 Os objetos no bancos de dados do AD podem ser acessados através do protocolo LDAP, o ADSI (interface dos COMs (Component Object Model) ) e dos serviços da APIs de
-mensagens e o Gerenciador de Contas de Segurança. 
+mensagens e o Gerenciador de Contas de Segurança.
 
 No Active Directory são encontrados objetos, florestas, arvores, domínios, partiçoes, esquemas e unidades organizacionais (similares a pastas). Uma estrutura de AD é um arranjo de informações sobre objetos. Os objetos se dividem em duas categorias principais:
 
 * Recursos: Hardware em uma rede ex.: Impressoras
 * Entidades de segurança: Entidades puramente lógicas ex.: Contas de usuário ou grupos.
 
-Para cada entidade de segurança são atribuídos security identifiers (SIDs) únicos. Cada objeto representa uma única entidade: um usuário, um computador, uma impressora ou um grupo e seus atributos, e certos objetos podem conter outros objetos. 
+Para cada entidade de segurança são atribuídos security identifiers (SIDs) únicos. Cada objeto representa uma única entidade: um usuário, um computador, uma impressora ou um grupo e seus atributos, e certos objetos podem conter outros objetos.
 
 Dentro de uma implantação, os objetos são agrupados em domínios. Os objetos para um único domínio são armazenados em uma única base de dados (que podem ser replicados).
 Os domínios são identificados pelo seu o namespace (nome no DNS). Um domínio é definido como um grupo lógico de objetos de rede (usuários, dispositivos) que compartilham o mesmo banco de dados AD.
 
-Uma árvore é uma coleção de um ou mais domínios, e árvores de domínio em um namespace contínuo, vinculados em uma hierarquia de confiança transitiva. Uma floresta é uma coleção de árvores que compartilham um catálogo global comum, esquemas de diretório, estruturas lógicas e a configuração do diretório. A floresta representa o limite de segurança dentro do qual os usuários, computadores, grupos e outros objetos são acessíveis. 
+Uma árvore é uma coleção de um ou mais domínios, e árvores de domínio em um namespace contínuo, vinculados em uma hierarquia de confiança transitiva. Uma floresta é uma coleção de árvores que compartilham um catálogo global comum, esquemas de diretório, estruturas lógicas e a configuração do diretório. A floresta representa o limite de segurança dentro do qual os usuários, computadores, grupos e outros objetos são acessíveis.
 
-O banco de dados do AD está organizado em partições, cada um armazenando tipos de objetos específicos e seguindo um padrão de replicação. A partição schema contém a definição de classes de objetos e atributos dentro da Floresta. A partição Configuration contém informações sobre a estrutura física e de configuração da floresta (como a topologia física). Ambos replicam para todos os domínios da floresta. A partição do domínio detém todos os objetos criados nesse domínio e replica somente dentro de seu próprio domínio. 
+O banco de dados do AD está organizado em partições, cada um armazenando tipos de objetos específicos e seguindo um padrão de replicação. A partição schema contém a definição de classes de objetos e atributos dentro da Floresta. A partição Configuration contém informações sobre a estrutura física e de configuração da floresta (como a topologia física). Ambos replicam para todos os domínios da floresta. A partição do domínio detém todos os objetos criados nesse domínio e replica somente dentro de seu próprio domínio.
 
 Os objetos mantidos dentro de um domínio podem ser agrupados em Organizational Units (OUs). OUs é o nível recomendado de a aplicação de políticas de grupo, que são objetos do AD chamados formalmente **Group Policy Objects (GPOs)**, embora as políticas também podem ser aplicadas a domínios ou sites. A UO é o nível em que os poderes administrativos são comumente delegados, mas a delegação pode ser executada com os objetos individuais ou com os atributos também.
 
-![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/gpo.gif#center)
+![Samba](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/gpo.gif#center)
 
 Não é possível, criar contas de usuários com um nome de usuário idêntico em OUs separadas. Isto é assim porque o atributo de objeto de usuário (sAMAccountName), deve ser exclusivo dentro do domínio. Dois usuários em diferentes OUs podem ter o mesmo Common Name (o nome sob o qual eles são armazenados no próprio diretório).
 
@@ -191,12 +191,12 @@ opções “Usuários e Computadores” do Active Directory.
 * Diretivas de grupo do Windows.
 * Os arquivos de transferências, das pastas e arquivos que devem estar disponíveis e
 sincronizados entre os controladores dos domínios de serviço de replicação (FRS).
-* Junções de sistema de arquivo. Segundo a Microsoft, o recomendável é instalar esses 3 em locais distintos, preferencialmente em HDs separados, para facilitar a recuperação do sistema em caso de falha de hardware. Se a floresta está no nível de funcionalidade do Windows Server 2008 ou Windows Server 2008 R2, o sistema de replicação de SYSVOL deixa de ser o NT File Replication. 
+* Junções de sistema de arquivo. Segundo a Microsoft, o recomendável é instalar esses 3 em locais distintos, preferencialmente em HDs separados, para facilitar a recuperação do sistema em caso de falha de hardware. Se a floresta está no nível de funcionalidade do Windows Server 2008 ou Windows Server 2008 R2, o sistema de replicação de SYSVOL deixa de ser o NT File Replication.
 * Service (NTFRS) e passa a ser o Distributed File System Replication (DFSR), o que termina criando uma dependência de uma versão específica de sistema operacional Windows.
 
-![Samba](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/sysvol.gif#center)
+![Samba](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/sysvol.gif#center)
 
-Depois de 10 anos de trabalho e 6 anos da liberação da última versão principal, os desenvolvedores do Samba anunciaram o lançamento do Samba 4.0, a versão mais recente da implementação em software livre do protocolo Server Message Block (SMB).  Outras características do Samba 4 incluem a primeira implementação em software livre da versão 2.1 do protocolo SMB de compartilhamento de arquivos da Microsoft e uma implementação inicial do SMB3 que será desenvolvido em versões futuras da ramificação do Samba 4. 
+Depois de 10 anos de trabalho e 6 anos da liberação da última versão principal, os desenvolvedores do Samba anunciaram o lançamento do Samba 4.0, a versão mais recente da implementação em software livre do protocolo Server Message Block (SMB).  Outras características do Samba 4 incluem a primeira implementação em software livre da versão 2.1 do protocolo SMB de compartilhamento de arquivos da Microsoft e uma implementação inicial do SMB3 que será desenvolvido em versões futuras da ramificação do Samba 4.
 
 Por padrão, o servidor smbd do Samba 3 é utilizado para todos os serviço de arquivos. Para casos de uso como um controlador de domínio do Active Directory, o servidor de arquivos NTVFS é fornecido da forma como foi utilizado nos primeiros betas do Samba 4 e é mais recomendável para esta tarefa. A integração segura e incorporada ao NTP fornece **[timestamps](https://pt.wikipedia.org/wiki/Marca_temporal)** mais precisos para clientes Windows.
 
@@ -235,18 +235,18 @@ Neste momento, já podemos acessar o diretório usando o Microsoft Windows em no
 
 O protocolo SMB foi desenvolvido inicialmente por **[Barry Feigenbaum](https://www.linkedin.com/in/barryfeigenbaum)** na IBM, na década de 80. Exigia, nessa época, uma camada de API (Application Programming Interface), denominada Network Basic Input/Output System isto é, o **(NetBIOS)**. O NetBIOS fornecia serviços tais como resolução de nome e navegação de rede que posteriormente foi implementado, ou adotado, pela Microsoft em função da expansão de seus produtos na década de 90 que era focado em rede de computadores.
 
-Na evolução do desenvolvimento do SMB, pela Microsoft, criou-se uma versão chamada CIFS **(Common Internet File System)** para padronizar com a **[Internet Engineering Task Force - IETF](https://pt.wikipedia.org/wiki/Internet_Engineering_Task_Force)** recebendo o nome final de **SMB/CIFS** (tecnicamente um "dialeto" do SMB) em 1996. 
+Na evolução do desenvolvimento do SMB, pela Microsoft, criou-se uma versão chamada CIFS **(Common Internet File System)** para padronizar com a **[Internet Engineering Task Force - IETF](https://pt.wikipedia.org/wiki/Internet_Engineering_Task_Force)** recebendo o nome final de **SMB/CIFS** (tecnicamente um "dialeto" do SMB) em 1996.
 O Windows for WorkGroups foi o primeiro sistema da Microsoft a adotar o SMB/CIFS. Como o protocolo predominante foi o TCP/IP e para a resolução de nomes a Microsoft teve que adotar o DNS (Domain Name System) e com que SMB tivesse que ser executado diretamente sobre o protocolo TCP/IP na modalidade denominada **hosting direto** (utiliza-se TCP e UDP na porta 445). Portanto, em redes Windows, o SMB/CIFS se transformou em um padrão para a manipulação de arquivos entre máquinas.
 
 O SMB, que significa Server Message Block, é um protocolo para compartilhamento de arquivos, impressoras, portas seriais e abstrações de comunicação. O SMB é um protocolo cliente-servidor. O diagrama a baixo, ilustra a maneira pela qual funciona SMB. Os servidores disponibilizam sistemas de arquivos e outros recursos (impressoras, processadores de mensagens, pipes) disponíveis para os clientes da rede. Os computadores clientes podem ter seus próprios discos rígidos, mas eles também querem o acesso aos sistemas de arquivos compartilhados e impressoras nos servidores.
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/smb1.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/smb1.png#center)
 
 Basicamente o cliente se conecta ao servidor que utiliza o protocolo TCP/IP (na verdade, se conecta ao NetBIOS sobre o TCP/IP, conforme especificado no **[RFC1001](http://tools.ietf.org/html/rfc1001)** e **[RFC1002](http://tools.ietf.org/html/rfc1002)**), NetBEUI ou IPX/SPX. Depois de terem estabelecido uma conexão, o cliente pode, em seguida, enviar comandos (SMBs) para o servidor o que lhe permite abrir arquivos, ler e escrever. É possível fazer todo o tipo de coisa dentro de um servidor de arquivos. No entanto, no caso do SMB, estas coisas são feitas através da rede.
 
-O protocolo SMB embora tenha outras funções associadas a ele, primordialmente tem como funcionalidade o compartilhamento de arquivos. Mas é possível também o compartilhamento de impressoras e definir níveis de segurança e autenticação. Por ser muito usado nos sistemas operacionais da Microsoft a versão do SMB, denominado SMB/CIFS, é um protocolo muito comum em diversos tipos de máquinas e sistemas para o compartilhamento de arquivos. 
+O protocolo SMB embora tenha outras funções associadas a ele, primordialmente tem como funcionalidade o compartilhamento de arquivos. Mas é possível também o compartilhamento de impressoras e definir níveis de segurança e autenticação. Por ser muito usado nos sistemas operacionais da Microsoft a versão do SMB, denominado SMB/CIFS, é um protocolo muito comum em diversos tipos de máquinas e sistemas para o compartilhamento de arquivos.
 
-> O SMB pela perspectiva do Modelo OSI está na **camada de aplicação** e utiliza nomes de até 15 caracteres para definir endereços de máquina em uma rede. A Microsoft chegou ainda a desenvolver o SMB2 juntamente com o lançamento do Windows Vista. 
+> O SMB pela perspectiva do Modelo OSI está na **camada de aplicação** e utiliza nomes de até 15 caracteres para definir endereços de máquina em uma rede. A Microsoft chegou ainda a desenvolver o SMB2 juntamente com o lançamento do Windows Vista.
 
 Andrew Tridgell utilizando da engenharia reversa em cima do protocolo SMB implementou no sistema operacional Unix e fazendo com que o servidor Unix aparecesse como sendo um servidor de arquivos Windows em seu computador com DOS. O Samba foi viabilizado por meio do protocolo **[NBT](https://pt.wikipedia.org/wiki/NetBIOS)**, de 1987, que emula redes locais NetBIOS sobre redes TCP/IP. O NBNS (mais conhecido tecnicamente por WINS - Windows Internet Name Server, ou ainda NBT) cria praticamente uma lista cruzada de endereços IP e nomes NetBios facilitando dessa forma a comunicação entre máquinas e sistemas distintos.
 
@@ -254,7 +254,7 @@ Andrew Tridgell utilizando da engenharia reversa em cima do protocolo SMB implem
 
 ### Estrutura do Active Directory
 
-Um serviço de diretório pode se explicado com várias ilustrações, mas a ilustração que, em minha opinião, mais demonstra o verdadeiro sentido de um serviço de diretório é a figura de uma lista telefônica ou uma agenda pessoal. Em nossa agenda podemos organizar, dias, semanas, meses e até anos, passando por pessoas, nomes, sobrenomes, datas de aniversário, dados importantes dentre outros. 
+Um serviço de diretório pode se explicado com várias ilustrações, mas a ilustração que, em minha opinião, mais demonstra o verdadeiro sentido de um serviço de diretório é a figura de uma lista telefônica ou uma agenda pessoal. Em nossa agenda podemos organizar, dias, semanas, meses e até anos, passando por pessoas, nomes, sobrenomes, datas de aniversário, dados importantes dentre outros.
 
 O serviço de diretório tem exatamente o mesmo sentido, o sentido de organizar e principalmente ter um local centralizado para a busca de informações necessárias no dia a dia, para nossos trabalhos.
 
@@ -271,7 +271,7 @@ O Active Directory assumiu o mercado de serviços de diretório pelo seu desempe
 Hoje quando criamos um usuário para logar no domínio de nossa empresa, estamos utilizando um serviço de diretório e por consequência usando o Active Directory.
 Abaixo temos uma figura para demonstrar todos os recursos que o Active Directory pode utilizar como serviço de diretório de sua empresa:
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad1.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad1.png#center)
 
 A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco de dados, este banco é conhecido com **NTDS.dit** e esta localizado na pasta %SystemRoot%\NTDS\ntds.dit em uma instalação default do AD. Este diretório chamado de NTDS apenas existirá nos servidores que tenham a função de Domain Controllers (DC’s). Neste diretório existirão os arquivos relacionados abaixo. Durante o processo de instalação do Active Directory **da Microsoft**, são criados cinco arquivos:
 
@@ -283,24 +283,24 @@ A cima, comparamos o AD com uma agenda, o AD físicamente também tem um banco d
 
 Bem, agora sabemos que a estrutura lógica do AD é gravada em uma base de dados física chamada de Ntds.dit, porém Domain Controller é Active Directory? **Claro que não**, no desenho abaixo demonstramos claramente a diferença entre AD (estrutura lógica do AD) e DC (Servidor que contém uma cópia do NTDS.dit do AD). No desenho abaixo imaginemos uma construção, estamos construindo um grande salão de festas. Imaginem que nosso teto (retângulo azul) é nosso Active Directory, porém precisamos apoiar este teto em pilares (cilindros vermelhos), caso contrário nosso teto irá desabar, certo?
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad2.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad2.png#center)
 
 É isto mesmo, o Active Directory é a estrutura lógica (teto), e os DC’s são servidores fisicos (pilares), por isto a necessidade de termos muitos DC’s espalhados. Assim nosso AD mesmo na falha de um DC (pilar) ou vários DC’s ainda conseguirá responder as solicitações e pedidos de nossa infraestrutura.
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad3.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad3.png#center)
 
 Isto só é possível porque cada servidor quando recebe a função de Domain Controller, herda a criação do diretório %SystemRoot%\NTDS\ e toda a estrutura comentada acima. Todos os dados criados originalmente são replicados para o novo DC criado. Assim em um AD (domínio) com três DC’s como na figura abaixo, todos os Dc’s estão atualizados com todos os dados igualmente, isto recebe o nome de replicação do Active Directory.
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad4.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad4.png#center)
 
 O Serviço de Diretório do AD é divido em duas estruturas a estrutura lógica e a estrutura física, o conhecimento pleno sobre a estrutura do AD é muito importante, principalmente quando maior for sua estrutura. Nestas explicações informaremos algumas ferramentas que podem auxiliar na verificação deste processo, vale lembrar que estamos focando as explicações no Active Directory do Windows Server 2008 R2, porém estas explicações poderão ser utilizadas em qualquer uma das versões de Active Directory, nos próximos artigos falaremos das evoluções para as futuras versões.
 
-Quando falamos de estrutura lógica do Active Directory, muitos termos são falados, a estrutura lógica do AD consiste em Objetos, Unidades Organizacionais, Domínio, Árvores de Domínio e Floresta. Utilizamos a estrutura lógica do AD para podermos gerenciar os objetos dentro da organização. Já os objetos, são os componentes mais básicos da estrutura lógica e representam, usuários, computadores e impressoras. 
+Quando falamos de estrutura lógica do Active Directory, muitos termos são falados, a estrutura lógica do AD consiste em Objetos, Unidades Organizacionais, Domínio, Árvores de Domínio e Floresta. Utilizamos a estrutura lógica do AD para podermos gerenciar os objetos dentro da organização. Já os objetos, são os componentes mais básicos da estrutura lógica e representam, usuários, computadores e impressoras.
 
 No caso do OU (Unidades Organizacionais), é um objeto de container, utilizado para organizar outros objetos. A organização pode ser feita de várias formas.
 Geográfica – Onde as OU’s representam Estadas ou Cidades de sua estrutura física Exemplo: OU SP - OU RJ Setorial – Onde as OU’s representam setores da estrutura física da empresa, por unidade de negócio. Exemplo: OU Administrativo – OU Produção Departamental – Onde as OU’s representam setores da estrutura física da empresa por departamento. Exemplo: OU RH – OU DP – OU Caldeira Híbrido – Modelo onde podemos interagir todos os modelos acima, na Figura abaixo temos um modelo disto.
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad5.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad5.png#center)
 
 O domínio é a estrutura mais importante do Active Directory e tem 2 funções principais.
 
@@ -317,11 +317,11 @@ Quando precisamos criar um segundo domínio, na maioria das vezes por necessidad
 
 Criamos o domínio livemotion.local (Figura esquerda abaixo), para podermos configurar diretivas de segurança, em um dado momento, precisamos criar um domínio novo, que tenha acesso aos recursos do domínio livemotion.local, porém tenha suas próprias necessidades de segurança (Figura direita abaixo).
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad6.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad6.png#center)
 
 Conforme as figuras acima, podemos ver que quando temos um domínio filho, imedia/sambatamente estamos vinculados a um domínio pai, e esta divisão hierárquica de nome chamamos de Árvore de Domínios.O primeiro domínio de uma Floresta, chamamos de Root Domain, a Floresta receberá o nome deste domínio, a floresta pode ser feita de um único domínio com também estar dividida com várias árvores dentro da mesma floresta.
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad7.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad7.png#center)
 
 Quando falamos de estrutura física do Active Directory, alguns termos são utilizados, a estrutura física do AD consiste em Domain Controllers e Sites.
 A estrutura física do AD é totalmente independente da estrutura lógica do AD. A estrutura física é responsável por otimizar o tráfego de rede e manter segurança em locais físicos distintos. Um Domain Controller ou DC tem a função de executar o Active Directory e também armazenar a base do Active Directory bem como Replicar esta base “alterações” com outros DC’s.
@@ -329,7 +329,7 @@ A estrutura física do AD é totalmente independente da estrutura lógica do AD.
 Quando falamos de Árvores de Domínio ou até mesmo Floresta, vale lembrar que um DC pode apenas suportar um único domínio. Para criar uma disponibilidade do Active Directory podemos ter mais de um DC, sendo assim num exemplo de 2 Dc’s temos a base do Active Directory sendo replicada de forma perfeita entre os dois Dc’s.
 A base do Active Directory o NTDS.dit é divido em partições, conforme a figura demonstrada abaixo:
 
-![SMB](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/ad8.png#center)
+![SMB](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/ad8.png#center)
 
 Estas partições formam o arquivo NTDS.dit, este é replicado entre cada um dos DC’s de seu domínio, consequentemente o arquivo é replicado para cada DC, tendo todos os Dc’s sincronizados logo teremos um Active Directory saudável e que pode suprir a falha de um DC, sem afetar o serviço de diretório do domínio.
 
@@ -338,7 +338,7 @@ Estas partições formam o arquivo NTDS.dit, este é replicado entre cada um dos
 ### Protocolos do Active Directory
 
 * **LDAP**
-&minus; O protocolo LDAP é um protocolo de comunicação desenvolvido para uso em redes TCP/IP. O protocolo LDAP define a forma como um cliente de diretório pode acessar um servidor de diretório e a forma como o cliente pode executar as operações de diretório e compartilhar dados de diretório. Os padrões LDAP são estabelecidos por grupos de trabalho da equipe Internet Engineering Task Force (IETF). O Active Directory implementa as especificações de rascunho de atributos LDAP e os padrões IETF para o LDAP versões 2 e 3. 
+&minus; O protocolo LDAP é um protocolo de comunicação desenvolvido para uso em redes TCP/IP. O protocolo LDAP define a forma como um cliente de diretório pode acessar um servidor de diretório e a forma como o cliente pode executar as operações de diretório e compartilhar dados de diretório. Os padrões LDAP são estabelecidos por grupos de trabalho da equipe Internet Engineering Task Force (IETF). O Active Directory implementa as especificações de rascunho de atributos LDAP e os padrões IETF para o LDAP versões 2 e 3.
 
 Como está implícito em seu nome, o LDAP foi desenvolvido como um método eficaz para o acesso a serviços de diretório sem a complexidade de outros protocolos de serviços de diretório. Como o LDAP define as operações que podem ser executadas para consultar e modificar informações em um diretório, e a forma como as informações em um diretório podem ser acessadas com segurança, você pode usá-lo para localizar ou enumerar objetos de diretório e para consultar ou administrar o Active Directory.
 
@@ -350,7 +350,7 @@ O **clapd** é um simples daemon LDAP Connectionless, escrito como parte do esfo
 
 &minus; O Domain Name System ( DNS ) é um sistema de gerenciamento de nomes hierárquico e distribuído para computadores, serviços ou qualquer recurso conectado à Internet ou em uma rede privada. Ele baseia-se em nomes hierárquicos e permite a inscrição de vários dados digitados além do nome do host e seu IP. Em virtude do banco de dados de DNS ser distribuído, seu tamanho é ilimitado e o desempenho não degrada tanto quando se adiciona mais servidores nele. Este tipo de servidor usa como porta padrão a 53. A implementação do DNS-Berkeley, foi desenvolvido originalmente para o sistema operacional BSD UNIX 4.3.
 
-Um domínio do Active Directory é fortemente baseado em um domínio DNS, particularmente devido à forte integração entre o Kerberos e DNS, e o fato de que este permite uma mudança para a hierarquia de nomes. 
+Um domínio do Active Directory é fortemente baseado em um domínio DNS, particularmente devido à forte integração entre o Kerberos e DNS, e o fato de que este permite uma mudança para a hierarquia de nomes.
 
 O servidor DNS traduz nomes para os endereços IP e endereços IP para nomes respectivos, e permitindo a localização de hosts em um domínio determinado. Num sistema livre o serviço é implementado pelo software BIND. Esse serviço geralmente se encontra localizado no servidor DNS primário. O servidor DNS secundário é uma espécie de cópia de segurança do servidor DNS primário. Assim, ele se torna parte necessária para quem que usar a internet de uma forma mais fácil e evita que hackers roubem seus dados pessoais.
 
@@ -362,13 +362,13 @@ O servidor DNS traduz nomes para os endereços IP e endereços IP para nomes res
 
 > O Kerberos necessita que os relógios internos dos clientes estejam sincronizados com o dele. Na configuração padrão, é necessário que os relógios dos clientes não tenham uma diferença maior do que 10 minutos. Na prática, servidores NTP são utilizados para manter os relógios do servidor e dos clientes sincronizados.
 
-> Heimdal Kerberos é uma implementação open source do protocolo Kerberos. 
+> Heimdal Kerberos é uma implementação open source do protocolo Kerberos.
 
 * **SMB/CIFS**
-&minus; O SMB/CIFS (Server Message Block/Common Internet File System) é um protocolo de redes cujo o uso mais comum como foi dito anteriormente é o compartilhamento de arquivos em uma LAN. Para mais detalhes sobre este protocolo, vá em **[Protocolos SMB e CIFS](#protocolos-smb-e-cifs)**. 
+&minus; O SMB/CIFS (Server Message Block/Common Internet File System) é um protocolo de redes cujo o uso mais comum como foi dito anteriormente é o compartilhamento de arquivos em uma LAN. Para mais detalhes sobre este protocolo, vá em **[Protocolos SMB e CIFS](#protocolos-smb-e-cifs)**.
 
 * **NetBIOS**
-&minus;  É uma API que fornece serviços relacionados com a camada de sessão do modelo OSI, permitindo que os aplicativos em computadores separados se comuniquem em uma rede local, não podendo ser confundido, portanto, como um protocolo de rede. 
+&minus;  É uma API que fornece serviços relacionados com a camada de sessão do modelo OSI, permitindo que os aplicativos em computadores separados se comuniquem em uma rede local, não podendo ser confundido, portanto, como um protocolo de rede.
 
 Sistemas operacionais mais antigos executavam o NetBIOS sobre o IEEE 802.2 e o IPX/SPX usando os protocolos NetBIOS Frames (NBF) e NetBIOS sobre IPX/SPX (NBX), respectivamente. Em redes modernas, o NetBIOS normalmente é executado sobre TCP/IP através do protocolo NetBIOS sobre TCP/IP (NBT). Isso resulta que cada computador na rede possua um endereço IP e um nome NetBIOS correspondente a um (possivelmente diferente) nome de hospedeiro.
 
@@ -394,7 +394,7 @@ de Rede).
 * **NTP**: Network Time Protocol.
 * **PDC**: Primary Domain Controller.
 * **SMB**: Server Message Block.
-* **NMBD**: Cuida da resolução de nomes nos PC's em seus endereços de IP. 
+* **NMBD**: Cuida da resolução de nomes nos PC's em seus endereços de IP.
 * **smbclient**: Cliente SMB para GNU/Linux, permite Pcs GNU/Linux acessarem Pc's GNU/Linux e servidores SAMBA.
 * **testpam**: Testa o arquivo de configuração SAMBA caso tenha algum erro no smb.conf.
 * **smbclient**: Listará as conexões ativas com o servidor e dará o status do serviço.
@@ -498,7 +498,7 @@ auto eth0
 iface eth0 inet static
 
 # coloque o ip correspondente a sua rede local
-address 192.168.1.100 
+address 192.168.1.100
 netmask 255.255.255.0
 
 # verifique seu gateway e coloque aqui
@@ -598,7 +598,7 @@ NetBIOS Domain:	SEUDOMINIO
 DNS Domain:		seudominio.com.br
 ```
 
-> **Nota:** É de suma importância que a senha do --adminpass seja segura (com números,letras e caracteres especiais). Caso contrário, retornará um erro e não irá promover o samba. Dei preferência ao SAMBA_INTERNAL como sistema de configuração do DNS. Se você prefere usar o BIND9, dê uma estudada em **[Configure BIND as backend for SAMBA AD](https://wiki.samba.org/index.php/Configure_BIND_as_backend_for_Samba_AD)**. 
+> **Nota:** É de suma importância que a senha do --adminpass seja segura (com números,letras e caracteres especiais). Caso contrário, retornará um erro e não irá promover o samba. Dei preferência ao SAMBA_INTERNAL como sistema de configuração do DNS. Se você prefere usar o BIND9, dê uma estudada em **[Configure BIND as backend for SAMBA AD](https://wiki.samba.org/index.php/Configure_BIND_as_backend_for_Samba_AD)**.
 
 Uma breve explicação dos parâmetros usados:
 
@@ -618,7 +618,7 @@ sudo cp /var/lib/samba/private/krb5.conf /etc/
 
 > **Nota:** Criamos uma cópia do krb5.conf na pasta /etc/ porque é a pasta padrão da configuração do Kerberos para com o Samba 4.
 
-Inicie o samba: 
+Inicie o samba:
 
 ```bash
 sudo systemctl start samba
@@ -669,7 +669,7 @@ sudo mkdir -p /var/sambausers
 Para aplicar novas configurações:
 
 ```bash
-sudo smbcontrol all reload-config 
+sudo smbcontrol all reload-config
 ```
 
 Caso não saiba como configurar seu `smb.conf`, consulte o site **[http://www.sloop.net/smb.conf.html](http://www.sloop.net/smb.conf.html)**. Depois de tudo a cima feito, vamos testar as configurações. Verifique versão do samba e smbclient:
@@ -734,7 +734,7 @@ E por fim teremos algo semelhante a isto:
 Domain=[TESTE] OS=[Unix] Server=[Samba 4.1.17-Debian]
 .   D		   0  Fri Dec 18 11:16:51 2015
 ..	D		   0  Fri Dec 18 11:21:12 2015
-	49788 blocks of size 524288. 44277 blocks available
+    49788 blocks of size 524288. 44277 blocks available
 ```
 
 ---
@@ -797,7 +797,7 @@ sudo smbcontrol all reload-config
 A partir de agora efetue login como um administrador de domínio em um computador cliente Windows e clique em Iniciar -> Executar "\\samba\". Na lista de ações, clique duas vezes "Impressoras e faxes" e em seguida, clique em Arquivo -> Propriedades do Servidor. Na guia Drivers, clique em "Adicionar …", em seguida, em "Next". Em seguida escolha o driver que você gostaria de instalar e clique em “Avançar”, escolha as arquiteturas dos drivers que você deseja instalar.
 
 
---- 
+---
 
 # Lixeira do Samba
 
@@ -855,7 +855,7 @@ Agora vamos à explicação de cada variável a cima:
 
 ---
 
-## Auditando acessos 
+## Auditando acessos
 
 O Samba oferece também um recurso de geração de log. Ele pode ser ativado adicionando as opções abaixo na seção [global] do smb.conf:
 
@@ -975,7 +975,7 @@ Alterar o arquivo /etc/logrotate.d/samba, onde existe:
 /var/log/samba/*.log
 ```
 
-Altere para: 
+Altere para:
 
 ```bash
 /var/log/samba/[b-z]*.log
@@ -987,9 +987,9 @@ Diferente de outros utilitários do sistema, o logrotate **não é executado em 
 
 ### Usando acls para permissoes avancadas no Linux
 
-As ACLs (Access Control Lists) nos fornecem um controle mais refinado sobre quais usuários podem acessar diretórios e arquivos específicos do que as permissões tradicionais do GNU/Linux. Usando as ACLs, podemos especificar as formas nas quais cada um dos usuários podem acessar um diretório ou um arquivo. Se eu quiser dar uma permissão apenas para mais uma pessoa, por exemplo, a minha opção com chmod, seria criar um grupo de apenas uma pessoa e autorizar este grupo a acessar o arquivo ou diretório. Enfim, fica muito complicado quando precisamos regular o acesso de uma maneira mais detalhada. 
+As ACLs (Access Control Lists) nos fornecem um controle mais refinado sobre quais usuários podem acessar diretórios e arquivos específicos do que as permissões tradicionais do GNU/Linux. Usando as ACLs, podemos especificar as formas nas quais cada um dos usuários podem acessar um diretório ou um arquivo. Se eu quiser dar uma permissão apenas para mais uma pessoa, por exemplo, a minha opção com chmod, seria criar um grupo de apenas uma pessoa e autorizar este grupo a acessar o arquivo ou diretório. Enfim, fica muito complicado quando precisamos regular o acesso de uma maneira mais detalhada.
 
-Existem dois tipos de ACLs: regras de acesso **(access ACLs)** e regras padrão **(default ACLs)**. Uma regra de acesso especifica informações de acesso para um único arquivo ou diretório. Já uma regra padrão é aplicada apenas a diretórios, e especifica informações de acesso padrões para todos os arquivos no diretório que não possuam uma ACL explícita aplicada. Como vimos no capítulo 4 em **[Instalando o Samba](http://neur0dev.github.io/2015/09/11/samba4.html#instalando-o-samba)**, note que instalamos também as ACL's e ajustamos o particionamento para aceitar a acl no /etc/fstab. De agora em diante vamos trabalhar com uma maneira diferente de lidar com permissões além do já conhecido chmod.
+Existem dois tipos de ACLs: regras de acesso **(access ACLs)** e regras padrão **(default ACLs)**. Uma regra de acesso especifica informações de acesso para um único arquivo ou diretório. Já uma regra padrão é aplicada apenas a diretórios, e especifica informações de acesso padrões para todos os arquivos no diretório que não possuam uma ACL explícita aplicada. Como vimos no capítulo 4 em **[Instalando o Samba](http://scovl.github.io/2015/09/11/samba4.html#instalando-o-samba)**, note que instalamos também as ACL's e ajustamos o particionamento para aceitar a acl no /etc/fstab. De agora em diante vamos trabalhar com uma maneira diferente de lidar com permissões além do já conhecido chmod.
 
 Para usar este tipo de permissão, é bastante simples apesar de haver inúmeros parâmetros. Por exemplo, crie uma pasta chamada testes:
 
@@ -1231,7 +1231,7 @@ Pronto já temos um servidor ldap com nossa base de usuários. Lembre-se que o s
 Fazendo a Migração:
 
 ```bash
-sudo samba-tool domain classicupgrade --dbdir=root/backup/var/lib/samba/ --use-xattrs=yes 
+sudo samba-tool domain classicupgrade --dbdir=root/backup/var/lib/samba/ --use-xattrs=yes
 --dns-backend=SAMBA_INTERNAL --realm=empresa /root/backup/etc/samba/smb.conf
 ```
 
@@ -1241,7 +1241,7 @@ Entendendo um pouco o faz cada parâmetro:
 * **--dbdir**: O diretório onde o banco de dados do Samba3 está localizado.
 * **--use-xattr**: O Samba4 usa xattr para armazenar metadados de arquivos. O Samba3 não suporta xattr, então você deve usar o parâmetro --use-xattr=yes para habilitar o suporte a xattr no Samba4.
 * **--realm**: O domínio do Samba3.
-* **--dns-backend**: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em **[Samba como um controlador de dominio](ihttp://neur0dev.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**.
+* **--dns-backend**: Por padrão o Samba é configurado com o servidor DNS interno. Mas você poderá usar o BIND9 como explica no capítulo 4 em **[Samba como um controlador de dominio](ihttp://scovl.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**.
 
 Apos migrar o domínio tive um problema na senha do meu usuário administrator com isso tive que setar a senha do mesmo novamente:
 
@@ -1262,7 +1262,7 @@ Permissão na pasta dns do samba
 sudo chmod 777 -R /opt/samba/private/dns
 ```
 
-Por fim, no samba4 faça alguns testes do kerberos e do próprio samba4 que já foram descritos os passos no capítulo 4 em **[Samba como um controlador de dominio](http://neur0dev.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**, a partir de **Teste o Kerberos...**.
+Por fim, no samba4 faça alguns testes do kerberos e do próprio samba4 que já foram descritos os passos no capítulo 4 em **[Samba como um controlador de dominio](http://scovl.github.io/2015/09/11/samba4.html#samba-como-um-controlador-de-dominio)**, a partir de **Teste o Kerberos...**.
 
 > **Nota:** Caso você tenha problemas com SID duplicados, por favor acessar a documentação do Samba em **[Prevent failure due to duplicate SID's](https://goo.gl/m1lyQJ)**. Isto é, lá contém um script em python que ajuda a resolver este problema.
 
@@ -1419,14 +1419,14 @@ Mais sobre o Samba-Tool na **[documentação oficial](https://www.samba.org/samb
 ### Ingressando clientes no dominio Windows
 
 Como o Windows 10 ainda é recente e o 8 não é tão prático quanto o 7, vamos nos focar no 7 para a configuração de domínio do samba. Lembrando que você poderá aplicar o mesmo no 8 e 10 que deverá funcionar. Acesse as propriedades do sistemas e em computador, clique no botão "Alterar". Informe o nome do domínio e clique em "OK". Será solicitado um nome e senha de um usuário do domínio, neste caso, iremos utilizar a conta de administrador do Samba, visto que ainda não criamos nenhum usuário comum. Será solicitado que o computador seja reiniciado como nos exemplos a baixo:
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad1.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad2.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad3.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad4.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad1.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad2.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad3.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad4.png#center)
 
 Ao efetuar este procedimento, o computador será automaticamente registrado no samba. Computadores com S.O. até o Windows XP serão registrados de forma diferente aos clientes com Windows Vista em diante, por conta das diferentes versões do protocolo SMB utilizadas. Reinicie o computador e troque o usuário para o administrador do domínio.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad5.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad5.png#center)
 
 > **Nota:** Caso não apareça "Fazer logon em: DOMÍNIO", informe o login como: DOMÍNIO\administrator.
 
@@ -1434,7 +1434,7 @@ Ao efetuar este procedimento, o computador será automaticamente registrado no s
 
 ### RSAT Ferramenta de administracao remota
 
-Para administrar o samba pode-se utilizar o samba-tool, no entanto, recomenda-se a ferramenta **[Remote Server Admininstration Tools - RSAT da Microsoft](http://www.microsoft.com/downloads/details.aspx?FamilyID=7D2F6AD7-656B-4313-A005-4E344E43997D&displaylang=en)**. Após instalar, habilite as ferramentas necessárias para a administração do Samba, vá em painel de controle, "Programas e Recursos" e cliquem em "Ativar ou desativar recursos do Windows" (aba lateral esquerda)e selecione as ferramentas: 
+Para administrar o samba pode-se utilizar o samba-tool, no entanto, recomenda-se a ferramenta **[Remote Server Admininstration Tools - RSAT da Microsoft](http://www.microsoft.com/downloads/details.aspx?FamilyID=7D2F6AD7-656B-4313-A005-4E344E43997D&displaylang=en)**. Após instalar, habilite as ferramentas necessárias para a administração do Samba, vá em painel de controle, "Programas e Recursos" e cliquem em "Ativar ou desativar recursos do Windows" (aba lateral esquerda)e selecione as ferramentas:
 
 * Ferramentas de Serviços da Área de Trabalho Remota;
 * Ferramentas de Servidor DNS;
@@ -1443,19 +1443,19 @@ Para administrar o samba pode-se utilizar o samba-tool, no entanto, recomenda-se
 * Módulo do Active Directory para Windows PowerShell; e
 * Ferramentas de Gerenciamento de Diretiva de Grupo.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad6.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad6.png#center)
 
 A principal ferramenta de administração do Samba da RSAT, é a "Usuários e Computadores do Active Diretory". Acessível em: "Painel de Controle" > "Ferramentas Administrativas". Ao executá-la, habilite a opção "Recursos avançados" para exibição plena dos recursos de administração.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad7.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad8.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad7.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad8.png#center)
 
 Para outras versões do Microsoft Windows, consulte a **[instalação do RSAT na documentação do samba](https://wiki.samba.org/index.php/Installing_RSAT_on_Windows_for_AD_Management)**. Ao instalar e configurar o Samba, fora definido um compartilhamento denominado "home", que destina-se ao uso pessoal dos usuários. Não se trata da função de perfil remoto, mas apenas um diretório onde o usuário poderá utilizar para armazenar arquivos pessoais e acessar em qualquer computador do domínio.
 É necessário ajustar algumas permissões diretamente no Samba. Para isso, efetue o login do usuário administrator no Windows e acesse "Gerenciamento do computador". Vá no menu "Ação" > "Conectar a outro computador..." e informe o nome do servidor samba, neste caso "debian".
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad9.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad10.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad11.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad9.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad10.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad11.png#center)
 
 Ao conectar no servidor, vá em "Ferramentas do sistema" > "Pastas Compartilhadas" > "home". Configure nas abas "Permissões de compartilhamento" e "Segurança" os seguintes nomes e grupos de usuários:
 
@@ -1479,26 +1479,26 @@ Domain Admins           Controle Total
 
 Você poderá customizar essas permissões de acordo com suas necessidades.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad12.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad13.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad14.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad12.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad13.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad14.png#center)
 
 Clique em "OK" para salvar.
 
 Através da RSAT iremos criar um usuário comum, sem privilégios de administrador. Abra a ferramenta "Usuários e Computadores do Active Diretory". Em seguida vá no menu "Ação" > "Novo" > "Uusuário". Informe os dados do usuário, como nome, sobrenome, logon e senha. As senhas deverão atender a política de senhas do Samba, por padrão requer caracteres maiúsculos, minúsculos e números.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad15.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad16.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad17.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad15.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad16.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad17.png#center)
 
 Após criá-lo, consulte-o em "Usuários" e configure o compatilhamento "home", conforme:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad18.png#center)
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad19.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad18.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad19.png#center)
 
 Ao concluir, basta efetuar o login com o novo usuário criado:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad20.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad20.png#center)
 
 ---
 
@@ -1569,19 +1569,19 @@ sudo smbclient -L localhost -U%
 
 Agora vá para o computador com Windows onde você instalou a ferramenta de administração remota (AD) para o seu servidor de domínio e defina os usuários a quem você deseja definir como perfil nomade. Abra o cmd e digite **dsa.msc**, ou run e digite **dsa.msc** para abrir console do Active Directory e em seguida defina o caminho do usuário:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad23.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad23.png#center)
 
 Vá para o usuário para o qual você deseja implementar perfil nomade e adicione o caminho seguido pelo nome do usuário do diretório do perfil no **profile path** da seção de propriedades como mostra abaixo:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad24.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad24.png#center)
 
-Daqui em diante você apenas acompanha se o perfil nomade está funcionando ou não. Uma forma de fazer isto, é acessando o usuário no Windows, fazer modificações de arquivos e pastas e acompanhar modificações na pasta /userprofiles no samba. 
+Daqui em diante você apenas acompanha se o perfil nomade está funcionando ou não. Uma forma de fazer isto, é acessando o usuário no Windows, fazer modificações de arquivos e pastas e acompanhar modificações na pasta /userprofiles no samba.
 
 > **Nota:** Certifique-se de que o usuário estará logando em máquinas onde o Sistema Operacional se mantém o mesmo. Isto é, que ele esteja logando em máquinas do Windows 7 ao invés de outras versões. Pois, pode ser que não funcione caso o usuário fique transitando entre uma versão e outra do mesmo sistema. Caso ainda tenha dificuldades em operar com perfil nomade no windows7, dê uma olhada **[neste vídeo](http://samba.org/tridge/Samba4Demo/s4demo3.ogv)**. Recomendo que tenha o VLC player instalado na máquina.
 
 ---
 
-### Adicionando unidades organizacionais 
+### Adicionando unidades organizacionais
 
 Para trabalharmos com o unidades organizacionais (UO) no samba, poderemos fazer isto usando o **[snap-in](https://msdn.microsoft.com/en-us/library/bb742437.aspx#EEAA)** do Windows, ou até mesmo o Zentyal, GOsa2, Webmin, Smb4k, o Lam, SMB2WWW, gnomba, Jabs, Komba2, Smb Web client e muitos outros. No entanto, como a maioria dos administradores de sistemas estão mais acostumados a trabalhar com o **[snap-in](https://msdn.microsoft.com/en-us/library/bb742437.aspx#EEAA)** do Windows, a este darei preferência por enquanto. Mais a frente farei uma abordagem ao GOsa2 e outras tecnologias.
 
@@ -1591,9 +1591,9 @@ Este costuma ser um procedimento bastante simples como mostra a seguir:
 * Clique com o botão direito do mouse em seu domínio.
 * Escolha a opção new ou (novo), e vá em organizational unit (unidade organizacional).
 * Em type, coloque o nome 'OU Demo' por exemplo.
-* Em seguida será exibida uma unidade organizacional chamada 'OU Demo'. 
+* Em seguida será exibida uma unidade organizacional chamada 'OU Demo'.
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad25.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad25.png#center)
 
 A partir de agora, você poderá mudar o lugar onde criou a unidade organizacional ou simplesmente criar sub unidades organizacionais.
 
@@ -1606,16 +1606,16 @@ A partir de agora, você poderá mudar o lugar onde criou a unidade organizacion
 Assim como para criar unidades organizacionais usando o snap-in do Windows, para criar GPO's também é bastante simples. Veja os exemplos a baixo:
 
 * Clique em Iniciar, Ferramentas Administrativas e Diretivas de Grupos.
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad26.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad26.png#center)
 * Clique sobre com botão direito e  Criar um GPO neste domínio e …
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad27.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad27.png#center)
 * Nome da GPO será “Exemplo_GPO” e OK.
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad28.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad28.png#center)
 * Sobre a nova GPO clique com botão direito,  clique em  editar:
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad29.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad29.png#center)
 * Para bloquear o acesso ao Painel de Controle vai em, Configurações do Usuário, Diretivas, Modelos Administrativos, Painel de Controle e  Proibir acesso ao Painel de Controle:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad30.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad30.png#center)
 
 Duplo clique sobre a diretiva e marque a opção  “Habilitado” de OK. Pronto, GPO criada com sucesso. Caso ainda existam dúvidas a respeito da criação de GPO's, dê uma olhada neste **[video da documentação oficial](http://samba.org/tridge/Samba4Demo/s4demo2.ogv)**.
 
@@ -1657,10 +1657,10 @@ suddo /usr/sbin/samba_backup
 E em caso de sucesso, agora só nos falta adicionar o script ao crontab:
 
 ```bash
-sudo crontan -e 
+sudo crontan -e
 ```
 
-E a rotina de backup. Por exemplo para ele rodar sempre as 2am 
+E a rotina de backup. Por exemplo para ele rodar sempre as 2am
 
 ```bash
 0 2 * * * /usr/sbin/samba_backup
@@ -1686,7 +1686,7 @@ sudo tar -jxf sysvol.{Timestamp}.tar.bz2 -C /usr/local/samba/
 Renomeie os arquivos .ldb.bak gerados para .ldb .Para tal, usaremos o find:
 
 ```bash
-sudo find /usr/local/samba/private/ -type f -name '.ldb.bak' -print0 | while read -d $'\0' f ; 
+sudo find /usr/local/samba/private/ -type f -name '.ldb.bak' -print0 | while read -d $'\0' f ;
 do mv "$f" "${f%.bak}" ; done
 ```
 
@@ -1741,7 +1741,7 @@ Explicando o comando acima:
 Assim, conseguiremos unir o servidor primário com o secundário. Agora, o próximo passo consiste em certificar que seu hostname do domínio secundário é resolúvel:
 
 ```bash
-nslookup test1.dominio.com 
+nslookup test1.dominio.com
 ```
 
 > **Nota:** Neste caso, depende muito do servidor DNS que você está adontando. Isto é, o BIND9 ou o Samba_internal.
@@ -1767,7 +1767,7 @@ nslookup test1.dominio.com
 Teste também se o objectGUID é resolúvel:
 
 ```bash
-ldbsearch -H /usr/local/samba/private/sam.ldb '(invocationid= * )' --cross-ncs objectguid 
+ldbsearch -H /usr/local/samba/private/sam.ldb '(invocationid= * )' --cross-ncs objectguid
 ```
 
 Se tudo correr bem, deverá aparecer algo semelhante a isto:
@@ -1841,13 +1841,13 @@ samba-tool drs showrepl
 
 Na máquina com Windows Server, caso você deseje gerenciar o servidor secundário a partir do **snap-in** do AD do Windows, abra o **Console de gerenciamento do Active Directory**, vá em **Ação** e selecione **Alterar controlador de domínio** como mostra a baixo:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad31.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad31.png#center)
 
 Aqui você deve ser capaz de ver os seus controladores de domínio disponíveis e seus status como mostrado abaixo:
 
-![Windows](https://raw.githubusercontent.com/neur0dev/neur0dev.github.io/master/post/images/samba/win7ad32.png#center)
+![Windows](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/samba/win7ad32.png#center)
 
-Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em **[Samba tool](http://neur0dev.github.io/2015/09/11/samba4.html#samba-tool)**. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.
+Agora teste criar um usuário no servidor secundário e acompanhar no primário como já mostrei no capítulo 6 em **[Samba tool](http://scovl.github.io/2015/09/11/samba4.html#samba-tool)**. Se o usuário criado no servidor secundário aparecer no primário, a nossa replicação está funcionando bem. O mesmo a partir de qualquer controlador de domínio.
 
 ---
 
@@ -1856,4 +1856,3 @@ Agora teste criar um usuário no servidor secundário e acompanhar no primário 
 * **[Implementing Samba 4](https://www.packtpub.com/web-development/implementing-samba-4)**
 * **[Active Directory Cookbook](http://www.amazon.com/Active-Directory-Cookbook-Cookbooks-OReilly/dp/1449361420)**
 * **[The Definitive Guide to Samba 4](https://openlibrary.org/books/OL12369507M/The_Definitive_Guide_to_Samba_4)**
-
