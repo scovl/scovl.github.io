@@ -360,7 +360,7 @@ public MeterRegistryCustomizer<PrometheusMeterRegistry> prometheusRegistryCustom
 }
 ```
 
-Isso adiciona um PrometheusMeterRegistry ao seu aplicativo Spring Boot e registra as métricas com o Prometheus. Verifique as métricas no Prometheus. Você pode acessar as métricas do seu aplicativo Java no Prometheus acessando a URL **[http://seu_aplicativo:porta/metrics](http://seu_aplicativo:porta/metrics)**. As métricas serão exibidas no formato Prometheus, que você pode usar para criar gráficos e alertas.
+Isso adiciona um PrometheusMeterRegistry ao seu aplicativo Spring Boot e registra as métricas com o Prometheus. Verifique as métricas no Prometheus. Você pode acessar as métricas do seu aplicativo Java no Prometheus acessando a URL **[https://seu_aplicativo:9090/metrics](https://seu_aplicativo:9090/metrics)**. As métricas serão exibidas no formato Prometheus, que você pode usar para criar gráficos e alertas.
 
 ### JavaScript/Node
 
