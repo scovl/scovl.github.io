@@ -21,11 +21,11 @@ weight = 2
 
 ### Prometheus
 
-O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open-source. Foi desenvolvida com o objetivo de fornecer uma forma eficiente de coletar, armazenar e analisar métricas de desempenho de sistemas distribuídos. Ele foi projetado para ser escalável, fácil de usar e altamente personalizável. Possui sua própria linguagem de consulta, chamada PromQL, que permite aos usuários criar consultas complexas para analisar os dados de métricas. Ele também possui uma interface web para visualizar e explorar esses dados. Além disso, é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. O Prometheus também é frequentemente usado em conjunto com outras ferramentas, como Grafana, que fornece recursos avançados de visualização de dados, alertas e análise histórica de dados.
+O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open source. Foi desenvolvida com o objetivo de fornecer uma forma eficiente de coletar, armazenar e analisar métricas de desempenho de sistemas distribuídos. Ele foi projetado para ser escalável, fácil de usar e altamente personalizável. Possui sua própria linguagem de consulta, chamada PromQL, que permite aos usuários criar consultas complexas para analisar os dados de métricas. Ele também possui uma interface web para visualizar e explorar esses dados. Além disso, é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. O Prometheus também é frequentemente usado em conjunto com outras ferramentas, como Grafana, que fornece recursos avançados de visualização de dados, alertas e análise histórica de dados.
 
-A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software, SoundCloud, em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)**, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. A CNCF agora é a responsável pelo desenvolvimento e manutenção do projeto Prometheus.
+A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software SoundCloud em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)**, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. Atualmente, a CNCF respons�vel pelo desenvolvimento e manuten��o do projeto Prometheus.
 
-> **NOTA**: Leia mais sobre PromQL em **[Aqui](https://scovl.github.io/2023/03/19/promql/)**.
+> **NOTA**: Leia mais sobre PromQL **[Aqui](https://scovl.github.io/2023/03/19/promql/)**.
 
 ### Tipos de métricas
 
@@ -36,6 +36,8 @@ O Prometheus suporta quatro tipos principais de métricas: Counter, Gauge, Histo
 * **Histogram:** São métricas que calculam a distribuição de valores em um intervalo de tempo, como o tempo de resposta de uma solicitação de rede. Os histogramas são calculados a partir de contadores, em que os valores dos contadores são divididos em intervalos ou buckets de tamanho fixo. As funções `histogram_quantile()` e `irate()` são frequentemente usadas para analisar histogramas.
 * **Summary**: São métricas semelhantes a um histogram, mas em vez de contabilizar os valores dos contadores em baldes fixos, calcula a média, o percentil e o número total de valores em um determinado período. É indicado para o cálculo de médias, valores extremos e percentis.
 
+No geral histogramas são mais eficientes para latência e distribuição de dados enquanto summaries são mais precisos para percentis específicos.
+
 Além desses tipos de métricas, o Prometheus também suporta métricas de estado, que são usadas para indicar se um determinado recurso está `up`,`down`. Essas métricas são geralmente usadas para monitorar a disponibilidade de serviços.
 
 ### Monitoramento pull vs push
@@ -44,7 +46,7 @@ Para simplificar o entendimento a cerca de monitoramento Pull vs Push, imagine q
 
 ![img#center](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/tsdb/prom-pullvspush.png#center)
 
-Já o monitoramento push é um método no qual um dispositivo ou sistema envia automaticamente informações para outro dispositivo ou sistema sem esperar uma solicitação. Ele "empurra" as informações. Por exemplo, em um sistema de monitoramento de rede, cada dispositivo na rede pode ser configurado para automaticamente enviar informações de status para um dispositivo de monitoramento sempre que houver uma alteração. Em resumo, o monitoramento pull é baseado em solicitação e o monitoramento push é baseado em notificação. O Prometheus usa um sistema chamado "Exporters" para coletar dados de diversos sistemas e aplicativos e envia esses dados para o Prometheus para serem armazenados e analisados (monitoramento pull). O Prometheus não precisa solicitar esses dados, pois eles são enviados automaticamente pelos Exporters. Isso permite que o Prometheus colete dados em tempo real e sem sobrecarregar os sistemas e aplicativos monitorados.
+Já o monitoramento push é um método no qual um dispositivo ou sistema envia automaticamente informações para outro dispositivo ou sistema sem esperar uma solicitação. Ele "empurra" as informações. Por exemplo, em um sistema de monitoramento de rede, cada dispositivo na rede pode ser configurado para automaticamente enviar informações de status para um dispositivo de monitoramento sempre que houver uma alteração. Em resumo, o monitoramento pull é baseado em solicitação e o monitoramento push é baseado em notificação. O Prometheus usa Exporters para expor dados de diversos sistemas e aplicativos, que o Prometheus coleta periodicamente (monitoramento pull). O Prometheus utiliza um m�todo de coleta "pull", onde ele periodicamente solicita dados dos Exporters configurados. Isso permite que o Prometheus colete dados em tempo real e sem sobrecarregar os sistemas e aplicativos monitorados.
 
 ### Arquitetura do Prometheus
 
@@ -454,7 +456,9 @@ Dessa forma, você estará coletando e fornecendo dados de métricas de tempo de
 
 ### Ferramentas legadas e privadas
 
-Muitas vezes temos sistemas e serviços legados ou ferramentas fechadas que não fornecem suas métricas em um formato compatível com o Prometheus. Nesses casos, existem algumas soluções possíveis para monitorá-los com o Prometheus:
+Muitas vezes temos sistemas e serviços legados ou ferramentas fechadas que não
+fornecem suas métricas em um formato compatível com o Prometheus. Nesses casos,
+existem algumas soluções possíveis para monitorá-los com o Prometheus:
 
 * **Bridge**: outra opção é utilizar bridges, que são programas que atuam como intermediários entre o Prometheus e as ferramentas legadas ou fechadas. O bridge coleta as métricas da ferramenta em um formato não compatível com o Prometheus e as converte para um formato compatível antes de disponibilizá-las para o Prometheus.
 * **Plugins**: uma terceira opção é utilizar plugins, que são programas que estendem as funcionalidades do Prometheus. Um plugin pode ser desenvolvido para coletar métricas de uma ferramenta específica e disponibilizá-las em um formato compatível com o Prometheus.
