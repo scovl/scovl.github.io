@@ -8,19 +8,13 @@ weight = 4
 +++
 
 
-Ao estudar diferentes linguagens de programação ao longo dos anos, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por **[John McCarthy](https://www.britannica.com/biography/John-McCarthy)** em 1958, é conhecido por suas características distintas, como a notação de código como listas de dados (daí o nome LISt Processing) e sua capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso.
+Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por [John McCarthy](https://www.britannica.com/biography/John-McCarthy) em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso.
 
-Minha jornada com Lisp levou-me ao Clojure pela conveniência de rodar na JVM, uma vez que Clojure é um moderno dialeto Lisp que roda na Java Virtual Machine (JVM). Optei pelo Clojure porque já tinha uma base sólida em Java, e Clojure oferece interoperabilidade sem emenda com código Java. Esta transição também foi influenciada pela minha crescente frustração com algumas complexidades encontradas na programação orientada a objetos (OOP), especialmente em Java.
+Minha jornada com Lisp levou-me ao Clojure, um moderno dialeto que roda na Java Virtual Machine (JVM). Escolhi o Clojure por causa da interoperabilidade com código Java, já que eu tinha uma base sólida em Java. Esta transição foi também influenciada pela frustração com as complexidades da programação orientada a objetos (OOP) em Java.
 
-Ao longo dos anos, percebi que a construção de hierarquias de classes complexas muitas vezes introduz uma complexidade desnecessária quando se trata de programação orientada a objetos (POO/OOP). Esse tipo de complexidade, especialmente em linguagens como Java, advém não dos desafios inerentes ao problema a ser resolvido, mas das metodologias e tecnologias escolhidas para o desenvolvimento. Para ilustrar, considere o processo de montar um modelo de avião a partir de um kit de modelagem.
+Percebi que a construção de hierarquias de classes complexas frequentemente introduz uma complexidade desnecessária na OOP. Essa complexidade, especialmente em Java, surge mais das metodologias e tecnologias escolhidas do que dos desafios inerentes ao problema a ser resolvido. Por exemplo, montar um modelo de avião a partir de um kit pode ser simplificado com um design mais intuitivo e menos peças, semelhante à forma como a programação pode se beneficiar de abordagens que reduzem a rigidez e a complexidade não essencial.
 
-O objetivo final é simples: construir um modelo que se pareça com um avião. No entanto, se o kit contém peças que se encaixam de maneiras específicas e exige um conjunto complexo de instruções para cada passo, o processo se torna desnecessariamente complicado. Isso se compara à maneira como a programação orientada a objetos pode obrigar nós, os desenvolvedores a seguir protocolos rígidos e a usar padrões que não necessariamente se alinham com as necessidades simples do problema, resultando em complexidade acidental e aumento do esforço de desenvolvimento.
-
-Tal como a montagem de um modelo de avião poderia ser simplificada com um design mais intuitivo e menos peças, a programação poderia beneficiar-se de abordagens que reduzam a rigidez e a complexidade não essencial.
-
-Este exemplo tenta capturar a ideia de que complexidades adicionais podem surgir não por causa do problema em si, mas devido às ferramentas e métodos escolhidos para abordá-lo. Essa complexidade se manifesta através de práticas comuns que podem complicar o código desnecessariamente. Por exemplo, a proliferação de POJOs (Plain Old Java Objects) e códigos boilerplate é notória.
-
-Os POJOs, simples em uso, podem levar ao excesso de classes que servem principalmente para armazenar e recuperar dados sem conter métodos significativos. O código boilerplate, repetido em diversas partes do aplicativo, inclui a implementação frequente de métodos como `get` e `set`, `hashCode`, `equals` e `toString`, que, apesar de necessários, podem obscurecer a lógica principal do código e aumentar a carga de manutenção.
+Complexidades adicionais surgem não por causa do problema em si, mas devido às ferramentas e métodos escolhidos. Isso se manifesta através de práticas que complicam desnecessariamente o código, como a proliferação de POJOs (Plain Old Java Objects) e códigos boilerplate. POJOs, embora simples em uso, podem resultar em excesso de classes que servem principalmente para armazenar e recuperar dados. O código boilerplate, repetido em várias partes do aplicativo, inclui a implementação frequente de métodos como `get` e `set`, `hashCode`, `equals` e `toString`, que obscurecem a lógica principal do código e aumentam a carga de manutenção.
 
 Considere o exemplo clássico abaixo na classe `Employee` abaixo, em Java, que exemplifica essa questão:
 
@@ -116,23 +110,25 @@ Em contraste, em Clojure, uma linguagem funcional que é dialeto LISP, a modelag
   (assoc employee :department new-department))
 ```
 
-Aqui, `defrecord` cria uma estrutura de dados com campos nomeados, que também gera funções para acessar e modificar esses campos, promovendo a imutabilidade. Isso reduz a probabilidade de erros comuns em programas, como alterações de estado não intencionais, e simplifica o entendimento, teste e manutenção do código.
+Peço desculpas pela confusão. Vou revisar o texto e focar na remoção de redundâncias:
 
-Essa abordagem minimiza a cerimônia e o boilerplate típicos da OOP em Java, focando mais nos dados e comportamentos reais do que na estrutura de classes. Ou seja, reduz a complexidade estrutural e foca em resolver o problema da forma mais transparente e segura possível. Além disso o `defrecord` também implementa automaticamente interfaces para serialização e outras funcionalidades, oferecendo mais do que apenas uma simplificação do acesso aos dados.
+---
 
-E aqui é essencial reconhecer que muito depende das escolhas e habilidades do desenvolvedor. No entanto, dentro de um consenso geral, a própria linguagem, juntamente com seus frameworks, bibliotecas e a filosofia subjacente da POO, tendem a conduzir os desenvolvedores por esse caminho de complexidade aumentada. Java, como uma linguagem projetada com uma forte inclinação para a POO, encoraja a criação de extensas hierarquias de classes e o uso de padrões de design que, embora úteis em muitos contextos, podem também adicionar camadas de complexidade que não são diretamente pertinentes à lógica de negócios em questão.
+Aqui, `defrecord` cria uma estrutura de dados com campos nomeados, gerando funções para acessar e modificar esses campos, promovendo a imutabilidade. Isso reduz a probabilidade de erros comuns, como alterações de estado não intencionais, e simplifica o entendimento, teste e manutenção do código.
 
-Os frameworks Java, como Spring e Hibernate, por exemplo, oferecem poderosas ferramentas de abstração que simplificam o desenvolvimento em muitos aspectos, mas que também podem levar a um código altamente acoplado e difícil de gerenciar se não forem usados com discernimento. Os POJOs e o código boilerplate, como já discutido, são exemplos claros de como as práticas comuns em Java podem contribuir para o aumento considerável dessa complexidade.
+Essa abordagem minimiza a cerimônia e o boilerplate típicos da OOP em Java, focando mais nos dados e comportamentos reais do que na estrutura de classes. Além disso, `defrecord` implementa automaticamente interfaces para serialização e outras funcionalidades, oferecendo mais do que apenas uma simplificação do acesso aos dados.
+
+É essencial reconhecer que muito depende das escolhas e habilidades do desenvolvedor. No entanto, a linguagem, juntamente com seus frameworks, bibliotecas e a filosofia subjacente da POO, tendem a conduzir os desenvolvedores para uma maior complexidade. Java, como uma linguagem projetada com uma forte inclinação para a POO, encoraja a criação de hierarquias de classes e o uso de padrões de design que, embora úteis em muitos contextos, podem adicionar camadas de complexidade não pertinentes à lógica de negócios.
+
+Frameworks Java, como Spring e Hibernate, oferecem ferramentas de abstração poderosas que simplificam o desenvolvimento, mas podem levar a um código altamente acoplado e difícil de gerenciar se não forem usados com discernimento. POJOs e código boilerplate são exemplos de como práticas comuns em Java podem contribuir para a complexidade.
 
 Embora a intenção seja promover a reutilização de código e a clareza, a implementação repetitiva de métodos padrão em cada classe pode obscurecer a lógica principal e aumentar a carga de manutenção, especialmente em projetos de grande escala.
 
-Portanto, embora muito dependa do desenvolvedor em termos de como ele escolhe estruturar e implementar soluções em Java, o ambiente e as práticas incentivadas pela linguagem e seus frameworks comumente conduzem a uma complexidade que pode não ser estritamente necessária para resolver o problema em mãos. Isso destaca a importância de uma abordagem crítica e reflexiva no uso das capacidades da linguagem para evitar cair em armadilhas.
+Portanto, embora muito dependa do desenvolvedor em termos de como ele escolhe estruturar e implementar soluções em Java, o ambiente e as práticas incentivadas pela linguagem e seus frameworks geralmente conduzem a uma complexidade desnecessária. Isso destaca a importância de uma abordagem crítica e reflexiva no uso das capacidades da linguagem para evitar armadilhas.
 
 ## Manutenibilidade
 
-Este conceito se refere à facilidade com que um software pode ser modificado para corrigir falhas, melhorar a funcionalidade ou adaptar-se a mudanças no ambiente. Em contextos de desenvolvimento que utilizam Java (POO) e Clojure (programação funcional), as abordagens para manutenção variam significativamente, impactadas pela estrutura e paradigmas da linguagem.
-
-Java, sendo uma linguagem orientada a objetos, incentiva a modelagem de soluções através de hierarquias de classes e interfaces. Um exemplo clássico dessa abordagem é o padrão de design Composite, utilizado para construir uma estrutura de objetos em que os objetos individuais podem ser tratados de maneira uniforme. Veja um exemplo simplificado abaixo:
+Este conceito se refere à facilidade com que um software pode ser modificado para corrigir falhas, melhorar a funcionalidade ou adaptar-se a mudanças no ambiente. Java incentiva a modelagem de soluções através de hierarquias de classes e interfaces. Um exemplo clássico dessa abordagem é o padrão de design Composite, utilizado para construir uma estrutura de objetos em que os objetos individuais podem ser tratados de maneira uniforme. Veja um exemplo simplificado abaixo:
 
 ```java
 interface Component {
@@ -166,7 +162,7 @@ class Composite implements Component {
 
 Este padrão é útil, mas à medida que a árvore de componentes cresce e se torna mais complexa, a manutenção pode se tornar um desafio. O gerenciamento de estados e o impacto das mudanças em uma parte do sistema podem afetar outras partes de maneira não trivial, aumentando o risco de bugs e reduzindo a clareza do código.
 
-Por outro lado, Clojure, ao adotar o paradigma funcional, promove a imutabilidade e o uso de funções puras. Isso resulta em um estilo de código que é frequentemente mais conciso e expressivo. Um exemplo equivalente ao padrão Composite em Clojure pode ser visto na manipulação de estruturas de dados aninhadas, como listas ou vetores, utilizando funções de alta ordem:
+Por outro lado, Clojure promove a imutabilidade e o uso de funções puras. Isso resulta em um estilo de código que é frequentemente mais conciso e expressivo. Um exemplo equivalente ao padrão Composite em Clojure pode ser visto na manipulação de estruturas de dados aninhadas, como listas ou vetores, utilizando funções de alta ordem:
 
 ```clojure
 (defn operation [component]
@@ -183,7 +179,7 @@ Por outro lado, Clojure, ao adotar o paradigma funcional, promove a imutabilidad
 
 Neste exemplo, a função `operation` manipula recursivamente uma estrutura aninhada, aplicando a operação a cada elemento, seja ele simples ou composto. A clareza e simplicidade do código são mantidas, mesmo quando a estrutura se torna complexa. A manutenibilidade em Java pode ser desafiadora devido à necessidade de gerenciar estados mutáveis e a complexidade associada a hierarquias de classes extensas. A herança e o polimorfismo, enquanto poderosos, podem introduzir dependências ocultas e efeitos colaterais que dificultam as modificações e a compreensão do sistema como um todo.
 
-Em Clojure, ao minimizar estados mutáveis e enfatizar funções puras, facilita a manutenção ao reduzir as interdependências entre componentes. A imutabilidade por padrão ajuda a evitar muitos bugs comuns associados a mudanças de estado, e as funções puras promovem um estilo de programação que é intrinsecamente mais fácil de testar e verificar.
+A imutabilidade por padrão ajuda a evitar muitos bugs comuns associados a mudanças de estado, e as funções puras promovem um estilo de programação que é intrinsecamente mais fácil de testar e verificar.
 
 ## Transparência referencial
 
@@ -273,11 +269,11 @@ Neste exemplo, `ElectricCar` reutiliza o código de `Vehicle` e `Car`, mas a sob
 
 Neste exemplo, as funções `add`, `add-five`, e `multiply-by-two` são compostas para criar uma nova função `add-five-and-double`. Cada função pode ser reutilizada independentemente em outros contextos.
 
-A reutilização em Java, baseada em herança, pode levar à rigidez e a um acoplamento não intencional entre classes. A herança impõe uma relação is-a (é-um) que nem sempre é a mais adequada para todos os cenários de reutilização, e a modificação de classes base pode afetar todas as subclasses de maneiras inesperadas.
+A reutilização em Java, baseada em herança, pode levar à rigidez e a um acoplamento não intencional entre classes. A herança impõe uma relação "é-um" que nem sempre é a mais adequada para todos os cenários de reutilização, e a modificação de classes base pode afetar todas as subclasses de maneiras inesperadas.
 
-Um exemplo clássico de rigidez e acoplamento não intencional em Java é frequentemente observado quando se usa herança para compartilhar funcionalidades entre classes que não possuem uma relação natural de "é-um". Isso pode levar a uma estrutura de código onde mudanças em uma superclasse afetam inesperadamente suas subclasses. Vamos examinar um cenário comum:
+Um exemplo clássico de rigidez e acoplamento não intencional ocorre quando se usa herança para compartilhar funcionalidades entre classes que não possuem uma relação natural de "é-um". Isso pode levar a uma estrutura de código onde mudanças em uma superclasse afetam inesperadamente suas subclasses.
 
-Considere um sistema onde você tem uma classe `Animal` que é usada como superclasse para várias subclasses específicas de animais. A classe `Animal` pode incluir métodos que não são aplicáveis a todas as suas subclasses, forçando um comportamento específico onde ele pode não ser necessário ou adequado.
+Considere um sistema onde uma classe `Animal` é usada como superclasse para várias subclasses específicas de animais. A classe `Animal` pode incluir métodos que não são aplicáveis a todas as suas subclasses, forçando um comportamento específico onde ele pode não ser necessário ou adequado.
 
 ```java
 class Animal {
@@ -313,12 +309,15 @@ class Bird extends Animal {
 }
 ```
 
+Entendi o problema. Vou focar apenas na remoção de redundâncias, mantendo o texto o mais próximo possível do original.
 
-A classe `Animal` define métodos `breathe` e `eat` que todas as subclasses são forçadas a herdar. Isso pode não ser ideal para todos os tipos de animais, como os que possuem métodos de respiração ou alimentação únicos, exigindo que essas subclasses sobrescrevam esses métodos para comportamentos específicos. Todas as subclasses de `Animal` estão intimamente ligadas às implementações de `breathe` e `eat` definidas na superclasse.
+---
 
-Isso significa que qualquer mudança nos métodos da classe `Animal` pode ter efeitos colaterais em `Fish`, `Bird` e qualquer outra subclasse. Por exemplo, se decidirmos adicionar um método `sleep` na classe `Animal` que define como os animais dormem, todas as subclasses terão esse método, mesmo que a maneira de dormir varie significativamente entre diferentes tipos de animais, ou mesmo não seja relevante para todos eles.
+A classe `Animal` define métodos `breathe` e `eat` que todas as subclasses são forçadas a herdar. Isso pode não ser ideal para todos os tipos de animais, como os que possuem métodos de respiração ou alimentação únicos, exigindo que essas subclasses sobrescrevam esses métodos para comportamentos específicos. Todas as subclasses de `Animal` estão ligadas às implementações de `breathe` e `eat` da superclasse.
 
-Este exemplo ilustra como a herança em Java pode introduzir rigidez e acoplamento não intencional entre classes. A herança obriga as subclasses a aderirem à interface e ao comportamento da superclasse, o que pode não ser sempre desejável e pode limitar a flexibilidade do design do sistema. Mudanças na superclasse podem afetar todas as subclasses de maneiras não previstas, tornando o sistema mais difícil de manter e evoluir. A composição, em vez de herança, é frequentemente recomendada para mitigar esses problemas, permitindo uma maior flexibilidade e reduzindo o acoplamento indesejado.
+Qualquer mudança nos métodos da classe `Animal` pode ter efeitos colaterais em `Fish`, `Bird` e outras subclasses. Por exemplo, se adicionarmos um método `sleep` na classe `Animal` que define como os animais dormem, todas as subclasses terão esse método, mesmo que a maneira de dormir varie entre diferentes tipos de animais, ou mesmo não seja relevante para todos.
+
+Este exemplo ilustra como a herança em Java pode introduzir rigidez e acoplamento entre classes. A herança obriga as subclasses a aderirem à interface e ao comportamento da superclasse, o que pode não ser desejável e pode limitar a flexibilidade do design. Mudanças na superclasse podem afetar todas as subclasses de maneiras não previstas, tornando o sistema mais difícil de manter e evoluir. A composição, em vez de herança, é frequentemente recomendada para mitigar esses problemas, permitindo maior flexibilidade e reduzindo o acoplamento indesejado.
 
 Em contraste, Clojure favorece uma abordagem de composição funcional, onde a reutilização do código é alcançada combinando funções menores e mais genéricas. Essa abordagem reduz o acoplamento e aumenta a flexibilidade, permitindo que os desenvolvedores construam novas funcionalidades de maneira mais previsível e segura.
 
@@ -419,14 +418,14 @@ O pattern `observer` em Java frequentemente leva a componentes fortemente acopla
 
 ---
 
-Por fim, a comparação entre Java e Clojure é particularmente relevante e instrutiva porque ambos operam dentro do mesmo ambiente de execução, a Java Virtual Machine (JVM). Essa proximidade tecnológica permite explorar como diferentes paradigmas de programação — orientada a objetos e funcional — podem ser implementados em um mesmo ambiente de runtime, proporcionando uma comparação direta e justa das características e vantagens de cada linguagem sob as mesmas condições de infraestrutura.
+Por fim, a comparação entre Java e Clojure é relevante porque ambos operam na Java Virtual Machine (JVM). Essa proximidade tecnológica permite explorar como diferentes paradigmas de programação — orientada a objetos e funcional — podem ser implementados em um mesmo ambiente de runtime, proporcionando uma comparação direta das características e vantagens de cada linguagem sob as mesmas condições de infraestrutura.
 
-Java, sendo uma das linguagens mais utilizadas e com um vasto ecossistema, exemplifica o paradigma de programação orientado a objetos, enquanto Clojure, também rodando na JVM, oferece uma abordagem puramente funcional.
+Java, sendo uma das linguagens mais utilizadas e com um vasto ecossistema, exemplifica o paradigma orientado a objetos, enquanto Clojure, também rodando na JVM, oferece uma abordagem funcional.
 
-Além disso, a utilização da JVM por ambas as linguagens garante que qualquer comparação seja focada nas linguagens e seus paradigmas, em vez de variáveis externas como diferenças no desempenho do sistema operacional ou do ambiente de execução. Isso torna as discussões sobre performance, manutenção, e design de código mais claras e fundamentadas, já que ambas as linguagens podem aproveitar as otimizações e características de performance oferecidas pela JVM, como gerenciamento de memória e coleta de lixo.
+A utilização da JVM por ambas as linguagens garante que qualquer comparação seja focada nas linguagens e seus paradigmas, em vez de variáveis externas como diferenças no desempenho do sistema operacional ou do ambiente de execução. Isso torna as discussões sobre performance, manutenção e design de código mais claras e fundamentadas, já que ambas as linguagens podem aproveitar as otimizações e características de performance da JVM, como gerenciamento de memória e coleta de lixo.
 
-Outras linguagens funcionais que não operam na JVM, como Elixir e Haskell, também poderiam ser comparadas a Java. Elixir, que roda na Erlang VM, é conhecida por sua capacidade de lidar com sistemas distribuídos de alta disponibilidade, enquanto Haskell é frequentemente elogiada por seu sistema de tipos rigoroso e avaliação preguiçosa, proporcionando um estilo de programação que minimiza bugs e maximiza a eficiência em termos de execução de algoritmos complexos. No entanto, essas comparações introduziriam variáveis adicionais relacionadas às diferenças nas máquinas virtuais e modelos de execução, o que poderia complicar a análise direta dos paradigmas de programação em si.
+Outras linguagens funcionais que não operam na JVM, como Elixir e Haskell, também poderiam ser comparadas a Java. Elixir, que roda na Erlang VM, é conhecida por sua capacidade de lidar com sistemas distribuídos de alta disponibilidade, enquanto Haskell é frequentemente elogiada por seu sistema de tipos rigoroso e avaliação preguiçosa, minimizando bugs e maximizando a eficiência em termos de execução de algoritmos complexos. No entanto, essas comparações introduziriam variáveis adicionais relacionadas às diferenças nas máquinas virtuais e modelos de execução, complicando a análise direta dos paradigmas de programação.
 
-Encorajo todos os desenvolvedores a experimentar Clojure ou outra linguagem funcional. Explorar essas linguagens pode não apenas melhorar suas habilidades de programação, mas também oferecer novas ferramentas para resolver problemas de maneiras que antes não pareciam possíveis. Dê o primeiro passo para explorar um novo universo.
+Encorajo todos os desenvolvedores a experimentar Clojure ou outra linguagem funcional. Explorar essas linguagens pode não apenas melhorar suas habilidades de programação, mas também oferecer novas ferramentas para resolver problemas de maneiras que antes não pareciam possíveis.
 
-A aprendizagem e a adaptação a novos paradigmas não apenas enriquecem o seu conhecimento, mas também expande sua capacidade de escolher a ferramenta certa para o trabalho certo, abrindo novos caminhos para soluções criativas. Experimentar algo novo pode ser desafiador, mas as recompensas em termos de crescimento profissional e satisfação na resolução de problemas são imensuráveis.
+A aprendizagem e adaptação a novos paradigmas não apenas enriquecem o seu conhecimento, mas também expandem sua capacidade de escolher a ferramenta certa para o trabalho certo, abrindo novos caminhos para soluções criativas. Experimentar algo novo pode ser desafiador, mas as recompensas em termos de crescimento profissional e satisfação na resolução de problemas são imensuráveis.
