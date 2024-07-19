@@ -139,13 +139,13 @@ Em contraste, em Clojure, uma linguagem funcional que é dialeto LISP, a modelag
   (assoc employee :department new-department))
 ```
 
-Aqui, `defrecord` cria uma estrutura de dados com campos nomeados, gerando funções para acessar e modificar esses campos, promovendo a imutabilidade. Isso reduz a probabilidade de erros comuns, como alterações de estado não intencionais, e simplifica o entendimento, teste e manutenção do código.
+Aqui, [`defrecord`](https://clojure.org/reference/datatypes#defrecord) cria uma estrutura de dados com campos nomeados, gerando funções para acessar e modificar esses campos, promovendo a imutabilidade. Isso reduz a probabilidade de erros comuns, como alterações de estado não intencionais, e simplifica o entendimento, teste e manutenção do código.
 
 Essa abordagem minimiza a cerimônia e o boilerplate típicos da OOP em Java, focando mais nos dados e comportamentos reais do que na estrutura de classes. Além disso, `defrecord` implementa automaticamente interfaces para serialização e outras funcionalidades, oferecendo mais do que apenas uma simplificação do acesso aos dados.
 
-É essencial reconhecer que muito depende das escolhas e habilidades do desenvolvedor. No entanto, a linguagem, juntamente com seus frameworks, bibliotecas e a filosofia subjacente da POO, tendem a conduzir os desenvolvedores para uma maior complexidade. Java, como uma linguagem projetada com uma forte inclinação para a POO, encoraja a criação de hierarquias de classes e o uso de padrões de design que, embora úteis em muitos contextos, podem adicionar camadas de complexidade não pertinentes à lógica de negócios.
+É essencial reconhecer que muito depende das escolhas e habilidades do desenvolvedor. No entanto, a linguagem, juntamente com seus frameworks, bibliotecas e a filosofia subjacente da [POO](https://pt.wikipedia.org/wiki/Programa%C3%A7%C3%A3o_orientada_a_objetos), tendem a conduzir os desenvolvedores para uma maior complexidade. Java, como uma linguagem projetada com uma forte inclinação para a POO, encoraja a criação de hierarquias de classes e o uso de [padrões de design](https://en.wikipedia.org/wiki/Software_design_pattern) que, embora úteis em muitos contextos, podem adicionar camadas de complexidade não pertinentes à lógica de negócios.
 
-Frameworks Java, como Spring e Hibernate, oferecem ferramentas de abstração poderosas que simplificam o desenvolvimento, mas podem levar a um código altamente acoplado e difícil de gerenciar se não forem usados com discernimento. POJOs e código boilerplate são exemplos de como práticas comuns em Java podem contribuir para a complexidade.
+Frameworks Java, como [Spring](https://spring.io/) e [Hibernate](https://hibernate.org/), oferecem ferramentas de abstração poderosas que simplificam o desenvolvimento, mas podem levar a um código altamente acoplado e difícil de gerenciar se não forem usados com discernimento. [POJOs](https://pt.wikipedia.org/wiki/Plain_Old_Java_Object) e código boilerplate são exemplos de como práticas comuns em Java podem contribuir para a complexidade.
 
 Embora a intenção seja promover a reutilização de código e a clareza, a implementação repetitiva de métodos padrão em cada classe pode obscurecer a lógica principal e aumentar a carga de manutenção, especialmente em projetos de grande escala.
 
@@ -187,7 +187,7 @@ class Composite implements Component {
 
 Este padrão é útil, mas à medida que a árvore de componentes cresce e se torna mais complexa, a manutenção pode se tornar um desafio. O gerenciamento de estados e o impacto das mudanças em uma parte do sistema podem afetar outras partes de maneira não trivial, aumentando o risco de bugs e reduzindo a clareza do código.
 
-Por outro lado, Clojure promove a imutabilidade e o uso de funções puras. Isso resulta em um estilo de código que é frequentemente mais conciso e expressivo. Um exemplo equivalente ao padrão Composite em Clojure pode ser visto na manipulação de estruturas de dados aninhadas, como listas ou vetores, utilizando funções de alta ordem:
+Por outro lado, Clojure promove a imutabilidade e o uso de [funções puras](https://en.wikipedia.org/wiki/Pure_function). Isso resulta em um estilo de código que é frequentemente mais conciso e expressivo. Um exemplo equivalente ao [padrão Composite](https://en.wikipedia.org/wiki/Composite_pattern) em Clojure pode ser visto na manipulação de estruturas de dados aninhadas, como listas ou vetores, utilizando [funções de alta ordem](https://en.wikipedia.org/wiki/Higher-order_function):
 
 ```clojure
 (defn operation [component]
@@ -208,9 +208,9 @@ A imutabilidade por padrão ajuda a evitar muitos bugs comuns associados a mudan
 
 # Transparência referencial
 
-A transparência referencial é um conceito fundamental em programação funcional e se refere à propriedade de funções onde a substituição de uma expressão por seu valor não altera o comportamento do programa. Este conceito é crucial para garantir a previsibilidade e a confiabilidade do código, especialmente em análises e otimizações de compiladores.
+A [transparência referencial](https://en.wikipedia.org/wiki/Referential_transparency) é um conceito fundamental em programação funcional e se refere à propriedade de funções onde a substituição de uma expressão por seu valor não altera o comportamento do programa. Este conceito é crucial para garantir a previsibilidade e a confiabilidade do código, especialmente em análises e otimizações de compiladores.
 
-Java frequentemente lida com estados mutáveis, o que pode comprometer a transparência referencial. Em Java, objetos podem ter seus estados internos alterados, o que significa que chamadas repetidas ao mesmo método no mesmo objeto podem produzir resultados diferentes se o estado do objeto tiver sido modificado entre chamadas. Vejamos um exemplo clássico na classe Counter abaixo:
+Java frequentemente lida com estados mutáveis, o que pode comprometer a transparência referencial. Em Java, objetos podem ter seus estados internos alterados, o que significa que chamadas repetidas ao mesmo método no mesmo objeto podem produzir resultados diferentes se o estado do objeto tiver sido modificado entre chamadas. Vejamos um exemplo clássico na classe `Counter` abaixo:
 
 ```java
 class Counter {
@@ -241,11 +241,11 @@ Neste exemplo, a chamada ao método `getCount` retorna resultados diferentes dep
 (def new-count (increment initial-count))
 ```
 
-Neste caso, a função `increment` é pura e possui transparência referencial. Independente de quantas vezes você chame `increment` com o mesmo valor de `count`, o resultado será sempre o mesmo, e não haverá efeitos colaterais que alterem outros estados ou dados. Isso não apenas simplifica o entendimento do código, mas também o torna mais seguro em ambientes concorrentes e distribuídos.
+Neste caso, a função `increment` é pura e possui [transparência referencial](https://en.wikipedia.org/wiki/Referential_transparency). Independente de quantas vezes você chame `increment` com o mesmo valor de `count`, o resultado será sempre o mesmo, e não haverá efeitos colaterais que alterem outros estados ou dados. Isso não apenas simplifica o entendimento do código, mas também o torna mais seguro em ambientes concorrentes e distribuídos.
 
 A falta de transparência referencial em Java pode levar a bugs sutis e dificuldades de manutenção, pois o desenvolvedor deve manter um modelo mental do estado de todo o sistema ao analisar o comportamento do código. Isso é especialmente problemático em sistemas grandes e complexos, onde os efeitos colaterais de uma parte do sistema podem ter implicações inesperadas em outra parte.
 
-Em Clojure, a garantia de transparência referencial contribui para uma maior modularidade e reusabilidade do código. Funções puras e imutáveis podem ser combinadas e reutilizadas em diferentes contextos sem preocupação com interações inesperadas, tornando o sistema globalmente mais fácil de entender e de manter.
+Em Clojure, a garantia de transparência referencial contribui para uma maior modularidade e reusabilidade do código. [Funções puras](https://en.wikipedia.org/wiki/Pure_function) e imutáveis podem ser combinadas e reutilizadas em diferentes contextos sem preocupação com interações inesperadas, tornando o sistema globalmente mais fácil de entender e de manter.
 
 A transparência referencial é mais do que uma característica técnica; é uma filosofia de design que influencia profundamente a confiabilidade, a manutenibilidade e a escalabilidade de software. Enquanto Java pode ser adaptado para seguir este princípio até certo ponto (usando objetos imutáveis e minimizando efeitos colaterais), Clojure o incorpora de maneira fundamental.
 
@@ -253,7 +253,7 @@ A transparência referencial é mais do que uma característica técnica; é uma
 
 A reutilização de código é um objetivo desejado em desenvolvimento de software, visando reduzir redundância, aumentar a eficiência e facilitar a manutenção. No entanto, as abordagens de Java (orientada a objetos) e Clojure (funcional) apresentam desafios distintos que podem afetar a eficácia da reutilização do código.
 
-Em Java, a reutilização de código é frequentemente implementada através de herança, permitindo que classes derivadas reutilizem código de suas classes base. Embora útil, este método pode levar a problemas de acoplamento e fragilidade. Por exemplo, a herança profunda pode obscurecer a origem dos dados e métodos, dificultando a rastreabilidade e a manutenção do código. Além disso, alterações na classe base podem ter efeitos colaterais inesperados nas classes derivadas. Vejamos um exemplo clássico na classe Vehicle abaixo:
+Em Java, a reutilização de código é frequentemente implementada através de [herança](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)), permitindo que classes derivadas reutilizem código de suas classes base. Embora útil, este método pode levar a problemas de acoplamento e fragilidade. Por exemplo, a herança profunda pode obscurecer a origem dos dados e métodos, dificultando a rastreabilidade e a manutenção do código. Além disso, alterações na classe base podem ter efeitos colaterais inesperados nas classes derivadas. Vejamos um exemplo clássico na classe `Vehicle` abaixo:
 
 ```java
 class Vehicle {
@@ -439,9 +439,9 @@ O pattern `observer` em Java frequentemente leva a componentes fortemente acopla
 
 ---
 
-A comparação entre Java e Clojure é relevante porque ambos operam na Java Virtual Machine (JVM). Isso permite analisar diretamente as características dos paradigmas de programação orientada a objetos e funcional. Java, com seu vasto ecossistema, exemplifica a orientação a objetos, enquanto Clojure oferece uma abordagem funcional. A utilização da JVM garante que a comparação se concentre nas diferenças paradigmáticas, sem interferências externas, tornando as discussões sobre performance, manutenção e design de código mais claras e fundamentadas.
+A comparação entre Java e Clojure é relevante porque ambos operam na [Java Virtual Machine (JVM)](https://en.wikipedia.org/wiki/Java_virtual_machine). Isso permite analisar diretamente as características dos paradigmas de programação orientada a objetos e funcional. Java, com seu vasto ecossistema, exemplifica a orientação a objetos, enquanto Clojure oferece uma abordagem funcional. A utilização da JVM garante que a comparação se concentre nas diferenças paradigmáticas, sem interferências externas, tornando as discussões sobre performance, manutenção e design de código mais claras e fundamentadas.
 
-Outras linguagens funcionais, como Elixir e Haskell, também poderiam ser comparadas a Java. Elixir, rodando na Erlang VM, é conhecida por sua capacidade de lidar com high availability distributed systems. Haskell é elogiada por seu strong type system e lazy evaluation, minimizando bugs e maximizando a eficiência em algoritmos complexos. No entanto, essas comparações introduziriam variáveis adicionais devido às diferenças nas virtual machines e execution models, complicando a análise dos paradigmas de programação.
+Outras linguagens funcionais, como Elixir e Haskell, também poderiam ser comparadas a Java. Elixir, rodando na [Erlang VM](https://www.erlang.org/), é conhecida por sua capacidade de lidar com [high availability distributed systems](https://en.wikipedia.org/wiki/High-availability_cluster). Haskell é elogiada por seu [strong type system](https://en.wikipedia.org/wiki/Type_system#Strong_and_weak_typing) e [lazy evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation), minimizando bugs e maximizando a eficiência em algoritmos complexos. No entanto, essas comparações introduziriam variáveis adicionais devido às diferenças nas virtual machines e execution models, complicando a análise dos paradigmas de programação.
 
 Explorar Clojure ou outras linguagens funcionais pode melhorar suas habilidades de programação e oferecer novas ferramentas para resolver problemas de maneiras inovadoras. Aprender novos paradigmas expande sua capacidade de escolher a ferramenta certa para cada trabalho, abrindo novos caminhos para soluções criativas. Embora desafiador, experimentar algo novo proporciona crescimento profissional e satisfação na resolução de problemas.
 
