@@ -104,7 +104,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 17 min</span>
+            <span>Estimated reading time: 19 min</span>
         </p>
     
 </header>
@@ -112,7 +112,27 @@
         <div class="post-content clearfix" itemprop="articleBody">
     
 
-    <p>Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por <a href="https://www.britannica.com/biography/John-McCarthy">John McCarthy</a> em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso.</p>
+    <h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="/2024/07/18/oop/#introducao">Introdução</a></li>
+<li><a href="/2024/07/18/oop/#descobrindo-clojure-uma-ponte-entre-lisp-e-java">Descobrindo Clojure: Uma Ponte entre Lisp e Java</a></li>
+<li><a href="/2024/07/18/oop/#manutenibilidade">Manutenibilidade</a></li>
+<li><a href="/2024/07/18/oop/#transparência-referencial">Transparência referencial</a></li>
+<li><a href="/2024/07/18/oop/#problemas-de-reutilização">Problemas de Reutilização</a></li>
+<li><a href="/2024/07/18/oop/#pattern-null-object">Pattern Null Object</a></li>
+<li><a href="/2024/07/18/oop/#pattern-singleton">Pattern Singleton</a></li>
+<li><a href="/2024/07/18/oop/#pattern-observer">Pattern Observer</a></li>
+</ol>
+<h1 id="introdução">Introdução</h1>
+<p>Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por <a href="https://www.britannica.com/biography/John-McCarthy">John McCarthy</a> em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso. Mas o que torna o Lisp tão atraente em comparação com linguagens mais modernas?</p>
+<p>O Lisp continua a ser atraente em comparação com linguagens modernas principalmente notação prefixada e a natureza homoicônica (onde o código é tratado como uma lista de dados que pode ser manipulada pelo próprio programa) permitem uma flexibilidade incrível na macro expansão e manipulação de código. Isso torna o Lisp excepcionalmente poderoso para escrever código compacto e expressivo que pode modificar sua própria estrutura, o que é mais difícil em linguagens mais rígidas e menos dinâmicas.</p>
+<p>Por exemplo, a introdução de dialetos Lisp como <code>shcl</code>, uma implementação de um shell script em Lisp que descobri recentemente, demonstra como essas características podem ser úteis em ambientes modernos. Além do tratamento de exceções com blocos <code>try/catch</code>, ele suporta recursos como logging avançado, gerenciamento automático de memória através de garbage collection e uma interface para manipular ambientes de execução de forma mais controlada. Essas funcionalidades enriquecem o shell, transformando scripts simples em aplicações robustas e menos propensas a erros.. Por exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-lisp" data-lang="lisp"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="nv">try</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="nv">command-that-may-fail</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">  <span class="p">(</span><span class="k">catch</span> <span class="ss">&#39;error</span> <span class="nv">e</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="p">(</span><span class="nv">println</span> <span class="s">&#34;Erro capturado: &#34;</span> <span class="nv">e</span><span class="p">)))</span>
+</span></span></code></pre></div><p>Este exemplo ilustra como o Lisp, através de suas extensões e dialetos, se adapta e continua relevante, trazendo suas características poderosas para novos domínios e desafios na programação contemporânea.</p>
+<h1 id="descobrindo-clojure-uma-ponte-entre-lisp-e-java">Descobrindo Clojure: Uma Ponte entre Lisp e Java</h1>
 <p>Minha jornada com Lisp levou-me ao Clojure, um moderno dialeto que roda na Java Virtual Machine (JVM). Escolhi o Clojure por causa da interoperabilidade com código Java, já que eu tinha uma base sólida em Java. Esta transição foi também influenciada pela frustração com as complexidades da programação orientada a objetos (OOP) em Java.</p>
 <p>Percebi que a construção de hierarquias de classes complexas frequentemente introduz uma complexidade desnecessária na OOP. Essa complexidade, especialmente em Java, surge mais das metodologias e tecnologias escolhidas do que dos desafios inerentes ao problema a ser resolvido. Por exemplo, montar um modelo de avião a partir de um kit pode ser simplificado com um design mais intuitivo e menos peças, semelhante à forma como a programação pode se beneficiar de abordagens que reduzem a rigidez e a complexidade não essencial.</p>
 <p>Complexidades adicionais surgem não por causa do problema em si, mas devido às ferramentas e métodos escolhidos. Isso se manifesta através de práticas que complicam desnecessariamente o código, como a proliferação de POJOs (Plain Old Java Objects) e códigos boilerplate. POJOs, embora simples em uso, podem resultar em excesso de classes que servem principalmente para armazenar e recuperar dados. O código boilerplate, repetido em várias partes do aplicativo, inclui a implementação frequente de métodos como <code>get</code> e <code>set</code>, <code>hashCode</code>, <code>equals</code> e <code>toString</code>, que obscurecem a lógica principal do código e aumentam a carga de manutenção.</p>
@@ -207,7 +227,7 @@
 <p>Frameworks Java, como Spring e Hibernate, oferecem ferramentas de abstração poderosas que simplificam o desenvolvimento, mas podem levar a um código altamente acoplado e difícil de gerenciar se não forem usados com discernimento. POJOs e código boilerplate são exemplos de como práticas comuns em Java podem contribuir para a complexidade.</p>
 <p>Embora a intenção seja promover a reutilização de código e a clareza, a implementação repetitiva de métodos padrão em cada classe pode obscurecer a lógica principal e aumentar a carga de manutenção, especialmente em projetos de grande escala.</p>
 <p>Portanto, embora muito dependa do desenvolvedor em termos de como ele escolhe estruturar e implementar soluções em Java, o ambiente e as práticas incentivadas pela linguagem e seus frameworks geralmente conduzem a uma complexidade desnecessária. Isso destaca a importância de uma abordagem crítica e reflexiva no uso das capacidades da linguagem para evitar armadilhas.</p>
-<h2 id="manutenibilidade">Manutenibilidade</h2>
+<h1 id="manutenibilidade">Manutenibilidade</h1>
 <p>Este conceito se refere à facilidade com que um software pode ser modificado para corrigir falhas, melhorar a funcionalidade ou adaptar-se a mudanças no ambiente. Java incentiva a modelagem de soluções através de hierarquias de classes e interfaces. Um exemplo clássico dessa abordagem é o padrão de design Composite, utilizado para construir uma estrutura de objetos em que os objetos individuais podem ser tratados de maneira uniforme. Veja um exemplo simplificado abaixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">interface</span> <span class="nc">Component</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operation</span><span class="p">();</span><span class="w">
@@ -250,7 +270,7 @@
 </span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">(</span><span class="nf">operation</span> <span class="nv">tree</span><span class="p">)</span>
 </span></span></code></pre></div><p>Neste exemplo, a função <code>operation</code> manipula recursivamente uma estrutura aninhada, aplicando a operação a cada elemento, seja ele simples ou composto. A clareza e simplicidade do código são mantidas, mesmo quando a estrutura se torna complexa. A manutenibilidade em Java pode ser desafiadora devido à necessidade de gerenciar estados mutáveis e a complexidade associada a hierarquias de classes extensas. A herança e o polimorfismo, enquanto poderosos, podem introduzir dependências ocultas e efeitos colaterais que dificultam as modificações e a compreensão do sistema como um todo.</p>
 <p>A imutabilidade por padrão ajuda a evitar muitos bugs comuns associados a mudanças de estado, e as funções puras promovem um estilo de programação que é intrinsecamente mais fácil de testar e verificar.</p>
-<h2 id="transparência-referencial">Transparência referencial</h2>
+<h1 id="transparência-referencial">Transparência referencial</h1>
 <p>A transparência referencial é um conceito fundamental em programação funcional e se refere à propriedade de funções onde a substituição de uma expressão por seu valor não altera o comportamento do programa. Este conceito é crucial para garantir a previsibilidade e a confiabilidade do código, especialmente em análises e otimizações de compiladores.</p>
 <p>Java frequentemente lida com estados mutáveis, o que pode comprometer a transparência referencial. Em Java, objetos podem ter seus estados internos alterados, o que significa que chamadas repetidas ao mesmo método no mesmo objeto podem produzir resultados diferentes se o estado do objeto tiver sido modificado entre chamadas. Vejamos um exemplo clássico na classe Counter abaixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">class</span> <span class="nc">Counter</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -279,7 +299,7 @@
 <p>A falta de transparência referencial em Java pode levar a bugs sutis e dificuldades de manutenção, pois o desenvolvedor deve manter um modelo mental do estado de todo o sistema ao analisar o comportamento do código. Isso é especialmente problemático em sistemas grandes e complexos, onde os efeitos colaterais de uma parte do sistema podem ter implicações inesperadas em outra parte.</p>
 <p>Em Clojure, a garantia de transparência referencial contribui para uma maior modularidade e reusabilidade do código. Funções puras e imutáveis podem ser combinadas e reutilizadas em diferentes contextos sem preocupação com interações inesperadas, tornando o sistema globalmente mais fácil de entender e de manter.</p>
 <p>A transparência referencial é mais do que uma característica técnica; é uma filosofia de design que influencia profundamente a confiabilidade, a manutenibilidade e a escalabilidade de software. Enquanto Java pode ser adaptado para seguir este princípio até certo ponto (usando objetos imutáveis e minimizando efeitos colaterais), Clojure o incorpora de maneira fundamental.</p>
-<h2 id="problemas-de-reutilização">Problemas de Reutilização</h2>
+<h1 id="problemas-de-reutilização">Problemas de Reutilização</h1>
 <p>A reutilização de código é um objetivo desejado em desenvolvimento de software, visando reduzir redundância, aumentar a eficiência e facilitar a manutenção. No entanto, as abordagens de Java (orientada a objetos) e Clojure (funcional) apresentam desafios distintos que podem afetar a eficácia da reutilização do código.</p>
 <p>Em Java, a reutilização de código é frequentemente implementada através de herança, permitindo que classes derivadas reutilizem código de suas classes base. Embora útil, este método pode levar a problemas de acoplamento e fragilidade. Por exemplo, a herança profunda pode obscurecer a origem dos dados e métodos, dificultando a rastreabilidade e a manutenção do código. Além disso, alterações na classe base podem ter efeitos colaterais inesperados nas classes derivadas. Vejamos um exemplo clássico na classe Vehicle abaixo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">class</span> <span class="nc">Vehicle</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -353,7 +373,7 @@
 <p>Qualquer mudança nos métodos da classe <code>Animal</code> pode ter efeitos colaterais em <code>Fish</code>, <code>Bird</code> e outras subclasses. Por exemplo, se adicionarmos um método <code>sleep</code> na classe <code>Animal</code> que define como os animais dormem, todas as subclasses terão esse método, mesmo que a maneira de dormir varie entre diferentes tipos de animais, ou mesmo não seja relevante para todos.</p>
 <p>Este exemplo ilustra como a herança em Java pode introduzir rigidez e acoplamento entre classes. A herança obriga as subclasses a aderirem à interface e ao comportamento da superclasse, o que pode não ser desejável e pode limitar a flexibilidade do design. Mudanças na superclasse podem afetar todas as subclasses de maneiras não previstas, tornando o sistema mais difícil de manter e evoluir. A composição, em vez de herança, é frequentemente recomendada para mitigar esses problemas, permitindo maior flexibilidade e reduzindo o acoplamento indesejado.</p>
 <p>Em contraste, Clojure favorece uma abordagem de composição funcional, onde a reutilização do código é alcançada combinando funções menores e mais genéricas. Essa abordagem reduz o acoplamento e aumenta a flexibilidade, permitindo que os desenvolvedores construam novas funcionalidades de maneira mais previsível e segura.</p>
-<h2 id="pattern-null-object">Pattern Null Object</h2>
+<h1 id="pattern-null-object">Pattern Null Object</h1>
 <p>O uso de <code>nil</code> em Clojure como um objeto nulo simplifica o tratamento de valores ausentes em sequências, coleções e mapas. Este suporte embutido reduz a necessidade de verificações extensivas de nulos e tratamentos especiais. Em contraste, o <code>null</code> de Java requer verificações explícitas para prevenir NullPointerException, levando a um código verboso e propenso a erros. Exemplo:</p>
 <p>Em Clojure:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="nb">first </span><span class="nv">nil</span><span class="p">)</span> <span class="c1">;; nil</span>
@@ -364,7 +384,7 @@
 </span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">    </span><span class="n">lista</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">0</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>O tratamento de valores nulos em Java é uma fonte frequente de erros em tempo de execução e isso aumenta a complexidade do código e a probabilidade de bugs, prejudicando a confiabilidade do software visto que sempre precisa tratar o uso do <code>null</code>.</p>
-<h2 id="pattern-singleton">Pattern Singleton</h2>
+<h1 id="pattern-singleton">Pattern Singleton</h1>
 <p>O <code>defonce</code> e referências atômicas em Clojure fornecem uma maneira simples e segura para threads de implementar singletons. No entanto, o padrão Singleton é geralmente desencorajado em ambos os paradigmas devido à sua tendência de introduzir estado global e dependências difíceis de gerenciar e testar. A implementação tradicional de singleton em Java muitas vezes envolve mecanismos complexos de sincronização para garantir a segurança em threads, aumentando a complexidade. Exemplo:</p>
 <p>Em Clojure:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defonce </span><span class="nv">servidor-web</span> <span class="p">(</span><span class="nf">atom</span> <span class="nv">nil</span><span class="p">))</span>
@@ -387,7 +407,7 @@
 </span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>O pattern Singleton introduz dependências ocultas e estado global, que podem levar a um acoplamento rígido e dificuldade nos testes. Em Java, garantir a segurança em threads em singletons adiciona complexidade adicional e potencial para bugs sutis.</p>
-<h2 id="pattern-observer">Pattern Observer</h2>
+<h1 id="pattern-observer">Pattern Observer</h1>
 <p>A função <code>add-watch</code> de Clojure e a biblioteca <code>core.async</code> oferecem soluções elegantes para implementar o padrão observer, permitindo modelos de programação reativa. O pattern <code>observer</code> em Java envolve a definição de objetos observáveis e interfaces de observadores, o que pode resultar em acoplamento rígido entre os componentes e mecanismos de tratamento de eventos mais complexos. Exemplo:</p>
 <p>Em Clojure:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">jogador</span> <span class="p">(</span><span class="nf">atom</span> <span class="p">{</span><span class="ss">:pontuacao</span> <span class="mi">0</span><span class="p">}))</span>
