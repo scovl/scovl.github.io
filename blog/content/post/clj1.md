@@ -166,8 +166,6 @@ Neste projeto específico, poderíamos usar `def` para definir constantes ou var
 
 Agora que você viu como criar um projeto simples em Clojure usando o Leiningen e desenvolver um programa funcional, que tal explorar ainda mais? Experimente adicionar `def` para definir constantes ou variáveis globais que poderiam ser usadas em todo o código, como nomes de personagens ou elementos da história. Isso não só enriquecerá seu projeto, mas também ajudará a entender melhor como organizar e modularizar seu código.
 
-Aqui está uma sugestão para o último tópico do seu documento, incentivando o leitor a subir o projeto no GitHub e a participar do desafio #100DaysOfCode:
-
 ---
 
 ## 100daysofcode
