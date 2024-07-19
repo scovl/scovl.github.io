@@ -8,7 +8,37 @@ weight = 4
 +++
 
 
-Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por [John McCarthy](https://www.britannica.com/biography/John-McCarthy) em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso.
+## Table of Contents
+1. [Introdução](#introducao)
+2. [Descobrindo Clojure: Uma Ponte entre Lisp e Java](#descobrindo-clojure-uma-ponte-entre-lisp-e-java)
+3. [Manutenibilidade](#manutenibilidade)
+4. [Transparência referencial](#transparência-referencial)
+5. [Problemas de Reutilização](#problemas-de-reutilização)
+6. [Pattern Null Object](#pattern-null-object)
+7. [Pattern Singleton](#pattern-singleton)
+8. [Pattern Observer](#pattern-observer)
+
+
+
+# Introdução
+
+Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por [John McCarthy](https://www.britannica.com/biography/John-McCarthy) em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados. Emacs Lisp e Common Lisp são dois dos muitos dialetos que evoluíram a partir do Lisp original, cada um com suas próprias peculiaridades e casos de uso. Mas o que torna o Lisp tão atraente em comparação com linguagens mais modernas?
+
+O Lisp continua a ser atraente em comparação com linguagens modernas principalmente notação prefixada e a natureza homoicônica (onde o código é tratado como uma lista de dados que pode ser manipulada pelo próprio programa) permitem uma flexibilidade incrível na macro expansão e manipulação de código. Isso torna o Lisp excepcionalmente poderoso para escrever código compacto e expressivo que pode modificar sua própria estrutura, o que é mais difícil em linguagens mais rígidas e menos dinâmicas.
+
+Por exemplo, a introdução de dialetos Lisp como `shcl`, uma implementação de um shell script em Lisp que descobri recentemente, demonstra como essas características podem ser úteis em ambientes modernos. Além do tratamento de exceções com blocos `try/catch`, ele suporta recursos como logging avançado, gerenciamento automático de memória através de garbage collection e uma interface para manipular ambientes de execução de forma mais controlada. Essas funcionalidades enriquecem o shell, transformando scripts simples em aplicações robustas e menos propensas a erros.. Por exemplo:
+
+```lisp
+(try
+  (command-that-may-fail)
+  (catch 'error e
+    (println "Erro capturado: " e)))
+```
+
+Este exemplo ilustra como o Lisp, através de suas extensões e dialetos, se adapta e continua relevante, trazendo suas características poderosas para novos domínios e desafios na programação contemporânea.
+
+
+# Descobrindo Clojure: Uma Ponte entre Lisp e Java
 
 Minha jornada com Lisp levou-me ao Clojure, um moderno dialeto que roda na Java Virtual Machine (JVM). Escolhi o Clojure por causa da interoperabilidade com código Java, já que eu tinha uma base sólida em Java. Esta transição foi também influenciada pela frustração com as complexidades da programação orientada a objetos (OOP) em Java.
 
@@ -122,7 +152,7 @@ Embora a intenção seja promover a reutilização de código e a clareza, a imp
 
 Portanto, embora muito dependa do desenvolvedor em termos de como ele escolhe estruturar e implementar soluções em Java, o ambiente e as práticas incentivadas pela linguagem e seus frameworks geralmente conduzem a uma complexidade desnecessária. Isso destaca a importância de uma abordagem crítica e reflexiva no uso das capacidades da linguagem para evitar armadilhas.
 
-## Manutenibilidade
+# Manutenibilidade
 
 Este conceito se refere à facilidade com que um software pode ser modificado para corrigir falhas, melhorar a funcionalidade ou adaptar-se a mudanças no ambiente. Java incentiva a modelagem de soluções através de hierarquias de classes e interfaces. Um exemplo clássico dessa abordagem é o padrão de design Composite, utilizado para construir uma estrutura de objetos em que os objetos individuais podem ser tratados de maneira uniforme. Veja um exemplo simplificado abaixo:
 
@@ -177,7 +207,7 @@ Neste exemplo, a função `operation` manipula recursivamente uma estrutura anin
 
 A imutabilidade por padrão ajuda a evitar muitos bugs comuns associados a mudanças de estado, e as funções puras promovem um estilo de programação que é intrinsecamente mais fácil de testar e verificar.
 
-## Transparência referencial
+# Transparência referencial
 
 A transparência referencial é um conceito fundamental em programação funcional e se refere à propriedade de funções onde a substituição de uma expressão por seu valor não altera o comportamento do programa. Este conceito é crucial para garantir a previsibilidade e a confiabilidade do código, especialmente em análises e otimizações de compiladores.
 
@@ -220,7 +250,7 @@ Em Clojure, a garantia de transparência referencial contribui para uma maior mo
 
 A transparência referencial é mais do que uma característica técnica; é uma filosofia de design que influencia profundamente a confiabilidade, a manutenibilidade e a escalabilidade de software. Enquanto Java pode ser adaptado para seguir este princípio até certo ponto (usando objetos imutáveis e minimizando efeitos colaterais), Clojure o incorpora de maneira fundamental.
 
-## Problemas de Reutilização
+# Problemas de Reutilização
 
 A reutilização de código é um objetivo desejado em desenvolvimento de software, visando reduzir redundância, aumentar a eficiência e facilitar a manutenção. No entanto, as abordagens de Java (orientada a objetos) e Clojure (funcional) apresentam desafios distintos que podem afetar a eficácia da reutilização do código.
 
@@ -317,7 +347,7 @@ Este exemplo ilustra como a herança em Java pode introduzir rigidez e acoplamen
 
 Em contraste, Clojure favorece uma abordagem de composição funcional, onde a reutilização do código é alcançada combinando funções menores e mais genéricas. Essa abordagem reduz o acoplamento e aumenta a flexibilidade, permitindo que os desenvolvedores construam novas funcionalidades de maneira mais previsível e segura.
 
-## Pattern Null Object
+# Pattern Null Object
 
 O uso de `nil` em Clojure como um objeto nulo simplifica o tratamento de valores ausentes em sequências, coleções e mapas. Este suporte embutido reduz a necessidade de verificações extensivas de nulos e tratamentos especiais. Em contraste, o `null` de Java requer verificações explícitas para prevenir NullPointerException, levando a um código verboso e propenso a erros. Exemplo:
 
@@ -339,7 +369,7 @@ if (lista != null) {
 
 O tratamento de valores nulos em Java é uma fonte frequente de erros em tempo de execução e isso aumenta a complexidade do código e a probabilidade de bugs, prejudicando a confiabilidade do software visto que sempre precisa tratar o uso do `null`.
 
-## Pattern Singleton
+# Pattern Singleton
 
 O `defonce` e referências atômicas em Clojure fornecem uma maneira simples e segura para threads de implementar singletons. No entanto, o padrão Singleton é geralmente desencorajado em ambos os paradigmas devido à sua tendência de introduzir estado global e dependências difíceis de gerenciar e testar. A implementação tradicional de singleton em Java muitas vezes envolve mecanismos complexos de sincronização para garantir a segurança em threads, aumentando a complexidade. Exemplo:
 
@@ -374,7 +404,7 @@ public class ServidorWeb {
 O pattern Singleton introduz dependências ocultas e estado global, que podem levar a um acoplamento rígido e dificuldade nos testes. Em Java, garantir a segurança em threads em singletons adiciona complexidade adicional e potencial para bugs sutis.
 
 
-## Pattern Observer
+# Pattern Observer
 
 A função `add-watch` de Clojure e a biblioteca `core.async` oferecem soluções elegantes para implementar o padrão observer, permitindo modelos de programação reativa. O pattern `observer` em Java envolve a definição de objetos observáveis e interfaces de observadores, o que pode resultar em acoplamento rígido entre os componentes e mecanismos de tratamento de eventos mais complexos. Exemplo:
 
