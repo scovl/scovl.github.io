@@ -110,10 +110,6 @@ Em contraste, em Clojure, uma linguagem funcional que é dialeto LISP, a modelag
   (assoc employee :department new-department))
 ```
 
-Peço desculpas pela confusão. Vou revisar o texto e focar na remoção de redundâncias:
-
----
-
 Aqui, `defrecord` cria uma estrutura de dados com campos nomeados, gerando funções para acessar e modificar esses campos, promovendo a imutabilidade. Isso reduz a probabilidade de erros comuns, como alterações de estado não intencionais, e simplifica o entendimento, teste e manutenção do código.
 
 Essa abordagem minimiza a cerimônia e o boilerplate típicos da OOP em Java, focando mais nos dados e comportamentos reais do que na estrutura de classes. Além disso, `defrecord` implementa automaticamente interfaces para serialização e outras funcionalidades, oferecendo mais do que apenas uma simplificação do acesso aos dados.
