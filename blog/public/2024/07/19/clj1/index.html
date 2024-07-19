@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Clojure Sessions01 &middot; Vitor Lobo</title>
+        <meta name="description" content="Three Little Pigs">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.128.2">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Clojure Sessions01">
+<meta property="og:description" content="Three Little Pigs">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/2024/07/19/clj1/">
+        <link rel="stylesheet" href="http://localhost:1313//dist/site.css">
+        <link rel="stylesheet" href="http://localhost:1313//dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="http://localhost:1313//img/favicon.ico">
+    </head>
+    <body>
+        
+  
+
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="neurodev-title">
+                                <a title="neurodev" href="http://localhost:1313/">$ /home/scovl_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="http://localhost:1313//index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Clojure Sessions01</h1>
+    
+        <p class="post-description" itemprop="description">Three Little Pigs</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2024-07-19" itemprop="datePublished">sex., jul. 19, 2024</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 7 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><strong><a href="/2024/07/19/clj1/#introdução">Introdução</a></strong></li>
+<li><a href="/2024/07/19/clj1/#iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</a>
+<ul>
+<li><a href="/2024/07/19/clj1/#passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</a></li>
+<li><a href="/2024/07/19/clj1/#passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</a></li>
+<li><a href="/2024/07/19/clj1/#passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</a></li>
+<li><a href="/2024/07/19/clj1/#passo-4-executando-o-projeto">Passo 4: Executando o Projeto</a></li>
+</ul>
+</li>
+<li><a href="/2024/07/19/clj1/#def-e-defn-entendendo-as-diferenças">Def e Defn: Entendendo as Diferenças</a></li>
+<li><a href="/2024/07/19/clj1/#natureza-e-uso-de-def-e-defn">Natureza e Uso de Def e Defn</a></li>
+<li><a href="/2024/07/19/clj1/#100daysofcode">100daysofcode</a></li>
+</ul>
+<h1 id="introdução">Introdução</h1>
+<p>Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o <a href="https://clojure.org/guides/install_clojure">Clojure</a> e o <a href="https://leiningen.org/#install">Leiningen</a> instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:</p>
+<h1 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h1>
+<h3 id="passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</h3>
+<p>Para criar um novo projeto com Leiningen, abra seu terminal e digite o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein new app three-little-pigs
+</span></span></code></pre></div><p>Esse comando criará uma nova estrutura de projeto chamada <code>three-little-pigs</code>. O <code>lein new app &lt;nome-do-projeto&gt;</code> é usado para gerar um novo projeto Clojure com uma estrutura básica de diretórios e arquivos necessários para começar a desenvolver.</p>
+<h3 id="passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</h3>
+<p>Navegue até a pasta do projeto que acabamos de criar:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nb">cd</span> three-little-pigs
+</span></span></code></pre></div><p>Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">three-little-pigs/
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── CHANGELOG.md
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">├── LICENSE
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">├── README.md
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">├── doc
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">│   └── intro.md
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">├── project.clj
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">├── resources
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">├── src
+</span></span><span class="line"><span class="ln">10</span><span class="cl">│   └── three_little_pigs
+</span></span><span class="line"><span class="ln">11</span><span class="cl">│       └── core.clj
+</span></span><span class="line"><span class="ln">12</span><span class="cl">├── target
+</span></span><span class="line"><span class="ln">13</span><span class="cl">└── <span class="nb">test</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    └── three_little_pigs
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        └── core_test.clj
+</span></span></code></pre></div><p>Nosso código principal será escrito no arquivo <code>src/three_little_pigs/core.clj</code>. Esse arquivo é onde colocaremos a lógica do nosso programa.</p>
+<h3 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h3>
+<p>Abra o arquivo <code>src/three_little_pigs/core.clj</code> em seu editor de texto preferido e substitua o conteúdo com o seguinte código (não copie, escreva):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">story</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pig1</span> <span class="p">(</span><span class="nf">pig-activity</span> <span class="s">&#34;O primeiro porquinho&#34;</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="nv">pig2</span> <span class="p">(</span><span class="nf">pig-activity</span> <span class="s">&#34;O segundo porquinho&#34;</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="nv">pig3</span> <span class="p">(</span><span class="nf">pig-activity</span> <span class="s">&#34;O terceiro porquinho&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">        <span class="nv">wolf1</span> <span class="p">(</span><span class="nf">wolf-action</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">        <span class="nv">wolf2</span> <span class="p">(</span><span class="nf">wolf-action</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">        <span class="nv">wolf3</span> <span class="s">&#34;O lobo não conseguiu derrubar a casa de tijolos.&#34;</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">        <span class="nv">conclusion</span> <span class="s">&#34;A casa de tijolos do terceiro porquinho os salvou.&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">    <span class="p">(</span><span class="nb">str </span><span class="nv">pig1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">conclusion</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">)))</span>
+</span></span></code></pre></div><p>Aqui está uma explicação detalhada de cada parte do código:</p>
+<ul>
+<li><code>(ns three-little-pigs.core)</code>: Define um novo namespace chamado <code>three-little-pigs.core</code>, que agrupa funções relacionadas.</li>
+</ul>
+<p>Quando você declara <code>(ns three-little-pigs.core)</code> em Clojure, está fazendo o seguinte:</p>
+<ol>
+<li><strong>Criando ou Especificando um Espaço</strong>: Você está dizendo ao Clojure &ldquo;Vou trabalhar dentro de um espaço chamado <code>three-little-pigs.core</code>&rdquo;. Tudo o que você definir ou usar dentro deste arquivo será parte deste espaço.</li>
+<li><strong>Evitando Conflitos</strong>: Se em outra parte do seu projeto Clojure você tiver outro namespace, como <code>three-little-pigs.utils</code>, ele pode ter funções com o mesmo nome que as do <code>three-little-pigs.core</code> sem causar confusão ou erros, pois eles estão em &ldquo;pastas&rdquo; diferentes.</li>
+<li><strong>Organização</strong>: Ajuda a manter seu código organizado e claro. Por exemplo, funções relacionadas à lógica principal da história dos Três Porquinhos ficam no <code>three-little-pigs.core</code>, enquanto utilitários ou funções auxiliares podem estar em outro namespace como <code>three-little-pigs.utils</code>.</li>
+</ol>
+<p>Em suma, ao usar <code>(ns three-little-pigs.core)</code>, você está essencialmente preparando o terreno para escrever seu código em um local específico que é isolado e bem organizado, evitando problemas e facilitando a manutenção e a expansão do seu programa. É como se você estivesse etiquetando uma pasta grande para dizer &ldquo;Aqui dentro está tudo relacionado ao coração da história dos Três Porquinhos!</p>
+<ul>
+<li><code>(defn build-house [material] ...)</code>: Define uma função <code>build-house</code> que aceita um material e retorna uma string descrevendo a construção da casa.</li>
+<li><code>(defn pig-activity [pig material] ...)</code>: Define uma função <code>pig-activity</code> que aceita o nome de um porquinho e o material para construir a casa, combinando essas informações.</li>
+<li><code>(defn wolf-action [house] ...)</code>: Define uma função <code>wolf-action</code> que descreve a ação do lobo ao soprar a casa.</li>
+<li><code>(defn story [] ...)</code>: Define a função <code>story</code> que monta toda a história dos três porquinhos, usando as funções anteriores.</li>
+<li><code>(defn -main [] ...)</code>: Define a função <code>-main</code> que imprime a história quando o programa é executado.</li>
+</ul>
+<h3 id="passo-4-executando-o-projeto">Passo 4: Executando o Projeto</h3>
+<p>Para executar o nosso projeto e ver a história dos Três Porquinhos em ação, volte ao terminal e execute o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein run
+</span></span></code></pre></div><p>O comando <code>lein run</code> compila e executa o projeto, mostrando a saída no terminal. Você verá a história completa dos Três Porquinhos no terminal:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
+</span></span><span class="line"><span class="ln">4</span><span class="cl">O lobo veio, soprou e derrubou a casa de palha.
+</span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
+</span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
+</span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
+</span></span></code></pre></div><h3 id="def-e-defn">def e defn</h3>
+<p>Neste projeto específico, poderíamos usar <code>def</code> para definir constantes ou variáveis globais que poderiam ser usadas em todo o código. Por exemplo, se houvesse um elemento recorrente ou um valor que não muda, como o nome do lobo ou tipos de material utilizados na construção das casas, <code>def</code> seria apropriado. Exemplo:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">lobo</span> <span class="s">&#34;O lobo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">materiais</span> <span class="p">[</span><span class="s">&#34;palha&#34;</span> <span class="s">&#34;madeira&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">])</span>
+</span></span></code></pre></div><p>Aqui, <code>lobo</code> armazena o nome do personagem constante em toda a história, e <code>materiais</code> poderia ser uma lista de materiais usados pelos porquinhos, acessível em qualquer parte do programa.</p>
+<ul>
+<li>
+<p><strong><code>defn</code></strong>: No código <code>three-little-pigs</code>, <code>defn</code> é usado para definir funções que representam as ações dos personagens ou o fluxo da história. Cada função executa uma tarefa específica, como construir uma casa ou realizar a ação do lobo.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span></code></pre></div></li>
+</ul>
+<p>A função <code>build-house</code> aceita um material como argumento e retorna uma string descrevendo a construção da casa. <code>pig-activity</code> combina a ação de um porquinho escolhendo um material e usando <code>build-house</code> para construir a casa. <code>wolf-action</code> descreve a ação do lobo em relação às casas construídas.</p>
+<h3 id="natureza-e-uso">Natureza e Uso</h3>
+<ul>
+<li><strong>Natureza</strong>: <code>def</code> no código poderia ser usado para dados estáticos que não mudam, proporcionando fácil referência em todo o código. <code>defn</code>, por outro lado, encapsula blocos de lógica que são executados repetidamente, como ações de personagens.</li>
+<li><strong>Visibilidade</strong>: Tanto <code>def</code> quanto <code>defn</code> criam símbolos globais, mas <code>defn</code> facilita a organização ao agrupar lógicas de procedimentos sob um nome de função, que pode ser chamado em qualquer parte do código.</li>
+<li><strong>Flexibilidade</strong>: <code>def</code> proporciona a flexibilidade de armazenar qualquer tipo de dado, enquanto <code>defn</code> estrutura as ações que o programa pode executar, essencialmente moldando o comportamento interativo do código.</li>
+</ul>
+<p>Agora que você viu como criar um projeto simples em Clojure usando o Leiningen e desenvolver um programa funcional, que tal explorar ainda mais? Experimente adicionar <code>def</code> para definir constantes ou variáveis globais que poderiam ser usadas em todo o código, como nomes de personagens ou elementos da história. Isso não só enriquecerá seu projeto, mas também ajudará a entender melhor como organizar e modularizar seu código.</p>
+<p>Aqui está uma sugestão para o último tópico do seu documento, incentivando o leitor a subir o projeto no GitHub e a participar do desafio #100DaysOfCode:</p>
+<hr>
+<h2 id="100daysofcode">100daysofcode</h2>
+<p>Depois de concluir seu projeto, uma excelente forma de manter o aprendizado e obter feedback é compartilhá-lo no <a href="https://github.com">GitHub</a>. Além disso, considere aderir ao desafio <a href="https://www.100daysofcode.com/">#100DaysOfCode</a>. Esse desafio incentiva você a codificar todos os dias por 100 dias consecutivos, o que pode significativamente acelerar seu aprendizado em programação, especialmente em novas linguagens e paradigmas.</p>
+<p>Para quem está começando com Clojure e deseja uma leitura acessível e informativa, recomendo o livro <em>Clojure for the Brave and True</em> de Daniel Higginbotham. Este livro oferece uma introdução clara e divertida ao mundo de Clojure, cobrindo desde os conceitos básicos até técnicas mais avançadas, com exemplos práticos para ajudar você a praticar. Você pode encontrar mais informações sobre o livro e recursos adicionais no <a href="http://www.braveclojure.com/">site oficial do livro</a>.</p>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/oop/">OOP</a>, 
+            
+                <a href="/tags/software/">software</a>, 
+            
+                <a href="/tags/engineering/">engineering</a>, 
+            
+                <a href="/tags/clojure/">Clojure</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Clojure%20Sessions01&url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj1%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj1%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj1%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Clojure%20Sessions01&url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj1%2f&summary=Three%20Little%20Pigs"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="scovl" href="http://localhost:1313/">scovl</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2024 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="http://localhost:1313/js/jquery-1.11.3.min.js"></script>
+        <script src="http://localhost:1313/js/jquery.fitvids.js"></script>
+        <script src="http://localhost:1313/js/scripts.js"></script>
+    </body>
+</html>
+
