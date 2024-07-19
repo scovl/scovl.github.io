@@ -128,7 +128,7 @@ Embora a intenção seja promover a reutilização de código e a clareza, a imp
 
 Portanto, embora muito dependa do desenvolvedor em termos de como ele escolhe estruturar e implementar soluções em Java, o ambiente e as práticas incentivadas pela linguagem e seus frameworks comumente conduzem a uma complexidade que pode não ser estritamente necessária para resolver o problema em mãos. Isso destaca a importância de uma abordagem crítica e reflexiva no uso das capacidades da linguagem para evitar cair em armadilhas.
 
-## Manutenabilidade
+## Manutenibilidade
 
 Este conceito se refere à facilidade com que um software pode ser modificado para corrigir falhas, melhorar a funcionalidade ou adaptar-se a mudanças no ambiente. Em contextos de desenvolvimento que utilizam Java (POO) e Clojure (programação funcional), as abordagens para manutenção variam significativamente, impactadas pela estrutura e paradigmas da linguagem.
 
