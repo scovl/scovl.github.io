@@ -335,10 +335,6 @@ class Bird extends Animal {
 }
 ```
 
-Entendi o problema. Vou focar apenas na remoção de redundâncias, mantendo o texto o mais próximo possível do original.
-
----
-
 A classe `Animal` define métodos `breathe` e `eat` que todas as subclasses são forçadas a herdar. Isso pode não ser ideal para todos os tipos de animais, como os que possuem métodos de respiração ou alimentação únicos, exigindo que essas subclasses sobrescrevam esses métodos para comportamentos específicos. Todas as subclasses de `Animal` estão ligadas às implementações de `breathe` e `eat` da superclasse.
 
 Qualquer mudança nos métodos da classe `Animal` pode ter efeitos colaterais em `Fish`, `Bird` e outras subclasses. Por exemplo, se adicionarmos um método `sleep` na classe `Animal` que define como os animais dormem, todas as subclasses terão esse método, mesmo que a maneira de dormir varie entre diferentes tipos de animais, ou mesmo não seja relevante para todos.
