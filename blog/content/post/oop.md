@@ -9,7 +9,7 @@ weight = 4
 
 
 ## Table of Contents
-1. [Introdução](#introducao)
+1. [Introdução](#introdução)
 2. [Descobrindo Clojure: Uma Ponte entre Lisp e Java](#descobrindo-clojure-uma-ponte-entre-lisp-e-java)
 3. [Manutenibilidade](#manutenibilidade)
 4. [Transparência referencial](#transparência-referencial)
@@ -17,8 +17,7 @@ weight = 4
 6. [Pattern Null Object](#pattern-null-object)
 7. [Pattern Singleton](#pattern-singleton)
 8. [Pattern Observer](#pattern-observer)
-
-
+9. [Recomendações](#recomendações)
 
 # Introdução
 
@@ -445,3 +444,26 @@ A comparação entre Java e Clojure é relevante porque ambos operam na Java Vir
 Outras linguagens funcionais, como Elixir e Haskell, também poderiam ser comparadas a Java. Elixir, rodando na Erlang VM, é conhecida por sua capacidade de lidar com high availability distributed systems. Haskell é elogiada por seu strong type system e lazy evaluation, minimizando bugs e maximizando a eficiência em algoritmos complexos. No entanto, essas comparações introduziriam variáveis adicionais devido às diferenças nas virtual machines e execution models, complicando a análise dos paradigmas de programação.
 
 Explorar Clojure ou outras linguagens funcionais pode melhorar suas habilidades de programação e oferecer novas ferramentas para resolver problemas de maneiras inovadoras. Aprender novos paradigmas expande sua capacidade de escolher a ferramenta certa para cada trabalho, abrindo novos caminhos para soluções criativas. Embora desafiador, experimentar algo novo proporciona crescimento profissional e satisfação na resolução de problemas.
+
+---
+
+# Recomendações
+
+Se você está interessado em aprofundar seu conhecimento, aqui estão alguns livros que recomendo. São eles:
+
+* **["Clojure Programming"](https://www.amazon.com/Clojure-Programming-Chas-Emerick/dp/1449394701) por Chas Emerick, Brian Carper, e Christophe Grand**
+   - Este livro é uma introdução completa ao mundo do Clojure, abordando desde conceitos básicos até tópicos avançados como programação concorrente e interoperabilidade com Java.
+* **["Java Concurrency in Practice"](https://www.amazon.com/Java-Concurrency-Practice-Brian-Goetz/dp/0321349601) por Brian Goetz**
+   - Fundamental para entender a gestão de concorrência em Java, este livro oferece diretrizes práticas para escrever programas seguros e com alta performance.
+* **["Programming Clojure"](https://www.amazon.com.br/Programming-Clojure-3e-Alex-Miller/dp/1680502468) por Alex Miller e Stuart Halloway**
+   - Adequado para iniciantes e programadores experientes que querem aprender Clojure, o livro detalha a sintaxe, as estruturas de dados e o estilo funcional de programação.
+* **["Effective Java"](https://www.amazon.com/Effective-Java-Joshua-Bloch/dp/0134685997) por Joshua Bloch**
+   - Essencial para qualquer desenvolvedor Java, aborda práticas recomendadas acumuladas durante anos de experiência na Sun Microsystems.
+* **["The Joy of Clojure"](https://www.amazon.com/Joy-Clojure-Michael-Fogus/dp/1617291412) por Michael Fogus e Chris Houser**
+   - Ideal para quem já tem experiência com Clojure e deseja explorar os aspectos filosóficos e menos pragmáticos da linguagem.
+* **["Java Performance: The Definitive Guide"](https://www.amazon.com/Java-Performance-Definitive-Scott-Oaks/dp/1449358454) por Scott Oaks**
+   - Um guia crucial para desenvolvedores que precisam otimizar aplicações Java, focando em ferramentas de monitoramento e técnicas de melhoria de performance.
+* **["Land of Lisp: Learn to Program in Lisp, One Game at a Time!"](https://www.amazon.com/Land-Lisp-Learn-Program-Game/dp/1593272812) por Conrad Barski**
+   - Este livro é uma introdução divertida e acessível ao Lisp através do desenvolvimento de jogos. Ele ensina a programar em Lisp e desenvolver seus próprios jogos, o que torna o aprendizado interativo e prazeroso.
+* **["Practical Common Lisp"](https://www.amazon.com/Practical-Common-Peter-Seibel/dp/1590592395) por Peter Seibel**
+   - Um guia prático que detalha o uso do Common Lisp na programação do dia a dia, oferecendo uma ótima introdução à linguagem e mostrando como ela pode ser usada para resolver problemas reais.
