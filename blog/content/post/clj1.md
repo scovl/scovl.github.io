@@ -24,9 +24,9 @@ weight = 5
 
 Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:
 
-### Iniciando um Projeto com Leiningen
+## Iniciando um Projeto com Leiningen
 
-#### Passo 1: Criando um novo projeto
+### Passo 1: Criando um novo projeto
 
 Para criar um novo projeto com Leiningen, abra seu terminal e digite o seguinte comando:
 
@@ -62,7 +62,7 @@ three-little-pigs/
 
 Nosso código principal será escrito no arquivo `src/three_little_pigs/core.clj`. Esse arquivo é onde colocaremos a lógica do nosso programa.
 
-#### Passo 3: Escrevendo a História dos Três Porquinhos
+### Passo 3: Escrevendo a História dos Três Porquinhos
 
 Abra o arquivo `src/three_little_pigs/core.clj` em seu editor de texto preferido e substitua o conteúdo com o seguinte código:
 
@@ -112,7 +112,7 @@ O lobo não conseguiu derrubar a casa de tijolos.
 A casa de tijolos do terceiro porquinho os salvou.
 ```
 
-#### Passo 5: Gerando um JAR Executável
+### Passo 5: Gerando um JAR Executável
 
 Usar `lein run` é ótimo para testar seu código, mas e se você quiser compartilhar seu trabalho com pessoas que não têm Leiningen instalado? Para isso, você pode criar um arquivo JAR independente que qualquer pessoa com Java instalado (basicamente todo mundo) pode executar. Para criar o arquivo, execute o seguinte comando:
 
