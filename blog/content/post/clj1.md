@@ -22,7 +22,7 @@ weight = 5
 
 ### Introdução
 
-Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:
+Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o **[Clojure](https://clojure.org/guides/install_clojure)** e o **[Leiningen](https://leiningen.org/#install)** instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:
 
 ## Iniciando um Projeto com Leiningen
 
