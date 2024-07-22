@@ -129,23 +129,6 @@
 <li><a href="/2024/07/19/clj1/#natureza-e-uso-de-def-e-defn">Natureza e Uso de Def e Defn</a></li>
 <li><a href="/2024/07/19/clj1/#100daysofcode">100daysofcode</a></li>
 </ul>
-<h4 id="table-of-contents-1">Table of Contents</h4>
-<ul>
-<li>Introdução</li>
-<li>Iniciando um Projeto com Leiningen
-<ul>
-<li>Passo 1: Criando um novo projeto</li>
-<li>Passo 2: Estrutura do Projeto</li>
-<li>Passo 3: Escrevendo a História dos Três Porquinhos</li>
-<li>Passo 4: Executando o Projeto</li>
-<li>Passo 5: Gerando um JAR Executável</li>
-<li>Passo 6: Usando o REPL</li>
-</ul>
-</li>
-<li>Def e Defn: Entendendo as Diferenças</li>
-<li>Natureza e Uso de Def e Defn</li>
-<li>100daysofcode</li>
-</ul>
 <h3 id="introdução">Introdução</h3>
 <p>Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:</p>
 <h3 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h3>
@@ -153,25 +136,25 @@
 <p>Para criar um novo projeto com Leiningen, abra seu terminal e digite o seguinte comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein new app three-little-pigs
 </span></span></code></pre></div><p>Esse comando criará uma nova estrutura de projeto chamada <code>three-little-pigs</code>. O <code>lein new app &lt;nome-do-projeto&gt;</code> é usado para gerar um novo projeto Clojure com uma estrutura básica de diretórios e arquivos necessários para começar a desenvolver.</p>
-<h4 id="passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</h4>
+<h3 id="passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</h3>
 <p>Navegue até a pasta do projeto que acabamos de criar:</p>
 <p>Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:</p>
-<pre tabindex="0"><code>three-little-pigs/
-├── CHANGELOG.md
-├── LICENSE
-├── README.md
-├── doc
-│   └── intro.md
-├── project.clj
-├── resources
-├── src
-│   └── three_little_pigs
-│       └── core.clj
-├── target
-└── test
-    └── three_little_pigs
-        └── core_test.clj
-</code></pre><p>Nosso código principal será escrito no arquivo <code>src/three_little_pigs/core.clj</code>. Esse arquivo é onde colocaremos a lógica do nosso programa.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">three-little-pigs/
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── CHANGELOG.md
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">├── LICENSE
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">├── README.md
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">├── doc
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">│   └── intro.md
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">├── project.clj
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">├── resources
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">├── src
+</span></span><span class="line"><span class="ln">10</span><span class="cl">│   └── three_little_pigs
+</span></span><span class="line"><span class="ln">11</span><span class="cl">│       └── core.clj
+</span></span><span class="line"><span class="ln">12</span><span class="cl">├── target
+</span></span><span class="line"><span class="ln">13</span><span class="cl">└── <span class="nb">test</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    └── three_little_pigs
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        └── core_test.clj
+</span></span></code></pre></div><p>Nosso código principal será escrito no arquivo <code>src/three_little_pigs/core.clj</code>. Esse arquivo é onde colocaremos a lógica do nosso programa.</p>
 <h4 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h4>
 <p>Abra o arquivo <code>src/three_little_pigs/core.clj</code> em seu editor de texto preferido e substitua o conteúdo com o seguinte código:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span><span class="p">)</span>
@@ -197,49 +180,49 @@
 </span></span><span class="line"><span class="ln">21</span><span class="cl">
 </span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
 </span></span><span class="line"><span class="ln">23</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">)))</span>
-</span></span></code></pre></div><h4 id="passo-4-executando-o-projeto">Passo 4: Executando o Projeto</h4>
+</span></span></code></pre></div><h3 id="passo-4-executando-o-projeto">Passo 4: Executando o Projeto</h3>
 <p>Para executar o nosso projeto e ver a história dos Três Porquinhos em ação, volte ao terminal e execute o seguinte comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein run
 </span></span></code></pre></div><p>O comando <code>lein run</code> compila e executa o projeto, mostrando a saída no terminal. Você verá a história completa dos Três Porquinhos no terminal:</p>
-<pre tabindex="0"><code>O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
-O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
-O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
-O lobo veio, soprou e derrubou a casa de palha.
-O lobo veio, soprou e derrubou a casa de madeira.
-O lobo não conseguiu derrubar a casa de tijolos.
-A casa de tijolos do terceiro porquinho os salvou.
-</code></pre><h4 id="passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
+</span></span><span class="line"><span class="ln">4</span><span class="cl">O lobo veio, soprou e derrubou a casa de palha.
+</span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
+</span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
+</span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
+</span></span></code></pre></div><h4 id="passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</h4>
 <p>Usar <code>lein run</code> é ótimo para testar seu código, mas e se você quiser compartilhar seu trabalho com pessoas que não têm Leiningen instalado? Para isso, você pode criar um arquivo JAR independente que qualquer pessoa com Java instalado (basicamente todo mundo) pode executar. Para criar o arquivo, execute o seguinte comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein uberjar
 </span></span></code></pre></div><p>Este comando cria o arquivo <code>target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar</code>. Você pode executá-lo com Java usando o comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">java -jar target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar
 </span></span></code></pre></div><p>Agora, você tem um programa Clojure que pode ser distribuído e executado em quase qualquer plataforma.</p>
-<h4 id="passo-6-usando-o-repl">Passo 6: Usando o REPL</h4>
+<h3 id="passo-6-usando-o-repl">Passo 6: Usando o REPL</h3>
 <p>O REPL (Read-Eval-Print Loop) é uma ferramenta poderosa para experimentar com código. Ele permite que você interaja com um programa em execução e teste rapidamente ideias. Para iniciar um REPL, execute o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein repl
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein repl
 </span></span></code></pre></div><p>A saída deve ser algo assim:</p>
-<pre tabindex="0"><code>nREPL server started on port 54015 on host 127.0.0.1 - nrepl://127.0.0.1:54015
-REPL-y 0.5.1, nREPL 1.0.0
-Clojure 1.11.1
-OpenJDK 64-Bit Server VM 22.0.1+8-16
-    Docs: (doc function-name-here)
-          (find-doc &#34;part-of-name-here&#34;)
-  Source: (source function-name-here)
- Javadoc: (javadoc java-object-or-class-here)
-    Exit: Control+D or (exit) or (quit)
- Results: Stored in vars *1, *2, *3, an exception in *e
-</code></pre><p>O prompt <code>three-little-pigs.core=&gt;</code> indica que você está no namespace <code>three-little-pigs.core</code>. Agora você pode executar funções definidas no seu código:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">nREPL server started on port <span class="m">54015</span> on host 127.0.0.1 - nrepl://127.0.0.1:54015
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">REPL-y 0.5.1, nREPL 1.0.0
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">Clojure 1.11.1
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">OpenJDK 64-Bit Server VM 22.0.1+8-16
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    Docs: <span class="o">(</span>doc <span class="k">function</span>-name-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">          <span class="o">(</span>find-doc <span class="s2">&#34;part-of-name-here&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  Source: <span class="o">(</span><span class="nb">source</span> <span class="k">function</span>-name-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"> Javadoc: <span class="o">(</span>javadoc java-object-or-class-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    Exit: Control+D or <span class="o">(</span><span class="nb">exit</span><span class="o">)</span> or <span class="o">(</span>quit<span class="o">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"> Results: Stored in vars *1, *2, *3, an exception in *e
+</span></span></code></pre></div><p>O prompt <code>three-little-pigs.core=&gt;</code> indica que você está no namespace <code>three-little-pigs.core</code>. Agora você pode executar funções definidas no seu código:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">three-little-pigs.core=&gt;</span> <span class="p">(</span><span class="nf">-main</span><span class="p">)</span>
 </span></span></code></pre></div><p>Você verá a saída:</p>
-<pre tabindex="0"><code>O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
-O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
-O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
-O lobo veio, soprou e derrubou a casa de palha.
-O lobo veio, soprou e derrubou a casa de madeira.
-O lobo n�o conseguiu derrubar a casa de tijolos.
-A casa de tijolos do terceiro porquinho os salvou.
-nil
-</code></pre><p>Em Clojure, assim como em muitas outras linguagens de programação, funções sempre retornam algum valor. Quando uma função não tem um retorno explícito especificado, ou quando a última expressão avaliada não retorna um valor significativo para o contexto do programa, <code>nil</code> é retornado. nil é usado em Clojure para representar a ausência de um valor. Experimente algumas funções básicas do Clojure:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
+</span></span><span class="line"><span class="ln">4</span><span class="cl">O lobo veio, soprou e derrubou a casa de palha.
+</span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
+</span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
+</span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
+</span></span><span class="line"><span class="ln">8</span><span class="cl">nil
+</span></span></code></pre></div><p>Em Clojure, assim como em muitas outras linguagens de programação, funções sempre retornam algum valor. Quando uma função não tem um retorno explícito especificado, ou quando a última expressão avaliada não retorna um valor significativo para o contexto do programa, <code>nil</code> é retornado. nil é usado em Clojure para representar a ausência de um valor. Experimente algumas funções básicas do Clojure:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">clojure-noob.core=&gt;</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="mi">10</span>
 </span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">clojure-noob.core=&gt;</span> <span class="p">(</span><span class="nb">* </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
