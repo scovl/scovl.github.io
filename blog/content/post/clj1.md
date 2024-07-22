@@ -20,20 +20,6 @@ weight = 5
 * [Natureza e Uso de Def e Defn](#natureza-e-uso-de-def-e-defn)
 * [100daysofcode](#100daysofcode)
 
-#### Table of Contents
-
-- Introdução
-- Iniciando um Projeto com Leiningen
-  - Passo 1: Criando um novo projeto
-  - Passo 2: Estrutura do Projeto
-  - Passo 3: Escrevendo a História dos Três Porquinhos
-  - Passo 4: Executando o Projeto
-  - Passo 5: Gerando um JAR Executável
-  - Passo 6: Usando o REPL
-- Def e Defn: Entendendo as Diferenças
-- Natureza e Uso de Def e Defn
-- 100daysofcode
-
 ### Introdução
 
 Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:
@@ -50,13 +36,13 @@ lein new app three-little-pigs
 
 Esse comando criará uma nova estrutura de projeto chamada `three-little-pigs`. O `lein new app <nome-do-projeto>` é usado para gerar um novo projeto Clojure com uma estrutura básica de diretórios e arquivos necessários para começar a desenvolver.
 
-#### Passo 2: Estrutura do Projeto
+### Passo 2: Estrutura do Projeto
 
 Navegue até a pasta do projeto que acabamos de criar:
 
 Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:
 
-```
+```bash
 three-little-pigs/
 ├── CHANGELOG.md
 ├── LICENSE
@@ -106,7 +92,7 @@ Abra o arquivo `src/three_little_pigs/core.clj` em seu editor de texto preferido
   (println (story)))
 ```
 
-#### Passo 4: Executando o Projeto
+### Passo 4: Executando o Projeto
 
 Para executar o nosso projeto e ver a história dos Três Porquinhos em ação, volte ao terminal e execute o seguinte comando:
 
@@ -116,7 +102,7 @@ lein run
 
 O comando `lein run` compila e executa o projeto, mostrando a saída no terminal. Você verá a história completa dos Três Porquinhos no terminal:
 
-```
+```bash
 O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
 O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
 O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
@@ -142,17 +128,17 @@ java -jar target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar
 
 Agora, você tem um programa Clojure que pode ser distribuído e executado em quase qualquer plataforma.
 
-#### Passo 6: Usando o REPL
+### Passo 6: Usando o REPL
 
 O REPL (Read-Eval-Print Loop) é uma ferramenta poderosa para experimentar com código. Ele permite que você interaja com um programa em execução e teste rapidamente ideias. Para iniciar um REPL, execute o seguinte comando:
 
-```shell
+```bash
 lein repl
 ```
 
 A saída deve ser algo assim:
 
-```
+```bash
 nREPL server started on port 54015 on host 127.0.0.1 - nrepl://127.0.0.1:54015
 REPL-y 0.5.1, nREPL 1.0.0
 Clojure 1.11.1
@@ -173,13 +159,13 @@ three-little-pigs.core=> (-main)
 
 Você verá a saída:
 
-```
+```bash
 O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
 O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
 O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
 O lobo veio, soprou e derrubou a casa de palha.
 O lobo veio, soprou e derrubou a casa de madeira.
-O lobo n�o conseguiu derrubar a casa de tijolos.
+O lobo não conseguiu derrubar a casa de tijolos.
 A casa de tijolos do terceiro porquinho os salvou.
 nil
 ```

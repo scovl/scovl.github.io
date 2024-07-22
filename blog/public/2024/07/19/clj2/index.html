@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Clojure Sessions02 &middot; Vitor Lobo</title>
+        <meta name="description" content="Advanced Three Little Pigs">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.128.2">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Clojure Sessions02">
+<meta property="og:description" content="Advanced Three Little Pigs">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/2024/07/19/clj2/">
+        <link rel="stylesheet" href="http://localhost:1313//dist/site.css">
+        <link rel="stylesheet" href="http://localhost:1313//dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="http://localhost:1313//img/favicon.ico">
+    </head>
+    <body>
+        
+  
+
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="neurodev-title">
+                                <a title="neurodev" href="http://localhost:1313/">$ /home/scovl_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="http://localhost:1313//index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Clojure Sessions02</h1>
+    
+        <p class="post-description" itemprop="description">Advanced Three Little Pigs</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2024-07-19" itemprop="datePublished">sex., jul. 19, 2024</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 4 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><strong><a href="/2024/07/19/clj2/#introdução">Introdução</a></strong></li>
+<li><a href="/2024/07/19/clj2/#evoluindo-o-projeto-com-leiningen">Evoluindo o Projeto com Leiningen</a>
+<ul>
+<li><a href="/2024/07/19/clj2/#passo-1-refatorando-o-código">Passo 1: Refatorando o Código</a></li>
+<li><a href="/2024/07/19/clj2/#passo-2-dividindo-em-módulos">Passo 2: Dividindo em Módulos</a></li>
+<li><a href="/2024/07/19/clj2/#passo-3-usando-def-para-variáveis-globais">Passo 3: Usando <code>def</code> para Variáveis Globais</a></li>
+<li><a href="/2024/07/19/clj2/#passo-4-adicionando-mais-complexidade">Passo 4: Adicionando Mais Complexidade</a></li>
+<li><a href="/2024/07/19/clj2/#passo-5-executando-o-projeto-refatorado">Passo 5: Executando o Projeto Refatorado</a></li>
+</ul>
+</li>
+<li><a href="/2024/07/19/clj2/#conclusão">Conclusão</a></li>
+<li><a href="/2024/07/19/clj2/#compartilhando-seu-progresso">Compartilhando Seu Progresso</a></li>
+<li><a href="/2024/07/19/clj2/#100daysofcode">100daysofcode</a></li>
+</ul>
+<h1 id="introdução">Introdução</h1>
+<p>Neste segundo artigo, vamos avançar no nosso projeto &ldquo;Three Little Pigs&rdquo; utilizando conceitos mais avançados do Clojure. Iremos refatorar nosso código para torná-lo mais modular e introduzir o uso de <code>def</code> para variáveis globais. Isso não só melhorará a organização do código, mas também facilitará a manutenção e a escalabilidade do projeto.</p>
+<h1 id="evoluindo-o-projeto-com-leiningen">Evoluindo o Projeto com Leiningen</h1>
+<h3 id="passo-1-refatorando-o-código">Passo 1: Refatorando o Código</h3>
+<p>Vamos começar refatorando nosso código original. Primeiro, continue a partir do projeto anterior em <strong><a href="https://scovl.github.io/2024/07/19/clj1/">Clojure Sessions01</a></strong>.</p>
+<h3 id="passo-2-dividindo-em-módulos">Passo 2: Dividindo em Módulos</h3>
+<p>Dividir o código em módulos ajuda a manter o projeto organizado. Vamos criar dois novos arquivos para separar a lógica dos porquinhos e do lobo. Dentro da pasta <code>src/three_little_pigs</code>, crie dois novos arquivos: <code>pig.clj</code> e <code>wolf.clj</code>.</p>
+<h4 id="conteúdo-de-pigclj">Conteúdo de <code>pig.clj</code></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.pig</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
+</span></span></code></pre></div><h4 id="conteúdo-de-wolfclj">Conteúdo de <code>wolf.clj</code></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.wolf</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span></code></pre></div><h3 id="passo-3-usando-def-para-variáveis-globais">Passo 3: Usando <code>def</code> para Variáveis Globais</h3>
+<p>Vamos definir algumas variáveis globais que serão usadas em vários lugares do nosso projeto. Abra o arquivo <code>core.clj</code> e adicione as seguintes definições:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">three-little-pigs.pig</span> <span class="ss">:as</span> <span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">            <span class="p">[</span><span class="nv">three-little-pigs.wolf</span> <span class="ss">:as</span> <span class="nv">wolf</span><span class="p">]))</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">lobo</span> <span class="s">&#34;O lobo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">materiais</span> <span class="p">[</span><span class="s">&#34;palha&#34;</span> <span class="s">&#34;madeira&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">story</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pig1</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O primeiro porquinho&#34;</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        <span class="nv">pig2</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O segundo porquinho&#34;</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="nv">pig3</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O terceiro porquinho&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="nv">wolf1</span> <span class="p">(</span><span class="nf">wolf/wolf-action</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">        <span class="nv">wolf2</span> <span class="p">(</span><span class="nf">wolf/wolf-action</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="nv">wolf3</span> <span class="s">&#34;O lobo não conseguiu derrubar a casa de tijolos.&#34;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="nv">conclusion</span> <span class="s">&#34;A casa de tijolos do terceiro porquinho os salvou.&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="p">(</span><span class="nb">str </span><span class="nv">pig1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">conclusion</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="passo-4-adicionando-mais-complexidade">Passo 4: Adicionando Mais Complexidade</h3>
+<p>Para adicionar mais complexidade ao projeto, vamos introduzir novas funções e uma interação mais rica entre os personagens. Por exemplo, podemos adicionar diálogos entre os porquinhos e o lobo, e ações adicionais, como os porquinhos reforçando suas casas.</p>
+<h4 id="atualizando-pigclj">Atualizando <code>pig.clj</code></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.pig</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">reinforce-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho reforçou a casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-dialogue</span> <span class="p">[</span><span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; disse: &#39;Não vou deixar o lobo derrubar minha casa!&#39;&#34;</span><span class="p">))</span>
+</span></span></code></pre></div><h4 id="atualizando-wolfclj">Atualizando <code>wolf.clj</code></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.wolf</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-dialogue</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo disse: &#39;Vou soprar e sua casa derrubar!&#39;&#34;</span><span class="p">))</span>
+</span></span></code></pre></div><h4 id="atualizando-coreclj">Atualizando <code>core.clj</code></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">three-little-pigs.pig</span> <span class="ss">:as</span> <span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">            <span class="p">[</span><span class="nv">three-little-pigs.wolf</span> <span class="ss">:as</span> <span class="nv">wolf</span><span class="p">]))</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">lobo</span> <span class="s">&#34;O lobo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">materiais</span> <span class="p">[</span><span class="s">&#34;palha&#34;</span> <span class="s">&#34;madeira&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">story</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">pig1</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O primeiro porquinho&#34;</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        <span class="nv">pig2</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O segundo porquinho&#34;</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="nv">pig3</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="s">&#34;O terceiro porquinho&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="nv">reinforce1</span> <span class="p">(</span><span class="nf">pig/reinforce-house</span> <span class="s">&#34;tijolos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">        <span class="nv">wolf1</span> <span class="p">(</span><span class="nf">wolf/wolf-action</span> <span class="s">&#34;palha&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="nv">wolf2</span> <span class="p">(</span><span class="nf">wolf/wolf-action</span> <span class="s">&#34;madeira&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="nv">wolf3</span> <span class="s">&#34;O lobo não conseguiu derrubar a casa de tijolos.&#34;</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">        <span class="nv">dialogue1</span> <span class="p">(</span><span class="nf">pig/pig-dialogue</span> <span class="s">&#34;O terceiro porquinho&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">        <span class="nv">dialogue2</span> <span class="p">(</span><span class="nf">wolf/wolf-dialogue</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">        <span class="nv">conclusion</span> <span class="s">&#34;A casa de tijolos do terceiro porquinho os salvou.&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">    <span class="p">(</span><span class="nb">str </span><span class="nv">pig1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">pig3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">reinforce1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">wolf3</span> <span class="s">&#34;\n&#34;</span> <span class="nv">dialogue1</span> <span class="s">&#34;\n&#34;</span> <span class="nv">dialogue2</span> <span class="s">&#34;\n&#34;</span> <span class="nv">conclusion</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="passo-5-executando-o-projeto-refatorado">Passo 5: Executando o Projeto Refatorado</h3>
+<p>Para executar o projeto refatorado, utilize o mesmo comando no terminal:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein run
+</span></span></code></pre></div><p>Isso compilará e executará o projeto, exibindo a história completa dos Três Porquinhos com mais detalhes e interações no terminal.</p>
+<h1 id="compartilhando-seu-progresso">Compartilhando Seu Progresso</h1>
+<p>Depois de concluir seu projeto, uma excelente forma de manter o aprendizado e obter feedback é compartilhá-lo no <a href="https://github.com">GitHub</a>. Subir seu projeto para o GitHub não apenas protege seu código em um repositório remoto, mas também o expõe a uma comunidade global, onde outros desenvolvedores podem colaborar, sugerir melhorias e ajudar no desenvolvimento de suas habilidades.</p>
+<h1 id="100daysofcode">100daysofcode</h1>
+<p>Além disso, considere aderir ao desafio <a href="https://www.100daysofcode.com/">#100DaysOfCode</a>. Esse desafio incentiva você a codificar todos os dias por 100 dias consecutivos, o que pode significativamente acelerar seu aprendizado em programação, especialmente em novas linguagens e paradigmas como o Clojure.</p>
+<p>Para quem está começando com Clojure e deseja uma leitura acessível e informativa, recomendo o livro <em>Clojure for the Brave and True</em> de Daniel Higginbotham. Este livro oferece uma introdução clara e divertida ao mundo de Clojure, cobrindo desde os conceitos básicos até técnicas mais avançadas, com exemplos práticos para ajudar você a praticar. Você pode encontrar mais informações sobre o livro e recursos adicionais no <a href="http://www.braveclojure.com/">site oficial do livro</a>.</p>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/oop/">OOP</a>, 
+            
+                <a href="/tags/software/">software</a>, 
+            
+                <a href="/tags/engineering/">engineering</a>, 
+            
+                <a href="/tags/clojure/">Clojure</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Clojure%20Sessions02&url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj2%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj2%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj2%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Clojure%20Sessions02&url=http%3a%2f%2flocalhost%3a1313%2f2024%2f07%2f19%2fclj2%2f&summary=Advanced%20Three%20Little%20Pigs"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="scovl" href="http://localhost:1313/">scovl</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2024 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="http://localhost:1313/js/jquery-1.11.3.min.js"></script>
+        <script src="http://localhost:1313/js/jquery.fitvids.js"></script>
+        <script src="http://localhost:1313/js/scripts.js"></script>
+    </body>
+</html>
+

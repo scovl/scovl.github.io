@@ -3,7 +3,7 @@ title = "Clojure Sessions02"
 description = "Advanced Three Little Pigs"
 date = 2024-07-19T19:00:00-00:00
 tags = ["OOP","software","engineering", "Clojure"]
-draft = false
+draft = true
 weight = 6
 +++
 

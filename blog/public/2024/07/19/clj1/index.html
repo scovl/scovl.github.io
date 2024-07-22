@@ -121,23 +121,24 @@
 <li><a href="/2024/07/19/clj1/#passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</a></li>
 <li><a href="/2024/07/19/clj1/#passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</a></li>
 <li><a href="/2024/07/19/clj1/#passo-4-executando-o-projeto">Passo 4: Executando o Projeto</a></li>
+<li><a href="/2024/07/19/clj1/#passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</a></li>
+<li><a href="/2024/07/19/clj1/#passo-6-usando-o-repl">Passo 6: Usando o REPL</a></li>
 </ul>
 </li>
 <li><a href="/2024/07/19/clj1/#def-e-defn-entendendo-as-diferenças">Def e Defn: Entendendo as Diferenças</a></li>
 <li><a href="/2024/07/19/clj1/#natureza-e-uso-de-def-e-defn">Natureza e Uso de Def e Defn</a></li>
 <li><a href="/2024/07/19/clj1/#100daysofcode">100daysofcode</a></li>
 </ul>
-<h1 id="introdução">Introdução</h1>
-<p>Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o <a href="https://clojure.org/guides/install_clojure">Clojure</a> e o <a href="https://leiningen.org/#install">Leiningen</a> instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:</p>
-<h1 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h1>
-<h3 id="passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</h3>
+<h3 id="introdução">Introdução</h3>
+<p>Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:</p>
+<h3 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h3>
+<h4 id="passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</h4>
 <p>Para criar um novo projeto com Leiningen, abra seu terminal e digite o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein new app three-little-pigs
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein new app three-little-pigs
 </span></span></code></pre></div><p>Esse comando criará uma nova estrutura de projeto chamada <code>three-little-pigs</code>. O <code>lein new app &lt;nome-do-projeto&gt;</code> é usado para gerar um novo projeto Clojure com uma estrutura básica de diretórios e arquivos necessários para começar a desenvolver.</p>
 <h3 id="passo-2-estrutura-do-projeto">Passo 2: Estrutura do Projeto</h3>
 <p>Navegue até a pasta do projeto que acabamos de criar:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="nb">cd</span> three-little-pigs
-</span></span></code></pre></div><p>Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:</p>
+<p>Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">three-little-pigs/
 </span></span><span class="line"><span class="ln"> 2</span><span class="cl">├── CHANGELOG.md
 </span></span><span class="line"><span class="ln"> 3</span><span class="cl">├── LICENSE
@@ -154,8 +155,8 @@
 </span></span><span class="line"><span class="ln">14</span><span class="cl">    └── three_little_pigs
 </span></span><span class="line"><span class="ln">15</span><span class="cl">        └── core_test.clj
 </span></span></code></pre></div><p>Nosso código principal será escrito no arquivo <code>src/three_little_pigs/core.clj</code>. Esse arquivo é onde colocaremos a lógica do nosso programa.</p>
-<h3 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h3>
-<p>Abra o arquivo <code>src/three_little_pigs/core.clj</code> em seu editor de texto preferido e substitua o conteúdo com o seguinte código (não copie, escreva):</p>
+<h4 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h4>
+<p>Abra o arquivo <code>src/three_little_pigs/core.clj</code> em seu editor de texto preferido e substitua o conteúdo com o seguinte código:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span><span class="p">)</span>
 </span></span><span class="line"><span class="ln"> 2</span><span class="cl">
 </span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
@@ -179,27 +180,9 @@
 </span></span><span class="line"><span class="ln">21</span><span class="cl">
 </span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[]</span>
 </span></span><span class="line"><span class="ln">23</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">)))</span>
-</span></span></code></pre></div><p>Aqui está uma explicação detalhada de cada parte do código:</p>
-<ul>
-<li><code>(ns three-little-pigs.core)</code>: Define um novo namespace chamado <code>three-little-pigs.core</code>, que agrupa funções relacionadas.</li>
-</ul>
-<p>Quando você declara <code>(ns three-little-pigs.core)</code> em Clojure, está fazendo o seguinte:</p>
-<ol>
-<li><strong>Criando ou Especificando um Espaço</strong>: Você está dizendo ao Clojure &ldquo;Vou trabalhar dentro de um espaço chamado <code>three-little-pigs.core</code>&rdquo;. Tudo o que você definir ou usar dentro deste arquivo será parte deste espaço.</li>
-<li><strong>Evitando Conflitos</strong>: Se em outra parte do seu projeto Clojure você tiver outro namespace, como <code>three-little-pigs.utils</code>, ele pode ter funções com o mesmo nome que as do <code>three-little-pigs.core</code> sem causar confusão ou erros, pois eles estão em &ldquo;pastas&rdquo; diferentes.</li>
-<li><strong>Organização</strong>: Ajuda a manter seu código organizado e claro. Por exemplo, funções relacionadas à lógica principal da história dos Três Porquinhos ficam no <code>three-little-pigs.core</code>, enquanto utilitários ou funções auxiliares podem estar em outro namespace como <code>three-little-pigs.utils</code>.</li>
-</ol>
-<p>Em suma, ao usar <code>(ns three-little-pigs.core)</code>, você está essencialmente preparando o terreno para escrever seu código em um local específico que é isolado e bem organizado, evitando problemas e facilitando a manutenção e a expansão do seu programa. É como se você estivesse etiquetando uma pasta grande para dizer &ldquo;Aqui dentro está tudo relacionado ao coração da história dos Três Porquinhos!</p>
-<ul>
-<li><code>(defn build-house [material] ...)</code>: Define uma função <code>build-house</code> que aceita um material e retorna uma string descrevendo a construção da casa.</li>
-<li><code>(defn pig-activity [pig material] ...)</code>: Define uma função <code>pig-activity</code> que aceita o nome de um porquinho e o material para construir a casa, combinando essas informações.</li>
-<li><code>(defn wolf-action [house] ...)</code>: Define uma função <code>wolf-action</code> que descreve a ação do lobo ao soprar a casa.</li>
-<li><code>(defn story [] ...)</code>: Define a função <code>story</code> que monta toda a história dos três porquinhos, usando as funções anteriores.</li>
-<li><code>(defn -main [] ...)</code>: Define a função <code>-main</code> que imprime a história quando o programa é executado.</li>
-</ul>
-<h3 id="passo-4-executando-o-projeto">Passo 4: Executando o Projeto</h3>
+</span></span></code></pre></div><h3 id="passo-4-executando-o-projeto">Passo 4: Executando o Projeto</h3>
 <p>Para executar o nosso projeto e ver a história dos Três Porquinhos em ação, volte ao terminal e execute o seguinte comando:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein run
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein run
 </span></span></code></pre></div><p>O comando <code>lein run</code> compila e executa o projeto, mostrando a saída no terminal. Você verá a história completa dos Três Porquinhos no terminal:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
 </span></span><span class="line"><span class="ln">2</span><span class="cl">O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
@@ -208,37 +191,60 @@
 </span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
 </span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
 </span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
-</span></span></code></pre></div><h3 id="def-e-defn">def e defn</h3>
+</span></span></code></pre></div><h4 id="passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</h4>
+<p>Usar <code>lein run</code> é ótimo para testar seu código, mas e se você quiser compartilhar seu trabalho com pessoas que não têm Leiningen instalado? Para isso, você pode criar um arquivo JAR independente que qualquer pessoa com Java instalado (basicamente todo mundo) pode executar. Para criar o arquivo, execute o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein uberjar
+</span></span></code></pre></div><p>Este comando cria o arquivo <code>target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar</code>. Você pode executá-lo com Java usando o comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">java -jar target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar
+</span></span></code></pre></div><p>Agora, você tem um programa Clojure que pode ser distribuído e executado em quase qualquer plataforma.</p>
+<h3 id="passo-6-usando-o-repl">Passo 6: Usando o REPL</h3>
+<p>O REPL (Read-Eval-Print Loop) é uma ferramenta poderosa para experimentar com código. Ele permite que você interaja com um programa em execução e teste rapidamente ideias. Para iniciar um REPL, execute o seguinte comando:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">lein repl
+</span></span></code></pre></div><p>A saída deve ser algo assim:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">nREPL server started on port <span class="m">54015</span> on host 127.0.0.1 - nrepl://127.0.0.1:54015
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">REPL-y 0.5.1, nREPL 1.0.0
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">Clojure 1.11.1
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">OpenJDK 64-Bit Server VM 22.0.1+8-16
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    Docs: <span class="o">(</span>doc <span class="k">function</span>-name-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">          <span class="o">(</span>find-doc <span class="s2">&#34;part-of-name-here&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  Source: <span class="o">(</span><span class="nb">source</span> <span class="k">function</span>-name-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"> Javadoc: <span class="o">(</span>javadoc java-object-or-class-here<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    Exit: Control+D or <span class="o">(</span><span class="nb">exit</span><span class="o">)</span> or <span class="o">(</span>quit<span class="o">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"> Results: Stored in vars *1, *2, *3, an exception in *e
+</span></span></code></pre></div><p>O prompt <code>three-little-pigs.core=&gt;</code> indica que você está no namespace <code>three-little-pigs.core</code>. Agora você pode executar funções definidas no seu código:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">three-little-pigs.core=&gt;</span> <span class="p">(</span><span class="nf">-main</span><span class="p">)</span>
+</span></span></code></pre></div><p>Você verá a saída:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">O primeiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de palha.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">O segundo porquinho decidiu construir uma casa. O porquinho construiu uma casa de madeira.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">O terceiro porquinho decidiu construir uma casa. O porquinho construiu uma casa de tijolos.
+</span></span><span class="line"><span class="ln">4</span><span class="cl">O lobo veio, soprou e derrubou a casa de palha.
+</span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
+</span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
+</span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
+</span></span><span class="line"><span class="ln">8</span><span class="cl">nil
+</span></span></code></pre></div><p>Em Clojure, assim como em muitas outras linguagens de programação, funções sempre retornam algum valor. Quando uma função não tem um retorno explícito especificado, ou quando a última expressão avaliada não retorna um valor significativo para o contexto do programa, <code>nil</code> é retornado. nil é usado em Clojure para representar a ausência de um valor. Experimente algumas funções básicas do Clojure:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">clojure-noob.core=&gt;</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="mi">10</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nv">clojure-noob.core=&gt;</span> <span class="p">(</span><span class="nb">* </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="mi">24</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nv">clojure-noob.core=&gt;</span> <span class="p">(</span><span class="nb">first </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="mi">1</span>
+</span></span></code></pre></div><p>Usar o REPL permite um ciclo de feedback rápido.</p>
+<h3 id="def-e-defn">Def e Defn</h3>
 <p>Neste projeto específico, poderíamos usar <code>def</code> para definir constantes ou variáveis globais que poderiam ser usadas em todo o código. Por exemplo, se houvesse um elemento recorrente ou um valor que não muda, como o nome do lobo ou tipos de material utilizados na construção das casas, <code>def</code> seria apropriado. Exemplo:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">lobo</span> <span class="s">&#34;O lobo&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">materiais</span> <span class="p">[</span><span class="s">&#34;palha&#34;</span> <span class="s">&#34;madeira&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">])</span>
 </span></span></code></pre></div><p>Aqui, <code>lobo</code> armazena o nome do personagem constante em toda a história, e <code>materiais</code> poderia ser uma lista de materiais usados pelos porquinhos, acessível em qualquer parte do programa.</p>
-<ul>
-<li>
-<p><strong><code>defn</code></strong>: No código <code>three-little-pigs</code>, <code>defn</code> é usado para definir funções que representam as ações dos personagens ou o fluxo da história. Cada função executa uma tarefa específica, como construir uma casa ou realizar a ação do lobo.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
-</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
-</span></span><span class="line"><span class="ln">3</span><span class="cl">
-</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
-</span></span><span class="line"><span class="ln">5</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
-</span></span><span class="line"><span class="ln">6</span><span class="cl">
-</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
-</span></span><span class="line"><span class="ln">8</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
-</span></span></code></pre></div></li>
-</ul>
-<p>A função <code>build-house</code> aceita um material como argumento e retorna uma string descrevendo a construção da casa. <code>pig-activity</code> combina a ação de um porquinho escolhendo um material e usando <code>build-house</code> para construir a casa. <code>wolf-action</code> descreve a ação do lobo em relação às casas construídas.</p>
 <h3 id="natureza-e-uso">Natureza e Uso</h3>
 <ul>
-<li><strong>Natureza</strong>: <code>def</code> no código poderia ser usado para dados estáticos que não mudam, proporcionando fácil referência em todo o código. <code>defn</code>, por outro lado, encapsula blocos de lógica que são executados repetidamente, como ações de personagens.</li>
-<li><strong>Visibilidade</strong>: Tanto <code>def</code> quanto <code>defn</code> criam símbolos globais, mas <code>defn</code> facilita a organização ao agrupar lógicas de procedimentos sob um nome de função, que pode ser chamado em qualquer parte do código.</li>
-<li><strong>Flexibilidade</strong>: <code>def</code> proporciona a flexibilidade de armazenar qualquer tipo de dado, enquanto <code>defn</code> estrutura as ações que o programa pode executar, essencialmente moldando o comportamento interativo do código.</li>
+<li><strong>Natureza:</strong> <code>def</code> no código poderia ser usado para dados estáticos que não mudam, proporcionando fácil referência em todo o código. <code>defn</code>, por outro lado, encapsula blocos de lógica que são executados repetidamente, como ações de personagens.</li>
+<li><strong>Visibilidade:</strong> Tanto <code>def</code> quanto <code>defn</code> criam símbolos globais, mas <code>defn</code> facilita a organização ao agrupar lógicas de procedimentos sob um nome de função, que pode ser chamado em qualquer parte do código.</li>
+<li><strong>Flexibilidade:</strong> <code>def</code> proporciona a flexibilidade de armazenar qualquer tipo de dado, enquanto <code>defn</code> estrutura as ações que o programa pode executar, essencialmente moldando o comportamento interativo do código.</li>
 </ul>
 <p>Agora que você viu como criar um projeto simples em Clojure usando o Leiningen e desenvolver um programa funcional, que tal explorar ainda mais? Experimente adicionar <code>def</code> para definir constantes ou variáveis globais que poderiam ser usadas em todo o código, como nomes de personagens ou elementos da história. Isso não só enriquecerá seu projeto, mas também ajudará a entender melhor como organizar e modularizar seu código.</p>
-<p>Aqui está uma sugestão para o último tópico do seu documento, incentivando o leitor a subir o projeto no GitHub e a participar do desafio #100DaysOfCode:</p>
-<hr>
-<h2 id="100daysofcode">100daysofcode</h2>
-<p>Depois de concluir seu projeto, uma excelente forma de manter o aprendizado e obter feedback é compartilhá-lo no <a href="https://github.com">GitHub</a>. Além disso, considere aderir ao desafio <a href="https://www.100daysofcode.com/">#100DaysOfCode</a>. Esse desafio incentiva você a codificar todos os dias por 100 dias consecutivos, o que pode significativamente acelerar seu aprendizado em programação, especialmente em novas linguagens e paradigmas.</p>
-<p>Para quem está começando com Clojure e deseja uma leitura acessível e informativa, recomendo o livro <em>Clojure for the Brave and True</em> de Daniel Higginbotham. Este livro oferece uma introdução clara e divertida ao mundo de Clojure, cobrindo desde os conceitos básicos até técnicas mais avançadas, com exemplos práticos para ajudar você a praticar. Você pode encontrar mais informações sobre o livro e recursos adicionais no <a href="http://www.braveclojure.com/">site oficial do livro</a>.</p>
+<h3 id="100daysofcode">100daysofcode</h3>
+<p>Depois de concluir seu projeto, uma excelente forma de manter o aprendizado e obter feedback é compartilhá-lo no GitHub. Além disso, considere aderir ao desafio #100DaysOfCode. Esse desafio incentiva você a codificar todos os dias por 100 dias consecutivos, o que pode significativamente acelerar seu aprendizado em programação, especialmente em novas linguagens e paradigmas.</p>
+<p>Para quem está começando com Clojure e deseja uma leitura acessível e informativa, recomendo o livro <em>Clojure for the Brave and True</em> de Daniel Higginbotham. Este livro oferece uma introdução clara e divertida ao mundo de Clojure, cobrindo desde os conceitos básicos até técnicas mais avançadas, com exemplos práticos para ajudar você a praticar. Você pode encontrar mais informações sobre o livro e recursos adicionais no <a href="https://www.braveclojure.com/">site oficial do livro</a>.</p>
 
 </div>
 
