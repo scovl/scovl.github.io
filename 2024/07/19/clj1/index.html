@@ -131,8 +131,8 @@
 </ul>
 <h3 id="introdução">Introdução</h3>
 <p>Já pensou em começar a estudar alguma linguagem de programação funcional? Que tal começar agora? Você pode escolher qualquer uma, mas eu optarei pelo Clojure devido à minha afinidade com Java e Lisp, o que torna essa escolha mais conveniente. Mas, antes de começarmos, certifique-se de ter o Clojure e o Leiningen instalados em seu sistema. Siga os links para as instruções de instalação. Este é um exercício simples e divertido de aplicar. Então vamos começar:</p>
-<h3 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h3>
-<h4 id="passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</h4>
+<h2 id="iniciando-um-projeto-com-leiningen">Iniciando um Projeto com Leiningen</h2>
+<h3 id="passo-1-criando-um-novo-projeto">Passo 1: Criando um novo projeto</h3>
 <p>Para criar um novo projeto com Leiningen, abra seu terminal e digite o seguinte comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein new app three-little-pigs
 </span></span></code></pre></div><p>Esse comando criará uma nova estrutura de projeto chamada <code>three-little-pigs</code>. O <code>lein new app &lt;nome-do-projeto&gt;</code> é usado para gerar um novo projeto Clojure com uma estrutura básica de diretórios e arquivos necessários para começar a desenvolver.</p>
@@ -155,7 +155,7 @@
 </span></span><span class="line"><span class="ln">14</span><span class="cl">    └── three_little_pigs
 </span></span><span class="line"><span class="ln">15</span><span class="cl">        └── core_test.clj
 </span></span></code></pre></div><p>Nosso código principal será escrito no arquivo <code>src/three_little_pigs/core.clj</code>. Esse arquivo é onde colocaremos a lógica do nosso programa.</p>
-<h4 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h4>
+<h3 id="passo-3-escrevendo-a-história-dos-três-porquinhos">Passo 3: Escrevendo a História dos Três Porquinhos</h3>
 <p>Abra o arquivo <code>src/three_little_pigs/core.clj</code> em seu editor de texto preferido e substitua o conteúdo com o seguinte código:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span><span class="p">)</span>
 </span></span><span class="line"><span class="ln"> 2</span><span class="cl">
@@ -191,7 +191,7 @@
 </span></span><span class="line"><span class="ln">5</span><span class="cl">O lobo veio, soprou e derrubou a casa de madeira.
 </span></span><span class="line"><span class="ln">6</span><span class="cl">O lobo não conseguiu derrubar a casa de tijolos.
 </span></span><span class="line"><span class="ln">7</span><span class="cl">A casa de tijolos <span class="k">do</span> terceiro porquinho os salvou.
-</span></span></code></pre></div><h4 id="passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</h4>
+</span></span></code></pre></div><h3 id="passo-5-gerando-um-jar-executável">Passo 5: Gerando um JAR Executável</h3>
 <p>Usar <code>lein run</code> é ótimo para testar seu código, mas e se você quiser compartilhar seu trabalho com pessoas que não têm Leiningen instalado? Para isso, você pode criar um arquivo JAR independente que qualquer pessoa com Java instalado (basicamente todo mundo) pode executar. Para criar o arquivo, execute o seguinte comando:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">lein uberjar
 </span></span></code></pre></div><p>Este comando cria o arquivo <code>target/uberjar/three-little-pigs-0.1.0-SNAPSHOT-standalone.jar</code>. Você pode executá-lo com Java usando o comando:</p>
