@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Clojure Sessions03 &middot; Vitor Lobo</title>
+        <meta name="description" content="Advanced Three Little Pigs - Calling Functions, Macros, Special Forms, and More">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.128.2">
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Clojure Sessions03">
+<meta property="og:description" content="Advanced Three Little Pigs - Calling Functions, Macros, Special Forms, and More">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://scovl.github.io/2024/07/21/clj3/">
+        <link rel="stylesheet" href="https://scovl.github.io//dist/site.css">
+        <link rel="stylesheet" href="https://scovl.github.io//dist/syntax.css">
+        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        
+        
+        <link rel="shortcut icon" href="https://scovl.github.io//img/favicon.ico">
+    </head>
+    <body>
+        
+  
+
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="neurodev-title">
+                                <a title="neurodev" href="https://scovl.github.io/">$ /home/scovl_</a>
+                            </h1>
+                        
+                        <a class="button-square" href="https://scovl.github.io//index.xml"><i class="fa fa-rss"></i></a>
+                        
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        
+                    </div>
+
+                    <ul class="site-nav">
+                        <a class="site-nav-item" title="Home" href="/">Home</a>
+
+    <li class="site-nav-item">
+        <a title="About" href="/page/about/">About</a>
+    </li>
+
+    <li class="site-nav-item">
+        <a title="Contact" href="/page/contact/">Contact</a>
+    </li>
+
+
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
+        <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Clojure Sessions03</h1>
+    
+        <p class="post-description" itemprop="description">Advanced Three Little Pigs - Calling Functions, Macros, Special Forms, and More</p>
+    
+    <p class="post-date">
+        <span>Published <time datetime="2024-07-21" itemprop="datePublished">dom., jul. 21, 2024</time></span>
+        <span>by</span>
+        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
+            <span itemprop="name">
+                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo</a>
+            </span>
+        </span>
+    </p>
+    
+        <p class="post-reading post-line">
+            <span>Estimated reading time: 4 min</span>
+        </p>
+    
+</header>
+
+        <div class="post-content clearfix" itemprop="articleBody">
+    
+
+    <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><strong><a href="/2024/07/21/clj3/#introdução">Introdução</a></strong></li>
+<li><a href="/2024/07/21/clj3/#avançando-com-o-projeto">Avançando com o Projeto</a>
+<ul>
+<li><a href="/2024/07/21/clj3/#passo-1-chamadas-de-funções">Passo 1: Chamadas de Funções</a></li>
+<li><a href="/2024/07/21/clj3/#passo-2-chamadas-de-macros">Passo 2: Chamadas de Macros</a></li>
+<li><a href="/2024/07/21/clj3/#passo-3-usando-special-forms">Passo 3: Usando Special Forms</a></li>
+<li><a href="/2024/07/21/clj3/#passo-4-funções-anônimas">Passo 4: Funções Anônimas</a></li>
+<li><a href="/2024/07/21/clj3/#passo-5-funções-retornando-funções">Passo 5: Funções Retornando Funções</a></li>
+</ul>
+</li>
+<li><a href="/2024/07/21/clj3/#compartilhando-seu-progresso">Compartilhando Seu Progresso</a></li>
+<li><a href="/2024/07/21/clj3/#100daysofcode">100DaysOfCode</a></li>
+</ul>
+<h1 id="introdução">Introdução</h1>
+<p>Bem-vindo à terceira sessão de Clojure! Neste artigo, vamos continuar a história dos três porquinhos, introduzindo conceitos avançados de Clojure como chamadas de funções, chamadas de macros, special forms, funções anônimas, e funções que retornam outras funções. Essas técnicas avançadas permitirão criar um código mais expressivo e poderoso.</p>
+<h1 id="avançando-com-o-projeto">Avançando com o Projeto</h1>
+<h3 id="passo-1-chamadas-de-funções">Passo 1: Chamadas de Funções</h3>
+<p>Vamos começar aprimorando nosso projeto com chamadas de funções. Chamadas de funções são fundamentais em Clojure e permitem a reutilização de lógica em várias partes do código. No arquivo <code>pig.clj</code>, vamos adicionar uma função que decide a ação de um porquinho com base no material da casa:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.pig</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-activity</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; decidiu construir uma casa. &#34;</span> <span class="p">(</span><span class="nf">build-house</span> <span class="nv">material</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">reinforce-house</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O porquinho reforçou a casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-dialogue</span> <span class="p">[</span><span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; disse: &#39;Não vou deixar o lobo derrubar minha casa!&#39;&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">scared-pig</span> <span class="p">[</span><span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; está com medo do lobo e correu para a casa do próximo porquinho.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">pig-decision</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">material</span> <span class="s">&#34;tijolos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">    <span class="p">(</span><span class="nf">reinforce-house</span> <span class="nv">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="p">(</span><span class="nf">scared-pig</span> <span class="nv">pig</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="passo-2-chamadas-de-macros">Passo 2: Chamadas de Macros</h3>
+<p>Macros em Clojure permitem a criação de novos elementos sintáticos e a transformação do código antes da sua avaliação. Vamos criar uma macro para encapsular o comportamento de um porquinho sob ataque. No arquivo <code>wolf.clj</code>, adicionamos uma macro:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.wolf</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">(</span><span class="kd">defmacro </span><span class="nv">wolf-attack</span> <span class="p">[</span><span class="nv">pig</span> <span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  <span class="o">`</span><span class="p">(</span><span class="nf">do</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">     <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">wolf-dialogue</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">     <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">wolf-action</span> <span class="o">~</span><span class="nv">house</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">     <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">three-little-pigs.pig/pig-decision</span> <span class="o">~</span><span class="nv">pig</span> <span class="o">~</span><span class="nv">house</span><span class="p">))))</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo veio, soprou e derrubou a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-dialogue</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo disse: &#39;Vou soprar e sua casa derrubar!&#39;&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">wolf-failed-action</span> <span class="p">[</span><span class="nv">house</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  <span class="p">(</span><span class="nb">str </span><span class="s">&#34;O lobo tentou soprar e derrubar a casa de &#34;</span> <span class="nv">house</span> <span class="s">&#34;, mas não conseguiu.&#34;</span><span class="p">))</span>
+</span></span></code></pre></div><h3 id="passo-3-usando-special-forms">Passo 3: Usando Special Forms</h3>
+<p>Special forms são construções primitivas da linguagem que possuem regras especiais de avaliação. Vamos usar a special form <code>if</code> para decidir se o lobo consegue ou não derrubar a casa. No arquivo <code>core.clj</code>, integramos o uso da macro e a special form <code>if</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">(</span><span class="kd">ns </span><span class="nv">three-little-pigs.core</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">  <span class="p">(</span><span class="ss">:gen-class</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">three-little-pigs.pig</span> <span class="ss">:as</span> <span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">            <span class="p">[</span><span class="nv">three-little-pigs.wolf</span> <span class="ss">:as</span> <span class="nv">wolf</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">            <span class="p">[</span><span class="nv">clojure.string</span> <span class="ss">:as</span> <span class="nv">str</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">            <span class="p">[</span><span class="nv">clojure.set</span> <span class="ss">:as</span> <span class="nv">set</span><span class="p">]))</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">lobo</span> <span class="s">&#34;O lobo&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">materiais</span> <span class="o">&#39;</span><span class="p">(</span><span class="s">&#34;palha&#34;</span> <span class="s">&#34;madeira&#34;</span> <span class="s">&#34;tijolos&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">(</span><span class="k">def </span><span class="nv">porquinhos</span> <span class="o">&#39;</span><span class="p">({</span><span class="ss">:nome</span> <span class="s">&#34;Prático&#34;</span> <span class="ss">:material</span> <span class="s">&#34;palha&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">                  <span class="p">{</span><span class="ss">:nome</span> <span class="s">&#34;Heitor&#34;</span> <span class="ss">:material</span> <span class="s">&#34;madeira&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">                  <span class="p">{</span><span class="ss">:nome</span> <span class="s">&#34;Cícero&#34;</span> <span class="ss">:material</span> <span class="s">&#34;tijolos&#34;</span><span class="p">}))</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">reinforce?</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  <span class="p">(</span><span class="nb">= </span><span class="nv">material</span> <span class="s">&#34;tijolos&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">story</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">  <span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">remaining</span> <span class="nv">porquinhos</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">         <span class="nv">resultado</span> <span class="p">[]]</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">remaining</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">      <span class="p">(</span><span class="nf">str/join</span> <span class="s">&#34;\n&#34;</span> <span class="nv">resultado</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">      <span class="p">(</span><span class="k">let </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">nome</span> <span class="nv">material</span><span class="p">]}</span> <span class="p">(</span><span class="nb">first </span><span class="nv">remaining</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">            <span class="nv">acao</span> <span class="p">(</span><span class="nf">pig/pig-activity</span> <span class="nv">nome</span> <span class="nv">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">            <span class="nv">dialogo</span> <span class="p">(</span><span class="nf">pig/pig-dialogue</span> <span class="nv">nome</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">            <span class="nv">acao-lobo</span> <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">reinforce?</span> <span class="nv">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">                        <span class="p">(</span><span class="nf">wolf/wolf-failed-action</span> <span class="nv">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">                        <span class="p">(</span><span class="nf">wolf/wolf-action</span> <span class="nv">material</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">            <span class="nv">novo-resultado</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">resultado</span> <span class="nv">acao</span> <span class="nv">dialogo</span> <span class="nv">acao-lobo</span><span class="p">)]</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">        <span class="p">(</span><span class="nf">recur</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">remaining</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">               <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">reinforce?</span> <span class="nv">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">                 <span class="p">(</span><span class="nb">conj </span><span class="nv">novo-resultado</span> <span class="p">(</span><span class="nf">pig/reinforce-house</span> <span class="nv">material</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">                 <span class="p">(</span><span class="nb">conj </span><span class="nv">novo-resultado</span> <span class="p">(</span><span class="nf">pig/scared-pig</span> <span class="nv">nome</span><span class="p">))))))))</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">
+</span></span><span class="line"><span class="ln">35</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">  <span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">    <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="passo-4-funções-anônimas">Passo 4: Funções Anônimas</h3>
+<p>Funções anônimas são úteis quando você precisa de uma função rápida e descartável. Vamos adicionar uma função anônima para iterar sobre os materiais dos porquinhos. No arquivo <code>core.clj</code>, adicionamos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">list-materials</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="nb">map </span><span class="o">#</span><span class="p">(</span><span class="nb">str </span><span class="s">&#34;Material: &#34;</span> <span class="nv">%</span><span class="p">)</span> <span class="nv">materiais</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">str/join</span> <span class="s">&#34;\n&#34;</span> <span class="p">(</span><span class="nf">list-materials</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">  <span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">    <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="passo-5-funções-retornando-funções">Passo 5: Funções Retornando Funções</h3>
+<p>Funções que retornam outras funções são poderosas em Clojure para criar comportamentos dinâmicos. Vamos criar uma função que retorna uma função para construir casas. No arquivo <code>pig.clj</code>, adicionamos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">house-builder</span> <span class="p">[</span><span class="nv">material</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">pig</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="p">(</span><span class="nb">str </span><span class="nv">pig</span> <span class="s">&#34; construiu uma casa de &#34;</span> <span class="nv">material</span> <span class="s">&#34;.&#34;</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">build-all-houses</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">  <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">nome</span> <span class="nv">material</span><span class="p">]}]</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">         <span class="p">((</span><span class="nf">house-builder</span> <span class="nv">material</span><span class="p">)</span> <span class="nv">nome</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">       <span class="nv">porquinhos</span><span class="p">))</span>
+</span></span></code></pre></div><p>No arquivo <code>core.clj</code>, integramos:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">str/join</span> <span class="s">&#34;\n&#34;</span> <span class="p">(</span><span class="nf">list-materials</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">str/join</span> <span class="s">&#34;\n&#34;</span> <span class="p">(</span><span class="nf">pig/build-all-houses</span><span class="p">)))</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">  <span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">)))</span>
+</span></span></code></pre></div><h3 id="compartilhando-seu-progresso">Compartilhando Seu Progresso</h3>
+<p>Depois de concluir essas etapas, você pode compartilhar seu projeto no <a href="https://github.com">GitHub</a>. Isso permite que outros desenvolvedores colaborem, sugiram melhorias e ajudem no desenvolvimento de suas habilidades.</p>
+<h3 id="100daysofcode">100DaysOfCode</h3>
+<p>Considere aderir ao desafio <strong><a href="https://www.100daysofcode.com/">#100DaysOfCode</a></strong>, que incentiva a codificação diária por 100 dias consecutivos. Isso pode acelerar seu aprendizado, especialmente em novas linguagens e paradigmas como o Clojure.</p>
+<p>Para iniciantes em Clojure, recomendo o livro <strong><a href="https://www.braveclojure.com/">Clojure for the Brave and True</a></strong> de Daniel Higginbotham, que oferece uma introdução clara e divertida ao mundo de Clojure.</p>
+
+</div>
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+            
+                <a href="/tags/oop/">OOP</a>, 
+            
+                <a href="/tags/software/">software</a>, 
+            
+                <a href="/tags/engineering/">engineering</a>, 
+            
+                <a href="/tags/clojure/">Clojure</a>
+            
+        </p>
+    
+
+    <div class="share">
+        
+            <a class="icon-twitter" href="https://twitter.com/share?text=Clojure%20Sessions03&url=https%3a%2f%2fscovl.github.io%2f2024%2f07%2f21%2fclj3%2f"
+                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                <i class="fa fa-twitter"></i>
+                <span class="hidden">Twitter</span>
+            </a>
+        
+
+        
+            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fscovl.github.io%2f2024%2f07%2f21%2fclj3%2f"
+                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                <i class="fa fa-facebook"></i>
+                <span class="hidden">Facebook</span>
+            </a>
+        
+
+        
+            <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2fscovl.github.io%2f2024%2f07%2f21%2fclj3%2f"
+              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+              <i class="fa fa-google-plus"></i>
+                <span class="hidden">Google+</span>
+            </a>
+        
+        
+            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=Clojure%20Sessions03&url=https%3a%2f%2fscovl.github.io%2f2024%2f07%2f21%2fclj3%2f&summary=Advanced%20Three%20Little%20Pigs%20-%20Calling%20Functions%2c%20Macros%2c%20Special%20Forms%2c%20and%20More"
+               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
+               <i class="fa fa-linkedin"></i>
+               <span class="hidden">LinkedIn</span>
+            </a>
+        
+    </div>
+</footer>
+
+        
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="scovl" href="https://scovl.github.io/">scovl</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2024 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://scovl.github.io/js/jquery-1.11.3.min.js"></script>
+        <script src="https://scovl.github.io/js/jquery.fitvids.js"></script>
+        <script src="https://scovl.github.io/js/scripts.js"></script>
+    </body>
+</html>
+
