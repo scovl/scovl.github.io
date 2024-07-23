@@ -38,9 +38,7 @@ Esse comando criará uma nova estrutura de projeto chamada `three-little-pigs`. 
 
 ### Passo 2: Estrutura do Projeto
 
-Navegue até a pasta do projeto que acabamos de criar:
-
-Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:
+Navegue até a pasta do projeto que acabamos de criar. Uma vez dentro da pasta, você verá a seguinte estrutura de diretórios:
 
 ```bash
 three-little-pigs/
@@ -64,7 +62,7 @@ Nosso código principal será escrito no arquivo `src/three_little_pigs/core.clj
 
 ### Passo 3: Escrevendo a História dos Três Porquinhos
 
-Abra o arquivo `src/three_little_pigs/core.clj` em seu editor de texto preferido e substitua o conteúdo com o seguinte código:
+Abra o arquivo `src/three_little_pigs/core.clj` em seu editor de texto preferido e substitua o conteúdo com o seguinte código (não copie, digite):
 
 ```clojure
 (ns three-little-pigs.core)
