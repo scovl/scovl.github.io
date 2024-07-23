@@ -3,7 +3,7 @@ title = "Clojure Sessions03"
 description = "Advanced Three Little Pigs - Calling Functions, Macros, Special Forms, and More"
 date = 2024-07-21T19:00:00-00:00
 tags = ["OOP", "software", "engineering", "Clojure"]
-draft = false
+draft = true
 weight = 7
 +++
 
