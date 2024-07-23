@@ -119,6 +119,10 @@ Vamos definir algumas variáveis globais que serão usadas em vários lugares do
       (println "Fim da história!"))))
 ```
 
+No contexto de Clojure, que é uma linguagem funcional, o uso de variáveis globais pode ser diferente do que se espera em linguagens imperativas. Aqui,`def` é usado para definir símbolos que estão acessíveis globalmente dentro do namespace onde são declarados. Isso significa que, uma vez definido, o valor pode ser acessado de qualquer parte do código que compartilhe o mesmo namespace, sem a necessidade de passar como argumento nas funções.
+
+O artigo utiliza `def` para criar variáveis globais como `lobo`, `materiais`, e `porquinhos`, que representam componentes da história dos Três Porquinhos que são usados em várias partes do código. Isso facilita a manutenção do código, pois você não precisa passar essas informações através de cada chamada de função; elas estão disponíveis globalmente.
+
 Usamos `def` para definir variáveis globais que representam o lobo, os materiais de construção e os porquinhos. Isso nos permite acessar esses valores em qualquer lugar do projeto sem precisar passar parâmetros repetidamente. A função `reinforce?` verifica se o material é "tijolos", ajudando a decidir se a casa deve ser reforçada ou se o lobo falha ao tentar derrubá-la.
 
 Usamos `loop` e `recur` para iterar sobre os porquinhos e construir a história passo a passo. A função verifica se a casa é feita de tijolos para decidir a ação do lobo e a reação dos porquinhos. A função `-main` é a função principal que executa a história. Usamos `do` para executar múltiplas expressões e `when` para imprimir "Fim da história!" ao final.
@@ -170,6 +174,10 @@ As listas são uma estrutura de dados fundamental em Clojure. Vamos usá-las par
 
       (println "Fim da história!"))))
 ```
+
+Lists são estruturas de dados centrais em muitas linguagens de programação, incluindo Clojure. Em Clojure, uma lista é uma coleção ordenada de elementos. O código usa listas para armazenar informações sobre os materiais que os porquinhos usam e as ações que eles executam. Funções como `first` (para obter o primeiro elemento da lista) e `rest` (para obter todos os elementos exceto o primeiro) são usadas para navegar e manipular essas listas.
+
+Manipular listas é fundamental para processar coleções de dados, como ciclar através dos porquinhos e suas ações, o que é um caso comum em programação funcional.
 
 Alteramos a definição de `materiais` e `porquinhos` para usar listas. Isso demonstra como trabalhar com listas em Clojure para armazenar e iterar sobre coleções de dados. Um problema comum ao trabalhar com listas é a manipulação de elementos individuais. Em Clojure, `first`, `rest`, e `conj` são funções essenciais para lidar com listas. Certifique-se de entender bem essas funções para evitar erros de manipulação de dados.
 
@@ -223,6 +231,8 @@ Sets (conjuntos) são coleções de valores únicos. Vamos usar `sets` para gara
     (when true
       (println "Fim da história!"))))
 ```
+
+Além de garantir unicidade, os sets em Clojure também são úteis para realizar operações matemáticas de conjunto, como união, interseção e diferença, embora esses usos não sejam abordados diretamente neste passo do tutorial.
 
 Alteramos a definição de `materiais` para usar sets, garantindo que cada material seja único. Utilizamos um `atom` para armazenar os materiais usados e a função `swap!` para atualizar esse conjunto durante a execução da história. Execute `lein run` mais uma vez para garantir que tudo está funcionando corretamente após essas mudanças.
 
