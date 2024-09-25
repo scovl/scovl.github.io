@@ -1,74 +1,86 @@
 <!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
-    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Clojure Sessions02 &middot; Vitor Lobo</title>
-        <meta name="description" content="Advanced Three Little Pigs">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="generator" content="Hugo 0.128.2">
-        <meta name="robots" content="index,follow">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta property="og:title" content="Clojure Sessions02">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Clojure Sessions02 &middot; Vitor Lobo</title>
+    <meta name="description" content="Advanced Three Little Pigs">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="generator" content="Hugo 0.128.2">
+    <meta name="robots" content="index,follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Clojure Sessions02">
 <meta property="og:description" content="Advanced Three Little Pigs">
 <meta property="og:type" content="article">
 <meta property="og:url" content="http://localhost:1313/2024/07/21/clj2/">
-        <link rel="stylesheet" href="http://localhost:1313//dist/site.css">
-        <link rel="stylesheet" href="http://localhost:1313//dist/syntax.css">
-        <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-        
-        
-        
-        <link rel="shortcut icon" href="http://localhost:1313//img/favicon.ico">
-    </head>
-    <body>
-        
+    <link rel="stylesheet" href="http://localhost:1313//dist/site.css">
+    <link rel="stylesheet" href="http://localhost:1313//dist/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+    
+    
+    <link rel="shortcut icon" href="http://localhost:1313//img/favicon.ico">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+</head>
+<body>
+    
   
 
 
+    <div id="wrapper">
+        <header class="site-header">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    
+                        <h1 class="neurodev-title">
+                            <a title="neurodev" href="http://localhost:1313/">$ /home/scovl_</a>
+                        </h1>
+                    
+                    <a class="button-square" href="http://localhost:1313//index.xml"><i class="fa fa-rss"></i></a>
+                    
+                    
+                    
+                    
+                        <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
+                            <i class="fa fa-github-alt"></i>
+                        </a>
+                    
+                    
+                    
+                        <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
+                            <i class="fa fa-linkedin"></i>
+                        </a>
+                    
+                    
+                    
+                        <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
+                            <i class="fa fa-envelope"></i>
+                        </a>
+                    
+                </div>
 
-        <div id="wrapper">
-            <header class="site-header">
-                <div class="container">
-                    <div class="site-title-wrapper">
-                        
-                            <h1 class="neurodev-title">
-                                <a title="neurodev" href="http://localhost:1313/">$ /home/scovl_</a>
-                            </h1>
-                        
-                        <a class="button-square" href="http://localhost:1313//index.xml"><i class="fa fa-rss"></i></a>
-                        
-                        
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
-                                <i class="fa fa-github-alt"></i>
-                            </a>
-                        
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
-                                <i class="fa fa-linkedin"></i>
-                            </a>
-                        
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
-                                <i class="fa fa-envelope"></i>
-                            </a>
-                        
-                    </div>
-
-                    <ul class="site-nav">
-                        <a class="site-nav-item" title="Home" href="/">Home</a>
+                <ul class="site-nav">
+                    <a class="site-nav-item" title="Home" href="/">Home</a>
 
     <li class="site-nav-item">
         <a title="About" href="/page/about/">About</a>
@@ -79,11 +91,11 @@
     </li>
 
 
-                    </ul>
-                </div>
-            </header>
+                </ul>
+            </div>
+        </header>
 
-            <div id="container">
+        <div id="container">
 
 
 <div class="container">
@@ -104,7 +116,7 @@
     </p>
     
         <p class="post-reading post-line">
-            <span>Estimated reading time: 8 min</span>
+            <span>Estimated reading time: 9 min</span>
         </p>
     
 </header>
@@ -206,7 +218,9 @@
 </span></span><span class="line"><span class="ln">36</span><span class="cl">    <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">))</span>
 </span></span><span class="line"><span class="ln">37</span><span class="cl">    <span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
 </span></span><span class="line"><span class="ln">38</span><span class="cl">      <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">))))</span>
-</span></span></code></pre></div><p>Usamos <code>def</code> para definir variáveis globais que representam o lobo, os materiais de construção e os porquinhos. Isso nos permite acessar esses valores em qualquer lugar do projeto sem precisar passar parâmetros repetidamente. A função <code>reinforce?</code> verifica se o material é &ldquo;tijolos&rdquo;, ajudando a decidir se a casa deve ser reforçada ou se o lobo falha ao tentar derrubá-la.</p>
+</span></span></code></pre></div><p>No contexto de Clojure, que é uma linguagem funcional, o uso de variáveis globais pode ser diferente do que se espera em linguagens imperativas. Aqui,<code>def</code> é usado para definir símbolos que estão acessíveis globalmente dentro do namespace onde são declarados. Isso significa que, uma vez definido, o valor pode ser acessado de qualquer parte do código que compartilhe o mesmo namespace, sem a necessidade de passar como argumento nas funções.</p>
+<p>O artigo utiliza <code>def</code> para criar variáveis globais como <code>lobo</code>, <code>materiais</code>, e <code>porquinhos</code>, que representam componentes da história dos Três Porquinhos que são usados em várias partes do código. Isso facilita a manutenção do código, pois você não precisa passar essas informações através de cada chamada de função; elas estão disponíveis globalmente.</p>
+<p>Usamos <code>def</code> para definir variáveis globais que representam o lobo, os materiais de construção e os porquinhos. Isso nos permite acessar esses valores em qualquer lugar do projeto sem precisar passar parâmetros repetidamente. A função <code>reinforce?</code> verifica se o material é &ldquo;tijolos&rdquo;, ajudando a decidir se a casa deve ser reforçada ou se o lobo falha ao tentar derrubá-la.</p>
 <p>Usamos <code>loop</code> e <code>recur</code> para iterar sobre os porquinhos e construir a história passo a passo. A função verifica se a casa é feita de tijolos para decidir a ação do lobo e a reação dos porquinhos. A função <code>-main</code> é a função principal que executa a história. Usamos <code>do</code> para executar múltiplas expressões e <code>when</code> para imprimir &ldquo;Fim da história!&rdquo; ao final.</p>
 <p>Depois de definir as variáveis globais e atualizar a função principal, execute <code>lein run</code> novamente para verificar se o código funciona corretamente.</p>
 <h3 id="passo-4-trabalhando-com-lists">Passo 4: Trabalhando com Lists</h3>
@@ -250,7 +264,9 @@
 </span></span><span class="line"><span class="ln">37</span><span class="cl">
 </span></span><span class="line"><span class="ln">38</span><span class="cl">
 </span></span><span class="line"><span class="ln">39</span><span class="cl">      <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">))))</span>
-</span></span></code></pre></div><p>Alteramos a definição de <code>materiais</code> e <code>porquinhos</code> para usar listas. Isso demonstra como trabalhar com listas em Clojure para armazenar e iterar sobre coleções de dados. Um problema comum ao trabalhar com listas é a manipulação de elementos individuais. Em Clojure, <code>first</code>, <code>rest</code>, e <code>conj</code> são funções essenciais para lidar com listas. Certifique-se de entender bem essas funções para evitar erros de manipulação de dados.</p>
+</span></span></code></pre></div><p>Lists são estruturas de dados centrais em muitas linguagens de programação, incluindo Clojure. Em Clojure, uma lista é uma coleção ordenada de elementos. O código usa listas para armazenar informações sobre os materiais que os porquinhos usam e as ações que eles executam. Funções como <code>first</code> (para obter o primeiro elemento da lista) e <code>rest</code> (para obter todos os elementos exceto o primeiro) são usadas para navegar e manipular essas listas.</p>
+<p>Manipular listas é fundamental para processar coleções de dados, como ciclar através dos porquinhos e suas ações, o que é um caso comum em programação funcional.</p>
+<p>Alteramos a definição de <code>materiais</code> e <code>porquinhos</code> para usar listas. Isso demonstra como trabalhar com listas em Clojure para armazenar e iterar sobre coleções de dados. Um problema comum ao trabalhar com listas é a manipulação de elementos individuais. Em Clojure, <code>first</code>, <code>rest</code>, e <code>conj</code> são funções essenciais para lidar com listas. Certifique-se de entender bem essas funções para evitar erros de manipulação de dados.</p>
 <p>Execute <code>lein run</code> novamente para garantir que tudo está funcionando corretamente com as mudanças feitas.</p>
 <h3 id="passo-5-trabalhando-com-sets">Passo 5: Trabalhando com Sets</h3>
 <p>Sets (conjuntos) são coleções de valores únicos. Vamos usar <code>sets</code> para garantir que cada material usado pelos porquinhos seja único e para verificar se todos os materiais foram usados em <code>core.clj</code>:</p>
@@ -296,7 +312,8 @@
 </span></span><span class="line"><span class="ln">40</span><span class="cl">    <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">story</span><span class="p">))</span>
 </span></span><span class="line"><span class="ln">41</span><span class="cl">    <span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
 </span></span><span class="line"><span class="ln">42</span><span class="cl">      <span class="p">(</span><span class="nb">println </span><span class="s">&#34;Fim da história!&#34;</span><span class="p">))))</span>
-</span></span></code></pre></div><p>Alteramos a definição de <code>materiais</code> para usar sets, garantindo que cada material seja único. Utilizamos um <code>atom</code> para armazenar os materiais usados e a função <code>swap!</code> para atualizar esse conjunto durante a execução da história. Execute <code>lein run</code> mais uma vez para garantir que tudo está funcionando corretamente após essas mudanças.</p>
+</span></span></code></pre></div><p>Além de garantir unicidade, os sets em Clojure também são úteis para realizar operações matemáticas de conjunto, como união, interseção e diferença, embora esses usos não sejam abordados diretamente neste passo do tutorial.</p>
+<p>Alteramos a definição de <code>materiais</code> para usar sets, garantindo que cada material seja único. Utilizamos um <code>atom</code> para armazenar os materiais usados e a função <code>swap!</code> para atualizar esse conjunto durante a execução da história. Execute <code>lein run</code> mais uma vez para garantir que tudo está funcionando corretamente após essas mudanças.</p>
 <h3 id="passo-6-gerando-um-jar-executável">Passo 6: Gerando um JAR Executável</h3>
 <p>Usar <code>lein run</code> é ótimo para testar seu código, mas e se você quiser compartilhar seu trabalho com pessoas que não têm Leiningen instalado? Note que no artigo anterior em <strong><a href="https://scovl.github.io/2024/07/19/clj1/">Clojure Sessions01</a></strong>, o <code>.jar</code> até que foi gerado. No entanto, não era possível de ser executado. Isso porque não configuramos o arquivo <code>project.clj</code>. Então vamos configura-lo aqui os metadados do <code>.jar</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-clojure" data-lang="clojure"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">(</span><span class="kd">defproject </span><span class="nv">three-little-pigs</span> <span class="s">&#34;0.1.0-SNAPSHOT&#34;</span>

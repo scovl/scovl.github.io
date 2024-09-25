@@ -1,7 +1,7 @@
 +++
 title = "Clojure Sessions03"
 description = "Advanced Three Little Pigs - Calling Functions, Macros, Special Forms, and More"
-date = 2024-07-21T19:00:00-00:00
+date = 2024-07-24T19:00:00-00:00
 tags = ["OOP", "software", "engineering", "Clojure"]
 draft = true
 weight = 7
@@ -20,7 +20,7 @@ weight = 7
 
 # Introdução
 
-Bem-vindo à terceira sessão de Clojure! Neste artigo, vamos continuar a história dos três porquinhos, introduzindo conceitos avançados de Clojure como chamadas de funções, chamadas de macros, special forms, funções anônimas, e funções que retornam outras funções. Essas técnicas avançadas permitirão criar um código mais expressivo e poderoso.
+Bem-vindo à terceira sessão de Clojure! Vamos continuar a história dos três porquinhos, introduzindo conceitos como chamadas de funções, chamadas de macros, special forms, funções anônimas, e funções que retornam outras funções. Essas técnicas permitirão criar um código mais expressivo e poderoso.
 
 # Avançando com o Projeto
 
