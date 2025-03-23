@@ -1,0 +1,68 @@
+{{ define "main" }}
+<div class="post-list">
+    <h1 class="page-title">
+        {{ if eq .Kind "term" }}
+            {{ .Title }}
+        {{ else if eq .Kind "taxonomy" }}
+            {{ i18n "all" | default "Todos" }} {{ .Title }}
+        {{ else }}
+            {{ .Title }}
+        {{ end }}
+    </h1>
+
+    {{ $pages := .Pages }}
+    {{ if .IsHome }}
+        {{ $pages = where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+    {{ end }}
+    
+    {{ $sortedPages := $pages.ByWeight }}
+    {{ if not $sortedPages }}
+        {{ $sortedPages = $pages.ByDate.Reverse }}
+    {{ end }}
+    
+    {{ range $sortedPages }}
+    {{ if or (not .Draft) (and .Draft $.Site.BuildDrafts) }}
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            {{ if .Date }}
+            <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                {{ .Date.Format (.Site.Params.dateFormat | default "January 2, 2006") }}
+            </time>
+            {{ end }}
+            
+            {{ with .Params.author }}
+            <span class="post-author">por {{ . }}</span>
+            {{ end }}
+            
+            {{ if .Params.tags }}
+            <div class="post-item-tags">
+                {{ range .Params.tags }}
+                <a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
+                {{ end }}
+            </div>
+            {{ end }}
+            
+            {{ if .Description }}
+            <div class="post-description">
+                {{ .Description }}
+            </div>
+            {{ end }}
+        </div>
+        
+        {{ if .Summary }}
+        <div class="post-item-summary">
+            {{ .Summary }}
+            {{ if .Truncated }}
+            <a href="{{ .Permalink }}" class="read-more">{{ i18n "readMore" | default "Leia mais →" }}</a>
+            {{ end }}
+        </div>
+        {{ end }}
+    </article>
+    {{ end }}
+    {{ end }}
+</div>
+{{ end }} 

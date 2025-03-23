@@ -1,0 +1,61 @@
+{{ define "main" }}
+<div class="home">
+    {{ if .Site.Params.intro }}
+    <div class="intro">
+        {{ if .Site.Params.description }}
+        <p>{{ .Site.Params.description }}</p>
+        {{ end }}
+    </div>
+    {{ end }}
+    
+    <div class="posts">
+        <h2>{{ i18n "recentPosts" | default "" }}</h2>
+        
+        {{ $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+        {{ $pages := where $pages ".Params.draft" "!=" true }}
+        
+        {{ $sortedPages := $pages.ByWeight }}
+        {{ if not $sortedPages }}
+            {{ $sortedPages = $pages.ByDate.Reverse }}
+        {{ end }}
+        
+        {{ $paginator := .Paginate $sortedPages }}
+        
+        {{ range $paginator.Pages }}
+        <article class="post-item">
+            <h3 class="post-item-title">
+                <a href="{{ .Permalink }}">{{ .Title }}</a>
+            </h3>
+            
+            <div class="post-item-meta">
+                {{ if .Date }}
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                    {{ .Date.Format (.Site.Params.dateFormat | default "January 2, 2006") }}
+                </time>
+                {{ end }}
+                
+                {{ with .Params.author }}
+                <span class="post-author">por {{ . }}</span>
+                {{ end }}
+                
+                {{ if .Params.tags }}
+                <div class="post-item-tags">
+                    {{ range .Params.tags }}
+                    <a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
+                    {{ end }}
+                </div>
+                {{ end }}
+                
+                {{ if .Description }}
+                <div class="post-description">
+                    {{ .Description }}
+                </div>
+                {{ end }}
+            </div>
+        </article>
+        {{ end }}
+        
+        {{ template "_internal/pagination.html" . }}
+    </div>
+</div>
+{{ end }} 

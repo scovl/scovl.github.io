@@ -2,12 +2,12 @@
 title = "Prometheus"
 description = "Under the hood"
 date = 2023-03-21T23:18:18-03:00
-tags = ["Prometheus", "Grafana", "Monitoring", "TSDB"]
+tags = ["Prometheus", "Grafana", "Monitoring", "TSDB", "DevOps", "Observability"]
 draft = false
 weight = 2
 +++
 
-
+## Índice
 * **[Introdução](#introdução)**
 * **[Instalação](#instalação)**
 * **[Promtool](#promtool)**
@@ -16,16 +16,22 @@ weight = 2
 * **[PushGateway](#pushgateway)**
 * **[Federação](#federação)**
 * **[Under the Hood](#under-the-hood)**
+* **[Melhores Práticas](#melhores-práticas)**
+* **[Conclusão](#conclusão)**
 
 ## Introdução
 
 ### Prometheus
 
-O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open source. Foi desenvolvida com o objetivo de fornecer uma forma eficiente de coletar, armazenar e analisar métricas de desempenho de sistemas distribuídos. Ele foi projetado para ser escalável, fácil de usar e altamente personalizável. Possui sua própria linguagem de consulta, chamada PromQL, que permite aos usuários criar consultas complexas para analisar os dados de métricas. Ele também possui uma interface web para visualizar e explorar esses dados. Além disso, é compatível com uma variedade de sistemas e aplicativos, incluindo Kubernetes, Docker, e outros sistemas de gerenciamento de contêineres. O Prometheus também é frequentemente usado em conjunto com outras ferramentas, como Grafana, que fornece recursos avançados de visualização de dados, alertas e análise histórica de dados.
+O [Prometheus](https://prometheus.io/) é uma ferramenta de monitoramento de sistemas e aplicativos open source que revolucionou a forma como pensamos sobre observabilidade em ambientes distribuídos. Desenvolvido para fornecer uma abordagem eficiente de coletar, armazenar e analisar métricas de desempenho, o Prometheus se destaca por sua arquitetura simples mas poderosa, alta escalabilidade e modelo de dados dimensional.
 
-A ferramenta foi criada por uma equipe de desenvolvedores liderada por Julius Volz na empresa de consultoria de engenharia de software SoundCloud em 2012. No entanto, em 2016, a equipe do Prometheus foi transferida para a **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)**, uma organização sem fins lucrativos que abriga projetos de código aberto para sistemas nativos da nuvem. Atualmente, a CNCF responsável pelo desenvolvimento e manutenção projeto Prometheus.
+Uma característica fundamental do Prometheus é sua linguagem de consulta própria, PromQL, que permite aos usuários criar consultas complexas para analisar dados de séries temporais com precisão. Sua interface web integrada facilita a visualização e exploração dessas métricas, permitindo análises rápidas e a identificação de tendências e anomalias.
 
-> **NOTA**: Leia mais sobre PromQL **[Aqui](https://scovl.github.io/2023/03/19/promql/)**.
+O Prometheus foi projetado desde o início para trabalhar perfeitamente em ambientes containerizados como [Kubernetes](https://kubernetes.io/) e [Docker](https://www.docker.com/), tornando-o uma escolha natural para monitoramento nativo da nuvem. Frequentemente é utilizado em conjunto com [Grafana](https://grafana.com/) para visualizações avançadas, criando um poderoso ecossistema de observabilidade.
+
+A ferramenta foi criada em 2012 por uma equipe liderada por Julius Volz na SoundCloud, quando a empresa precisava de uma solução de monitoramento mais robusta. Em 2016, o projeto foi transferido para a **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)**, onde se tornou o segundo projeto a atingir o status de "graduado", demonstrando sua maturidade e adoção pela comunidade.
+
+> **NOTA**: Para um mergulho profundo na linguagem de consulta PromQL, veja nosso artigo dedicado **[aqui](https://scovl.github.io/2023/03/19/promql/)**.
 
 ### Tipos de métricas
 
@@ -276,13 +282,15 @@ promtool tsdb check /path/to/data/dir
 
 Essas são apenas algumas das funcionalidades do promtool. Ele pode ser uma ferramenta muito útil para garantir a qualidade do seu ambiente de monitoramento com Prometheus.
 
-## Instrumentação
+## 🔍 Instrumentação
 
-A instrumentação é um processo crucial para coletar dados de desempenho e monitorar sistemas em tempo real. No contexto do Prometheus, existem dois tipos principais de instrumentação: direta e indireta.
+A instrumentação é um processo crucial para coletar dados de desempenho e monitorar sistemas em tempo real. No contexto do Prometheus, existem dois tipos principais de instrumentação:
 
-* **A instrumentação direta** envolve a coleta de métricas diretamente de um aplicativo ou serviço, usando bibliotecas ou frameworks específicos. Isso permite que os desenvolvedores definam as métricas que são importantes para o seu aplicativo ou serviço e coletem informações específicas, como tempo de resposta de uma chamada de API ou a quantidade de memória usada.
+### 📊 Instrumentação Direta
+Envolve a coleta de métricas diretamente de um aplicativo ou serviço, usando bibliotecas ou frameworks específicos. Isso permite que os desenvolvedores definam as métricas que são importantes para o seu aplicativo ou serviço e coletem informações específicas, como tempo de resposta de uma chamada de API ou a quantidade de memória usada.
 
-* **A instrumentação indireta** envolve a coleta de métricas de sistemas de terceiros, como servidores de banco de dados ou balanceadores de carga. Isso pode ser feito usando plugins ou exporters que se comunicam com o sistema externo e traduzem as métricas em um formato que o Prometheus possa entender.
+### 🔄 Instrumentação Indireta
+Envolve a coleta de métricas de sistemas de terceiros, como servidores de banco de dados ou balanceadores de carga. Isso pode ser feito usando plugins ou exporters que se comunicam com o sistema externo e traduzem as métricas em um formato que o Prometheus possa entender.
 
 Ambos os tipos de instrumentação são importantes para obter insights precisos e valiosos sobre o desempenho do sistema. A instrumentação direta fornece dados específicos e granulares sobre o desempenho do aplicativo ou serviço, enquanto a instrumentação indireta permite monitorar o sistema como um todo e identificar gargalos e problemas em componentes externos.
 
@@ -366,7 +374,7 @@ Isso adiciona um PrometheusMeterRegistry ao seu aplicativo Spring Boot e registr
 
 ### JavaScript/Node
 
-A instrumentação indireta no Prometheus usando Node envolve a adição de código ao seu aplicativo Node.js para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Node.js, como o "prom-client" ou o "node-prom-bundle". Aqui está um exemplo de como adicionar o "prom-client" ao seu aplicativo Node.js e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
+A instrumentação direta no Prometheus usando Node envolve a adição de código ao seu aplicativo Node.js para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Node.js, como o "prom-client" ou o "node-prom-bundle". Aqui está um exemplo de como adicionar o "prom-client" ao seu aplicativo Node.js e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
 
 Instale o "prom-client" usando o npm:
 
@@ -411,7 +419,7 @@ Dessa forma, você estará coletando e fornecendo dados de métricas de tempo de
 
 ### Python
 
-A instrumentação indireta no Prometheus usando Python envolve a adição de código ao seu aplicativo Python para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Python, como o "prometheus_client" ou o "py-prometheus-client". Aqui está um exemplo de como adicionar o "prometheus_client" ao seu aplicativo Python e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
+A instrumentação direta no Prometheus usando Python envolve a adição de código ao seu aplicativo Python para coletar e fornecer dados de métricas ao Prometheus. Isso geralmente é feito adicionando uma biblioteca de instrumentação ao seu aplicativo e configurando-a para se comunicar com o Prometheus. Existem várias bibliotecas de instrumentação disponíveis para coletar métricas em aplicativos Python, como o "prometheus_client" ou o "py-prometheus-client". Aqui está um exemplo de como adicionar o "prometheus_client" ao seu aplicativo Python e configurá-lo para coletar métricas de tempo de resposta de uma rota específica:
 
 Instale o "prometheus_client" usando o pip:
 
@@ -466,6 +474,61 @@ existem algumas soluções possíveis para monitorá-los com o Prometheus:
 ## Alertmanager
 
 O Alertmanager é uma ferramenta que trabalha em conjunto com o Prometheus para gerenciar alertas. Ele recebe alertas do Prometheus e os processa de acordo com regras configuradas pelo usuário, como notificações por email, Slack, PagerDuty, entre outras. Basicamente ele funciona como um servidor HTTP que aguarda as notificações de alertas enviadas pelo Prometheus. Quando o Prometheus detecta uma condição de alerta, ele envia uma notificação ao Alertmanager, que então segue as regras de roteamento de alertas configuradas pelo usuário para enviar notificações.
+
+### Exemplo Prático de Configuração
+
+Vejamos um exemplo de como configurar alertas para notificar uma equipe via Slack quando um servidor ficar indisponível:
+
+1. Primeiramente, defina regras de alerta no arquivo `alert.rules.yml`:
+
+```yaml
+groups:
+- name: servidor
+  rules:
+  - alert: ServidorIndisponivel
+    expr: up{job="node"} == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Servidor indisponível: {{ $labels.instance }}"
+      description: "O servidor {{ $labels.instance }} está indisponível há mais de 1 minuto."
+```
+
+2. Configure o Prometheus para usar essas regras e o Alertmanager:
+
+```yaml
+# Em prometheus.yml
+rule_files:
+  - "alert.rules.yml"
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+```
+
+3. Configure o Alertmanager para enviar alertas para o Slack:
+
+```yaml
+# Em alertmanager.yml
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: 'slack-notifications'
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX'
+    channel: '#alerts'
+    send_resolved: true
+    title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+    text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+```
 
 Para configurar o Alertmanager com o Prometheus, é necessário criar um arquivo de configuração `alertmanager.yml` e especificar o endpoint do Alertmanager no arquivo de configuração `prometheus.yml`. O arquivo `alertmanager.yml` contém as regras de roteamento de alertas e configurações de notificação, como os destinatários e as plataformas de notificação. Para mais informações sobre como configurar o Alertmanager, consulte a documentação oficial em https://prometheus.io/docs/alerting/latest/configuration/.
 
@@ -523,42 +586,6 @@ Além desses arquivos, a pasta raiz do Prometheus também pode conter outros arq
     ├── 000000002
     └── checkpoint.00000001
         └── 00000000
-```
-
-* **WAL** - (Write Ahead Log) é o arquivo de log onde o Prometheus escreve todas as atualizações de dados antes de atualizar o banco de dados principal. Ele é usado para garantir a consistência e recuperação dos dados armazenados pelo Prometheus. Abaixo está um exemplo de como os dados são armazenados no WAL:
-
-```bash
-prometheus
-└── wal
-    ├── 0
-    │   ├── index
-    │   ├── segments
-    │   ├── tombstones
-    │   └── wal
-    ├── 1
-    │   ├── index
-    │   ├── segments
-    │   ├── tombstones
-    │   └── wal
-    └── ...
-```
-
-Para simplificar ainda mais, imagine que o Prometheus é um cofre, e dentro dele temos muitas coisas importantes, como números e informações sobre o seu computador ou até mesmo sobre sua casa. Agora, imagine que toda vez que você adiciona algo novo no seu cofre, como por exemplo, a temperatura da sua casa, é preciso escrever esse novo número em um diário, para sempre ter registro dele e poder acessá-lo depois. Esse diário é o que chamamos de WAL (Write Ahead Log) do Prometheus. Ele é como um diário onde o Prometheus escreve tudo o que ele coleta e guarda essas informações, para que possamos acessá-las depois. Assim como o diário precisa ser guardado em algum lugar seguro, o WAL também precisa ser guardado em um lugar seguro, para que não possa ser perdido ou danificado. Isso garante que todas as informações importantes sejam sempre salvas e possam ser acessadas quando precisarmos delas.
-
-* **chunks_head** - é a pasta onde o Prometheus armazena os principais dados de métricas coletadas. Ela contém pastas com nomes numéricos, cada uma corresponde a uma série de métricas. Dentro de cada pasta, encontra-se outras pastas como chunks, tombstones e arquivos como meta.json e index.
-* **chunks** - é a pasta onde o Prometheus armazena os dados de métricas coletadas em um formato compactado. Cada arquivo dentro dessa pasta representa um período de tempo específico.
-* **tombstones** - é a pasta onde o Prometheus armazena informações sobre métricas que foram removidas do banco de dados. Isso é usado para garantir que essas métricas não sejam incluídas na recuperação do banco de dados.
-* **meta.json** - é um arquivo que contém informações sobre a série de métricas, incluindo o nome, labels e outras informações relevantes.
-* **index** - é um arquivo que contém um índice dos dados de métricas armazenados no banco de dados. Isso é usado para permitir que o Prometheus localize rapidamente os dados desejados.
-
-Tomando a pasta **01BKGTZQ1SYQJTR4PB43C8PD98** como exemplo, que é um ID de bloco, observe que existe a seguinte estrutura:
-
-```bash
-├── chunks
-│   └── 000001
-├── tombstones
-├── index
-└── meta.json
 ```
 
 
@@ -622,9 +649,51 @@ No que diz respeito à pilha do Prometheus, o sistema utiliza uma estrutura de d
 
 Além disso, pode ser necessário considerar o dimensionamento vertical ou horizontal do servidor para lidar com grandes volumes de dados. Já que o gerenciamento de memória do Prometheus é feito pelo sistema operacional, não há muito o que possamos fazer para otimizar o uso de memória, o recomendado é potencializar o prometheus de modo que ele se torne apenas um componente de um sistema de monitoramento mais robusto, como é o caso do Thanos, Victoriametrics, Cortex, etc. Mas esse é um papo para outro artigo.
 
+## Melhores Práticas
+
+Após entendermos a arquitetura interna do Prometheus e como ele gerencia dados, é importante discutir algumas melhores práticas que podem otimizar seu uso e evitar problemas comuns:
+
+### Planejamento de Capacidade
+
+* **Dimensionamento adequado**: Planeje o dimensionamento do servidor Prometheus com base no número de métricas a serem coletadas, frequência de coleta e período de retenção.
+* **Monitoramento do próprio Prometheus**: Utilize métricas como `prometheus_tsdb_head_series` e `prometheus_engine_queries` para monitorar a saúde da própria instância.
+* **Política de retenção**: Defina uma política de retenção realista (via `--storage.tsdb.retention.time` ou `--storage.tsdb.retention.size`) baseada nas necessidades reais de análise histórica.
+
+### Organização de Métricas
+
+* **Nomeação consistente**: Adote um padrão de nomenclatura para suas métricas usando snake_case e prefixos de aplicação (`app_http_requests_total`).
+* **Labels significativos**: Use labels para adicionar dimensões às métricas, mas evite cardinalidade excessiva (> 10 valores por label).
+* **Evite explosão de cardinalidade**: Nunca use valores de alta cardinalidade como IDs de usuário, URLs completos ou timestamps como labels.
+
+### Consultas Eficientes
+
+* **Limite o uso de funções pesadas**: Funções como `topk()`, `bottomk()` e agregações com `by` em muitas dimensões podem ser caras.
+* **Prefira `rate()` sobre `irate()`**: Para a maioria dos dashboards, `rate()` oferece uma visão mais estável da taxa de mudança de uma métrica.
+* **Use intervalos de tempo razoáveis**: Consultas sobre períodos muito longos consomem mais recursos; limite-as quando possível.
+
+### Arquitetura para Escala
+
+* **Adote Prometheus hierárquico**: Para ambientes grandes, considere uma arquitetura hierárquica com federação para dividir a carga.
+* **Considere soluções de longo prazo**: Para retenção de longo prazo e alta disponibilidade, explore soluções como Thanos, Cortex ou VictoriaMetrics.
+* **Sharding**: Em ambientes muito grandes, divida o trabalho de scraping entre múltiplas instâncias do Prometheus.
+
+### Segurança
+
+* **Controle de acesso**: Implemente autenticação e autorização para acesso à API do Prometheus.
+* **TLS para endpoints**: Habilite TLS para comunicações entre Prometheus e seus alvos quando possível.
+* **Isolamento de rede**: Restrinja o acesso ao Prometheus apenas a redes confiáveis ou use um proxy reverso com autenticação.
+
+A implementação dessas práticas não apenas melhorará o desempenho do seu ambiente Prometheus, mas também facilitará sua manutenção e crescimento ao longo do tempo.
+
 ## Conclusão
 
-Neste artigo, vimos como o Prometheus funciona e como ele coleta e armazena dados de métricas. Também vimos como o Prometheus funciona internamente, como ele armazena dados em memória e em disco, e como ele gerencia a memória do host Linux. Espero que você tenha gostado do artigo e que ele tenha ajudado você a entender melhor como o Prometheus
+Neste artigo, exploramos em detalhes o Prometheus, desde seus conceitos fundamentais até sua arquitetura interna e funcionamento técnico. Vimos como ele implementa um banco de dados de séries temporais eficiente e como gerencia dados tanto em memória quanto em disco.
+
+O Prometheus se destaca no ecossistema de monitoramento por sua simplicidade, eficiência e abordagem pull-based, tornando-o uma ferramenta poderosa para monitorar ambientes modernos, especialmente os nativos da nuvem. Sua capacidade de coletar, armazenar e consultar métricas com baixa latência permite detectar problemas rapidamente e tomar decisões baseadas em dados.
+
+Entretanto, como qualquer ferramenta, o Prometheus tem seus limites, especialmente em termos de escalabilidade e retenção de longo prazo. É por isso que o ecossistema tem evoluído para incluir soluções complementares como Thanos, VictoriaMetrics e Cortex, que abordaremos em artigos futuros. A compreensão profunda do funcionamento interno do Prometheus apresentada aqui deve ajudar engenheiros e operadores a aproveitar melhor seus recursos, otimizar seu desempenho e evitar armadilhas comuns.
+
+Esperamos que este guia tenha fornecido insights valiosos tanto para iniciantes quanto para usuários experientes do Prometheus, e que sirva como referência para implementações bem-sucedidas em seus ambientes de produção.
 
 ---
 
@@ -636,3 +705,20 @@ Neste artigo, vimos como o Prometheus funciona e como ele coleta e armazena dado
 * **[Prometheusbook de James Turnbull](https://www.prometheusbook.com/)**
 * **[Hands-On Infrastructure Monitoring with Prometheus](https://www.oreilly.com/library/view/hands-on-infrastructure-monitoring/9781789612349/)**
 * **[Monitoring Microservices and Containerized Applications](https://www.oreilly.com/library/view/monitoring-microservices-and/9781484262160/)**
+
+### Prometheus vs. Outras Ferramentas de Monitoramento
+
+Entender como o Prometheus se compara a outras ferramentas populares de monitoramento pode ajudar a escolher a solução certa para seu ambiente:
+
+| Ferramenta | Modelo | Armazenamento | Foco | Pontos Fortes | Limitações |
+|------------|--------|---------------|------|---------------|------------|
+| **Prometheus** | Pull-based | TSDB próprio | Métricas | Simplicidade, PromQL, ecossistema Cloud Native | Retenção de longo prazo, alta disponibilidade |
+| **Grafana Mimir** | Pull/Push | Distribuído | Métricas | Escalabilidade horizontal, compatibilidade com PromQL | Complexidade de configuração |
+| **Datadog** | Push-based | Proprietário | Métricas, logs, traces | Interface unificada, monitoramento completo | Custo, código fechado |
+| **New Relic** | Push-based | Proprietário | APM, métricas | Profiling de aplicações, dashboards prontos | Custo, menos flexível |
+| **Nagios** | Pull-based | Relacional | Verificações de disponibilidade | Maturidade, extensibilidade | Configuração complexa, visualização limitada |
+| **ELK Stack** | Push-based | Elasticsearch | Logs, métricas | Pesquisa poderosa, análise de logs | Consumo de recursos, complexidade |
+
+O Prometheus se destaca pela sua abordagem não-intrusiva de monitoramento, focando primariamente em métricas numéricas e oferecendo uma linguagem de consulta poderosa. É especialmente adequado para ambientes dinâmicos como Kubernetes, onde serviços vêm e vão constantemente.
+
+Enquanto soluções como [Datadog](https://www.datadoghq.com/) e [New Relic](https://newrelic.com/) oferecem experiências mais integradas com APM (Application Performance Monitoring) e análise de logs, elas tendem a ser mais caras e menos flexíveis. O Prometheus, sendo open source, permite maior personalização e integração com outras ferramentas de código aberto.

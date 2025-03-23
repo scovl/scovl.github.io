@@ -1,0 +1,46 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.Description }}{{ end }}">
+
+<!-- CSS -->
+<link rel="stylesheet" href="{{ "css/styles.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/syntax.css" | relURL }}">
+
+<!-- custom gruvbox remote highlight -->
+<link rel="stylesheet" href="https://github.com/scovl/scovl.github.io/blob/master/static/css/syntax/gruvbox.css">
+<!-- Custom CSS from config if any -->
+{{ range .Site.Params.customCSS }}
+<link rel="stylesheet" href="{{ . | relURL }}">
+{{ end }}
+
+
+{{ if .Site.Params.math }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+{{ end }}
+
+{{ if .Site.Params.mermaid }}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: '{{ .Site.Params.mermaid.theme }}',
+            align: '{{ .Site.Params.mermaid.align }}'
+        });
+    });
+</script>
+{{ end }} 

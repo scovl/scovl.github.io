@@ -1,0 +1,12 @@
+{{ $lang := .Get 0 }}
+{{ $options := .Get 1 }}
+{{ $file := .Get 2 }}
+
+{{ if $file }}
+  {{ $content := os.ReadFile $file }}
+  {{ highlight $content $lang $options }}
+{{ else }}
+  <div class="highlight language-{{ $lang }}" data-lang="{{ $lang }}">
+    <pre class="language-{{ $lang }}"><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>
+  </div>
+{{ end }} 

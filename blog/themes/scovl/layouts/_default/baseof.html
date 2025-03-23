@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    {{ partial "head.html" . }}
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        {{ block "header" . }}
+        {{ partial "header.html" . }}
+        {{ end }}
+        
+        <!-- Main content -->
+        <main>
+            {{ block "main" . }}{{ end }}
+        </main>
+        
+        <!-- Footer -->
+        {{ block "footer" . }}
+        {{ partial "footer.html" . }}
+        {{ end }}
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="{{ "js/main.js" | relURL }}"></script>
+    
+    <!-- Custom JS from config if any -->
+    {{ range .Site.Params.customJS }}
+    <script src="{{ . | relURL }}"></script>
+    {{ end }}
+</body>
+</html> 

@@ -1,130 +1,133 @@
 <!DOCTYPE html>
-<html prefix="og: http://ogp.me/ns#">
+<html lang="pt">
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>PromQL &middot; Vitor Lobo</title>
-    <meta name="description" content="Entendendo o PromQL">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
-    <meta name="generator" content="Hugo 0.128.2">
-    <meta name="robots" content="index,follow">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="PromQL">
-<meta property="og:description" content="Entendendo o PromQL">
-<meta property="og:type" content="article">
-<meta property="og:url" content="http://localhost:1313/2023/03/19/promql/">
-    <link rel="stylesheet" href="http://localhost:1313//dist/site.css">
-    <link rel="stylesheet" href="http://localhost:1313//dist/syntax.css">
-    <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Roboto:wght@300;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Coming+Soon&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic|PT+Sans+Caption:700,400|Source+Sans+Pro:400|Raleway:300" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    
-    
-    
-    <link rel="shortcut icon" href="http://localhost:1313//img/favicon.ico">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-      MathJax = {
-        tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
-          displayMath: [['$$', '$$'], ['\\[', '\\]']]
-        },
-        svg: {
-          fontCache: 'global'
-        }
-      };
-    </script>
+    <title>PromQL | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Entendendo o PromQL">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://github.com/scovl/scovl.github.io/blob/master/static/css/syntax/gruvbox.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
 </head>
 <body>
-    
-  
-
-
-    <div id="wrapper">
+    <div class="container">
+        
+        
         <header class="site-header">
-            <div class="container">
-                <div class="site-title-wrapper">
-                    
-                        <h1 class="neurodev-title">
-                            <a title="neurodev" href="http://localhost:1313/">$ /home/scovl_</a>
-                        </h1>
-                    
-                    <a class="button-square" href="http://localhost:1313//index.xml"><i class="fa fa-rss"></i></a>
-                    
-                    
-                    
-                    
-                        <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/scovl" rel="me" target="_blank">
-                            <i class="fa fa-github-alt"></i>
-                        </a>
-                    
-                    
-                    
-                        <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://linkedin.com/in/vitor-lobo" rel="me" target="_blank">
-                            <i class="fa fa-linkedin"></i>
-                        </a>
-                    
-                    
-                    
-                        <a class="button-square button-social hint--top" data-hint="Email" title="Email" href="mailto:lobocode@gmail.com">
-                            <i class="fa fa-envelope"></i>
-                        </a>
-                    
-                </div>
-
-                <ul class="site-nav">
-                    <a class="site-nav-item" title="Home" href="/">Home</a>
-
-    <li class="site-nav-item">
-        <a title="About" href="/page/about/">About</a>
-    </li>
-
-    <li class="site-nav-item">
-        <a title="Contact" href="/page/contact/">Contact</a>
-    </li>
-
-
-                </ul>
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="http://localhost:1313/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">PromQL</h1>
+        <div class="post-meta">
+            
+            <time datetime="2023-03-19T17:31:45-03:00">
+                Sun, Mar 19, 2023
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-tags">
+                
+                <a href="/tags/observability/" class="tag">observability</a>
+                
+                <a href="/tags/prometheus/" class="tag">prometheus</a>
+                
+                <a href="/tags/promql/" class="tag">promql</a>
+                
+                <a href="/tags/monitoring/" class="tag">monitoring</a>
+                
+                <a href="/tags/tsdb/" class="tag">TSDB</a>
+                
             </div>
-        </header>
-
-        <div id="container">
-
-
-<div class="container">
-    <article class="post-container" itemscope="" itemtype="http://schema.org/BlogPosting">
-        <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">PromQL</h1>
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 30 min
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Entendendo o PromQL
+            </div>
+            
+        </div>
+    </header>
     
-        <p class="post-description" itemprop="description">Entendendo o PromQL</p>
-    
-    <p class="post-date">
-        <span>Published <time datetime="2023-03-19" itemprop="datePublished">dom., mar. 19, 2023</time></span>
-        <span>by</span>
-        <span itemscope="" itemprop="author" itemtype="https://schema.org/Person">
-            <span itemprop="name">
-                <a href="https://google.com/&#43;XXX" itemprop="url" rel="author">Vitor Lobo Ramos</a>
-            </span>
-        </span>
-    </p>
-    
-        <p class="post-reading post-line">
-            <span>Estimated reading time: 32 min</span>
-        </p>
-    
-</header>
-
-        <div class="post-content clearfix" itemprop="articleBody">
-    
-
-    <ul>
+    <div class="post-content content-wrapper">
+        <ul>
 <li><strong><a href="/2023/03/19/promql/#introdução">Introdução</a></strong></li>
 <li><strong><a href="/2023/03/19/promql/#funções">Funções</a></strong></li>
 <li><strong><a href="/2023/03/19/promql/#agregadores-e-operadores">Agregadores e Operadores</a></strong></li>
@@ -132,10 +135,10 @@
 <li><strong><a href="/2023/03/19/promql/#erros-comuns">Erros comuns</a></strong></li>
 </ul>
 <h2 id="introdução">Introdução</h2>
-<p>PromQL é uma linguagem de consulta poderosa usada para realizar consultas e configurar alertas sobre dados coletados pelo Prometheus. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, agrupamento de dados e agregações. Além disso, conta com recursos avançados como subconsultas e funções de séries temporais. As consultas PromQL podem ser executadas através da interface web do Prometheus, APIs ou bibliotecas de clientes.</p>
+<p>PromQL é uma linguagem de consulta poderosa usada para realizar consultas e configurar alertas sobre dados coletados pelo Prometheus. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações. Além disso, conta com recursos avançados como subconsultas e funções de séries temporais. As consultas PromQL podem ser executadas através da interface web do Prometheus, APIs ou bibliotecas de clientes.</p>
 <p>A linguagem também possibilita a criação de gráficos e painéis de visualização para métricas, utilizando ferramentas de visualização de dados como o Grafana. Dessa forma, a PromQL se mostra essencial para monitorar e analisar o desempenho de sistemas com eficiência e precisão. Neste artigo, vamos explorar os principais recursos da PromQL, que incluem funções, agregadores e operadores, além de demonstrar como criar consultas complexas para analisar dados de métricas.</p>
 <h3 id="time-series-database">Time series database</h3>
-<p>O Prometheus armazena dados em um formato binário chamado TSDB (Time Series Database). O TSDB é um banco de dados de séries temporais que é otimizado para armazenar dados de métricas. Ele é escrito em Go e é um projeto de código aberto hospedado no GitHub. Para simplificar o entendimento acerca de um banco de dados de série temporal, imagine que você tem um diário onde você registra a temperatura do ar todos os dias, às mesmas horas, assim como a velocidade do vento, pressão atmosférica, entre outras informações. Essas informações são armazenadas em ordem cronológica, ou seja, por ordem de tempo, e é possível consultá-las para ver como esses dados variam ao longo do tempo. É uma forma de armazenar e consultar dados que possuem uma dimensão temporal. Monitorar métricas a partir de um banco de dados em série temporal tem várias vantagens. Algumas das principais vantagens incluem:</p>
+<p>O Prometheus armazena dados em um formato binário chamado TSDB (Time Series Database). O TSDB é um banco de dados de séries temporais otimizado para armazenar dados de métricas. Ele é escrito em Go e é um projeto de código aberto hospedado no GitHub. Para simplificar o entendimento acerca de um banco de dados de série temporal, imagine que você tem um diário onde você registra a temperatura do ar todos os dias, às mesmas horas, assim como a velocidade do vento, pressão atmosférica, entre outras informações. Essas informações são armazenadas em ordem cronológica, ou seja, por ordem de tempo, e é possível consultá-las para ver como esses dados variam ao longo do tempo. É uma forma de armazenar e consultar dados que possuem uma dimensão temporal. Monitorar métricas a partir de um banco de dados em série temporal tem várias vantagens. Algumas das principais vantagens incluem:</p>
 <ul>
 <li><strong>Análise histórica:</strong> Um banco de dados em série temporal armazena dados em ordem cronológica, o que permite a análise de tendências e padrões ao longo do tempo. Isso é útil para entender como o desempenho do sistema evoluiu e identificar tendências que possam indicar problemas futuros.</li>
 <li><strong>Identificação de problemas:</strong> Armazenando dados em ordem cronológica, é possível investigar problemas usando dados históricos. Isso permite identificar a causa raiz de problemas de desempenho e disponibilidade.</li>
@@ -143,7 +146,7 @@
 <li><strong>Armazenamento escalável:</strong> Banco de dados em série temporal são projetados para lidar com grandes volumes de dados e escalar horizontalmente, permitindo que as métricas sejam armazenadas sem perda de desempenho.</li>
 <li><strong>Integração com outras ferramentas:</strong> A maioria das ferramentas de monitoramento e análise de dados suportam a coleta de dados de banco de dados em série temporal, o que permite a integração com outras ferramentas de monitoramento e análise.</li>
 </ul>
-<p>Em resumo, usar um banco de dados em série temporal permite coletar, armazenar e analisar dados de métricas de desempenho ao longo do tempo, permitindo a identificação de problemas, tendências e padrões, criação de alertas baseados no tempo, escalabilidade e integração com outras ferramentas de monitoramento e análise. PromQL (Prometheus Query Language) é a linguagem de consulta usada para extrair dados de métricas armazenadas em Prometheus. Ele permite que os usuários criem consultas complexas para analisar os dados de métricas.PromQL é baseado em expressões, que podem ser combinadas para criar consultas mais complexas. As expressões mais comuns incluem:</p>
+<p>Em resumo, usar um banco de dados em série temporal permite coletar, armazenar e analisar dados de métricas de desempenho ao longo do tempo, permitindo a identificação de problemas, tendências e padrões, criação de alertas baseados no tempo, escalabilidade e integração com outras ferramentas de monitoramento e análise. PromQL (Prometheus Query Language) é a linguagem de consulta usada para extrair dados de métricas armazenadas em Prometheus. Ele permite que os usuários criem consultas complexas para analisar os dados de métricas. PromQL é baseado em expressões, que podem ser combinadas para criar consultas mais complexas. As expressões mais comuns incluem:</p>
 <ul>
 <li><strong>Funções de agregação:</strong> Essas funções, como média, soma e máximo, permitem agregar dados de métricas ao longo de um período de tempo específico. Por exemplo, a função de média pode ser usada para calcular a média de uma métrica ao longo de um período de tempo.</li>
 <li><strong>Funções de filtragem:</strong> Essas funções permitem filtrar os dados de métricas para incluir ou excluir dados específicos. Por exemplo, a função &ldquo;igual&rdquo; pode ser usada para selecionar apenas os dados de uma métrica específica.</li>
@@ -151,227 +154,311 @@
 </ul>
 <p>PromQL também suporta operações matemáticas básicas, como adição, subtração, multiplicação e divisão, que podem ser usadas para combinar diferentes métricas e expressões. PromQL também suporta a utilização de operadores lógicos, como &ldquo;and&rdquo; e &ldquo;or&rdquo;, para combinar expressões e criar consultas mais complexas. Além disso, PromQL também oferece recursos avançados, como suporte a rótulos, que permitem selecionar dados específicos de métricas baseadas em rótulos associados a essas métricas. PromQL é uma linguagem poderosa e flexível, que permite aos usuários criar consultas complexas para analisar os dados de métricas armazenadas em Prometheus. Isso permite a identificação de problemas, tendências e padrões, criação de alertas baseados no tempo e integração com outras ferramentas de monitoramento e análise.</p>
 <h3 id="seletores">Seletores</h3>
-<p>Os Selectors em PromQL são como filtros que nos permitem escolher uma ou mais métricas específicas para consultas. Existem dois tipos de seletores: o primeiro é o seletor de nome de métrica, que seleciona métricas pelo seu nome, como por exemplo <code>http_requests_total</code>. O segundo é o seletor de label, que seleciona métricas pelo label associado a elas. Por exemplo, podemos ter uma métrica <code>http_requests_total</code> com os labels <code>method</code> e <code>handler</code>, e com valores <code>GET</code> e <code>/api/v1/users</code>, respectivamente. Usando o seletor de label, podemos escolher as métricas com label <code>method</code> igual a <code>GET</code> e <code>handler</code> igual a <code>/api/v1/users</code>. Os seletores são combinados com operadores de correspondência para selecionar um conjunto específico de séries de métricas. Esses operadores incluem <code>=, !=, =~</code> e <code>!~</code>, e são usados para comparar valores ou expressões regulares. Combinando os seletores com os operadores de correspondência, podemos selecionar as métricas exatas que desejamos. Exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">http_requests_total<span class="o">{</span><span class="nv">method</span><span class="o">=</span><span class="s2">&#34;GET&#34;</span>, <span class="nv">handler</span><span class="o">=</span><span class="s2">&#34;/api/v1/users&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><ul>
+<p>Os seletores em PromQL são como filtros que permitem escolher uma ou mais métricas específicas para consultas. Existem dois tipos de seletores: o primeiro é o seletor de nome de métrica, que seleciona métricas pelo seu nome, como por exemplo <code>http_requests_total</code>. O segundo é o seletor de label, que seleciona métricas pelo label associado a elas. Por exemplo, podemos ter uma métrica <code>http_requests_total</code> com os labels <code>method</code> e <code>handler</code>, e com valores <code>GET</code> e <code>/api/v1/users</code>, respectivamente. Usando o seletor de label, podemos escolher as métricas com label <code>method</code> igual a <code>GET</code> e <code>handler</code> igual a <code>/api/v1/users</code>. Os seletores são combinados com operadores de correspondência para selecionar um conjunto específico de séries de métricas. Esses operadores incluem <code>=, !=, =~</code> e <code>!~</code>, e são usados para comparar valores ou expressões regulares. Combinando os seletores com os operadores de correspondência, podemos selecionar as métricas exatas que desejamos. Exemplo:</p>
+
+
+  <pre><code class="language-bash">http_requests_total{method=&#34;GET&#34;, handler=&#34;/api/v1/users&#34;}</code></pre>
+ <ul>
 <li>Selecionando todas as métricas que possuem &ldquo;http&rdquo; no nome:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">{</span><span class="nv">__name__</span><span class="o">=</span>~<span class="s2">&#34;http.*&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">{__name__=~&#34;http.*&#34;}</code></pre>
+ <ul>
 <li>Selecionando métricas que possuem o label &ldquo;status&rdquo; com o valor &ldquo;error&rdquo;:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">{</span><span class="nv">status</span><span class="o">=</span><span class="s2">&#34;error&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><p>Selecionando métricas que possuem o label &ldquo;app&rdquo; com os valores &ldquo;frontend&rdquo; ou &ldquo;backend&rdquo;:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="o">{</span><span class="nv">app</span><span class="o">=</span>~<span class="s2">&#34;frontend|backend&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><h3 id="tipos-de-expressões">Tipos de expressões</h3>
-<p>Em PromQL, existem vários tipos de expressões que podem ser usados ​​para manipular as métricas coletadas pelo Prometheus. Essas expressões podem ser usadas para realizar cálculos matemáticos, agrupar métricas, filtrar resultados e muito mais. Aqui estão alguns dos principais tipos de expressões em PromQL:</p>
+
+
+  <pre><code class="language-bash">{status=&#34;error&#34;}</code></pre>
+ <p>Selecionando métricas que possuem o label &ldquo;app&rdquo; com os valores &ldquo;frontend&rdquo; ou &ldquo;backend&rdquo;:</p>
+
+
+  <pre><code class="language-bash">{app=~&#34;frontend|backend&#34;}</code></pre>
+ <h3 id="tipos-de-expressões">Tipos de expressões</h3>
+<p>Em PromQL, existem vários tipos de expressões que podem ser usadas para manipular as métricas coletadas pelo Prometheus. Essas expressões podem ser usadas para realizar cálculos matemáticos, agrupar métricas, filtrar resultados e muito mais. Aqui estão alguns dos principais tipos de expressões em PromQL:</p>
 <ul>
-<li><strong>Expressões aritméticas</strong>: São usadas para realizar cálculos matemáticos em séries de métricas. Por exemplo, podemos somar ou subtrair o valor de duas métricas usando operadores como <code>+</code> e <code>-</code>, ou ainda multiplicar ou dividir pelo valor de uma constante usando <code>*</code> e <code>/</code>. Por exemplo:</li>
+<li><strong>Expressões aritméticas:</strong> são usadas para realizar cálculos matemáticos em séries de métricas. Por exemplo, podemos somar ou subtrair o valor de duas métricas usando operadores como <code>+</code> e <code>-</code>, ou ainda multiplicar ou dividir pelo valor de uma constante usando <code>*</code> e <code>/</code>. Por exemplo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">node_cpu_seconds_total<span class="o">{</span><span class="nv">mode</span><span class="o">=</span><span class="s2">&#34;system&#34;</span><span class="o">}</span> / node_cpu_seconds_total<span class="o">{</span><span class="nv">mode</span><span class="o">=</span><span class="s2">&#34;idle&#34;</span><span class="o">}</span> * <span class="m">100</span>
-</span></span></code></pre></div><p>Neste exemplo, estamos calculando a porcentagem de tempo que a CPU passa no modo <code>&quot;system&quot;</code> em relação ao modo <code>&quot;idle&quot;</code>.</p>
+
+
+  <pre><code class="language-bash">node_cpu_seconds_total{mode=&#34;system&#34;} / node_cpu_seconds_total{mode=&#34;idle&#34;} * 100</code></pre>
+ <p>Neste exemplo, estamos calculando a porcentagem de tempo que a CPU passa no modo <code>&quot;system&quot;</code> em relação ao modo <code>&quot;idle&quot;</code>.</p>
 <ul>
-<li><strong>Funções de agregação</strong>: São usadas para agrupar e resumir séries de métricas. Essas funções incluem sum, avg, max e min, que permitem somar, calcular a média, obter o valor máximo e mínimo de uma série de métricas. Por exemplo:</li>
+<li><strong>Funções de agregação:</strong> são usadas para agrupar e resumir séries de métricas. Essas funções incluem sum, avg, max e min, que permitem somar, calcular a média, obter o valor máximo e mínimo de uma série de métricas. Por exemplo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>rate<span class="o">(</span>http_requests_total<span class="o">[</span>5m<span class="o">]))</span> by <span class="o">(</span>job<span class="o">)</span>
-</span></span></code></pre></div><p>Neste exemplo, estamos calculando a taxa de solicitações HTTP nos últimos 5 minutos e somando os resultados por <code>&quot;job&quot;</code>.</p>
+
+
+  <pre><code class="language-bash">sum(rate(http_requests_total[5m])) by (job)</code></pre>
+ <p>Neste exemplo, estamos calculando a taxa de solicitações HTTP nos últimos 5 minutos e somando os resultados por <code>&quot;job&quot;</code>.</p>
 <ul>
-<li><strong>Funções de filtro</strong>: São usadas para filtrar séries de métricas com base em seus labels. Essas funções incluem label_values e topk, que permitem obter os valores de um label específico e selecionar as principais séries de métricas com base em um label. Por exemplo:</li>
+<li><strong>Funções de filtro:</strong> são usadas para filtrar séries de métricas com base em seus labels. Essas funções incluem label_values e topk, que permitem obter os valores de um label específico e selecionar as principais séries de métricas com base em um label. Por exemplo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">topk<span class="o">(</span>5, http_requests_total<span class="o">)</span>
-</span></span></code></pre></div><p>Neste exemplo, estamos selecionando as 5 séries temporais com os maiores valores de <code>http_requests_total</code>.</p>
+
+
+  <pre><code class="language-bash">topk(5, http_requests_total)</code></pre>
+ <p>Neste exemplo, estamos selecionando as 5 séries temporais com os maiores valores de <code>http_requests_total</code>.</p>
 <ul>
-<li><strong>Funções de transformação</strong>: São usadas para transformar séries de métricas de uma maneira específica. Essas funções incluem rate, que permite calcular a taxa de mudança entre pontos de dados, irate, que permite calcular a taxa instantânea de mudança, e delta, que permite calcular a diferença entre os valores de métricas em dois pontos de tempo diferentes. Exemplo:</li>
+<li><strong>Funções de transformação:</strong> são usadas para transformar séries de métricas de uma maneira específica. Essas funções incluem rate, que permite calcular a taxa de mudança entre pontos de dados, irate, que permite calcular a taxa instantânea de mudança, e delta, que permite calcular a diferença entre os valores de métricas em dois pontos de tempo diferentes. Exemplo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">histogram_quantile<span class="o">(</span>0.95, rate<span class="o">(</span>http_request_duration_seconds_bucket<span class="o">[</span>5m<span class="o">]))</span>
-</span></span></code></pre></div><p>Acima, estamos calculando o percentil 95 da distribuição de latência das solicitações HTTP nos últimos 5 minutos.</p>
+
+
+  <pre><code class="language-bash">histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))</code></pre>
+ <p>Acima, estamos calculando o percentil 95 da distribuição de latência das solicitações HTTP nos últimos 5 minutos.</p>
 <ul>
-<li><strong>Expressões booleanas</strong>: São usadas para avaliar se uma determinada condição é verdadeira ou falsa. Essas expressões incluem operadores como and, or e unless, que permitem combinar ou negar condições. Por exemplo:</li>
+<li><strong>Expressões booleanas:</strong> são usadas para avaliar se uma determinada condição é verdadeira ou falsa. Essas expressões incluem operadores como and, or e unless, que permitem combinar ou negar condições. Por exemplo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>http_requests_total<span class="o">{</span><span class="nv">status_code</span><span class="o">=</span>~<span class="s2">&#34;5..&#34;</span><span class="o">}[</span>1m<span class="o">])</span> &gt; rate<span class="o">(</span>http_requests_total<span class="o">{</span><span class="nv">status_code</span><span class="o">=</span>~<span class="s2">&#34;2..&#34;</span><span class="o">}[</span>1m<span class="o">])</span> * 0.1
-</span></span></code></pre></div><p>Neste exemplo, estamos verificando se a taxa de solicitações HTTP com códigos de status <code>5xx</code> nos últimos 1 minuto é maior que 10% da taxa de solicitações com códigos de status <code>2xx </code>no mesmo período.</p>
+
+
+  <pre><code class="language-bash">rate(http_requests_total{status_code=~&#34;5..&#34;}[1m]) &gt; rate(http_requests_total{status_code=~&#34;2..&#34;}[1m]) * 0.1</code></pre>
+ <p>Neste exemplo, estamos verificando se a taxa de solicitações HTTP com códigos de status <code>5xx</code> nos últimos 1 minuto é maior que 10% da taxa de solicitações com códigos de status <code>2xx </code>no mesmo período.</p>
 <h3 id="vector-vs-range-vector">Vector vs Range Vector</h3>
-<p>Em PromQL, há dois tipos principais de vetores que podemos usar em nossas consultas: Vector e Range Vector.</p>
+<p>Em PromQL, há dois tipos principais de vetores que podemos usar em nossas consultas: vetor e range vector.</p>
 <ul>
-<li><strong>Vector</strong>: É um conjunto de pontos de dados com os mesmos labels, representando a série temporal de uma única métrica. Por exemplo, o vector <code>up{job=&quot;prometheus&quot;}</code> representa o tempo em que o serviço Prometheus estava em execução ou não, com o label <code>job=&quot;prometheus&quot;</code>.</li>
-<li><strong>Range Vector</strong>: É um conjunto de pontos de dados com os mesmos labels, mas que representa um intervalo de tempo em vez de um único ponto no tempo. Os dados em um Range Vector são coletados ao longo do tempo e armazenados em uma janela deslizante. Por exemplo, o range vector <code>up{job=&quot;prometheus&quot;}[5m]</code> representa o tempo em que o serviço Prometheus estava em execução ou não nos últimos 5 minutos.</li>
+<li><strong>Vetor:</strong> É um conjunto de pontos de dados com os mesmos labels, representando a série temporal de uma única métrica. Por exemplo, o vetor <code>up{job=&quot;prometheus&quot;}</code> representa o tempo em que o serviço Prometheus estava em execução ou não, com o label <code>job=&quot;prometheus&quot;</code>.</li>
+<li><strong>Range Vector:</strong> É um conjunto de pontos de dados com os mesmos labels, mas que representa um intervalo de tempo em vez de um único ponto no tempo. Os dados em um range vector são coletados ao longo do tempo e armazenados em uma janela deslizante. Por exemplo, o range vector <code>up{job=&quot;prometheus&quot;}[5m]</code> representa o tempo em que o serviço Prometheus estava em execução ou não nos últimos 5 minutos.</li>
 </ul>
 <p>Exemplos de consultas PromQL usando vetores e range vectors:</p>
 <ul>
 <li>Selecionando o valor atual da métrica <code>cpu_usage</code> para a instância &ldquo;webserver-1&rdquo;:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cpu_usage<span class="o">{</span><span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;webserver-1&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">cpu_usage{instance=&#34;webserver-1&#34;}</code></pre>
+ <ul>
 <li>Selecionando a diferença entre os valores atuais das métricas <code>http_requests_total</code> e <code>http_requests_failed</code> para cada instância:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">http_requests_total - http_requests_failed
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">http_requests_total - http_requests_failed</code></pre>
+ <ul>
 <li>Selecionando os últimos 5 minutos de dados da métrica <code>cpu_usage</code> para cada instância:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>cpu_usage<span class="o">[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">rate(cpu_usage[5m])</code></pre>
+ <ul>
 <li>Selecionando o valor máximo da métrica &ldquo;network_traffic&rdquo; em um intervalo de 30 minutos para cada instância:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">max_over_time<span class="o">(</span>network_traffic<span class="o">[</span>30m<span class="o">])</span> by <span class="o">(</span>instance<span class="o">)</span>
-</span></span></code></pre></div><p>Em outras palavras, um Vector é uma série temporal que representa o valor de uma única métrica em um determinado momento, enquanto um Range Vector é uma série temporal que representa o valor de uma única métrica em um intervalo de tempo específico. Os Range Vectors são especialmente úteis para consultas que exigem agregação ou transformação de dados ao longo do tempo, como cálculos de média móvel, cálculos de taxa de mudança, entre outros. Por outro lado, os Vectors são adequados para consultas que exigem dados em um único ponto no tempo, como a consulta do valor atual de uma métrica.</p>
-<h3 id="selector-safety">Selector Safety</h3>
-<p>Selector Safety é um conceito em PromQL que se refere à capacidade de uma expressão de selecionar métricas de forma segura, sem risco de gerar resultados imprecisos ou indesejados. Em PromQL, os Selectors são usados para filtrar e selecionar as métricas que desejamos consultar. Por exemplo, podemos usar um Selector para selecionar todas as métricas que correspondem a um determinado label, como <code>job=&quot;prometheus&quot;</code>. No entanto, nem todos os Selectors são seguros, pois alguns podem selecionar métricas indesejadas ou que não correspondem ao que queremos.</p>
-<p>Um exemplo de um Selector inseguro é o uso de uma expressão de correspondência de prefixo em um label, como <code>job=~&quot;prom.*&quot;</code>. Esta expressão selecionará todas as métricas com o label <code>job</code> que começa com a palavra &ldquo;prom&rdquo;, incluindo métricas que não correspondem ao que estamos procurando. Isso pode resultar em resultados imprecisos ou indesejados. Para garantir a segurança dos Selectors em PromQL, é recomendável seguir algumas práticas recomendadas, como evitar o uso de expressões de correspondência de prefixo e usar apenas operadores de correspondência exata, como <code>=</code>, <code>!=</code> e <code>=~</code>. Além disso, é importante entender bem as métricas que estão sendo coletadas e seus labels, para que possamos criar Selectors precisos e seguros.</p>
-<p>Exemplos de Selectors seguros e inseguros:</p>
+
+
+  <pre><code class="language-bash">max_over_time(network_traffic[30m]) by (instance)</code></pre>
+ <p>Em outras palavras, um vetor é uma série temporal que representa o valor de uma única métrica em um determinado momento, enquanto um range vector é uma série temporal que representa o valor de uma única métrica em um intervalo de tempo específico. Os range vectors são especialmente úteis para consultas que exigem agregação ou transformação de dados ao longo do tempo, como cálculos de média móvel, cálculos de taxa de mudança, entre outros. Por outro lado, os vetores são adequados para consultas que exigem dados em um único ponto no tempo, como a consulta do valor atual de uma métrica.</p>
+<h3 id="segurança-do-seletor">Segurança do Seletor</h3>
+<p>A segurança do seletor é um conceito em PromQL que se refere à capacidade de uma expressão de selecionar métricas de forma segura, sem risco de gerar resultados imprecisos ou indesejados. Em PromQL, os seletores são usados para filtrar e selecionar as métricas que desejamos consultar. Por exemplo, podemos usar um seletor para selecionar todas as métricas que correspondem a um determinado label, como <code>job=&quot;prometheus&quot;</code>. No entanto, nem todos os seletores são seguros, pois alguns podem selecionar métricas indesejadas ou que não correspondem ao que queremos.</p>
+<p>Um exemplo de um seletor inseguro é o uso de uma expressão de correspondência de prefixo em um label, como <code>job=~&quot;prom.*&quot;</code>. Esta expressão selecionará todas as métricas com o label <code>job</code> que começa com a palavra &ldquo;prom&rdquo;, incluindo métricas que não correspondem ao que estamos procurando. Isso pode resultar em resultados imprecisos ou indesejados. Para garantir a segurança dos seletores em PromQL, é recomendável seguir algumas práticas recomendadas, como evitar o uso de expressões de correspondência de prefixo e usar apenas operadores de correspondência exata, como <code>=</code>, <code>!=</code> e <code>=~</code>. Além disso, é importante entender bem as métricas que estão sendo coletadas e seus labels, para que possamos criar seletores precisos e seguros.</p>
+<p>Exemplos de seletores seguros e inseguros:</p>
 <ul>
 <li>Selecionando o valor atual da métrica &ldquo;http_requests_total&rdquo; para qualquer instância, sem usar um seletor não seguro:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">http_requests_total<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;webserver&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">http_requests_total{job=&#34;webserver&#34;}</code></pre>
+ <ul>
 <li>Selecionando o valor atual da métrica &ldquo;cpu_usage&rdquo; para todas as instâncias, usando um seletor seguro:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cpu_usage * on<span class="o">(</span>instance<span class="o">)</span> group_left<span class="o">(</span>instance<span class="o">)</span> <span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;webserver&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">cpu_usage * on(instance) group_left(instance) {job=&#34;webserver&#34;}</code></pre>
+ <ul>
 <li>Selecionando o valor médio da métrica &ldquo;memory_usage&rdquo; em um intervalo de 1 hora, sem usar um seletor não seguro:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>memory_usage<span class="o">[</span>1h<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">avg_over_time(memory_usage[1h])</code></pre>
+ <ul>
 <li>Selecionando o valor máximo da métrica &ldquo;network_traffic&rdquo; em um intervalo de 30 minutos para cada instância, usando um seletor seguro:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">max_over_time<span class="o">(</span>network_traffic<span class="o">[</span>30m<span class="o">])</span> by <span class="o">(</span>instance<span class="o">)</span> * on<span class="o">(</span>instance<span class="o">)</span> group_left<span class="o">(</span>instance<span class="o">)</span> <span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;webserver&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><h3 id="instant-vector-staleness">Instant Vector Staleness</h3>
-<p>Em PromQL, o Instant Vector é um conjunto de pontos de dados que representam o valor de uma única métrica em um determinado momento no tempo. Quando executamos uma consulta usando um Instant Vector, o Prometheus retorna o valor mais recente da métrica no momento da consulta. No entanto, se a métrica não tiver sido coletada recentemente, o valor retornado pelo Prometheus pode estar desatualizado, o que é conhecido como Instant Vector Staleness. Isso pode ser um problema em casos em que a precisão dos dados é crítica, como em alertas de segurança ou monitoramento de sistemas críticos. Para lidar com o Instant Vector Staleness, o Prometheus permite configurar o intervalo de avaliação para consultas que usam Instant Vectors. Isso permite que a consulta leve em consideração um período de tempo maior e, assim, reduzir o impacto do Instant Vector Staleness. Por exemplo, podemos configurar uma consulta para usar o intervalo de avaliação de 5 minutos ([5m]) para considerar os valores da métrica nos últimos 5 minutos em vez do valor mais recente no momento da consulta. Isso pode ajudar a garantir que os dados retornados pela consulta sejam mais precisos e atualizados.</p>
-<p>Em resumo, Instant Vector Staleness é um problema potencial em PromQL que se refere à idade dos dados de uma métrica no momento em que a consulta é executada. Para lidar com o Instant Vector Staleness, é recomendável configurar o intervalo de avaliação para consultas que usam Instant Vectors, permitindo que a consulta leve em consideração um período de tempo maior e, assim, reduzir o impacto do Staleness.</p>
-<p>Exemplos de consultas usando Instant Vectors:</p>
+
+
+  <pre><code class="language-bash">max_over_time(network_traffic[30m]) by (instance) * on(instance) group_left(instance) {job=&#34;webserver&#34;}</code></pre>
+ <h3 id="obsolescência-do-vetor-instantâneo">Obsolescência do Vetor Instantâneo</h3>
+<p>Em PromQL, o vetor instantâneo é um conjunto de pontos de dados que representam o valor de uma única métrica em um determinado momento no tempo. Quando executamos uma consulta usando um vetor instantâneo, o Prometheus retorna o valor mais recente da métrica no momento da consulta. No entanto, se a métrica não tiver sido coletada recentemente, o valor retornado pelo Prometheus pode estar desatualizado, o que é conhecido como obsolescência do vetor instantâneo. Isso pode ser um problema em casos em que a precisão dos dados é crítica, como em alertas de segurança ou monitoramento de sistemas críticos. Para lidar com a obsolescência do vetor instantâneo, o Prometheus permite configurar o intervalo de avaliação para consultas que usam vetores instantâneos. Isso permite que a consulta leve em consideração um período de tempo maior e, assim, reduzir o impacto da obsolescência. Por exemplo, podemos configurar uma consulta para usar o intervalo de avaliação de 5 minutos ([5m]) para considerar os valores da métrica nos últimos 5 minutos em vez do valor mais recente no momento da consulta. Isso pode ajudar a garantir que os dados retornados pela consulta sejam mais precisos e atualizados.</p>
+<p>Em resumo, a obsolescência do vetor instantâneo é um problema potencial em PromQL que se refere à idade dos dados de uma métrica no momento em que a consulta é executada. Para lidar com a obsolescência do vetor instantâneo, é recomendável configurar o intervalo de avaliação para consultas que usam vetores instantâneos, permitindo que a consulta leve em consideração um período de tempo maior e, assim, reduzir o impacto da obsolescência.</p>
+<p>Exemplos de consultas usando vetores instantâneos:</p>
 <ul>
 <li>Verificando se a métrica &ldquo;http_requests_total&rdquo; é atualizada nos últimos 5 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">http_requests_total unless absent<span class="o">(</span>rate<span class="o">(</span>http_requests_total<span class="o">[</span>5m<span class="o">]))</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">http_requests_total unless absent(rate(http_requests_total[5m]))</code></pre>
+ <ul>
 <li>Selecionando o valor atual da métrica &ldquo;cpu_usage&rdquo; apenas para as instâncias que atualizaram a métrica nos últimos 30 segundos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">cpu_usage * on<span class="o">(</span>instance<span class="o">)</span> group_left<span class="o">(</span>instance<span class="o">)</span> <span class="o">(</span>timestamp<span class="o">(</span>cpu_usage<span class="o">)</span> &gt; bool 1601920922<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">cpu_usage * on(instance) group_left(instance) (timestamp(cpu_usage) &gt; bool 1601920922)</code></pre>
+ <ul>
 <li>Selecionando o valor atual da métrica &ldquo;memory_usage&rdquo; para todas as instâncias, excluindo as que não atualizaram a métrica nos últimos 2 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">memory_usage unless absent_over_time<span class="o">(</span>memory_usage<span class="o">[</span>2m<span class="o">])</span>
-</span></span></code></pre></div><h2 id="funções">Funções</h2>
-<h3 id="functions-math-functions-e-clamping">Functions, Math Functions e Clamping</h3>
-<p>As funções permitem manipular e processar métricas. Elas podem ser usadas para realizar cálculos matemáticos, agregações, transformações e outras operações em métricas. Entre as funções mais comuns em PromQL estão as Math Functions, que são funções matemáticas usadas para realizar operações aritméticas em métricas. Essas funções incluem operações básicas, como soma, subtração, multiplicação e divisão, bem como funções mais avançadas, como exponenciação e raiz quadrada. Por exemplo, podemos usar a função <code>sum()</code> para somar os valores de uma métrica em um determinado intervalo de tempo. Podemos usar a função <code>rate()</code> para calcular a taxa de variação de uma métrica em um intervalo de tempo, ou a função <code>max()</code> para encontrar o valor máximo de uma métrica em um intervalo de tempo. Além das Math Functions, outra função útil em PromQL é a Clamping Function. Essa função é usada para limitar o valor de uma métrica a um determinado intervalo. Por exemplo, podemos usar a função <code>clamp_min()</code> para garantir que o valor de uma métrica não seja inferior a um determinado limite mínimo, ou a função <code>clamp_max()</code> para garantir que o valor não seja superior a um determinado limite máximo. Exemplo:</p>
+
+
+  <pre><code class="language-bash">memory_usage unless absent_over_time(memory_usage[2m])</code></pre>
+ <h2 id="funções">Funções</h2>
+<h3 id="funções-funções-matemáticas-e-clamping">Funções, Funções Matemáticas e Clamping</h3>
+<p>As funções permitem manipular e processar métricas de diversas formas. Elas podem ser usadas para realizar cálculos matemáticos, agregações, transformações e outras operações em métricas. Entre as funções mais comuns em PromQL estão as funções matemáticas, que são funções matemáticas usadas para realizar operações aritméticas em métricas. Essas funções incluem operações básicas, como soma, subtração, multiplicação e divisão, bem como funções mais avançadas, como exponenciação e raiz quadrada. Por exemplo, podemos usar a função <code>sum()</code> para somar os valores de uma métrica em um determinado intervalo de tempo. Podemos usar a função <code>rate()</code> para calcular a taxa de variação de uma métrica em um intervalo de tempo, ou a função <code>max()</code> para encontrar o valor máximo de uma métrica em um intervalo de tempo. Além das funções matemáticas, outra função útil em PromQL é a função de clamping. Essa função é usada para limitar o valor de uma métrica a um determinado intervalo. Por exemplo, podemos usar a função <code>clamp_min()</code> para garantir que o valor de uma métrica não seja inferior a um determinado limite mínimo, ou a função <code>clamp_max()</code> para garantir que o valor não seja superior a um determinado limite máximo. Exemplo:</p>
 <ul>
 <li>Para calcular a média dos valores de uma métrica nos últimos 5 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>metric_name<span class="o">[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">avg_over_time(metric_name[5m])</code></pre>
+ <ul>
 <li>Para calcular a soma dos valores de uma métrica nos últimos 10 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum_over_time<span class="o">(</span>metric_name<span class="o">[</span>10m<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum_over_time(metric_name[10m])</code></pre>
+ <ul>
 <li>Para calcular o máximo valor de uma métrica em um intervalo de tempo específico:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">max_over_time<span class="o">(</span>metric_name<span class="o">{</span><span class="nv">label</span><span class="o">=</span><span class="s2">&#34;value&#34;</span><span class="o">}[</span>1h<span class="o">])</span>
-</span></span></code></pre></div><p>Em resumo, as Functions são ferramentas poderosas em PromQL que permitem manipular e processar métricas. As Math Functions são usadas para realizar cálculos matemáticos em métricas, enquanto a Clamping Function é usada para limitar o valor de uma métrica a um determinado intervalo. O conhecimento dessas funções pode ajudar a realizar consultas mais avançadas e obter insights mais precisos a partir dos dados coletados.</p>
+
+
+  <pre><code class="language-bash">max_over_time(metric_name{label=&#34;value&#34;}[1h])</code></pre>
+ <p>Em resumo, as funções são ferramentas poderosas em PromQL que permitem manipular e processar métricas. As funções matemáticas são usadas para realizar cálculos matemáticos em métricas, enquanto a função de clamping é usada para limitar o valor de uma métrica a um determinado intervalo. O conhecimento dessas funções pode ajudar a realizar consultas mais avançadas e obter insights mais precisos a partir dos dados coletados.</p>
 <h3 id="timestamps-e-time-and-dates">Timestamps e Time and Dates</h3>
-<p>Em PromQL, Timestamps são valores numéricos que representam o tempo em segundos desde o início da época Unix (1º de janeiro de 1970, 00:00:00 UTC). Os Timestamps são usados para indicar quando uma métrica foi coletada ou para especificar um intervalo de tempo em uma consulta. Por exemplo, podemos usar um Timestamp para especificar uma janela de tempo em uma consulta usando a função <code>time()</code>. A função <code>time()</code> retorna o Timestamp atual no momento da execução da consulta. Podemos usar esse valor para definir um intervalo de tempo a ser considerado na consulta. Além disso, PromQL também oferece suporte para lidar com Time and Dates (tempo e datas). Isso é feito através do uso de funções como <code>hour()</code>, <code>day_of_week()</code> e <code>month()</code>, que permitem extrair informações específicas sobre o tempo e a data de uma métrica. Por exemplo, podemos usar a função <code>hour()</code> para extrair a hora do dia em que uma métrica foi coletada, ou a função <code>day_of_week()</code> para extrair o dia da semana em que a métrica foi coletada. Essas informações podem ser usadas para realizar análises mais precisas e identificar padrões sazonais ou diários em nossos dados.</p>
-<p>Exemplos de consultas usando Timestamps e Time and Dates:</p>
+<p>Em PromQL, timestamps são valores numéricos que representam o tempo em segundos desde o início da época Unix (1º de janeiro de 1970, 00:00:00 UTC). Os timestamps são usados para indicar quando uma métrica foi coletada ou para especificar um intervalo de tempo em uma consulta. Por exemplo, podemos usar um timestamp para especificar uma janela de tempo em uma consulta usando a função <code>time()</code>. A função <code>time()</code> retorna o timestamp atual no momento da execução da consulta. Podemos usar esse valor para definir um intervalo de tempo a ser considerado na consulta. Além disso, PromQL também oferece suporte para lidar com tempo e datas. Isso é feito através do uso de funções como <code>hour()</code>, <code>day_of_week()</code> e <code>month()</code>, que permitem extrair informações específicas sobre o tempo e a data de uma métrica. Por exemplo, podemos usar a função <code>hour()</code> para extrair a hora do dia em que uma métrica foi coletada, ou a função <code>day_of_week()</code> para extrair o dia da semana em que a métrica foi coletada. Essas informações podem ser usadas para realizar análises mais precisas e identificar padrões sazonais ou diários em nossos dados.</p>
+<p>Exemplos de consultas usando timestamps e tempo e datas:</p>
 <ul>
 <li>Selecionar a taxa de transferência média nos últimos 5 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>my_metric_total<span class="o">[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">rate(my_metric_total[5m])</code></pre>
+ <ul>
 <li>Selecionar a média das taxas de transferência por hora para as últimas 24 horas:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric_total<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">avg_over_time(rate(my_metric_total[1h]))[24h:1h]</code></pre>
+ <ul>
 <li>Selecionar o valor médio da métrica my_metric para o último dia:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg_over_time<span class="o">(</span>my_metric<span class="o">[</span>1d<span class="o">])</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">avg_over_time(my_metric[1d])</code></pre>
+ <ul>
 <li>Selecionar a métrica my_metric para um período específico:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">my_metric<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;prometheus&#34;</span>, <span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;localhost&#34;</span><span class="o">}[</span>start_time, end_time<span class="o">]</span>
-</span></span></code></pre></div><h3 id="counter-range-vectors-aggregating-across-time-e-subqueries">Counter Range Vectors, Aggregating Across Time e Subqueries</h3>
+
+
+  <pre><code class="language-bash">my_metric{job=&#34;prometheus&#34;, instance=&#34;localhost&#34;}[start_time, end_time]</code></pre>
+ <h3 id="counter-range-vectors-aggregating-across-time-e-subqueries">Counter Range Vectors, Aggregating Across Time e Subqueries</h3>
 <p>Counter Range Vectors são um tipo de vetor que contém uma série de pontos de dados que representam a contagem de eventos que ocorreram ao longo do tempo. Em outras palavras, os Counter Range Vectors fornecem informações sobre a taxa de eventos que ocorreram em um intervalo de tempo específico. Por exemplo, podemos usar um Counter Range Vector para acompanhar a quantidade de solicitações HTTP que um servidor recebe a cada segundo. Ao longo do tempo, podemos acumular esses dados em uma série temporal, que pode ser usada para análises posteriores.</p>
 <p>Para agregarmos os dados de um Counter Range Vector, podemos usar funções de agregação que operam sobre um intervalo de tempo, como <code>rate()</code> e <code>irate()</code>. Essas funções calculam a taxa de variação da contagem de eventos dentro do intervalo de tempo especificado. Além disso, PromQL também permite a realização de subconsultas, ou Subqueries. Isso permite que consultas mais avançadas sejam realizadas, onde uma consulta é realizada dentro de outra consulta. Por exemplo, podemos usar uma subconsulta para calcular a média de uma série temporal ao longo de um intervalo de tempo específico, que é então usado como entrada para uma consulta principal.</p>
 <p>A seguir, estão alguns exemplos de expressões PromQL envolvendo Counter Range Vectors, Aggregating Across Time e Subqueries:</p>
 <ul>
 <li>Selecionar a taxa de transferência média nos últimos 5 minutos para uma métrica my_metric que é um contador:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>my_metric<span class="o">[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><p>Selecionar a soma das taxas de transferência por hora para as últimas 24 horas para uma métrica my_metric que é um contador:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>rate<span class="o">(</span>my_metric<span class="o">[</span>1h<span class="o">]))[</span>24h:1h<span class="o">]</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">rate(my_metric[5m])</code></pre>
+ <p>Selecionar a soma das taxas de transferência por hora para as últimas 24 horas para uma métrica my_metric que é um contador:</p>
+
+
+  <pre><code class="language-bash">sum(rate(my_metric[1h]))[24h:1h]</code></pre>
+ <ul>
 <li>Selecionar a métrica my_metric para um período específico e calcular a soma cumulativa usando uma subconsulta:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>my_metric - my_metric offset 1d<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum(my_metric - my_metric offset 1d)</code></pre>
+ <ul>
 <li>Selecionar a média das taxas de transferência por hora para as últimas 24 horas para uma métrica my_metric que é um contador e calcular a diferença entre os valores em intervalos de 6 horas:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">delta<span class="o">(</span>avg_over_time<span class="o">(</span>rate<span class="o">(</span>my_metric<span class="o">[</span>1h<span class="o">]))[</span>24h:6h<span class="o">])</span>
-</span></span></code></pre></div><h3 id="histograms-switching-types-altering-labels-e-sorting">Histograms, Switching Types, Altering Labels e Sorting</h3>
-<p>Histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Eles são úteis para analisar a distribuição de valores em uma métrica, por exemplo, para determinar quantas solicitações HTTP foram concluídas em diferentes intervalos de tempo de resposta. Em PromQL, um Histograma é representado como um vetor com várias séries temporais, cada uma correspondendo a um intervalo (bucket) de valores. Para calcular a contagem total de observações em um Histograma, podemos usar a função <code>sum()</code>.</p>
-<p>Quando trabalhamos com Histogramas, também podemos alternar o tipo de dados entre o Histograma original e sua versão sumarizada (Summary). Isso pode ser feito usando a função <code>histogram_quantile()</code>, que calcula a distribuição de quantis do Histograma. Podemos então usar a função <code>sum()</code> em cima do resultado dessa função para obter uma versão sumarizada do Histograma. Outra funcionalidade importante em PromQL é a capacidade de alterar labels em uma consulta. Podemos usar as funções <code>label_replace()</code> e <code>label_map()</code> para adicionar, alterar ou remover labels de uma métrica. Isso pode ser útil para transformar métricas existentes em formatos mais úteis para nossos objetivos de análise. Finalmente, em PromQL, podemos classificar os resultados de uma consulta usando a função <code>sort()</code>. Isso permite que os resultados da consulta sejam ordenados em ordem crescente ou decrescente com base em um label ou valor específico. Em resumo, Histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Em PromQL, podemos alternar o tipo de dados entre o Histograma original e sua versão sumarizada, alterar labels em uma consulta usando funções como <code>label_replace()</code> e <code>label_map()</code>, e classificar os resultados de uma consulta usando a função <code>sort()</code>.</p>
-<p>A seguir, estão alguns exemplos de expressões PromQL envolvendo Histograms, Switching Types, Altering Labels e Sorting:</p>
+
+
+  <pre><code class="language-bash">delta(avg_over_time(rate(my_metric[1h]))[24h:6h])</code></pre>
+ <h3 id="histogramas-switching-types-altering-labels-e-sorting">Histogramas, Switching Types, Altering Labels e Sorting</h3>
+<p>Histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Eles são úteis para analisar a distribuição de valores em uma métrica, por exemplo, para determinar quantas solicitações HTTP foram concluídas em diferentes intervalos de tempo de resposta. Em PromQL, um histograma é representado como um vetor com várias séries temporais, cada uma correspondendo a um intervalo (bucket) de valores. Para calcular a contagem total de observações em um histograma, podemos usar a função <code>sum()</code>.</p>
+<p>Quando trabalhamos com histogramas, também podemos alternar o tipo de dados entre o histograma original e sua versão sumarizada (Summary). Isso pode ser feito usando a função <code>histogram_quantile()</code>, que calcula a distribuição de quantis do histograma. Podemos então usar a função <code>sum()</code> em cima do resultado dessa função para obter uma versão sumarizada do histograma. Outra funcionalidade importante em PromQL é a capacidade de alterar labels em uma consulta. Podemos usar as funções <code>label_replace()</code> e <code>label_map()</code> para adicionar, alterar ou remover labels de uma métrica. Isso pode ser útil para transformar métricas existentes em formatos mais úteis para nossos objetivos de análise. Finalmente, em PromQL, podemos classificar os resultados de uma consulta usando a função <code>sort()</code>. Isso permite que os resultados da consulta sejam ordenados em ordem crescente ou decrescente com base em um label ou valor específico. Em resumo, histogramas são uma forma de agrupar e contar observações em intervalos (buckets) de valores. Em PromQL, podemos alternar o tipo de dados entre o histograma original e sua versão sumarizada, alterar labels em uma consulta usando funções como <code>label_replace()</code> e <code>label_map()</code>, e classificar os resultados de uma consulta usando a função <code>sort()</code>.</p>
+<p>A seguir, estão alguns exemplos de expressões PromQL envolvendo histogramas, switching types, altering labels e sorting:</p>
 <ul>
 <li>Exemplo de consulta para exibir a contagem de observações em um intervalo de tempo para um histograma:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>rate<span class="o">(</span>my_histogram_bucket<span class="o">[</span>5m<span class="o">]))</span> by <span class="o">(</span>le<span class="o">)</span>
-</span></span></code></pre></div><p>Essa consulta irá exibir a contagem de observações para cada intervalo de tempo do histograma, representado pelos valores de &ldquo;le&rdquo; (menor ou igual). A função &ldquo;rate&rdquo; é usada para calcular a taxa de mudança do número de observações por segundo, e o operador &ldquo;sum&rdquo; é usado para adicionar as observações em cada intervalo de tempo.</p>
+
+
+  <pre><code class="language-bash">sum(rate(my_histogram_bucket[5m])) by (le)</code></pre>
+ <p>Essa consulta irá exibir a contagem de observações para cada intervalo de tempo do histograma, representado pelos valores de &ldquo;le&rdquo; (menor ou igual). A função &ldquo;rate&rdquo; é usada para calcular a taxa de mudança do número de observações por segundo, e o operador &ldquo;sum&rdquo; é usado para adicionar as observações em cada intervalo de tempo.</p>
 <ul>
 <li>Exemplo de consulta para converter um tipo de dados em outro:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">histogram_quantile<span class="o">(</span>0.9, sum<span class="o">(</span>rate<span class="o">(</span>my_histogram_bucket<span class="o">[</span>5m<span class="o">]))</span> by <span class="o">(</span>le<span class="o">))</span>
-</span></span></code></pre></div><p>Essa consulta converte um histograma em uma série de quantis, especificamente extraindo o quantil de 90% dos valores registrados no histograma. A função &ldquo;histogram_quantile&rdquo; é usada para calcular o quantil com base no histograma, e o operador &ldquo;sum&rdquo; é usado para agrupar as observações por intervalo de tempo.</p>
+
+
+  <pre><code class="language-bash">histogram_quantile(0.9, sum(rate(my_histogram_bucket[5m])) by (le))</code></pre>
+ <p>Essa consulta converte um histograma em uma série de quantis, especificamente extraindo o quantil de 90% dos valores registrados no histograma. A função &ldquo;histogram_quantile&rdquo; é usada para calcular o quantil com base no histograma, e o operador &ldquo;sum&rdquo; é usado para agrupar as observações por intervalo de tempo.</p>
 <ul>
 <li>Exemplo de consulta para alterar o rótulo de uma métrica:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">label_replace<span class="o">(</span>my_metric, <span class="s2">&#34;new_label&#34;</span>, <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>, <span class="s2">&#34;old_label&#34;</span>, <span class="s2">&#34;(.*)&#34;</span><span class="o">)</span>
-</span></span></code></pre></div><p>Essa consulta substitui o valor de um rótulo existente em uma métrica por um novo valor. A função &ldquo;label_replace&rdquo; é usada para especificar o rótulo existente e o novo valor, e o argumento &ldquo;$1&rdquo; é usado para capturar o valor existente do rótulo. A expressão regular &ldquo;(.*)&rdquo; é usada para corresponder a qualquer valor de rótulo existente.</p>
-<h3 id="missing-values">Missing values</h3>
+
+
+  <pre><code class="language-bash">label_replace(my_metric, &#34;new_label&#34;, &#34;$1&#34;, &#34;old_label&#34;, &#34;(.*)&#34;)</code></pre>
+ <p>Essa consulta substitui o valor de um rótulo existente em uma métrica por um novo valor. A função &ldquo;label_replace&rdquo; é usada para especificar o rótulo existente e o novo valor, e o argumento &ldquo;$1&rdquo; é usado para capturar o valor existente do rótulo. A expressão regular &ldquo;(.*)&rdquo; é usada para corresponder a qualquer valor de rótulo existente.</p>
+<h3 id="valores-ausentes">Valores Ausentes</h3>
 <p>Valores ausentes (Missing Values) podem ser um problema em consultas PromQL, pois podem afetar a precisão das análises e visualizações dos dados. Felizmente, PromQL tem uma maneira de lidar com valores ausentes, usando a função <code>absent()</code>. Essa função retorna 1 se uma série temporal estiver ausente em um determinado intervalo de tempo ou 0 caso contrário.</p>
 <h2 id="agregadores-e-operadores">Agregadores e Operadores</h2>
-<h3 id="operators-arithmetic-e-simple-binary-operator-matching">Operators, Arithmetic e Simple Binary Operator Matching</h3>
-<p>PromQL tem uma variedade de operadores que podem ser usados para combinar ou comparar séries temporais e seus valores. Esses operadores podem ser divididos em diferentes categorias, incluindo Operadores Aritméticos, Operadores Lógicos e Operadores de Comparação. No PromQL, Aggregators são funções que agregam resultados de várias séries temporais. Por exemplo, a função <code>sum()</code> retorna a soma dos valores de várias séries temporais para um intervalo de tempo. Outros exemplos de Aggregators incluem <code>avg()</code>, <code>min()</code>, <code>max()</code>, <code>count()</code>, entre outros. Quando trabalhamos com Aggregators, podemos escolher como os labels de saída são nomeados usando a função <code>by()</code>. Por exemplo, <code>sum by (foo)</code> retornará a soma dos valores agrupados pela label foo.</p>
-<p>Os Operadores Aritméticos são usados para executar operações matemáticas em séries temporais e seus valores. Esses operadores incluem <code>+</code> (adição), <code>-</code> (subtração), <code>*</code> (multiplicação) e <code>/</code> (divisão). Eles podem ser usados para combinar ou transformar séries temporais em diferentes maneiras. Os Operadores Lógicos são usados para combinar ou comparar séries temporais com base em valores booleanos. Eles incluem <code>and</code> (e lógico), <code>or</code> (ou lógico) e <code>unless</code> (a menos que). Esses operadores podem ser úteis para filtrar séries temporais com base em certas condições. Os Operadores de Comparação são usados para comparar valores em séries temporais e produzir valores booleanos como resultado. Eles incluem <code>==</code> (igual a), <code>!=</code> (diferente de), <code>&gt;</code> (maior que), <code>&lt;</code> (menor que), <code>&gt;=</code> (maior ou igual a) e <code>&lt;=</code> (menor ou igual a). Esses operadores são úteis para filtrar e analisar séries temporais com base em valores específicos. Para usar esses operadores, podemos usar a sintaxe PromQL adequada. Por exemplo, para somar duas séries temporais foo e bar, podemos usar a expressão <code>foo + bar</code>. Para comparar os valores de uma série temporal foo com um valor específico de 10, podemos usar a expressão <code>foo &gt; 10</code>.</p>
-<p>PromQL também tem a funcionalidade de Simple Binary Operator Matching, que permite que um operador binário seja aplicado a todas as combinações possíveis de pares de séries temporais com o mesmo conjunto de labels. Por exemplo, a expressão <code>foo + bool</code> bar adicionará todas as combinações de foo e bar que têm o mesmo conjunto de labels. Em resumo, PromQL tem uma variedade de operadores que podem ser usados para combinar ou comparar séries temporais e seus valores. Os Operadores Aritméticos são usados para executar operações matemáticas, os Operadores Lógicos são usados para combinar ou comparar séries temporais com base em valores booleanos, e os Operadores de Comparação são usados para comparar valores em séries temporais e produzir valores booleanos como resultado Podemos usar a sintaxe PromQL adequada para aplicar esses operadores e também podemos usar a funcionalidade de Simple Binary Operator Matching para aplicar um operador binário a todas as combinações possíveis de pares de séries temporais.</p>
+<h3 id="operadores-aritmética-e-simple-binary-operator-matching">Operadores, Aritmética e Simple Binary Operator Matching</h3>
+<p>PromQL tem uma variedade de operadores que podem ser usados para combinar ou comparar séries temporais e seus valores. Esses operadores podem ser divididos em diferentes categorias, incluindo operadores aritméticos, operadores lógicos e operadores de comparação. No PromQL, agregadores são funções que agregam resultados de várias séries temporais. Por exemplo, a função <code>sum()</code> retorna a soma dos valores de várias séries temporais para um intervalo de tempo. Outros exemplos de agregadores incluem <code>avg()</code>, <code>min()</code>, <code>max()</code>, <code>count()</code>, entre outros. Quando trabalhamos com agregadores, podemos escolher como os labels de saída são nomeados usando a função <code>by()</code>. Por exemplo, <code>sum by (foo)</code> retornará a soma dos valores agrupados pela label foo.</p>
+<p>Os operadores aritméticos são usados para executar operações matemáticas em séries temporais e seus valores. Esses operadores incluem <code>+</code> (adição), <code>-</code> (subtração), <code>*</code> (multiplicação) e <code>/</code> (divisão). Eles podem ser usados para combinar ou transformar séries temporais em diferentes maneiras. Os operadores lógicos são usados para combinar ou comparar séries temporais com base em valores booleanos. Eles incluem <code>and</code> (e lógico), <code>or</code> (ou lógico) e <code>unless</code> (a menos que). Esses operadores podem ser úteis para filtrar séries temporais com base em certas condições. Os operadores de comparação são usados para comparar valores em séries temporais e produzir valores booleanos como resultado. Eles incluem <code>==</code> (igual a), <code>!=</code> (diferente de), <code>&gt;</code> (maior que), <code>&lt;</code> (menor que), <code>&gt;=</code> (maior ou igual a) e <code>&lt;=</code> (menor ou igual a). Esses operadores são úteis para filtrar e analisar séries temporais com base em valores específicos. Para usar esses operadores, podemos usar a sintaxe PromQL adequada. Por exemplo, para somar duas séries temporais foo e bar, podemos usar a expressão <code>foo + bar</code>. Para comparar os valores de uma série temporal foo com um valor específico de 10, podemos usar a expressão <code>foo &gt; 10</code>.</p>
+<p>PromQL também tem a funcionalidade de Simple Binary Operator Matching, que permite que um operador binário seja aplicado a todas as combinações possíveis de pares de séries temporais com o mesmo conjunto de labels. Por exemplo, a expressão <code>foo + bool</code> bar adicionará todas as combinações de foo e bar que têm o mesmo conjunto de labels. Em resumo, PromQL tem uma variedade de operadores que podem ser usados para combinar ou comparar séries temporais e seus valores. Os operadores aritméticos são usados para executar operações matemáticas, os operadores lógicos são usados para combinar ou comparar séries temporais com base em valores booleanos, e os operadores de comparação são usados para comparar valores em séries temporais e produzir valores booleanos como resultado Podemos usar a sintaxe PromQL adequada para aplicar esses operadores e também podemos usar a funcionalidade de Simple Binary Operator Matching para aplicar um operador binário a todas as combinações possíveis de pares de séries temporais.</p>
 <p>Aqui estão alguns exemplos práticos de expressões PromQL usando operadores, aritmética e correspondência de operadores binários simples:</p>
 <ul>
 <li>Somando valores de duas métricas</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>metric1<span class="o">)</span> + sum<span class="o">(</span>metric2<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum(metric1) &#43; sum(metric2)</code></pre>
+ <ul>
 <li>Subtraindo valores de duas métricas</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>metric1<span class="o">)</span> - sum<span class="o">(</span>metric2<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum(metric1) - sum(metric2)</code></pre>
+ <ul>
 <li>Multiplicando valores de duas métricas</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>metric1<span class="o">)</span> * sum<span class="o">(</span>metric2<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum(metric1) * sum(metric2)</code></pre>
+ <ul>
 <li>Dividindo valores de duas métricas</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>metric1<span class="o">)</span> / sum<span class="o">(</span>metric2<span class="o">)</span>
-</span></span></code></pre></div><ul>
+
+
+  <pre><code class="language-bash">sum(metric1) / sum(metric2)</code></pre>
+ <ul>
 <li>Usando o operador de comparação &ldquo;maior que&rdquo;</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>metric1<span class="o">)</span> &gt; <span class="m">10</span>
-</span></span></code></pre></div><h3 id="matching-your-time-series-many-to-one-e-comparison-operators">Matching Your Time Series, Many to One e Comparison Operators</h3>
+
+
+  <pre><code class="language-bash">sum(metric1) &gt; 10</code></pre>
+ <h3 id="correspondência-de-séries-temporais-many-to-one-e-operadores-de-comparação">Correspondência de Séries Temporais, Many to One e Operadores de Comparação</h3>
 <p>Uma das tarefas mais comuns em PromQL é combinar séries temporais com base em seus labels. Isso pode ser feito usando a função match, que permite selecionar séries temporais com base em seus labels. A função match pode ser usada para selecionar séries temporais com base em um ou mais labels. Por exemplo, a expressão <code>match(foo{bar=&quot;baz&quot;})</code> selecionará todas as séries temporais que tiverem o label bar definido como baz na métrica foo. Podemos usar operadores de comparação, como <code>==</code>, <code>!=</code>,<code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> e <code>&lt;=</code>, para filtrar ainda mais as séries temporais com base em seus valores. Além disso, podemos combinar várias séries temporais em uma única série temporal usando funções de agregação, como <code>sum</code>, <code>avg</code>, <code>max</code>, <code>min</code>, <code>count</code>, entre outras. Essas funções permitem que várias séries temporais sejam agrupadas em uma única série temporal com base em um label em comum.</p>
-<p>Quando combinamos várias séries temporais em uma única série temporal, é importante lembrar que nem sempre haverá uma correspondência um para um entre as séries. Isso é conhecido como Many-to-One Matching, onde várias séries temporais são agrupadas em uma única série temporal com base em um label em comum. Ao usar Many-to-One Matching, pode ser necessário usar funções de agregação para reduzir as múltiplas séries temporais em um único valor. Por exemplo, podemos usar a função sum para adicionar os valores de várias séries temporais em uma única série temporal. Além disso, PromQL também possui Comparison Operators, que permitem comparar valores de uma série temporal com valores de outra série temporal. Esses operadores incluem <code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> e <code>&lt;=</code>. Eles podem ser úteis para comparar valores de duas séries temporais diferentes ou para comparar valores de uma série temporal com um valor constante.</p>
-<p>Em resumo, PromQL permite combinar séries temporais com base em seus labels usando a função match, que pode ser filtrada ainda mais usando operadores de comparação. Também é possível combinar várias séries temporais em uma única série temporal usando funções de agregação. Quando usamos Many-to-One Matching, pode ser necessário usar funções de agregação para reduzir as múltiplas séries temporais em um único valor. Além disso, PromQL também possui Comparison Operators, que permitem comparar valores de uma série temporal com valores de outra série temporal.</p>
-<h3 id="bool-vs-filtering">Bool vs Filtering</h3>
-<p>No PromQL, podemos usar operadores booleanos para comparar valores de séries temporais e criar expressões condicionais. Os operadores booleanos incluem <code>and</code>, <code>or</code> e <code>unless</code>. Podemos usar esses operadores para criar filtros em nossas consultas. Por exemplo, a expressão <code>foo &gt; 0 and bar == &quot;baz&quot;</code> selecionará todas as séries temporais que tiverem a métrica foo com valores maiores que 0 e a label bar com valor &ldquo;baz&rdquo;. Por exemplo:</p>
+<p>Quando combinamos várias séries temporais em uma única série temporal, é importante lembrar que nem sempre haverá uma correspondência um para um entre as séries. Isso é conhecido como Many-to-One Matching, onde várias séries temporais são agrupadas em uma única série temporal com base em um label em comum. Ao usar Many-to-One Matching, pode ser necessário usar funções de agregação para reduzir as múltiplas séries temporais em um único valor. Por exemplo, podemos usar a função sum para adicionar os valores de várias séries temporais em uma única série temporal. Além disso, PromQL também possui operadores de comparação, que permitem comparar valores de uma série temporal com valores de outra série temporal. Esses operadores incluem <code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> e <code>&lt;=</code>. Eles podem ser úteis para comparar valores de duas séries temporais diferentes ou para comparar valores de uma série temporal com um valor constante.</p>
+<p>Em resumo, PromQL permite combinar séries temporais com base em seus labels usando a função match, que pode ser filtrada ainda mais usando operadores de comparação. Também é possível combinar várias séries temporais em uma única série temporal usando funções de agregação. Quando usamos Many-to-One Matching, pode ser necessário usar funções de agregação para reduzir as múltiplas séries temporais em um único valor. Além disso, PromQL também possui operadores de comparação, que permitem comparar valores de uma série temporal com valores de outra série temporal.</p>
+<h3 id="bool-vs-filtragem">Bool vs Filtragem</h3>
+<p>No PromQL, podemos usar operadores booleanos para comparar valores de séries temporais e criar expressões condicionais. Os operadores booleanos incluem <code>and</code>, <code>or</code> e <code>unless</code>. Podemos usar esses operadores para criar filtros em nossas consultas. Por exemplo, a expressão <code>foo &gt; 0 and bar == &quot;baz&quot;</code> selecionará todas as séries temporais que tiverem a métrica foo com valores maiores que 0 e o label bar com valor &ldquo;baz&rdquo;. Por exemplo:</p>
 <ul>
 <li>Selecionando métricas que correspondem a uma condição específica utilizando a função sum() e a expressão ==:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>up<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;node&#34;</span><span class="o">}</span> <span class="o">==</span> 1<span class="o">)</span>
-</span></span></code></pre></div><p>Essa expressão irá retornar o número de instâncias que correspondem à condição <code>up{job=&quot;node&quot;} == 1</code>, ou seja, o número de instâncias que estão atualmente em execução.</p>
+
+
+  <pre><code class="language-bash">sum(up{job=&#34;node&#34;} == 1)</code></pre>
+ <p>Essa expressão irá retornar o número de instâncias que correspondem à condição <code>up{job=&quot;node&quot;} == 1</code>, ou seja, o número de instâncias que estão atualmente em execução.</p>
 <ul>
 <li>Selecionando métricas que correspondem a várias condições utilizando a função <code>or()</code>:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">sum<span class="o">(</span>up<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;node&#34;</span><span class="o">}</span> <span class="o">==</span> <span class="m">1</span> or up<span class="o">{</span><span class="nv">job</span><span class="o">=</span><span class="s2">&#34;db&#34;</span><span class="o">}</span> <span class="o">==</span> 1<span class="o">)</span>
-</span></span></code></pre></div><p>Essa expressão irá retornar o número de instâncias que correspondem a uma das duas condições especificadas, ou seja, o número total de instâncias que estão atualmente em execução em qualquer um dos trabalhos &ldquo;node&rdquo; ou &ldquo;db&rdquo;.</p>
+
+
+  <pre><code class="language-bash">sum(up{job=&#34;node&#34;} == 1 or up{job=&#34;db&#34;} == 1)</code></pre>
+ <p>Essa expressão irá retornar o número de instâncias que correspondem a uma das duas condições especificadas, ou seja, o número total de instâncias que estão atualmente em execução em qualquer um dos trabalhos &ldquo;node&rdquo; ou &ldquo;db&rdquo;.</p>
 <ul>
 <li>Filtrando métricas usando a função topk() e a expressão =~:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">topk<span class="o">(</span>5, sum<span class="o">(</span>rate<span class="o">(</span>http_requests_total<span class="o">{</span><span class="nv">status_code</span><span class="o">=</span>~<span class="s2">&#34;5.*&#34;</span><span class="o">}[</span>5m<span class="o">]))</span> by <span class="o">(</span>job<span class="o">))</span>
-</span></span></code></pre></div><p>Em resumo, o PromQL permite filtrar séries temporais usando operadores booleanos e a cláusula where. Os operadores booleanos são usados para filtrar séries temporais antes da aplicação de funções de agregação, enquanto a cláusula where é usada para filtrar séries temporais após a aplicação de funções de agregação.</p>
-<h3 id="logicalset-operators">Logical/Set Operators</h3>
+
+
+  <pre><code class="language-bash">topk(5, sum(rate(http_requests_total{status_code=~&#34;5.*&#34;}[5m])) by (job))</code></pre>
+ <p>Em resumo, o PromQL permite filtrar séries temporais usando operadores booleanos e a cláusula where. Os operadores booleanos são usados para filtrar séries temporais antes da aplicação de funções de agregação, enquanto a cláusula where é usada para filtrar séries temporais após a aplicação de funções de agregação.</p>
+<h3 id="operadores-lógicos-e-de-conjunto">Operadores Lógicos e de Conjunto</h3>
 <p>No PromQL, os operadores lógicos e de conjunto são usados para combinar e manipular séries temporais.</p>
 <p>Os operadores lógicos mais comuns incluem:</p>
 <ul>
@@ -390,10 +477,12 @@
 <hr>
 <h2 id="promql-na-prática">PromQL na prática</h2>
 <p>Acesse o <a href="https://prometheus.demo.do.prometheus.io/">https://prometheus.demo.do.prometheus.io/</a> onde contém um servidor Prometheus hospedado pela comunidade. Em seguida, execute a seguinte Query:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="m">100</span> * <span class="o">(</span><span class="m">1</span> - <span class="o">((</span>avg_over_time<span class="o">(</span>node_memory_MemFree_bytes<span class="o">[</span>10m<span class="o">])</span> + avg_over_time<span class="o">(</span>node_memory_Cached_bytes<span class="o">[</span>10m<span class="o">])</span> +
-</span></span><span class="line"><span class="ln">2</span><span class="cl">avg_over_time<span class="o">(</span>node_memory_Buffers_bytes<span class="o">[</span>10m<span class="o">]))</span> / avg_over_time<span class="o">(</span>node_memory_MemTotal_bytes<span class="o">[</span>10m<span class="o">])))</span>
-</span></span></code></pre></div><p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png#center"></p>
-<p>O Prometheus acima está coletando métricas de diversos <strong><a href="https://prometheus.demo.do.prometheus.io/targets">targets</a></strong>. A métrica acima, se refere ao <strong><a href="http://demo.do.prometheus.io:9100/metrics">Node_Exporter</a></strong>. Isto é, sao métricas de Sistema Operacional e Hardware Linux. A Query está registrando o consumo médio de memória. Com a interface do Prometheus aberta em seu navegador, vá até a aba <strong>GRAPH</strong>. O Prometheus é focado no que está acontecendo agora em vez de rastrear dados ao longo de semanas ou meses. Isso se baseia na premissa de que a maioria das consultas e alertas de monitoramento são gerados a partir de dados recentes, geralmente, com menos de um dia. O Prometheus é responsável por armazenar suas métricas como dados de séries temporais, isto é, ao longo do tempo:</p>
+
+
+  <pre><code class="language-bash">100 * (1 - ((avg_over_time(node_memory_MemFree_bytes[10m]) &#43; avg_over_time(node_memory_Cached_bytes[10m]) &#43;
+avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTotal_bytes[10m])))</code></pre>
+ <p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png#center"></p>
+<p>O Prometheus mencionado está coletando métricas de diversos <strong><a href="https://prometheus.demo.do.prometheus.io/targets">targets</a></strong>. A métrica acima, se refere ao <strong><a href="http://demo.do.prometheus.io:9100/metrics">Node_Exporter</a></strong>. Isto é, são métricas de Sistema Operacional e Hardware Linux. A Query está registrando o consumo médio de memória. Com a interface do Prometheus aberta em seu navegador, vá até a aba <strong>GRAPH</strong>. O Prometheus é focado no que está acontecendo agora em vez de rastrear dados ao longo de semanas ou meses. Isso se baseia na premissa de que a maioria das consultas e alertas de monitoramento são gerados a partir de dados recentes, geralmente, com menos de um dia. O Prometheus é responsável por armazenar suas métricas como dados de séries temporais, isto é, ao longo do tempo:</p>
 <p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/timeseries01.png#center"></p>
 <p>As métricas são armazenadas com o registro de data/hora, juntamente com pares de valores-chave opcionais chamados labels. Entenda labels como filtros que você aplica para trazer dados mais precisos a cerca de um ou mais endpoints. As métricas desempenham um papel importante para entender o comportamento da sua aplicação. Métricas são medidas de componentes de software ou hardware. Para tornar uma métrica útil, acompanhamos seu estado, geralmente registrando data points ao longo do tempo. Esses data points ou pontos de dados, são chamados de <strong>observations</strong> como mostra a imagem a seguir:</p>
 <p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/observation.png#center"></p>
@@ -404,24 +493,32 @@
 <ul>
 <li>Uso médio da CPU nos últimos 5 minutos:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">avg<span class="o">(</span>rate<span class="o">(</span>node_cpu_seconds_total<span class="o">{</span><span class="nv">mode</span><span class="o">=</span><span class="s2">&#34;idle&#34;</span><span class="o">}[</span>5m<span class="o">]))</span> * <span class="m">100</span>
-</span></span></code></pre></div><p>Essa expressão calcula a taxa de variação média do tempo de CPU ocioso nos últimos 5 minutos e, em seguida, a converte em uma porcentagem do tempo total da CPU. Isso pode ser útil para monitorar a utilização geral da CPU em um host.</p>
+
+
+  <pre><code class="language-bash">avg(rate(node_cpu_seconds_total{mode=&#34;idle&#34;}[5m])) * 100</code></pre>
+ <p>Essa expressão calcula a taxa de variação média do tempo de CPU ocioso nos últimos 5 minutos e, em seguida, a converte em uma porcentagem do tempo total da CPU. Isso pode ser útil para monitorar a utilização geral da CPU em um host.</p>
 <ul>
 <li>Uso da CPU por processo:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="m">100</span> - avg by <span class="o">(</span>process<span class="o">)</span> <span class="o">(</span>irate<span class="o">(</span>process_cpu_seconds_total<span class="o">{</span>process!<span class="o">=</span><span class="s2">&#34;prometheus&#34;</span><span class="o">}[</span>5m<span class="o">]))</span> * <span class="m">100</span>
-</span></span></code></pre></div><p>Essa expressão calcula a taxa de variação média do tempo de CPU gasto por cada processo nos últimos 5 minutos e, em seguida, a converte em uma porcentagem do tempo total da CPU. Isso pode ser útil para monitorar a utilização da CPU por processos específicos.</p>
+
+
+  <pre><code class="language-bash">100 - avg by (process) (irate(process_cpu_seconds_total{process!=&#34;prometheus&#34;}[5m])) * 100</code></pre>
+ <p>Essa expressão calcula a taxa de variação média do tempo de CPU gasto por cada processo nos últimos 5 minutos e, em seguida, a converte em uma porcentagem do tempo total da CPU. Isso pode ser útil para monitorar a utilização da CPU por processos específicos.</p>
 <ul>
 <li>Uso da CPU por processo em um determinado host:</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="m">100</span> - avg by <span class="o">(</span>process<span class="o">)</span> <span class="o">(</span>irate<span class="o">(</span>process_cpu_seconds_total<span class="o">{</span>process!<span class="o">=</span><span class="s2">&#34;prometheus&#34;</span>, <span class="nv">instance</span><span class="o">=</span><span class="s2">&#34;hostname:9100&#34;</span><span class="o">}[</span>5m<span class="o">]))</span> * <span class="m">100</span>
-</span></span></code></pre></div><p>Essa expressão é semelhante ao exemplo 2, mas é usada para monitorar o uso da CPU por processo em um host específico (substitua &ldquo;hostname&rdquo; pelo nome do host). A condição &ldquo;instance = &lsquo;hostname:9100&rsquo;&rdquo; é usada para filtrar as métricas apenas para o host especificado.</p>
+
+
+  <pre><code class="language-bash">100 - avg by (process) (irate(process_cpu_seconds_total{process!=&#34;prometheus&#34;, instance=&#34;hostname:9100&#34;}[5m])) * 100</code></pre>
+ <p>Essa expressão é semelhante ao exemplo 2, mas é usada para monitorar o uso da CPU por processo em um host específico (substitua &ldquo;hostname&rdquo; pelo nome do host). A condição &ldquo;instance = &lsquo;hostname:9100&rsquo;&rdquo; é usada para filtrar as métricas apenas para o host especificado.</p>
 <h3 id="memória">Memória</h3>
 <ul>
 <li>Porcentagem de memória usada</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl"><span class="m">100</span> - <span class="o">((</span>node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes<span class="o">)</span> * 100<span class="o">)</span>
-</span></span></code></pre></div><p>Existem alguns padrões comuns de consulta em PromQL que podem ser úteis para monitorar o estado do sistema ou para solucionar problemas específicos. Abaixo estão alguns exemplos de padrões de consulta comuns em PromQL:</p>
+
+
+  <pre><code class="language-bash">100 - ((node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100)</code></pre>
+ <p>Existem alguns padrões comuns de consulta em PromQL que podem ser úteis para monitorar o estado do sistema ou para solucionar problemas específicos. Abaixo estão alguns exemplos de padrões de consulta comuns em PromQL:</p>
 <ul>
 <li><strong>Monitoramento de métricas específicas</strong>: para monitorar uma métrica específica, você pode usar uma consulta simples como metric_name. Por exemplo, <code>cpu_usage</code> retornará a série temporal correspondente à métrica <code>cpu_usage</code>.</li>
 <li><strong>Agregação por labels</strong>: para agrupar as métricas por labels, você pode usar o operador <code>by</code>. Por exemplo, <code>sum by (instance) (cpu_usage)</code> retornará a soma da métrica cpu_usage agrupada por cada valor exclusivo do label instance.</li>
@@ -441,21 +538,27 @@
 <ul>
 <li><strong>Erro 1</strong>: Cardinalidade alta</li>
 </ul>
-<p>Um erro comum é criar consultas que resultam em alta cardinalidade, ou seja, um grande número de séries temporais únicas. Isso pode sobrecarregar o Prometheus e causar problemas de desempenho ou falta de memória. Exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>http_requests_total<span class="o">{</span>user_id!<span class="o">=</span><span class="s2">&#34;&#34;</span><span class="o">}[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada usuário individualmente. Se houver um grande número de usuários, isso resultará em alta cardinalidade e potenciais problemas de desempenho. Para evitar esse problema, você pode agregar métricas em dimensões de menor cardinalidade, como por exemplo, por região ou grupo de usuários.</p>
+<p>Um erro comum é criar consultas que resultam em alta cardinalidade, ou seja, um grande número de séries temporais distintas. Isso pode sobrecarregar o Prometheus e causar problemas de desempenho ou falta de memória. Exemplo:</p>
+
+
+  <pre><code class="language-bash">rate(http_requests_total{user_id!=&#34;&#34;}[5m])</code></pre>
+ <p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada usuário individualmente. Se houver um grande número de usuários, isso resultará em alta cardinalidade e potenciais problemas de desempenho. Para evitar esse problema, você pode agregar métricas em dimensões de menor cardinalidade, como por exemplo, por região ou grupo de usuários.</p>
 <ul>
 <li><strong>Erro 2</strong>: Granularidade desnecessária</li>
 </ul>
 <p>Outro erro comum é selecionar uma granularidade muito alta para consultas de intervalo, o que pode gerar muitos dados e prejudicar o desempenho. Por exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>http_requests_total<span class="o">[</span>1s<span class="o">])</span>
-</span></span></code></pre></div><p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada segundo. Se você não precisa de uma granularidade tão alta, isso resultará em uma consulta desnecessariamente pesada. Para evitar esse problema, selecione uma granularidade apropriada às suas necessidades, como por exemplo, 1 minuto ou 5 minutos.</p>
+
+
+  <pre><code class="language-bash">rate(http_requests_total[1s])</code></pre>
+ <p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP para cada segundo. Se você não precisa de uma granularidade tão alta, isso resultará em uma consulta desnecessariamente pesada. Para evitar esse problema, selecione uma granularidade apropriada às suas necessidades, como por exemplo, 1 minuto ou 5 minutos.</p>
 <ul>
 <li><strong>Erro 3</strong>: Ignorar o uso de funções de agregação</li>
 </ul>
 <p>Às vezes, as pessoas esquecem de usar funções de agregação em suas consultas, o que pode resultar em uma grande quantidade de dados ou gráficos confusos. Por exemplo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">rate<span class="o">(</span>http_requests_total<span class="o">[</span>5m<span class="o">])</span>
-</span></span></code></pre></div><p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP, mas não agrega os dados por qualquer dimensão. Isso pode resultar em um gráfico difícil de entender ou interpretar. Para evitar esse problema, use funções de agregação adequadas, como <code>sum()</code>, <code>avg()</code>, <code>min()</code>, <code>max()</code> ou <code>count()</code>, e agrupe os dados por dimensões relevantes.</p>
+
+
+  <pre><code class="language-bash">rate(http_requests_total[5m])</code></pre>
+ <p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP, mas não agrega os dados por qualquer dimensão. Isso pode resultar em um gráfico difícil de entender ou interpretar. Para evitar esse problema, use funções de agregação adequadas, como <code>sum()</code>, <code>avg()</code>, <code>min()</code>, <code>max()</code> ou <code>count()</code>, e agrupe os dados por dimensões relevantes.</p>
 <blockquote>
 <p><strong>Observação</strong>: A dica de ouro é que se você está tendo problema de desempenho em trazer métricas, provavelmente há algo errado com a sua query.</p>
 </blockquote>
@@ -471,105 +574,64 @@
 <li><strong>Documentação do Grafana, que utiliza PromQL para consultas</strong>: <a href="https://grafana.com/docs/grafana/latest/datasources/prometheus/">https://grafana.com/docs/grafana/latest/datasources/prometheus/</a></li>
 </ul>
 
-</div>
-
-        <footer class="post-footer clearfix">
-    
-        <p class="post-tags">
-            <span>Tagged:</span>
-            
-            
-                <a href="/tags/observability-prometheus-promql/">observability, prometheus, promql</a>
-            
-        </p>
-    
-
-    <div class="share">
-        
-            <a class="icon-twitter" href="https://twitter.com/share?text=PromQL&url=http%3a%2f%2flocalhost%3a1313%2f2023%2f03%2f19%2fpromql%2f"
-                onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-                <i class="fa fa-twitter"></i>
-                <span class="hidden">Twitter</span>
-            </a>
-        
-
-        
-            <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2f2023%2f03%2f19%2fpromql%2f"
-                onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-                <i class="fa fa-facebook"></i>
-                <span class="hidden">Facebook</span>
-            </a>
-        
-
-        
-            <a class="icon-google-plus" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2f2023%2f03%2f19%2fpromql%2f"
-              onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-              <i class="fa fa-google-plus"></i>
-                <span class="hidden">Google+</span>
-            </a>
-        
-        
-            <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&title=PromQL&url=http%3a%2f%2flocalhost%3a1313%2f2023%2f03%2f19%2fpromql%2f&summary=Entendendo%20o%20PromQL"
-               onclick="window.open(this.href, 'linkedin-share', 'width=554,height=481');return false;">
-               <i class="fa fa-linkedin"></i>
-               <span class="hidden">LinkedIn</span>
-            </a>
-        
     </div>
-</footer>
+    
+    
+</article>
 
+        </main>
         
-    <div class="comments">
-        <div id="disqus_thread"></div>
-<script>
-    window.disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "scovl-github-io" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    </div>
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
 
-    </article>
-</div>
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
 
             </div>
         </div>
-
-        <footer class="footer">
-            <div class="container">
-                <div class="site-title-wrapper">
-                    <h1 class="site-title">
-                        <a title="scovl" href="http://localhost:1313/">scovl</a>
-                    </h1>
-                    <a class="button-square button-jump-top js-jump-top" href="#">
-                        <i class="fa fa-angle-up"></i>
-                    </a>
-                </div>
-
-                <p class="footer-copyright">
-                    <span>&copy; 2024 / Powered by <a href="https://gohugo.io/">Hugo</a></span>
-                </p>
-                <p class="footer-copyright">
-                </p>
-            </div>
-        </footer>
-
-        <script src="http://localhost:1313/js/jquery-1.11.3.min.js"></script>
-        <script src="http://localhost:1313/js/jquery.fitvids.js"></script>
-        <script src="http://localhost:1313/js/scripts.js"></script>
-    </body>
-</html>
-
+    </div>
+</footer> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 

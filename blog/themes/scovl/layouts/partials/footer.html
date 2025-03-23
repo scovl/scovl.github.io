@@ -1,0 +1,42 @@
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; {{ now.Format "2006" }} {{ .Site.Copyright | default .Site.Title }}
+            </div>
+            
+            <div class="social-links">
+                {{ if .Site.Params.github }}
+                <a href="{{ .Site.Params.github }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                {{ end }}
+                
+                {{ if .Site.Params.linkedin }}
+                <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                {{ end }}
+                
+                {{ if .Site.Params.email }}
+                <a href="mailto:{{ .Site.Params.email }}" class="social-link">
+                    Email
+                </a>
+                {{ end }}
+
+                {{ if .Site.Params.mastodon }}
+                <a href="{{ .Site.Params.mastodon }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                {{ end }}
+
+                {{ if .Site.Params.rss }}
+                <a href="{{ .Site.Params.rss }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                {{ end }}
+
+            </div>
+        </div>
+    </div>
+</footer> 

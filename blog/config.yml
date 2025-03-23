@@ -1,9 +1,9 @@
 baseurl: "https://scovl.github.io"
 title: scovl
-theme: mycustom
-languageCode: en
+theme: scovl
+languageCode: pt-br
 copyright: Vitor Lobo
-disqusShortname: scovl-github-io
+
 pygmentsUseClasses: true
 pygmentsCodefences: true
 DefaultContentLanguage: pt
@@ -16,17 +16,18 @@ languages:
 markup:
   highlight:
     codeFences: true
-    guessSyntax: false
+    guessSyntax: true
     hl_Lines: ""
     lineNoStart: 1
     lineNos: true
-    lineNumbersInTable: false
-    noClasses: true
+    lineNumbersInTable: true
+    noClasses: false
+    style: "one-light"
     tabWidth: 2
-    style: dracula
   goldmark:
     renderer:
       unsafe: true
+
 
 
 privacy:
@@ -51,6 +52,8 @@ params:
   linkedin: "https://linkedin.com/in/vitor-lobo"
   github: "https://github.com/scovl"
   email: lobocode@gmail.com
+  mastodon: "https://hachyderm.io/@lobocode"
+  rss: "https://scovl.github.io/index.xml"
   opengraph: true
   shareTwitter: true
   shareLinkedIn: true
@@ -66,6 +69,9 @@ params:
   math: true
   navigation:
     help: Help
+  mermaid:
+    theme: "light"
+    align: "center"
 
 permalinks:
   post: "/:year/:month/:day/:filename/"
