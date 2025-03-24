@@ -317,7 +317,7 @@ Em seguida, vamos implementar o módulo de embeddings que vai permitir procurar 
            (map second)))))
 ```
 
-O código acima implementa uma técnica chamada [TF-IDF (Term Frequency-Inverse Document Frequency)](https://pt.wikipedia.org/wiki/TF-IDF) para criar representações vetoriais dos textos. Esta abordagem permite calcular a similaridade entre documentos sem depender de modelos externos. No entanto, para a parte de geração, ainda usamos o Ollama com o modelo deepseek-r1.
+A partir de agora, vamos implementar o módulo de geração de respostas usando o [Ollama](https://ollama.com/) com o modelo [deepseek-r1](https://ollama.com/models/deepseek-r1).
 
 #### Usando Ollama para LLMs locais sem API keys
 
@@ -488,9 +488,7 @@ Note que o módulo `llm.clj` inclui funções utilitárias adicionais como `extr
     (println "Obrigado por usar o DocAI. Até a próxima!")))
 ```
 
-Note que o módulo principal inclui mais logs com emojis, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis.
-
-A estrutura de pastas do projeto fica assim:
+Note que o módulo principal inclui mais logs com emojis, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis. A estrutura de pastas do projeto fica assim:
 
 ```bash
 docai/
