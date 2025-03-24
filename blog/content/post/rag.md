@@ -542,6 +542,8 @@ Processando...
 [Resposta do modelo sobre JWT baseada no example.md]
 ```
 
+> **NOTA:** A propósito, o projeto docai está disponível no [https://github.com/scovl/docai](https://github.com/scovl/docai) caso você queira contribuir com o projeto ou usar em outro projeto.
+
 ### Considerações importantes 
 
 1. **Performance**: Esta implementação é básica e pode ser otimizada:
