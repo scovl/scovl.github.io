@@ -1,7 +1,7 @@
 // Code Escaper - Escapes Liquid syntax in code blocks
 document.addEventListener('DOMContentLoaded', function() {
   // Find all code blocks
-  const codeBlocks = document.querySelectorAll('pre code');
+  const codeBlocks = document.querySelectorAll('pre code, div.mermaid');
   
   codeBlocks.forEach(function(codeBlock) {
     // Replace dangerous Liquid syntax with HTML entities
@@ -26,5 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize syntax highlighting if Prism is available
   if (typeof Prism !== 'undefined') {
     Prism.highlightAll();
+  }
+  
+  // Initialize Mermaid diagrams if Mermaid is available
+  if (typeof mermaid !== 'undefined') {
+    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
   }
 }); 
