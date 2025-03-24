@@ -483,16 +483,16 @@ Vejamos um exemplo de como configurar alertas para notificar uma equipe via Slac
 
 ```yaml
 groups:
-- name: servidor
+- name: basic_alerts
   rules:
-  - alert: ServidorIndisponivel
-    expr: up{job="node"} == 0
+  - alert: InstanceDown
+    expr: up == 0
     for: 1m
     labels:
       severity: critical
     annotations:
-      summary: "Servidor indisponível: {{ $labels.instance }}"
-      description: "O servidor {{ $labels.instance }} está indisponível há mais de 1 minuto."
+      summary: "Servidor indisponível: &#123;&#123; $labels.instance &#125;&#125;"
+      description: "O servidor &#123;&#123; $labels.instance &#125;&#125; está indisponível há mais de 1 minuto."
 ```
 
 2. Configure o Prometheus para usar essas regras e o Alertmanager:
@@ -526,8 +526,8 @@ receivers:
   - api_url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX'
     channel: '#alerts'
     send_resolved: true
-    title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-    text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+    title: "&#123;&#123; range .Alerts &#125;&#125;&#123;&#123; .Annotations.summary &#125;&#125;\n&#123;&#123; end &#125;&#125;"
+    text: "&#123;&#123; range .Alerts &#125;&#125;&#123;&#123; .Annotations.description &#125;&#125;\n&#123;&#123; end &#125;&#125;"
 ```
 
 Para configurar o Alertmanager com o Prometheus, é necessário criar um arquivo de configuração `alertmanager.yml` e especificar o endpoint do Alertmanager no arquivo de configuração `prometheus.yml`. O arquivo `alertmanager.yml` contém as regras de roteamento de alertas e configurações de notificação, como os destinatários e as plataformas de notificação. Para mais informações sobre como configurar o Alertmanager, consulte a documentação oficial em https://prometheus.io/docs/alerting/latest/configuration/.
