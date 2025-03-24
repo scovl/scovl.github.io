@@ -650,7 +650,10 @@ Base de conhecimento pronta! Faça sua pergunta:
 Como implementar autenticação JWT em Clojure?
 Processando...
 [Resposta do modelo sobre JWT baseada no example.md]</code></pre>
- <h3 id="considerações-importantes">Considerações importantes</h3>
+ <blockquote>
+<p><strong>NOTA:</strong> A propósito, o projeto docai está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a> caso você queira contribuir com o projeto ou usar em outro projeto.</p>
+</blockquote>
+<h3 id="considerações-importantes">Considerações importantes</h3>
 <ol>
 <li>
 <p><strong>Performance</strong>: Esta implementação é básica e pode ser otimizada:</p>
@@ -704,6 +707,7 @@ Experimentar com:
 <p>Bastante mais coisas podem ser feitas, mas essas são as mais importantes.</p>
 <hr>
 <h2 id="langchain4j-para-simplificar-a-criação-de-rag">Langchain4j para simplificar a criação de RAG</h2>
+<p>Até aqui utilizei a abordagem TF-IDF para criar embeddings e a abordagem manual para criar o RAG com intuito de apenas demonstrar o processo. O ideal, é usar embeddings pré-treinados e um banco de dados vetorial para armazenar os embeddings e realizar a busca por similaridade. Para isso, vamos usar a biblioteca <a href="https://github.com/langchain4j/langchain4j">Langchain4j</a>.</p>
 <p>Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java. Embora a implementação manual que fizemos anteriormente seja um ótimo exercício de aprendizado, usar Langchain4j pode simplificar significativamente o desenvolvimento, especialmente para aplicações mais complexas.</p>
 <p>Vantagens de usar Langchain4j:</p>
 <ul>
