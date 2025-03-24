@@ -435,7 +435,7 @@ cd docai</code></pre>
            (sort-by first &gt;)
            (take n)
            (map second)))))</code></pre>
- <p>O código acima implementa uma técnica chamada <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a> para criar representações vetoriais dos textos. Esta abordagem permite calcular a similaridade entre documentos sem depender de modelos externos. No entanto, para a parte de geração, ainda usamos o Ollama com o modelo deepseek-r1.</p>
+ <p>A partir de agora, vamos implementar o módulo de geração de respostas usando o <a href="https://ollama.com/">Ollama</a> com o modelo <a href="https://ollama.com/models/deepseek-r1">deepseek-r1</a>.</p>
 <h4 id="usando-ollama-para-llms-locais-sem-api-keys">Usando Ollama para LLMs locais sem API keys</h4>
 <p>Uma vantagem importante dessa abordagem é que vamos utilizar o <a href="https://ollama.com/">Ollama</a> para executar nossos modelos localmente. O Ollama é uma ferramenta incrível que permite rodar LLMs diretamente na sua máquina, sem depender de serviços em nuvem ou API keys. Vamos implementar a interface com o Ollama:</p>
 
@@ -600,8 +600,7 @@ cd docai</code></pre>
         (println &#34;Erro: &#34; (.getMessage e))
         (println &#34;Detalhes: &#34; (ex-data e))))
     (println &#34;Obrigado por usar o DocAI. Até a próxima!&#34;)))</code></pre>
- <p>Note que o módulo principal inclui mais logs com emojis, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis.</p>
-<p>A estrutura de pastas do projeto fica assim:</p>
+ <p>Note que o módulo principal inclui mais logs com emojis, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis. A estrutura de pastas do projeto fica assim:</p>
 
 
   <pre><code class="language-bash">docai/
