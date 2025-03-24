@@ -509,16 +509,16 @@ existem algumas soluções possíveis para monitorá-los com o Prometheus:</p>
 
 
   <pre><code class="language-yaml">groups:
-- name: servidor
+- name: basic_alerts
   rules:
-  - alert: ServidorIndisponivel
-    expr: up{job=&#34;node&#34;} == 0
+  - alert: InstanceDown
+    expr: up == 0
     for: 1m
     labels:
       severity: critical
     annotations:
-      summary: &#34;Servidor indisponível: {{ $labels.instance }}&#34;
-      description: &#34;O servidor {{ $labels.instance }} está indisponível há mais de 1 minuto.&#34;</code></pre>
+      summary: &#34;Servidor indisponível: &amp;#123;&amp;#123; $labels.instance &amp;#125;&amp;#125;&#34;
+      description: &#34;O servidor &amp;#123;&amp;#123; $labels.instance &amp;#125;&amp;#125; está indisponível há mais de 1 minuto.&#34;</code></pre>
  <ol start="2">
 <li>Configure o Prometheus para usar essas regras e o Alertmanager:</li>
 </ol>
@@ -552,8 +552,8 @@ receivers:
   - api_url: &#39;https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX&#39;
     channel: &#39;#alerts&#39;
     send_resolved: true
-    title: &#34;{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}&#34;
-    text: &#34;{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}&#34;</code></pre>
+    title: &#34;&amp;#123;&amp;#123; range .Alerts &amp;#125;&amp;#125;&amp;#123;&amp;#123; .Annotations.summary &amp;#125;&amp;#125;\n&amp;#123;&amp;#123; end &amp;#125;&amp;#125;&#34;
+    text: &#34;&amp;#123;&amp;#123; range .Alerts &amp;#125;&amp;#125;&amp;#123;&amp;#123; .Annotations.description &amp;#125;&amp;#125;\n&amp;#123;&amp;#123; end &amp;#125;&amp;#125;&#34;</code></pre>
  <p>Para configurar o Alertmanager com o Prometheus, é necessário criar um arquivo de configuração <code>alertmanager.yml</code> e especificar o endpoint do Alertmanager no arquivo de configuração <code>prometheus.yml</code>. O arquivo <code>alertmanager.yml</code> contém as regras de roteamento de alertas e configurações de notificação, como os destinatários e as plataformas de notificação. Para mais informações sobre como configurar o Alertmanager, consulte a documentação oficial em <a href="https://prometheus.io/docs/alerting/latest/configuration/">https://prometheus.io/docs/alerting/latest/configuration/</a>.</p>
 <blockquote>
 <p><strong>Observação</strong>: o Alertmanager não é um componente obrigatório do Prometheus. Ele é uma ferramenta opcional que pode ser usada para gerenciar alertas. Se você não precisar de alertas, não precisa configurar o Alertmanager. Pretendo escrever um outro artigo dedicado ao Alertmanager, então fique ligado!</p>
@@ -820,6 +820,9 @@ receivers:
         </div>
     </div>
 </footer>
+
+
+<script src="/js/code-escaper.js"></script>
 
 
 <script>
