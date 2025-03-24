@@ -29,42 +29,14 @@ Neste artigo, vamos explorar como construir uma aplicação [RAG (Retrieval-Augm
 
 ## O que é RAG e por que precisamos dele? 
 
-Sabe esses modelos de linguagem grandes [(LLMs)](https://pt.wikipedia.org/wiki/Modelo_de_linguagem) que todo mundo tá falando, tipo o GPT? Então, eles são incríveis, mas têm uma limitação meio chata: eles são "congelados" no tempo. É como se eles tivessem uma foto do mundo quando foram treinados, e não conseguissem ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:
+Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é "congelado" no tempo.
+
+Quando um LLM é treinado, ele absorve informações disponíveis até um determinado momento - sua data de corte de treinamento. Após esse ponto, o modelo não tem acesso a nenhuma informação nova. É como se ele tivesse uma foto do mundo quando foi treinado, e não conseguisse ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:
 
 - Eventos que aconteceram em 2023
 - Novas tecnologias que surgiram
 - Aquela série nova que todo mundo tá assistindo
 - O último filme que ganhou o Oscar
-
-
-A imagem abaixo mostra o fluxo de um sistema RAG:
-
-```mermaid
-graph LR
-    A[Documentos] --> B[Processamento de Documentos]
-    B --> C[Armazenamento de Vetores]
-    D[Consulta do Usuário] --> E[Processamento da Consulta]
-    E --> F[Recuperação de Documentos Relevantes]
-    C --> F
-    F --> G[Contexto Aumentado]
-    G --> H[LLM]
-    H --> I[Resposta Final]
-    
-    style A fill:#f9d5e5,stroke:#333
-    style B fill:#eeeeee,stroke:#333
-    style C fill:#d3f8e2,stroke:#333
-    style D fill:#f9d5e5,stroke:#333
-    style E fill:#eeeeee,stroke:#333
-    style F fill:#e3e2f9,stroke:#333
-    style G fill:#d3f8e2,stroke:#333
-    style H fill:#f9e2ae,stroke:#333
-    style I fill:#c5e0f9,stroke:#333
-
-```
-
-O diagrama acima ilustra o fluxo de um sistema RAG, desde a ingestão de documentos até a geração da resposta final. Primeiro, os documentos são processados e armazenados como vetores. Quando um usuário faz uma consulta, o sistema processa essa pergunta, recupera os documentos mais relevantes do armazenamento vetorial e cria um contexto aumentado que é enviado ao LLM.
-
-Este processo resolve exatamente o problema que mencionamos: a limitação temporal dos LLMs. Ao fornecer documentos relevantes e atualizados como contexto adicional, o modelo consegue gerar respostas baseadas não apenas no seu conhecimento pré-treinado, mas também nas informações mais recentes que foram recuperadas especificamente para aquela consulta. É como dar ao LLM a capacidade de "pesquisar" antes de responder.
 
 
 ### Por que isso é um problema? 
@@ -100,7 +72,32 @@ Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/ab
 
 > O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um "sabe-tudo" desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.
 
-O RAG também é uma maneira de você nichar seu LLM em uma área específica, seja ela um assunto, uma empresa, uma linguagem, uma tecnologia, etc.
+O RAG também é uma maneira de você nichar seu LLM em uma área específica, seja ela um assunto, uma empresa, uma linguagem, uma tecnologia, etc. O RAG é uma técnica que combina a capacidade de geração de texto dos LLMs com um sistema de recuperação de informações. Em vez de depender apenas do conhecimento interno do modelo, o RAG busca informações relevantes em uma base de dados externa antes de gerar uma resposta. A imagem abaixo mostra o fluxo de um sistema RAG:
+
+```mermaid
+graph LR
+    A[Documentos] --> B[Processamento de Documentos]
+    B --> C[Armazenamento de Vetores]
+    D[Consulta do Usuário] --> E[Processamento da Consulta]
+    E --> F[Recuperação de Documentos Relevantes]
+    C --> F
+    F --> G[Contexto Aumentado]
+    G --> H[LLM]
+    H --> I[Resposta Final]
+    
+    style A fill:#f9d5e5,stroke:#333
+    style B fill:#eeeeee,stroke:#333
+    style C fill:#d3f8e2,stroke:#333
+    style D fill:#f9d5e5,stroke:#333
+    style E fill:#eeeeee,stroke:#333
+    style F fill:#e3e2f9,stroke:#333
+    style G fill:#d3f8e2,stroke:#333
+    style H fill:#f9e2ae,stroke:#333
+    style I fill:#c5e0f9,stroke:#333
+
+```
+
+O diagrama acima ilustra o fluxo de um sistema RAG, desde a ingestão de documentos até a geração da resposta final. Primeiro, os documentos são processados e armazenados como vetores. Quando um usuário faz uma consulta, o sistema processa essa pergunta, recupera os documentos mais relevantes do armazenamento vetorial e cria um contexto aumentado que é enviado ao LLM.
 
 ---
 
