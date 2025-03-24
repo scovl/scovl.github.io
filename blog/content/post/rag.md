@@ -590,6 +590,8 @@ Bastante mais coisas podem ser feitas, mas essas são as mais importantes.
 
 ## Langchain4j para simplificar a criação de RAG
 
+Até aqui utilizei a abordagem TF-IDF para criar embeddings e a abordagem manual para criar o RAG com intuito de apenas demonstrar o processo. O ideal, é usar embeddings pré-treinados e um banco de dados vetorial para armazenar os embeddings e realizar a busca por similaridade. Para isso, vamos usar a biblioteca [Langchain4j](https://github.com/langchain4j/langchain4j).
+
 Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java. Embora a implementação manual que fizemos anteriormente seja um ótimo exercício de aprendizado, usar Langchain4j pode simplificar significativamente o desenvolvimento, especialmente para aplicações mais complexas.
 
 Vantagens de usar Langchain4j:
