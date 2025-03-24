@@ -471,11 +471,11 @@ Note que o módulo `llm.clj` inclui funções utilitárias adicionais como `extr
   (println "Inicializando DocAI...")
   
   ;; Verificar se o Ollama está acessível
-  (println "ℹ️ Para usar o Ollama, certifique-se de que ele está em execução com o comando: ollama serve")
-  (println "ℹ️ Usando o modelo deepseek-r1. Se você ainda não o baixou, execute: ollama pull deepseek-r1")
+  (println "Para usar o Ollama, certifique-se de que ele está em execução com o comando: ollama serve")
+  (println "Usando o modelo deepseek-r1. Se você ainda não o baixou, execute: ollama pull deepseek-r1")
   
   (let [kb (setup-knowledge-base)]
-    (println "✨ Base de conhecimento pronta! Faça sua pergunta:")
+    (println "Base de conhecimento pronta! Faça sua pergunta:")
     (try
       (loop []
         (when-let [input (read-line)]
