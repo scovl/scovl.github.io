@@ -20,6 +20,7 @@ author = "Vitor Lobo Ramos"
         - [Como usar?](#como-usar)
 - **[Considerações importantes](#considerações-importantes)**
 - **[Próximos passos](#próximos-passos)**
+- **[Langchain4j para simplificar a criação de RAG](#langchain4j-para-simplificar-a-criação-de-rag)**
 
 
 Olá, pessoal! 👋 
@@ -560,6 +561,8 @@ Processando...
    - Mistral: Bom para tarefas específicas
    - Gemma: Leve e eficiente
 
+
+
 ---
 
 ### Próximos passos
@@ -573,7 +576,9 @@ Algumas ideias para expandir o projeto:
 5.  **Erros:** Tratar mais erros (Ollama offline, modelo indisponível, rede, arquivos inválidos).
 6.  **Logging:** Usar um framework de logging para rastreamento e depuração.
 7.  **Testes:** Adicionar testes unitários e de integração.
-8.  **Prompt Engineering:** Refinar o prompt (em `format-prompt`) para melhorar as respostas.  Experimentar com:
+8.  **Prompt Engineering:** Refinar o prompt (em `format-prompt`) para melhorar as respostas.
+9.  **Usar langchain4j:** criar RAG através do [langchain4j](https://github.com/langchain4j/langchain4j) via interop java com o clojure.
+  Experimentar com:
     *   Exemplos no prompt (few-shot learning).
     *   Instruções passo a passo (chain-of-thought).
     *   Instruções claras sobre formato, tamanho, etc.
@@ -581,12 +586,26 @@ Algumas ideias para expandir o projeto:
 
 Bastante mais coisas podem ser feitas, mas essas são as mais importantes.
 
+---
+
+## Langchain4j para simplificar a criação de RAG
+
+Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java. Embora a implementação manual que fizemos anteriormente seja um ótimo exercício de aprendizado, usar Langchain4j pode simplificar significativamente o desenvolvimento, especialmente para aplicações mais complexas.
+
+Vantagens de usar Langchain4j:
+
+- **Abstração:** Langchain4j fornece componentes pré-construídos para tarefas comuns como carregamento de documentos, divisão de texto, criação de embeddings, armazenamento vetorial e interação com LLMs.
+- **Modularidade:** Você pode facilmente trocar diferentes implementações (por exemplo, usar diferentes modelos de embedding ou bancos de dados vetoriais) sem alterar o código principal da aplicação.
+- **Integração:** Langchain4j oferece integrações com várias ferramentas e serviços populares, incluindo Ollama, bancos de dados vetoriais (como Chroma, Weaviate, Qdrant), e modelos de linguagem de diferentes provedores.
+- **Comunidade e Suporte:** Langchain4j possui uma comunidade ativa e boa documentação, facilitando a obtenção de ajuda e a resolução de problemas.
+
+> Em um próximo artigo, escreverei sobre como usar [Langchain4j](https://github.com/langchain4j/langchain4j) para criar um sistema RAG ainda neste mesmo projeto.
+
 
 ---
 
 ## Referências
 
-- [Langchain](https://python.langchain.com/docs/getting_started/introduction) - Documentação do Langchain
 - [RAG](https://www.pinecone.io/learn/rag/) - Documentação do Pinecone
 - [Embedding](https://www.pinecone.io/learn/embeddings/) - Documentação do Pinecone
 - [LLM](https://www.pinecone.io/learn/llms/) - Documentação do Pinecone

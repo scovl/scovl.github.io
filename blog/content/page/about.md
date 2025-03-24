@@ -16,9 +16,9 @@ Sou um engenheiro de software, escritor, gamer nas horas vagas e pesquisador ind
 
 ## Projetos
 
-Posso dizer que iniciei na programação colaborando com projetos open source desde 2009 ainda quando era usuário ativo do [IRC](https://pt.wikipedia.org/wiki/IRC) na freenode. Lá que conheci muitos desenvolvedores que me influenciaram muito na minha carreira. Colaborar com projetos open source me ensinou muito sobre programação e principalmente trabalho em comunidade o que colaborou significativamente para o meu crescimento profissional.
+Posso dizer que iniciei na programação colaborando com projetos open source desde 2009 ainda quando era usuário ativo do [IRC](https://pt.wikipedia.org/wiki/IRC) na freenode. Lá que conheci muitos desenvolvedores que me influenciaram muito na minha carreira. 
 
-Abaixo alguns projetos open source que tenho colaborado:
+Colaborar com projetos open source me ensinou muito sobre programação e principalmente trabalho em comunidade o que colaborou significativamente para o meu crescimento profissional. Abaixo alguns projetos open source que tenho colaborado:
 
 - [Marmite](https://github.com/rochacbruno/marmite) - Marmite é gerador de site/blog estáticos escrito em Rust.
 - [checkrc](https://github.com/scovl/checkrc) - checkrc é um validador de configurações para o freeBSD.
