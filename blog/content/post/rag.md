@@ -488,7 +488,7 @@ Note que o módulo `llm.clj` inclui funções utilitárias adicionais como `extr
     (println "Obrigado por usar o DocAI. Até a próxima!")))
 ```
 
-Note que o módulo principal inclui mais logs com emojis, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis. A estrutura de pastas do projeto fica assim:
+Note que o módulo principal inclui mais logs, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis. A estrutura de pastas do projeto fica assim:
 
 ```bash
 docai/
