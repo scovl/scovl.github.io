@@ -152,40 +152,14 @@
 <p>Olá, pessoal! 👋</p>
 <p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
 <h2 id="o-que-é-rag-e-por-que-precisamos-dele">O que é RAG e por que precisamos dele?</h2>
-<p>Sabe esses modelos de linguagem grandes <a href="https://pt.wikipedia.org/wiki/Modelo_de_linguagem">(LLMs)</a> que todo mundo tá falando, tipo o GPT? Então, eles são incríveis, mas têm uma limitação meio chata: eles são &ldquo;congelados&rdquo; no tempo. É como se eles tivessem uma foto do mundo quando foram treinados, e não conseguissem ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:</p>
+<p>Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
+<p>Quando um LLM é treinado, ele absorve informações disponíveis até um determinado momento - sua data de corte de treinamento. Após esse ponto, o modelo não tem acesso a nenhuma informação nova. É como se ele tivesse uma foto do mundo quando foi treinado, e não conseguisse ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:</p>
 <ul>
 <li>Eventos que aconteceram em 2023</li>
 <li>Novas tecnologias que surgiram</li>
 <li>Aquela série nova que todo mundo tá assistindo</li>
 <li>O último filme que ganhou o Oscar</li>
 </ul>
-<p>A imagem abaixo mostra o fluxo de um sistema RAG:</p>
-
-
-  
-    
-  
-  <div class="mermaid">graph LR
-    A[Documentos] --&gt; B[Processamento de Documentos]
-    B --&gt; C[Armazenamento de Vetores]
-    D[Consulta do Usuário] --&gt; E[Processamento da Consulta]
-    E --&gt; F[Recuperação de Documentos Relevantes]
-    C --&gt; F
-    F --&gt; G[Contexto Aumentado]
-    G --&gt; H[LLM]
-    H --&gt; I[Resposta Final]
-    
-    style A fill:#f9d5e5,stroke:#333
-    style B fill:#eeeeee,stroke:#333
-    style C fill:#d3f8e2,stroke:#333
-    style D fill:#f9d5e5,stroke:#333
-    style E fill:#eeeeee,stroke:#333
-    style F fill:#e3e2f9,stroke:#333
-    style G fill:#d3f8e2,stroke:#333
-    style H fill:#f9e2ae,stroke:#333
-    style I fill:#c5e0f9,stroke:#333</div>
- <p>O diagrama acima ilustra o fluxo de um sistema RAG, desde a ingestão de documentos até a geração da resposta final. Primeiro, os documentos são processados e armazenados como vetores. Quando um usuário faz uma consulta, o sistema processa essa pergunta, recupera os documentos mais relevantes do armazenamento vetorial e cria um contexto aumentado que é enviado ao LLM.</p>
-<p>Este processo resolve exatamente o problema que mencionamos: a limitação temporal dos LLMs. Ao fornecer documentos relevantes e atualizados como contexto adicional, o modelo consegue gerar respostas baseadas não apenas no seu conhecimento pré-treinado, mas também nas informações mais recentes que foram recuperadas especificamente para aquela consulta. É como dar ao LLM a capacidade de &ldquo;pesquisar&rdquo; antes de responder.</p>
 <h3 id="por-que-isso-é-um-problema">Por que isso é um problema?</h3>
 <p>Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.</p>
 <p>O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento &ldquo;congelada&rdquo; no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.</p>
@@ -218,7 +192,32 @@
 <blockquote>
 <p>O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um &ldquo;sabe-tudo&rdquo; desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.</p>
 </blockquote>
-<p>O RAG também é uma maneira de você nichar seu LLM em uma área específica, seja ela um assunto, uma empresa, uma linguagem, uma tecnologia, etc.</p>
+<p>O RAG também é uma maneira de você nichar seu LLM em uma área específica, seja ela um assunto, uma empresa, uma linguagem, uma tecnologia, etc. O RAG é uma técnica que combina a capacidade de geração de texto dos LLMs com um sistema de recuperação de informações. Em vez de depender apenas do conhecimento interno do modelo, o RAG busca informações relevantes em uma base de dados externa antes de gerar uma resposta. A imagem abaixo mostra o fluxo de um sistema RAG:</p>
+
+
+  
+    
+  
+  <div class="mermaid">graph LR
+    A[Documentos] --&gt; B[Processamento de Documentos]
+    B --&gt; C[Armazenamento de Vetores]
+    D[Consulta do Usuário] --&gt; E[Processamento da Consulta]
+    E --&gt; F[Recuperação de Documentos Relevantes]
+    C --&gt; F
+    F --&gt; G[Contexto Aumentado]
+    G --&gt; H[LLM]
+    H --&gt; I[Resposta Final]
+    
+    style A fill:#f9d5e5,stroke:#333
+    style B fill:#eeeeee,stroke:#333
+    style C fill:#d3f8e2,stroke:#333
+    style D fill:#f9d5e5,stroke:#333
+    style E fill:#eeeeee,stroke:#333
+    style F fill:#e3e2f9,stroke:#333
+    style G fill:#d3f8e2,stroke:#333
+    style H fill:#f9e2ae,stroke:#333
+    style I fill:#c5e0f9,stroke:#333</div>
+ <p>O diagrama acima ilustra o fluxo de um sistema RAG, desde a ingestão de documentos até a geração da resposta final. Primeiro, os documentos são processados e armazenados como vetores. Quando um usuário faz uma consulta, o sistema processa essa pergunta, recupera os documentos mais relevantes do armazenamento vetorial e cria um contexto aumentado que é enviado ao LLM.</p>
 <hr>
 <h3 id="construindo-uma-aplicação-rag-simples">Construindo uma aplicação RAG simples</h3>
 <p>Vamos construir uma aplicação RAG simples usando Clojure! Nosso objetivo é criar um assistente inteligente que possa responder perguntas sobre documentação técnica de projetos open source. Vou te mostrar como fazer isso passo a passo.</p>
