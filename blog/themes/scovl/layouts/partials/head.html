@@ -6,18 +6,22 @@
 <link rel="stylesheet" href="{{ "css/styles.css" | relURL }}">
 <link rel="stylesheet" href="{{ "css/syntax.css" | relURL }}">
 
-<!-- custom gruvbox remote highlight -->
-<link rel="stylesheet" href="https://github.com/scovl/scovl.github.io/blob/master/static/css/syntax/gruvbox.css">
+<!-- Prism.js for Syntax Highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+
 <!-- Custom CSS from config if any -->
 {{ range .Site.Params.customCSS }}
 <link rel="stylesheet" href="{{ . | relURL }}">
 {{ end }}
 
-
 {{ if .Site.Params.math }}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {

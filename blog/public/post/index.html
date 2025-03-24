@@ -11,7 +11,10 @@
 <link rel="stylesheet" href="/css/syntax.css">
 
 
-<link rel="stylesheet" href="https://github.com/scovl/scovl.github.io/blob/master/static/css/syntax/gruvbox.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 
 
 
@@ -20,6 +23,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
@@ -94,6 +98,56 @@
     
     
     
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2024/01/23/rag/">RAG Simples com Clojure e Ollama</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2024-01-23T19:00:00Z">
+                Tue, Jan 23, 2024
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/rag/" class="tag">RAG</a>
+                
+                <a href="/tags/llm/" class="tag">LLM</a>
+                
+                <a href="/tags/ai/" class="tag">AI</a>
+                
+                <a href="/tags/langchain/" class="tag">Langchain</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Um protótipo funcional do zero
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            Sumário O que é RAG e por que precisamos dele? Por que isso é um problema? E é aí que entra o RAG! Construindo uma aplicação RAG simples Preparando o ambiente Estrutura do projeto Usando Ollama para LLMs locais sem API keys Como usar? Considerações importantes Próximos passos Olá, pessoal! 👋
+Neste artigo, vamos explorar como construir uma aplicação RAG (Retrieval-Augmented Generation) completa do zero usando Clojure. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais.
+            
+            <a href="http://localhost:1313/2024/01/23/rag/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
     
     
     
@@ -198,101 +252,6 @@
     </article>
     
     
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2024/07/18/oop/">Java e Clojure</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2024-07-18T19:00:00Z">
-                Thu, Jul 18, 2024
-            </time>
-            
-            
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/oop/" class="tag">OOP</a>
-                
-                <a href="/tags/software/" class="tag">software</a>
-                
-                <a href="/tags/engineering/" class="tag">engineering</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Explorando outros mundos
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            Table of Contents Introdução Descobrindo Clojure: Uma Ponte entre Lisp e Java Manutenibilidade Transparência referencial Problemas de Reutilização Pattern Null Object Pattern Singleton Pattern Observer Recomendações Introdução Ao estudar diferentes linguagens de programação, fui atraído pela família Lisp devido à sua simplicidade e poder. Lisp, criado por John McCarthy em 1958, é conhecido pela notação de código como listas de dados e pela capacidade de manipular código como uma estrutura de dados.
-            
-            <a href="http://localhost:1313/2024/07/18/oop/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/03/21/dd01/">Análise de código estático</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-03-21T19:00:00Z">
-                Fri, Mar 21, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/oop/" class="tag">OOP</a>
-                
-                <a href="/tags/software/" class="tag">software</a>
-                
-                <a href="/tags/engineering/" class="tag">engineering</a>
-                
-                <a href="/tags/clojure/" class="tag">Clojure</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Deep Dive
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            Análise Estática de Código: Entendendo seu Programa sem Executá-lo Muitos mecanismos que ocorrem naturalmente em nosso dia-a-dia no desenvolvimento de software, muitas vezes, não são devidamente apreciados e nem mesmo conhecidos. Ações das quais parecem mágicas, mas que na verdade são resultado de um grande esforço de muitas pessoas ao longo de décadas.
-Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem mágicas como intelisense, autocompletion, dumping de variáveis e palavras reservadas de cada linguagem de programação, entre outras.
-            
-            <a href="http://localhost:1313/2025/03/21/dd01/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
 </div>
 
         </main>
@@ -340,7 +299,20 @@ Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem
             </div>
         </div>
     </div>
-</footer> 
+</footer>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
         
     </div>
     

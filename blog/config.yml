@@ -5,7 +5,8 @@ languageCode: pt-br
 copyright: Vitor Lobo
 
 pygmentsUseClasses: true
-pygmentsCodefences: true
+pygmentsCodeFences: true
+pygmentsStyle: "dracula"
 DefaultContentLanguage: pt
 
 languages:
@@ -22,7 +23,7 @@ markup:
     lineNos: true
     lineNumbersInTable: true
     noClasses: false
-    style: "one-light"
+    style: "dracula"
     tabWidth: 2
   goldmark:
     renderer:
@@ -72,6 +73,9 @@ params:
   mermaid:
     theme: "light"
     align: "center"
+  customSCSS:
+    customSCSS:
+      - "css/custom.scss"
 
 permalinks:
   post: "/:year/:month/:day/:filename/"

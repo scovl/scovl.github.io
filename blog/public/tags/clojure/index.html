@@ -11,7 +11,10 @@
 <link rel="stylesheet" href="/css/syntax.css">
 
 
-<link rel="stylesheet" href="https://github.com/scovl/scovl.github.io/blob/master/static/css/syntax/gruvbox.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 
 
 
@@ -20,6 +23,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
@@ -99,13 +103,13 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/03/21/dd01/">Análise de código estático</a>
+            <a href="http://localhost:1313/2025/03/23/dd01/">Análise de código estático</a>
         </h2>
         
         <div class="post-item-meta">
             
-            <time datetime="2025-03-21T19:00:00Z">
-                Fri, Mar 21, 2025
+            <time datetime="2025-03-23T19:00:00Z">
+                Sun, Mar 23, 2025
             </time>
             
             
@@ -139,7 +143,50 @@
             Análise Estática de Código: Entendendo seu Programa sem Executá-lo Muitos mecanismos que ocorrem naturalmente em nosso dia-a-dia no desenvolvimento de software, muitas vezes, não são devidamente apreciados e nem mesmo conhecidos. Ações das quais parecem mágicas, mas que na verdade são resultado de um grande esforço de muitas pessoas ao longo de décadas.
 Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem mágicas como intelisense, autocompletion, dumping de variáveis e palavras reservadas de cada linguagem de programação, entre outras.
             
-            <a href="http://localhost:1313/2025/03/21/dd01/" class="read-more">Leia mais →</a>
+            <a href="http://localhost:1313/2025/03/23/dd01/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2024/03/24/test-syntax-highlighting/">Teste de Syntax Highlighting</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2024-03-24T00:00:00Z">
+                Sun, Mar 24, 2024
+            </time>
+            
+            
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/code/" class="tag">code</a>
+                
+                <a href="/tags/clojure/" class="tag">clojure</a>
+                
+                <a href="/tags/syntax-highlighting/" class="tag">syntax-highlighting</a>
+                
+            </div>
+            
+            
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            Teste de Syntax Highlighting Vamos testar o highlighting para código Clojure:
+;; src/docai/document.clj(ns docai.document(:require [markdown-to-hiccup.core :as md][hickory.core :as html][clojure.string :as str]))(defn is-string? [x](instance? String x))(defn extract-text-from-markdown [content](try(let [hiccup-result (md/md-&gt;hiccup content)text-nodes (filter is-string? (flatten hiccup-result))]text-nodes)(catch Exception e(println &#34;Erro ao processar Markdown:&#34; (.getMessage e))[content])))E também podemos testar código de outras linguagens:
+def hello_world():print(&#34;Hello, world!&#34;)return 42# Este é um comentárioclass Example:def __init__(self, value):self.
+            
+            <a href="http://localhost:1313/2024/03/24/test-syntax-highlighting/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -193,7 +240,20 @@ Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem
             </div>
         </div>
     </div>
-</footer> 
+</footer>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
         
     </div>
     
