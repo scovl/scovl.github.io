@@ -1,0 +1,24 @@
+# Jekyll configuration for GitHub Pages
+# This config file is only used by GitHub Pages
+
+# Disable processing Liquid tags in Markdown files
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
+  syntax_highlighter_opts:
+    disable: true
+
+# Prevent GitHub from processing these files with Liquid
+exclude:
+  - blog/content/**/*.md
+
+# Configure GitHub Pages to treat all Liquid tags as literal text
+liquid:
+  error_mode: warn
+  
+# Use a very simple theme
+theme: jekyll-theme-minimal
+
+# Improve build performance
+incremental: true 
