@@ -4,7 +4,7 @@ description = "Under the hood"
 date = 2023-03-21T23:18:18-03:00
 tags = ["Prometheus", "Grafana", "Monitoring", "TSDB", "DevOps", "Observability"]
 draft = false
-weight = 2
+weight = 3
 +++
 
 ## Índice

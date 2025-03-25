@@ -4,7 +4,7 @@ description = "Entendendo o PromQL"
 date = 2023-03-19T17:31:45-03:00
 tags = ["observability", "prometheus", "promql", "monitoring", "TSDB"]
 draft = false
-weight = 3
+weight = 4
 author = "Vitor Lobo Ramos"
 +++
 

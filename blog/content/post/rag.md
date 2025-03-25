@@ -1,7 +1,7 @@
 +++
 title = "RAG Simples com Clojure e Ollama"
 description = "Um protótipo funcional do zero"
-date = 2024-01-23T19:00:00-00:00
+date = 2025-03-23T19:00:00-00:00
 tags = ["RAG", "LLM", "AI", "Langchain"]
 draft = false
 weight = 1
@@ -733,9 +733,7 @@ Nossa implementação atual oferece uma base funcional, mas pode ser significati
 
 Para lidar com documentações extensas, recomendo estratégias específicas de gerenciamento de memória, como o processamento de chunks em lotes menores, implementação de indexação incremental que constrói a base de conhecimento gradualmente, e utilização de técnicas de streaming para processar arquivos grandes sem sobrecarregar a memória disponível.
 
-Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o [DeepSeek R1](https://ollama.com/models/deepseek-r1) destaca-se na compreensão geral e geração de texto, o [DeepSeek Coder](https://ollama.com/models/deepseek-coder) é especializado em código, o [Llama 3](https://ollama.com/models/llama3) serve como excelente alternativa geral, o [Mistral](https://ollama.com/models/mistral) demonstra eficácia em tarefas específicas, enquanto o [Gemma](https://ollama.com/models/gemma) oferece uma solução leve e eficiente para ambientes com recursos limitados.
-
-Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:
+Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o [DeepSeek R1](https://ollama.com/models/deepseek-r1) destaca-se na compreensão geral e geração de texto, o [DeepSeek Coder](https://ollama.com/models/deepseek-coder) é especializado em código, o [Llama 3](https://ollama.com/models/llama3) serve como excelente alternativa geral, o [Mistral](https://ollama.com/models/mistral) demonstra eficácia em tarefas específicas, enquanto o [Gemma](https://ollama.com/models/gemma) oferece uma solução leve e eficiente para ambientes com recursos limitados. Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:
 
 1. **Ollama Offline**
    - **Sintoma**: O sistema não consegue se conectar ao servidor Ollama
@@ -774,12 +772,7 @@ Outra questão importante é como estou tratando os erros. O sistema implementa 
      context-chunks)
    ```
 
-4. **Melhorias Futuras**
-   - Implementar retry com backoff exponencial para falhas de conexão
-   - Adicionar cache de embeddings para melhor performance
-   - Implementar streaming para arquivos muito grandes
-   - Adicionar validação de formato de documentos
-   - Implementar rate limiting para evitar sobrecarga do Ollama
+4. **Melhorias Futuras** - Implementar [retry com backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff) para falhas de conexão, adicionar [cache de embeddings](https://en.wikipedia.org/wiki/Cache_(computing)) para melhor performance, implementar [streaming](https://en.wikipedia.org/wiki/Streaming_media) para arquivos muito grandes, adicionar [validação de formato de documentos](https://en.wikipedia.org/wiki/Document_validation) e implementar [rate limiting](https://en.wikipedia.org/wiki/Rate_limiting) para evitar sobrecarga do Ollama.
 
 ---
 
@@ -807,14 +800,7 @@ O código acima define uma função `format-prompt` que estrutura a comunicaçã
 
 A estrutura do prompt é cuidadosamente projetada com vários elementos estratégicos: primeiro, define o papel do modelo como "assistente especializado em documentação técnica", estabelecendo o tom e a expectativa; em seguida, fornece o contexto extraído da documentação para que o modelo tenha as informações necessárias; depois, apresenta claramente a pergunta do usuário; e finalmente, inclui instruções específicas sobre como o modelo deve responder, incentivando respostas técnicas precisas com exemplos de código quando apropriado, além de orientar como proceder quando a documentação não contém informações relevantes.
 
-
-#### Técnicas de Prompt Engineering
-
-- **Role Prompting**: Define um papel específico para o modelo ("Você é um especialista em...")
-- **Few-shot Learning**: Fornece exemplos de entradas e saídas desejadas
-- **Chain of Thought**: Pede ao modelo para explicar seu raciocínio
-- **Format Specification**: Especifica o formato desejado da resposta
-- **Constraints**: Define limites e requisitos para a resposta
+O prompt engineering utiliza diversas técnicas para melhorar as respostas dos LLMs, incluindo: [**Role Prompting**](https://www.promptingguide.ai/techniques/role-prompting), que define um papel específico para o modelo (como "Você é um especialista em..."); [**Few-shot Learning**](https://www.promptingguide.ai/techniques/few-shot), que fornece exemplos de entradas e saídas desejadas; [**Chain of Thought**](https://www.promptingguide.ai/techniques/chain-of-thought), que solicita ao modelo explicar seu raciocínio passo a passo; [**Format Specification**](https://www.promptingguide.ai/techniques/format-specification), que especifica o formato exato desejado para a resposta; e [**Constraints**](https://www.promptingguide.ai/techniques/constraints), que estabelece limites e requisitos específicos que a resposta deve seguir.
 
 #### Exemplo de Prompt Avançado
 
@@ -840,21 +826,9 @@ A estrutura deste prompt segue princípios de engenharia de prompts mais sofisti
        "6. Use formatação Markdown para melhor legibilidade"))
 ```
 
-#### Dicas para Prompts Efetivos
+Para criar prompts efetivos, é essencial ser específico e claro nas instruções, utilizar formatação adequada para melhorar a legibilidade e incluir exemplos ilustrativos sempre que possível. Também é recomendável definir limites e restrições claras, solicitar ao modelo que explique seu raciocínio e utilizar um processo iterativo para refinar continuamente o prompt até obter os resultados desejados.
 
-- Seja específico e claro nas instruções
-- Use formatação para melhorar a legibilidade
-- Inclua exemplos quando possível
-- Defina limites e restrições claras
-- Peça ao modelo para explicar seu raciocínio
-- Use iteração para refinar o prompt
-
-#### Avaliação de Prompts
-
-- Teste diferentes variações do mesmo prompt
-- Compare as respostas para identificar a melhor estrutura
-- Colete feedback dos usuários
-- Mantenha um registro dos prompts que funcionam bem
+A avaliação sistemática de prompts envolve testar diferentes variações da mesma instrução e comparar as respostas para identificar qual estrutura produz os melhores resultados. Este processo deve incluir a coleta de feedback dos usuários finais e a manutenção de um registro detalhado dos prompts que demonstraram bom desempenho, permitindo assim o desenvolvimento de um conjunto de melhores práticas específicas para cada caso de uso.
 
 > **Nota**: O [Prompt Engineering](https://www.promptingguide.ai/) é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.
 
@@ -907,7 +881,7 @@ Quando o projeto crescer, vai ser essencial ter um banco de dados vetorial decen
 
 A parte de tratamento de erros e logging também precisa de carinho. Já pensou o usuário esperando resposta e o Ollama tá offline? Ou um arquivo corrompido? Precisamos de mensagens amigáveis e um sistema de logging decente pra rastrear problemas. E claro, testes! Sem testes unitários e de integração, qualquer mudança vira uma roleta-russa.
 
-O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt [(few-shot)](https://www.promptingguide.ai/techniques/few-shot), instruções passo a passo [(chain-of-thought)](https://www.promptingguide.ai/techniques/chain-of-thought), e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o [langchain4j](https://github.com/langchain4j/langchain4j) via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!
+O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o langchain4j via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!
 
 ### Usando Langchain4j
 
