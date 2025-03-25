@@ -116,7 +116,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 18 min
+                Estimated reading time: 19 min
             </div>
             
             
@@ -192,21 +192,42 @@
 <h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
 <h3 id="o-que-é-rag">O que é RAG?</h3>
 <p>Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
-<p>Quando um LLM é treinado, ele absorve informações disponíveis até um determinado momento - sua data de corte de treinamento. Após esse ponto, o modelo não tem acesso a nenhuma informação nova. É como se ele tivesse uma foto do mundo quando foi treinado, e não conseguisse ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:</p>
-<ul>
-<li>Eventos que aconteceram em 2023</li>
-<li>Novas tecnologias que surgiram</li>
-<li>Aquela série nova que todo mundo tá assistindo</li>
-<li>O último filme que ganhou o Oscar</li>
-</ul>
-<h3 id="por-que-precisamos-do-rag">Por que precisamos do RAG?</h3>
+
+
+  
+    
+  
+  <div class="mermaid">graph TD
+    A[LLM Treinado] --&gt; B[Data de Corte]
+    B --&gt; C[Conhecimento Congelado]
+    C --&gt; D[Limitações]
+    D --&gt; E[Não sabe eventos recentes]
+    D --&gt; F[Não tem dados atualizados]
+    D --&gt; G[Não conhece novas tecnologias]</div>
+ <h3 id="por-que-precisamos-do-rag">Por que precisamos do RAG?</h3>
 <p>Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.</p>
 <p>O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento &ldquo;congelada&rdquo; no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.</p>
 <blockquote>
 <p>Confiar exclusivamente em um LLM &ldquo;puro&rdquo; nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.</p>
 </blockquote>
 <h3 id="os-três-pilares-do-rag">Os Três Pilares do RAG</h3>
-<ol>
+
+
+  
+  <div class="mermaid">graph LR
+    A[RAG] --&gt; B[Base de Dados Atual]
+    A --&gt; C[Pesquisa em Tempo Real]
+    A --&gt; D[Combinação de Conhecimento]
+    
+    B --&gt; E[Documentos Atualizados]
+    B --&gt; F[Dados em Tempo Real]
+    
+    C --&gt; G[Busca Ativa]
+    C --&gt; H[Seleção de Informações]
+    
+    D --&gt; I[Integração com LLM]
+    D --&gt; J[Contextualização]</div>
+ <ol>
 <li>
 <p><strong>Conexão com uma base de dados atual:</strong> Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.</p>
 </li>
@@ -795,7 +816,28 @@ Como implementar auth saml em python?
 Como integrar o auth0 em uma aplicação Clojure?
 etc...</code></pre>
  <p>O DocAI processa sua pergunta em várias etapas:</p>
-<ol>
+
+
+  
+  <div class="mermaid">flowchart TD
+    A[Início] --&gt; B[Carrega Documentação]
+    B --&gt; C[Processa Documentos]
+    C --&gt; D[Gera Embeddings]
+    D --&gt; E[Base de Conhecimento]
+    
+    F[Consulta do Usuário] --&gt; G[Processa Consulta]
+    G --&gt; H[Gera Embedding da Consulta]
+    H --&gt; I[Busca Similaridade]
+    I --&gt; J[Seleciona Chunks Relevantes]
+    J --&gt; K[Combina Contexto]
+    K --&gt; L[Gera Prompt]
+    L --&gt; M[LLM DeepSeek R1]
+    M --&gt; N[Resposta Final]
+    
+    E --&gt; I
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style N fill:#9ff,stroke:#333,stroke-width:2px</div>
+ <ol>
 <li><strong>Processamento da Consulta</strong>: A pergunta é convertida em um vetor TF-IDF</li>
 <li><strong>Busca por Similaridade</strong>: O sistema encontra os chunks mais relevantes</li>
 <li><strong>Geração de Contexto</strong>: Os chunks são combinados em um contexto coeso</li>
@@ -970,7 +1012,44 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 </blockquote>
 <h2 id="próximos-passos">Próximos Passos</h2>
 <h3 id="melhorias-propostas">Melhorias Propostas</h3>
-<ol>
+
+
+  
+  <div class="mermaid">mindmap
+  root((Melhorias))
+    Tokenização
+      BPE
+      WordPiece
+      Tokenizador do Modelo
+    Embeddings
+      Pré-treinados
+      Via Ollama
+      Cache
+    Banco de Dados
+      Milvus
+      FAISS
+      Qdrant
+    Cache
+      Embeddings
+      Respostas
+    Erros
+      Conexão
+      Modelo
+      Rede
+    Logging
+      Framework
+      Rastreamento
+    Testes
+      Unitários
+      Integração
+    Prompt
+      Few-shot
+      Chain-of-thought
+      Formato
+    Langchain4j
+      Abstração
+      Integração</div>
+ <ol>
 <li>
 <p><strong>Tokenização Avançada</strong></p>
 <ul>
