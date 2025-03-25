@@ -56,12 +56,15 @@ Neste artigo, vamos explorar como construir uma aplicação [RAG (Retrieval-Augm
 
 Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é "congelado" no tempo.
 
-Quando um LLM é treinado, ele absorve informações disponíveis até um determinado momento - sua data de corte de treinamento. Após esse ponto, o modelo não tem acesso a nenhuma informação nova. É como se ele tivesse uma foto do mundo quando foi treinado, e não conseguisse ver nada que aconteceu depois disso. Por exemplo, se um LLM foi treinado em 2022, ele não vai saber nada sobre:
-
-- Eventos que aconteceram em 2023
-- Novas tecnologias que surgiram
-- Aquela série nova que todo mundo tá assistindo
-- O último filme que ganhou o Oscar
+```mermaid
+graph TD
+    A[LLM Treinado] --> B[Data de Corte]
+    B --> C[Conhecimento Congelado]
+    C --> D[Limitações]
+    D --> E[Não sabe eventos recentes]
+    D --> F[Não tem dados atualizados]
+    D --> G[Não conhece novas tecnologias]
+```
 
 ### Por que precisamos do RAG?
 
@@ -72,6 +75,22 @@ O problema fundamental reside no fato de que esses modelos, por mais sofisticado
 > Confiar exclusivamente em um LLM "puro" nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.
 
 ### Os Três Pilares do RAG
+
+```mermaid
+graph LR
+    A[RAG] --> B[Base de Dados Atual]
+    A --> C[Pesquisa em Tempo Real]
+    A --> D[Combinação de Conhecimento]
+    
+    B --> E[Documentos Atualizados]
+    B --> F[Dados em Tempo Real]
+    
+    C --> G[Busca Ativa]
+    C --> H[Seleção de Informações]
+    
+    D --> I[Integração com LLM]
+    D --> J[Contextualização]
+```
 
 1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
 
@@ -627,6 +646,27 @@ etc...
 
 O DocAI processa sua pergunta em várias etapas:
 
+```mermaid
+flowchart TD
+    A[Início] --> B[Carrega Documentação]
+    B --> C[Processa Documentos]
+    C --> D[Gera Embeddings]
+    D --> E[Base de Conhecimento]
+    
+    F[Consulta do Usuário] --> G[Processa Consulta]
+    G --> H[Gera Embedding da Consulta]
+    H --> I[Busca Similaridade]
+    I --> J[Seleciona Chunks Relevantes]
+    J --> K[Combina Contexto]
+    K --> L[Gera Prompt]
+    L --> M[LLM DeepSeek R1]
+    M --> N[Resposta Final]
+    
+    E --> I
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style N fill:#9ff,stroke:#333,stroke-width:2px
+```
+
 1. **Processamento da Consulta**: A pergunta é convertida em um vetor TF-IDF
 2. **Busca por Similaridade**: O sistema encontra os chunks mais relevantes
 3. **Geração de Contexto**: Os chunks são combinados em um contexto coeso
@@ -781,6 +821,43 @@ O Prompt Engineering é uma habilidade crucial para obter bons resultados com LL
 ## Próximos Passos
 
 ### Melhorias Propostas
+
+```mermaid
+mindmap
+  root((Melhorias))
+    Tokenização
+      BPE
+      WordPiece
+      Tokenizador do Modelo
+    Embeddings
+      Pré-treinados
+      Via Ollama
+      Cache
+    Banco de Dados
+      Milvus
+      FAISS
+      Qdrant
+    Cache
+      Embeddings
+      Respostas
+    Erros
+      Conexão
+      Modelo
+      Rede
+    Logging
+      Framework
+      Rastreamento
+    Testes
+      Unitários
+      Integração
+    Prompt
+      Few-shot
+      Chain-of-thought
+      Formato
+    Langchain4j
+      Abstração
+      Integração
+```
 
 1. **Tokenização Avançada**
    - Usar um tokenizador de *subpalavras* (como BPE ou WordPiece)
