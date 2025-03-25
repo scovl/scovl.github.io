@@ -3,7 +3,7 @@ title = "Busca Semântica com Ollama e PostgreSQL"
 description = "Implementando busca semântica com PostgreSQL e Ollama"
 date = 2025-03-25T12:00:00-00:00
 tags = ["RAG", "PostgreSQL", "pgvector", "pgai", "Ollama", "Semantic Search"]
-draft = false
+draft = true
 weight = 2
 author = "Vitor Lobo Ramos"
 +++
