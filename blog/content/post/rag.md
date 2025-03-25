@@ -10,24 +10,49 @@ author = "Vitor Lobo Ramos"
 
 # Sumário
 
-- **[O que é RAG e por que precisamos dele?](#o-que-é-rag-e-por-que-precisamos-dele)**
-    - [Por que isso é um problema?](#por-que-isso-é-um-problema)
-    - [E é aí que entra o RAG!](#e-é-aí-que-entra-o-rag)
-    - **[Construindo uma aplicação RAG simples](#construindo-uma-aplicação-rag-simples)**
-        - [Preparando o ambiente](#preparando-o-ambiente)
-        - [Estrutura do projeto](#estrutura-do-projeto)
-        - [Usando Ollama para LLMs locais sem API keys](#usando-ollama-para-llms-locais-sem-api-keys)
-        - [Como usar?](#como-usar)
-- **[Considerações importantes](#considerações-importantes)**
-- **[Próximos passos](#próximos-passos)**
-- **[Langchain4j para simplificar a criação de RAG](#langchain4j-para-simplificar-a-criação-de-rag)**
+- **[Introdução](#introdução)**
+- **[Fundamentos do RAG](#fundamentos-do-rag)**
+    - [O que é RAG?](#o-que-é-rag)
+    - [Por que precisamos do RAG?](#por-que-precisamos-do-rag)
+    - [Os Três Pilares do RAG](#os-três-pilares-do-rag)
+    - [Por que o DeepSeek R1?](#por-que-o-deepseek-r1)
+- **[Implementação Prática](#implementação-prática)**
+    - [Preparando o Ambiente](#preparando-o-ambiente)
+    - [Estrutura do Projeto](#estrutura-do-projeto)
+    - [Processamento de Documentos](#processamento-de-documentos)
+    - [Sistema de Embeddings](#sistema-de-embeddings)
+        - [Entendendo o TF-IDF](#entendendo-o-tf-idf)
+        - [Similaridade do Cosseno](#similaridade-do-cosseno)
+        - [Limitações do TF-IDF](#limitações-do-tf-idf)
+    - [Interface com Ollama](#interface-com-ollama)
+    - [Módulo Principal](#módulo-principal)
+- **[Como Usar](#como-usar)**
+    - [Instalação do Ollama](#instalação-do-ollama)
+    - [Configuração do Projeto](#configuração-do-projeto)
+    - [Executando a Aplicação](#executando-a-aplicação)
+- **[Considerações Técnicas](#considerações-técnicas)**
+    - [Performance e Otimizações](#performance-e-otimizações)
+    - [Tratamento de Erros](#tratamento-de-erros)
+    - [Prompt Engineering](#prompt-engineering)
+        - [Estrutura do Prompt](#estrutura-do-prompt)
+        - [Técnicas de Prompt Engineering](#técnicas-de-prompt-engineering)
+        - [Exemplo de Prompt Avançado](#exemplo-de-prompt-avançado)
+        - [Dicas para Prompts Efetivos](#dicas-para-prompts-efetivos)
+        - [Avaliação de Prompts](#avaliação-de-prompts)
+- **[Próximos Passos](#próximos-passos)**
+    - [Melhorias Propostas](#melhorias-propostas)
+    - [Usando Langchain4j](#usando-langchain4j)
+- **[Referências](#referências)**
 
+## Introdução
 
 Olá, pessoal! 👋 
 
 Neste artigo, vamos explorar como construir uma aplicação [RAG (Retrieval-Augmented Generation)](https://pt.wikipedia.org/wiki/Geração_aumentada_por_recuperação) completa do zero usando [Clojure](https://clojure.org/). Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!
 
-## O que é RAG e por que precisamos dele? 
+## Fundamentos do RAG
+
+### O que é RAG?
 
 Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é "congelado" no tempo.
 
@@ -38,29 +63,21 @@ Quando um LLM é treinado, ele absorve informações disponíveis até um determ
 - Aquela série nova que todo mundo tá assistindo
 - O último filme que ganhou o Oscar
 
+### Por que precisamos do RAG?
 
-### Por que isso é um problema? 
-
-Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático. 
+Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.
 
 O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento "congelada" no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.
 
-> Confiar exclusivamente em um LLM "puro" nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada. 
+> Confiar exclusivamente em um LLM "puro" nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.
 
-
-### E é aí que entra o RAG!
-
-Imagine um LLM como um erudito com vasto conhecimento enciclopédico, mas que viveu isolado em uma biblioteca por décadas. Ele possui um conhecimento profundo de muitos assuntos, mas está desatualizado sobre os eventos recentes e desenvolvimentos em diversas áreas. O RAG, nesse contexto, seria como fornecer a esse erudito um par de óculos de última geração que não apenas corrigem sua visão, mas também o conectam a um fluxo constante de informações atualizadas. 
-
-Ele agora pode ler jornais, artigos científicos recentes, consultar bases de dados em tempo real e, assim, responder a perguntas com uma precisão e relevância muito maiores.
-
-**Os Três Pilares do RAG**:
+### Os Três Pilares do RAG
 
 1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
 
 2. **Pesquisa em tempo real:** O LLM não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O LLM, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
 
-3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas. O erudito agora não apenas lê as notícias, mas as interpreta à luz de seu vasto conhecimento.
+3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.
 
 Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/abs/2309.01066), existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:
 
@@ -71,80 +88,25 @@ Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/ab
 
 > O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um "sabe-tudo" desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.
 
-O RAG também é uma maneira de você nichar seu LLM em uma área específica, seja ela um assunto, uma empresa, uma linguagem, uma tecnologia, etc. O RAG é uma técnica que combina a capacidade de geração de texto dos LLMs com um sistema de recuperação de informações. Em vez de depender apenas do conhecimento interno do modelo, o RAG busca informações relevantes em uma base de dados externa antes de gerar uma resposta. A imagem abaixo mostra o fluxo de um sistema RAG:
+### Por que o DeepSeek R1?
 
-```mermaid
-graph LR
-    A[Documentos] --> B[Processamento de Documentos]
-    B --> C[Armazenamento de Vetores]
-    D[Consulta do Usuário] --> E[Processamento da Consulta]
-    E --> F[Recuperação de Documentos Relevantes]
-    C --> F
-    F --> G[Contexto Aumentado]
-    G --> H[LLM]
-    H --> I[Resposta Final]
-    
-    style A fill:#f9d5e5,stroke:#333
-    style B fill:#eeeeee,stroke:#333
-    style C fill:#d3f8e2,stroke:#333
-    style D fill:#f9d5e5,stroke:#333
-    style E fill:#eeeeee,stroke:#333
-    style F fill:#e3e2f9,stroke:#333
-    style G fill:#d3f8e2,stroke:#333
-    style H fill:#f9e2ae,stroke:#333
-    style I fill:#c5e0f9,stroke:#333
+O DeepSeek R1 foi escolhido para este projeto por várias razões:
 
-```
+1. **Qualidade das Respostas**: O DeepSeek R1 é conhecido por gerar respostas de alta qualidade, especialmente em contextos técnicos. Ele tem um bom entendimento de código e documentação, o que é crucial para um sistema RAG focado em documentação técnica.
+2. **Eficiência**: Comparado a outros modelos disponíveis no Ollama, o DeepSeek R1 oferece um bom equilíbrio entre qualidade e velocidade. Ele é otimizado para rodar localmente sem sacrificar a qualidade das respostas.
+3. **Suporte a Código**: O modelo tem excelente compreensão de várias linguagens de programação, incluindo Clojure, o que é ideal para responder perguntas sobre documentação técnica.
+4. **Contexto**: O DeepSeek R1 é particularmente bom em manter o contexto e gerar respostas coerentes, mesmo quando recebe informações parciais ou fragmentadas.
 
-O diagrama acima ilustra o fluxo de um sistema RAG, desde a ingestão de documentos até a geração da resposta final. Primeiro, os documentos são processados e armazenados como vetores. Quando um usuário faz uma consulta, o sistema processa essa pergunta, recupera os documentos mais relevantes do armazenamento vetorial e cria um contexto aumentado que é enviado ao LLM.
+## Implementação Prática
 
----
-
-### Construindo uma aplicação RAG simples
-
-Vamos construir uma aplicação RAG simples usando Clojure! Nosso objetivo é criar um assistente inteligente que possa responder perguntas sobre documentação técnica de projetos open source. Vou te mostrar como fazer isso passo a passo.
-
-#### Preparando o ambiente
+### Preparando o Ambiente
 
 Pre-requisitos:
 - [Clojure](https://clojure.org/guides/getting_started): Linguagem de programação funcional que vamos usar para construir a aplicação
 - [Leiningen](https://leiningen.org/): Ferramenta de build para Clojure
 - [Ollama](https://ollama.com/): Modelo de linguagem local
 
-Primeiro, vamos criar um novo projeto Clojure usando Leiningen:
-
-```bash
-lein new app docai
-cd docai
-```
-
-Agora, vamos adicionar as dependências necessárias no arquivo `project.clj`:
-
-```clojure
-(defproject docai "0.1.0-SNAPSHOT"
-  :description "Um assistente RAG para consulta de documentação técnica"
-  :url "http://example.com/FIXME"
-  :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
-            :url "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.11.1"]
-                 [markdown-to-hiccup "0.6.2"]    ; Para processar Markdown
-                 [hickory "0.7.1"]              ; Para processar HTML
-                 [org.clojure/data.json "2.4.0"]  ; Para JSON
-                 [http-kit "2.6.0"]             ; Para requisições HTTP
-                 [org.clojure/tools.logging "1.2.4"]  ; Para logging
-                 [org.clojure/tools.namespace "1.4.4"]  ; Para reloading
-                 [org.clojure/core.async "1.6.681"]  ; Para operações assíncronas
-                 [org.clojure/core.memoize "1.0.257"]  ; Para cache
-                 [org.clojure/core.cache "1.0.225"]]  ; Para cache
-  :main ^:skip-aot docai.core
-  :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
-```
-
-> Curiosidade: Porque Clojure? Por ser uma linguagem funcional, facilita a implementação de pipelines de processamento de dados.
-
-#### Estrutura do projeto
+### Estrutura do Projeto
 
 Nossa aplicação terá três componentes principais:
 1. **Processamento de documentação (Markdown/HTML)**
@@ -156,11 +118,9 @@ Nossa aplicação terá três componentes principais:
 3. **Interface com o LLM**
    - Geração de resposta usando o LLM
 
-> **Observação:** Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de [TF-IDF (Term Frequency-Inverse Document Frequency)](https://pt.wikipedia.org/wiki/TF-IDF). 
+> **Observação:** Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de [TF-IDF (Term Frequency-Inverse Document Frequency)](https://pt.wikipedia.org/wiki/TF-IDF).
 
-O TF-IDF é uma técnica que nos permite representar documentos como vetores, calculando a importância de cada palavra com base em sua frequência no documento e em todo o corpus. Isso nos permite realizar uma busca por similaridade, sem depender de APIs externas para a geração de embeddings. É importante ressaltar que essa é uma abordagem didática e simplificada. Para um sistema RAG de produção, o ideal seria utilizar embeddings gerados pelo próprio modelo de linguagem (ou um modelo compatível), em conjunto com um banco de dados vetorial. 
-
-No entanto, para a parte de geração de respostas, continuaremos usando o [Ollama](https://ollama.com/) com o modelo [deepseek-r1](https://ollama.com/models/deepseek-r1). Vamos criar os namespaces necessários começando pelo módulo de processamento de documentos:
+### Processamento de Documentos
 
 ```clojure
 ;; src/docai/document.clj
@@ -218,7 +178,7 @@ No entanto, para a parte de geração de respostas, continuaremos usando o [Olla
     processed))
 ```
 
-Em seguida, vamos implementar o módulo de embeddings que vai permitir procurar informações semanticamente relevantes. Aqui estamos usando uma implementação própria de TF-IDF, que é uma técnica eficiente para representar documentos em vetores, sem depender de APIs externas:
+### Sistema de Embeddings
 
 ```clojure
 ;; src/docai/embedding.clj
@@ -316,11 +276,106 @@ Em seguida, vamos implementar o módulo de embeddings que vai permitir procurar 
            (map second)))))
 ```
 
-A partir de agora, vamos implementar o módulo de geração de respostas usando o [Ollama](https://ollama.com/) com o modelo [deepseek-r1](https://ollama.com/models/deepseek-r1).
+#### Entendendo o TF-IDF
 
-#### Usando Ollama para LLMs locais sem API keys
+O TF-IDF é uma técnica fundamental para representar documentos como vetores numéricos. Vamos entender como ele funciona através de um exemplo prático:
 
-Uma vantagem importante dessa abordagem é que vamos utilizar o [Ollama](https://ollama.com/) para executar nossos modelos localmente. O Ollama é uma ferramenta incrível que permite rodar LLMs diretamente na sua máquina, sem depender de serviços em nuvem ou API keys. Vamos implementar a interface com o Ollama:
+##### Exemplo Numérico
+
+Suponha que temos três documentos sobre programação:
+
+1. Doc1: "Clojure é uma linguagem funcional"
+2. Doc2: "Clojure é uma linguagem Lisp"
+3. Doc3: "Python é uma linguagem dinâmica"
+
+Vamos calcular o TF-IDF passo a passo:
+
+1. **Tokenização e TF (Term Frequency)**
+   - Primeiro, convertemos para minúsculas e dividimos em palavras
+   - Removemos palavras muito curtas (menos de 3 caracteres)
+   - Calculamos a frequência de cada termo em cada documento
+
+   ```
+   Doc1: {"clojure": 1, "linguagem": 1, "funcional": 1}
+   Doc2: {"clojure": 1, "linguagem": 1, "lisp": 1}
+   Doc3: {"python": 1, "linguagem": 1, "dinâmica": 1}
+   ```
+
+2. **IDF (Inverse Document Frequency)**
+   - Contamos em quantos documentos cada termo aparece
+   - Aplicamos a fórmula: IDF = log(N/DF), onde:
+     - N = número total de documentos (3)
+     - DF = número de documentos que contêm o termo
+
+   ```bash
+   "clojure": log(3/2) = 0.405
+   "linguagem": log(3/3) = 0
+   "funcional": log(3/1) = 1.099
+   "lisp": log(3/1) = 1.099
+   "python": log(3/1) = 1.099
+   "dinâmica": log(3/1) = 1.099
+   ```
+
+3. **TF-IDF Final**
+   - Multiplicamos TF pelo IDF para cada termo
+
+   ```bash
+   Doc1: {"clojure": 0.405, "linguagem": 0, "funcional": 1.099}
+   Doc2: {"clojure": 0.405, "linguagem": 0, "lisp": 1.099}
+   Doc3: {"python": 1.099, "linguagem": 0, "dinâmica": 1.099}
+   ```
+
+4. **Vetorização**
+   - Convertemos para vetores usando todos os termos únicos como dimensões
+   - Preenchemos com 0 para termos ausentes
+
+   ```bash
+   Doc1: [0.405, 0, 1.099, 0, 0, 0]
+   Doc2: [0.405, 0, 0, 1.099, 0, 0]
+   Doc3: [0, 0, 0, 0, 1.099, 1.099]
+   ```
+
+##### Por que usar logaritmo no IDF?
+
+O logaritmo no IDF serve para dois propósitos principais:
+
+1. **Suavização**: Reduz o impacto de termos muito raros ou muito comuns
+2. **Escala**: Mantém os valores em uma faixa mais gerenciável
+
+Por exemplo, sem o logaritmo:
+- Um termo que aparece em 1/1000 documentos teria IDF = 1000
+- Um termo que aparece em 1/2 documentos teria IDF = 2
+
+Com o logaritmo:
+- `log(1000) ≈ 6.9`
+- `log(2) ≈ 0.7`
+
+#### Similaridade do Cosseno
+
+A similaridade do cosseno mede o ângulo entre dois vetores TF-IDF. Quanto menor o ângulo, mais similares são os documentos. A fórmula é:
+
+```bash
+cos(θ) = (A·B) / (||A|| ||B||)
+```
+
+Onde:
+- `A·B` é o produto escalar dos vetores
+- `||A||` e `||B||` são as normas (comprimentos) dos vetores
+
+#### Limitações do TF-IDF
+
+1. **Semântica**: TF-IDF não captura o significado das palavras. Por exemplo:
+   - "carro" e "automóvel" são tratados como palavras diferentes
+   - "bom" e "ruim" são tratados como palavras diferentes
+2. **Ordem**: Não considera a ordem das palavras
+   - "gato come rato" e "rato come gato" teriam o mesmo vetor TF-IDF
+3. **Contexto**: Não captura o contexto das palavras
+   - "banco" (financeiro) e "banco" (assento) são tratados como a mesma palavra
+4. **Dimensão**: O vetor final pode ser muito grande (uma dimensão para cada termo único)
+
+> Por isso, em sistemas RAG modernos, é mais comum usar embeddings gerados por modelos de linguagem, que capturam melhor a semântica e o contexto das palavras.
+
+### Interface com Ollama
 
 ```clojure
 ;; src/docai/llm.clj
@@ -381,7 +436,7 @@ Uma vantagem importante dessa abordagem é que vamos utilizar o [Ollama](https:/
            "\n\nVocê pode iniciar o Ollama com o comando: ollama serve"))))
 ```
 
-Note que o módulo `llm.clj` inclui funções utilitárias adicionais como `extract_code_blocks` para extrair blocos de código das respostas e `extract_summary` para criar resumos do texto, além de melhor tratamento de erros na comunicação com o Ollama. Por fim, vamos criar o módulo principal que integra todos os componentes:
+### Módulo Principal
 
 ```clojure
 ;; src/docai/core.clj
@@ -487,58 +542,110 @@ Note que o módulo `llm.clj` inclui funções utilitárias adicionais como `extr
     (println "Obrigado por usar o DocAI. Até a próxima!")))
 ```
 
-Note que o módulo principal inclui mais logs, melhor tratamento de erros e verificações adicionais para garantir que o sistema não falhe quando não há chunks ou embeddings disponíveis. A estrutura de pastas do projeto fica assim:
+## Como Usar
 
+### Instalação do Ollama
+
+1. **Instalação**:
+   - **Windows**: Baixe o instalador do [site oficial do Ollama](https://ollama.com/download) e execute-o
+   - **Linux**: Execute o comando:
+     ```bash
+     curl https://ollama.ai/install.sh | sh
+     ```
+   - **macOS**: Use o Homebrew:
+     ```bash
+     brew install ollama
+     ```
+
+2. **Iniciando o Servidor**:
+   ```bash
+   ollama serve
+   ```
+
+3. **Baixando o Modelo**:
+   ```bash
+   ollama pull deepseek-r1
+   ```
+
+4. **Verificando a Instalação**:
+   - Execute um teste simples:
+     ```bash
+     ollama run deepseek-r1 "Olá! Como você está?"
+     ```
+   - Se tudo estiver funcionando, você receberá uma resposta do modelo
+
+> **Dica**: O Ollama mantém os modelos em cache local. Se você precisar liberar espaço, pode usar `ollama rm deepseek-r1` para remover o modelo.
+
+### Configuração do Projeto
+
+1. Crie um novo projeto Clojure:
 ```bash
-docai/
-├── src/
-│ ├── docai/
-│ │ ├── document.clj  # Processamento de documentos
-│ │ ├── embedding.clj # Sistema de embeddings usando TF-IDF
-│ │ ├── llm.clj       # Interface com o Ollama
-│ │ └── core.clj      # Módulo principal
-├── resources/
-│ └── docs/           # Onde ficam os documentos
-│ │ ├── rag.md        # Este documento sobre RAG
-│ │ └── example.md    # Exemplo de documentação JWT
-├── project.clj       # Configuração do projeto
-└── README.md
+lein new app docai
+cd docai
 ```
 
-### Como usar?
-
-1. Instale o Ollama seguindo as instruções em [ollama.com](https://ollama.com)
-2. Inicie o servidor Ollama:
-```bash
-ollama serve
+2. Configure o `project.clj`:
+```clojure
+(defproject docai "0.1.0-SNAPSHOT"
+  :description "Um assistente RAG para consulta de documentação técnica"
+  :url "http://example.com/FIXME"
+  :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
+            :url "https://www.eclipse.org/legal/epl-2.0/"}
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [markdown-to-hiccup "0.6.2"]
+                 [hickory "0.7.1"]
+                 [org.clojure/data.json "2.4.0"]
+                 [http-kit "2.6.0"]
+                 [org.clojure/tools.logging "1.2.4"]
+                 [org.clojure/tools.namespace "1.4.4"]
+                 [org.clojure/core.async "1.6.681"]
+                 [org.clojure/core.memoize "1.0.257"]
+                 [org.clojure/core.cache "1.0.225"]]
+  :main ^:skip-aot docai.core
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
 ```
 
-É necessário rodar o servidor do Ollama antes de executar o projeto pois, caso contrário, o projeto não conseguirá se conectar ao modelo.
+### Executando a Aplicação
 
-3. Baixe o modelo DeepSeek R1 (ou qualquer outro modelo que preferir):
+1. Coloque seus documentos na pasta `resources/docs/` (já incluímos dois exemplos: `example.md`)
+2. Execute o projeto:
 
-```bash
-ollama pull deepseek-r1
-```
-
-4. Coloque seus documentos na pasta `resources/docs/` (já incluímos dois exemplos: rag.md e example.md)
-5. Execute o projeto:
 ```bash
 lein run
 ```
 
-6. Faça suas perguntas! Exemplo:
-```
-Inicializando DocAI...
-Base de conhecimento pronta! Faça sua pergunta:
+3. Faça suas perguntas! Exemplo:
+
+```bash
 Como implementar autenticação JWT em Clojure?
-Processando...
-[Resposta do modelo sobre JWT baseada no example.md]
+Como implementar auth saml em python?
+Como integrar o auth0 em uma aplicação Clojure?
+etc...
+``` 	
+
+O DocAI processa sua pergunta em várias etapas:
+
+1. **Processamento da Consulta**: A pergunta é convertida em um vetor TF-IDF
+2. **Busca por Similaridade**: O sistema encontra os chunks mais relevantes
+3. **Geração de Contexto**: Os chunks são combinados em um contexto coeso
+4. **Geração de Resposta**: O LLM gera uma resposta baseada no contexto
+
+Você pode ver o processo em ação nos logs:
+
+```bash
+DEBUG - Processando query: Como implementar autenticação JWT em Clojure?
+DEBUG - Índices similares: [2, 5, 8]
+DEBUG - Tamanho do contexto: 1234 caracteres
+DEBUG - Amostra do contexto: "Para implementar autenticação JWT em Clojure..."
 ```
 
 > **NOTA:** A propósito, o projeto docai está disponível no [https://github.com/scovl/docai](https://github.com/scovl/docai) caso você queira contribuir com o projeto ou usar em outro projeto.
 
-### Considerações importantes 
+## Considerações Técnicas
+
+### Performance e Otimizações
 
 1. **Performance**: Esta implementação é básica e pode ser otimizada:
    - Usando um banco de dados vetorial como [Milvus](https://milvus.io/) ou [FAISS](https://github.com/facebookresearch/faiss)
@@ -557,50 +664,172 @@ Processando...
    - Mistral: Bom para tarefas específicas
    - Gemma: Leve e eficiente
 
+### Tratamento de Erros
 
+O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:
 
----
+1. **Ollama Offline**
+   - **Sintoma**: O sistema não consegue se conectar ao servidor Ollama
+   - **Tratamento**: O código verifica a disponibilidade do servidor e fornece mensagens claras de erro:
+   ```clojure
+   (catch Exception e
+     (str "Erro ao gerar resposta: " (.getMessage e) 
+          "\n\nPor favor, verifique se o Ollama está em execução no endereço " 
+          ollama-url 
+          "\n\nVocê pode iniciar o Ollama com o comando: ollama serve"))
+   ```
 
-### Próximos passos
+2. **Documentação Muito Grande**
+   - **Sintoma**: Arquivos de documentação que excedem a memória disponível
+   - **Tratamento**: O sistema implementa:
+     - Chunking de documentos (512 tokens por chunk)
+     - Processamento em lotes
+     - Logs de progresso para monitoramento
+   ```clojure
+   (let [content (slurp doc-path)
+         chunks (partition-all 512 text)]
+     (println "Quantidade de chunks gerados:" (count chunks)))
+   ```
 
-Algumas ideias para expandir o projeto:
+3. **Consultas sem Relação com a Documentação**
+   - **Sintoma**: Nenhum chunk relevante é encontrado para a consulta
+   - **Tratamento**: O sistema:
+     - Verifica se há chunks disponíveis
+     - Usa fallback para conteúdo original se necessário
+     - Fornece feedback claro ao usuário
+   ```clojure
+   (if (str/blank? context-chunks)
+     (if (seq (:original-files knowledge-base))
+       (get-file-content (first (:original-files knowledge-base)))
+       "Não foi possível encontrar informações relevantes.")
+     context-chunks)
+   ```
 
-1.  **Tokenização Avançada:** Usar um tokenizador de *subpalavras* (como BPE ou WordPiece) para melhorar a busca semântica. Idealmente, o mesmo usado no treinamento do modelo (ex: `deepseek-r1`).
-2.  **Embeddings Pré-treinados:** Usar embeddings do próprio modelo (via Ollama) em vez de TF-IDF.  Mais simples e *muito* melhor para busca semântica.
-3.  **Banco de Dados Vetorial:** Usar um banco de dados vetorial (Milvus, FAISS, Qdrant, etc.) para lidar com *muitos* documentos de forma eficiente.
-4.  **Cache:** Usar cache para os embeddings (e, opcionalmente, respostas) para acelerar o sistema.
-5.  **Erros:** Tratar mais erros (Ollama offline, modelo indisponível, rede, arquivos inválidos).
-6.  **Logging:** Usar um framework de logging para rastreamento e depuração.
-7.  **Testes:** Adicionar testes unitários e de integração.
-8.  **Prompt Engineering:** Refinar o prompt (em `format-prompt`) para melhorar as respostas.
-9.  **Usar langchain4j:** criar RAG através do [langchain4j](https://github.com/langchain4j/langchain4j) via interop java com o clojure.
-  Experimentar com:
-    *   Exemplos no prompt (few-shot learning).
-    *   Instruções passo a passo (chain-of-thought).
-    *   Instruções claras sobre formato, tamanho, etc.
-    *   Pedir a fonte da informação (qual chunk).
+4. **Melhorias Futuras**
+   - Implementar retry com backoff exponencial para falhas de conexão
+   - Adicionar cache de embeddings para melhor performance
+   - Implementar streaming para arquivos muito grandes
+   - Adicionar validação de formato de documentos
+   - Implementar rate limiting para evitar sobrecarga do Ollama
 
-Bastante mais coisas podem ser feitas, mas essas são as mais importantes.
+### Prompt Engineering
 
----
+O Prompt Engineering é uma habilidade crucial para obter bons resultados com LLMs. Um prompt bem estruturado pode fazer a diferença entre uma resposta vaga e uma resposta precisa e útil.
 
-## Langchain4j para simplificar a criação de RAG
+#### Estrutura do Prompt
 
-Até aqui utilizei a abordagem TF-IDF para criar embeddings e a abordagem manual para criar o RAG com intuito de apenas demonstrar o processo. O ideal, é usar embeddings pré-treinados e um banco de dados vetorial para armazenar os embeddings e realizar a busca por similaridade. Para isso, vamos usar a biblioteca [Langchain4j](https://github.com/langchain4j/langchain4j).
+```clojure
+(defn format-prompt
+  "Formata o prompt para o LLM"
+  [context query]
+  (str "Você é um assistente especializado em documentação técnica. "
+       "Com base no seguinte contexto da documentação:\n\n"
+       context
+       "\n\nPergunta: " query
+       "\n\nForneça uma resposta técnica precisa e, se possível, "
+       "inclua exemplos de código. Se a documentação não contiver "
+       "informações relevantes para a pergunta, indique isso claramente "
+       "e forneça uma resposta geral com base em seu conhecimento."))
+```
 
-Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java. Embora a implementação manual que fizemos anteriormente seja um ótimo exercício de aprendizado, usar Langchain4j pode simplificar significativamente o desenvolvimento, especialmente para aplicações mais complexas.
+#### Técnicas de Prompt Engineering
+
+- **Role Prompting**: Define um papel específico para o modelo ("Você é um especialista em...")
+- **Few-shot Learning**: Fornece exemplos de entradas e saídas desejadas
+- **Chain of Thought**: Pede ao modelo para explicar seu raciocínio
+- **Format Specification**: Especifica o formato desejado da resposta
+- **Constraints**: Define limites e requisitos para a resposta
+
+#### Exemplo de Prompt Avançado
+
+```clojure
+(defn format-advanced-prompt
+  "Formata um prompt mais sofisticado para o LLM"
+  [context query]
+  (str "Você é um especialista em documentação técnica de software, "
+       "com foco em Clojure e desenvolvimento web.\n\n"
+       "Contexto da documentação:\n"
+       context
+       "\n\nPergunta: " query
+       "\n\nPor favor, siga estas diretrizes:\n"
+       "1. Seja preciso e técnico\n"
+       "2. Inclua exemplos de código quando relevante\n"
+       "3. Cite as partes da documentação que você está usando\n"
+       "4. Se a informação não estiver na documentação, indique claramente\n"
+       "5. Mantenha a resposta concisa mas completa\n"
+       "6. Use formatação Markdown para melhor legibilidade"))
+```
+
+#### Dicas para Prompts Efetivos
+
+- Seja específico e claro nas instruções
+- Use formatação para melhorar a legibilidade
+- Inclua exemplos quando possível
+- Defina limites e restrições claras
+- Peça ao modelo para explicar seu raciocínio
+- Use iteração para refinar o prompt
+
+#### Avaliação de Prompts
+
+- Teste diferentes variações do mesmo prompt
+- Compare as respostas para identificar a melhor estrutura
+- Colete feedback dos usuários
+- Mantenha um registro dos prompts que funcionam bem
+
+> **Nota**: O [Prompt Engineering](https://www.promptingguide.ai/) é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.
+
+## Próximos Passos
+
+### Melhorias Propostas
+
+1. **Tokenização Avançada**
+   - Usar um tokenizador de *subpalavras* (como BPE ou WordPiece)
+   - Idealmente, o mesmo usado no treinamento do modelo (ex: `deepseek-r1`)
+
+2. **Embeddings Pré-treinados**
+   - Usar embeddings do próprio modelo (via Ollama)
+   - Mais simples e *muito* melhor para busca semântica
+
+3. **Banco de Dados Vetorial**
+   - Usar um banco de dados vetorial (Milvus, FAISS, Qdrant, etc.)
+   - Para lidar com *muitos* documentos de forma eficiente
+
+4. **Cache**
+   - Usar cache para os embeddings
+   - Opcionalmente, cache de respostas
+
+5. **Erros**
+   - Tratar mais erros (Ollama offline, modelo indisponível, rede, arquivos inválidos)
+
+6. **Logging**
+   - Usar um framework de logging para rastreamento e depuração
+
+7. **Testes**
+   - Adicionar testes unitários e de integração
+
+8. **Prompt Engineering**
+   - Refinar o prompt (em `format-prompt`)
+   - Experimentar com:
+     * Exemplos no prompt (few-shot learning)
+     * Instruções passo a passo (chain-of-thought)
+     * Instruções claras sobre formato, tamanho, etc.
+     * Pedir a fonte da informação (qual chunk)
+
+9. **Usar langchain4j**
+   - Criar RAG através do [langchain4j](https://github.com/langchain4j/langchain4j)
+   - Via interop java com o clojure
+
+### Usando Langchain4j
+
+Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java.
 
 Vantagens de usar Langchain4j:
-
-- **Abstração:** Langchain4j fornece componentes pré-construídos para tarefas comuns como carregamento de documentos, divisão de texto, criação de embeddings, armazenamento vetorial e interação com LLMs.
-- **Modularidade:** Você pode facilmente trocar diferentes implementações (por exemplo, usar diferentes modelos de embedding ou bancos de dados vetoriais) sem alterar o código principal da aplicação.
-- **Integração:** Langchain4j oferece integrações com várias ferramentas e serviços populares, incluindo Ollama, bancos de dados vetoriais (como Chroma, Weaviate, Qdrant), e modelos de linguagem de diferentes provedores.
-- **Comunidade e Suporte:** Langchain4j possui uma comunidade ativa e boa documentação, facilitando a obtenção de ajuda e a resolução de problemas.
+- **Abstração**: Fornece componentes pré-construídos para tarefas comuns
+- **Modularidade**: Permite trocar implementações facilmente
+- **Integração**: Oferece integrações com várias ferramentas e serviços
+- **Comunidade e Suporte**: Possui uma comunidade ativa e boa documentação
 
 > Em um próximo artigo, escreverei sobre como usar [Langchain4j](https://github.com/langchain4j/langchain4j) para criar um sistema RAG ainda neste mesmo projeto.
-
-
----
 
 ## Referências
 
