@@ -47,7 +47,6 @@ O problema fundamental reside no fato de que esses modelos, por mais sofisticado
 
 > Confiar exclusivamente em um LLM "puro" nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada. 
 
-É nesse contexto que a técnica de Recuperação de Geração Aumentada (RAG - Retrieval-Augmented Generation) se torna não apenas vantajosa, mas essencial. RAG permite superar a limitação temporal inerente aos LLMs, garantindo que as aplicações inteligentes entreguem informações relevantes e atualizadas.
 
 ### E é aí que entra o RAG!
 
