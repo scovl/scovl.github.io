@@ -116,7 +116,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 21 min
+                Estimated reading time: 25 min
             </div>
             
             
@@ -160,7 +160,6 @@
 <li><strong><a href="/2024/01/23/rag/#considerações-técnicas">Considerações Técnicas</a></strong>
 <ul>
 <li><a href="/2024/01/23/rag/#performance-e-otimizações">Performance e Otimizações</a></li>
-<li><a href="/2024/01/23/rag/#tratamento-de-erros">Tratamento de Erros</a></li>
 <li><a href="/2024/01/23/rag/#prompt-engineering">Prompt Engineering</a></li>
 </ul>
 </li>
@@ -646,7 +645,9 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
            &#34;\n\nPor favor, verifique se o Ollama está em execução no endereço &#34; 
            ollama-url 
            &#34;\n\nVocê pode iniciar o Ollama com o comando: ollama serve&#34;))))</code></pre>
- <h4 id="módulo-principal">Módulo Principal</h4>
+ <p>A parte mais importante aqui é a função <code>call-ollama-api</code>, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função <code>format-prompt</code> super importante, que estrutura a mensagem enviada ao modelo. Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa &ldquo;engenharia de prompt&rdquo; é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.</p>
+<p>A função <code>generate-response</code> amarra tudo isso, pegando a pergunta e o contexto, formatando o prompt, enviando para o Ollama e tratando possíveis erros. Tem até uma mensagem amigável caso o Ollama não esteja rodando, sugerindo como iniciar o serviço. É um exemplo clássico de como interfaces com LLMs funcionam: você prepara um prompt bem estruturado, envia para o modelo, e recebe de volta texto gerado que (esperamos!) responda à pergunta original com base no contexto fornecido.</p>
+<h4 id="módulo-principal">Módulo Principal</h4>
 <p>Agora vamos implementar o módulo principal que vai ser o ponto de entrada para o RAG. Ele vai ser responsável por carregar os documentos, processar os chunks, criar os embeddings e gerar a resposta para a query do usuário.</p>
 
 
@@ -751,8 +752,12 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
         (println &#34;Erro: &#34; (.getMessage e))
         (println &#34;Detalhes: &#34; (ex-data e))))
     (println &#34;Obrigado por usar o DocAI. Até a próxima!&#34;)))</code></pre>
- <hr>
+ <p>Basicamente, quando você faz uma pergunta, o sistema primeiro transforma sua pergunta em números (embeddings) e depois procura nos documentos quais partes são mais parecidas com o que você perguntou. É como se ele estivesse destacando os trechos mais relevantes de um livro para responder sua dúvida. Você pode ver isso acontecendo quando ele imprime os &ldquo;índices similares&rdquo; no console - são as posições dos pedaços de texto que ele achou mais úteis.</p>
+<p>Depois de encontrar os trechos relevantes, o sistema junta tudo em um &ldquo;contexto&rdquo; - que é basicamente um resumo das informações importantes. Se ele não achar nada parecido com sua pergunta, ele tenta usar o documento inteiro ou avisa que não tem informação suficiente. Dá para ver que ele é bem transparente, mostrando no console o tamanho do contexto e até uma amostra do que encontrou, para você entender o que está acontecendo nos bastidores.</p>
+<p>Por fim, ele passa sua pergunta original junto com o contexto encontrado para o modelo de linguagem (LLM) gerar uma resposta personalizada. É como dar a um especialista tanto a sua pergunta quanto as páginas relevantes de um manual técnico - assim ele pode dar uma resposta muito mais precisa e fundamentada. Todo esse processo acontece em segundos, permitindo que você tenha uma conversa fluida com seus documentos, como se estivesse conversando com alguém que leu tudo e está pronto para responder suas dúvidas específicas.</p>
+<hr>
 <h2 id="como-usar">Como Usar</h2>
+<p>Abaixo um guia para você instalar e usar o DocAI (e ver o processo em ação).</p>
 <h3 id="instalação-do-ollama">Instalação do Ollama</h3>
 <ol>
 <li>
@@ -853,38 +858,13 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
  <blockquote>
 <p><strong>NOTA:</strong> A propósito, o projeto docai está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a> caso você queira contribuir com o projeto ou usar em outro projeto.</p>
 </blockquote>
+<hr>
 <h2 id="considerações-técnicas">Considerações Técnicas</h2>
 <h3 id="performance-e-otimizações">Performance e Otimizações</h3>
-<ol>
-<li>
-<p><strong>Performance</strong>: Esta implementação é básica e pode ser otimizada:</p>
-<ul>
-<li>Usando um banco de dados vetorial como <a href="https://milvus.io/">Milvus</a> ou <a href="https://github.com/facebookresearch/faiss">FAISS</a></li>
-<li>Implementando cache de embeddings</li>
-<li>Paralelizando o processamento de chunks</li>
-</ul>
-</li>
-<li>
-<p><strong>Memória</strong>: Para documentações muito extensas, considere:</p>
-<ul>
-<li>Processar os chunks em lotes</li>
-<li>Implementar indexação incremental</li>
-<li>Usar streaming para arquivos grandes</li>
-</ul>
-</li>
-<li>
-<p><strong>Modelos</strong>: Diferentes modelos do Ollama têm diferentes características:</p>
-<ul>
-<li>DeepSeek R1: Bom para compreensão geral e geração de texto</li>
-<li>DeepSeek Coder: Especializado em código</li>
-<li>Llama 3: Boa alternativa geral</li>
-<li>Mistral: Bom para tarefas específicas</li>
-<li>Gemma: Leve e eficiente</li>
-</ul>
-</li>
-</ol>
-<h3 id="tratamento-de-erros">Tratamento de Erros</h3>
-<p>O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:</p>
+<p>Nossa implementação atual oferece uma base funcional, mas pode ser significativamente otimizada em termos de performance através da adoção de bancos de dados vetoriais como <a href="https://milvus.io/">Milvus</a> ou <a href="https://github.com/facebookresearch/faiss">FAISS</a>, implementação de cache de embeddings e paralelização do processamento de chunks, permitindo consultas mais rápidas mesmo com grandes volumes de dados.</p>
+<p>Para lidar com documentações extensas, recomendo estratégias específicas de gerenciamento de memória, como o processamento de chunks em lotes menores, implementação de indexação incremental que constrói a base de conhecimento gradualmente, e utilização de técnicas de streaming para processar arquivos grandes sem sobrecarregar a memória disponível.</p>
+<p>Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> destaca-se na compreensão geral e geração de texto, o <a href="https://ollama.com/models/deepseek-coder">DeepSeek Coder</a> é especializado em código, o <a href="https://ollama.com/models/llama3">Llama 3</a> serve como excelente alternativa geral, o <a href="https://ollama.com/models/mistral">Mistral</a> demonstra eficácia em tarefas específicas, enquanto o <a href="https://ollama.com/models/gemma">Gemma</a> oferece uma solução leve e eficiente para ambientes com recursos limitados.</p>
+<p>Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:</p>
 <ol>
 <li>
 <p><strong>Ollama Offline</strong></p>
@@ -949,6 +929,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 </ul>
 </li>
 </ol>
+<hr>
 <h3 id="prompt-engineering">Prompt Engineering</h3>
 <p>O Prompt Engineering é uma habilidade crucial para obter bons resultados com LLMs. Um prompt bem estruturado pode fazer a diferença entre uma resposta vaga e uma resposta precisa e útil.</p>
 <h4 id="estrutura-do-prompt">Estrutura do Prompt</h4>
@@ -965,7 +946,9 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
        &#34;inclua exemplos de código. Se a documentação não contiver &#34;
        &#34;informações relevantes para a pergunta, indique isso claramente &#34;
        &#34;e forneça uma resposta geral com base em seu conhecimento.&#34;))</code></pre>
- <h4 id="técnicas-de-prompt-engineering">Técnicas de Prompt Engineering</h4>
+ <p>O código acima define uma função <code>format-prompt</code> que estrutura a comunicação com o modelo de linguagem. Esta função recebe dois parâmetros principais: o <code>context</code>, que contém os trechos relevantes da documentação recuperados pelo sistema RAG, e a <code>query</code>, que é a pergunta do usuário. A função combina esses elementos em um prompt estruturado que orienta o comportamento do LLM.</p>
+<p>A estrutura do prompt é cuidadosamente projetada com vários elementos estratégicos: primeiro, define o papel do modelo como &ldquo;assistente especializado em documentação técnica&rdquo;, estabelecendo o tom e a expectativa; em seguida, fornece o contexto extraído da documentação para que o modelo tenha as informações necessárias; depois, apresenta claramente a pergunta do usuário; e finalmente, inclui instruções específicas sobre como o modelo deve responder, incentivando respostas técnicas precisas com exemplos de código quando apropriado, além de orientar como proceder quando a documentação não contém informações relevantes.</p>
+<h4 id="técnicas-de-prompt-engineering">Técnicas de Prompt Engineering</h4>
 <ul>
 <li><strong>Role Prompting</strong>: Define um papel específico para o modelo (&ldquo;Você é um especialista em&hellip;&rdquo;)</li>
 <li><strong>Few-shot Learning</strong>: Fornece exemplos de entradas e saídas desejadas</li>
@@ -974,6 +957,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <li><strong>Constraints</strong>: Define limites e requisitos para a resposta</li>
 </ul>
 <h4 id="exemplo-de-prompt-avançado">Exemplo de Prompt Avançado</h4>
+<p>Este código implementa uma versão avançada de formatação de prompt para o LLM, criando uma estrutura mais detalhada e direcionada. Ele fornece um conjunto de diretrizes numeradas que orientam o comportamento do modelo, incluindo requisitos para precisão técnica, exemplos de código, citações da documentação, transparência sobre limitações de conhecimento, concisão e uso de formatação Markdown.</p>
+<p>A estrutura deste prompt segue princípios de engenharia de prompts mais sofisticados, incorporando técnicas como role prompting (definição clara do papel do modelo), constraint engineering (estabelecimento de diretrizes específicas) e format specification (solicitação de formatação Markdown). Esta abordagem mais estruturada ajuda a obter respostas mais consistentes, informativas e bem formatadas do modelo, especialmente para consultas técnicas complexas relacionadas à documentação de Clojure.</p>
 
 
   <pre><code class="language-clojure">(defn format-advanced-prompt
@@ -1011,6 +996,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <p><strong>Nota</strong>: O <a href="https://www.promptingguide.ai/">Prompt Engineering</a> é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.</p>
 </blockquote>
 <h2 id="próximos-passos">Próximos Passos</h2>
+<p>Abaixo uma lista de melhorias que podem ser feitas no projeto atual.</p>
 <h3 id="melhorias-propostas">Melhorias Propostas</h3>
 
 
@@ -1049,75 +1035,10 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     Langchain4j
       Abstração
       Integração</div>
- <ol>
-<li>
-<p><strong>Tokenização Avançada</strong></p>
-<ul>
-<li>Usar um tokenizador de <em>subpalavras</em> (como BPE ou WordPiece)</li>
-<li>Idealmente, o mesmo usado no treinamento do modelo (ex: <code>deepseek-r1</code>)</li>
-</ul>
-</li>
-<li>
-<p><strong>Embeddings Pré-treinados</strong></p>
-<ul>
-<li>Usar embeddings do próprio modelo (via Ollama)</li>
-<li>Mais simples e <em>muito</em> melhor para busca semântica</li>
-</ul>
-</li>
-<li>
-<p><strong>Banco de Dados Vetorial</strong></p>
-<ul>
-<li>Usar um banco de dados vetorial (Milvus, FAISS, Qdrant, etc.)</li>
-<li>Para lidar com <em>muitos</em> documentos de forma eficiente</li>
-</ul>
-</li>
-<li>
-<p><strong>Cache</strong></p>
-<ul>
-<li>Usar cache para os embeddings</li>
-<li>Opcionalmente, cache de respostas</li>
-</ul>
-</li>
-<li>
-<p><strong>Erros</strong></p>
-<ul>
-<li>Tratar mais erros (Ollama offline, modelo indisponível, rede, arquivos inválidos)</li>
-</ul>
-</li>
-<li>
-<p><strong>Logging</strong></p>
-<ul>
-<li>Usar um framework de logging para rastreamento e depuração</li>
-</ul>
-</li>
-<li>
-<p><strong>Testes</strong></p>
-<ul>
-<li>Adicionar testes unitários e de integração</li>
-</ul>
-</li>
-<li>
-<p><strong>Prompt Engineering</strong></p>
-<ul>
-<li>Refinar o prompt (em <code>format-prompt</code>)</li>
-<li>Experimentar com:
-<ul>
-<li>Exemplos no prompt (few-shot learning)</li>
-<li>Instruções passo a passo (chain-of-thought)</li>
-<li>Instruções claras sobre formato, tamanho, etc.</li>
-<li>Pedir a fonte da informação (qual chunk)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p><strong>Usar langchain4j</strong></p>
-<ul>
-<li>Criar RAG através do <a href="https://github.com/langchain4j/langchain4j">langchain4j</a></li>
-<li>Via interop java com o clojure</li>
-</ul>
-</li>
-</ol>
+ <p>Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo <a href="https://en.wikipedia.org/wiki/Byte_pair_encoding">BPE</a> ou <a href="https://en.wikipedia.org/wiki/WordPiece">WordPiece</a> - idealmente o mesmo que o modelo usa. E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda!</p>
+<p>Quando o projeto crescer, vai ser essencial ter um banco de dados vetorial decente. Imagina lidar com milhares de documentos usando nossa implementação atual? Seria um pesadelo! <a href="https://milvus.io/">Milvus</a>, <a href="https://github.com/facebookresearch/faiss">FAISS</a> ou <a href="https://qdrant.tech/">Qdrant</a> resolveriam isso numa boa. E não podemos esquecer do cache - tanto para embeddings quanto para respostas. Economiza um tempão e reduz a carga no sistema.</p>
+<p>A parte de tratamento de erros e logging também precisa de carinho. Já pensou o usuário esperando resposta e o Ollama tá offline? Ou um arquivo corrompido? Precisamos de mensagens amigáveis e um sistema de logging decente pra rastrear problemas. E claro, testes! Sem testes unitários e de integração, qualquer mudança vira uma roleta-russa.</p>
+<p>O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt <a href="https://www.promptingguide.ai/techniques/few-shot">(few-shot)</a>, instruções passo a passo <a href="https://www.promptingguide.ai/techniques/chain-of-thought">(chain-of-thought)</a>, e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o <a href="https://github.com/langchain4j/langchain4j">langchain4j</a> via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!</p>
 <h3 id="usando-langchain4j">Usando Langchain4j</h3>
 <p>Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java.</p>
 <p>Vantagens de usar Langchain4j:</p>
