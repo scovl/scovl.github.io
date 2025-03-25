@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Busca Semântica com Ollama e PostgreSQL | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Implementando busca semântica com PostgreSQL e Ollama">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Busca Semântica com Ollama e PostgreSQL</h1>
+        <div class="post-meta">
+            
+            <time datetime="2025-03-25T12:00:00Z">
+                Tue, Mar 25, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-tags">
+                
+                <a href="/tags/rag/" class="tag">RAG</a>
+                
+                <a href="/tags/postgresql/" class="tag">PostgreSQL</a>
+                
+                <a href="/tags/pgvector/" class="tag">pgvector</a>
+                
+                <a href="/tags/pgai/" class="tag">pgai</a>
+                
+                <a href="/tags/ollama/" class="tag">Ollama</a>
+                
+                <a href="/tags/semantic-search/" class="tag">Semantic Search</a>
+                
+            </div>
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 8 min
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Implementando busca semântica com PostgreSQL e Ollama
+            </div>
+            
+        </div>
+    </header>
+    
+    <div class="post-content content-wrapper">
+        <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#introdução">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#entendendo-a-arquitetura">Entendendo a Arquitetura</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#pré-requisitos">Pré-requisitos</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-semântica">Passos para Construir a Busca Semântica</a></strong>
+<ul>
+<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extensões">1. Habilitando as Extensões</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#3-inserindo-documentos">3. Inserindo Documentos</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-semântica">5. Realizando Busca Semântica</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#próximos-passos">Próximos Passos</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#referências">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá, pessoal! 👋</p>
+<p>Em um <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
+<p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral.</p>
+<p>A combinação do <a href="https://www.postgresql.org/">PostgreSQL</a> com extensões como <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>, junto com o <a href="https://ollama.com/">Ollama</a> (que permite executar modelos de linguagem localmente), cria uma solução completa e de alto desempenho para <a href="https://en.wikipedia.org/wiki/Semantic_search">processamento semântico de dados</a>.</p>
+<h2 id="entendendo-a-arquitetura">Entendendo a Arquitetura</h2>
+<p>A busca semântica vai além da simples correspondência de palavras-chave, capturando o significado e o contexto da sua consulta. Em vez de depender apenas de correspondências exatas, ela utiliza <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings vetoriais</a> para representar o conteúdo semântico do texto (ou qualquer dado não estruturado). Essa abordagem permite que seu sistema recupere resultados contextualmente relevantes, mesmo quando as palavras-chave exatas não estão presentes.</p>
+<p>Por exemplo, se você pesquisar por &ldquo;melhores lugares para comer&rdquo;, um <a href="https://en.wikipedia.org/wiki/Semantic_search">sistema de busca semântica</a> pode recuperar documentos sobre &ldquo;restaurantes bem avaliados nas proximidades&rdquo; ou &ldquo;experiências gastronômicas altamente recomendadas&rdquo;, efetivamente capturando sua intenção em vez da formulação exata. A arquitetura para busca semântica com PostgreSQL envolve quatro componentes principais:</p>
+
+
+  
+    
+  
+  <div class="mermaid">flowchart LR
+    A[Ollama] --&gt; B[pgai]
+    B --&gt; C[pgvector]
+    C --&gt; D[PostgreSQL]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#9ff,stroke:#333,stroke-width:2px</div>
+ <ul>
+<li><a href="https://ollama.com/"><strong>Ollama</strong></a>: Ferramenta open-source que permite executar e gerenciar modelos de linguagem de grande escala (LLMs) e modelos de visão (VLMs) localmente no seu computador ou em um servidor cloud, proporcionando maior privacidade e controle sobre os dados.</li>
+<li><a href="https://github.com/timescale/pgai"><strong>pgai</strong></a>: Extensão do PostgreSQL que simplifica o armazenamento e recuperação de dados para RAG e outras aplicações de IA, automatizando a criação e gestão de embeddings, facilitando a busca semântica e permitindo a execução de funções de LLM diretamente dentro de consultas SQL.</li>
+<li><a href="https://github.com/pgvector/pgvector"><strong>pgvector</strong></a>: Extensão do PostgreSQL que adiciona suporte para armazenar, indexar e consultar embeddings vetoriais de alta dimensionalidade.</li>
+<li><a href="https://www.postgresql.org/"><strong>PostgreSQL</strong></a>: O sistema de banco de dados relacional que serve como fundação robusta e escalável para todo o sistema.</li>
+</ul>
+<hr>
+<h2 id="pré-requisitos">Pré-requisitos</h2>
+<p>Antes de começar, precisamos garantir que você tenha:</p>
+<ol>
+<li><strong>Docker e Docker Compose</strong>: Para configurar o ambiente facilmente</li>
+<li><strong>PostgreSQL com pgvector e pgai</strong>: Para armazenar e consultar embeddings</li>
+<li><strong>Ollama</strong>: Para gerar embeddings e executar modelos de linguagem</li>
+</ol>
+<blockquote>
+<p><strong>NOTA</strong>: Procure na documentação de cada componente para mais detalhes sobre como instalar e configurar cada um deles.</p>
+</blockquote>
+<p>Vamos configurar tudo isso rapidamente usando Docker Compose:</p>
+
+
+  <pre><code class="language-bash">name: pgai
+services:
+  db:
+    image: timescale/timescaledb-ha:pg17
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - &#34;5432:5432&#34;
+    volumes:
+      - data:/home/postgres/pgdata/data
+    command: [ &#34;-c&#34;, &#34;ai.ollama_host=http://ollama:11434&#34; ]
+  vectorizer-worker:
+    image: timescale/pgai-vectorizer-worker:latest
+    environment:
+      PGAI_VECTORIZER_WORKER_DB_URL: postgres://postgres:postgres@db:5432/postgres
+      OLLAMA_HOST: http://ollama:11434
+    command: [ &#34;--poll-interval&#34;, &#34;5s&#34;, &#34;--log-level&#34;, &#34;DEBUG&#34; ]
+  ollama:
+    image: ollama/ollama
+volumes:
+  data:</code></pre>
+ <p>Basicamente, o que fazemos é criar um ambiente com um banco de dados PostgreSQL, o vectorizer e o ollama. Agora basta colocar o conteúdo do arquivo acima no arquivo <code>docker-compose.yml</code> e rodar o comando <code>docker compose up -d</code> para iniciar o ambiente. Em seguida, baixamos o modelo de embeddings que vamos usar:</p>
+
+
+  <pre><code class="language-bash">docker compose exec ollama ollama pull nomic-embed-text</code></pre>
+ <p>Este setup configura um banco de dados PostgreSQL com as extensões <a href="https://github.com/timescale/pgai">pgai</a>, <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgvectorscale">pgvectorscale</a>. Também configura o Ollama, que você pode usar para implantar LLMs e modelos de embedding.</p>
+<h2 id="passos-para-construir-a-busca-semântica">Passos para Construir a Busca Semântica</h2>
+<p>Os passos para implementar a busca semântica no PostgreSQL são relativamente simples. Primeiro, vamos habilitar as extensões necessárias, criar uma tabela para armazenar nossos documentos, configurar o <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> para gerar <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a> automaticamente e, finalmente, realizar consultas semânticas.</p>
+<h3 id="1-habilitando-as-extensões">1. Habilitando as Extensões</h3>
+<p>Primeiro, precisamos habilitar as extensões necessárias no PostgreSQL:</p>
+
+
+  <pre><code class="language-sql">CREATE EXTENSION IF NOT EXISTS vector CASCADE; 
+CREATE EXTENSION IF NOT EXISTS ai CASCADE;</code></pre>
+ <h3 id="2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</h3>
+<p>Agora, vamos criar uma tabela para armazenar os documentos que queremos pesquisar:</p>
+
+
+  <pre><code class="language-sql">CREATE TABLE IF NOT EXISTS documentos (
+   id SERIAL PRIMARY KEY,
+   titulo TEXT NOT NULL,
+   conteudo TEXT,
+   categoria TEXT,
+   data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+ <p>Neste exemplo, criamos uma tabela chamada <code>documentos</code> com quatro colunas: <code>id</code>, <code>titulo</code>, <code>conteudo</code> e <code>categoria</code>. É importante notar que a coluna <code>id</code> é a chave primária da tabela. Outro ponto importante é que a coluna <code>data_criacao</code> é uma coluna de metadados que é gerada automaticamente pelo PostgreSQL.</p>
+<h3 id="3-inserindo-documentos">3. Inserindo Documentos</h3>
+<p>Podemos inserir documentos manualmente ou usar a função <code>ai.load_dataset</code> do <a href="https://github.com/timescale/pgai">pgai</a> para carregar dados diretamente do <a href="https://huggingface.co/">Hugging Face</a>:</p>
+
+
+  <pre><code class="language-sql">SELECT ai.load_dataset(
+   name =&gt; &#39;Cohere/movies&#39;,
+   table_name =&gt; &#39;documentos&#39;,
+   if_table_exists =&gt; &#39;append&#39;,
+   field_types =&gt; &#39;{&#34;title&#34;: &#34;titulo&#34;, &#34;overview&#34;: &#34;conteudo&#34;, &#34;genres&#34;: &#34;categoria&#34;}&#39;::jsonb
+);</code></pre>
+ <p>Alternativamente, podemos inserir registros manualmente:</p>
+
+
+  <pre><code class="language-sql">INSERT INTO documentos (titulo, conteudo, categoria) VALUES 
+(&#39;Guia Clojure&#39;, &#39;Clojure é uma linguagem funcional moderna...&#39;, &#39;Programação&#39;),
+(&#39;Tutorial RAG&#39;, &#39;Sistemas RAG combinam busca e geração...&#39;, &#39;IA&#39;),
+(&#39;PostgreSQL Avançado&#39;, &#39;Técnicas de otimização para PostgreSQL...&#39;, &#39;Banco de Dados&#39;);</code></pre>
+ <blockquote>
+<p><strong>NOTA</strong>: O <a href="https://huggingface.co/">Hugging Face</a> é uma plataforma de dados e modelos de IA.</p>
+</blockquote>
+<p>Agora vamos configurar o vectorizer para gerar embeddings automaticamente.</p>
+<h3 id="4-configurando-o-vectorizer">4. Configurando o Vectorizer</h3>
+<p>O <a href="https://github.com/timescale/pgai">pgai</a> inclui uma ferramenta chamada <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> que automatiza a criação e sincronização de embeddings. Esta é uma das funcionalidades mais poderosas desta solução, pois elimina a necessidade de ferramentas externas para criar <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a>. Vamos configurá-la:</p>
+
+
+  <pre><code class="language-sql">SELECT ai.create_vectorizer(
+   &#39;public.documentos&#39;::regclass,
+   destination =&gt; &#39;documentos_embeddings&#39;,
+   embedding =&gt; ai.embedding_ollama(&#39;nomic-embed-text&#39;, 768),
+   chunking =&gt; ai.chunking_recursive_character_text_splitter(&#39;conteudo&#39;)
+);</code></pre>
+ <p>Basicamente, o comando acima faz o seguinte:</p>
+<ol>
+<li>Cria uma tabela <code>documentos_embeddings</code> para armazenar os vetores</li>
+<li>Configura o modelo <code>nomic-embed-text</code> via Ollama para gerar embeddings</li>
+<li>Define uma estratégia de chunking para dividir textos longos</li>
+<li>Cria automaticamente uma view <code>documentos_embeddings_vectorized</code> que junta os documentos com seus embeddings</li>
+</ol>
+<p>O <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> também cuida da sincronização automática dos embeddings quando documentos são inseridos, atualizados ou removidos - sem necessidade de código adicional! Isto simplifica enormemente a manutenção do sistema.</p>
+<h3 id="5-realizando-busca-semântica">5. Realizando Busca Semântica</h3>
+<p>Agora estamos prontos para realizar buscas semânticas. Usaremos a função <code>ai.ollama_embed</code> para gerar embeddings para nossa consulta e o operador de distância de cosseno (<code>&lt;=&gt;</code>) para encontrar documentos similares:</p>
+
+
+  <pre><code class="language-sql">WITH query_embedding AS (
+    -- Gerar embedding para a consulta
+    SELECT ai.ollama_embed(&#39;nomic-embed-text&#39;, &#39;Como implementar RAG em sistemas modernos&#39;, 
+                          host =&gt; &#39;http://ollama:11434&#39;) AS embedding
+)
+SELECT
+    d.titulo,
+    d.conteudo,
+    d.categoria,
+    t.embedding &lt;=&gt; (SELECT embedding FROM query_embedding) AS distancia
+FROM documentos_embeddings t
+LEFT JOIN documentos d ON t.id = d.id
+ORDER BY distancia
+LIMIT 5;</code></pre>
+ <p>Este código SQL realiza uma <a href="https://en.wikipedia.org/wiki/Semantic_search">busca semântica</a> em nossa base de documentos utilizando <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a> gerados pelo modelo <code>nomic-embed-text</code> através do <a href="https://ollama.com/">Ollama</a>. Primeiro, criamos uma CTE (Common Table Expression) chamada <code>query_embedding</code> que gera o embedding para nossa consulta &ldquo;Como implementar RAG em sistemas modernos&rdquo;. Em seguida, selecionamos os documentos mais relevantes comparando este embedding de consulta com os embeddings armazenados na tabela <code>documentos_embeddings</code> usando o operador de distância de cosseno (<code>&lt;=&gt;</code>).</p>
+<p>O resultado é uma lista ordenada dos documentos mais semanticamente similares à nossa consulta, independentemente de compartilharem as mesmas palavras exatas. Esta é a essência da busca semântica - encontrar conteúdo conceitualmente relacionado, não apenas correspondências de palavras-chave. A coluna <code>distancia</code> nos mostra quão próximo cada documento está da nossa consulta, com valores menores indicando maior similaridade. Limitamos os resultados aos 5 documentos mais relevantes, mas este número pode ser ajustado conforme necessário. O PostgreSQL oferece três operadores para cálculo de similaridade:</p>
+<ul>
+<li><code>&lt;-&gt;</code>: <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Distância L2 (Euclidiana)</a></li>
+<li><code>&lt;#&gt;</code>: <a href="https://en.wikipedia.org/wiki/Dot_product">Produto interno</a></li>
+<li><code>&lt;=&gt;</code>: <a href="https://en.wikipedia.org/wiki/Cosine_distance">Distância de cosseno</a> (geralmente a melhor opção)</li>
+</ul>
+<p>E pronto! Com apenas esses poucos passos, temos um sistema de busca semântica totalmente funcional, diretamente no PostgreSQL. <strong><a href="/2025/03/23/rag/">Para quem acompanhou o artigo anterior sobre a implementação de RAG em Clojure</a></strong>, vale a pena comparar as duas abordagens:</p>
+<p>A diferença entre as duas abordagens é bem clara quando olhamos lado a lado. <a href="/2025/03/23/rag/">No artigo anterior sobre RAG em Clojure</a>, usamos uma técnica mais simples <a href="/post/tf-idf/">(TF-IDF)</a> que funciona bem para projetos pequenos e didáticos. É como usar uma bicicleta para se locomover para distâncias curtas. O código em Clojure mantém tudo em memória, o que é ótimo para aprender os conceitos, mas começa a dar problema quando a quantidade de documentos cresce.</p>
+<p>Já a abordagem com PostgreSQL + pgai é como trocar a bicicleta por um carro esportivo! Estamos usando embeddings densos gerados por LLMs, que capturam muito melhor o significado semântico dos textos. O PostgreSQL cuida de toda a parte chata de persistência e indexação, permitindo que você escale para milhões de documentos sem suar. Os índices especializados para vetores (como HNSW) fazem buscas em bilhões de embeddings parecerem instantâneas, algo que nossa implementação anterior jamais conseguiria.</p>
+<p>O mais legal é que a manutenção fica muito mais simples. Com o <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer do pgai</a>, você só precisa inserir documentos no banco normalmente, e ele cuida automaticamente de gerar e atualizar os embeddings.</p>
+<hr>
+<h2 id="integração-com-clojure">Integração com Clojure</h2>
+<p>O objetivo deste artigo é mostrar como é fácil construir um sistema de busca semântica usando PostgreSQL e pgai. No entanto, é mostrar também como podemos evoluir à proposta anterior e construir um sistema de busca semântica mais robusto e escalável usando PostgreSQL e pgai e Clojure.</p>
+
+
+  <pre><code class="language-clojure">;; src/docai/pg.clj
+(ns docai.pg
+  (:require [next.jdbc :as jdbc]
+            [clojure.data.json :as json]))
+
+(def db-spec
+  {:dbtype &#34;postgresql&#34;
+   :dbname &#34;postgres&#34;
+   :host &#34;localhost&#34;
+   :user &#34;postgres&#34;
+   :password &#34;password&#34;})
+
+(defn query-semantic-search
+  &#34;Realiza busca semântica via PostgreSQL&#34;
+  [query limit]
+  (let [conn (jdbc/get-connection db-spec)
+        sql (str &#34;WITH query_embedding AS (&#34;
+                 &#34;  SELECT ai.ollama_embed(&#39;nomic-embed-text&#39;, ?, host =&gt; &#39;http://ollama:11434&#39;) AS embedding&#34;
+                 &#34;)&#34;
+                 &#34;SELECT&#34;
+                 &#34;  d.titulo,&#34;
+                 &#34;  d.conteudo,&#34;
+                 &#34;  d.categoria,&#34;
+                 &#34;  t.embedding &lt;=&gt; (SELECT embedding FROM query_embedding) AS distancia&#34;
+                 &#34; FROM documentos_embeddings t&#34;
+                 &#34; LEFT JOIN documentos d ON t.id = d.id&#34;
+                 &#34; ORDER BY distancia&#34;
+                 &#34; LIMIT ?&#34;)
+        results (jdbc/execute! conn [sql query limit])]
+    results))</code></pre>
+ <blockquote>
+<p><strong>NOTA</strong>: O código acima é um exemplo de como integrar a busca semântica no PostgreSQL com uma aplicação Clojure. O código completo está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a>.</p>
+</blockquote>
+<p>A abordagem com PostgreSQL oferece uma solução robusta e escalável para busca semântica, eliminando a necessidade de ferramentas especializadas. A combinação com Ollama permite execução local de modelos, garantindo privacidade e controle sobre os dados.</p>
+<p>Enquanto nossa implementação inicial em Clojure ofereceu uma base educativa para entender os conceitos de RAG, a abordagem com PostgreSQL fornece um caminho claro para sistemas de produção. O melhor de tudo é que você pode começar em apenas 10 minutos!</p>
+<hr>
+<h2 id="referências">Referências</h2>
+<ul>
+<li><a href="https://github.com/pgvector/pgvector">Documentação do pgvector</a> - Extensão do PostgreSQL para armazenar, indexar e consultar embeddings vetoriais de alta dimensionalidade.</li>
+<li><a href="https://github.com/timescale/pgai">Documentação do pgai</a> - Extensão do PostgreSQL que simplifica o armazenamento e recuperação de dados para RAG e outras aplicações de IA.</li>
+<li><a href="https://supabase.com/blog/openai-embeddings-postgres-vector">Embeddings Eficientes com PostgreSQL</a> - Artigo sobre como usar embeddings com PostgreSQL.</li>
+<li><a href="https://www.pinecone.io/learn/hnsw-ivfflat/">HNSW vs. IVFFlat para Busca de Similaridade</a> - Artigo sobre as diferenças entre HNSW e IVFFlat para busca de similaridade.</li>
+<li><a href="https://ollama.com/">Ollama - Rodando LLMs localmente</a> - Documentação do Ollama, uma ferramenta open-source para executar modelos de linguagem de grande escala localmente.</li>
+<li><a href="/2025/03/23/rag/">Artigo anterior sobre RAG com Clojure</a> - Artigo sobre como implementar RAG com Clojure.</li>
+</ul>
+
+    </div>
+    
+    
+</article>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 
