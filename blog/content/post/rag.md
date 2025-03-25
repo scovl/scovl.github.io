@@ -21,9 +21,6 @@ author = "Vitor Lobo Ramos"
     - [Estrutura do Projeto](#estrutura-do-projeto)
     - [Processamento de Documentos](#processamento-de-documentos)
     - [Sistema de Embeddings](#sistema-de-embeddings)
-        - [Entendendo o TF-IDF](#entendendo-o-tf-idf)
-        - [Similaridade do Cosseno](#similaridade-do-cosseno)
-        - [Limitações do TF-IDF](#limitações-do-tf-idf)
     - [Interface com Ollama](#interface-com-ollama)
     - [Módulo Principal](#módulo-principal)
 - **[Como Usar](#como-usar)**
@@ -34,11 +31,6 @@ author = "Vitor Lobo Ramos"
     - [Performance e Otimizações](#performance-e-otimizações)
     - [Tratamento de Erros](#tratamento-de-erros)
     - [Prompt Engineering](#prompt-engineering)
-        - [Estrutura do Prompt](#estrutura-do-prompt)
-        - [Técnicas de Prompt Engineering](#técnicas-de-prompt-engineering)
-        - [Exemplo de Prompt Avançado](#exemplo-de-prompt-avançado)
-        - [Dicas para Prompts Efetivos](#dicas-para-prompts-efetivos)
-        - [Avaliação de Prompts](#avaliação-de-prompts)
 - **[Próximos Passos](#próximos-passos)**
     - [Melhorias Propostas](#melhorias-propostas)
     - [Usando Langchain4j](#usando-langchain4j)
@@ -93,28 +85,20 @@ graph LR
 ```
 
 1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
-
 2. **Pesquisa em tempo real:** O LLM não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O LLM, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
-
 3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.
 
 Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/abs/2309.01066), existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:
 
-* **Redução de "alucinações":** LLMs, sem acesso a informações externas, podem "inventar" respostas (as chamadas "alucinações") quando confrontados com perguntas sobre tópicos que estão fora de seu conhecimento base. O RAG, ao fornecer dados factuais, diminui drasticamente a probabilidade de alucinações.
-* **Respostas mais atualizadas:** O conhecimento de um LLM treinado em um determinado momento fica congelado no tempo. O RAG garante que as respostas reflitam as informações mais recentes disponíveis.
-* **Maior transparência e explicabilidade:** Ao citar as fontes de informação utilizadas, o RAG torna as respostas dos LLMs mais transparentes e verificáveis. Isso aumenta a confiança no modelo, pois podemos entender de onde vieram as informações.
-* **Melhora no desempenho em tarefas especificas:** O RAG aumenta a capacidade do LLM de lidar com tarefas que requerem acesso e entendimento de bases de dados ou informações especificas, como responder perguntas sobre documentos ou dados de uma empresa.
+O RAG resolve vários problemas de uma vez só: diminui aquelas "viagens" dos LLMs quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!
 
 > O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um "sabe-tudo" desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.
 
 ### Por que o DeepSeek R1?
 
-O DeepSeek R1 foi escolhido para este projeto por várias razões:
+Ele trabalha muito bem com documentação técnica, o que é perfeito para nosso sistema [RAG](https://pt.wikipedia.org/wiki/Geração_aumentada_por_recuperação) focado em docs técnicas. O DeepSeek R1 consegue equilibrar qualidade e velocidade melhor que outros modelos do Ollama, rodando na sua máquina sem ficar alucinando com respostas que não fazem sentido.
 
-1. **Qualidade das Respostas**: O DeepSeek R1 é conhecido por gerar respostas de alta qualidade, especialmente em contextos técnicos. Ele tem um bom entendimento de código e documentação, o que é crucial para um sistema RAG focado em documentação técnica.
-2. **Eficiência**: Comparado a outros modelos disponíveis no Ollama, o DeepSeek R1 oferece um bom equilíbrio entre qualidade e velocidade. Ele é otimizado para rodar localmente sem sacrificar a qualidade das respostas.
-3. **Suporte a Código**: O modelo tem excelente compreensão de várias linguagens de programação, incluindo Clojure, o que é ideal para responder perguntas sobre documentação técnica.
-4. **Contexto**: O DeepSeek R1 é particularmente bom em manter o contexto e gerar respostas coerentes, mesmo quando recebe informações parciais ou fragmentadas.
+O modelo também se dá super bem com várias linguagens de programação, incluindo [Clojure](https://clojure.org/), então ele responde numa boa sobre implementações técnicas e documentação de código. E o melhor: mesmo quando você joga informações pela metade ou todas bagunçadas, ele ainda consegue manter o contexto e dar respostas que fazem sentido. Por isso ele é perfeito para o que estamos construindo!
 
 ## Implementação Prática
 
@@ -139,7 +123,45 @@ Nossa aplicação terá três componentes principais:
 
 > **Observação:** Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de [TF-IDF (Term Frequency-Inverse Document Frequency)](https://pt.wikipedia.org/wiki/TF-IDF).
 
-### Processamento de Documentos
+### Configuração do Projeto
+
+1. Crie um novo projeto Clojure:
+```bash
+lein new app docai
+cd docai
+```
+
+2. Configure o `project.clj`:
+```clojure
+(defproject docai "0.1.0-SNAPSHOT"
+  :description "Um assistente RAG para consulta de documentação técnica"
+  :url "http://example.com/FIXME"
+  :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
+            :url "https://www.eclipse.org/legal/epl-2.0/"}
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [markdown-to-hiccup "0.6.2"]
+                 [hickory "0.7.1"]
+                 [org.clojure/data.json "2.4.0"]
+                 [http-kit "2.6.0"]
+                 [org.clojure/tools.logging "1.2.4"]
+                 [org.clojure/tools.namespace "1.4.4"]
+                 [org.clojure/core.async "1.6.681"]
+                 [org.clojure/core.memoize "1.0.257"]
+                 [org.clojure/core.cache "1.0.225"]]
+  :main ^:skip-aot docai.core
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+```
+
+A estrutura do projeto acima define um aplicativo Clojure para RAG (Retrieval-Augmented Generation) com várias dependências essenciais: `markdown-to-hiccup` e `hickory` para processar documentos em Markdown e HTML, `data.json` e `http-kit` para comunicação com APIs (como a do Ollama), `tools.logging` para registro de eventos, `tools.namespace` para gerenciamento de namespaces, `core.async` para operações assíncronas (útil ao lidar com processamento de documentos grandes), e `core.memoize` e `core.cache` para implementar cache de resultados (como embeddings ou respostas do LLM), o que melhora significativamente a performance ao evitar recálculos desnecessários, especialmente em consultas repetidas ou similares.
+
+
+### Implementação dos Componentes
+
+Agora vamos implementar os três componentes principais do nosso sistema RAG e vamos começar com o processamento de documentos. Pois, ele é o ponto de entrada para o RAG onde vamos processar os documentos e extrair o texto para ser usado nos outros componentes.
+
+#### Processamento de Documentos
 
 ```clojure
 ;; src/docai/document.clj
@@ -197,7 +219,26 @@ Nossa aplicação terá três componentes principais:
     processed))
 ```
 
-### Sistema de Embeddings
+Este trecho de código implementa a parte de processamento de documentos do nosso sistema RAG. Basicamente, ele pega arquivos Markdown ou HTML e extrai o texto puro deles para que possamos usar depois na busca semântica. O código usa bibliotecas como `markdown-to-hiccup` e `hickory` para converter os documentos em estruturas de dados que facilitam a extração do texto.
+
+```mermaid
+graph TD
+    A[Documento] --> B{É Markdown?}
+    B -->|Sim| C[Processa Markdown]
+    B -->|Não| D[Processa HTML]
+    C --> E[Extrai Texto]
+    D --> E
+    E --> F[Divide em Chunks]
+    F --> G[Limpa e Formata]
+    G --> H[Chunks Prontos]
+```
+
+O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) de 512 tokens cada, e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.
+
+
+#### Sistema de Embeddings
+
+Agora vamos implementar o sistema de embeddings. Ele é responsável por criar embeddings para o texto para que possamos usar na busca semântica.
 
 ```clojure
 ;; src/docai/embedding.clj
@@ -294,6 +335,18 @@ Nossa aplicação terá três componentes principais:
            (take n)
            (map second)))))
 ```
+
+O código acima implementa um sistema simples de embeddings usando TF-IDF (Term Frequency-Inverse Document Frequency) para transformar textos em vetores numéricos. Basicamente, ele pega documentos de texto, quebra em palavras (tokens), calcula a importância de cada palavra considerando tanto sua frequência no documento quanto sua raridade na coleção inteira, e cria vetores que representam cada documento. É como transformar textos em coordenadas matemáticas para que o computador possa entender a "semelhança" entre eles.
+
+```mermaid
+graph TD
+    A[Documentos] -->|Tokenização| B[Tokens]
+    B -->|TF-IDF| C[Vetores Numéricos]
+    C -->|Similaridade do Cosseno| D[Documentos Similares]
+```
+
+A parte mais legal é a função `similarity_search`, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional - quanto menor o ângulo entre dois pontos, mais similares eles são. O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.
+
 
 #### Entendendo o TF-IDF
 
@@ -394,7 +447,9 @@ Onde:
 
 > Por isso, em sistemas RAG modernos, é mais comum usar embeddings gerados por modelos de linguagem, que capturam melhor a semântica e o contexto das palavras.
 
-### Interface com Ollama
+#### Interface com Ollama
+
+Agora vamos implementar a interface com o Ollama. Ele é responsável por gerar a resposta para a query do usuário (essa parte aqui é super divertida, pois é onde vamos usar o LLM).
 
 ```clojure
 ;; src/docai/llm.clj
@@ -455,7 +510,9 @@ Onde:
            "\n\nVocê pode iniciar o Ollama com o comando: ollama serve"))))
 ```
 
-### Módulo Principal
+#### Módulo Principal
+
+Agora vamos implementar o módulo principal que vai ser o ponto de entrada para o RAG. Ele vai ser responsável por carregar os documentos, processar os chunks, criar os embeddings e gerar a resposta para a query do usuário. 
 
 ```clojure
 ;; src/docai/core.clj
@@ -561,6 +618,8 @@ Onde:
     (println "Obrigado por usar o DocAI. Até a próxima!")))
 ```
 
+---
+
 ## Como Usar
 
 ### Instalação do Ollama
@@ -594,37 +653,6 @@ Onde:
    - Se tudo estiver funcionando, você receberá uma resposta do modelo
 
 > **Dica**: O Ollama mantém os modelos em cache local. Se você precisar liberar espaço, pode usar `ollama rm deepseek-r1` para remover o modelo.
-
-### Configuração do Projeto
-
-1. Crie um novo projeto Clojure:
-```bash
-lein new app docai
-cd docai
-```
-
-2. Configure o `project.clj`:
-```clojure
-(defproject docai "0.1.0-SNAPSHOT"
-  :description "Um assistente RAG para consulta de documentação técnica"
-  :url "http://example.com/FIXME"
-  :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
-            :url "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.11.1"]
-                 [markdown-to-hiccup "0.6.2"]
-                 [hickory "0.7.1"]
-                 [org.clojure/data.json "2.4.0"]
-                 [http-kit "2.6.0"]
-                 [org.clojure/tools.logging "1.2.4"]
-                 [org.clojure/tools.namespace "1.4.4"]
-                 [org.clojure/core.async "1.6.681"]
-                 [org.clojure/core.memoize "1.0.257"]
-                 [org.clojure/core.cache "1.0.225"]]
-  :main ^:skip-aot docai.core
-  :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
-```
 
 ### Executando a Aplicação
 
