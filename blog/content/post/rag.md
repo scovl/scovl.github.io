@@ -169,9 +169,6 @@ Agora vamos implementar os três componentes principais do nosso sistema RAG e v
             [hickory.core :as html]
             [clojure.string :as str]))
 
-(defn is-string? [x]
-  (instance? String x))
-
 (defn extract-text-from-markdown [content]
   (try
     (let [hiccup-result (md/md->hiccup content)
