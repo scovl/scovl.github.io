@@ -1,7 +1,7 @@
 +++
 title = "Técnicas Avançadas para RAG em Produção"
 description = "Explorando técnicas para otimizar sistemas RAG para uso em produção"
-date = 2025-03-27T12:00:00-00:00
+date = 2025-03-28T12:00:00-00:00
 tags = ["RAG", "LLM", "AI", "Optimização", "Produção", "PostgreSQL", "Ollama"]
 draft = false
 weight = 3
