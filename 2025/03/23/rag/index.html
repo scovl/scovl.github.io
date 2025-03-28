@@ -302,9 +302,6 @@ cd docai</code></pre>
             [hickory.core :as html]
             [clojure.string :as str]))
 
-(defn is-string? [x]
-  (instance? String x))
-
 (defn extract-text-from-markdown [content]
   (try
     (let [hiccup-result (md/md-&gt;hiccup content)
