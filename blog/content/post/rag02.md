@@ -1606,7 +1606,3 @@ O futuro dos sistemas de IA não está em modelos cada vez maiores, mas na combi
 - [Ollama - Rodando LLMs localmente](https://ollama.com/) - Ferramenta para executar LLMs localmente.
 - [PostgreSQL](https://www.postgresql.org/) - Sistema de gerenciamento de banco de dados relacional.
 - [Projeto DocAI](https://github.com/scovl/docai) - Repositório do projeto DocAI.
-- [Projeto IDEFICS para RAG Multimodal](https://huggingface.co/blog/idefics) - Modelo e framework para RAG multimodal.
-- [Redis Vector Database para RAG](https://redis.io/docs/stack/search/reference/vectors/) - Implementação de busca vetorial com Redis.
-- [Retrieval-Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) - Conceitos fundamentais de RAG.
-- [Supabase - Image Search com pgvector](https://supabase.com/blog/image-search-using-ai-embeddings) - Implementação de busca de imagens com pgvector.
