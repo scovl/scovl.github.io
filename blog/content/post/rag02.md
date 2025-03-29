@@ -115,8 +115,8 @@ SELECT * FROM filtrados ORDER BY distancia LIMIT 5;
 
 Dividir documentos em chunks menores é uma prática padrão, mas qual é o tamanho ideal?
 
-- [Chunks muito pequenos perdem contexto crucial](https://www.llmops.com/blog/llmops-small-chunks)
-- [Chunks muito grandes diluem a recuperação com detalhes irrelevantes](https://www.llmops.com/blog/llmops-large-chunks)
+- Chunks muito pequenos perdem contexto crucial
+- Chunks muito grandes diluem a recuperação com detalhes irrelevantes
 
 > **Solução**: Adaptar a estratégia de chunking ao tipo de conteúdo. No nosso [PostgreSQL RAG](/post/semantic-postgresql/), usamos chunking recursivo:
 
@@ -135,21 +135,21 @@ SELECT ai.create_vectorizer(
 
 ### Armadilha 3: Falta de Monitoramento Contínuo
 
-Como garantir que seu sistema permaneça eficaz ao longo do tempo? [LLMOps](https://www.llmops.com/) não é apenas sobre implantação, mas sobre o monitoramento contínuo da qualidade.
+Como garantir que seu sistema permaneça eficaz ao longo do tempo? [LLMOps](https://www.databricks.com/br/glossary/llmops) não é apenas sobre implantação, mas sobre o monitoramento contínuo da qualidade.
 
 > **Solução**: Implementar métricas de avaliação como:
-> - [Comparações com respostas conhecidas (ground truth)](https://www.llmops.com/blog/llmops-ground-truth)
-> - [Detecção de drift em embeddings](https://www.llmops.com/blog/llmops-drift)
-> - [Monitoramento de latência e taxa de falhas](https://www.llmops.com/blog/llmops-monitoring)
+> - Comparações com respostas conhecidas (ground truth)
+> - Detecção de drift em embeddings
+> - Monitoramento de latência e taxa de falhas
 
 ### Armadilha 4: Consultas Complexas em Pipelines Simples
 
 Muitas consultas do mundo real são complexas demais para uma única etapa de recuperação. Se uma pergunta requer sintetizar várias informações, um pipeline RAG padrão pode falhar.
 
 **Solução**: Implementar fluxos de trabalho mais sofisticados:
-- [Workflows com agentes](https://www.llmops.com/blog/llmops-agents)
-- [Recuperação multi-hop](https://www.llmops.com/blog/llmops-multi-hop)
-- [Geração dinâmica de prompts](https://www.llmops.com/blog/llmops-dynamic-prompts)
+- Workflows com agentes
+- Recuperação multi-hop
+- Geração dinâmica de prompts
 
 ## Técnicas Avançadas de Otimização
 
@@ -406,7 +406,7 @@ flowchart TB
     style RES fill:#f99,stroke:#333,stroke-width:2px
 ```
 
-Este diagrama ilustra uma arquitetura avançada [ReAct (Raciocínio + Ação)](https://www.llmops.com/blog/llmops-react) para sistemas [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation), mostrando como uma consulta complexa é processada através de múltiplos componentes especializados. O fluxo começa com a consulta do usuário sendo analisada por um [Planejador](https://en.wikipedia.org/wiki/Workflow), que cria um plano estruturado de execução. 
+Este diagrama ilustra uma arquitetura avançada ReAct para sistemas [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation), mostrando como uma consulta complexa é processada através de múltiplos componentes especializados. O fluxo começa com a consulta do usuário sendo analisada por um [Planejador](https://en.wikipedia.org/wiki/Workflow), que cria um plano estruturado de execução. 
 
 Este plano é então gerenciado por um [Roteador](https://en.wikipedia.org/wiki/Routing) que distribui sub-tarefas para agentes especializados (Pesquisa, Raciocínio e Cálculo), cada um interagindo com recursos específicos como bases de dados vetoriais, LLMs ou ferramentas de cálculo.
 
@@ -465,7 +465,7 @@ Vamos analisar o código abaixo para entender como funciona um sistema ReAct par
                (conj responses step-result))))))
 ```
 
-O código implementa um agente [ReAct (Reasoning + Acting)](https://www.llmops.com/blog/llmops-react) para consultas complexas em um sistema [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation). A função principal `react-agent` avalia se a consulta requer um plano de execução complexo ou pode ser processada diretamente. Para consultas complexas, cria-se um plano estruturado que é executado pela função `execute-plan`, que utiliza um loop para processar cada etapa do plano sequencialmente. 
+O código implementa um agente ReAct (Reasoning + Acting) para consultas complexas em um sistema [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation). A função principal `react-agent` avalia se a consulta requer um plano de execução complexo ou pode ser processada diretamente. Para consultas complexas, cria-se um plano estruturado que é executado pela função `execute-plan`, que utiliza um loop para processar cada etapa do plano sequencialmente. 
 
 O sistema emprega agentes especializados (busca, raciocínio, cálculo) selecionados dinamicamente com base no tipo de tarefa. Cada agente contribui com resultados parciais que são acumulados em um contexto compartilhado, permitindo que etapas posteriores utilizem informações de etapas anteriores. Finalmente, todas as respostas são sintetizadas em um resultado coerente. 
 
@@ -1566,15 +1566,6 @@ O futuro dos sistemas de IA não está em modelos cada vez maiores, mas na combi
 - [LangChain](https://python.langchain.com/) - Biblioteca para desenvolvimento de aplicações baseadas em LLM.
 - [LlamaIndex - Implementando ReAct Agents](https://docs.llamaindex.ai/en/stable/examples/agent/react_agent.html) - Guia para implementação de agentes ReAct.
 - [LlamaIndex](https://docs.llamaindex.ai/) - Framework para construir aplicações alimentadas por LLM.
-- [LLMOps - Agentes](https://www.llmops.com/blog/llmops-agents) - Boas práticas para implementação de agentes.
-- [LLMOps - Comparações com respostas conhecidas](https://www.llmops.com/blog/llmops-ground-truth) - Avaliação de respostas contra ground truth.
-- [LLMOps - Detecção de drift em embeddings](https://www.llmops.com/blog/llmops-drift) - Monitoramento de mudanças em embeddings.
-- [LLMOps - Geração dinâmica de prompts](https://www.llmops.com/blog/llmops-dynamic-prompts) - Técnicas para geração adaptativa de prompts.
-- [LLMOps - Monitoramento](https://www.llmops.com/blog/llmops-monitoring) - Estratégias para monitoramento de sistemas RAG.
-- [LLMOps - Problemas com chunks grandes](https://www.llmops.com/blog/llmops-large-chunks) - Análise de impactos de chunks grandes.
-- [LLMOps - Problemas com chunks pequenos](https://www.llmops.com/blog/llmops-small-chunks) - Desafios de chunks pequenos demais.
-- [LLMOps - ReAct](https://www.llmops.com/blog/llmops-react) - Padrão Reasoning+Acting para agentes.
-- [LLMOps - Recuperação multi-hop](https://www.llmops.com/blog/llmops-multi-hop) - Técnicas para recuperação em múltiplas etapas.
 - [MultiModal RAG com LlamaIndex](https://docs.llamaindex.ai/en/stable/examples/multi_modal/) - Exemplos de implementação multimodal.
 - [Ollama - Rodando LLMs localmente](https://ollama.com/) - Ferramenta para executar LLMs localmente.
 - [PostgreSQL](https://www.postgresql.org/) - Sistema de gerenciamento de banco de dados relacional.
