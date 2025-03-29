@@ -111,6 +111,11 @@ filtrados AS (
 SELECT * FROM filtrados ORDER BY distancia LIMIT 5;
 ```
 
+Este código SQL demonstra uma abordagem de duas fases para melhorar a qualidade da recuperação em sistemas RAG. Na primeira fase, utilizamos a [busca vetorial](https://en.wikipedia.org/wiki/Vector_database) para recuperar 20 candidatos iniciais ordenados por [similaridade vetorial](https://en.wikipedia.org/wiki/Vector_database) (usando o operador `<=>` do [pgvector](https://en.wikipedia.org/wiki/Vector_database) para calcular a distância entre embeddings). Esta etapa prioriza a velocidade e a amplitude da recuperação.
+
+Na segunda fase, aplicamos filtros mais refinados para verificar a relevância real dos documentos recuperados. Isso pode incluir filtros baseados em regras (como busca por palavras-chave usando `ILIKE`) ou até mesmo modelos secundários de avaliação de relevância (como sugerido no comentário sobre a função experimental do [pgai](https://github.com/timescale/pgai)). Esta abordagem em duas etapas equilibra eficiência e precisão, permitindo que o sistema primeiro capture um conjunto amplo de candidatos potenciais e depois refine os resultados para apresentar apenas os documentos verdadeiramente relevantes para a consulta do usuário.
+
+
 ### Armadilha 2: Tamanho Inadequado de Chunks
 
 Dividir documentos em chunks menores é uma prática padrão, mas qual é o tamanho ideal?
@@ -132,6 +137,11 @@ SELECT ai.create_vectorizer(
                                                            chunk_overlap => 200)
 );
 ```
+
+Para documentos técnicos, que geralmente contêm informações densas e interconectadas, configuramos chunks maiores (1500 caracteres) com uma sobreposição significativa (200 caracteres). 
+
+Isso permite preservar mais contexto dentro de cada chunk, o que é crucial para a compreensão de conceitos técnicos complexos. O uso do `chunking_recursive_character_text_splitter` implementa uma estratégia de divisão recursiva que respeita a estrutura natural do texto, enquanto o modelo de embedding `nomic-embed-text` com 768 dimensões captura as nuances semânticas do conteúdo técnico. Esta [abordagem adaptativa de chunking](https://en.wikipedia.org/wiki/Chunking_(data_storage)) é fundamental para equilibrar a granularidade da recuperação com a preservação do contexto necessário para respostas precisas em sistemas [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation).
+
 
 ### Armadilha 3: Falta de Monitoramento Contínuo
 
@@ -363,7 +373,7 @@ O componente Sintetizador atua como o elemento integrador final, combinando as r
     sub-questions))
 ```
 
-Uma implementação mais robusta de workflows com agentes envolve várias etapas adicionais:
+Uma implementação mais robusta de workflows com agentes envolve várias etapas adicionais. Trataremos deste assunto em um próximo artigo.
 
 ---
 
@@ -1285,6 +1295,7 @@ Esta implementação representa um componente crucial de um sistema LLMOps madur
 Agora que exploramos várias técnicas avançadas, vamos ver como elas são implementadas no projeto DocAI. Nosso sistema atual já incorpora muitas dessas técnicas para criar um pipeline RAG avançado.
 
 > Caso não saiba o que é o DocAI, você pode ver os artigos anteriores [RAG Simples com Clojure e Ollama](https://scovl.github.io/2025/03/23/rag/) e [Busca Semântica com Ollama e PostgreSQL](https://scovl.github.io/2025/03/25/semantic-postgresql/).
+
 ### Arquitetura Atual do DocAI
 
 A arquitetura do DocAI implementa um sistema RAG completo com suporte a agentes para consultas complexas. Os principais componentes são:
@@ -1418,6 +1429,18 @@ O DocAI se destaca por implementar várias técnicas avançadas de RAG em um sis
       {:chunk-size 1000 :chunk-overlap 100}))
   ```
 
+O sistema implementa estratégias de [chunking adaptativas](https://en.wikipedia.org/wiki/Chunking_(data_storage)) que otimizam a segmentação de documentos conforme seu tipo específico. Esta abordagem reconhece que diferentes conteúdos possuem características únicas que afetam como devem ser divididos para processamento:
+
+- **Artigos**: Chunks maiores (1000 tokens) com sobreposição significativa (150 tokens), preservando o fluxo narrativo e argumentativo
+- **Código-fonte**: Chunks menores (500 tokens) com sobreposição reduzida (50 tokens), respeitando a estrutura modular do código
+- **Documentos legais**: Chunks extensos (1500 tokens) com alta sobreposição (200 tokens), mantendo intactas cláusulas e referências cruzadas
+- **Conteúdo Q&A**: Chunks de tamanho médio (800 tokens) com sobreposição moderada (100 tokens), preservando pares de perguntas e respostas
+
+Esta estratégia contextual melhora significativamente a qualidade da recuperação, garantindo que cada tipo de documento seja processado de forma otimizada para seu formato e densidade informacional específicos. A função `adaptive-chunking-strategy` demonstra uma implementação elegante deste conceito, utilizando pattern matching para selecionar parâmetros otimizados para cada categoria de documento. 
+
+Documentos legais, por exemplo, recebem chunks maiores (1500 tokens) devido à sua natureza densa e interconectada, enquanto documentos de perguntas e respostas utilizam uma configuração intermediária (800 tokens). Esta estratégia de chunking contextual melhora significativamente a qualidade da recuperação, garantindo que o contexto semântico seja preservado de forma apropriada para cada tipo específico de conteúdo.
+
+
 - **Cache Multinível**: Implementação de cache para embeddings e respostas, reduzindo latência e custos:
   ```clojure
   ;; Cache para embeddings
@@ -1427,6 +1450,10 @@ O DocAI se destaca por implementar várias técnicas avançadas de RAG em um sis
   ;; Cache para resultados de agentes
   (def agent-cache (atom {}))
   ```
+
+O sistema implementa uma estratégia de [cache multinível](https://en.wikipedia.org/wiki/Cache_hierarchy) para otimizar o desempenho e reduzir custos operacionais. Utilizando estruturas de dados atômicas [(`atom`)](https://en.wikipedia.org/wiki/Atom_(data_structure)), o [DocAI](https://github.com/scovl/docai) mantém três camadas distintas de cache: para embeddings, respostas completas e resultados de agentes. Esta abordagem permite reutilizar cálculos computacionalmente intensivos como a geração de embeddings, evitando processamento redundante de textos idênticos. 
+
+O cache de respostas armazena resultados finais para consultas frequentes, enquanto o cache de agentes preserva resultados intermediários de subtarefas específicas. Esta implementação reduz significativamente a latência do sistema, especialmente para consultas recorrentes, e diminui custos associados a chamadas de API para modelos externos. A estrutura atômica escolhida garante [thread-safety](https://en.wikipedia.org/wiki/Thread_safety) em ambientes concorrentes, permitindo atualizações seguras do cache mesmo com múltiplas consultas simultâneas.
 
 - **Verificação de Respostas**: Sistema que avalia e melhora automaticamente as respostas:
   ```clojure
@@ -1454,10 +1481,19 @@ O DocAI se destaca por implementar várias técnicas avançadas de RAG em um sis
           improved-version))))
   ```
 
+O código acima implementa um sistema de verificação e melhoria automática de respostas, um componente crítico em sistemas [RAG](https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation) avançados. A função `verify-response` atua como um "agente crítico" que avalia a qualidade das respostas geradas com base em três critérios fundamentais: fidelidade ao contexto fornecido, completude em relação à pergunta original e precisão factual. Este mecanismo de auto-verificação representa uma camada adicional de controle de qualidade que ajuda a mitigar alucinações e imprecisões comuns em sistemas baseados em LLMs.
+
+A implementação utiliza uma abordagem elegante de [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering), onde o sistema solicita explicitamente uma avaliação crítica da resposta original. O prompt estruturado inclui a consulta do usuário, um resumo do contexto (limitado a 300 caracteres para evitar sobrecarga) e a resposta gerada, orientando o modelo a realizar uma análise meticulosa. A função então analisa o resultado da verificação, mantendo a resposta original quando considerada adequada ou extraindo uma versão aprimorada quando necessário, utilizando expressões regulares para limpar metadados desnecessários da resposta melhorada.
+
+Este mecanismo de verificação representa uma implementação prática do conceito de [Constitutional AI](https://en.wikipedia.org/wiki/Constitutional_AI) ou "AI com princípios orientadores", onde um sistema é projetado para avaliar criticamente suas próprias saídas. Ao incorporar esta camada de verificação no pipeline [RAG](https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation), o [DocAI](https://github.com/scovl/docai) consegue oferecer respostas mais confiáveis e precisas, reduzindo significativamente o risco de fornecer informações incorretas ou incompletas. Esta abordagem reflexiva é particularmente valiosa em domínios onde a precisão é crucial, como documentação técnica, informações médicas ou análises legais.
+
+
 - **Métricas Detalhadas**: Sistema de monitoramento que registra todos os aspectos das interações:
   ```clojure
   (metrics/log-rag-interaction query [] response latency)
   ```
+
+O código acima implementa um sistema de monitoramento que registra todos os aspectos das interações, incluindo a consulta do usuário, o tempo de resposta, e a resposta gerada. Este sistema permite acompanhar o desempenho do sistema ao longo do tempo e identificar possíveis problemas ou pontos de melhoria. Isso é essencial para manter o sistema funcionando de forma eficiente e para continuar evoluindo para novas funcionalidades.
 
 Estas implementações demonstram como as técnicas avançadas de RAG discutidas neste artigo podem ser integradas em um sistema coeso, resultando em um assistente de documentação mais inteligente e eficiente.
 
