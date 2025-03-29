@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Técnicas Avançadas para RAG em Produção | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Explorando técnicas para otimizar sistemas RAG para uso em produção">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Técnicas Avançadas para RAG em Produção</h1>
+        <div class="post-meta">
+            
+            <time datetime="2025-03-28T12:00:00Z">
+                Fri, Mar 28, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-tags">
+                
+                <a href="/tags/rag/" class="tag">RAG</a>
+                
+                <a href="/tags/llm/" class="tag">LLM</a>
+                
+                <a href="/tags/ai/" class="tag">AI</a>
+                
+                <a href="/tags/optimiza%C3%A7%C3%A3o/" class="tag">Optimização</a>
+                
+                <a href="/tags/produ%C3%A7%C3%A3o/" class="tag">Produção</a>
+                
+                <a href="/tags/postgresql/" class="tag">PostgreSQL</a>
+                
+                <a href="/tags/ollama/" class="tag">Ollama</a>
+                
+            </div>
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 46 min
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Explorando técnicas para otimizar sistemas RAG para uso em produção
+            </div>
+            
+        </div>
+    </header>
+    
+    <div class="post-content content-wrapper">
+        <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/28/rag02/#introdução">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#técnicas-avançadas-de-otimização">Técnicas Avançadas de Otimização</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#estratégias-de-chunking-dinâmico">Estratégias de Chunking Dinâmico</a></li>
+<li><a href="/2025/03/28/rag02/#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avançada">Arquitetura de Agentes Avançada</a></li>
+<li><a href="/2025/03/28/rag02/#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#pipelines-multimodais">Pipelines Multimodais</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
+<li><a href="/2025/03/28/rag02/#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
+<li><a href="/2025/03/28/rag02/#desafios-de-implementação-multimodal">Desafios de Implementação Multimodal</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#estratégias-de-cache">Estratégias de Cache</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#estratégias-avançadas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-métricas-llmops-na-prática">Monitoramento e Métricas: LLMOps na Prática</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#métricas-de-qualidade-específicas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
+<li><a href="/2025/03/28/rag02/#automação-da-avaliação-com-llms-como-juízes">Automação da Avaliação com LLMs como Juízes</a></li>
+<li><a href="/2025/03/28/rag02/#configuração-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
+<li><a href="/2025/03/28/rag02/#integração-com-sistemas-de-feedback-do-usuário">Integração com Sistemas de Feedback do Usuário</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#implementando-no-docai">Implementando no DocAI</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#diferenciais-do-docai">Diferenciais do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#próximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#integração-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#conclusão">Conclusão</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#referências">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá pessoal! 👋</p>
+<p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
+<p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
+<h2 id="da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</h2>
+<blockquote>
+<p>&ldquo;No papel, implementar um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> parece simples—conectar um banco de dados vetorial, processar documentos, incorporar os dados, incorporar a consulta, consultar o <a href="https://en.wikipedia.org/wiki/Vector_database">banco de dados vetorial</a> e gerar a resposta com o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>. Mas na prática, transformar um protótipo em uma aplicação de alto desempenho é um desafio completamente diferente.&rdquo;</p>
+</blockquote>
+<p>Ao migrarmos do <a href="/2025/03/23/rag/">TF-IDF em memória</a> para <a href="/2025/03/25/semantic-postgresql/">PostgreSQL/pgvector/pgai</a>, demos um grande salto de qualidade. Porém, à medida que o volume de dados cresce e os casos de uso se tornam mais complexos, novos desafios surgem:</p>
+<ul>
+<li><strong>Escalabilidade</strong>: Como lidar com milhões de documentos sem degradar o desempenho?</li>
+<li><strong>Precisão</strong>: Como garantir que estamos recuperando o contexto mais relevante para cada consulta?</li>
+<li><strong>Eficiência</strong>: Como reduzir latência e custos de processamento?</li>
+<li><strong>Confiabilidade</strong>: Como evitar alucinações e respostas incorretas?</li>
+<li><strong>Manutenção</strong>: Como monitorar e melhorar continuamente o sistema?</li>
+</ul>
+<p>Antes de mergulharmos nas técnicas avançadas, precisamos entender que o impacto mais significativo no desempenho de um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> não vem apenas de usar o modelo de linguagem mais recente. Os verdadeiros ganhos vêm de três fatores fundamentais:</p>
+<ul>
+<li><strong>Qualidade dos dados</strong>: Dados bem estruturados e relevantes são a base de todo sistema RAG eficaz.</li>
+<li><strong>Preparação adequada</strong>: Como os dados são processados, limpos e organizados.</li>
+<li><strong>Processamento eficiente</strong>: Como os dados são recuperados e utilizados durante a inferência.</li>
+</ul>
+<p>Mesmo com o avanço dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, esperar que modelos maiores corrijam magicamente problemas em dados defeituosos não é uma estratégia viável. O futuro da <a href="https://en.wikipedia.org/wiki/Artificial_intelligence">IA</a> não está em um único modelo que sabe tudo, mas em sistemas que combinam <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, modelos multimodais e ferramentas de suporte que trabalham juntos de forma integrada. Dito isto, para construir um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> robusto, precisamos responder a várias perguntas importantes como:</p>
+<ul>
+<li>Como construir <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">mecanismos de recuperação robustos</a>?</li>
+<li>Qual o papel da <a href="https://en.wikipedia.org/wiki/Embedding_model">qualidade dos embeddings</a> no desempenho da recuperação?</li>
+<li>Como adaptar estratégias de <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">chunking</a> dinamicamente?</li>
+<li>Como o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> pode interpretar dados de forma eficaz?</li>
+<li>Uma cadeia de <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a> ajudaria a refinar as respostas? Vale o custo?</li>
+<li>Como prevenir alucinações mantendo a diversidade das respostas?</li>
+<li>Como integrar entradas <a href="https://en.wikipedia.org/wiki/Multimodal_learning">multimodais</a> (texto, imagens, tabelas) em um pipeline <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>?</li>
+<li>Quais estratégias de <a href="https://en.wikipedia.org/wiki/Cache_(computing)">cache</a> reduzem chamadas de API redundantes e latência?</li>
+<li>Como automatizar a <a href="https://en.wikipedia.org/wiki/Evaluation_of_retrieval_systems">avaliação da recuperação</a> para melhoria contínua?</li>
+</ul>
+<h2 id="armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</h2>
+<p>Baseado na nossa experiência com o <a href="https://github.com/scovl/docai">DocAI</a> e nos desafios relatados pela comunidade, identificamos quatro armadilhas principais que podem comprometer sistemas RAG:</p>
+<h3 id="armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</h3>
+<p>Uma busca por vizinhos mais próximos sempre retornará algum resultado, mas como saber se é realmente útil? Alguns documentos podem parecer relevantes com base na similaridade vetorial, mas não fornecem o contexto adequado para responder à pergunta do usuário.</p>
+<blockquote>
+<p><strong>Solução</strong>: Implementar verificação de relevância pós-recuperação usando <a href="https://huggingface.co/cross-encoder">cross-encoders</a> ou filtros baseados em regras. No <a href="https://www.postgresql.org/">PostgreSQL</a>, podemos fazer isso com:</p>
+</blockquote>
+
+
+  <pre><code class="language-sql">-- Primeiro recuperamos candidatos usando busca vetorial
+WITH candidatos AS (
+  SELECT id, titulo, conteudo, embedding &lt;=&gt; query_embedding AS distancia
+  FROM documentos_embeddings
+  ORDER BY distancia
+  LIMIT 20
+),
+-- Depois aplicamos filtro secundário para verificar relevância real
+filtrados AS (
+  SELECT id, titulo, conteudo, distancia
+  FROM candidatos
+  WHERE 
+    -- Filtro baseado em regras (exemplo: deve conter palavras-chave)
+    conteudo ILIKE &#39;%&#39; || &#39;palavra_chave&#39; || &#39;%&#39;
+    -- Ou usar um modelo secundário para avaliar relevância
+    -- ai.evaluate_relevance(conteudo, &#39;consulta_original&#39;) &gt; 0.7  -- ⚠️ Nota: Função experimental no pgai
+)
+SELECT * FROM filtrados ORDER BY distancia LIMIT 5;</code></pre>
+ <h3 id="armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</h3>
+<p>Dividir documentos em chunks menores é uma prática padrão, mas qual é o tamanho ideal?</p>
+<ul>
+<li>Chunks muito pequenos perdem contexto crucial</li>
+<li>Chunks muito grandes diluem a recuperação com detalhes irrelevantes</li>
+</ul>
+<blockquote>
+<p><strong>Solução</strong>: Adaptar a estratégia de chunking ao tipo de conteúdo. No nosso <a href="/2025/03/25/semantic-postgresql/">PostgreSQL RAG</a>, usamos chunking recursivo:</p>
+</blockquote>
+
+
+  <pre><code class="language-sql">-- Podemos ajustar os parâmetros de chunking para diferentes tipos de documentos
+SELECT ai.create_vectorizer(
+   &#39;documentos_tecnicos&#39;::regclass,
+   destination =&gt; &#39;embeddings_tecnicos&#39;,
+   embedding =&gt; ai.embedding_ollama(&#39;nomic-embed-text&#39;, 768),
+   -- Chunks maiores para documentos técnicos que precisam de mais contexto
+   chunking =&gt; ai.chunking_recursive_character_text_splitter(&#39;conteudo&#39;, 
+                                                           chunk_size =&gt; 1500, 
+                                                           chunk_overlap =&gt; 200)
+);</code></pre>
+ <h3 id="armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</h3>
+<p>Como garantir que seu sistema permaneça eficaz ao longo do tempo? <a href="https://www.databricks.com/br/glossary/llmops">LLMOps</a> não é apenas sobre implantação, mas sobre o monitoramento contínuo da qualidade.</p>
+<blockquote>
+<p><strong>Solução</strong>: Implementar métricas de avaliação como:</p>
+<ul>
+<li>Comparações com respostas conhecidas (ground truth)</li>
+<li>Detecção de drift em embeddings</li>
+<li>Monitoramento de latência e taxa de falhas</li>
+</ul>
+</blockquote>
+<h3 id="armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</h3>
+<p>Muitas consultas do mundo real são complexas demais para uma única etapa de recuperação. Se uma pergunta requer sintetizar várias informações, um pipeline RAG padrão pode falhar.</p>
+<p><strong>Solução</strong>: Implementar fluxos de trabalho mais sofisticados:</p>
+<ul>
+<li>Workflows com agentes</li>
+<li>Recuperação multi-hop</li>
+<li>Geração dinâmica de prompts</li>
+</ul>
+<h2 id="técnicas-avançadas-de-otimização">Técnicas Avançadas de Otimização</h2>
+<p>Agora que entendemos os fundamentos e as armadilhas comuns, vamos explorar técnicas específicas para melhorar cada componente do nosso sistema RAG.</p>
+<h3 id="re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</h3>
+
+
+  
+    
+  
+  <div class="mermaid">flowchart LR
+    subgraph &#34;Primeira Fase&#34;
+        Q[Consulta] --&gt; EMB[Embedding da Consulta]
+        EMB --&gt; SIM[Busca por Similaridade Vetorial]
+        DB[(Base Vetorial)] --&gt; SIM
+        SIM --&gt; IC[Chunks Iniciais]
+    end
+    
+    subgraph &#34;Re-ranqueamento&#34;
+        IC --&gt; PAIR[Pares Consulta-Chunk]
+        Q2[Consulta Original] --&gt; PAIR
+        PAIR --&gt; CENC[Cross-Encoder]
+        CENC --&gt; SCORE[Scores de Relevância]
+        SCORE --&gt; SORT[Ordenação por Relevância]
+        SORT --&gt; RC[Chunks Re-ranqueados]
+    end
+    
+    IC -.-&gt; |Top-K Chunks| PAIR
+    RC --&gt; GEN[Geração de Resposta]
+    
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+    style Q2 fill:#f9f,stroke:#333,stroke-width:2px
+    style CENC fill:#ffc,stroke:#333,stroke-width:2px
+    style RC fill:#9f9,stroke:#333,stroke-width:2px
+    style GEN fill:#99f,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima ilustra o processo de re-ranqueamento em um sistema RAG, dividido em duas fases principais:</p>
+<ol>
+<li>
+<p>Na &ldquo;Primeira Fase&rdquo;, o fluxo começa com a consulta do usuário que é transformada em um embedding vetorial. Este embedding é então utilizado para realizar uma busca por <a href="https://en.wikipedia.org/wiki/Vector_database">similaridade vetorial</a> na base de dados vetoriais, resultando em um conjunto inicial de chunks relevantes.</p>
+</li>
+<li>
+<p>A segunda fase, &ldquo;Re-ranqueamento&rdquo;, representa o refinamento desses resultados iniciais. Os chunks recuperados são combinados com a consulta original para formar pares consulta-chunk. Estes pares são processados por um <a href="https://en.wikipedia.org/wiki/Cross-encoder">cross-encoder</a>, um modelo especializado que avalia a relevância contextual entre a consulta e cada chunk. O cross-encoder gera scores de relevância que permitem uma ordenação mais precisa, resultando em chunks re-ranqueados que são finalmente utilizados para a geração da resposta final.</p>
+</li>
+</ol>
+<p>Esta abordagem em duas etapas combina a eficiência computacional dos embeddings (que permitem busca rápida em grandes bases de dados) com a precisão dos cross-encoders (que capturam melhor as relações semânticas entre consulta e documento), superando as limitações de cada método quando usado isoladamente. Abordagem conceitual de como implementar re-ranqueamento com cross-encoder em Clojure:</p>
+
+
+  <pre><code class="language-clojure">;; Exemplo conceitual de como implementar re-ranqueamento com cross-encoder
+(defn rerank-results
+  &#34;Re-classifica resultados usando cross-encoder para melhorar a precisão&#34;
+  [query initial-results n]
+  (let [;; Em um cenário real, usaríamos uma biblioteca Clojure para acessar modelos
+        ;; Como o clj-huggingface ou wrapper Java para transformers
+        cross-encoder (load-cross-encoder &#34;cross-encoder/ms-marco-MiniLM-L-6-v2&#34;)
+        
+        ;; Preparar pares de consulta-documento para avaliação
+        pairs (map (fn [doc] [query (:conteudo doc)]) initial-results)
+        
+        ;; Obter scores de relevância do cross-encoder
+        scores (predict-with-cross-encoder cross-encoder pairs)
+        
+        ;; Associar scores aos resultados originais
+        results-with-scores (map-indexed 
+                              (fn [idx doc] 
+                                (assoc doc :relevance_score (nth scores idx)))
+                              initial-results)
+        
+        ;; Ordenar por score de relevância (do maior para o menor)
+        reranked-results (sort-by :relevance_score &gt; results-with-scores)]
+    
+    ;; Retornar apenas os top-n resultados
+    (take n reranked-results)))
+
+;; Funções auxiliares (implementações dependeriam da biblioteca específica usada)
+(defn load-cross-encoder [model-name]
+  ;; Carregar modelo cross-encoder usando Java interop ou biblioteca específica
+  (println &#34;Carregando modelo&#34; model-name)
+  {:model-name model-name})
+
+(defn predict-with-cross-encoder [model pairs]
+  ;; Executar predição do cross-encoder nos pares consulta-documento
+  ;; Retorna um vetor de scores de relevância
+  (println &#34;Avaliando&#34; (count pairs) &#34;pares com&#34; (:model-name model))
+  (vec (repeatedly (count pairs) #(rand))))</code></pre>
+ <p>No contexto do <a href="/2025/03/25/semantic-postgresql/">DocAI com PostgreSQL</a>, podemos implementar isso como:</p>
+
+
+  <pre><code class="language-clojure">;; Exemplo de implementação de re-ranqueamento em Clojure para DocAI
+(defn rerank-results
+  &#34;Re-classifica resultados usando cross-encoder&#34;
+  [query initial-results]
+  (let [conn (jdbc/get-connection db-spec)
+        ;; Construir array de IDs para consulta SQL
+        ids (str/join &#34;,&#34; (map :id initial-results))
+        ;; Consulta SQL que utiliza função do pgai para re-classificação
+        sql (str &#34;SELECT d.id, d.titulo, d.conteudo, 
+                 ai.relevance_score(&#39;&#34; query &#34;&#39;, d.conteudo) AS relevance  -- ⚠️ Nota: Função experimental no pgai
+                 FROM documentos d 
+                 WHERE d.id IN (&#34; ids &#34;) 
+                 ORDER BY relevance DESC&#34;)]
+    (jdbc/execute! conn [sql])))</code></pre>
+ <p>O primeiro código demonstra uma implementação conceitual de re-ranqueamento usando um cross-encoder em Clojure. Ele recebe uma consulta e resultados iniciais, utiliza um modelo cross-encoder para avaliar a relevância de cada documento em relação à consulta, e então reordena os resultados com base nos scores obtidos. As funções auxiliares simulam a integração com modelos de machine learning, embora em um cenário real seria necessário utilizar bibliotecas específicas para acessar modelos de linguagem.</p>
+<p>O segundo exemplo mostra uma implementação mais prática no contexto de um sistema <a href="/2025/03/25/semantic-postgresql/">DocAI integrado com PostgreSQL</a>. Neste caso, o re-ranqueamento é delegado a uma função SQL (<code>ai.relevance_score</code>) que avalia a relevância entre a consulta e o conteúdo do documento diretamente no banco de dados. Esta abordagem aproveita as capacidades de IA incorporadas no PostgreSQL através de extensões como pgai, simplificando a arquitetura ao mover o processamento de relevância para o banco de dados.</p>
+<p>Ambas as implementações ilustram diferentes estratégias para melhorar a precisão dos resultados em sistemas RAG. A primeira abordagem oferece mais controle e flexibilidade ao processar o re-ranqueamento na aplicação, enquanto a segunda aproveita as capacidades do banco de dados para simplificar a arquitetura e potencialmente melhorar o desempenho ao reduzir a transferência de dados entre a aplicação e o banco de dados. A escolha entre estas abordagens dependerá dos requisitos específicos do sistema, incluindo considerações de desempenho, escalabilidade e facilidade de manutenção.</p>
+<hr>
+<h3 id="estratégias-de-chunking-dinâmico">Estratégias de Chunking Dinâmico</h3>
+<p>Em vez de usar um tamanho fixo para todos os chunks, podemos implementar estratégias dinâmicas que se adaptam ao conteúdo:</p>
+<ul>
+<li><strong>Chunking Semântico</strong>: Dividir o texto em unidades semanticamente coerentes</li>
+<li><strong>Chunking Hierárquico</strong>: Manter múltiplas granularidades do mesmo conteúdo</li>
+<li><strong>Chunking Adaptativo</strong>: Ajustar tamanho com base em características do documento</li>
+</ul>
+
+
+  <pre><code class="language-clojure">;; Função conceitual para chunking hierárquico
+(defn create-hierarchical-chunks
+  &#34;Cria chunks em múltiplos níveis de granularidade&#34;
+  [document]
+  (let [;; Divisão em parágrafos
+        paragraphs (split-paragraphs document)
+        ;; Divisão em seções
+        sections (split-sections document)
+        ;; Documento completo
+        full-doc [{:content document :level &#34;document&#34;}]
+        ;; Combinar todos os níveis
+        all-chunks (concat full-doc
+                          (map #(hash-map :content % :level &#34;section&#34;) sections)
+                          (map #(hash-map :content % :level &#34;paragraph&#34;) paragraphs))]
+    ;; Inserir no PostgreSQL com metadados sobre o nível
+    (doseq [chunk all-chunks]
+      (jdbc/execute! db-spec
+                    [&#34;INSERT INTO documentos_hierarquicos 
+                     (conteudo, nivel_granularidade) VALUES (?, ?)&#34;
+                     (:content chunk) (:level chunk)]))))</code></pre>
+ <p>O código acima implementa uma estratégia de <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">chunking hierárquico</a> em <a href="https://clojure.org/">Clojure</a>, uma técnica avançada para sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> que mantém múltiplas representações do mesmo conteúdo em diferentes níveis de granularidade. A função <code>create-hierarchical-chunks</code> divide um documento em três níveis: documento completo, seções e parágrafos, preservando assim tanto o contexto amplo quanto os detalhes específicos.</p>
+<p>Esta abordagem permite que o sistema de recuperação escolha a granularidade mais apropriada dependendo da consulta, oferecendo flexibilidade que um chunking de tamanho fixo não consegue proporcionar.</p>
+<p>A implementação utiliza funções auxiliares como <code>split-paragraphs</code> e <code>split-sections</code> (não mostradas no código) para segmentar o documento de forma inteligente, respeitando a estrutura semântica do texto. Cada <a href="https://en.wikipedia.org/wiki/Chunk_(data_storage)">chunk</a> é armazenado no <a href="https://www.postgresql.org/">PostgreSQL</a> junto com metadados sobre seu nível de granularidade, permitindo consultas que podem priorizar diferentes níveis dependendo do tipo de pergunta.</p>
+<p>Esta técnica é particularmente valiosa para documentos longos e estruturados, como artigos técnicos ou documentação, onde tanto o contexto geral quanto detalhes específicos podem ser relevantes dependendo da natureza da consulta do usuário.</p>
+<hr>
+<h3 id="workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</h3>
+<p>Para consultas que exigem raciocínio em várias etapas, podemos implementar agentes que decompõem o problema:</p>
+
+
+  
+  <div class="mermaid">flowchart TB
+    Q[Consulta Original] --&gt; AN[Analisador de Consulta]
+    AN --&gt; SQ1[Sub-questão 1]
+    AN --&gt; SQ2[Sub-questão 2]
+    AN --&gt; SQ3[Sub-questão 3]
+    
+    SQ1 --&gt; R1[RAG Específico 1]
+    SQ2 --&gt; R2[RAG Específico 2]
+    SQ3 --&gt; R3[RAG Específico 3]
+    
+    R1 --&gt; A1[Resposta Parcial 1]
+    R2 --&gt; A2[Resposta Parcial 2]
+    R3 --&gt; A3[Resposta Parcial 3]
+    
+    A1 --&gt; S[Sintetizador]
+    A2 --&gt; S
+    A3 --&gt; S
+    
+    S --&gt; FR[Resposta Final]
+    
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+    style S fill:#bbf,stroke:#333,stroke-width:2px
+    style FR fill:#bfb,stroke:#333,stroke-width:2px</div>
+ <p>Este diagrama ilustra uma arquitetura de <a href="https://en.wikipedia.org/wiki/Workflow">workflow</a> baseada em agentes para processamento de consultas complexas em sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>. O fluxo começa com uma consulta do usuário que é analisada por um componente <a href="https://en.wikipedia.org/wiki/Query_parser">Analisador</a>, responsável por decompor a pergunta original em sub-questões mais específicas e gerenciáveis. Cada sub-questão é então direcionada para um pipeline <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> especializado, permitindo recuperações contextuais mais precisas.</p>
+<p>A abordagem <a href="https://en.wikipedia.org/wiki/Divide_and_conquer_algorithm">divide-e-conquista</a> demonstrada no diagrama permite que o sistema lide com perguntas que exigiriam conhecimento de diferentes domínios ou documentos. Cada <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> especializado pode utilizar diferentes bases de conhecimento, estratégias de recuperação ou até mesmo modelos de linguagem otimizados para domínios específicos, resultando em respostas parciais de alta qualidade para cada aspecto da consulta.</p>
+<p>O componente Sintetizador atua como o elemento integrador final, combinando as respostas parciais em uma resposta coerente e abrangente. Esta arquitetura modular não apenas melhora a precisão das respostas para consultas complexas, mas também oferece maior transparência no processo de raciocínio, permitindo identificar quais fontes contribuíram para cada parte da resposta final. O resultado é um sistema RAG mais robusto, capaz de lidar com consultas que exigem raciocínio em múltiplas etapas e integração de informações de diversas fontes.</p>
+
+
+  <pre><code class="language-clojure">(defn agent-rag-workflow
+  &#34;Implementa um workflow de agente para consultas complexas&#34;
+  [query]
+  (let [;; Passo 1: Analisar a consulta e identificar sub-questões
+        sub-questions (analyze-query query)
+        ;; Passo 2: Buscar informações para cada sub-questão
+        sub-answers (map #(retrieve-and-generate %) sub-questions)
+        ;; Passo 3: Sintetizar respostas parciais em uma resposta final
+        final-context (str/join &#34;\n\n&#34; sub-answers)
+        final-prompt (str &#34;Com base nas seguintes informações:\n\n&#34; 
+                         final-context 
+                         &#34;\n\nResponda à pergunta original: &#34; query)
+        final-answer (generate-response final-prompt)]
+    final-answer))
+
+(defn analyze-query
+  &#34;Divide uma consulta complexa em sub-questões&#34;
+  [query]
+  (let [prompt (str &#34;Divida a seguinte pergunta em sub-questões independentes:\n\n&#34; query)
+        response (call-ollama-api prompt)
+        ;; Parsear a resposta para extrair as sub-questões
+        sub-questions (parse-sub-questions response)]
+    sub-questions))</code></pre>
+ <p>Uma implementação mais robusta de workflows com agentes envolve várias etapas adicionais:</p>
+<hr>
+<h4 id="arquitetura-de-agentes-avançada">Arquitetura de Agentes Avançada</h4>
+<p>Os sistemas de agentes RAG mais sofisticados aplicam o conceito de <strong>ReAct</strong> (Raciocínio + Ação) para processar consultas complexas:</p>
+
+
+  
+  <div class="mermaid">flowchart TB
+    subgraph &#34;Arquitetura ReAct para RAG&#34;
+    Q[Consulta do Usuário] --&gt; PL[Planejador]
+    PL --&gt; PLAN[Plano de Execução]
+    PLAN --&gt; RT[Roteador]
+    
+    RT --&gt;|Sub-tarefa 1| AS[Agente de Pesquisa]
+    RT --&gt;|Sub-tarefa 2| AR[Agente de Raciocínio]
+    RT --&gt;|Sub-tarefa 3| AC[Agente de Cálculo]
+    
+    AS --&gt; OR[Orquestrador]
+    AR --&gt; OR
+    AC --&gt; OR
+    
+    OR --&gt; SI[Sintetizador]
+    SI --&gt; RES[Resposta Final]
+    end
+    
+    subgraph &#34;Ferramentas e Recursos&#34;
+    AS -.-&gt; VDB[(Base Vetorial)]
+    AR -.-&gt; LLM[Modelo de Linguagem]
+    AC -.-&gt; CALC[Ferramentas de Cálculo]
+    end
+    
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+    style PLAN fill:#ffc,stroke:#333,stroke-width:2px
+    style RT fill:#9cf,stroke:#333,stroke-width:2px
+    style AS fill:#bbf,stroke:#333,stroke-width:2px
+    style AR fill:#bbf,stroke:#333,stroke-width:2px
+    style AC fill:#bbf,stroke:#333,stroke-width:2px
+    style SI fill:#bfb,stroke:#333,stroke-width:2px
+    style RES fill:#f99,stroke:#333,stroke-width:2px</div>
+ <p>Este diagrama ilustra uma arquitetura avançada ReAct para sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>, mostrando como uma consulta complexa é processada através de múltiplos componentes especializados. O fluxo começa com a consulta do usuário sendo analisada por um <a href="https://en.wikipedia.org/wiki/Workflow">Planejador</a>, que cria um plano estruturado de execução.</p>
+<p>Este plano é então gerenciado por um <a href="https://en.wikipedia.org/wiki/Routing">Roteador</a> que distribui sub-tarefas para agentes especializados (Pesquisa, Raciocínio e Cálculo), cada um interagindo com recursos específicos como bases de dados vetoriais, LLMs ou ferramentas de cálculo.</p>
+<p>A força desta arquitetura está na sua capacidade de decompor problemas complexos em tarefas gerenciáveis e especializadas, permitindo que cada componente se concentre no que faz melhor. O <a href="https://en.wikipedia.org/wiki/Orchestration">Orquestrador</a> coordena os resultados dos diferentes agentes, enquanto o <a href="https://en.wikipedia.org/wiki/Synthesis">Sintetizador</a> integra todas as informações em uma resposta final coerente. Esta abordagem modular não apenas melhora a precisão das respostas, mas também aumenta a transparência do processo de raciocínio e facilita a depuração e otimização de componentes individuais do sistema RAG.</p>
+<ul>
+<li><strong>Planejador</strong>: Analisa a consulta e cria um plano de execução</li>
+<li><strong>Roteador</strong>: Direciona sub-consultas para ferramentas especializadas</li>
+<li><strong>Agentes Especializados</strong>: Executam tarefas específicas
+<ul>
+<li>Agente de Pesquisa: Recupera informações da base de conhecimento</li>
+<li>Agente de Raciocínio: Realiza inferências lógicas sobre os dados recuperados</li>
+<li>Agente de Cálculo: Processa cálculos e análises numéricas</li>
+</ul>
+</li>
+<li><strong>Orquestrador</strong>: Gerencia o fluxo de informações entre agentes</li>
+<li><strong>Sintetizador</strong>: Combina as respostas em um resultado coerente</li>
+</ul>
+<p>Vamos analisar o código abaixo para entender como funciona um sistema ReAct para RAG:</p>
+
+
+  <pre><code class="language-clojure">;; Exemplo conceitual de um sistema ReAct para RAG
+(defn react-agent
+  &#34;Implementa um agente ReAct para consultas complexas&#34;
+  [query]
+  (let [;; Determinar se a consulta precisa de um plano
+        plan-needed? (complex-query? query)
+        ;; Se necessário, criar um plano
+        execution-plan (when plan-needed?
+                         (create-execution-plan query))
+        ;; Executar o plano ou a consulta direta
+        result (if plan-needed?
+                 (execute-plan execution-plan)
+                 (simple-rag-query query))]
+    result))
+
+(defn execute-plan
+  &#34;Executa um plano com agentes especializados&#34;
+  [plan]
+  (loop [steps (:steps plan)
+         context {}
+         responses []]
+    (if (empty? steps)
+      ;; Sintetizar respostas em um resultado final
+      (synthesize-responses responses (:query plan))
+      (let [current-step (first steps)
+            agent-type (:agent current-step)
+            ;; Determinar qual agente especializado usar
+            agent-fn (case agent-type
+                       :search search-agent
+                       :reasoning reasoning-agent
+                       :calculation calculation-agent
+                       :default default-agent)
+            ;; Executar o agente com o contexto atual
+            step-result (agent-fn (:input current-step) context)
+            ;; Atualizar o contexto com o resultado
+            updated-context (assoc context (:id current-step) step-result)]
+        (recur (rest steps) 
+               updated-context 
+               (conj responses step-result))))))</code></pre>
+ <p>O código implementa um agente ReAct (Reasoning + Acting) para consultas complexas em um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>. A função principal <code>react-agent</code> avalia se a consulta requer um plano de execução complexo ou pode ser processada diretamente. Para consultas complexas, cria-se um plano estruturado que é executado pela função <code>execute-plan</code>, que utiliza um loop para processar cada etapa do plano sequencialmente.</p>
+<p>O sistema emprega agentes especializados (busca, raciocínio, cálculo) selecionados dinamicamente com base no tipo de tarefa. Cada agente contribui com resultados parciais que são acumulados em um contexto compartilhado, permitindo que etapas posteriores utilizem informações de etapas anteriores. Finalmente, todas as respostas são sintetizadas em um resultado coerente.</p>
+<p>Esta arquitetura modular permite decompor problemas complexos em tarefas gerenciáveis, melhorando a precisão e facilitando a manutenção do sistema.Para implementações detalhadas de sistemas de agentes RAG, consulte:</p>
+<ul>
+<li><a href="https://docs.llamaindex.ai/en/stable/examples/agent/react_agent.html">LlamaIndex - Implementando ReAct Agents</a></li>
+<li><a href="https://python.langchain.com/docs/modules/agents/agent_types/multi_agent">LangChain - Multi-Agent Systems</a></li>
+<li><a href="https://huggingface.co/blog/autonomous-agents">HuggingFace - Agentes Autônomos</a></li>
+</ul>
+<h4 id="casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</h4>
+<p>Os workflows com agentes são particularmente úteis em cenários como:</p>
+<ul>
+<li><strong>Pesquisa Científica</strong>: Onde diversas fontes precisam ser consultadas e relacionadas</li>
+<li><strong>Diagnóstico de Problemas</strong>: Quando é necessário seguir uma árvore de decisão</li>
+<li><strong>Análise de Documentos Complexos</strong>: Como contratos ou documentação técnica</li>
+<li><strong>Planejamento Estratégico</strong>: Onde múltiplas dimensões precisam ser consideradas</li>
+</ul>
+<hr>
+<h3 id="pipelines-multimodais">Pipelines Multimodais</h3>
+<p>Integrar entradas multimodais (texto, imagens, tabelas) em um pipeline RAG pode enriquecer significativamente o contexto:</p>
+
+
+  
+  <div class="mermaid">flowchart LR
+    subgraph &#34;Documento Misto&#34;
+    TXT[Texto]
+    IMG[Imagens]
+    TBL[Tabelas]
+    end
+    
+    subgraph &#34;Processadores Específicos&#34;
+    TXT --&gt; TXT_P[Processador de Texto]
+    IMG --&gt; IMG_P[Processador de Imagem]
+    TBL --&gt; TBL_P[Processador de Tabela]
+    end
+    
+    subgraph &#34;Embeddings&#34;
+    TXT_P --&gt; TXT_E[Embedding de Texto]
+    IMG_P --&gt; IMG_E[Embedding de Imagem]
+    TBL_P --&gt; TBL_E[Embedding de Tabela]
+    end
+    
+    TXT_E --&gt; FUS[Fusão de Representações]
+    IMG_E --&gt; FUS
+    TBL_E --&gt; FUS
+    
+    FUS --&gt; DB[(Base de Dados Multimodal)]
+    Q[Consulta do Usuário] --&gt; Q_PROC[Processador de Consulta]
+    Q_PROC --&gt; RAG[Motor RAG]
+    DB --&gt; RAG
+    RAG --&gt; RES[Resposta Multimodal]
+    
+    style TXT fill:#f9f,stroke:#333,stroke-width:2px
+    style IMG fill:#9cf,stroke:#333,stroke-width:2px
+    style TBL fill:#fcf,stroke:#333,stroke-width:2px
+    style FUS fill:#ff9,stroke:#333,stroke-width:2px
+    style DB fill:#9f9,stroke:#333,stroke-width:2px
+    style RES fill:#f99,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima ilustra uma arquitetura de pipeline multimodal para sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>, demonstrando como diferentes tipos de conteúdo (texto, imagens e tabelas) podem ser processados e integrados em um único sistema de recuperação. O fluxo começa com a extração desses diferentes elementos de um documento misto, cada um seguindo para processadores especializados que compreendem as características únicas de cada modalidade.</p>
+<p>Na camada de embeddings, cada tipo de conteúdo é transformado em representações vetoriais específicas para sua modalidade - textos são processados por modelos de linguagem, imagens por modelos de visão computacional, e tabelas por processadores estruturados. O componente de fusão de representações é crucial nesta arquitetura, pois combina estas diferentes representações vetoriais em um formato unificado que pode ser armazenado e consultado eficientemente na base de dados multimodal.</p>
+<p>Quando uma consulta do usuário é recebida, ela passa pelo processador de consulta que determina quais modalidades são relevantes para a pergunta, e o motor <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> recupera as informações apropriadas da base de dados multimodal. Esta abordagem permite que o sistema forneça respostas enriquecidas que incorporam conhecimento de múltiplas modalidades, resultando em uma experiência mais completa e contextualmente relevante para o usuário, especialmente para consultas que se beneficiam de informações visuais ou estruturadas além do texto puro.</p>
+
+
+  <pre><code class="language-clojure">(defn process-multimodal-document
+  &#34;Processa um documento que contém texto e imagens&#34;
+  [doc-path]
+  (let [;; Extrair texto
+        text-content (extract-text doc-path)
+        ;; Identificar e extrair imagens
+        image-paths (extract-images doc-path)
+        ;; Gerar descrições para as imagens usando um modelo de visão
+        image-descriptions (map #(describe-image %) image-paths)
+        ;; Combinar texto e descrições de imagens
+        enriched-content (str text-content &#34;\n\n&#34;
+                             &#34;O documento contém as seguintes imagens:\n&#34;
+                             (str/join &#34;\n&#34; image-descriptions))]
+    ;; Inserir no banco de dados
+    (jdbc/execute! db-spec
+                  [&#34;INSERT INTO documentos (titulo, conteudo) VALUES (?, ?)&#34;
+                   (extract-title doc-path) enriched-content])))</code></pre>
+ <hr>
+<h4 id="arquitetura-multimodal-completa">Arquitetura Multimodal Completa</h4>
+<p>Uma implementação mais completa de pipelines multimodais requer vários componentes especializados:</p>
+
+
+  
+  <div class="mermaid">flowchart TD
+    DOC[Documento Multimodal] --&gt; DETECT[Detector de Tipo]
+    DETECT --&gt; EXTRACT[Extração de Componentes]
+    
+    EXTRACT --&gt; TX[Componentes de Texto]
+    EXTRACT --&gt; IMG[Componentes de Imagem]
+    EXTRACT --&gt; TBL[Componentes de Tabela]
+    EXTRACT --&gt; AUD[Componentes de Áudio]
+    
+    TX --&gt; TX_PROC[Processador de Texto]
+    IMG --&gt; IMG_PROC[Processador de Imagem]
+    TBL --&gt; TBL_PROC[Processador de Tabela]
+    AUD --&gt; AUD_PROC[Processador de Áudio]
+    
+    TX_PROC --&gt; TX_EMB[Embedding de Texto]
+    IMG_PROC --&gt; IMG_EMB[Embedding de Imagem]
+    TBL_PROC --&gt; TBL_EMB[Embedding de Tabela]
+    AUD_PROC --&gt; AUD_EMB[Embedding de Áudio]
+    
+    TX_EMB --&gt; FUSION[Fusão de Representações]
+    IMG_EMB --&gt; FUSION
+    TBL_EMB --&gt; FUSION
+    AUD_EMB --&gt; FUSION
+    
+    FUSION --&gt; META[Adição de Metadados]
+    META --&gt; STORE[Armazenamento em PostgreSQL]
+    
+    subgraph &#34;Modelos Específicos&#34;
+        TX_PROC -.- TEXT_MODEL[Modelo de Texto]
+        IMG_PROC -.- CLIP[CLIP]
+        TBL_PROC -.- TABLE_MODEL[Modelo de Tabela]
+        AUD_PROC -.- AUDIO_MODEL[Modelo de Áudio]
+        FUSION -.- FLAMINGO[Flamingo]
+    end
+    
+    style DOC fill:#f9f,stroke:#333,stroke-width:2px
+    style FUSION fill:#ff9,stroke:#333,stroke-width:2px
+    style META fill:#9cf,stroke:#333,stroke-width:2px
+    style STORE fill:#9f9,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima ilustra uma arquitetura para <a href="https://en.wikipedia.org/wiki/Multimodal_AI">processamento de documentos multimodais</a> em sistemas RAG avançados. O fluxo começa com um documento multimodal que passa por um <a href="https://en.wikipedia.org/wiki/Type_detection">detector de tipo</a>, seguido pela <a href="https://en.wikipedia.org/wiki/Component_extraction">extração de componentes</a> que separa o conteúdo em diferentes modalidades: texto, imagem, tabela e áudio. Cada tipo de componente é então direcionado para um processador especializado, projetado para extrair informações significativas específicas daquela modalidade.</p>
+<p>Após o processamento inicial, cada componente é transformado em uma <a href="https://en.wikipedia.org/wiki/Embedding_model">representação vetorial (embedding)</a> usando modelos especializados para cada modalidade - <a href="https://en.wikipedia.org/wiki/Text_embedding">modelos de texto para componentes textuais</a>, <a href="https://en.wikipedia.org/wiki/CLIP">CLIP para imagens</a>, <a href="https://en.wikipedia.org/wiki/Table_embedding">modelos específicos para tabelas</a> e <a href="https://en.wikipedia.org/wiki/Audio_embedding">áudio</a>. Estes embeddings são então combinados através de um processo de fusão de representações, que cria uma compreensão unificada e coerente do documento multimodal, potencialmente utilizando modelos como o <a href="https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model">Flamingo</a> que são projetados para integração multimodal.</p>
+<p>A etapa final do pipeline envolve a adição de <a href="https://en.wikipedia.org/wiki/Metadata">metadados estruturados</a> à <a href="https://en.wikipedia.org/wiki/Unified_representation">representação unificada</a> e seu armazenamento em um banco de dados <a href="https://www.postgresql.org/">PostgreSQL</a> otimizado para <a href="https://en.wikipedia.org/wiki/Vector_database">busca vetorial</a> com <a href="https://github.com/pgvector/pgvector">pgvector</a>.</p>
+<p>Esta arquitetura modular permite que o sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> processe eficientemente documentos complexos contendo múltiplos tipos de mídia, mantendo as relações semânticas entre diferentes componentes e possibilitando recuperação mais precisa quando consultado. Os modelos específicos destacados no diagrama (<code>TEXT_MODEL</code>, <code>CLIP</code>, <code>TABLE_MODEL</code>, <code>AUDIO_MODEL</code> e <code>FLAMINGO</code>) representam as tecnologias de ponta que podem ser empregadas em cada etapa do processamento.</p>
+<p>O código abaixo implementa um pipeline avançado para processamento de documentos multimodais em <a href="https://clojure.org/">Clojure</a>, demonstrando uma abordagem sofisticada para lidar com conteúdo heterogêneo em sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>:</p>
+
+
+  <pre><code class="language-clojure">;; Exemplo de pipeline multimodal mais elaborado
+(defn advanced-multimodal-processor
+  &#34;Pipeline completo para processamento multimodal&#34;
+  [document-path]
+  (let [;; Determinar tipo de documento
+        doc-type (detect-document-type document-path)
+        
+        ;; Extrair componentes por tipo
+        components (case doc-type
+                     :pdf (extract-pdf-components document-path)
+                     :doc (extract-doc-components document-path)
+                     :webpage (extract-webpage-components document-path)
+                     (extract-text-components document-path))
+        
+        ;; Processar cada componente com seu processador especializado
+        processed-components (map process-component components)
+        
+        ;; Gerar embeddings multimodais
+        embeddings (map #(generate-multimodal-embedding % doc-type) processed-components)
+        
+        ;; Criar representação unificada
+        unified-representation {:components processed-components
+                               :embeddings embeddings
+                               :metadata {:doc-type doc-type
+                                         :path document-path
+                                         :extracted-at (java.util.Date.)}}]
+    
+    ;; Armazenar no PostgreSQL com schema adequado para multimodalidade
+    (store-multimodal-document unified-representation)))
+
+(defn process-component
+  &#34;Processa um componente baseado em seu tipo&#34;
+  [component]
+  (case (:type component)
+    :text (process-text (:content component))
+    :image (process-image (:content component))
+    :table (process-table (:content component))
+    :chart (process-chart (:content component))
+    :audio (process-audio (:content component))
+    (:content component))) ;; Fallback para tipos desconhecidos</code></pre>
+ <p>A função principal <code>advanced-multimodal-processor</code> orquestra todo o fluxo, começando pela detecção do tipo de documento, seguida pela extração de componentes específicos para cada formato (PDF, DOC, páginas web), processamento especializado de cada componente, geração de embeddings multimodais e finalmente o armazenamento da representação unificada no PostgreSQL. Esta arquitetura modular permite que o sistema processe de forma inteligente diferentes tipos de mídia dentro do mesmo documento.</p>
+<p>A função auxiliar <code>process-component</code> exemplifica o tratamento especializado para cada modalidade, direcionando o conteúdo para processadores específicos com base no tipo do componente (texto, imagem, tabela, gráfico ou áudio). Esta abordagem granular garante que cada tipo de conteúdo receba o tratamento mais apropriado, maximizando a qualidade da informação extraída e sua representação vetorial.</p>
+<p>O resultado é um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> verdadeiramente <a href="https://en.wikipedia.org/wiki/Multimodal_AI">multimodal</a>, capaz de compreender e recuperar informações de documentos complexos que combinam texto, elementos visuais e dados estruturados, proporcionando respostas mais completas e contextualmente ricas para as consultas dos usuários.</p>
+<hr>
+<h4 id="esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</h4>
+<p>Para armazenar e recuperar eficientemente dados multimodais no PostgreSQL:</p>
+
+
+  <pre><code class="language-sql">-- Tabela principal para documentos multimodais
+CREATE TABLE documentos_multimodais (
+    id SERIAL PRIMARY KEY,
+    titulo TEXT NOT NULL,
+    doc_type TEXT,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela para componentes específicos
+CREATE TABLE componentes_documento (
+    id SERIAL PRIMARY KEY,
+    documento_id INTEGER REFERENCES documentos_multimodais(id) ON DELETE CASCADE,
+    tipo_componente TEXT NOT NULL,
+    conteudo TEXT,
+    posicao INTEGER,
+    metadados JSONB
+);
+
+-- Tabela para embeddings de texto
+CREATE TABLE embeddings_texto (
+    id SERIAL PRIMARY KEY,
+    componente_id INTEGER REFERENCES componentes_documento(id) ON DELETE CASCADE,
+    embedding VECTOR(768)
+);
+
+-- Tabela para embeddings de imagem
+CREATE TABLE embeddings_imagem (
+    id SERIAL PRIMARY KEY,
+    componente_id INTEGER REFERENCES componentes_documento(id) ON DELETE CASCADE,
+    embedding VECTOR(512)
+);</code></pre>
+ <p>Este esquema (scheme) <a href="https://en.wikipedia.org/wiki/SQL">SQL</a> estabelece uma estrutura robusta para armazenar e gerenciar documentos multimodais no <a href="https://www.postgresql.org/">PostgreSQL</a>. A arquitetura é composta por quatro tabelas interconectadas: uma tabela principal (<code>documentos_multimodais</code>) que armazena metadados gerais dos documentos, uma tabela para componentes específicos (<code>componentes_documento</code>) que fragmenta cada documento em suas partes constituintes (texto, imagens, etc.), e duas tabelas especializadas para armazenar embeddings vetoriais de diferentes modalidades (<code>embeddings_texto</code> e <code>embeddings_imagem</code>). Esta estrutura relacional permite uma organização hierárquica do conteúdo, mantendo a integridade referencial através de chaves estrangeiras.</p>
+<p>A separação dos <a href="https://en.wikipedia.org/wiki/Embedding_model">embeddings</a> por tipo de modalidade é particularmente importante, pois diferentes tipos de conteúdo geralmente requerem modelos de embedding distintos com dimensionalidades variadas (768 para texto e 512 para imagens no exemplo). Esta abordagem modular facilita a implementação de consultas multimodais eficientes, permitindo buscas por similaridade em cada modalidade separadamente ou de forma combinada.</p>
+<p>Além disso, o uso de campos <a href="https://www.postgresql.org/docs/current/datatype-json.html">JSONB</a> para metadados oferece flexibilidade para armazenar informações adicionais sem necessidade de alterar o esquema, tornando o sistema adaptável a diferentes tipos de documentos e requisitos de aplicação. Para implementações detalhadas de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> multimodal, consulte:</p>
+<ul>
+<li><a href="https://docs.llamaindex.ai/en/stable/examples/multi_modal/">MultiModal RAG com LlamaIndex</a></li>
+<li><a href="https://towardsdatascience.com/a-comprehensive-guide-to-multimodal-rag-ea72c387c6e8">Comprehensive Guide to MultiModal RAG</a></li>
+<li><a href="https://huggingface.co/blog/idefics">Projeto IDEFICS para RAG Multimodal</a></li>
+<li><a href="https://supabase.com/blog/image-search-using-ai-embeddings">Supabase - Image Search com pgvector</a></li>
+</ul>
+<hr>
+<h4 id="desafios-de-implementação-multimodal">Desafios de Implementação Multimodal</h4>
+<p>A implementação de pipelines multimodais traz desafios específicos:</p>
+<ol>
+<li><strong>Alinhamento de Representações</strong>: Garantir que diferentes modalidades possam ser comparadas</li>
+<li><strong>Gerenciamento de Recursos</strong>: Modelos multimodais são computacionalmente exigentes</li>
+<li><strong>Estratégias de Fusão</strong>: Decidir quando fundir informações de diferentes modalidades
+<ul>
+<li>Fusão Precoce: Combinar antes do embedding</li>
+<li>Fusão Tardia: Manter embeddings separados e combinar apenas no ranking final</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>No próximo artigo, exploraremos em profundidade como expandir o DocAI para oferecer suporte total a conteúdo multimodal, com exemplos práticos de implementação e otimização de desempenho.</p>
+</blockquote>
+<hr>
+<h3 id="estratégias-de-cache">Estratégias de Cache</h3>
+<p>Implementar caching pode reduzir drasticamente a latência e os custos:</p>
+
+
+  
+  <div class="mermaid">flowchart TD
+    Q[Consulta] --&gt; CH1{Cache L1?}
+    CH1 --&gt;|Sim| RES1[Resposta do Cache L1]
+    CH1 --&gt;|Não| CH2{Cache L2?}
+    
+    CH2 --&gt;|Sim| RES2[Resposta do Cache L2]
+    CH2 --&gt;|Não| CH3{Cache L3?}
+    
+    CH3 --&gt;|Sim| RES3[Resposta do Cache L3]
+    CH3 --&gt;|Não| PROC[Processamento RAG Completo]
+    
+    PROC --&gt; RES4[Nova Resposta]
+    RES4 --&gt; STORE[Armazenar em Cache]
+    STORE --&gt; RES[Resposta Final]
+    
+    RES1 --&gt; RES
+    RES2 --&gt; RES
+    RES3 --&gt; RES
+    
+    subgraph &#34;Camadas de Cache&#34;
+    CH1
+    CH2
+    CH3
+    end
+    
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+    style PROC fill:#ffc,stroke:#333,stroke-width:2px
+    style RES fill:#9f9,stroke:#333,stroke-width:2px
+    style STORE fill:#9cf,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima ilustra uma estratégia de cache em múltiplas camadas para sistemas RAG, uma técnica fundamental para otimizar tanto a latência quanto os custos operacionais. A arquitetura implementa três níveis de cache <code>(L1, L2 e L3)</code>, cada um representando diferentes compromissos entre velocidade e abrangência. O cache <code>L1</code> tipicamente armazena respostas exatas para consultas idênticas, oferecendo resposta instantânea quando há correspondência perfeita. O cache <code>L2</code> pode armazenar respostas para consultas semanticamente similares, enquanto o cache <code>L3</code> pode conter resultados parciais como embeddings pré-calculados ou chunks recuperados anteriormente.</p>
+<p>Esta abordagem em cascata permite que o sistema evite o processamento <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">RAG</a> completo sempre que possível, reduzindo significativamente o tempo de resposta e a carga computacional. Quando uma consulta não encontra correspondência em nenhum nível de cache, apenas então o sistema executa o fluxo completo de <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">RAG</a>, que inclui geração de embeddings, recuperação de contexto e inferência do <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>.</p>
+<blockquote>
+<p>A nova resposta gerada é então armazenada no cache apropriado para uso futuro, criando um sistema que se torna progressivamente mais eficiente à medida que processa mais consultas. A implementação de uma estratégia de cache multicamada como esta pode reduzir custos operacionais em até 70% em sistemas de produção com padrões de consulta repetitivos.</p>
+</blockquote>
+<p>Além da economia de recursos, a redução na latência melhora significativamente a experiência do usuário, com respostas quase instantâneas para consultas frequentes. Para maximizar a eficácia, é importante implementar políticas de expiração de cache e estratégias de invalidação para garantir que as informações permaneçam atualizadas, especialmente em domínios onde os dados subjacentes mudam com frequência. Abaixo, um exemplo de implementação de cache de dois níveis em Clojure:</p>
+
+
+  <pre><code class="language-clojure">;; Implementação de cache de dois níveis em Clojure
+(def embedding-cache (atom {}))
+(def response-cache (atom {}))
+
+(defn cached-embed
+  &#34;Gera embedding para texto com cache&#34;
+  [text]
+  (if-let [cached (@embedding-cache text)]
+    cached
+    (let [embedding (generate-embedding text)]
+      (swap! embedding-cache assoc text embedding)
+      embedding)))
+
+(defn cached-rag-query
+  &#34;Executa consulta RAG com cache&#34;
+  [query]
+  (if-let [cached (@response-cache query)]
+    (do
+      (println &#34;Cache hit for query!&#34;)
+      cached)
+    (let [;; Processo RAG normal
+          response (full-rag-process query)]
+      ;; Armazenar no cache apenas para consultas não-pessoais
+      (when (not (personal-query? query))
+        (swap! response-cache assoc query response))
+      response)))</code></pre>
+ <p>O código acima implementa uma estratégia de cache de dois níveis em <a href="https://clojure.org/">Clojure</a> para otimizar sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>. O primeiro nível (<code>embedding-cache</code>) armazena embeddings já calculados para textos, evitando a regeneração desses vetores que é computacionalmente intensiva. O segundo nível (<code>response-cache</code>) armazena respostas completas para consultas anteriores, permitindo retornar resultados instantaneamente quando uma consulta idêntica é feita novamente.</p>
+<p>A função <code>cached-embed</code> verifica primeiro se o embedding já existe no cache antes de gerá-lo, enquanto <code>cached-rag-query</code> implementa lógica similar para respostas completas, incluindo uma verificação inteligente para evitar o cache de consultas pessoais.</p>
+<p>Em produção com maior escala, esta abordagem poderia ser estendida para utilizar <a href="https://redis.io/">Redis</a> ou outras soluções de cache distribuído, mantendo os mesmos princípios fundamentais. Para o <a href="https://www.postgresql.org/">PostgreSQL</a>, podemos implementar <a href="https://www.postgresql.org/docs/current/pgvector-embeddings.html">cache de embeddings diretamente no banco</a>:</p>
+
+
+  <pre><code class="language-sql">-- Criar tabela de cache para embeddings de consultas frequentes
+CREATE TABLE IF NOT EXISTS query_embedding_cache (
+  query_text TEXT PRIMARY KEY,
+  embedding VECTOR(768),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  hit_count INTEGER DEFAULT 1
+);
+
+-- Função para obter embedding com cache
+CREATE OR REPLACE FUNCTION get_cached_embedding(query TEXT)
+RETURNS VECTOR AS $$
+DECLARE
+  cached_embedding VECTOR(768);
+BEGIN
+  -- Verificar se existe no cache
+  SELECT embedding INTO cached_embedding
+  FROM query_embedding_cache
+  WHERE query_text = query;
+  
+  -- Se existe, atualizar contador e retornar
+  IF FOUND THEN
+    UPDATE query_embedding_cache 
+    SET hit_count = hit_count &#43; 1 
+    WHERE query_text = query;
+    RETURN cached_embedding;
+  ELSE
+    -- Gerar novo embedding
+    cached_embedding := ai.ollama_embed(&#39;nomic-embed-text&#39;, query);  -- ⚠️ Nota: Verifique a disponibilidade desta função na sua instalação
+    
+    -- Armazenar no cache
+    INSERT INTO query_embedding_cache (query_text, embedding)
+    VALUES (query, cached_embedding);
+    
+    RETURN cached_embedding;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;</code></pre>
+ <p>Este código SQL implementa um sistema de cache para embeddings de consultas no PostgreSQL, otimizando significativamente o desempenho de sistemas RAG em produção. A tabela <code>query_embedding_cache</code> armazena o texto da consulta como chave primária, junto com seu <a href="https://www.postgresql.org/docs/current/pgvector-embeddings.html">embedding vetorial</a>, <a href="https://www.postgresql.org/docs/current/functions-datetime.html">timestamp de criação</a> e um <a href="https://www.postgresql.org/docs/current/functions-math.html">contador de acessos</a>. Esta estrutura não apenas evita o recálculo de embeddings para consultas repetidas, mas também fornece dados valiosos sobre padrões de uso através do campo <code>hit_count</code>.</p>
+<p>A função <code>get_cached_embedding</code> encapsula a lógica de cache com uma interface limpa: quando uma consulta é recebida, ela primeiro verifica se o embedding já existe no cache. Se encontrado, incrementa o contador de acessos e retorna imediatamente o embedding armazenado, economizando o custo computacional da geração de embeddings. Caso contrário, gera um novo embedding usando o modelo &rsquo;nomic-embed-text&rsquo; via <a href="https://ollama.com/">Ollama</a>, armazena-o no cache para uso futuro e o retorna.</p>
+<p>Esta implementação reduz significativamente a latência para consultas repetidas, diminui a carga nos serviços de embedding, e proporciona uma base para análises de desempenho e otimização contínua. A abordagem é particularmente eficaz em cenários onde os usuários tendem a fazer perguntas semelhantes ou quando o sistema processa grandes volumes de consultas, resultando em economia de recursos computacionais e melhoria na experiência do usuário com respostas mais rápidas.</p>
+<h4 id="estratégias-avançadas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</h4>
+<p>Para sistemas RAG em produção, podemos implementar estratégias de cache mais sofisticadas:</p>
+<ol>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Multilevel_cache"><strong>Cache em Múltiplas Camadas</strong></a>:</p>
+<ul>
+<li>L1: Cache em memória para consultas muito frequentes</li>
+<li>L2: Cache em banco de dados para persistência entre reinicializações</li>
+<li>L3: Cache distribuído (como <a href="https://redis.io/">Redis</a>) para sistemas escaláveis</li>
+</ul>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Time_to_live"><strong>Políticas de Expiração Inteligentes</strong></a>:</p>
+<ul>
+<li>TTL (Time-to-Live) baseado na frequência de uso</li>
+<li>Invalidação seletiva quando documentos relacionados são atualizados</li>
+<li>Cache semântico que agrupa consultas similares</li>
+</ul>
+</li>
+<li>
+<p><strong>Pré-Computação e Cache Preditivo</strong>:</p>
+<ul>
+<li>Analisar padrões de consulta para pré-computar respostas prováveis</li>
+<li>Gerar embeddings para variações comuns de consultas</li>
+</ul>
+</li>
+</ol>
+
+
+  <pre><code class="language-clojure">;; Exemplo de implementação de cache com Redis para alta disponibilidade
+(defn distributed-cached-rag-query
+  &#34;Executa consulta RAG com cache distribuído&#34;
+  [query]
+  (let [cache-key (str &#34;rag:query:&#34; (digest/md5 query))
+        ;; Verificar no Redis
+        cached-response (redis/get cache-key)]
+    (if cached-response
+      ;; Usar resposta em cache
+      (do
+        (redis/incr (str cache-key &#34;:hits&#34;))
+        (json/read-str cached-response))
+      ;; Gerar nova resposta
+      (let [response (full-rag-process query)
+            ;; Serializar e armazenar no Redis com TTL
+            _ (redis/setex cache-key 
+                          (* 60 60 24) ;; 24 horas
+                          (json/write-str response))
+            ;; Registrar metadados para análise
+            _ (redis/hmset (str cache-key &#34;:meta&#34;)
+                          {&#34;timestamp&#34; (System/currentTimeMillis)
+                           &#34;query_length&#34; (count query)
+                           &#34;query_type&#34; (determine-query-type query)})]
+        response))))</code></pre>
+ <p>Para implementações detalhadas de estratégias de cache para RAG, consulte:</p>
+<ul>
+<li><a href="https://docs.llamaindex.ai/en/stable/module_guides/querying/query_engine/query_engine_caching">LlamaIndex - Query Engine Caching</a></li>
+<li><a href="https://python.langchain.com/docs/modules/model_io/llms/llm_caching">LangChain - Caching para LLM Applications</a></li>
+<li><a href="https://redis.io/docs/stack/search/reference/vectors/">Redis Vector Database for RAG</a></li>
+</ul>
+<hr>
+<h2 id="monitoramento-e-métricas-llmops-na-prática">Monitoramento e Métricas: LLMOps na Prática</h2>
+<p>Para garantir que nosso sistema RAG continue funcionando bem em produção, precisamos monitorar métricas chave:</p>
+
+
+  
+  <div class="mermaid">flowchart TB
+    subgraph &#34;Ciclo de Monitoramento RAG&#34;
+    direction TB
+    LOG[Logs de Interações] --&gt; METR[Cálculo de Métricas]
+    METR --&gt; ANOM[Detecção de Anomalias]
+    ANOM --&gt; ALER[Alertas e Relatórios]
+    ALER --&gt; OPT[Otimização do Sistema]
+    OPT --&gt; LOG
+    end
+    
+    subgraph &#34;Métricas RAG&#34;
+    direction LR
+    METR_OP[Métricas Operacionais]
+    METR_Q[Métricas de Qualidade]
+    METR_F[Métricas de Feedback]
+    end
+    
+    METR --- METR_OP
+    METR --- METR_Q
+    METR --- METR_F
+    
+    style LOG fill:#f9f,stroke:#333,stroke-width:2px
+    style METR fill:#ffc,stroke:#333,stroke-width:2px
+    style ANOM fill:#f99,stroke:#333,stroke-width:2px
+    style OPT fill:#9f9,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima ilustra o ciclo completo de <a href="https://en.wikipedia.org/wiki/Monitoring">monitoramento</a> para <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">sistemas RAG</a> em produção. No centro do processo estão os &ldquo;<a href="https://en.wikipedia.org/wiki/Log_file">Logs de Interações</a>&rdquo;, que capturam dados detalhados sobre cada <a href="https://en.wikipedia.org/wiki/Query">consulta</a> processada pelo sistema, incluindo a pergunta original, os <a href="https://en.wikipedia.org/wiki/Information_retrieval">documentos recuperados</a>, a <a href="https://en.wikipedia.org/wiki/Natural_language_generation">resposta gerada</a> e <a href="https://en.wikipedia.org/wiki/Performance_metric">métricas de desempenho</a>.</p>
+<p>Estes logs alimentam o &ldquo;<a href="https://en.wikipedia.org/wiki/Metric_(mathematics)">Cálculo de Métricas</a>&rdquo;, que transforma <a href="https://en.wikipedia.org/wiki/Raw_data">dados brutos</a> em <a href="https://en.wikipedia.org/wiki/Key_performance_indicator">indicadores acionáveis</a> distribuídos em três categorias principais: <a href="https://en.wikipedia.org/wiki/Operational_efficiency">operacionais</a> (<a href="https://en.wikipedia.org/wiki/Latency_(engineering)">latência</a>, <a href="https://en.wikipedia.org/wiki/Throughput">throughput</a>), <a href="https://en.wikipedia.org/wiki/Data_quality">qualidade</a> (<a href="https://en.wikipedia.org/wiki/Precision_and_recall">precisão</a>, <a href="https://en.wikipedia.org/wiki/Relevance_(information_retrieval)">relevância</a>) e <a href="https://en.wikipedia.org/wiki/Feedback">feedback</a> (avaliações dos usuários). A &ldquo;<a href="https://en.wikipedia.org/wiki/Anomaly_detection">Detecção de Anomalias</a>&rdquo; monitora continuamente estas métricas para identificar desvios significativos dos padrões esperados, gerando &ldquo;<a href="https://en.wikipedia.org/wiki/Alert_management">Alertas e Relatórios</a>&rdquo; que orientam a &ldquo;<a href="https://en.wikipedia.org/wiki/System_optimization">Otimização do Sistema</a>&rdquo;, fechando assim o ciclo de <a href="https://en.wikipedia.org/wiki/Continuous_improvement">melhoria contínua</a>.</p>
+<p>Este fluxo de trabalho representa a essência do <a href="https://en.wikipedia.org/wiki/MLOps">LLMOps</a> aplicado a sistemas RAG, onde o monitoramento não é apenas <a href="https://en.wikipedia.org/wiki/Reactive_programming">reativo</a>, mas <a href="https://en.wikipedia.org/wiki/Proactive">proativo</a> na identificação de oportunidades de melhoria. A estrutura tripartite das métricas garante uma <a href="https://en.wikipedia.org/wiki/Holism">visão holística</a> do desempenho: enquanto as métricas operacionais asseguram a <a href="https://en.wikipedia.org/wiki/Technical_efficiency">eficiência técnica</a> do sistema, as métricas de qualidade avaliam a <a href="https://en.wikipedia.org/wiki/Semantic_similarity">precisão semântica</a> das respostas, e as métricas de feedback incorporam a <a href="https://en.wikipedia.org/wiki/Human-centered_design">perspectiva humana</a> na avaliação.</p>
+<p>Esta abordagem <a href="https://en.wikipedia.org/wiki/System_integration">integrada</a> permite que <a href="https://en.wikipedia.org/wiki/Engineering_team">equipes de engenharia</a> identifiquem rapidamente <a href="https://en.wikipedia.org/wiki/Bottleneck_(software)">gargalos</a>, ajustem <a href="https://en.wikipedia.org/wiki/Information_retrieval">parâmetros de recuperação</a> e melhorem continuamente a <a href="https://en.wikipedia.org/wiki/User_experience">experiência do usuário</a> final, mesmo à medida que o <a href="https://en.wikipedia.org/wiki/Big_data">volume de dados</a> e a <a href="https://en.wikipedia.org/wiki/Query_complexity">complexidade das consultas</a> aumentam. O código abaixo mostra como implementar o log e a avaliação de respostas em <a href="https://en.wikipedia.org/wiki/Clojure">Clojure</a>:</p>
+
+
+  <pre><code class="language-clojure">;; Estrutura para log e avaliação de respostas
+(defn log-rag-interaction
+  &#34;Registra uma interação RAG para análise posterior&#34;
+  [query retrieved-docs response latency]
+  (jdbc/execute! db-spec
+                [&#34;INSERT INTO rag_logs 
+                 (query, retrieved_docs, response, latency_ms, timestamp)
+                 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)&#34;
+                 query
+                 (json/write-str retrieved-docs)
+                 response
+                 latency]))
+
+;; Função para calcular métricas de desempenho
+(defn calculate-rag-metrics
+  &#34;Calcula métricas de desempenho para um período&#34;
+  [start-date end-date]
+  (let [logs (jdbc/execute! db-spec
+                           [&#34;SELECT * FROM rag_logs 
+                            WHERE timestamp BETWEEN ? AND ?&#34;
+                            start-date end-date])
+        ;; Métricas de latência
+        avg-latency (average-latency logs)
+        p95-latency (percentile-latency logs 95)
+        ;; Taxa de falhas (quando resposta contém erros específicos)
+        failure-rate (failure-rate logs)
+        ;; Distribuição de consultas por tópico
+        topic-distribution (topic-distribution logs)]
+    {:avg_latency avg-latency
+     :p95_latency p95-latency
+     :failure_rate failure-rate
+     :topic_distribution topic-distribution}))</code></pre>
+ <p>A função <code>log-rag-interaction</code> captura cada aspecto da interação desde a consulta original até os documentos recuperados, a resposta gerada e o tempo de latência armazenando-os em um banco de dados relacional para análise posterior. Esta abordagem permite rastrear o histórico completo de interações, criando um registro valioso para depuração, otimização e avaliação de desempenho ao longo do tempo.</p>
+<p>A função <code>calculate-rag-metrics</code> complementa o sistema de logging ao transformar os dados brutos em métricas acionáveis, calculando indicadores críticos como latência média, percentil 95 de latência (importante para entender outliers), taxa de falhas e distribuição de consultas por tópico.</p>
+<p>Esta análise multidimensional permite que as equipes identifiquem não apenas problemas técnicos (como gargalos de desempenho), mas também padrões de uso e áreas temáticas que podem requerer otimização específica. A combinação destas duas funções estabelece um ciclo de feedback contínuo que é essencial para <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">sistemas RAG em produção</a>, permitindo melhorias iterativas baseadas em dados reais de uso.</p>
+<h3 id="métricas-de-qualidade-específicas-para-rag">Métricas de Qualidade Específicas para RAG</h3>
+<p>Além das métricas operacionais comuns (latência, disponibilidade), sistemas RAG requerem métricas específicas para avaliar a qualidade das respostas:</p>
+<h4 id="1-métricas-de-relevância-do-contexto">1. Métricas de Relevância do Contexto</h4>
+<ul>
+<li><strong>Precision@K</strong>: Proporção de chunks recuperados que são realmente relevantes para a consulta</li>
+<li><strong>Recall@K</strong>: Proporção de chunks relevantes na base de conhecimento que foram recuperados</li>
+<li><strong>NDCG (Normalized Discounted Cumulative Gain)</strong>: Avalia se os chunks mais relevantes estão no topo da lista</li>
+</ul>
+<p>Abaixo, um exemplo de implementação de métricas de relevância do contexto em Clojure:</p>
+
+
+  <pre><code class="language-clojure">(defn calculate-precision-at-k
+  &#34;Calcula Precision@K para uma consulta e seus chunks recuperados&#34;
+  [query chunks k expert-judgments]
+  (let [retrieved-top-k (take k chunks)
+        relevant-count (count (filter #(is-chunk-relevant? % query expert-judgments) 
+                                     retrieved-top-k))]
+    (double (/ relevant-count (min k (count retrieved-top-k))))))
+
+(defn calculate-recall-at-k
+  &#34;Calcula Recall@K para uma consulta&#34;
+  [query chunks k all-relevant-chunks expert-judgments]
+  (let [retrieved-top-k (take k chunks)
+        retrieved-relevant (filter #(is-chunk-relevant? % query expert-judgments) 
+                                  retrieved-top-k)
+        total-relevant-count (count all-relevant-chunks)]
+    (if (pos? total-relevant-count)
+      (double (/ (count retrieved-relevant) total-relevant-count))
+      1.0))) ;; Se não há chunks relevantes, recall é 1</code></pre>
+ <p>A função <code>calculate-precision-at-k</code> mede a proporção de chunks relevantes entre os <code>k</code> primeiros resultados recuperados, comparando-os com julgamentos de especialistas. Já a função <code>calculate-recall-at-k</code> avalia a proporção de chunks relevantes que foram efetivamente recuperados em relação ao total de chunks relevantes disponíveis.</p>
+<p>Ambas as métricas são fundamentais para entender a eficácia do sistema de recuperação: <code>precision</code> indica quão precisa é a recuperação (minimizando falsos positivos), enquanto <code>recall</code> mostra quão completa é a recuperação (minimizando falsos negativos). A implementação inclui tratamento para casos especiais, como quando não há chunks relevantes disponíveis, garantindo resultados matematicamente consistentes.</p>
+<h4 id="2-métricas-de-qualidade-da-resposta">2. Métricas de Qualidade da Resposta</h4>
+<p>Para avaliar a qualidade das respostas geradas por sistemas RAG, é essencial implementar métricas específicas que capturem diferentes dimensões de eficácia. Estas métricas vão além de simples avaliações binárias (correto/incorreto) e permitem uma análise nuançada da performance do sistema. Implementamos as seguintes métricas qualitativas em nosso framework de avaliação:</p>
+<ul>
+<li><strong>Faithfulness (Fidelidade)</strong>: O grau em que a resposta é suportada pelo contexto fornecido, sem alucinações</li>
+<li><strong>Answer Relevancy (Relevância da Resposta)</strong>: Quão bem a resposta aborda a consulta do usuário</li>
+<li><strong>Contextual Precision (Precisão Contextual)</strong>: Proporção do contexto utilizado que foi relevante para a resposta</li>
+<li><strong>Helpfulness (Utilidade)</strong>: Avaliação subjetiva de quão útil foi a resposta para o usuário</li>
+</ul>
+<p>Abaixo, um exemplo de implementação de métricas de qualidade da resposta em Clojure:</p>
+
+
+  <pre><code class="language-clojure">(defn evaluate-response-quality
+  &#34;Avalia métricas qualitativas de uma resposta RAG&#34;
+  [query context response]
+  (let [;; Usar LLM como avaliador
+        prompt-faithfulness (str &#34;Avalie a fidelidade da seguinte resposta ao contexto fornecido.\n\n&#34;
+                                &#34;Consulta: &#34; query &#34;\n\n&#34;
+                                &#34;Contexto: &#34; context &#34;\n\n&#34;
+                                &#34;Resposta: &#34; response &#34;\n\n&#34;
+                                &#34;A resposta contém informações que não estão no contexto? &#34;
+                                &#34;A resposta contradiz o contexto em algum ponto? &#34;
+                                &#34;Atribua uma pontuação de 1 a 10, onde 10 significa perfeita fidelidade ao contexto.&#34;)
+        
+        prompt-relevancy (str &#34;Avalie quão relevante é a resposta para a consulta.\n\n&#34;
+                             &#34;Consulta: &#34; query &#34;\n\n&#34;
+                             &#34;Resposta: &#34; response &#34;\n\n&#34;
+                             &#34;A resposta aborda diretamente a consulta? &#34;
+                             &#34;Alguma parte importante da consulta foi ignorada? &#34;
+                             &#34;Atribua uma pontuação de 1 a 10, onde 10 significa perfeitamente relevante.&#34;)
+        
+        ;; Chamar LLM para avaliação
+        faithfulness-result (parse-score (call-evaluation-llm prompt-faithfulness))
+        relevancy-result (parse-score (call-evaluation-llm prompt-relevancy))]
+    
+    ;; Retornar resultados agregados
+    {:faithfulness faithfulness-result
+     :relevancy relevancy-result
+     :composite_score (/ (&#43; faithfulness-result relevancy-result) 2.0)}))</code></pre>
+ <p>A função recebe três parâmetros principais: a consulta original do usuário (<code>query</code>), o contexto recuperado pelo sistema (<code>context</code>) e a resposta gerada pelo modelo (<code>response</code>). Utilizando esses inputs, a função constrói dois prompts específicos para avaliar diferentes dimensões da qualidade da resposta.</p>
+<p>O primeiro prompt avalia a &ldquo;fidelidade&rdquo; <a href="https://en.wikipedia.org/wiki/Faithfulness_(literary_theory)">(faithfulness)</a> da resposta, verificando se ela se mantém fiel ao contexto fornecido sem adicionar informações não presentes ou contradizer o material de referência. O segundo prompt avalia a &ldquo;relevância&rdquo; <a href="https://en.wikipedia.org/wiki/Relevance_(information_retrieval)">(relevancy)</a>, analisando se a resposta aborda diretamente a consulta do usuário e se cobre todos os aspectos importantes da pergunta. Ambos os prompts são enviados para um <a href="https://github.com/langchain-ai/langchain/blob/main/libs/langchain-core/langchain_core/prompts/prompt.py">LLM avaliador através da função <code>call-evaluation-llm</code></a>, que retorna uma avaliação textual que é então convertida em uma pontuação numérica pela função <code>parse-score</code>.</p>
+<p>Por fim, a função agrega os resultados em um mapa contendo as pontuações individuais de fidelidade e relevância, além de calcular uma pontuação composta que é a média das duas métricas. Esta abordagem de &ldquo;LLM como avaliador&rdquo; representa uma técnica avançada no campo de RAG, permitindo avaliações automatizadas que capturam nuances qualitativas difíceis de medir com métricas puramente estatísticas.</p>
+<blockquote>
+<p>O código demonstra como implementar um sistema de avaliação que pode ser usado para monitoramento contínuo da qualidade das respostas e identificação de áreas para melhoria.</p>
+</blockquote>
+<h4 id="3-métricas-de-consenso-entre-modelos">3. Métricas de Consenso entre Modelos</h4>
+<p>Uma técnica eficaz é comparar respostas de múltiplos modelos ou configurações:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Model_agreement"><strong>Model Agreement (Concordância de Modelos)</strong></a>: Grau de concordância entre diferentes LLMs para a mesma consulta/contexto</li>
+<li><a href="https://en.wikipedia.org/wiki/Embedding"><strong>Embedding Stability (Estabilidade de Embeddings)</strong></a>: Consistência de embeddings entre atualizações de modelos</li>
+<li><a href="https://en.wikipedia.org/wiki/Context_utilization_variance"><strong>Context Utilization Variance (Variância de Utilização de Contexto)</strong></a>: Diferenças na forma como os modelos utilizam o contexto</li>
+</ul>
+<p>Abaixo, um exemplo de implementação de métricas de consenso entre modelos em Clojure:</p>
+
+
+  <pre><code class="language-clojure">(defn measure-model-agreement
+  &#34;Mede concordância entre diferentes modelos para mesma consulta&#34;
+  [query context models]
+  (let [;; Gerar respostas de cada modelo
+        responses (map #(generate-response-with-model % query context) models)
+        
+        ;; Calcular similaridade semântica entre cada par de respostas
+        similarities (for [i (range (count responses))
+                          j (range (inc i) (count responses))]
+                      (calculate-semantic-similarity 
+                        (nth responses i) 
+                        (nth responses j)))
+        
+        ;; Média das similaridades como medida de concordância
+        avg-similarity (if (seq similarities)
+                         (/ (reduce &#43; similarities) (count similarities))
+                         1.0)]
+    avg-similarity))</code></pre>
+ <p>Esta função implementa uma métrica de concordância entre modelos, uma técnica valiosa para avaliar a robustez de sistemas RAG. Ao gerar respostas para a mesma consulta usando diferentes modelos, a função calcula a similaridade semântica entre cada par de respostas. Uma alta concordância (similaridade) entre modelos diversos sugere que a resposta é mais confiável, enquanto baixa concordância pode indicar ambiguidade nos dados ou questões com a recuperação de contexto.</p>
+<p>A implementação utiliza uma abordagem de comparação par a par, onde cada resposta é comparada com todas as outras. A função <code>calculate-semantic-similarity</code> (não mostrada) provavelmente utiliza embeddings para medir quão semanticamente próximas estão duas respostas. O resultado final é uma pontuação média de similaridade que quantifica o nível geral de consenso entre os modelos. Esta métrica é particularmente útil para identificar consultas problemáticas onde diferentes modelos divergem significativamente, sinalizando potenciais áreas para melhoria no pipeline RAG.</p>
+<h3 id="automação-da-avaliação-com-llms-como-juízes">Automação da Avaliação com LLMs como Juízes</h3>
+
+
+  
+  <div class="mermaid">flowchart TD
+    Q[Consulta do Usuário] --&gt; RAG[Sistema RAG]
+    CTX[Contexto Recuperado] --&gt; RAG
+    
+    RAG --&gt; RESP[Resposta Gerada]
+    
+    subgraph &#34;Avaliação Automatizada&#34;
+        RESP --&gt; JUDGE[LLM Avaliador]
+        Q --&gt; JUDGE
+        CTX --&gt; JUDGE
+        CRIT[Critérios de Avaliação] --&gt; JUDGE
+        
+        JUDGE --&gt; EVAL[Avaliação Estruturada]
+        EVAL --&gt; DB[(Banco de Dados)]
+        
+        EVAL --&gt; METRICS[Métricas de Qualidade]
+        METRICS --&gt; DASH[Dashboard]
+        
+        EVAL --&gt; INSIGHT[Insights para Melhoria]
+        INSIGHT --&gt; REFINE[Refinamento do Sistema]
+        REFINE -.-&gt; RAG
+    end
+    
+    style Q fill:#f9f,stroke:#333,stroke-width:2px
+    style RESP fill:#9cf,stroke:#333,stroke-width:2px
+    style JUDGE fill:#fc9,stroke:#333,stroke-width:2px
+    style EVAL fill:#9f9,stroke:#333,stroke-width:2px
+    style REFINE fill:#f99,stroke:#333,stroke-width:2px</div>
+ <p>O diagrama acima representando o fluxo desde a consulta do usuário até o refinamento contínuo do sistema. No centro do processo está o &ldquo;LLM Avaliador&rdquo; (JUDGE), que recebe três entradas cruciais: a consulta original do usuário, o contexto recuperado e a resposta gerada pelo sistema RAG. Adicionalmente, o avaliador utiliza critérios de avaliação predefinidos para realizar uma análise estruturada e imparcial.</p>
+<p>O aspecto mais valioso deste fluxo é o ciclo de feedback que ele estabelece: a avaliação estruturada não apenas alimenta um banco de dados para registro histórico e gera métricas de qualidade para visualização em dashboards, mas também produz insights acionáveis que direcionam o refinamento do sistema. Esta abordagem cíclica permite que o sistema RAG evolua continuamente, aprendendo com suas próprias limitações e melhorando progressivamente a qualidade das respostas, sem necessidade de intervenção humana constante em cada etapa do processo de avaliação. Uma abordagem emergente é usar LLMs como &ldquo;juízes&rdquo; para avaliar automaticamente a qualidade das respostas:</p>
+
+
+  <pre><code class="language-clojure">(defn llm-judge-evaluation
+  &#34;Utiliza LLM como juiz para avaliar respostas RAG&#34;
+  [query context response evaluation-criteria]
+  (let [;; Construir prompt para avaliação
+        evaluation-prompt (str &#34;Você é um avaliador especializado em sistemas RAG. &#34;
+                              &#34;Analise a seguinte interação e avalie de acordo com os critérios especificados.\n\n&#34;
+                              &#34;Consulta do usuário: &#34; query &#34;\n\n&#34;
+                              &#34;Contexto recuperado: &#34; context &#34;\n\n&#34;
+                              &#34;Resposta gerada: &#34; response &#34;\n\n&#34;
+                              &#34;Critérios de avaliação:\n&#34;
+                              evaluation-criteria &#34;\n\n&#34;
+                              &#34;Para cada critério, forneça:\n&#34;
+                              &#34;1. Uma pontuação de 1-10\n&#34;
+                              &#34;2. Justificativa para a pontuação\n&#34;
+                              &#34;3. Sugestões específicas para melhoria\n&#34;
+                              &#34;Formate sua resposta como JSON.&#34;)
+        
+        ;; Chamar LLM avaliador (preferivelmente um modelo diferente do usado para gerar a resposta para evitar viés de auto-avaliação)](https://en.wikipedia.org/wiki/Self-assessment)
+        judge-response (call-evaluation-llm evaluation-prompt)
+        
+        ;; Parsear resposta estruturada
+        evaluation-results (json/read-str judge-response)]
+    
+    ;; Registrar avaliação no banco de dados
+    (log-evaluation query context response evaluation-results)
+    
+    ;; Retornar resultados estruturados
+    evaluation-results))</code></pre>
+ <p>A implementação segue um padrão elegante e prático: primeiro constrói um prompt detalhado que enquadra a tarefa de avaliação, depois chama um modelo <a href="https://en.wikipedia.org/wiki/Self-assessment">LLM dedicado (preferencialmente diferente do usado na geração da resposta para evitar viés de auto-avaliação)</a>, processa a resposta estruturada e finalmente registra os resultados para análise posterior. Esta abordagem permite avaliação contínua e escalável da qualidade do sistema RAG, fornecendo insights acionáveis para refinamento do pipeline sem necessidade de intervenção humana constante.</p>
+<p>A função representa uma evolução importante nas práticas de avaliação de RAG, combinando a capacidade de compreensão contextual dos LLMs com a necessidade de feedback estruturado e quantificável.</p>
+<h4 id="configuração-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</h4>
+<p>Para monitoramento contínuo, é essencial configurar um dashboard que acompanhe a evolução das métricas ao longo do tempo:</p>
+
+
+  <pre><code class="language-clojure">(defn generate-rag-quality-report
+  &#34;Gera relatório diário de qualidade do sistema RAG&#34;
+  []
+  (let [;; Período de avaliação (último dia)
+        end-date (java.util.Date.)
+        start-date (-&gt; (java.util.Calendar/getInstance)
+                       (doto (.setTime end-date)
+                             (.add java.util.Calendar/DAY_OF_MONTH -1))
+                       (.getTime))
+        
+        ;; Recuperar logs do período
+        logs (jdbc/execute! db-spec
+                           [&#34;SELECT * FROM rag_logs 
+                             WHERE timestamp BETWEEN ? AND ?&#34;
+                            start-date end-date])
+        
+        ;; Calcular métricas operacionais
+        operational-metrics (calculate-operational-metrics logs)
+        
+        ;; Selecionar amostra aleatória para avaliação qualitativa
+        evaluation-sample (take 50 (shuffle logs))
+        
+        ;; Avaliar qualidade das respostas na amostra
+        quality-metrics (evaluate-sample-quality evaluation-sample)
+        
+        ;; Identificar tendências e anomalias
+        trends (detect-quality-trends quality-metrics)
+        anomalies (detect-quality-anomalies quality-metrics)
+        
+        ;; Compilar relatório
+        report {:date (format-date end-date)
+                :sample_size (count evaluation-sample)
+                :operational_metrics operational-metrics
+                :quality_metrics quality-metrics
+                :trends trends
+                :anomalies anomalies
+                :recommendations (generate-recommendations trends anomalies)}]
+    
+    ;; Salvar relatório e enviar notificações se houver anomalias
+    (save-quality-report report)
+    (when (not-empty anomalies)
+      (send-quality-alert report))
+    
+    report))</code></pre>
+ <p>O código acima implementa uma função Clojure chamada <code>generate-rag-quality-report</code> que automatiza a geração de relatórios diários de qualidade para um sistema RAG. A função começa definindo um período de avaliação (último dia), recupera logs de interações RAG desse período do banco de dados, e calcula métricas operacionais básicas. Em seguida, seleciona uma amostra aleatória de 50 interações para uma avaliação qualitativa mais profunda.</p>
+<p>O núcleo da função está na avaliação da qualidade das respostas na amostra selecionada, seguida pela identificação de tendências e anomalias nos dados de qualidade. Isso permite que o sistema não apenas meça o desempenho atual, mas também detecte padrões emergentes ou problemas que possam exigir atenção. O relatório final é estruturado como um <a href="https://clojure.org/reference/data_structures">mapa Clojure</a> contendo a data, tamanho da amostra, métricas operacionais, métricas de qualidade, tendências identificadas, anomalias detectadas e recomendações geradas automaticamente.</p>
+<p>Um aspecto importante da função é seu mecanismo de alerta: após salvar o relatório no sistema, ela verifica se foram detectadas anomalias e, em caso positivo, envia alertas para os responsáveis. Esta abordagem proativa para monitoramento de qualidade permite que equipes de engenharia e produto intervenham rapidamente quando o desempenho do sistema RAG começa a degradar, antes que os usuários sejam significativamente afetados. O código exemplifica uma implementação prática de <a href="https://en.wikipedia.org/wiki/LLMOps">LLMOps</a>, focando na avaliação contínua e sistemática da qualidade das respostas em um sistema RAG.</p>
+<h3 id="integração-com-sistemas-de-feedback-do-usuário">Integração com Sistemas de Feedback do Usuário</h3>
+<p>O feedback direto dos usuários é uma fonte valiosa para avaliar a qualidade das respostas:</p>
+
+
+  <pre><code class="language-clojure">(defn process-user-feedback
+  &#34;Processa feedback explícito do usuário&#34;
+  [query-id response-id feedback-type feedback-text]
+  (let [;; Registrar feedback no banco de dados
+        _ (jdbc/execute! db-spec
+                        [&#34;INSERT INTO user_feedback 
+                          (query_id, response_id, feedback_type, feedback_text, timestamp) 
+                          VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)&#34;
+                         query-id response-id feedback-type feedback-text])
+        
+        ;; Recuperar detalhes da interação
+        interaction (jdbc/execute-one! db-spec
+                                     [&#34;SELECT query, retrieved_docs, response 
+                                       FROM rag_logs WHERE id = ?&#34;
+                                      query-id])
+        
+        ;; Analisar feedback para extrair insights
+        feedback-analysis (analyze-user-feedback feedback-type 
+                                               feedback-text 
+                                               (:query interaction)
+                                               (:response interaction))]
+    
+    ;; Atualizar métricas agregadas
+    (update-feedback-metrics feedback-type)
+    
+    ;; Para feedback negativo, adicionar à fila de revisão manual
+    (when (= feedback-type &#34;negative&#34;)
+      (add-to-manual-review-queue query-id feedback-analysis))
+    
+    feedback-analysis))</code></pre>
+ <p>A função registra o feedback no banco de dados, recupera os detalhes da interação original, analisa o feedback para extrair insights valiosos e atualiza métricas agregadas. Um aspecto importante é o tratamento especial para <a href="https://en.wikipedia.org/wiki/Negative_feedback">feedback negativo</a>, que é automaticamente adicionado a uma fila de revisão manual, permitindo que a equipe investigue e corrija problemas específicos.</p>
+<p>Esta implementação representa um componente crucial de um sistema LLMOps maduro, pois estabelece um ciclo de feedback contínuo entre usuários e desenvolvedores. Ao capturar sistematicamente as avaliações dos usuários e vinculá-las às consultas e respostas específicas, a função permite análises detalhadas sobre o desempenho do sistema, identificação de padrões de falha e oportunidades de melhoria.</p>
+<hr>
+<h2 id="implementando-no-docai">Implementando no DocAI</h2>
+<p>Agora que exploramos várias técnicas avançadas, vamos ver como elas são implementadas no projeto DocAI. Nosso sistema atual já incorpora muitas dessas técnicas para criar um pipeline RAG avançado.</p>
+<blockquote>
+<p>Caso não saiba o que é o DocAI, você pode ver os artigos anteriores <a href="https://scovl.github.io/2025/03/23/rag/">RAG Simples com Clojure e Ollama</a> e <a href="https://scovl.github.io/2025/03/25/semantic-postgresql/">Busca Semântica com Ollama e PostgreSQL</a>.</p>
+</blockquote>
+<h3 id="arquitetura-atual-do-docai">Arquitetura Atual do DocAI</h3>
+<p>A arquitetura do DocAI implementa um sistema RAG completo com suporte a agentes para consultas complexas. Os principais componentes são:</p>
+<ol>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/core.clj"><strong>Core (core.clj)</strong></a>: Coordenação central do sistema, implementando a interface CLI e gerenciando o fluxo de dados entre componentes.</p>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/llm.clj"><strong>LLM (llm.clj)</strong></a>: Interface com o Ollama para geração de texto e embeddings, abstraindo detalhes de comunicação com a API.</p>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/pg.clj"><strong>PostgreSQL (pg.clj)</strong></a>: Implementação da busca semântica com pgvector, incluindo configuração e consultas otimizadas.</p>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/document.clj"><strong>Processamento de Documentos (document.clj)</strong></a>: Responsável pela extração, limpeza e preparação de texto de diferentes formatos.</p>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/advanced_rag.clj"><strong>Advanced RAG (advanced_rag.clj)</strong></a>:</p>
+<ul>
+<li>Cache em múltiplos níveis (embeddings e respostas)</li>
+<li>Chunking dinâmico adaptado ao tipo de documento</li>
+<li>Re-ranqueamento de resultados para melhorar precisão</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/agents.clj"><strong>Sistema de Agentes (agents.clj)</strong></a>:</p>
+<ul>
+<li>Análise de complexidade de consultas</li>
+<li>Decomposição em sub-tarefas</li>
+<li>Agentes especializados (busca, raciocínio, cálculo)</li>
+<li>Verificação de qualidade das respostas</li>
+<li>Síntese de resultados parciais</li>
+</ul>
+</li>
+<li>
+<p><a href="https://github.com/docai-ai/docai/blob/main/src/metrics.clj"><strong>Métricas (metrics.clj)</strong></a>: Monitoramento de desempenho e qualidade das respostas.</p>
+</li>
+</ol>
+<p>O fluxo de processamento de consultas inicia em <code>core.clj</code>, que identifica se a consulta requer um pipeline RAG simples ou avançado com agentes:</p>
+
+
+  <pre><code class="language-clojure">(defn query-advanced-rag
+  &#34;Processa uma consulta usando o pipeline RAG avançado&#34;
+  [query]
+  (println &#34;DEBUG - Processando query com RAG avançado:&#34; query)
+  (let [start-time (System/currentTimeMillis)
+        ;; Verificar se a consulta precisa do workflow com agentes
+        need-agents (agents/needs-agent-workflow? query)
+        _ (when need-agents
+            (println &#34;DEBUG - Consulta identificada como complexa, usando workflow com agentes&#34;))
+        
+        ;; Escolher o processamento adequado
+        response (if need-agents
+                   (agents/process-with-agents query)
+                   (adv-rag/advanced-rag-query query))
+        
+        end-time (System/currentTimeMillis)
+        latency (- end-time start-time)]
+    
+    ;; Registrar métricas
+    (metrics/log-rag-interaction query [] response latency)
+    
+    response))</code></pre>
+ <p>Para consultas simples, o pipeline <code>advanced-rag-query</code> realiza:</p>
+<ol>
+<li>Verificação de cache</li>
+<li>Análise de complexidade da consulta</li>
+<li>Busca semântica com chunking dinâmico</li>
+<li>Formatação de prompt contextualizado</li>
+<li>Geração de resposta com o LLM</li>
+</ol>
+<p>Para consultas complexas, o sistema de agentes em <code>agents.clj</code> entra em ação:</p>
+
+
+  <pre><code class="language-clojure">(defn execute-agent-workflow
+  &#34;Executa o workflow completo de agentes para uma consulta complexa&#34;
+  [query]
+  (let [;; Verificar cache primeiro
+        cached (@agent-cache query)]
+    (if cached
+      cached
+      (let [start-time (System/currentTimeMillis)
+            
+            ;; Analisar a consulta para determinar intenção e sub-questões
+            analysis (analyze-query query)
+            primary-intent (get-agent-type (:intent analysis))
+            subtasks (or (:sub_questions analysis) [query])
+            
+            ;; Resultados parciais
+            results (atom [])
+            
+            ;; Executar cada subtarefa em sequência
+            _ (doseq [subtask subtasks]
+                (let [agent-result (execute-subtask 
+                                     subtask 
+                                     primary-intent
+                                     @results)]
+                  (swap! results conj (:response agent-result))))
+            
+            ;; Gerar resposta final sintetizada
+            synthesis-prompt (str &#34;Com base nas seguintes informações:\n\n&#34;
+                                 (str/join &#34;\n\n&#34; @results)
+                                 &#34;\n\nResponda à pergunta original de forma completa e coerente: &#34; query)
+            
+            initial-response (llm/call-ollama-api synthesis-prompt)
+            
+            ;; Obter contexto combinado para verificação
+            combined-context (str/join &#34;\n\n&#34; @results)
+            
+            ;; Verificar a qualidade da resposta
+            final-response (verify-response query combined-context initial-response)
+            
+            duration (- (System/currentTimeMillis) start-time)]
+        
+        ;; Registrar métricas e resultados
+        final-response))))</code></pre>
+ <p>O sistema de agentes implementa um workflow sofisticado para consultas complexas:</p>
+<ol>
+<li>Análise da consulta para identificar intenção e subtarefas</li>
+<li>Execução de cada subtarefa com agentes especializados</li>
+<li>Acumulação de resultados parciais</li>
+<li>Síntese de uma resposta final coerente</li>
+<li>Verificação da qualidade da resposta</li>
+<li>Armazenamento em cache para consultas futuras</li>
+</ol>
+<h3 id="diferenciais-do-docai">Diferenciais do DocAI</h3>
+<p>O DocAI se destaca por implementar várias técnicas avançadas de RAG em um sistema integrado e modular:</p>
+<ul>
+<li>
+<p><strong>Chunking Adaptativo</strong>: Diferentes estratégias de chunking baseadas no tipo de documento:</p>
+
+
+  <pre><code class="language-clojure">(defn adaptive-chunking-strategy
+  &#34;Determina estratégia de chunking com base no tipo de documento&#34;
+  [document-type]
+  (case document-type
+    &#34;article&#34; {:chunk-size 1000 :chunk-overlap 150}
+    &#34;code&#34; {:chunk-size 500 :chunk-overlap 50}
+    &#34;legal&#34; {:chunk-size 1500 :chunk-overlap 200}
+    &#34;qa&#34; {:chunk-size 800 :chunk-overlap 100}
+    ;; Default
+    {:chunk-size 1000 :chunk-overlap 100}))</code></pre>
+ </li>
+<li>
+<p><strong>Cache Multinível</strong>: Implementação de cache para embeddings e respostas, reduzindo latência e custos:</p>
+
+
+  <pre><code class="language-clojure">;; Cache para embeddings
+(def embedding-cache (atom {}))
+;; Cache para respostas
+(def response-cache (atom {}))
+;; Cache para resultados de agentes
+(def agent-cache (atom {}))</code></pre>
+ </li>
+<li>
+<p><strong>Verificação de Respostas</strong>: Sistema que avalia e melhora automaticamente as respostas:</p>
+
+
+  <pre><code class="language-clojure">(defn verify-response
+  &#34;Usa um agente crítico para verificar e melhorar uma resposta&#34;
+  [query context response]
+  (let [prompt (str &#34;Avalie criticamente a seguinte resposta para a consulta do usuário. 
+                    Verifique se a resposta é:\n&#34;
+                    &#34;1. Fiel ao contexto fornecido\n&#34;
+                    &#34;2. Completa (responde todos os aspectos da pergunta)\n&#34;
+                    &#34;3. Precisa (não contém informações incorretas)\n\n&#34;
+                    &#34;Consulta: &#34; query &#34;\n\n&#34;
+                    &#34;Contexto: &#34; (if (&gt; (count context) 300) 
+                                  (str (subs context 0 300) &#34;...&#34;) context) &#34;\n\n&#34;
+                    &#34;Resposta: &#34; response &#34;\n\n&#34;
+                    &#34;Se a resposta for adequada, apenas responda &#39;A resposta está correta&#39;. &#34;
+                    &#34;Caso contrário, forneça uma versão melhorada.&#34;)
+        verification (llm/call-ollama-api prompt)]
+
+    (if (str/includes? verification &#34;A resposta está correta&#34;)
+      response
+      (let [improved-version (str/replace verification 
+                                         #&#34;(?i).*?\b(a resposta melhorada seria:|versão melhorada:|resposta corrigida:|sugestão de resposta:|aqui está uma versão melhorada:)\s*&#34; 
+                                         &#34;&#34;)]
+        improved-version))))</code></pre>
+ </li>
+<li>
+<p><strong>Métricas Detalhadas</strong>: Sistema de monitoramento que registra todos os aspectos das interações:</p>
+
+
+  <pre><code class="language-clojure">(metrics/log-rag-interaction query [] response latency)</code></pre>
+ </li>
+</ul>
+<p>Estas implementações demonstram como as técnicas avançadas de RAG discutidas neste artigo podem ser integradas em um sistema coeso, resultando em um assistente de documentação mais inteligente e eficiente.</p>
+<h3 id="próximos-passos-para-o-docai">Próximos Passos para o DocAI</h3>
+<p>Conforme detalhado no <code>plan.md</code>, o DocAI evoluirá para um sistema RAG Agêntico mais completo, implementando as seguintes melhorias:</p>
+<ol>
+<li>
+<p><strong>Reescrita de Consultas</strong></p>
+<ul>
+<li>Módulo de reformulação para melhorar a precisão da busca</li>
+<li>Expansão de consultas curtas e foco em consultas abrangentes</li>
+</ul>
+</li>
+<li>
+<p><strong>Seleção Dinâmica de Fontes</strong></p>
+<ul>
+<li>Workflow de agentes aprimorado para decidir quais fontes consultar</li>
+<li>Integração com APIs externas e pesquisa web</li>
+</ul>
+</li>
+<li>
+<p><strong>Framework de Ferramentas para Agentes</strong></p>
+<ul>
+<li>Sistema de ferramentas para ações específicas</li>
+<li>Executores de código, calculadoras e formatadores</li>
+</ul>
+</li>
+<li>
+<p><strong>Interface Multimodal</strong></p>
+<ul>
+<li>Processamento de imagens e geração de gráficos</li>
+<li>Suporte a diversos formatos além de texto</li>
+</ul>
+</li>
+</ol>
+<p>Estas evoluções manterão a arquitetura modular e extensível do DocAI, permitindo adaptação a diferentes casos de uso e domínios de conhecimento.</p>
+<h2 id="integração-com-o-ecossistema">Integração com o Ecossistema</h2>
+
+
+  
+  <div class="mermaid">flowchart TB
+    subgraph &#34;Ecossistema DocAI&#34;
+        direction TB
+        
+        DOCAI[Sistema DocAI] --- OLLAMA[Ollama]
+        DOCAI --- POSTGRES[PostgreSQL &#43; pgvector]
+        
+        DOCAI --- API_GATE[API Gateway]
+        API_GATE --- WEB_APP[Aplicação Web]
+        API_GATE --- CLI[Interface CLI]
+        
+        DOCAI --- MONITORING[Sistema de Monitoramento]
+        MONITORING --- DASHBOARD[Dashboard de Métricas]
+        
+        DOCAI -.-&gt; FUTURE_INT[Integrações Futuras]
+        FUTURE_INT -.-&gt; EXT_API[APIs Externas]
+        FUTURE_INT -.-&gt; SEARCH[Motores de Busca]
+        FUTURE_INT -.-&gt; TOOLS[Ferramentas de Produtividade]
+        
+        style DOCAI fill:#f99,stroke:#333,stroke-width:3px
+        style OLLAMA fill:#9f9,stroke:#333,stroke-width:2px
+        style POSTGRES fill:#99f,stroke:#333,stroke-width:2px
+        style FUTURE_INT fill:#ddd,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    end</div>
+ <p>O diagrama acima mostra como o DocAI se integra ao ecossistema mais amplo de ferramentas e serviços. No centro está o sistema <a href="https://github.com/docai-ai/docai">DocAI</a>, que se conecta diretamente com <a href="https://github.com/ollama/ollama">Ollama</a> para geração de texto e embeddings, e com <a href="https://www.postgresql.org/">PostgreSQL</a> (com <a href="https://github.com/pgvector/pgvector">pgvector</a>) para armazenamento e recuperação de dados vetoriais.</p>
+<p>Para interação com usuários, o DocAI se conecta a um <a href="https://en.wikipedia.org/wiki/API_gateway">API Gateway</a> que fornece acesso tanto para uma aplicação web quanto para uma interface de linha de comando (CLI). Um sistema dedicado de monitoramento coleta métricas e as exibe em um dashboard para análise de desempenho.</p>
+<p>As linhas tracejadas indicam integrações futuras planejadas, incluindo <a href="https://en.wikipedia.org/wiki/API">APIs externas</a> para busca de informações adicionais, <a href="https://en.wikipedia.org/wiki/Search_engine">motores de busca</a> para ampliar o alcance de recuperação, e <a href="https://en.wikipedia.org/wiki/Productivity">ferramentas de produtividade</a> para aumentar as capacidades do sistema.</p>
+<p>Esta arquitetura modular permite que o DocAI se mantenha flexível e adaptável, podendo ser expandido conforme novos requisitos e oportunidades surgem, sempre mantendo seu núcleo robusto de funcionalidades RAG avançadas.</p>
+<hr>
+<h2 id="conclusão">Conclusão</h2>
+<p>Transformar um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">RAG</a> de protótipo para produção requer mais do que apenas escolher as melhores ferramentas - exige uma compreensão profunda de cada componente e como eles trabalham juntos para produzir resultados confiáveis.</p>
+<p>O projeto <a href="https://github.com/scovl/docai">DocAI</a> representa uma implementação robusta das técnicas avançadas de RAG discutidas neste artigo. Sua arquitetura modular, com componentes especializados em diferentes aspectos do processo (como Core, LLM, PostgreSQL, Sistema de Agentes e Métricas), demonstra a importância de um design bem estruturado para sistemas RAG em produção.</p>
+<p>As técnicas que exploramos - desde re-ranqueamento e chunking dinâmico até workflows com agentes e monitoramento avançado - representam as práticas que separam implementações amadoras de sistemas robustos e prontos para uso em escala.</p>
+
+
+  
+  <div class="mermaid">flowchart LR
+    subgraph &#34;Evolução do DocAI&#34;
+    direction LR
+    BASIC[RAG Básico com TF-IDF] --&gt; PGSQL[PostgreSQL &#43; Embeddings] --&gt; ADV[Sistema RAG Avançado] --&gt; AGT[Sistema RAG Agêntico]
+    end
+    
+    style BASIC fill:#ddf,stroke:#333,stroke-width:2px
+    style PGSQL fill:#fdf,stroke:#333,stroke-width:2px
+    style ADV fill:#dfd,stroke:#333,stroke-width:2px
+    style AGT fill:#ffd,stroke:#333,stroke-width:2px</div>
+ <p>Nossa jornada com o <a href="https://github.com/scovl/docai">DocAI</a> evoluiu significativamente, de uma implementação básica com TF-IDF, passando por um sistema com PostgreSQL e embeddings, e agora para uma arquitetura avançada com agentes que pode lidar com casos de uso complexos do mundo real. O próximo passo, conforme detalhado no plano de evolução, será expandir ainda mais essas capacidades para criar um sistema RAG Agêntico completo.</p>
+<p>O futuro dos sistemas de IA não está em modelos cada vez maiores, mas na combinação inteligente de componentes especializados que trabalham juntos para superar limitações individuais. O <a href="https://github.com/scovl/docai">DocAI</a> exemplifica esta abordagem, demonstrando como a integração de técnicas avançadas de RAG pode resultar em um sistema mais inteligente, preciso e útil para seus usuários.</p>
+<hr>
+<h2 id="referências">Referências</h2>
+<ul>
+<li><a href="/2025/03/25/semantic-postgresql/">Artigo anterior: Busca Semântica com Ollama e PostgreSQL</a> - Nossa implementação básica com PostgreSQL.</li>
+<li><a href="https://openai.com/research/clip">CLIP - OpenAI</a> - Modelo para unificar visão e linguagem.</li>
+<li><a href="https://towardsdatascience.com/a-comprehensive-guide-to-multimodal-rag-ea72c387c6e8">Comprehensive Guide to MultiModal RAG</a> - Guia detalhado para implementação de RAG multimodal.</li>
+<li><a href="https://huggingface.co/cross-encoder">Cross-Encoders - Hugging Face</a> - Modelos para re-ranking em sistemas de recuperação.</li>
+<li><a href="https://dailydoseofds.com">Daily Dose of Data Science: RAG Techniques</a> - Artigo sobre técnicas para otimizar sistemas RAG.</li>
+<li><a href="https://github.com/timescale/pgai">Documentação do pgai</a> - Extensão do PostgreSQL para aplicações de IA.</li>
+<li><a href="https://github.com/pgvector/pgvector">Documentação do pgvector</a> - Extensão do PostgreSQL para embeddings vetoriais.</li>
+<li><a href="https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model">Flamingo - DeepMind</a> - Modelo visual de linguagem para tarefas multimodais.</li>
+<li><a href="https://www.pinecone.io/learn/hnsw-ivfflat/">HNSW vs. IVFFlat para Busca de Similaridade</a> - Comparação de algoritmos de indexação vetorial.</li>
+<li><a href="https://huggingface.co/blog/autonomous-agents">HuggingFace - Agentes Autônomos</a> - Implementação de agentes autônomos para RAG.</li>
+<li><a href="https://www.postgresql.org/docs/current/datatype-json.html">JSONB no PostgreSQL</a> - Documentação sobre o tipo de dados JSONB.</li>
+<li><a href="https://python.langchain.com/docs/modules/agents/agent_types/multi_agent">LangChain - Multi-Agent Systems</a> - Implementação de sistemas multi-agentes.</li>
+<li><a href="https://python.langchain.com/">LangChain</a> - Biblioteca para desenvolvimento de aplicações baseadas em LLM.</li>
+<li><a href="https://docs.llamaindex.ai/en/stable/examples/agent/react_agent.html">LlamaIndex - Implementando ReAct Agents</a> - Guia para implementação de agentes ReAct.</li>
+<li><a href="https://docs.llamaindex.ai/">LlamaIndex</a> - Framework para construir aplicações alimentadas por LLM.</li>
+<li><a href="https://docs.llamaindex.ai/en/stable/examples/multi_modal/">MultiModal RAG com LlamaIndex</a> - Exemplos de implementação multimodal.</li>
+<li><a href="https://ollama.com/">Ollama - Rodando LLMs localmente</a> - Ferramenta para executar LLMs localmente.</li>
+<li><a href="https://www.postgresql.org/">PostgreSQL</a> - Sistema de gerenciamento de banco de dados relacional.</li>
+<li><a href="https://github.com/scovl/docai">Projeto DocAI</a> - Repositório do projeto DocAI.</li>
+<li><a href="https://huggingface.co/blog/idefics">Projeto IDEFICS para RAG Multimodal</a> - Modelo e framework para RAG multimodal.</li>
+<li><a href="https://redis.io/docs/stack/search/reference/vectors/">Redis Vector Database para RAG</a> - Implementação de busca vetorial com Redis.</li>
+<li><a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">Retrieval-Augmented Generation (RAG)</a> - Conceitos fundamentais de RAG.</li>
+<li><a href="https://supabase.com/blog/image-search-using-ai-embeddings">Supabase - Image Search com pgvector</a> - Implementação de busca de imagens com pgvector.</li>
+</ul>
+
+    </div>
+    
+    
+</article>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 
