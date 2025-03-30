@@ -1595,8 +1595,6 @@ O futuro dos sistemas de IA não está em modelos cada vez maiores, mas na combi
 - [Documentação do pgai](https://github.com/timescale/pgai) - Extensão do PostgreSQL para aplicações de IA.
 - [Documentação do pgvector](https://github.com/pgvector/pgvector) - Extensão do PostgreSQL para embeddings vetoriais.
 - [Flamingo - DeepMind](https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model) - Modelo visual de linguagem para tarefas multimodais.
-- [HNSW vs. IVFFlat para Busca de Similaridade](https://www.pinecone.io/learn/hnsw-ivfflat/) - Comparação de algoritmos de indexação vetorial.
-- [HuggingFace - Agentes Autônomos](https://huggingface.co/blog/autonomous-agents) - Implementação de agentes autônomos para RAG.
 - [JSONB no PostgreSQL](https://www.postgresql.org/docs/current/datatype-json.html) - Documentação sobre o tipo de dados JSONB.
 - [LangChain - Multi-Agent Systems](https://python.langchain.com/docs/modules/agents/agent_types/multi_agent) - Implementação de sistemas multi-agentes.
 - [LangChain](https://python.langchain.com/) - Biblioteca para desenvolvimento de aplicações baseadas em LLM.
