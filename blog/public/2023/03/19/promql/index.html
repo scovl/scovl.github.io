@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -133,10 +135,10 @@
     
     <div class="post-content content-wrapper">
         <ul>
-<li><strong><a href="/2023/03/19/promql/#introdução">Introdução</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#funções">Funções</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#fun%c3%a7%c3%b5es">Funções</a></strong></li>
 <li><strong><a href="/2023/03/19/promql/#agregadores-e-operadores">Agregadores e Operadores</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#promql-na-prática">PromQL na prática</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#promql-na-pr%c3%a1tica">PromQL na prática</a></strong></li>
 <li><strong><a href="/2023/03/19/promql/#erros-comuns">Erros comuns</a></strong></li>
 </ul>
 <h2 id="introdução">Introdução</h2>
@@ -486,13 +488,13 @@
 
   <pre><code class="language-bash">100 * (1 - ((avg_over_time(node_memory_MemFree_bytes[10m]) &#43; avg_over_time(node_memory_Cached_bytes[10m]) &#43;
 avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTotal_bytes[10m])))</code></pre>
- <p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png#center"></p>
+ <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png#center" alt="img#center"></p>
 <p>O Prometheus mencionado está coletando métricas de diversos <strong><a href="https://prometheus.demo.do.prometheus.io/targets">targets</a></strong>. A métrica acima, se refere ao <strong><a href="http://demo.do.prometheus.io:9100/metrics">Node_Exporter</a></strong>. Isto é, são métricas de Sistema Operacional e Hardware Linux. A Query está registrando o consumo médio de memória. Com a interface do Prometheus aberta em seu navegador, vá até a aba <strong>GRAPH</strong>. O Prometheus é focado no que está acontecendo agora em vez de rastrear dados ao longo de semanas ou meses. Isso se baseia na premissa de que a maioria das consultas e alertas de monitoramento são gerados a partir de dados recentes, geralmente, com menos de um dia. O Prometheus é responsável por armazenar suas métricas como dados de séries temporais, isto é, ao longo do tempo:</p>
-<p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/timeseries01.png#center"></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/timeseries01.png#center" alt="img#center"></p>
 <p>As métricas são armazenadas com o registro de data/hora, juntamente com pares de valores-chave opcionais chamados labels. Entenda labels como filtros que você aplica para trazer dados mais precisos a cerca de um ou mais endpoints. As métricas desempenham um papel importante para entender o comportamento da sua aplicação. Métricas são medidas de componentes de software ou hardware. Para tornar uma métrica útil, acompanhamos seu estado, geralmente registrando data points ao longo do tempo. Esses data points ou pontos de dados, são chamados de <strong>observations</strong> como mostra a imagem a seguir:</p>
-<p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/observation.png#center"></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/observation.png#center" alt="img#center"></p>
 <p>Um observation (o potinho no gráfico), consiste em um registro de data/hora bastante preciso em milissegundos e um valor float64. Uma coleção de observations registrados ao longo do tempo, é o que é denominado de série temporal. Um ou mais quadros atuais, ou seja, as séries temporais que voce está analizando atualmente, por sua vez, é chamado de <strong>samples</strong>:</p>
-<p><img alt="img#center" src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/samples01.png#center"></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/samples01.png#center" alt="img#center"></p>
 <p>Experimente executar cada uma das métricas abaixo em seu devido contexto:</p>
 <h3 id="cpu-usage">CPU Usage</h3>
 <ul>
@@ -565,8 +567,7 @@ avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTo
   <pre><code class="language-bash">rate(http_requests_total[5m])</code></pre>
  <p>Neste exemplo, a consulta calcula a taxa de solicitações HTTP, mas não agrega os dados por qualquer dimensão. Isso pode resultar em um gráfico difícil de entender ou interpretar. Para evitar esse problema, use funções de agregação adequadas, como <code>sum()</code>, <code>avg()</code>, <code>min()</code>, <code>max()</code> ou <code>count()</code>, e agrupe os dados por dimensões relevantes.</p>
 <blockquote>
-<p><strong>Observação</strong>: A dica de ouro é que se você está tendo problema de desempenho em trazer métricas, provavelmente há algo errado com a sua query.</p>
-</blockquote>
+<p><strong>Observação</strong>: A dica de ouro é que se você está tendo problema de desempenho em trazer métricas, provavelmente há algo errado com a sua query.</p></blockquote>
 <h2 id="conclusão">Conclusão</h2>
 <p>Neste artigo, explorei diversas expressões e conceitos importantes do PromQL, a linguagem de consulta utilizada no Prometheus. Com exemplos práticos e uma abordagem didática, vimos como utilizar operadores, funções, cláusulas e técnicas de seleção para construir consultas eficazes e precisas. Espero que este material seja útil para desenvolvedores, devops e SREs que utilizam o Prometheus como ferramenta de monitoramento e que desejam aprimorar seus conhecimentos.</p>
 <hr>
@@ -581,6 +582,29 @@ avg_over_time(node_memory_Buffers_bytes[10m])) / avg_over_time(node_memory_MemTo
 
     </div>
     
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
     
 </article>
 

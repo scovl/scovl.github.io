@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -138,23 +140,23 @@
     <div class="post-content content-wrapper">
         <h1 id="sumário">Sumário</h1>
 <ul>
-<li><strong><a href="/2025/03/28/rag02/#introdução">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</a></strong>
+<li><strong><a href="/2025/03/28/rag02/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#da-teoria-%c3%a0-produ%c3%a7%c3%a3o-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evit%c3%a1-las">Armadilhas Comuns e Como Evitá-las</a></strong>
 <ul>
-<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensa%c3%a7%c3%a3o-de-relev%c3%a2ncia">Armadilha 1: A Falsa Sensação de Relevância</a></li>
 <li><a href="/2025/03/28/rag02/#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
-<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-cont%c3%adnuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
 <li><a href="/2025/03/28/rag02/#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/28/rag02/#técnicas-avançadas-de-otimização">Técnicas Avançadas de Otimização</a></strong>
+<li><strong><a href="/2025/03/28/rag02/#t%c3%a9cnicas-avan%c3%a7adas-de-otimiza%c3%a7%c3%a3o">Técnicas Avançadas de Otimização</a></strong>
 <ul>
 <li><a href="/2025/03/28/rag02/#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
-<li><a href="/2025/03/28/rag02/#estratégias-de-chunking-dinâmico">Estratégias de Chunking Dinâmico</a></li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-chunking-din%c3%a2mico">Estratégias de Chunking Dinâmico</a></li>
 <li><a href="/2025/03/28/rag02/#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
 <ul>
-<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avançada">Arquitetura de Agentes Avançada</a></li>
+<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avan%c3%a7ada">Arquitetura de Agentes Avançada</a></li>
 <li><a href="/2025/03/28/rag02/#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
 </ul>
 </li>
@@ -162,34 +164,34 @@
 <ul>
 <li><a href="/2025/03/28/rag02/#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
 <li><a href="/2025/03/28/rag02/#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
-<li><a href="/2025/03/28/rag02/#desafios-de-implementação-multimodal">Desafios de Implementação Multimodal</a></li>
+<li><a href="/2025/03/28/rag02/#desafios-de-implementa%c3%a7%c3%a3o-multimodal">Desafios de Implementação Multimodal</a></li>
 </ul>
 </li>
-<li><a href="/2025/03/28/rag02/#estratégias-de-cache">Estratégias de Cache</a>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-cache">Estratégias de Cache</a>
 <ul>
-<li><a href="/2025/03/28/rag02/#estratégias-avançadas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-avan%c3%a7adas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-métricas-llmops-na-prática">Monitoramento e Métricas: LLMOps na Prática</a></strong>
+<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-m%c3%a9tricas-llmops-na-pr%c3%a1tica">Monitoramento e Métricas: LLMOps na Prática</a></strong>
 <ul>
-<li><a href="/2025/03/28/rag02/#métricas-de-qualidade-específicas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
-<li><a href="/2025/03/28/rag02/#automação-da-avaliação-com-llms-como-juízes">Automação da Avaliação com LLMs como Juízes</a></li>
-<li><a href="/2025/03/28/rag02/#configuração-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
-<li><a href="/2025/03/28/rag02/#integração-com-sistemas-de-feedback-do-usuário">Integração com Sistemas de Feedback do Usuário</a></li>
+<li><a href="/2025/03/28/rag02/#m%c3%a9tricas-de-qualidade-espec%c3%adficas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
+<li><a href="/2025/03/28/rag02/#automa%c3%a7%c3%a3o-da-avalia%c3%a7%c3%a3o-com-llms-como-ju%c3%adzes">Automação da Avaliação com LLMs como Juízes</a></li>
+<li><a href="/2025/03/28/rag02/#configura%c3%a7%c3%a3o-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
+<li><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-sistemas-de-feedback-do-usu%c3%a1rio">Integração com Sistemas de Feedback do Usuário</a></li>
 </ul>
 </li>
 <li><strong><a href="/2025/03/28/rag02/#implementando-no-docai">Implementando no DocAI</a></strong>
 <ul>
 <li><a href="/2025/03/28/rag02/#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
 <li><a href="/2025/03/28/rag02/#diferenciais-do-docai">Diferenciais do DocAI</a></li>
-<li><a href="/2025/03/28/rag02/#próximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#pr%c3%b3ximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/28/rag02/#integração-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#conclusão">Conclusão</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#referências">Referências</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#conclus%c3%a3o">Conclusão</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#refer%c3%aancias">Referências</a></strong></li>
 </ul>
 <h2 id="introdução">Introdução</h2>
 <p>Olá pessoal! 👋</p>
@@ -197,8 +199,7 @@
 <p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
 <h2 id="da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</h2>
 <blockquote>
-<p>&ldquo;No papel, implementar um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> parece simples—conectar um banco de dados vetorial, processar documentos, incorporar os dados, incorporar a consulta, consultar o <a href="https://en.wikipedia.org/wiki/Vector_database">banco de dados vetorial</a> e gerar a resposta com o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>. Mas na prática, transformar um protótipo em uma aplicação de alto desempenho é um desafio completamente diferente.&rdquo;</p>
-</blockquote>
+<p>&ldquo;No papel, implementar um sistema <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> parece simples—conectar um banco de dados vetorial, processar documentos, incorporar os dados, incorporar a consulta, consultar o <a href="https://en.wikipedia.org/wiki/Vector_database">banco de dados vetorial</a> e gerar a resposta com o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>. Mas na prática, transformar um protótipo em uma aplicação de alto desempenho é um desafio completamente diferente.&rdquo;</p></blockquote>
 <p>Ao migrarmos do <a href="/2025/03/23/rag/">TF-IDF em memória</a> para <a href="/2025/03/25/semantic-postgresql/">PostgreSQL/pgvector/pgai</a>, demos um grande salto de qualidade. Porém, à medida que o volume de dados cresce e os casos de uso se tornam mais complexos, novos desafios surgem:</p>
 <ul>
 <li><strong>Escalabilidade</strong>: Como lidar com milhões de documentos sem degradar o desempenho?</li>
@@ -217,12 +218,12 @@
 <ul>
 <li>Como construir <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">mecanismos de recuperação robustos</a>?</li>
 <li>Qual o papel da <a href="https://en.wikipedia.org/wiki/Embedding_model">qualidade dos embeddings</a> no desempenho da recuperação?</li>
-<li>Como adaptar estratégias de <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">chunking</a> dinamicamente?</li>
+<li>Como adaptar estratégias de <a href="https://en.wikipedia.org/wiki/Chunking_%28data_storage%29">chunking</a> dinamicamente?</li>
 <li>Como o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> pode interpretar dados de forma eficaz?</li>
 <li>Uma cadeia de <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a> ajudaria a refinar as respostas? Vale o custo?</li>
 <li>Como prevenir alucinações mantendo a diversidade das respostas?</li>
 <li>Como integrar entradas <a href="https://en.wikipedia.org/wiki/Multimodal_learning">multimodais</a> (texto, imagens, tabelas) em um pipeline <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>?</li>
-<li>Quais estratégias de <a href="https://en.wikipedia.org/wiki/Cache_(computing)">cache</a> reduzem chamadas de API redundantes e latência?</li>
+<li>Quais estratégias de <a href="https://en.wikipedia.org/wiki/Cache_%28computing%29">cache</a> reduzem chamadas de API redundantes e latência?</li>
 <li>Como automatizar a <a href="https://en.wikipedia.org/wiki/Evaluation_of_retrieval_systems">avaliação da recuperação</a> para melhoria contínua?</li>
 </ul>
 <h2 id="armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</h2>
@@ -230,8 +231,7 @@
 <h3 id="armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</h3>
 <p>Uma busca por vizinhos mais próximos sempre retornará algum resultado, mas como saber se é realmente útil? Alguns documentos podem parecer relevantes com base na similaridade vetorial, mas não fornecem o contexto adequado para responder à pergunta do usuário.</p>
 <blockquote>
-<p><strong>Solução</strong>: Implementar verificação de relevância pós-recuperação usando <a href="https://huggingface.co/cross-encoder">cross-encoders</a> ou filtros baseados em regras. No <a href="https://www.postgresql.org/">PostgreSQL</a>, podemos fazer isso com:</p>
-</blockquote>
+<p><strong>Solução</strong>: Implementar verificação de relevância pós-recuperação usando <a href="https://huggingface.co/cross-encoder">cross-encoders</a> ou filtros baseados em regras. No <a href="https://www.postgresql.org/">PostgreSQL</a>, podemos fazer isso com:</p></blockquote>
 
 
   <pre><code class="language-sql">-- Primeiro recuperamos candidatos usando busca vetorial
@@ -261,8 +261,7 @@ SELECT * FROM filtrados ORDER BY distancia LIMIT 5;</code></pre>
 <li>Chunks muito grandes diluem a recuperação com detalhes irrelevantes</li>
 </ul>
 <blockquote>
-<p><strong>Solução</strong>: Adaptar a estratégia de chunking ao tipo de conteúdo. No nosso <a href="/2025/03/25/semantic-postgresql/">PostgreSQL RAG</a>, usamos chunking recursivo:</p>
-</blockquote>
+<p><strong>Solução</strong>: Adaptar a estratégia de chunking ao tipo de conteúdo. No nosso <a href="/2025/03/25/semantic-postgresql/">PostgreSQL RAG</a>, usamos chunking recursivo:</p></blockquote>
 
 
   <pre><code class="language-sql">-- Podemos ajustar os parâmetros de chunking para diferentes tipos de documentos
@@ -276,7 +275,7 @@ SELECT ai.create_vectorizer(
                                                            chunk_overlap =&gt; 200)
 );</code></pre>
  <p>Para documentos técnicos, que geralmente contêm informações densas e interconectadas, configuramos chunks maiores (1500 caracteres) com uma sobreposição significativa (200 caracteres).</p>
-<p>Isso permite preservar mais contexto dentro de cada chunk, o que é crucial para a compreensão de conceitos técnicos complexos. O uso do <code>chunking_recursive_character_text_splitter</code> implementa uma estratégia de divisão recursiva que respeita a estrutura natural do texto, enquanto o modelo de embedding <code>nomic-embed-text</code> com 768 dimensões captura as nuances semânticas do conteúdo técnico. Esta <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">abordagem adaptativa de chunking</a> é fundamental para equilibrar a granularidade da recuperação com a preservação do contexto necessário para respostas precisas em sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>.</p>
+<p>Isso permite preservar mais contexto dentro de cada chunk, o que é crucial para a compreensão de conceitos técnicos complexos. O uso do <code>chunking_recursive_character_text_splitter</code> implementa uma estratégia de divisão recursiva que respeita a estrutura natural do texto, enquanto o modelo de embedding <code>nomic-embed-text</code> com 768 dimensões captura as nuances semânticas do conteúdo técnico. Esta <a href="https://en.wikipedia.org/wiki/Chunking_%28data_storage%29">abordagem adaptativa de chunking</a> é fundamental para equilibrar a granularidade da recuperação com a preservação do contexto necessário para respostas precisas em sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a>.</p>
 <h3 id="armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</h3>
 <p>Como garantir que seu sistema permaneça eficaz ao longo do tempo? <a href="https://www.databricks.com/br/glossary/llmops">LLMOps</a> não é apenas sobre implantação, mas sobre o monitoramento contínuo da qualidade.</p>
 <blockquote>
@@ -285,8 +284,7 @@ SELECT ai.create_vectorizer(
 <li>Comparações com respostas conhecidas (ground truth)</li>
 <li>Detecção de drift em embeddings</li>
 <li>Monitoramento de latência e taxa de falhas</li>
-</ul>
-</blockquote>
+</ul></blockquote>
 <h3 id="armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</h3>
 <p>Muitas consultas do mundo real são complexas demais para uma única etapa de recuperação. Se uma pergunta requer sintetizar várias informações, um pipeline RAG padrão pode falhar.</p>
 <p><strong>Solução</strong>: Implementar fluxos de trabalho mais sofisticados:</p>
@@ -427,9 +425,9 @@ SELECT ai.create_vectorizer(
                     [&#34;INSERT INTO documentos_hierarquicos 
                      (conteudo, nivel_granularidade) VALUES (?, ?)&#34;
                      (:content chunk) (:level chunk)]))))</code></pre>
- <p>O código acima implementa uma estratégia de <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">chunking hierárquico</a> em <a href="https://clojure.org/">Clojure</a>, uma técnica avançada para sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> que mantém múltiplas representações do mesmo conteúdo em diferentes níveis de granularidade. A função <code>create-hierarchical-chunks</code> divide um documento em três níveis: documento completo, seções e parágrafos, preservando assim tanto o contexto amplo quanto os detalhes específicos.</p>
+ <p>O código acima implementa uma estratégia de <a href="https://en.wikipedia.org/wiki/Chunking_%28data_storage%29">chunking hierárquico</a> em <a href="https://clojure.org/">Clojure</a>, uma técnica avançada para sistemas <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> que mantém múltiplas representações do mesmo conteúdo em diferentes níveis de granularidade. A função <code>create-hierarchical-chunks</code> divide um documento em três níveis: documento completo, seções e parágrafos, preservando assim tanto o contexto amplo quanto os detalhes específicos.</p>
 <p>Esta abordagem permite que o sistema de recuperação escolha a granularidade mais apropriada dependendo da consulta, oferecendo flexibilidade que um chunking de tamanho fixo não consegue proporcionar.</p>
-<p>A implementação utiliza funções auxiliares como <code>split-paragraphs</code> e <code>split-sections</code> (não mostradas no código) para segmentar o documento de forma inteligente, respeitando a estrutura semântica do texto. Cada <a href="https://en.wikipedia.org/wiki/Chunk_(data_storage)">chunk</a> é armazenado no <a href="https://www.postgresql.org/">PostgreSQL</a> junto com metadados sobre seu nível de granularidade, permitindo consultas que podem priorizar diferentes níveis dependendo do tipo de pergunta.</p>
+<p>A implementação utiliza funções auxiliares como <code>split-paragraphs</code> e <code>split-sections</code> (não mostradas no código) para segmentar o documento de forma inteligente, respeitando a estrutura semântica do texto. Cada <a href="https://en.wikipedia.org/wiki/Chunk_%28data_storage%29">chunk</a> é armazenado no <a href="https://www.postgresql.org/">PostgreSQL</a> junto com metadados sobre seu nível de granularidade, permitindo consultas que podem priorizar diferentes níveis dependendo do tipo de pergunta.</p>
 <p>Esta técnica é particularmente valiosa para documentos longos e estruturados, como artigos técnicos ou documentação, onde tanto o contexto geral quanto detalhes específicos podem ser relevantes dependendo da natureza da consulta do usuário.</p>
 <hr>
 <h3 id="workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</h3>
@@ -819,8 +817,7 @@ CREATE TABLE embeddings_imagem (
 </li>
 </ol>
 <blockquote>
-<p>No próximo artigo, exploraremos em profundidade como expandir o DocAI para oferecer suporte total a conteúdo multimodal, com exemplos práticos de implementação e otimização de desempenho.</p>
-</blockquote>
+<p>No próximo artigo, exploraremos em profundidade como expandir o DocAI para oferecer suporte total a conteúdo multimodal, com exemplos práticos de implementação e otimização de desempenho.</p></blockquote>
 <hr>
 <h3 id="estratégias-de-cache">Estratégias de Cache</h3>
 <p>Implementar caching pode reduzir drasticamente a latência e os custos:</p>
@@ -859,8 +856,7 @@ CREATE TABLE embeddings_imagem (
  <p>O diagrama acima ilustra uma estratégia de cache em múltiplas camadas para sistemas RAG, uma técnica fundamental para otimizar tanto a latência quanto os custos operacionais. A arquitetura implementa três níveis de cache <code>(L1, L2 e L3)</code>, cada um representando diferentes compromissos entre velocidade e abrangência. O cache <code>L1</code> tipicamente armazena respostas exatas para consultas idênticas, oferecendo resposta instantânea quando há correspondência perfeita. O cache <code>L2</code> pode armazenar respostas para consultas semanticamente similares, enquanto o cache <code>L3</code> pode conter resultados parciais como embeddings pré-calculados ou chunks recuperados anteriormente.</p>
 <p>Esta abordagem em cascata permite que o sistema evite o processamento <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">RAG</a> completo sempre que possível, reduzindo significativamente o tempo de resposta e a carga computacional. Quando uma consulta não encontra correspondência em nenhum nível de cache, apenas então o sistema executa o fluxo completo de <a href="https://en.wikipedia.org/wiki/Retrieval-Augmented_Generation">RAG</a>, que inclui geração de embeddings, recuperação de contexto e inferência do <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>.</p>
 <blockquote>
-<p>A nova resposta gerada é então armazenada no cache apropriado para uso futuro, criando um sistema que se torna progressivamente mais eficiente à medida que processa mais consultas. A implementação de uma estratégia de cache multicamada como esta pode reduzir custos operacionais em até 70% em sistemas de produção com padrões de consulta repetitivos.</p>
-</blockquote>
+<p>A nova resposta gerada é então armazenada no cache apropriado para uso futuro, criando um sistema que se torna progressivamente mais eficiente à medida que processa mais consultas. A implementação de uma estratégia de cache multicamada como esta pode reduzir custos operacionais em até 70% em sistemas de produção com padrões de consulta repetitivos.</p></blockquote>
 <p>Além da economia de recursos, a redução na latência melhora significativamente a experiência do usuário, com respostas quase instantâneas para consultas frequentes. Para maximizar a eficácia, é importante implementar políticas de expiração de cache e estratégias de invalidação para garantir que as informações permaneçam atualizadas, especialmente em domínios onde os dados subjacentes mudam com frequência. Abaixo, um exemplo de implementação de cache de dois níveis em Clojure:</p>
 
 
@@ -1026,9 +1022,9 @@ $$ LANGUAGE plpgsql;</code></pre>
     style ANOM fill:#f99,stroke:#333,stroke-width:2px
     style OPT fill:#9f9,stroke:#333,stroke-width:2px</div>
  <p>O diagrama acima ilustra o ciclo completo de <a href="https://en.wikipedia.org/wiki/Monitoring">monitoramento</a> para <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">sistemas RAG</a> em produção. No centro do processo estão os &ldquo;<a href="https://en.wikipedia.org/wiki/Log_file">Logs de Interações</a>&rdquo;, que capturam dados detalhados sobre cada <a href="https://en.wikipedia.org/wiki/Query">consulta</a> processada pelo sistema, incluindo a pergunta original, os <a href="https://en.wikipedia.org/wiki/Information_retrieval">documentos recuperados</a>, a <a href="https://en.wikipedia.org/wiki/Natural_language_generation">resposta gerada</a> e <a href="https://en.wikipedia.org/wiki/Performance_metric">métricas de desempenho</a>.</p>
-<p>Estes logs alimentam o &ldquo;<a href="https://en.wikipedia.org/wiki/Metric_(mathematics)">Cálculo de Métricas</a>&rdquo;, que transforma <a href="https://en.wikipedia.org/wiki/Raw_data">dados brutos</a> em <a href="https://en.wikipedia.org/wiki/Key_performance_indicator">indicadores acionáveis</a> distribuídos em três categorias principais: <a href="https://en.wikipedia.org/wiki/Operational_efficiency">operacionais</a> (<a href="https://en.wikipedia.org/wiki/Latency_(engineering)">latência</a>, <a href="https://en.wikipedia.org/wiki/Throughput">throughput</a>), <a href="https://en.wikipedia.org/wiki/Data_quality">qualidade</a> (<a href="https://en.wikipedia.org/wiki/Precision_and_recall">precisão</a>, <a href="https://en.wikipedia.org/wiki/Relevance_(information_retrieval)">relevância</a>) e <a href="https://en.wikipedia.org/wiki/Feedback">feedback</a> (avaliações dos usuários). A &ldquo;<a href="https://en.wikipedia.org/wiki/Anomaly_detection">Detecção de Anomalias</a>&rdquo; monitora continuamente estas métricas para identificar desvios significativos dos padrões esperados, gerando &ldquo;<a href="https://en.wikipedia.org/wiki/Alert_management">Alertas e Relatórios</a>&rdquo; que orientam a &ldquo;<a href="https://en.wikipedia.org/wiki/System_optimization">Otimização do Sistema</a>&rdquo;, fechando assim o ciclo de <a href="https://en.wikipedia.org/wiki/Continuous_improvement">melhoria contínua</a>.</p>
+<p>Estes logs alimentam o &ldquo;<a href="https://en.wikipedia.org/wiki/Metric_%28mathematics%29">Cálculo de Métricas</a>&rdquo;, que transforma <a href="https://en.wikipedia.org/wiki/Raw_data">dados brutos</a> em <a href="https://en.wikipedia.org/wiki/Key_performance_indicator">indicadores acionáveis</a> distribuídos em três categorias principais: <a href="https://en.wikipedia.org/wiki/Operational_efficiency">operacionais</a> (<a href="https://en.wikipedia.org/wiki/Latency_%28engineering%29">latência</a>, <a href="https://en.wikipedia.org/wiki/Throughput">throughput</a>), <a href="https://en.wikipedia.org/wiki/Data_quality">qualidade</a> (<a href="https://en.wikipedia.org/wiki/Precision_and_recall">precisão</a>, <a href="https://en.wikipedia.org/wiki/Relevance_%28information_retrieval%29">relevância</a>) e <a href="https://en.wikipedia.org/wiki/Feedback">feedback</a> (avaliações dos usuários). A &ldquo;<a href="https://en.wikipedia.org/wiki/Anomaly_detection">Detecção de Anomalias</a>&rdquo; monitora continuamente estas métricas para identificar desvios significativos dos padrões esperados, gerando &ldquo;<a href="https://en.wikipedia.org/wiki/Alert_management">Alertas e Relatórios</a>&rdquo; que orientam a &ldquo;<a href="https://en.wikipedia.org/wiki/System_optimization">Otimização do Sistema</a>&rdquo;, fechando assim o ciclo de <a href="https://en.wikipedia.org/wiki/Continuous_improvement">melhoria contínua</a>.</p>
 <p>Este fluxo de trabalho representa a essência do <a href="https://en.wikipedia.org/wiki/MLOps">LLMOps</a> aplicado a sistemas RAG, onde o monitoramento não é apenas <a href="https://en.wikipedia.org/wiki/Reactive_programming">reativo</a>, mas <a href="https://en.wikipedia.org/wiki/Proactive">proativo</a> na identificação de oportunidades de melhoria. A estrutura tripartite das métricas garante uma <a href="https://en.wikipedia.org/wiki/Holism">visão holística</a> do desempenho: enquanto as métricas operacionais asseguram a <a href="https://en.wikipedia.org/wiki/Technical_efficiency">eficiência técnica</a> do sistema, as métricas de qualidade avaliam a <a href="https://en.wikipedia.org/wiki/Semantic_similarity">precisão semântica</a> das respostas, e as métricas de feedback incorporam a <a href="https://en.wikipedia.org/wiki/Human-centered_design">perspectiva humana</a> na avaliação.</p>
-<p>Esta abordagem <a href="https://en.wikipedia.org/wiki/System_integration">integrada</a> permite que <a href="https://en.wikipedia.org/wiki/Engineering_team">equipes de engenharia</a> identifiquem rapidamente <a href="https://en.wikipedia.org/wiki/Bottleneck_(software)">gargalos</a>, ajustem <a href="https://en.wikipedia.org/wiki/Information_retrieval">parâmetros de recuperação</a> e melhorem continuamente a <a href="https://en.wikipedia.org/wiki/User_experience">experiência do usuário</a> final, mesmo à medida que o <a href="https://en.wikipedia.org/wiki/Big_data">volume de dados</a> e a <a href="https://en.wikipedia.org/wiki/Query_complexity">complexidade das consultas</a> aumentam. O código abaixo mostra como implementar o log e a avaliação de respostas em <a href="https://en.wikipedia.org/wiki/Clojure">Clojure</a>:</p>
+<p>Esta abordagem <a href="https://en.wikipedia.org/wiki/System_integration">integrada</a> permite que <a href="https://en.wikipedia.org/wiki/Engineering_team">equipes de engenharia</a> identifiquem rapidamente <a href="https://en.wikipedia.org/wiki/Bottleneck_%28software%29">gargalos</a>, ajustem <a href="https://en.wikipedia.org/wiki/Information_retrieval">parâmetros de recuperação</a> e melhorem continuamente a <a href="https://en.wikipedia.org/wiki/User_experience">experiência do usuário</a> final, mesmo à medida que o <a href="https://en.wikipedia.org/wiki/Big_data">volume de dados</a> e a <a href="https://en.wikipedia.org/wiki/Query_complexity">complexidade das consultas</a> aumentam. O código abaixo mostra como implementar o log e a avaliação de respostas em <a href="https://en.wikipedia.org/wiki/Clojure">Clojure</a>:</p>
 
 
   <pre><code class="language-clojure">;; Estrutura para log e avaliação de respostas
@@ -1136,11 +1132,10 @@ $$ LANGUAGE plpgsql;</code></pre>
      :relevancy relevancy-result
      :composite_score (/ (&#43; faithfulness-result relevancy-result) 2.0)}))</code></pre>
  <p>A função recebe três parâmetros principais: a consulta original do usuário (<code>query</code>), o contexto recuperado pelo sistema (<code>context</code>) e a resposta gerada pelo modelo (<code>response</code>). Utilizando esses inputs, a função constrói dois prompts específicos para avaliar diferentes dimensões da qualidade da resposta.</p>
-<p>O primeiro prompt avalia a &ldquo;fidelidade&rdquo; <a href="https://en.wikipedia.org/wiki/Faithfulness_(literary_theory)">(faithfulness)</a> da resposta, verificando se ela se mantém fiel ao contexto fornecido sem adicionar informações não presentes ou contradizer o material de referência. O segundo prompt avalia a &ldquo;relevância&rdquo; <a href="https://en.wikipedia.org/wiki/Relevance_(information_retrieval)">(relevancy)</a>, analisando se a resposta aborda diretamente a consulta do usuário e se cobre todos os aspectos importantes da pergunta. Ambos os prompts são enviados para um <a href="https://github.com/langchain-ai/langchain/blob/main/libs/langchain-core/langchain_core/prompts/prompt.py">LLM avaliador através da função <code>call-evaluation-llm</code></a>, que retorna uma avaliação textual que é então convertida em uma pontuação numérica pela função <code>parse-score</code>.</p>
+<p>O primeiro prompt avalia a &ldquo;fidelidade&rdquo; <a href="https://en.wikipedia.org/wiki/Faithfulness_%28literary_theory%29">(faithfulness)</a> da resposta, verificando se ela se mantém fiel ao contexto fornecido sem adicionar informações não presentes ou contradizer o material de referência. O segundo prompt avalia a &ldquo;relevância&rdquo; <a href="https://en.wikipedia.org/wiki/Relevance_%28information_retrieval%29">(relevancy)</a>, analisando se a resposta aborda diretamente a consulta do usuário e se cobre todos os aspectos importantes da pergunta. Ambos os prompts são enviados para um <a href="https://github.com/langchain-ai/langchain/blob/main/libs/langchain-core/langchain_core/prompts/prompt.py">LLM avaliador através da função <code>call-evaluation-llm</code></a>, que retorna uma avaliação textual que é então convertida em uma pontuação numérica pela função <code>parse-score</code>.</p>
 <p>Por fim, a função agrega os resultados em um mapa contendo as pontuações individuais de fidelidade e relevância, além de calcular uma pontuação composta que é a média das duas métricas. Esta abordagem de &ldquo;LLM como avaliador&rdquo; representa uma técnica avançada no campo de RAG, permitindo avaliações automatizadas que capturam nuances qualitativas difíceis de medir com métricas puramente estatísticas.</p>
 <blockquote>
-<p>O código demonstra como implementar um sistema de avaliação que pode ser usado para monitoramento contínuo da qualidade das respostas e identificação de áreas para melhoria.</p>
-</blockquote>
+<p>O código demonstra como implementar um sistema de avaliação que pode ser usado para monitoramento contínuo da qualidade das respostas e identificação de áreas para melhoria.</p></blockquote>
 <h4 id="3-métricas-de-consenso-entre-modelos">3. Métricas de Consenso entre Modelos</h4>
 <p>Uma técnica eficaz é comparar respostas de múltiplos modelos ou configurações:</p>
 <ul>
@@ -1328,8 +1323,7 @@ $$ LANGUAGE plpgsql;</code></pre>
 <h2 id="implementando-no-docai">Implementando no DocAI</h2>
 <p>Agora que exploramos várias técnicas avançadas, vamos ver como elas são implementadas no projeto DocAI. Nosso sistema atual já incorpora muitas dessas técnicas para criar um pipeline RAG avançado.</p>
 <blockquote>
-<p>Caso não saiba o que é o DocAI, você pode ver os artigos anteriores <a href="https://scovl.github.io/2025/03/23/rag/">RAG Simples com Clojure e Ollama</a> e <a href="https://scovl.github.io/2025/03/25/semantic-postgresql/">Busca Semântica com Ollama e PostgreSQL</a>.</p>
-</blockquote>
+<p>Caso não saiba o que é o DocAI, você pode ver os artigos anteriores <a href="https://scovl.github.io/2025/03/23/rag/">RAG Simples com Clojure e Ollama</a> e <a href="https://scovl.github.io/2025/03/25/semantic-postgresql/">Busca Semântica com Ollama e PostgreSQL</a>.</p></blockquote>
 <h3 id="arquitetura-atual-do-docai">Arquitetura Atual do DocAI</h3>
 <p>A arquitetura do DocAI implementa um sistema RAG completo com suporte a agentes para consultas complexas. Os principais componentes são:</p>
 <ol>
@@ -1472,7 +1466,7 @@ $$ LANGUAGE plpgsql;</code></pre>
     {:chunk-size 1000 :chunk-overlap 100}))</code></pre>
  </li>
 </ul>
-<p>O sistema implementa estratégias de <a href="https://en.wikipedia.org/wiki/Chunking_(data_storage)">chunking adaptativas</a> que otimizam a segmentação de documentos conforme seu tipo específico. Esta abordagem reconhece que diferentes conteúdos possuem características únicas que afetam como devem ser divididos para processamento:</p>
+<p>O sistema implementa estratégias de <a href="https://en.wikipedia.org/wiki/Chunking_%28data_storage%29">chunking adaptativas</a> que otimizam a segmentação de documentos conforme seu tipo específico. Esta abordagem reconhece que diferentes conteúdos possuem características únicas que afetam como devem ser divididos para processamento:</p>
 <ul>
 <li><strong>Artigos</strong>: Chunks maiores (1000 tokens) com sobreposição significativa (150 tokens), preservando o fluxo narrativo e argumentativo</li>
 <li><strong>Código-fonte</strong>: Chunks menores (500 tokens) com sobreposição reduzida (50 tokens), respeitando a estrutura modular do código</li>
@@ -1493,7 +1487,7 @@ $$ LANGUAGE plpgsql;</code></pre>
 (def agent-cache (atom {}))</code></pre>
  </li>
 </ul>
-<p>O sistema implementa uma estratégia de <a href="https://en.wikipedia.org/wiki/Cache_hierarchy">cache multinível</a> para otimizar o desempenho e reduzir custos operacionais. Utilizando estruturas de dados atômicas <a href="https://en.wikipedia.org/wiki/Atom_(data_structure)">(<code>atom</code>)</a>, o <a href="https://github.com/scovl/docai">DocAI</a> mantém três camadas distintas de cache: para embeddings, respostas completas e resultados de agentes. Esta abordagem permite reutilizar cálculos computacionalmente intensivos como a geração de embeddings, evitando processamento redundante de textos idênticos.</p>
+<p>O sistema implementa uma estratégia de <a href="https://en.wikipedia.org/wiki/Cache_hierarchy">cache multinível</a> para otimizar o desempenho e reduzir custos operacionais. Utilizando estruturas de dados atômicas <a href="https://en.wikipedia.org/wiki/Atom_%28data_structure%29">(<code>atom</code>)</a>, o <a href="https://github.com/scovl/docai">DocAI</a> mantém três camadas distintas de cache: para embeddings, respostas completas e resultados de agentes. Esta abordagem permite reutilizar cálculos computacionalmente intensivos como a geração de embeddings, evitando processamento redundante de textos idênticos.</p>
 <p>O cache de respostas armazena resultados finais para consultas frequentes, enquanto o cache de agentes preserva resultados intermediários de subtarefas específicas. Esta implementação reduz significativamente a latência do sistema, especialmente para consultas recorrentes, e diminui custos associados a chamadas de API para modelos externos. A estrutura atômica escolhida garante <a href="https://en.wikipedia.org/wiki/Thread_safety">thread-safety</a> em ambientes concorrentes, permitindo atualizações seguras do cache mesmo com múltiplas consultas simultâneas.</p>
 <ul>
 <li><strong>Verificação de Respostas</strong>: Sistema que avalia e melhora automaticamente as respostas:
@@ -1650,6 +1644,29 @@ $$ LANGUAGE plpgsql;</code></pre>
 
     </div>
     
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
     
 </article>
 

@@ -39,7 +39,7 @@
         {{ .Content }}
     </div>
     
-    {{ if and (not .Params.draft) .Site.DisqusShortname }}
+    {{ if and (not .Params.draft) .Site.Params.disqusShortname }}
     <div class="post-comments">
         {{ template "_internal/disqus.html" . }}
     </div>

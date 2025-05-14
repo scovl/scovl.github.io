@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -104,6 +106,66 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
+            <a href="https://scovl.github.io/2025/05/12/tserr/">Tratamento Funcional de Erros em TypeScript</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-05-12T18:31:45-03:00">
+                Mon, May 12, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/javascript/" class="tag">javascript</a>
+                
+                <a href="/tags/typescript/" class="tag">typescript</a>
+                
+                <a href="/tags/fp-ts/" class="tag">fp-ts</a>
+                
+                <a href="/tags/programa%C3%A7%C3%A3o-funcional/" class="tag">programação funcional</a>
+                
+                <a href="/tags/tratamento-de-erros/" class="tag">tratamento de erros</a>
+                
+                <a href="/tags/desenvolvimento/" class="tag">desenvolvimento</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Usando fp-ts para gerenciar erros de forma robusta e tipada
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem tambémoutras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:</p>
+<ul>
+<li><a href="https://github.com/purify-ts/purify-ts"><strong>Purify-ts</strong></a>: Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either</li>
+<li><a href="https://github.com/microsoft/neverthrow"><strong>Neverthrow</strong></a>: Biblioteca especializada em tratamento de erros com Result/Either</li>
+<li><a href="https://github.com/Effect-TS/effect"><strong>Effect-ts</strong></a>: Uma biblioteca mais recente que expande os conceitos do fp-ts com um foco em efeitos</li>
+<li><a href="https://github.com/zio/zio-ts"><strong>Zio-ts</strong></a>: Inspirada na biblioteca ZIO de Scala, oferecendo abstrações para IO, concorrência e recursos</li>
+</ul>
+<p>Cada uma dessas bibliotecas tem seus pontos fortes, mas o <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> se destaca pela sua maturidade, documentação abrangente e ecossistema rico de bibliotecas complementares. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.</p>
+            
+            <a href="https://scovl.github.io/2025/05/12/tserr/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
             <a href="https://scovl.github.io/2025/03/23/rag/">RAG Simples com Clojure e Ollama</a>
         </h2>
         
@@ -141,7 +203,51 @@
         
         
         <div class="post-item-summary">
-            Sumário Introdução Fundamentos do RAG O que é RAG? Por que precisamos do RAG? Os Três Pilares do RAG Por que o DeepSeek R1? Implementação Prática Preparando o Ambiente Estrutura do Projeto Processamento de Documentos Sistema de Embeddings Interface com Ollama Módulo Principal Como Usar Instalação do Ollama Configuração do Projeto Executando a Aplicação Considerações Técnicas Performance e Otimizações Prompt Engineering Próximos Passos Melhorias Propostas Usando Langchain4j Referências Introdução Olá, pessoal!
+            <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/23/rag/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/23/rag/#fundamentos-do-rag">Fundamentos do RAG</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#o-que-%c3%a9-rag">O que é RAG?</a></li>
+<li><a href="/2025/03/23/rag/#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
+<li><a href="/2025/03/23/rag/#os-tr%c3%aas-pilares-do-rag">Os Três Pilares do RAG</a></li>
+<li><a href="/2025/03/23/rag/#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#implementa%c3%a7%c3%a3o-pr%c3%a1tica">Implementação Prática</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#preparando-o-ambiente">Preparando o Ambiente</a></li>
+<li><a href="/2025/03/23/rag/#estrutura-do-projeto">Estrutura do Projeto</a></li>
+<li><a href="/2025/03/23/rag/#processamento-de-documentos">Processamento de Documentos</a></li>
+<li><a href="/2025/03/23/rag/#sistema-de-embeddings">Sistema de Embeddings</a></li>
+<li><a href="/2025/03/23/rag/#interface-com-ollama">Interface com Ollama</a></li>
+<li><a href="/2025/03/23/rag/#m%c3%b3dulo-principal">Módulo Principal</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#como-usar">Como Usar</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#instala%c3%a7%c3%a3o-do-ollama">Instalação do Ollama</a></li>
+<li><a href="/2025/03/23/rag/#tf-idf">TF-IDF</a></li>
+<li><a href="/2025/03/23/rag/#configura%c3%a7%c3%a3o-do-projeto">Configuração do Projeto</a></li>
+<li><a href="/2025/03/23/rag/#executando-a-aplica%c3%a7%c3%a3o">Executando a Aplicação</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#considera%c3%a7%c3%b5es-t%c3%a9cnicas">Considerações Técnicas</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#performance-e-otimiza%c3%a7%c3%b5es">Performance e Otimizações</a></li>
+<li><a href="/2025/03/23/rag/#prompt-engineering">Prompt Engineering</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#pr%c3%b3ximos-passos">Próximos Passos</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#melhorias-propostas">Melhorias Propostas</a></li>
+<li><a href="/2025/03/23/rag/#usando-langchain4j">Usando Langchain4j</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#refer%c3%aancias">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá, pessoal! 👋</p>
             
             <a href="https://scovl.github.io/2025/03/23/rag/" class="read-more">Leia mais →</a>
             
@@ -194,8 +300,27 @@
         
         
         <div class="post-item-summary">
-            Sumário Introdução Entendendo a Arquitetura Pré-requisitos Passos para Construir a Busca Semântica 1. Habilitando as Extensões 2. Criando a Tabela de Documentos 3. Inserindo Documentos 4. Configurando o Vectorizer 5. Realizando Busca Semântica Integração com Clojure Persistência de Modelos entre Reinicializações Conclusão Introdução Olá, pessoal! 👋
-No artigo anterior, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando Clojure e Ollama com uma implementação simples de TF-IDF. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.
+            <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#entendendo-a-arquitetura">Entendendo a Arquitetura</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#pr%c3%a9-requisitos">Pré-requisitos</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-sem%c3%a2ntica">Passos para Construir a Busca Semântica</a></strong>
+<ul>
+<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extens%c3%b5es">1. Habilitando as Extensões</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#3-inserindo-documentos">3. Inserindo Documentos</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-sem%c3%a2ntica">5. Realizando Busca Semântica</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#integra%c3%a7%c3%a3o-com-clojure">Integração com Clojure</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#persist%c3%aancia-de-modelos-entre-reinicializa%c3%a7%c3%b5es">Persistência de Modelos entre Reinicializações</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#conclus%c3%a3o">Conclusão</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá, pessoal! 👋</p>
+<p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
             
             <a href="https://scovl.github.io/2025/03/25/semantic-postgresql/" class="read-more">Leia mais →</a>
             
@@ -250,7 +375,63 @@ No artigo anterior, exploramos como construir um sistema RAG (Retrieval-Augmente
         
         
         <div class="post-item-summary">
-            Sumário Introdução Da Teoria à Produção: Os Desafios Reais Armadilhas Comuns e Como Evitá-las Armadilha 1: A Falsa Sensação de Relevância Armadilha 2: Tamanho Inadequado de Chunks Armadilha 3: Falta de Monitoramento Contínuo Armadilha 4: Consultas Complexas em Pipelines Simples Técnicas Avançadas de Otimização Re-ranqueamento de Chunks Estratégias de Chunking Dinâmico Workflows com Agentes para Consultas Complexas Arquitetura de Agentes Avançada Casos de Uso para Workflows de Agentes Pipelines Multimodais Arquitetura Multimodal Completa Esquema PostgreSQL para Dados Multimodais Desafios de Implementação Multimodal Estratégias de Cache Estratégias Avançadas de Cache para RAG Monitoramento e Métricas: LLMOps na Prática Métricas de Qualidade Específicas para RAG Automação da Avaliação com LLMs como Juízes Configuração de um Dashboard de Qualidade RAG Integração com Sistemas de Feedback do Usuário Implementando no DocAI Arquitetura Atual do DocAI Diferenciais do DocAI Próximos Passos para o DocAI Integração com o Ecossistema Conclusão Referências Introdução Olá pessoal!
+            <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/28/rag02/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#da-teoria-%c3%a0-produ%c3%a7%c3%a3o-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evit%c3%a1-las">Armadilhas Comuns e Como Evitá-las</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensa%c3%a7%c3%a3o-de-relev%c3%a2ncia">Armadilha 1: A Falsa Sensação de Relevância</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-cont%c3%adnuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#t%c3%a9cnicas-avan%c3%a7adas-de-otimiza%c3%a7%c3%a3o">Técnicas Avançadas de Otimização</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-chunking-din%c3%a2mico">Estratégias de Chunking Dinâmico</a></li>
+<li><a href="/2025/03/28/rag02/#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avan%c3%a7ada">Arquitetura de Agentes Avançada</a></li>
+<li><a href="/2025/03/28/rag02/#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#pipelines-multimodais">Pipelines Multimodais</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
+<li><a href="/2025/03/28/rag02/#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
+<li><a href="/2025/03/28/rag02/#desafios-de-implementa%c3%a7%c3%a3o-multimodal">Desafios de Implementação Multimodal</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-cache">Estratégias de Cache</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-avan%c3%a7adas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-m%c3%a9tricas-llmops-na-pr%c3%a1tica">Monitoramento e Métricas: LLMOps na Prática</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#m%c3%a9tricas-de-qualidade-espec%c3%adficas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
+<li><a href="/2025/03/28/rag02/#automa%c3%a7%c3%a3o-da-avalia%c3%a7%c3%a3o-com-llms-como-ju%c3%adzes">Automação da Avaliação com LLMs como Juízes</a></li>
+<li><a href="/2025/03/28/rag02/#configura%c3%a7%c3%a3o-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
+<li><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-sistemas-de-feedback-do-usu%c3%a1rio">Integração com Sistemas de Feedback do Usuário</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#implementando-no-docai">Implementando no DocAI</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#diferenciais-do-docai">Diferenciais do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#pr%c3%b3ximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#conclus%c3%a3o">Conclusão</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#refer%c3%aancias">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá pessoal! 👋</p>
             
             <a href="https://scovl.github.io/2025/03/28/rag02/" class="read-more">Leia mais →</a>
             
@@ -301,7 +482,22 @@ No artigo anterior, exploramos como construir um sistema RAG (Retrieval-Augmente
         
         
         <div class="post-item-summary">
-            Índice Introdução Instalação Promtool Instrumentação Alertmanager PushGateway Federação Under the Hood Melhores Práticas Conclusão Introdução Prometheus O Prometheus é uma ferramenta de monitoramento de sistemas e aplicativos open source que revolucionou a forma como pensamos sobre observabilidade em ambientes distribuídos. Desenvolvido para fornecer uma abordagem eficiente de coletar, armazenar e analisar métricas de desempenho, o Prometheus se destaca por sua arquitetura simples mas poderosa, alta escalabilidade e modelo de dados dimensional.
+            <h2 id="índice">Índice</h2>
+<ul>
+<li><strong><a href="/2023/03/21/prometheus/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#instala%c3%a7%c3%a3o">Instalação</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#promtool">Promtool</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#instrumenta%c3%a7%c3%a3o">Instrumentação</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#alertmanager">Alertmanager</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#pushgateway">PushGateway</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#federa%c3%a7%c3%a3o">Federação</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#under-the-hood">Under the Hood</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#melhores-pr%c3%a1ticas">Melhores Práticas</a></strong></li>
+<li><strong><a href="/2023/03/21/prometheus/#conclus%c3%a3o">Conclusão</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<h3 id="prometheus">Prometheus</h3>
+<p>O <a href="https://prometheus.io/">Prometheus</a> é uma ferramenta de monitoramento de sistemas e aplicativos open source que revolucionou a forma como pensamos sobre observabilidade em ambientes distribuídos. Desenvolvido para fornecer uma abordagem eficiente de coletar, armazenar e analisar métricas de desempenho, o Prometheus se destaca por sua arquitetura simples mas poderosa, alta escalabilidade e modelo de dados dimensional.</p>
             
             <a href="https://scovl.github.io/2023/03/21/prometheus/" class="read-more">Leia mais →</a>
             
@@ -352,9 +548,88 @@ No artigo anterior, exploramos como construir um sistema RAG (Retrieval-Augmente
         
         
         <div class="post-item-summary">
-            Introdução Funções Agregadores e Operadores PromQL na prática Erros comuns Introdução PromQL é uma linguagem de consulta poderosa usada para realizar consultas e configurar alertas sobre dados coletados pelo Prometheus. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações.
+            <ul>
+<li><strong><a href="/2023/03/19/promql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#fun%c3%a7%c3%b5es">Funções</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#agregadores-e-operadores">Agregadores e Operadores</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#promql-na-pr%c3%a1tica">PromQL na prática</a></strong></li>
+<li><strong><a href="/2023/03/19/promql/#erros-comuns">Erros comuns</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>PromQL é uma linguagem de consulta poderosa usada para realizar consultas e configurar alertas sobre dados coletados pelo Prometheus. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações. Além disso, conta com recursos avançados como subconsultas e funções de séries temporais. As consultas PromQL podem ser executadas através da interface web do Prometheus, APIs ou bibliotecas de clientes.</p>
             
             <a href="https://scovl.github.io/2023/03/19/promql/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/1/01/01/jsast/"></a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            
+            
+            
+            
+            
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h2 id="desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</h2>
+<p><em>Tempo de Leitura: uns 15-25 minutinhos (ou um café ☕)</em></p>
+<p><strong>O que você vai encontrar aqui:</strong></p>
+<ul>
+<li>Introdução (Sem formalidades!)</li>
+<li>ASTs: O Que Raios é Isso?
+<ul>
+<li>Traduzindo: O que é uma AST?</li>
+<li>Pra que serve essa &ldquo;árvore&rdquo;?</li>
+<li>Os 3 Passos Mágicos da AST</li>
+<li>Por que começar com o Esprima?</li>
+</ul>
+</li>
+<li>Mão na Massa: Bora Codar!
+<ul>
+<li>Preparando o Terreno (Instalação)</li>
+<li>Nosso Projetinho Simples</li>
+<li>&ldquo;Parseando&rdquo;: Transformando Código em AST</li>
+<li>&ldquo;Traversando&rdquo;: Dando um Rolê na AST</li>
+<li>Analisando: Catando Informações Úteis</li>
+</ul>
+</li>
+<li>Como Rodar Isso Aí
+<ul>
+<li>Instalando o Esprima (Moleza!)</li>
+<li>Exemplo Básico pra Sentir o Gostinho</li>
+<li>Botando pra Funcionar</li>
+</ul>
+</li>
+<li>Detalhes Importantes (Pra Ficar Ligado!)
+<ul>
+<li>Performance: Roda Liso?</li>
+<li>Entendendo as Peças do Quebra-Cabeça (ESTree)</li>
+<li>E se o Código Tiver Erro?</li>
+</ul>
+</li>
+<li>Próximos Níveis (O que mais dá pra fazer?)
+<ul>
+<li>Turbinando a Brincadeira</li>
+<li>Outras Ferramentas na Caixa</li>
+</ul>
+</li>
+<li>Onde Achar Mais Info (Links Úteis)</li>
+</ul>
+<p>Olá pessoal! 👋</p>
+            
+            <a href="https://scovl.github.io/1/01/01/jsast/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -379,8 +654,19 @@ No artigo anterior, exploramos como construir um sistema RAG (Retrieval-Augmente
         
         
         <div class="post-item-summary">
-            Next-level Backends with Rama: Storing and Traversing Graphs in 60 LOC Introdução ao Rama Rama é uma plataforma que permite a criação de backends escaláveis com uma quantidade mínima de código. Sistemas que normalmente exigiriam milhares de linhas de código podem ser implementados em algumas dezenas de linhas, oferecendo:
-Escalabilidade para milhões de leituras/escritas por segundo Conformidade ACID Alto desempenho Tolerância a falhas através de replicação incremental Implantação, atualização e escalonamento via simples comandos CLI Monitoramento abrangente integrado Exemplo: Armazenamento e Travessia de Grafos Para demonstrar a potência do Rama, vamos analisar a implementação de um backend para armazenamento de grafos e execução de consultas rápidas de travessia.
+            <h1 id="next-level-backends-with-rama-storing-and-traversing-graphs-in-60-loc">Next-level Backends with Rama: Storing and Traversing Graphs in 60 LOC</h1>
+<h2 id="introdução-ao-rama">Introdução ao Rama</h2>
+<p>Rama é uma plataforma que permite a criação de backends escaláveis com uma quantidade mínima de código. Sistemas que normalmente exigiriam milhares de linhas de código podem ser implementados em algumas dezenas de linhas, oferecendo:</p>
+<ul>
+<li>Escalabilidade para milhões de leituras/escritas por segundo</li>
+<li>Conformidade ACID</li>
+<li>Alto desempenho</li>
+<li>Tolerância a falhas através de replicação incremental</li>
+<li>Implantação, atualização e escalonamento via simples comandos CLI</li>
+<li>Monitoramento abrangente integrado</li>
+</ul>
+<h2 id="exemplo-armazenamento-e-travessia-de-grafos">Exemplo: Armazenamento e Travessia de Grafos</h2>
+<p>Para demonstrar a potência do Rama, vamos analisar a implementação de um backend para armazenamento de grafos e execução de consultas rápidas de travessia. O exemplo específico é uma árvore genealógica, onde cada nó (pessoa) tem dois pais e qualquer número de filhos.</p>
             
             <a href="https://scovl.github.io/1/01/01/rama/" class="read-more">Leia mais →</a>
             

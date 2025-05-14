@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -136,21 +138,21 @@
     <div class="post-content content-wrapper">
         <h1 id="sumário">Sumário</h1>
 <ul>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#introdução">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
 <li><strong><a href="/2025/03/25/semantic-postgresql/#entendendo-a-arquitetura">Entendendo a Arquitetura</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#pré-requisitos">Pré-requisitos</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-semântica">Passos para Construir a Busca Semântica</a></strong>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#pr%c3%a9-requisitos">Pré-requisitos</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-sem%c3%a2ntica">Passos para Construir a Busca Semântica</a></strong>
 <ul>
-<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extensões">1. Habilitando as Extensões</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extens%c3%b5es">1. Habilitando as Extensões</a></li>
 <li><a href="/2025/03/25/semantic-postgresql/#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
 <li><a href="/2025/03/25/semantic-postgresql/#3-inserindo-documentos">3. Inserindo Documentos</a></li>
 <li><a href="/2025/03/25/semantic-postgresql/#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-semântica">5. Realizando Busca Semântica</a></li>
+<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-sem%c3%a2ntica">5. Realizando Busca Semântica</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#integração-com-clojure">Integração com Clojure</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#persistência-de-modelos-entre-reinicializações">Persistência de Modelos entre Reinicializações</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#conclusão">Conclusão</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#integra%c3%a7%c3%a3o-com-clojure">Integração com Clojure</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#persist%c3%aancia-de-modelos-entre-reinicializa%c3%a7%c3%b5es">Persistência de Modelos entre Reinicializações</a></strong></li>
+<li><strong><a href="/2025/03/25/semantic-postgresql/#conclus%c3%a3o">Conclusão</a></strong></li>
 </ul>
 <h2 id="introdução">Introdução</h2>
 <p>Olá, pessoal! 👋</p>
@@ -158,7 +160,7 @@
 <p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral. Diferentemente do artigo anterior, vamos usar o <a href="https://ollama.com/">Ollama</a> via Docker assim como o <a href="https://www.postgresql.org/">PostgreSQL</a> e as extensões <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>.</p>
 <p>A combinação do <a href="https://www.postgresql.org/">PostgreSQL</a> com extensões como <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>, junto com o <a href="https://ollama.com/">Ollama</a> (que permite executar modelos de linguagem localmente), cria uma solução completa e de alto desempenho para <a href="https://en.wikipedia.org/wiki/Semantic_search">processamento semântico de dados</a>.</p>
 <h2 id="entendendo-a-arquitetura">Entendendo a Arquitetura</h2>
-<p>A busca semântica vai além da simples correspondência de palavras-chave, capturando o significado e o contexto da sua consulta. Em vez de depender apenas de correspondências exatas, ela utiliza <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings vetoriais</a> para representar o conteúdo semântico do texto (ou qualquer dado não estruturado). Essa abordagem permite que seu sistema recupere resultados contextualmente relevantes, mesmo quando as palavras-chave exatas não estão presentes.</p>
+<p>A busca semântica vai além da simples correspondência de palavras-chave, capturando o significado e o contexto da sua consulta. Em vez de depender apenas de correspondências exatas, ela utiliza <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings vetoriais</a> para representar o conteúdo semântico do texto (ou qualquer dado não estruturado). Essa abordagem permite que seu sistema recupere resultados contextualmente relevantes, mesmo quando as palavras-chave exatas não estão presentes.</p>
 <p>Por exemplo, se você pesquisar por &ldquo;melhores lugares para comer&rdquo;, um <a href="https://en.wikipedia.org/wiki/Semantic_search">sistema de busca semântica</a> pode recuperar documentos sobre &ldquo;restaurantes bem avaliados nas proximidades&rdquo; ou &ldquo;experiências gastronômicas altamente recomendadas&rdquo;, efetivamente capturando sua intenção em vez da formulação exata. A arquitetura para busca semântica com PostgreSQL envolve quatro componentes principais:</p>
 
 
@@ -186,8 +188,7 @@
 <li><strong>PostgreSQL com pgvector e pgai</strong>: Para armazenar e consultar embeddings</li>
 </ol>
 <blockquote>
-<p><strong>NOTA</strong>: No artigo anterior sobre <a href="/2025/03/23/rag/">RAG em Clojure</a>, usamos o <a href="https://ollama.com/">Ollama</a> com <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> baixando o projeto ollama diretamente na máquina. Nesta abordagem, vamos usar o Ollama via Docker. Portanto, recomendo que você feche o Ollama para usar-mos ele inteiramente via Docker aqui nesta abordagem (é necessário fechar para não conflitar com o endpoint do Ollama que vamos usar no Docker Compose).</p>
-</blockquote>
+<p><strong>NOTA</strong>: No artigo anterior sobre <a href="/2025/03/23/rag/">RAG em Clojure</a>, usamos o <a href="https://ollama.com/">Ollama</a> com <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> baixando o projeto ollama diretamente na máquina. Nesta abordagem, vamos usar o Ollama via Docker. Portanto, recomendo que você feche o Ollama para usar-mos ele inteiramente via Docker aqui nesta abordagem (é necessário fechar para não conflitar com o endpoint do Ollama que vamos usar no Docker Compose).</p></blockquote>
 <p>Vamos configurar tudo isso rapidamente usando Docker Compose:</p>
 
 
@@ -269,14 +270,14 @@ volumes:
  <p>O diagrama acima ilustra a arquitetura do sistema de busca semântica com PostgreSQL. No centro, temos três componentes principais: o TimescaleDB (uma versão especializada do PostgreSQL), o pgai-vectorizer-worker (responsável por processar e vetorizar os textos) e o Ollama (que fornece os modelos de IA). As conexões entre os serviços mostram como eles se comunicam: o vectorizer-worker se conecta tanto ao banco de dados quanto ao Ollama para realizar seu trabalho de transformação de textos em vetores.</p>
 <p>Os volumes persistentes (representados em cinza) garantem que tanto os dados do PostgreSQL quanto os modelos do Ollama sejam preservados entre reinicializações. Esta arquitetura modular permite escalar cada componente independentemente conforme necessário, enquanto mantém um fluxo de dados eficiente para operações de busca semântica.</p>
 <p>O serviço <code>vectorizer-worker</code> é um componente especializado do <a href="https://github.com/timescale/pgai">pgai</a> que monitora o banco de dados a cada 5 segundos, processando automaticamente textos para transformá-los em embeddings vetoriais. Ele se conecta ao banco <a href="https://www.postgresql.org/">PostgreSQL</a> e ao serviço <a href="https://ollama.com/">Ollama</a> para realizar a vetorização dos textos, funcionando como uma ponte entre o armazenamento de dados e o modelo de IA, com logs detalhados para facilitar a depuração durante o desenvolvimento.</p>
-<p>Por fim, o serviço <code>ollama</code> fornece a infraestrutura para executar modelos de IA localmente, expondo uma API REST na porta 11434 e armazenando os modelos baixados em um volume persistente. Este design de três camadas (banco de dados, processador de vetores e motor de IA) cria um sistema completo para busca semântica que pode ser iniciado com um simples <code>docker compose up -d</code>, seguido pelo download do modelo de <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a> que transformará os textos em vetores.</p>
+<p>Por fim, o serviço <code>ollama</code> fornece a infraestrutura para executar modelos de IA localmente, expondo uma API REST na porta 11434 e armazenando os modelos baixados em um volume persistente. Este design de três camadas (banco de dados, processador de vetores e motor de IA) cria um sistema completo para busca semântica que pode ser iniciado com um simples <code>docker compose up -d</code>, seguido pelo download do modelo de <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings</a> que transformará os textos em vetores.</p>
 
 
   <pre><code class="language-bash">docker compose exec ollama ollama pull nomic-embed-text</code></pre>
  <p>Este setup configura um banco de dados PostgreSQL com as extensões <a href="https://github.com/timescale/pgai">pgai</a>, <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgvectorscale">pgvectorscale</a>. Também configura o Ollama, que você pode usar para implantar LLMs e modelos de embedding.</p>
 <hr>
 <h2 id="passos-para-construir-a-busca-semântica">Passos para Construir a Busca Semântica</h2>
-<p>Os passos para implementar a busca semântica no PostgreSQL são relativamente simples. Primeiro, vamos habilitar as extensões necessárias, criar uma tabela para armazenar nossos documentos, configurar o <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> para gerar <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a> automaticamente e, finalmente, realizar consultas semânticas.</p>
+<p>Os passos para implementar a busca semântica no PostgreSQL são relativamente simples. Primeiro, vamos habilitar as extensões necessárias, criar uma tabela para armazenar nossos documentos, configurar o <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> para gerar <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings</a> automaticamente e, finalmente, realizar consultas semânticas.</p>
 <h3 id="1-habilitando-as-extensões">1. Habilitando as Extensões</h3>
 <p>Primeiro, precisamos habilitar as extensões necessárias no PostgreSQL:</p>
 
@@ -313,11 +314,10 @@ CREATE EXTENSION IF NOT EXISTS ai CASCADE;</code></pre>
 (&#39;Tutorial RAG&#39;, &#39;Sistemas RAG combinam busca e geração...&#39;, &#39;IA&#39;),
 (&#39;PostgreSQL Avançado&#39;, &#39;Técnicas de otimização para PostgreSQL...&#39;, &#39;Banco de Dados&#39;);</code></pre>
  <blockquote>
-<p><strong>NOTA</strong>: O <a href="https://huggingface.co/">Hugging Face</a> é uma plataforma de dados e modelos de IA.</p>
-</blockquote>
+<p><strong>NOTA</strong>: O <a href="https://huggingface.co/">Hugging Face</a> é uma plataforma de dados e modelos de IA.</p></blockquote>
 <p>Agora vamos configurar o vectorizer para gerar embeddings automaticamente.</p>
 <h3 id="4-configurando-o-vectorizer">4. Configurando o Vectorizer</h3>
-<p>O <a href="https://github.com/timescale/pgai">pgai</a> inclui uma ferramenta chamada <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> que automatiza a criação e sincronização de embeddings. Esta é uma das funcionalidades mais poderosas desta solução, pois elimina a necessidade de ferramentas externas para criar <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a>. Vamos configurá-la:</p>
+<p>O <a href="https://github.com/timescale/pgai">pgai</a> inclui uma ferramenta chamada <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> que automatiza a criação e sincronização de embeddings. Esta é uma das funcionalidades mais poderosas desta solução, pois elimina a necessidade de ferramentas externas para criar <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings</a>. Vamos configurá-la:</p>
 
 
   <pre><code class="language-sql">SELECT ai.create_vectorizer(
@@ -352,7 +352,7 @@ FROM documentos_embeddings t
 LEFT JOIN documentos d ON t.id = d.id
 ORDER BY distancia
 LIMIT 5;</code></pre>
- <p>Este código SQL realiza uma <a href="https://en.wikipedia.org/wiki/Semantic_search">busca semântica</a> em nossa base de documentos utilizando <a href="https://en.wikipedia.org/wiki/Embedding_(machine_learning)">embeddings</a> gerados pelo modelo <code>nomic-embed-text</code> através do <a href="https://ollama.com/">Ollama</a>. Primeiro, criamos uma CTE (Common Table Expression) chamada <code>query_embedding</code> que gera o embedding para nossa consulta &ldquo;Como implementar RAG em sistemas modernos&rdquo;. Em seguida, selecionamos os documentos mais relevantes comparando este embedding de consulta com os embeddings armazenados na tabela <code>documentos_embeddings</code> usando o operador de distância de cosseno (<code>&lt;=&gt;</code>).</p>
+ <p>Este código SQL realiza uma <a href="https://en.wikipedia.org/wiki/Semantic_search">busca semântica</a> em nossa base de documentos utilizando <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings</a> gerados pelo modelo <code>nomic-embed-text</code> através do <a href="https://ollama.com/">Ollama</a>. Primeiro, criamos uma CTE (Common Table Expression) chamada <code>query_embedding</code> que gera o embedding para nossa consulta &ldquo;Como implementar RAG em sistemas modernos&rdquo;. Em seguida, selecionamos os documentos mais relevantes comparando este embedding de consulta com os embeddings armazenados na tabela <code>documentos_embeddings</code> usando o operador de distância de cosseno (<code>&lt;=&gt;</code>).</p>
 <p>O resultado é uma lista ordenada dos documentos mais semanticamente similares à nossa consulta, independentemente de compartilharem as mesmas palavras exatas. Esta é a essência da busca semântica - encontrar conteúdo conceitualmente relacionado, não apenas correspondências de palavras-chave. A coluna <code>distancia</code> nos mostra quão próximo cada documento está da nossa consulta, com valores menores indicando maior similaridade. Limitamos os resultados aos 5 documentos mais relevantes, mas este número pode ser ajustado conforme necessário. O PostgreSQL oferece três operadores para cálculo de similaridade:</p>
 <ul>
 <li><code>&lt;-&gt;</code>: <a href="https://en.wikipedia.org/wiki/Euclidean_distance">Distância L2 (Euclidiana)</a></li>
@@ -399,8 +399,7 @@ LIMIT 5;</code></pre>
         results (jdbc/execute! conn [sql query limit])]
     results))</code></pre>
  <blockquote>
-<p><strong>NOTA</strong>: O código acima é um exemplo de como integrar a busca semântica no PostgreSQL com uma aplicação Clojure. O código completo está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a>.</p>
-</blockquote>
+<p><strong>NOTA</strong>: O código acima é um exemplo de como integrar a busca semântica no PostgreSQL com uma aplicação Clojure. O código completo está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a>.</p></blockquote>
 <h2 id="configuração-de-contêineres-e-resolução-de-problemas">Configuração de Contêineres e Resolução de Problemas</h2>
 <p>Ao trabalhar com contêineres Docker ou Podman, você pode encontrar alguns desafios específicos relacionados à comunicação entre serviços. Vamos explorar algumas dicas para garantir que sua configuração funcione sem problemas:</p>
 <h3 id="nomeação-de-contêineres-e-comunicação-entre-serviços">Nomeação de Contêineres e Comunicação entre Serviços</h3>
@@ -598,6 +597,29 @@ fi</code></pre>
 
     </div>
     
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
     
 </article>
 

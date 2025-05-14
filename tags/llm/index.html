@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -141,7 +143,51 @@
         
         
         <div class="post-item-summary">
-            Sumário Introdução Fundamentos do RAG O que é RAG? Por que precisamos do RAG? Os Três Pilares do RAG Por que o DeepSeek R1? Implementação Prática Preparando o Ambiente Estrutura do Projeto Processamento de Documentos Sistema de Embeddings Interface com Ollama Módulo Principal Como Usar Instalação do Ollama Configuração do Projeto Executando a Aplicação Considerações Técnicas Performance e Otimizações Prompt Engineering Próximos Passos Melhorias Propostas Usando Langchain4j Referências Introdução Olá, pessoal!
+            <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/23/rag/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/23/rag/#fundamentos-do-rag">Fundamentos do RAG</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#o-que-%c3%a9-rag">O que é RAG?</a></li>
+<li><a href="/2025/03/23/rag/#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
+<li><a href="/2025/03/23/rag/#os-tr%c3%aas-pilares-do-rag">Os Três Pilares do RAG</a></li>
+<li><a href="/2025/03/23/rag/#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#implementa%c3%a7%c3%a3o-pr%c3%a1tica">Implementação Prática</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#preparando-o-ambiente">Preparando o Ambiente</a></li>
+<li><a href="/2025/03/23/rag/#estrutura-do-projeto">Estrutura do Projeto</a></li>
+<li><a href="/2025/03/23/rag/#processamento-de-documentos">Processamento de Documentos</a></li>
+<li><a href="/2025/03/23/rag/#sistema-de-embeddings">Sistema de Embeddings</a></li>
+<li><a href="/2025/03/23/rag/#interface-com-ollama">Interface com Ollama</a></li>
+<li><a href="/2025/03/23/rag/#m%c3%b3dulo-principal">Módulo Principal</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#como-usar">Como Usar</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#instala%c3%a7%c3%a3o-do-ollama">Instalação do Ollama</a></li>
+<li><a href="/2025/03/23/rag/#tf-idf">TF-IDF</a></li>
+<li><a href="/2025/03/23/rag/#configura%c3%a7%c3%a3o-do-projeto">Configuração do Projeto</a></li>
+<li><a href="/2025/03/23/rag/#executando-a-aplica%c3%a7%c3%a3o">Executando a Aplicação</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#considera%c3%a7%c3%b5es-t%c3%a9cnicas">Considerações Técnicas</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#performance-e-otimiza%c3%a7%c3%b5es">Performance e Otimizações</a></li>
+<li><a href="/2025/03/23/rag/#prompt-engineering">Prompt Engineering</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#pr%c3%b3ximos-passos">Próximos Passos</a></strong>
+<ul>
+<li><a href="/2025/03/23/rag/#melhorias-propostas">Melhorias Propostas</a></li>
+<li><a href="/2025/03/23/rag/#usando-langchain4j">Usando Langchain4j</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/23/rag/#refer%c3%aancias">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá, pessoal! 👋</p>
             
             <a href="https://scovl.github.io/2025/03/23/rag/" class="read-more">Leia mais →</a>
             
@@ -196,7 +242,63 @@
         
         
         <div class="post-item-summary">
-            Sumário Introdução Da Teoria à Produção: Os Desafios Reais Armadilhas Comuns e Como Evitá-las Armadilha 1: A Falsa Sensação de Relevância Armadilha 2: Tamanho Inadequado de Chunks Armadilha 3: Falta de Monitoramento Contínuo Armadilha 4: Consultas Complexas em Pipelines Simples Técnicas Avançadas de Otimização Re-ranqueamento de Chunks Estratégias de Chunking Dinâmico Workflows com Agentes para Consultas Complexas Arquitetura de Agentes Avançada Casos de Uso para Workflows de Agentes Pipelines Multimodais Arquitetura Multimodal Completa Esquema PostgreSQL para Dados Multimodais Desafios de Implementação Multimodal Estratégias de Cache Estratégias Avançadas de Cache para RAG Monitoramento e Métricas: LLMOps na Prática Métricas de Qualidade Específicas para RAG Automação da Avaliação com LLMs como Juízes Configuração de um Dashboard de Qualidade RAG Integração com Sistemas de Feedback do Usuário Implementando no DocAI Arquitetura Atual do DocAI Diferenciais do DocAI Próximos Passos para o DocAI Integração com o Ecossistema Conclusão Referências Introdução Olá pessoal!
+            <h1 id="sumário">Sumário</h1>
+<ul>
+<li><strong><a href="/2025/03/28/rag02/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#da-teoria-%c3%a0-produ%c3%a7%c3%a3o-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evit%c3%a1-las">Armadilhas Comuns e Como Evitá-las</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensa%c3%a7%c3%a3o-de-relev%c3%a2ncia">Armadilha 1: A Falsa Sensação de Relevância</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-cont%c3%adnuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
+<li><a href="/2025/03/28/rag02/#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#t%c3%a9cnicas-avan%c3%a7adas-de-otimiza%c3%a7%c3%a3o">Técnicas Avançadas de Otimização</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-chunking-din%c3%a2mico">Estratégias de Chunking Dinâmico</a></li>
+<li><a href="/2025/03/28/rag02/#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avan%c3%a7ada">Arquitetura de Agentes Avançada</a></li>
+<li><a href="/2025/03/28/rag02/#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#pipelines-multimodais">Pipelines Multimodais</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
+<li><a href="/2025/03/28/rag02/#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
+<li><a href="/2025/03/28/rag02/#desafios-de-implementa%c3%a7%c3%a3o-multimodal">Desafios de Implementação Multimodal</a></li>
+</ul>
+</li>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-cache">Estratégias de Cache</a>
+<ul>
+<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-avan%c3%a7adas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-m%c3%a9tricas-llmops-na-pr%c3%a1tica">Monitoramento e Métricas: LLMOps na Prática</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#m%c3%a9tricas-de-qualidade-espec%c3%adficas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
+<li><a href="/2025/03/28/rag02/#automa%c3%a7%c3%a3o-da-avalia%c3%a7%c3%a3o-com-llms-como-ju%c3%adzes">Automação da Avaliação com LLMs como Juízes</a></li>
+<li><a href="/2025/03/28/rag02/#configura%c3%a7%c3%a3o-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
+<li><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-sistemas-de-feedback-do-usu%c3%a1rio">Integração com Sistemas de Feedback do Usuário</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#implementando-no-docai">Implementando no DocAI</a></strong>
+<ul>
+<li><a href="/2025/03/28/rag02/#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#diferenciais-do-docai">Diferenciais do DocAI</a></li>
+<li><a href="/2025/03/28/rag02/#pr%c3%b3ximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
+</ul>
+</li>
+<li><strong><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#conclus%c3%a3o">Conclusão</a></strong></li>
+<li><strong><a href="/2025/03/28/rag02/#refer%c3%aancias">Referências</a></strong></li>
+</ul>
+<h2 id="introdução">Introdução</h2>
+<p>Olá pessoal! 👋</p>
             
             <a href="https://scovl.github.io/2025/03/28/rag02/" class="read-more">Leia mais →</a>
             

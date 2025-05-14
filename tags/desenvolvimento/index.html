@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Desenvolvimento | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<div class="post-list">
+    <h1 class="page-title">
+        
+            Desenvolvimento
+        
+    </h1>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/2025/05/12/tserr/">Tratamento Funcional de Erros em TypeScript</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-05-12T18:31:45-03:00">
+                Mon, May 12, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/javascript/" class="tag">javascript</a>
+                
+                <a href="/tags/typescript/" class="tag">typescript</a>
+                
+                <a href="/tags/fp-ts/" class="tag">fp-ts</a>
+                
+                <a href="/tags/programa%C3%A7%C3%A3o-funcional/" class="tag">programação funcional</a>
+                
+                <a href="/tags/tratamento-de-erros/" class="tag">tratamento de erros</a>
+                
+                <a href="/tags/desenvolvimento/" class="tag">desenvolvimento</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Usando fp-ts para gerenciar erros de forma robusta e tipada
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem tambémoutras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:</p>
+<ul>
+<li><a href="https://github.com/purify-ts/purify-ts"><strong>Purify-ts</strong></a>: Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either</li>
+<li><a href="https://github.com/microsoft/neverthrow"><strong>Neverthrow</strong></a>: Biblioteca especializada em tratamento de erros com Result/Either</li>
+<li><a href="https://github.com/Effect-TS/effect"><strong>Effect-ts</strong></a>: Uma biblioteca mais recente que expande os conceitos do fp-ts com um foco em efeitos</li>
+<li><a href="https://github.com/zio/zio-ts"><strong>Zio-ts</strong></a>: Inspirada na biblioteca ZIO de Scala, oferecendo abstrações para IO, concorrência e recursos</li>
+</ul>
+<p>Cada uma dessas bibliotecas tem seus pontos fortes, mas o <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> se destaca pela sua maturidade, documentação abrangente e ecossistema rico de bibliotecas complementares. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.</p>
+            
+            <a href="https://scovl.github.io/2025/05/12/tserr/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+</div>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 

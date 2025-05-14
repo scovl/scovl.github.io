@@ -25,6 +25,7 @@ author = "Vitor Lobo Ramos"
     - [Módulo Principal](#módulo-principal)
 - **[Como Usar](#como-usar)**
     - [Instalação do Ollama](#instalação-do-ollama)
+    - [TF-IDF](#tf-idf)
     - [Configuração do Projeto](#configuração-do-projeto)
     - [Executando a Aplicação](#executando-a-aplicação)
 - **[Considerações Técnicas](#considerações-técnicas)**
@@ -121,6 +122,52 @@ Nossa aplicação terá três componentes principais:
    - Geração de resposta usando o LLM
 
 > **Observação:** Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de [TF-IDF (Term Frequency-Inverse Document Frequency)](https://pt.wikipedia.org/wiki/TF-IDF).
+
+
+### TF-IDF
+
+O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:
+
+1. **Term Frequency (TF)**: Mede a frequência de uma palavra em um documento.
+   ```
+   TF(termo) = (Número de vezes que o termo aparece no documento) / (Total de termos no documento)
+   ```
+
+2. **Inverse Document Frequency (IDF)**: Mede a raridade de um termo na coleção de documentos.
+   ```
+   IDF(termo) = log(Número total de documentos / Número de documentos contendo o termo)
+   ```
+
+3. **TF-IDF**: É o produto desses dois valores.
+   ```
+   TF-IDF(termo) = TF(termo) × IDF(termo)
+   ```
+
+**Exemplo prático:**
+
+Imagine que temos três documentos técnicos:
+- Doc1: "Clojure é uma linguagem funcional baseada em Lisp."
+- Doc2: "Python é uma linguagem de programação versátil."
+- Doc3: "Clojure e Python são linguagens de programação populares."
+
+Para calcular o TF-IDF da palavra "Clojure" no Doc1:
+
+1. TF("Clojure", Doc1) = 1/8 = 0.125 (aparece 1 vez em 8 palavras)
+2. IDF("Clojure") = log(3/2) ≈ 0.176 (aparece em 2 dos 3 documentos)
+3. TF-IDF("Clojure", Doc1) = 0.125 × 0.176 ≈ 0.022
+
+Comparando com a palavra "linguagem" no mesmo documento:
+1. TF("linguagem", Doc1) = 1/8 = 0.125
+2. IDF("linguagem") = log(3/3) = 0 (aparece em todos os documentos)
+3. TF-IDF("linguagem", Doc1) = 0.125 × 0 = 0
+
+Isso mostra que "Clojure" tem maior valor discriminativo que "linguagem" para o Doc1, pois "linguagem" é comum em todos os documentos.
+
+No nosso sistema RAG, usaremos o TF-IDF para:
+1. Indexar os documentos técnicos
+2. Encontrar os documentos mais relevantes para uma consulta
+3. Priorizar termos distintivos ao buscar informações
+
 
 ### Configuração do Projeto
 

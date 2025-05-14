@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title> | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title"></h1>
+        <div class="post-meta">
+            
+            
+            
+            
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 13 min
+            </div>
+            
+            
+            
+        </div>
+    </header>
+    
+    <div class="post-content content-wrapper">
+        <h2 id="desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</h2>
+<p><em>Tempo de Leitura: uns 15-25 minutinhos (ou um café ☕)</em></p>
+<p><strong>O que você vai encontrar aqui:</strong></p>
+<ul>
+<li>Introdução (Sem formalidades!)</li>
+<li>ASTs: O Que Raios é Isso?
+<ul>
+<li>Traduzindo: O que é uma AST?</li>
+<li>Pra que serve essa &ldquo;árvore&rdquo;?</li>
+<li>Os 3 Passos Mágicos da AST</li>
+<li>Por que começar com o Esprima?</li>
+</ul>
+</li>
+<li>Mão na Massa: Bora Codar!
+<ul>
+<li>Preparando o Terreno (Instalação)</li>
+<li>Nosso Projetinho Simples</li>
+<li>&ldquo;Parseando&rdquo;: Transformando Código em AST</li>
+<li>&ldquo;Traversando&rdquo;: Dando um Rolê na AST</li>
+<li>Analisando: Catando Informações Úteis</li>
+</ul>
+</li>
+<li>Como Rodar Isso Aí
+<ul>
+<li>Instalando o Esprima (Moleza!)</li>
+<li>Exemplo Básico pra Sentir o Gostinho</li>
+<li>Botando pra Funcionar</li>
+</ul>
+</li>
+<li>Detalhes Importantes (Pra Ficar Ligado!)
+<ul>
+<li>Performance: Roda Liso?</li>
+<li>Entendendo as Peças do Quebra-Cabeça (ESTree)</li>
+<li>E se o Código Tiver Erro?</li>
+</ul>
+</li>
+<li>Próximos Níveis (O que mais dá pra fazer?)
+<ul>
+<li>Turbinando a Brincadeira</li>
+<li>Outras Ferramentas na Caixa</li>
+</ul>
+</li>
+<li>Onde Achar Mais Info (Links Úteis)</li>
+</ul>
+<p>Olá pessoal! 👋</p>
+<p>Neste artigo, vou desmistificar um pouco como navegar através de uma AST usando o Esprima em Javascript/Typescript. Desta maneira você pode manipular código evitando ao máximo usar expressões regulares (que em muitos casos são um pesadelo). Mas vamos começar pelo começo, o que é uma AST? Uma AST é uma representação abstrata da estrutura sintática de um programa. Ela é uma árvore de nós que representa a hierarquia e a relação entre as partes do código.</p>
+<p>Isto é muito útil para uma diversidade de aplicações como:</p>
+<ul>
+<li>Análise de código - como o ESLint</li>
+<li>Transformação de código - como o Babel</li>
+<li>Verificação de padrões - como o Prettier</li>
+</ul>
+<p>E muito mais!</p>
+<p>Abstraíndo um pouco o conceito, imagina que seu código é uma receita de bolo. A AST é tipo um <strong>diagrama ou um mapa mental</strong> dessa receita. Ela pega o texto puro do código e organiza ele numa estrutura de árvore, mostrando como cada pedacinho se conecta. Ela ignora coisas como espaços extras ou comentários (na maioria das vezes) e foca no que realmente importa: a estrutura<strong>lógica</strong> do código. Exemplo:</p>
+
+
+  <pre><code class="language-javascript">const PI = 3.14;</code></pre>
+ <p><strong>AST (Versão Super Simplificada):</strong></p>
+
+
+  <pre><code class="language-json">- Program {
+    type: &#34;Program&#34;,
+    start: 0,
+    end: 16,
+    body: [
+        - VariableDeclaration {
+            type: &#34;VariableDeclaration&#34;,
+            start: 0,
+            end: 16,
+            declarations: [
+                - VariableDeclarator {
+                    type: &#34;VariableDeclarator&#34;,
+                    start: 6,
+                    end: 15,
+                    id: Identifier {
+                        type: &#34;Identifier&#34;,
+                        start: 6,
+                        end: 8,
+                        name: &#34;PI&#34;
+                    },
+                    init: Literal {
+                        type: &#34;Literal&#34;,
+                        start: 11,
+                        end: 15,
+                        value: 3.14,
+                        raw: &#34;3.14&#34;
+                    }
+                }
+            ]
+            kind: &#34;const&#34;
+        }
+    ]
+    sourceType: &#34;script&#34;
+}
+
+Viu só? Cada parte do código (o `const`, o nome `PI`, o número `3.14`) vira um **&#34;nó&#34;** nessa árvore. Cada nó tem um `type` dizendo o que ele é (`VariableDeclaration`, `Identifier`, `Literal`) e outras informações pra dar mais detalhes. É basicamente **código falando sobre código**!
+
+Você pode estar se perguntando: Blz, mas pra que serve essa &#34;árvore&#34;? ASTs são o coração de muitas ferramentas que usamos:
+
+*   **Linters (ESLint):** Ele &#34;lê&#34; a AST (o mapa do código) pra ver se você seguiu as regras de estilo ou se tem algum erro bobo ali, *sem precisar rodar o código*.
+*   **Transpilers (Babel):** Quer usar código JavaScript moderno que o navegador antigo não entende? O Babel olha a AST, &#34;reescreve&#34; as partes modernas de um jeito mais antigo, e depois gera o código JS compatível. Pura mágica da AST!
+*   **Bundlers (Webpack, Rollup):** Eles olham os `import` e `export` na AST pra entender quais arquivos dependem de quais e juntar tudo num pacote só.
+*   **Formatadores (Prettier):** Ele não liga pro seu estilo, ele olha a AST (a estrutura lógica) e reescreve o código do jeito *dele*, todo formatadinho.
+*   **Refatoração em IDEs:** Sabe quando você renomeia uma variável e a IDE magicamente atualiza em todos os lugares? Adivinha? AST em ação!
+
+&gt; **Resumindo:** É muito mais fácil pra um programa analisar ou modificar outro programa usando a AST do que tentando entender a string de texto puro. É o jeito inteligente de fazer as coisas! 😉
+
+#### Os 3 Passos Mágicos da AST
+
+Geralmente, trabalhar com AST envolve 3 etapas:
+
+**AST: O Fluxo**
+
+Código (Texto) ➡️ **1. Parsing** ➡️ AST (Mapa) ➡️ **2. Traversal** ➡️ Visita aos Nós ➡️ **3. Análise/Transformação** ➡️ Info Útil / Código Novo
+
+1.  **Parsing (Tradução):** É pegar o textão do código e transformar ele na estrutura de árvore (a AST). Quem faz isso é um carinha chamado **Parser** (tipo o Esprima). Ele verifica se o código tá certinho (sintaxe) e monta o mapa.
+2.  **Traversal (Passeio):** Com o mapa (AST) pronto, a gente precisa &#34;andar&#34; por ele pra visitar os nós (as partes do código). O jeito comum é usar o **Visitor Pattern**: você define funções tipo &#34;ei, quando encontrar um nó do tipo `FunctionDeclaration`, faça isso aqui!&#34;. É como ter um guia turístico pra cada tipo de lugar no mapa.
+3.  **Análise/Transformação (Ação):** Enquanto passeia pelos nós, você pode fazer coisas:
+    *   **Análise:** Só olhar e coletar informações (Ex: contar quantas funções tem, achar todos os `console.log`).
+    *   **Transformação:** Mudar a própria AST (Ex: renomear uma variável, trocar um nó por outro). Aí depois você pode gerar código novo a partir da AST modificada.
+
+
+### Mão na Massa: Bora Codar!
+
+#### Preparando o Terreno (Instalação)
+
+Você vai precisar do **Node.js** instalado (com npm ou yarn).
+
+No terminal, dentro da pasta do seu projeto, manda bala:
+
+```bash
+# Com npm
+npm install esprima
+npm install --save-dev @types/esprima @types/estree # Se for usar TypeScript
+
+# Ou com yarn
+yarn add esprima
+yarn add --dev @types/esprima @types/estree # Se for usar TypeScript</code></pre>
+ <p><em>Dica:</em> <code>@types/estree</code> são as definições de tipo pro padrão ESTree, super útil em TS!</p>
+<p>Moleza, né? 😉</p>
+<h4 id="nosso-projetinho-simples">Nosso Projetinho Simples</h4>
+<p>Cria uma pasta e um arquivo <code>index.js</code> (ou <code>index.ts</code>) dentro dela. Algo tipo:</p>
+
+
+  <pre><code class="language-">meu-projeto-ast/
+├── node_modules/
+├── index.js   # Ou index.ts
+└── package.json</code></pre>
+ <h4 id="parseando-transformando-código-em-ast">&ldquo;Parseando&rdquo;: Transformando Código em AST</h4>
+<p>A principal função do Esprima é a <code>parseScript</code> (pra código JS normal) ou <code>parseModule</code> (se tiver <code>import</code>/<code>export</code>).</p>
+<p><strong>Exemplo em JavaScript (<code>index.js</code>):</strong></p>
+
+
+  <pre><code class="language-javascript">const esprima = require(&#39;esprima&#39;);
+
+const codigo = &#39;const ANO = 2024; console.log(&#34;Olá, AST!&#34;);&#39;;
+
+try {
+  // A mágica acontece aqui!
+  const ast = esprima.parseScript(codigo, {
+    loc: true, // Quero saber a linha/coluna de cada nó
+    range: true // Quero saber o índice de início/fim no texto original
+  });
+
+  // Imprime a AST toda bonitona (é um objeto gigante!)
+  console.log(&#34;AST Gerada:&#34;);
+  console.log(JSON.stringify(ast, null, 2));
+
+} catch (e) {
+  // Se der erro de sintaxe no código, ele cai aqui
+  console.error(&#34;Eita, deu erro no parsing:&#34;, e.description);
+  console.error(` &gt;&gt; Na linha ${e.lineNumber}, coluna ${e.column}`);
+}</code></pre>
+ <p><strong>Exemplo em TypeScript (<code>index.ts</code>):</strong></p>
+
+
+  <pre><code class="language-typescript">import * as esprima from &#39;esprima&#39;;
+import { Program, Node } from &#39;estree&#39;; // Tipos pra deixar o TS feliz
+
+const codigo: string = &#39;let message = &#34;TypeScript &#43; AST = ❤️&#34;;&#39;;
+
+try {
+  const ast: Program = esprima.parseScript(codigo, {
+    loc: true,
+    range: true,
+    tokens: true // Opcional: Me dá uma lista de todos os &#34;pedaços&#34; (palavras-chave, nomes, etc.)
+  });
+
+  console.log(&#34;AST Gerada (TS):&#34;);
+  console.log(JSON.stringify(ast, null, 2));
+
+} catch (e: any) { // Captura o erro
+  console.error(&#34;Ops, erro no parsing (TS):&#34;, e.description);
+  console.error(` &gt;&gt; Na linha ${e.lineNumber}, coluna ${e.column}`);
+}</code></pre>
+ <ul>
+<li><strong><code>parseScript</code> vs <code>parseModule</code>:</strong> Lembra: <code>parseModule</code> se tiver <code>import</code>/<code>export</code>.</li>
+<li><strong>Opções úteis:</strong>
+<ul>
+<li><code>loc</code>/<code>range</code>: Pra saber <em>onde</em> cada parte da AST está no código original (ótimo pra mostrar erros!).</li>
+<li><code>tokens</code>: Te dá uma lista de todos os &ldquo;tokens&rdquo; (tipo <code>const</code>, <code>ANO</code>, <code>=</code>, <code>2024</code>, <code>;</code>). Útil pra algumas análises, mas gasta mais memória.</li>
+<li><code>comment</code>: Pra incluir os comentários na AST.</li>
+<li><code>jsx</code>: Se tiver código React/JSX.</li>
+</ul>
+</li>
+</ul>
+<p>Roda isso e você vai ver a estrutura da AST impressa! É um JSONzão, mas ali tá todo o seu código organizado.</p>
+<h4 id="traversando-dando-um-rolê-na-ast">&ldquo;Traversando&rdquo;: Dando um Rolê na AST</h4>
+<p>Beleza, temos o mapa (AST). Como a gente &ldquo;anda&rdquo; por ele pra ver o que tem em cada lugar? Podemos fazer isso com uma função recursiva simples, ou usar bibliotecas prontas (como <code>estraverse</code>).</p>
+<p>Vamos criar nossa função de &ldquo;passeio&rdquo; (um Visitor Pattern bem simples):</p>
+<p><strong>JavaScript (<code>index.js</code> - continuação):</strong></p>
+
+
+  <pre><code class="language-javascript">// ... (código do parsing ali em cima) ...
+
+// Função pra &#34;passear&#34; na árvore
+function traverse(node, visitor) {
+  // 1. Visita o nó atual: Se o visitor tiver algo pra esse tipo de nó, chama!
+  if (visitor[node.type]) {
+    visitor[node.type](node);
+  }
+
+  // 2. Visita os filhos: Olha todas as propriedades do nó
+  for (const key in node) {
+    if (node.hasOwnProperty(key)) {
+      const child = node[key];
+      // Se for um objeto ou array...
+      if (typeof child === &#39;object&#39; &amp;&amp; child !== null) {
+        // Se for um array de nós, visita cada um
+        if (Array.isArray(child)) {
+          child.forEach(subChild =&gt; {
+            if (subChild &amp;&amp; subChild.type) { // Garante que é um nó AST válido
+              traverse(subChild, visitor);
+            }
+          });
+        }
+        // Se for um único nó filho, visita ele
+        else if (child.type) {
+          traverse(child, visitor);
+        }
+      }
+    }
+  }
+}
+
+// Nosso &#34;guia turístico&#34;: o que fazer quando encontrar cada tipo de nó
+const meuVisitor = {
+  // Quando achar uma declaração de função...
+  FunctionDeclaration(node) {
+    console.log(`\n==&gt; Achei uma função! Nome: ${node.id.name}, Linha: ${node.loc.start.line}`);
+  },
+  // Quando achar uma chamada de função...
+  CallExpression(node) {
+    // Verifica se tá chamando direto um nome (tipo console.log)
+    if (node.callee.type === &#39;Identifier&#39;) {
+      console.log(`\n==&gt; Opa, chamando a função: ${node.callee.name}()`);
+    }
+  }
+  // Poderia adicionar mais: &#39;IfStatement&#39;, &#39;ForStatement&#39;, etc.
+};
+
+// Só roda a travessia se o parsing deu certo
+if (typeof ast !== &#39;undefined&#39;) {
+  console.log(&#34;\nBora passear pela AST e analisar...&#34;);
+  traverse(ast, meuVisitor);
+}</code></pre>
+ <p><strong>TypeScript (<code>index.ts</code> - continuação):</strong></p>
+
+
+  <pre><code class="language-typescript">// ... (código do parsing ali em cima) ...
+
+// Interface pro nosso Visitor (pra ajudar o TS)
+interface Visitor {
+  [nodeType: string]: (node: Node) =&gt; void; // Aceita qualquer tipo de nó do ESTree
+}
+
+// Função traverse (igual a de JS, mas com um pouco de tipagem)
+function traverse(node: Node, visitor: Visitor): void {
+  // ... (lógica igual à da versão JS) ...
+  if (visitor[node.type]) {
+    visitor[node.type](node);
+  }
+  for (const key in node) {
+    // ... (restante da lógica recursiva) ...
+  }
+}
+
+
+const meuVisitorTS: Visitor = {
+  VariableDeclarator(node: any) { // Usando &#39;any&#39; pra simplificar o acesso às props
+    console.log(`\n==&gt; Variável declarada (TS)! Nome: ${node.id.name}, Linha: ${node.loc?.start.line}`);
+  },
+  Literal(node: any) {
+    if (typeof node.value === &#39;string&#39;) {
+      console.log(`\n==&gt; Achei um texto (string literal): &#34;${node.value}&#34;`);
+    }
+  }
+};
+
+declare const ast: Program | undefined; // Avisa pro TS que &#39;ast&#39; existe
+
+if (ast) { // Verifica se ast não é undefined
+  console.log(&#34;\nPasseando pela AST (TS)...&#34;);
+  traverse(ast, meuVisitorTS);
+}</code></pre>
+ <p>Essa função <code>traverse</code> é bem básica. Bibliotecas como <code>estraverse</code> são tipo um &ldquo;GPS mais chique&rdquo;, te dão mais controle (tipo avisar quando <em>entra</em> e quando <em>sai</em> de um nó).</p>
+<h4 id="analisando-catando-informações-úteis">Analisando: Catando Informações Úteis</h4>
+<p>A &ldquo;análise&rdquo; acontece dentro das funções que a gente colocou no <code>visitor</code>. Viu ali no <code>meuVisitor</code>? Quando ele encontra um nó <code>FunctionDeclaration</code>, ele imprime o nome e a linha. Quando acha um <code>CallExpression</code>, imprime o nome da função chamada.</p>
+<p>É aí que a mágica acontece! Você pode criar visitors pra:</p>
+<ul>
+<li>Pegar todos os nomes de variáveis.</li>
+<li>Verificar se alguém usou <code>eval</code> (geralmente não é legal!).</li>
+<li>Contar quantas vezes <code>console.log</code> foi chamado.</li>
+<li>Achar todos os links (<code>&lt;a&gt;</code> em JSX, por exemplo).</li>
+<li>Medir a complexidade do código (contando <code>if</code>, <code>for</code>, etc.).</li>
+<li>O céu é o limite! 🚀</li>
+</ul>
+<h3 id="como-rodar-isso-aí">Como Rodar Isso Aí</h3>
+<h4 id="instalando-o-esprima-moleza">Instalando o Esprima (Moleza!)</h4>
+<p>Já fizemos lá em cima, né? Só garantir que o Node.js tá aí e rodar <code>npm install esprima</code> ou <code>yarn add esprima</code>.</p>
+<h4 id="exemplo-básico-pra-sentir-o-gostinho">Exemplo Básico pra Sentir o Gostinho</h4>
+<p>Pega o código completo (parsing + traverse + visitor) que montamos acima e salva num arquivo <code>index.js</code> ou <code>index.ts</code>.</p>
+<p><strong>Exemplo Completo Simples (JS - pra facilitar o copiar/colar):</strong></p>
+
+
+  <pre><code class="language-javascript">// index.js
+const esprima = require(&#39;esprima&#39;);
+
+// Nosso código de exemplo
+const codigo = `
+function calcularArea(largura, altura) {
+  // Função simples
+  if (largura &lt;= 0 || altura &lt;= 0) {
+    return null; // Não calcula área inválida
+  }
+  const area = largura * altura;
+  console.log(&#34;Área calculada:&#34;, area);
+  return area;
+}
+
+let resultado = calcularArea(10, 5);
+let nome = &#34;AST Explorer&#34;; // Uma string literal
+`;
+
+// Função pra &#34;passear&#34; na árvore (copie daqui se precisar)
+function traverse(node, visitor) {
+  if (!node) return; // Segurança extra
+  if (visitor[node.type]) {
+    visitor[node.type](node);
+  }
+  for (const key in node) {
+    if (node.hasOwnProperty(key)) {
+      const child = node[key];
+      if (typeof child === &#39;object&#39; &amp;&amp; child !== null) {
+        if (Array.isArray(child)) {
+          child.forEach(subChild =&gt; {
+            if (subChild &amp;&amp; subChild.type) { traverse(subChild, visitor); }
+          });
+        } else if (child.type) {
+          traverse(child, visitor);
+        }
+      }
+    }
+  }
+}
+
+
+// Nosso &#34;guia turístico&#34;
+const meuVisitor = {
+  FunctionDeclaration(node) {
+    console.log(`\n[INFO] Função encontrada: &#39;${node.id.name}&#39; com ${node.params.length} params. Linha: ${node.loc.start.line}`);
+  },
+  VariableDeclarator(node) {
+    console.log(`[INFO] Var declarada: &#39;${node.id.name}&#39;. Tipo: ${node.kind || &#39;var/let/const&#39;}.`); // kind só em VariableDeclaration
+  },
+  CallExpression(node) {
+    if (node.callee.type === &#39;Identifier&#39;) {
+      console.log(`[INFO] Chamada de função: ${node.callee.name}(). Linha: ${node.loc.start.line}`);
+    } else if (node.callee.type === &#39;MemberExpression&#39;) { // tipo console.log
+        if (node.callee.object.type === &#39;Identifier&#39; &amp;&amp; node.callee.property.type === &#39;Identifier&#39;) {
+             console.log(`[INFO] Chamada de método: ${node.callee.object.name}.${node.callee.property.name}(). Linha: ${node.loc.start.line}`);
+        }
+    }
+  },
+  IfStatement(node) {
+    console.log(`[INFO] Encontrado um &#39;if&#39;. Linha: ${node.loc.start.line}`);
+  },
+  Literal(node) {
+      if(typeof node.value === &#39;string&#39; &amp;&amp; node.value.length &gt; 0) {
+        console.log(`[INFO] String encontrada: &#34;${node.value}&#34;. Linha: ${node.loc.start.line}`);
+      }
+  }
+};
+
+// --- Roda Tudo ---
+try {
+  console.log(&#34;--- Analisando o Código ---&#34;);
+  const ast = esprima.parseScript(codigo, { loc: true, range: true });
+
+  // Descomente pra ver a ASTzona completa:
+  // console.log(&#34;\n--- AST Completa ---&#34;);
+  // console.log(JSON.stringify(ast, null, 2));
+
+  console.log(&#34;\n--- Iniciando Análise com Visitor ---&#34;);
+  traverse(ast, meuVisitor);
+  console.log(&#34;\n--- Análise Concluída ---&#34;);
+
+} catch (e) {
+  console.error(&#34;\n--- ERRO ---&#34;);
+  console.error(&#34;Deu ruim no parsing:&#34;, e.description);
+  console.error(`Local: Linha ${e.lineNumber}, Coluna ${e.column}`);
+}</code></pre>
+ <h4 id="botando-pra-funcionar">Botando pra Funcionar</h4>
+<p>Abre o terminal na pasta do projeto e manda ver:</p>
+
+
+  <pre><code class="language-bash"># Se for JavaScript
+node index.js
+
+# Se for TypeScript (precisa do ts-node ou compilar antes)
+# Instala globalmente (se não tiver): npm install -g ts-node
+ts-node index.ts
+# Ou compila e roda:
+# tsc index.ts
+# node index.js</code></pre>
+ <p>E pronto! Você vai ver a saída da nossa &ldquo;análise&rdquo; no console, mostrando as funções, variáveis, chamadas e o que mais a gente pediu pro visitor procurar. Legal, né? 😎</p>
+<h3 id="detalhes-importantes-pra-ficar-ligado">Detalhes Importantes (Pra Ficar Ligado!)</h3>
+<h4 id="performance-roda-liso">Performance: Roda Liso?</h4>
+<ul>
+<li><strong>Arquivos Gigantes:</strong> Parsear arquivos JS muito, muito grandes pode consumir bastante memória e processador. O Esprima é rápido, mas pra projetos gigantescos, pode ser um ponto a otimizar.</li>
+<li><strong>Opções Ligadas:</strong> Ligar opções como <code>tokens</code>, <code>loc</code>, <code>range</code>, <code>comment</code> deixa o processo um pouco mais lento e a AST maior. Só ligue se for usar mesmo.</li>
+<li><strong>Recuperação de Erros:</strong> O Esprima padrão para no primeiro erro de sintaxe. Ferramentas mais avançadas tentam continuar analisando mesmo com erros, mas isso é bem mais complexo.</li>
+</ul>
+<h4 id="entendendo-as-peças-do-quebra-cabeça-estree">Entendendo as Peças do Quebra-Cabeça (ESTree)</h4>
+<p>O segredo pra explorar ASTs é sacar o <strong>ESTree</strong>. É ele que define todos os tipos de nós que podem aparecer (<code>Identifier</code>, <code>Literal</code>, <code>IfStatement</code>, <code>ForStatement</code>, etc.) e o que cada um tem dentro.</p>
+<p><strong>Como analisar um nó:</strong></p>
+<p>Seu Visitor pega um <code>node</code> ➡️ Olha o <code>node.type</code> ➡️ Sabendo o tipo, você sabe quais propriedades procurar (ex: um <code>IfStatement</code> tem <code>test</code>, <code>consequent</code>, <code>alternate</code>) ➡️ Pega a informação que você quer!</p>
+<ul>
+<li><strong>Exemplo: <code>IfStatement</code> (o nó do <code>if</code>)</strong>
+<ul>
+<li><code>type</code>: &ldquo;IfStatement&rdquo;</li>
+<li><code>test</code>: É a condição dentro do <code>if (...)</code>. Geralmente outro nó, tipo uma comparação (<code>BinaryExpression</code>).</li>
+<li><code>consequent</code>: É o bloco de código <code>{...}</code> que roda se a condição for verdadeira. Geralmente um <code>BlockStatement</code>.</li>
+<li><code>alternate</code>: É o bloco do <code>else</code> (ou <code>else if</code>). Pode ser outro <code>IfStatement</code>, um <code>BlockStatement</code> ou <code>null</code> se não tiver <code>else</code>.</li>
+</ul>
+</li>
+</ul>
+<p>Vale muito a pena dar uma olhada na documentação do ESTree (link lá no final) e brincar no <a href="https://astexplorer.net/">astexplorer.net</a> pra ver como diferentes códigos viram ASTs.</p>
+<h4 id="e-se-o-código-tiver-erro">E se o Código Tiver Erro?</h4>
+<p>Se você tentar parsear um código com erro de sintaxe (tipo esqueceu uma vírgula), o Esprima vai dar pau e jogar um erro (Exception). Por isso é <strong>fundamental</strong> colocar o <code>esprima.parseScript(...)</code> dentro de um bloco <code>try...catch</code>.</p>
+
+
+  <pre><code class="language-javascript">try {
+  const ast = esprima.parseScript(&#34;let x = oops&#34;); // Erro aqui!
+} catch (e) {
+  // O &#39;e&#39; tem infos úteis!
+  console.error(&#34;Deu erro de sintaxe!&#34;);
+  console.error(&#34;Mensagem:&#34;, e.description);
+  console.error(&#34;Onde:&#34;, `Linha ${e.lineNumber}, Coluna ${e.column}`);
+}</code></pre>
+ <p>Assim seu programa não quebra inteiro e você pode tratar o erro direitinho.</p>
+<h3 id="próximos-níveis-o-que-mais-dá-pra-fazer">Próximos Níveis (O que mais dá pra fazer?)</h3>
+<p>Curtiu a brincadeira? Dá pra ir muito além!</p>
+<h4 id="turbinando-a-brincadeira">Turbinando a Brincadeira</h4>
+<ul>
+<li><strong>Passeio Turbinado:</strong> Dá uma olhada na biblioteca <code>estraverse</code>. Ela te dá mais controle sobre o passeio na AST.</li>
+<li><strong>Análises Mais Ninjas:</strong>
+<ul>
+<li>Achar variáveis que nunca são usadas.</li>
+<li>Calcular a &ldquo;complexidade&rdquo; de uma função (quantos <code>if</code>s, <code>for</code>s aninhados?).</li>
+<li>Mapear quem chama quem no seu código.</li>
+</ul>
+</li>
+<li><strong>Brincar de Transformar:</strong> Modifica a AST (com cuidado!) e usa uma lib tipo <code>escodegen</code> pra gerar o código JS de volta a partir da AST modificada. Imagina renomear todas as variáveis <code>i</code> de um loop pra <code>index</code> automaticamente!</li>
+<li><strong>Falar TypeScript de Verdade:</strong> Pra analisar código TS <em>com tipos</em>, o Esprima não serve. Aí você teria que usar a API do próprio compilador TypeScript (<code>tsc</code>) ou ferramentas como <code>typescript-eslint-parser</code>. É mais complexo, mas te dá acesso aos tipos!</li>
+</ul>
+<h4 id="outras-ferramentas-na-caixa">Outras Ferramentas na Caixa</h4>
+<ul>
+<li><strong>Acorn:</strong> Parser JS moderno e rápido, base do Babel. Tem plugins! É tipo o Esprima anabolizado.</li>
+<li><strong>Babel (@babel/parser):</strong> O parser do Babel. Entende de tudo, até das features mais novas do JS e JSX. Se você já usa Babel, pode usar o parser dele.</li>
+<li><strong>TypeScript Compiler API:</strong> Acesso total à AST do TypeScript, incluindo tipos. Poderoso, mas com curva de aprendizado maior.</li>
+<li><strong>AST Explorer (astexplorer.net):</strong> <strong>Use isso!</strong> É um site onde você cola seu código e vê a AST gerada por vários parsers. Melhor jeito de aprender e testar.</li>
+</ul>
+<p>Esprima é show pra começar, mas pra coisas mais sérias ou específicas (principalmente com TS), talvez valha a pena olhar essas outras.</p>
+<h3 id="onde-achar-mais-info-links-úteis">Onde Achar Mais Info (Links Úteis)</h3>
+<ul>
+<li><strong>Esprima (Site Oficial):</strong> <a href="http://esprima.org/">esprima.org</a></li>
+<li><strong>ESTree (A &ldquo;Gramática&rdquo; das ASTs):</strong> <a href="https://github.com/estree/estree">github.com/estree/estree</a></li>
+<li><strong>AST Explorer (Seu Melhor Amigo!):</strong> <a href="https://astexplorer.net/">astexplorer.net</a></li>
+<li><strong>Estraverse (Pra Passear Melhor):</strong> <a href="https://github.com/estools/estraverse">github.com/estools/estraverse</a></li>
+<li><strong>Escodegen (Pra Gerar Código da AST):</strong> <a href="https://github.com/estools/escodegen">github.com/estools/escodegen</a></li>
+<li><strong>Acorn (Alternativa):</strong> <a href="https://github.com/acornjs/acorn">github.com/acornjs/acorn</a></li>
+<li><strong>Babel Parser (Outra Alternativa):</strong> <a href="https://babeljs.io/docs/en/babel-parser">babeljs.io/docs/en/babel-parser</a></li>
+</ul>
+
+    </div>
+    
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+    
+</article>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 

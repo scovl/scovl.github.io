@@ -16,6 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
 
 
 
@@ -117,7 +119,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 25 min
+                Estimated reading time: 26 min
             </div>
             
             
@@ -132,45 +134,46 @@
     <div class="post-content content-wrapper">
         <h1 id="sumário">Sumário</h1>
 <ul>
-<li><strong><a href="/2025/03/23/rag/#introdução">Introdução</a></strong></li>
+<li><strong><a href="/2025/03/23/rag/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
 <li><strong><a href="/2025/03/23/rag/#fundamentos-do-rag">Fundamentos do RAG</a></strong>
 <ul>
-<li><a href="/2025/03/23/rag/#o-que-é-rag">O que é RAG?</a></li>
+<li><a href="/2025/03/23/rag/#o-que-%c3%a9-rag">O que é RAG?</a></li>
 <li><a href="/2025/03/23/rag/#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
-<li><a href="/2025/03/23/rag/#os-três-pilares-do-rag">Os Três Pilares do RAG</a></li>
+<li><a href="/2025/03/23/rag/#os-tr%c3%aas-pilares-do-rag">Os Três Pilares do RAG</a></li>
 <li><a href="/2025/03/23/rag/#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/23/rag/#implementação-prática">Implementação Prática</a></strong>
+<li><strong><a href="/2025/03/23/rag/#implementa%c3%a7%c3%a3o-pr%c3%a1tica">Implementação Prática</a></strong>
 <ul>
 <li><a href="/2025/03/23/rag/#preparando-o-ambiente">Preparando o Ambiente</a></li>
 <li><a href="/2025/03/23/rag/#estrutura-do-projeto">Estrutura do Projeto</a></li>
 <li><a href="/2025/03/23/rag/#processamento-de-documentos">Processamento de Documentos</a></li>
 <li><a href="/2025/03/23/rag/#sistema-de-embeddings">Sistema de Embeddings</a></li>
 <li><a href="/2025/03/23/rag/#interface-com-ollama">Interface com Ollama</a></li>
-<li><a href="/2025/03/23/rag/#módulo-principal">Módulo Principal</a></li>
+<li><a href="/2025/03/23/rag/#m%c3%b3dulo-principal">Módulo Principal</a></li>
 </ul>
 </li>
 <li><strong><a href="/2025/03/23/rag/#como-usar">Como Usar</a></strong>
 <ul>
-<li><a href="/2025/03/23/rag/#instalação-do-ollama">Instalação do Ollama</a></li>
-<li><a href="/2025/03/23/rag/#configuração-do-projeto">Configuração do Projeto</a></li>
-<li><a href="/2025/03/23/rag/#executando-a-aplicação">Executando a Aplicação</a></li>
+<li><a href="/2025/03/23/rag/#instala%c3%a7%c3%a3o-do-ollama">Instalação do Ollama</a></li>
+<li><a href="/2025/03/23/rag/#tf-idf">TF-IDF</a></li>
+<li><a href="/2025/03/23/rag/#configura%c3%a7%c3%a3o-do-projeto">Configuração do Projeto</a></li>
+<li><a href="/2025/03/23/rag/#executando-a-aplica%c3%a7%c3%a3o">Executando a Aplicação</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/23/rag/#considerações-técnicas">Considerações Técnicas</a></strong>
+<li><strong><a href="/2025/03/23/rag/#considera%c3%a7%c3%b5es-t%c3%a9cnicas">Considerações Técnicas</a></strong>
 <ul>
-<li><a href="/2025/03/23/rag/#performance-e-otimizações">Performance e Otimizações</a></li>
+<li><a href="/2025/03/23/rag/#performance-e-otimiza%c3%a7%c3%b5es">Performance e Otimizações</a></li>
 <li><a href="/2025/03/23/rag/#prompt-engineering">Prompt Engineering</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/23/rag/#próximos-passos">Próximos Passos</a></strong>
+<li><strong><a href="/2025/03/23/rag/#pr%c3%b3ximos-passos">Próximos Passos</a></strong>
 <ul>
 <li><a href="/2025/03/23/rag/#melhorias-propostas">Melhorias Propostas</a></li>
 <li><a href="/2025/03/23/rag/#usando-langchain4j">Usando Langchain4j</a></li>
 </ul>
 </li>
-<li><strong><a href="/2025/03/23/rag/#referências">Referências</a></strong></li>
+<li><strong><a href="/2025/03/23/rag/#refer%c3%aancias">Referências</a></strong></li>
 </ul>
 <h2 id="introdução">Introdução</h2>
 <p>Olá, pessoal! 👋</p>
@@ -194,8 +197,7 @@
 <p>Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.</p>
 <p>O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento &ldquo;congelada&rdquo; no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.</p>
 <blockquote>
-<p>Confiar exclusivamente em um LLM &ldquo;puro&rdquo; nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.</p>
-</blockquote>
+<p>Confiar exclusivamente em um LLM &ldquo;puro&rdquo; nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.</p></blockquote>
 <h3 id="os-três-pilares-do-rag">Os Três Pilares do RAG</h3>
 
 
@@ -221,8 +223,7 @@
 <p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
 <p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos LLMs quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
 <blockquote>
-<p>O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um &ldquo;sabe-tudo&rdquo; desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.</p>
-</blockquote>
+<p>O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um &ldquo;sabe-tudo&rdquo; desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.</p></blockquote>
 <h3 id="por-que-o-deepseek-r1">Por que o DeepSeek R1?</h3>
 <p>Ele trabalha muito bem com documentação técnica, o que é perfeito para nosso sistema <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG</a> focado em docs técnicas. O DeepSeek R1 consegue equilibrar qualidade e velocidade melhor que outros modelos do Ollama, rodando na sua máquina sem ficar alucinando com respostas que não fazem sentido.</p>
 <p>O modelo também se dá super bem com várias linguagens de programação, incluindo <a href="https://clojure.org/">Clojure</a>, então ele responde numa boa sobre implementações técnicas e documentação de código. E o melhor: mesmo quando você joga informações pela metade ou todas bagunçadas, ele ainda consegue manter o contexto e dar respostas que fazem sentido. Por isso ele é perfeito para o que estamos construindo!</p>
@@ -256,8 +257,55 @@
 </li>
 </ol>
 <blockquote>
-<p><strong>Observação:</strong> Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a>.</p>
-</blockquote>
+<p><strong>Observação:</strong> Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a>.</p></blockquote>
+<h3 id="tf-idf">TF-IDF</h3>
+<p>O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:</p>
+<ol>
+<li>
+<p><strong>Term Frequency (TF)</strong>: Mede a frequência de uma palavra em um documento.</p>
+
+
+  <pre><code class="language-">TF(termo) = (Número de vezes que o termo aparece no documento) / (Total de termos no documento)</code></pre>
+ </li>
+<li>
+<p><strong>Inverse Document Frequency (IDF)</strong>: Mede a raridade de um termo na coleção de documentos.</p>
+
+
+  <pre><code class="language-">IDF(termo) = log(Número total de documentos / Número de documentos contendo o termo)</code></pre>
+ </li>
+<li>
+<p><strong>TF-IDF</strong>: É o produto desses dois valores.</p>
+
+
+  <pre><code class="language-">TF-IDF(termo) = TF(termo) × IDF(termo)</code></pre>
+ </li>
+</ol>
+<p><strong>Exemplo prático:</strong></p>
+<p>Imagine que temos três documentos técnicos:</p>
+<ul>
+<li>Doc1: &ldquo;Clojure é uma linguagem funcional baseada em Lisp.&rdquo;</li>
+<li>Doc2: &ldquo;Python é uma linguagem de programação versátil.&rdquo;</li>
+<li>Doc3: &ldquo;Clojure e Python são linguagens de programação populares.&rdquo;</li>
+</ul>
+<p>Para calcular o TF-IDF da palavra &ldquo;Clojure&rdquo; no Doc1:</p>
+<ol>
+<li>TF(&ldquo;Clojure&rdquo;, Doc1) = 1/8 = 0.125 (aparece 1 vez em 8 palavras)</li>
+<li>IDF(&ldquo;Clojure&rdquo;) = log(3/2) ≈ 0.176 (aparece em 2 dos 3 documentos)</li>
+<li>TF-IDF(&ldquo;Clojure&rdquo;, Doc1) = 0.125 × 0.176 ≈ 0.022</li>
+</ol>
+<p>Comparando com a palavra &ldquo;linguagem&rdquo; no mesmo documento:</p>
+<ol>
+<li>TF(&ldquo;linguagem&rdquo;, Doc1) = 1/8 = 0.125</li>
+<li>IDF(&ldquo;linguagem&rdquo;) = log(3/3) = 0 (aparece em todos os documentos)</li>
+<li>TF-IDF(&ldquo;linguagem&rdquo;, Doc1) = 0.125 × 0 = 0</li>
+</ol>
+<p>Isso mostra que &ldquo;Clojure&rdquo; tem maior valor discriminativo que &ldquo;linguagem&rdquo; para o Doc1, pois &ldquo;linguagem&rdquo; é comum em todos os documentos.</p>
+<p>No nosso sistema RAG, usaremos o TF-IDF para:</p>
+<ol>
+<li>Indexar os documentos técnicos</li>
+<li>Encontrar os documentos mais relevantes para uma consulta</li>
+<li>Priorizar termos distintivos ao buscar informações</li>
+</ol>
 <h3 id="configuração-do-projeto">Configuração do Projeto</h3>
 <ol>
 <li>Crie um novo projeto Clojure:</li>
@@ -581,8 +629,7 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
 <li><strong>Dimensão</strong>: O vetor final pode ser muito grande (uma dimensão para cada termo único)</li>
 </ol>
 <blockquote>
-<p>Por isso, em sistemas RAG modernos, é mais comum usar embeddings gerados por modelos de linguagem, que capturam melhor a semântica e o contexto das palavras.</p>
-</blockquote>
+<p>Por isso, em sistemas RAG modernos, é mais comum usar embeddings gerados por modelos de linguagem, que capturam melhor a semântica e o contexto das palavras.</p></blockquote>
 <h4 id="interface-com-ollama">Interface com Ollama</h4>
 <p>Agora vamos implementar a interface com o Ollama. Ele é responsável por gerar a resposta para a query do usuário (essa parte aqui é super divertida, pois é onde vamos usar o LLM).</p>
 
@@ -799,8 +846,7 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
 </li>
 </ol>
 <blockquote>
-<p><strong>Dica</strong>: O Ollama mantém os modelos em cache local. Se você precisar liberar espaço, pode usar <code>ollama rm deepseek-r1</code> para remover o modelo.</p>
-</blockquote>
+<p><strong>Dica</strong>: O Ollama mantém os modelos em cache local. Se você precisar liberar espaço, pode usar <code>ollama rm deepseek-r1</code> para remover o modelo.</p></blockquote>
 <h3 id="executando-a-aplicação">Executando a Aplicação</h3>
 <ol>
 <li>Coloque seus documentos na pasta <code>resources/docs/</code> (já incluímos dois exemplos: <code>example.md</code>)</li>
@@ -854,8 +900,7 @@ DEBUG - Índices similares: [2, 5, 8]
 DEBUG - Tamanho do contexto: 1234 caracteres
 DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure...&#34;</code></pre>
  <blockquote>
-<p><strong>NOTA:</strong> A propósito, o projeto docai está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a> caso você queira contribuir com o projeto ou usar em outro projeto.</p>
-</blockquote>
+<p><strong>NOTA:</strong> A propósito, o projeto docai está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a> caso você queira contribuir com o projeto ou usar em outro projeto.</p></blockquote>
 <hr>
 <h2 id="considerações-técnicas">Considerações Técnicas</h2>
 <h3 id="performance-e-otimizações">Performance e Otimizações</h3>
@@ -916,7 +961,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   context-chunks)</code></pre>
  </li>
 <li>
-<p><strong>Melhorias Futuras</strong> - Implementar <a href="https://en.wikipedia.org/wiki/Exponential_backoff">retry com backoff exponencial</a> para falhas de conexão, adicionar <a href="https://en.wikipedia.org/wiki/Cache_(computing)">cache de embeddings</a> para melhor performance, implementar <a href="https://en.wikipedia.org/wiki/Streaming_media">streaming</a> para arquivos muito grandes, adicionar <a href="https://en.wikipedia.org/wiki/Document_validation">validação de formato de documentos</a> e implementar <a href="https://en.wikipedia.org/wiki/Rate_limiting">rate limiting</a> para evitar sobrecarga do Ollama.</p>
+<p><strong>Melhorias Futuras</strong> - Implementar <a href="https://en.wikipedia.org/wiki/Exponential_backoff">retry com backoff exponencial</a> para falhas de conexão, adicionar <a href="https://en.wikipedia.org/wiki/Cache_%28computing%29">cache de embeddings</a> para melhor performance, implementar <a href="https://en.wikipedia.org/wiki/Streaming_media">streaming</a> para arquivos muito grandes, adicionar <a href="https://en.wikipedia.org/wiki/Document_validation">validação de formato de documentos</a> e implementar <a href="https://en.wikipedia.org/wiki/Rate_limiting">rate limiting</a> para evitar sobrecarga do Ollama.</p>
 </li>
 </ol>
 <hr>
@@ -962,8 +1007,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
  <p>Para criar prompts efetivos, é essencial ser específico e claro nas instruções, utilizar formatação adequada para melhorar a legibilidade e incluir exemplos ilustrativos sempre que possível. Também é recomendável definir limites e restrições claras, solicitar ao modelo que explique seu raciocínio e utilizar um processo iterativo para refinar continuamente o prompt até obter os resultados desejados.</p>
 <p>A avaliação sistemática de prompts envolve testar diferentes variações da mesma instrução e comparar as respostas para identificar qual estrutura produz os melhores resultados. Este processo deve incluir a coleta de feedback dos usuários finais e a manutenção de um registro detalhado dos prompts que demonstraram bom desempenho, permitindo assim o desenvolvimento de um conjunto de melhores práticas específicas para cada caso de uso.</p>
 <blockquote>
-<p><strong>Nota</strong>: O <a href="https://www.promptingguide.ai/">Prompt Engineering</a> é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.</p>
-</blockquote>
+<p><strong>Nota</strong>: O <a href="https://www.promptingguide.ai/">Prompt Engineering</a> é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.</p></blockquote>
 <h2 id="próximos-passos">Próximos Passos</h2>
 <p>Abaixo uma lista de melhorias que podem ser feitas no projeto atual.</p>
 <h3 id="melhorias-propostas">Melhorias Propostas</h3>
@@ -1018,8 +1062,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <li><strong>Comunidade e Suporte</strong>: Possui uma comunidade ativa e boa documentação</li>
 </ul>
 <blockquote>
-<p>Em um próximo artigo, escreverei sobre como usar <a href="https://github.com/langchain4j/langchain4j">Langchain4j</a> para criar um sistema RAG ainda neste mesmo projeto.</p>
-</blockquote>
+<p>Em um próximo artigo, escreverei sobre como usar <a href="https://github.com/langchain4j/langchain4j">Langchain4j</a> para criar um sistema RAG ainda neste mesmo projeto.</p></blockquote>
 <h2 id="referências">Referências</h2>
 <ul>
 <li><a href="https://www.pinecone.io/learn/rag/">RAG</a> - Documentação do Pinecone</li>
@@ -1035,6 +1078,29 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
     </div>
     
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
     
 </article>
 
