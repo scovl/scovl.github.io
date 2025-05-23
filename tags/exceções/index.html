@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Exceções | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<div class="post-list">
+    <h1 class="page-title">
+        
+            Exceções
+        
+    </h1>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/2025/05/23/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-05-23T19:41:45-03:00">
+                Fri, May 23, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/tratamento-de-erros/" class="tag">tratamento de erros</a>
+                
+                <a href="/tags/exce%C3%A7%C3%B5es/" class="tag">exceções</a>
+                
+                <a href="/tags/javascript/" class="tag">javascript</a>
+                
+                <a href="/tags/typescript/" class="tag">typescript</a>
+                
+                <a href="/tags/rust/" class="tag">rust</a>
+                
+                <a href="/tags/clojure/" class="tag">clojure</a>
+                
+                <a href="/tags/zig/" class="tag">zig</a>
+                
+                <a href="/tags/boas-pr%C3%A1ticas/" class="tag">boas práticas</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Entenda quando, por que e para que o try/catch foi criado, e por que ele não deve ser usado como controle de fluxo lógico.
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>O conceito de <a href="https://en.wikipedia.org/wiki/Exception_handling">tratamento de exceções</a>, incluindo o <code>try/catch</code>, surgiu nos anos 70 com linguagens como <strong><a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a></strong>, que criaram formas mais organizadas de lidar com erros. Antes disso, os programas usavam <a href="https://en.wikipedia.org/wiki/Return_code">códigos de retorno</a> ou checagens manuais, o que deixava o código cheio de bugs e difícil de manter. A ideia era simples: separar o que o programa faz normalmente de como ele lida com as coisas que dão errado, como falhas de hardware, problemas de <a href="https://en.wikipedia.org/wiki/Input/output">entrada/saída</a> ou quando alguém tenta <a href="https://en.wikipedia.org/wiki/Division_by_zero">dividir por zero</a>.</p>
+            
+            <a href="https://scovl.github.io/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+</div>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 
