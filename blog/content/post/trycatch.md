@@ -1,7 +1,7 @@
 +++
 title = "Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico"
 description = "Entenda quando, por que e para que o try/catch foi criado, e por que ele não deve ser usado como controle de fluxo lógico."
-date = 2025-05-14T16:31:45-03:00
+date = 2025-05-23T19:41:45-03:00
 tags = ["tratamento de erros", "exceções", "javascript", "typescript", "rust", "clojure", "zig", "boas práticas"]
 draft = false
 weight = 1
