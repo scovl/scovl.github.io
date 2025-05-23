@@ -9,7 +9,7 @@ author = "Vitor Lobo Ramos"
 +++
 
 
-Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca [fp-ts](https://gcanti.github.io/fp-ts/) (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem tambémoutras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:
+Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca [fp-ts](https://gcanti.github.io/fp-ts/) (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem também outras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:
 
 - [**Purify-ts**](https://github.com/purify-ts/purify-ts): Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either
 - [**Neverthrow**](https://github.com/microsoft/neverthrow): Biblioteca especializada em tratamento de erros com Result/Either

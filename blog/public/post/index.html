@@ -18,6 +18,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+
+<style>
+@font-face {
+    font-family: 'Gotham';
+    src: url('/fonts/gotham/Gotham.woff2') format('woff2'),
+         url('/fonts/gotham/Gotham.woff') format('woff'),
+         url('/fonts/gotham/Gotham.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+body {
+    font-family: 'Gotham', Arial, sans-serif;
+}
+</style>
 
 
 
@@ -106,6 +123,63 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
+            <a href="http://localhost:1313/2025/05/14/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-05-14T16:31:45-03:00">
+                Wed, May 14, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/tratamento-de-erros/" class="tag">tratamento de erros</a>
+                
+                <a href="/tags/exce%C3%A7%C3%B5es/" class="tag">exceções</a>
+                
+                <a href="/tags/javascript/" class="tag">javascript</a>
+                
+                <a href="/tags/typescript/" class="tag">typescript</a>
+                
+                <a href="/tags/rust/" class="tag">rust</a>
+                
+                <a href="/tags/clojure/" class="tag">clojure</a>
+                
+                <a href="/tags/zig/" class="tag">zig</a>
+                
+                <a href="/tags/boas-pr%C3%A1ticas/" class="tag">boas práticas</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Entenda quando, por que e para que o try/catch foi criado, e por que ele não deve ser usado como controle de fluxo lógico, com exemplos em Rust, Clojure e Zig.
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>O conceito de <a href="https://en.wikipedia.org/wiki/Exception_handling">tratamento de exceções</a>, incluindo o <code>try/catch</code>, surgiu nos anos 70 com linguagens como <strong><a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a></strong>, que criaram formas mais organizadas de lidar com erros. Antes disso, os programas usavam <a href="https://en.wikipedia.org/wiki/Return_code">códigos de retorno</a> ou checagens manuais, o que deixava o código cheio de bugs e difícil de manter. A ideia era simples: separar o que o programa faz normalmente de como ele lida com as coisas que dão errado, como falhas de hardware, problemas de <a href="https://en.wikipedia.org/wiki/Input/output">entrada/saída</a> ou quando alguém tenta <a href="https://en.wikipedia.org/wiki/Division_by_zero">dividir por zero</a>.</p>
+            
+            <a href="http://localhost:1313/2025/05/14/trycatch/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
             <a href="http://localhost:1313/2025/05/12/tserr/">Tratamento Funcional de Erros em TypeScript</a>
         </h2>
         
@@ -147,7 +221,7 @@
         
         
         <div class="post-item-summary">
-            <p>Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem tambémoutras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:</p>
+            <p>Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de erros em TypeScript usando conceitos de programação funcional. A biblioteca <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> (Functional Programming em TypeScript) oferece ferramentas que permitem lidar com falhas de forma explícita e type-safe, melhorando a robustez e legibilidade do código. Existem também outras bibliotecas com abordagens semelhantes ou complementares no ecossistema TypeScript:</p>
 <ul>
 <li><a href="https://github.com/purify-ts/purify-ts"><strong>Purify-ts</strong></a>: Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either</li>
 <li><a href="https://github.com/microsoft/neverthrow"><strong>Neverthrow</strong></a>: Biblioteca especializada em tratamento de erros com Result/Either</li>

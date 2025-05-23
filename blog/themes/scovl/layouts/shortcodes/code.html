@@ -6,7 +6,5 @@
   {{ $content := os.ReadFile $file }}
   {{ highlight $content $lang $options }}
 {{ else }}
-  <div class="highlight language-{{ $lang }}" data-lang="{{ $lang }}">
-    <pre class="language-{{ $lang }}"><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>
-  </div>
+  <pre class="language-{{ $lang }}"><code class="language-{{ $lang }}">{{ .Inner | highlight $lang $options }}</code></pre>
 {{ end }} 
