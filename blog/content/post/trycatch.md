@@ -81,29 +81,31 @@ Neste artigo, vamos explorar de onde veio o `try/catch`, para que ele foi criado
 
 ## Propósito do Try/Catch
 
-[SIMULA 67](https://en.wikipedia.org/wiki/SIMULA_67), precursora de conceitos modernos de programação orientada a objetos, introduziu mecanismos pioneiros para **controle de fluxo em situações excepcionais**. Seu sistema de `try/catch` (ou `ON-actions`) permitia a delimitação de blocos de código suscetíveis a falhas e a definição de rotinas de recuperação. Esse paradigma influenciou diretamente linguagens posteriores, como C++, que adotou uma abordagem similar com `try`, `catch` e `throw`.
+A linguagem [SIMULA 67](https://en.wikipedia.org/wiki/SIMULA_67), precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções no modelo `try/catch`, seu uso de *ON-actions* para lidar com condições excepcionais (como falhas em operações de [I/O](https://en.wikipedia.org/wiki/Input/output)) representou um avanço inicial no controle de fluxo em situações de erro.  
 
-Neste contexto, o tratamento de exceções era implementado por meio de **blocos protegidos** e **handlers** associados. A estrutura básica consistia em:  
-1. **Bloco Try (Protegido)**: Delimitava o código onde erros poderiam ocorrer.  
-2. **Bloco Catch (Handler)**: Definido via **ON-actions**, executado caso uma exceção fosse detectada. Exemplo simplificado:  
+Nesse contexto, o tratamento de exceções era implementado por meio de **blocos protegidos** e **handlers** associados. A estrutura básica consistia em:  
 
-```bash  
+1. **Bloco Protegido (*Try*)**: Delimitava o código no qual erros poderiam ocorrer.  
+2. **Handler (*Catch*)**: Definido via *ON-actions*, executado caso uma exceção fosse detectada. O exemplo a seguir ilustra essa abordagem:  
+
+```simula  
 BEGIN  
    ON ERROR DO BEGIN  
-      ! Código de recuperação (catch).  
+      ! Código de recuperação (handler).  
    END;  
    ! Bloco protegido (try).  
    ...  
 END;  
 ```  
 
-Esse modelo permitia **desacoplar** a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ herdou e refinou o conceito de `try/catch`, formalizando-o como parte do sistema de exceções. As semelhanças incluem:  
-- **Bloco Try**: Delimita operações críticas.  
-- **Bloco Catch**: Captura exceções lançadas por `throw`, similar às **ON-actions**.  
+Esse modelo permitia **desacoplar** a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ herdou e refinou esse conceito, formalizando-o como parte do sistema de exceções por meio das estruturas `try` e `catch`. As principais semelhanças incluem:  
 
-Por exemplo, o código abaixo mostra como o `try/catch` pode ser usado em C++ para capturar exceções lançadas por `throw`:
+- **Bloco *Try***: Delimita operações críticas.  
+- **Bloco *Catch***: Captura exceções lançadas por `throw`, análogo às *ON-actions* em SIMULA 67.  
 
-```c
+O exemplo a seguir demonstra a sintaxe do tratamento de exceções em C++:  
+
+```cpp  
 try {  
    // Código potencialmente problemático.  
    throw std::runtime_error("Erro!");  
