@@ -245,30 +245,30 @@
 <li><a href="/2025/05/23/trycatch/#conclus%c3%a3o">Conclusão</a></li>
 </ul>
 <h2 id="propósito-do-trycatch">Propósito do Try/Catch</h2>
-<p><a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a>, precursora de conceitos modernos de programação orientada a objetos, introduziu mecanismos pioneiros para <strong>controle de fluxo em situações excepcionais</strong>. Seu sistema de <code>try/catch</code> (ou <code>ON-actions</code>) permitia a delimitação de blocos de código suscetíveis a falhas e a definição de rotinas de recuperação. Esse paradigma influenciou diretamente linguagens posteriores, como C++, que adotou uma abordagem similar com <code>try</code>, <code>catch</code> e <code>throw</code>.</p>
-<p>Neste contexto, o tratamento de exceções era implementado por meio de <strong>blocos protegidos</strong> e <strong>handlers</strong> associados. A estrutura básica consistia em:</p>
+<p>A linguagem <a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a>, precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções no modelo <code>try/catch</code>, seu uso de <em>ON-actions</em> para lidar com condições excepcionais (como falhas em operações de <a href="https://en.wikipedia.org/wiki/Input/output">I/O</a>) representou um avanço inicial no controle de fluxo em situações de erro.</p>
+<p>Nesse contexto, o tratamento de exceções era implementado por meio de <strong>blocos protegidos</strong> e <strong>handlers</strong> associados. A estrutura básica consistia em:</p>
 <ol>
-<li><strong>Bloco Try (Protegido)</strong>: Delimitava o código onde erros poderiam ocorrer.</li>
-<li><strong>Bloco Catch (Handler)</strong>: Definido via <strong>ON-actions</strong>, executado caso uma exceção fosse detectada. Exemplo simplificado:</li>
+<li><strong>Bloco Protegido (<em>Try</em>)</strong>: Delimitava o código no qual erros poderiam ocorrer.</li>
+<li><strong>Handler (<em>Catch</em>)</strong>: Definido via <em>ON-actions</em>, executado caso uma exceção fosse detectada. O exemplo a seguir ilustra essa abordagem:</li>
 </ol>
 
 
-  <pre><code class="language-bash">BEGIN  
+  <pre><code class="language-simula">BEGIN  
    ON ERROR DO BEGIN  
-      ! Código de recuperação (catch).  
+      ! Código de recuperação (handler).  
    END;  
    ! Bloco protegido (try).  
    ...  
 END;  </code></pre>
- <p>Esse modelo permitia <strong>desacoplar</strong> a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ herdou e refinou o conceito de <code>try/catch</code>, formalizando-o como parte do sistema de exceções. As semelhanças incluem:</p>
+ <p>Esse modelo permitia <strong>desacoplar</strong> a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ herdou e refinou esse conceito, formalizando-o como parte do sistema de exceções por meio das estruturas <code>try</code> e <code>catch</code>. As principais semelhanças incluem:</p>
 <ul>
-<li><strong>Bloco Try</strong>: Delimita operações críticas.</li>
-<li><strong>Bloco Catch</strong>: Captura exceções lançadas por <code>throw</code>, similar às <strong>ON-actions</strong>.</li>
+<li><strong>Bloco <em>Try</em></strong>: Delimita operações críticas.</li>
+<li><strong>Bloco <em>Catch</em></strong>: Captura exceções lançadas por <code>throw</code>, análogo às <em>ON-actions</em> em SIMULA 67.</li>
 </ul>
-<p>Por exemplo, o código abaixo mostra como o <code>try/catch</code> pode ser usado em C++ para capturar exceções lançadas por <code>throw</code>:</p>
+<p>O exemplo a seguir demonstra a sintaxe do tratamento de exceções em C++:</p>
 
 
-  <pre><code class="language-c">try {  
+  <pre><code class="language-cpp">try {  
    // Código potencialmente problemático.  
    throw std::runtime_error(&#34;Erro!&#34;);  
 } catch (const std::exception&amp; e) {  
