@@ -26,6 +26,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-lisp.min.js"></script>
 
 
 
@@ -135,7 +137,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 123 min
+                Estimated reading time: 122 min
             </div>
             
             
@@ -161,88 +163,39 @@
 <li><a href="/2025/05/23/trycatch/#prop%c3%b3sito-do-trycatch">Propósito do Try/Catch</a>
 <ul>
 <li><a href="/2025/05/23/trycatch/#principais-usos-do-trycatch">Principais Usos do Try/Catch</a></li>
+</ul>
+</li>
 <li><a href="/2025/05/23/trycatch/#tratamento-de-exce%c3%a7%c3%b5es-em-diferentes-contextos">Tratamento de Exceções em Diferentes Contextos</a>
 <ul>
+<li><a href="/2025/05/23/trycatch/#opera%c3%a7%c3%b5es-de-i-o">Operações de I/O</a></li>
+<li><a href="/2025/05/23/trycatch/#gerenciamento-de-recursos">Gerenciamento de Recursos</a></li>
+<li><a href="/2025/05/23/trycatch/#valida%c3%a7%c3%a3o-de-dados">Validação de Dados</a></li>
 <li><a href="/2025/05/23/trycatch/#transa%c3%a7%c3%b5es-at%c3%b4micas">Transações Atômicas</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#smart-pointers">Smart Pointers</a></li>
-<li><a href="/2025/05/23/trycatch/#custo-de-performance-das-exce%c3%a7%c3%b5es">Custo de Performance das Exceções</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#garantias-de-exce%c3%a7%c3%a3o">Garantias de Exceção</a></li>
-<li><a href="/2025/05/23/trycatch/#tipos-espec%c3%adficos-de-exce%c3%a7%c3%a3o-em-c">Tipos Específicos de Exceção em C++</a></li>
-</ul>
-</li>
+<li><a href="/2025/05/23/trycatch/#tratamento-de-erros-em-m%c3%baltiplas-camadas">Tratamento de Erros em Múltiplas Camadas</a></li>
+<li><a href="/2025/05/23/trycatch/#tratamento-de-exce%c3%a7%c3%b5es-em-construtores-e-destrui%c3%a7%c3%a3o-de-recursos">Tratamento de Exceções em Construtores e Destrução de Recursos</a></li>
+<li><a href="/2025/05/23/trycatch/#tipos-espec%c3%adficos-de-exce%c3%a7%c3%a3o-em-c&#43;&#43;">Tipos Específicos de Exceção em C++</a></li>
 <li><a href="/2025/05/23/trycatch/#separar-tratamento-de-erros-da-l%c3%b3gica-principal">Separar Tratamento de Erros da Lógica Principal</a></li>
 <li><a href="/2025/05/23/trycatch/#recupera%c3%a7%c3%a3o-controlada">Recuperação Controlada</a></li>
-<li><a href="/2025/05/23/trycatch/#proteger-recursos-cr%c3%adticos">Proteger Recursos Críticos</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#ponteiros-inteligentes-raii-em-ac%c3%a3o">Ponteiros Inteligentes: RAII em Ação</a></li>
-</ul>
-</li>
+<li><a href="/2025/05/23/trycatch/#proteger-recursos-cr%c3%adticos">Proteger Recursos Críticos</a></li>
 </ul>
 </li>
 <li><a href="/2025/05/23/trycatch/#por-que-usar-trycatch-como-fluxo-l%c3%b3gico-%c3%a9-errado">Por que Usar Try/Catch como Fluxo Lógico é Errado</a>
 <ul>
 <li><a href="/2025/05/23/trycatch/#separa%c3%a7%c3%a3o-clara-entre-tratamento-de-erros-e-controle-de-fluxo">Separação Clara entre Tratamento de Erros e Controle de Fluxo</a></li>
 <li><a href="/2025/05/23/trycatch/#a-abordagem-correta">A Abordagem Correta</a></li>
-<li><a href="/2025/05/23/trycatch/#por-que-evitar-exce%c3%a7%c3%b5es-para-controle-de-fluxo">Por que Evitar Exceções para Controle de Fluxo?</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#entendendo-o-desenrolamento-da-pilha">Entendendo o Desenrolamento da Pilha</a></li>
-<li><a href="/2025/05/23/trycatch/#exception-safety-e-fun%c3%a7%c3%b5es-make">Exception Safety e Funções Make</a></li>
 </ul>
 </li>
-<li><a href="/2025/05/23/trycatch/#impacto-no-design-de-apis">Impacto no Design de APIs</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#hierarquia-de-exce%c3%a7%c3%b5es-significativas">Hierarquia de Exceções Significativas</a></li>
-<li><a href="/2025/05/23/trycatch/#interfaces-resilientes">Interfaces Resilientes</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#testabilidade">Testabilidade</a></li>
-<li><a href="/2025/05/23/trycatch/#consist%c3%aancia-no-tratamento-de-erros">Consistência no Tratamento de Erros</a></li>
-<li><a href="/2025/05/23/trycatch/#compatibilidade-bin%c3%a1ria">Compatibilidade Binária</a></li>
-<li><a href="/2025/05/23/trycatch/#logging-e-diagn%c3%b3stico">Logging e Diagnóstico</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#performance-e-otimiza%c3%a7%c3%b5es-de-exce%c3%a7%c3%b5es">Performance e Otimizações de Exceções</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#o-modelo-zero-cost-exceptions-em-compiladores-modernos">O Modelo Zero-Cost Exceptions em Compiladores Modernos</a></li>
-<li><a href="/2025/05/23/trycatch/#otimiza%c3%a7%c3%b5es-avan%c3%a7adas-em-compiladores-modernos">Otimizações Avançadas em Compiladores Modernos</a></li>
-<li><a href="/2025/05/23/trycatch/#compara%c3%a7%c3%a3o-exce%c3%a7%c3%b5es-vs-c%c3%b3digos-de-retorno">Comparação: Exceções vs. Códigos de Retorno</a></li>
-<li><a href="/2025/05/23/trycatch/#quando-o-custo-%c3%a9-justific%c3%a1vel">Quando o Custo é Justificável</a></li>
-<li><a href="/2025/05/23/trycatch/#por-que-o-lan%c3%a7amento-de-exce%c3%a7%c3%b5es-%c3%a9-custo">Por que o Lançamento de Exceções é Custo?</a></li>
-<li><a href="/2025/05/23/trycatch/#o-impacto-do-noexcept-nas-otimiza%c3%a7%c3%b5es">O Impacto do noexcept nas Otimizações</a></li>
-<li><a href="/2025/05/23/trycatch/#o-custo-oculto-das-exce%c3%a7%c3%b5es-para-controle-de-fluxo">O Custo Oculto das Exceções para Controle de Fluxo</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#quando-usar-noexcept">Quando Usar noexcept?</a></li>
-<li><a href="/2025/05/23/trycatch/#quando-evitar-noexcept">Quando Evitar noexcept?</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#impacto-no-tamanho-do-bin%c3%a1rio">Impacto no Tamanho do Binário</a></li>
-<li><a href="/2025/05/23/trycatch/#ferramentas-de-an%c3%a1lise-est%c3%a1tica">Ferramentas de Análise Estática</a></li>
-<li><a href="/2025/05/23/trycatch/#boas-pr%c3%a1ticas-com-noexcept">Boas Práticas com noexcept</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#quando-usar-trycatch-os-casos-de-uso-apropriados">Quando Usar Try/Catch? Os Casos de Uso Apropriados</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#tipagem-fraca-e-m%c3%a1-pr%c3%a1tica-de-design">Tipagem Fraca e Má Prática de Design</a></li>
+<li><a href="/2025/05/23/trycatch/#quando-usar-noexcept">Quando Usar <code>noexcept</code>?</a></li>
+<li><a href="/2025/05/23/trycatch/#quando-evitar-noexcept">Quando Evitar <code>noexcept</code>?</a></li>
+<li><a href="/2025/05/23/trycatch/#quando-usar-trycatch-os-casos-de-uso-apropriados">Quando usar Try/Catch? Os Casos de Uso Apropriados</a></li>
 <li><a href="/2025/05/23/trycatch/#m%c3%a1-pr%c3%a1tica-de-design">Má Prática de Design</a></li>
-<li><a href="/2025/05/23/trycatch/#abordagens-em-outras-linguagens">Abordagens em Outras Linguagens</a></li>
-<li><a href="/2025/05/23/trycatch/#o-princ%c3%adpio-crash-early">O Princípio &ldquo;Crash Early&rdquo;</a></li>
-<li><a href="/2025/05/23/trycatch/#design-by-contract-e-programa%c3%a7%c3%a3o-com-asser%c3%a7%c3%b5es">Design by Contract e Programação com Asserções</a>
-<ul>
-<li><a href="/2025/05/23/trycatch/#programa%c3%a7%c3%a3o-com-asser%c3%a7%c3%b5es">Programação com Asserções</a></li>
-<li><a href="/2025/05/23/trycatch/#integrando-dbcs-asser%c3%a7%c3%b5es-e-exce%c3%a7%c3%b5es">Integrando DbC, Asserções e Exceções</a></li>
-</ul>
-</li>
+<li><a href="/2025/05/23/trycatch/#design-by-contract-e-programa%c3%a7%c3%a3o-com-asser%c3%a7%c3%b5es">Design by Contract e Programação com Asserções</a></li>
 <li><a href="/2025/05/23/trycatch/#desacoplamento-e-manutenibilidade">Desacoplamento e Manutenibilidade</a></li>
 <li><a href="/2025/05/23/trycatch/#programa%c3%a7%c3%a3o-por-coincid%c3%aancia">Programação por Coincidência</a></li>
 <li><a href="/2025/05/23/trycatch/#configura%c3%a7%c3%a3o-como-metadados">Configuração como Metadados</a></li>
 <li><a href="/2025/05/23/trycatch/#testabilidade-e-caminhos-de-erro">Testabilidade e Caminhos de Erro</a></li>
-</ul>
-</li>
-<li><a href="/2025/05/23/trycatch/#diretrizes-pr%c3%a1ticas-quando-usar-exce%c3%a7%c3%b5es-vs-alternativas">Diretrizes Práticas: Quando Usar Exceções vs. Alternativas</a></li>
-<li><a href="/2025/05/23/trycatch/#conclus%c3%a3o">Conclusão</a></li>
+<li><a href="/2025/05/23/trycatch/#diretrizes-pr%c3%a1ticas-quando-usar-exce%c3%a7%c3%b5es-vs-alternativas">Diretrizes Práticas: Quando usar Exceções vs. Alternativas</a></li>
+<li><a href="/2025/05/23/trycatch/#refer%c3%aancias">Referências</a></li>
 </ul>
 <h2 id="propósito-do-trycatch">Propósito do Try/Catch</h2>
 <p>A linguagem <a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a>, precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções idêntico ao modelo <code>try/catch</code> atual, seu mecanismo de <em>ON-actions</em> para lidar com condições excepcionais (como falhas em operações de <a href="https://en.wikipedia.org/wiki/Input/output">I/O</a>) foi conceitualmente similar e representou um avanço significativo no controle de fluxo em situações de erro. O tratamento de exceções em SIMULA 67 utilizava estruturas análogas às atuais, mas com implementação distinta, organizadas em:</p>
@@ -284,7 +237,7 @@ END;  </code></pre>
 <p>Consolidando essa evolução histórica, o C++ moderno formalizou o tratamento de exceções por meio das estruturas <code>try</code> e <code>catch</code>, que permitem que um bloco de código seja protegido contra exceções e que um tratamento adequado seja feito caso uma exceção seja lançada:</p>
 
 
-  <pre><code class="language-cpp">try {  
+  <pre><code class="language-c">try {  
    // Código potencialmente problemático.  
    throw std::runtime_error(&#34;Erro!&#34;);  
 } catch (const std::exception&amp; e) {  
@@ -569,7 +522,7 @@ try {
 <p>Em operações que precisam ser atômicas (ou tudo acontece ou nada acontece), o tratamento de exceções é essencial. O código a seguir ilustra como usar <code>try/catch</code> para garantir a atomicidade de uma operação, assegurando que ela seja completamente bem-sucedida ou não tenha efeito persistente.</p>
 
 
-  <pre><code class="language-cpp">void transferir(Conta&amp; origem, Conta&amp; destino, double valor) {
+  <pre><code class="language-c">void transferir(Conta&amp; origem, Conta&amp; destino, double valor) {
     if (valor &lt;= 0) {
         throw std::invalid_argument(&#34;Valor da transferência deve ser positivo&#34;);
     }
@@ -599,11 +552,11 @@ try {
 </li>
 </ol>
 <p>Esta técnica garante a integridade do sistema financeiro: ou a transferência é completada com sucesso, ou o sistema retorna ao estado inicial e propaga o erro para tratamento em níveis superiores.</p>
-<h3 id="5-tratamento-de-erros-em-múltiplas-camadas">5. Tratamento de Erros em Múltiplas Camadas</h3>
+<h3 id="tratamento-de-erros-em-múltiplas-camadas">Tratamento de Erros em Múltiplas Camadas</h3>
 <p>Em sistemas complexos, as exceções frequentemente atravessam várias camadas de abstração. A estratégia a seguir demonstra como enriquecer o contexto das exceções à medida que elas se propagam:</p>
 
 
-  <pre><code class="language-cpp">void camadaAlta() {
+  <pre><code class="language-c">void camadaAlta() {
     try {
         camadaMedia();
     } catch (const std::exception&amp; e) {
@@ -634,7 +587,7 @@ void camadaBaixa() {
 </ol>
 <p>Este encadeamento de informações cria uma trilha de diagnóstico valiosa. Uma exceção originada em <code>camadaBaixa</code> (&ldquo;Erro na camada baixa&rdquo;) se transforma em uma mensagem mais informativa ao passar por <code>camadaMedia</code> (&ldquo;Falha na camada média: Erro na camada baixa&rdquo;) e finalmente por <code>camadaAlta</code> (&ldquo;Falha na camada alta: Falha na camada média: Erro na camada baixa&rdquo;).</p>
 <p>Esta abordagem facilita significativamente a depuração, permitindo que os desenvolvedores rastreiem o caminho exato da falha através das diferentes camadas do sistema, sem perder o contexto original do erro.</p>
-<h3 id="6-tratamento-de-exceções-em-construtores-e-destrução-de-recursos">6. Tratamento de Exceções em Construtores e Destrução de Recursos</h3>
+<h3 id="tratamento-de-exceções-em-construtores-e-destrução-de-recursos">Tratamento de Exceções em Construtores e Destrução de Recursos</h3>
 <p>Os construtores representam um caso especial no tratamento de exceções, pois não possuem valor de retorno para indicar falha. Se um construtor não conseguir concluir sua tarefa, a única forma de sinalizar o problema é lançando uma exceção. Isso cria um desafio: como garantir que recursos adquiridos antes da falha sejam liberados adequadamente?</p>
 <p>A resposta está na combinação do tratamento de exceções com o padrão RAII (Resource Acquisition Is Initialization), implementado elegantemente através de smart pointers:</p>
 
@@ -5179,8 +5132,6 @@ void exemploUsoAutenticacao() {
 <em>Explica o sistema de <code>Result</code> e <code>Option</code> do Rust, que evita exceções.</em></li>
 <li><a href="https://a.co/d/4geTFbr"><strong>&ldquo;Clojure for the Brave and True&rdquo;</strong> - Daniel Higginbotham</a><br>
 <em>Aborda a filosofia de tratamento de erros em Clojure usando valores e mapas.</em></li>
-<li><a href="https://ziglang.org/documentation/"><strong>&ldquo;Zig Programming Language Documentation&rdquo;</strong> (Online)</a><br>
-<em>Explica o sistema único de erros como valores em Zig.</em></li>
 <li><a href="https://a.co/d/8oEH9z4"><strong>&ldquo;Designing Data-Intensive Applications&rdquo;</strong> - Martin Kleppmann</a><br>
 <em>Discute tolerância a falhas em sistemas distribuídos, complementando o conceito de &ldquo;graceful failure&rdquo;.</em></li>
 <li><a href="https://a.co/d/66ya4UP"><strong>&ldquo;Release It!: Design and Deploy Production-Ready Software&rdquo;</strong> - Michael T. Nygard</a><br>
