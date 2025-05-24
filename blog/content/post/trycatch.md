@@ -25,49 +25,71 @@ Neste artigo, vamos explorar de onde veio o `try/catch`, para que ele foi criado
 
 ## Sumário
 
-- [Introdução](#introdução)
-- [Histórico e Origens](#histórico-e-origens)
 - [Propósito do Try/Catch](#propósito-do-trycatch)
-  - [Problemas com Códigos de Erro](#problemas-com-códigos-de-erro)
-  - [Separação de Preocupações](#separação-de-preocupações)
-  - [Erros Não Podem Ser Ignorados](#erros-não-podem-ser-ignorados)
-  - [RAII e Segurança de Exceção](#raii-e-segurança-de-exceção)
-    - [Como o RAII Protege Seus Recursos](#como-o-raii-protege-seus-recursos)
-    - [Exemplos de RAII na Biblioteca Padrão](#exemplos-de-raii-na-biblioteca-padrão)
+    - [Principais Usos do Try/Catch](#principais-usos-do-trycatch)
+        - [Lidar com Situações Inesperadas](#lidar-com-situações-inesperadas)
+        - [RAII e Segurança de Exceção](#raii-e-segurança-de-exceção)
+        - [Como o RAII Protege Seus Recursos](#como-o-raii-protege-seus-recursos)
+        - [Exemplos de RAII na Biblioteca Padrão](#exemplos-de-raii-na-biblioteca-padrão)
+- [Gerenciamento de Recursos e RAII](#gerenciamento-de-recursos-e-raii)
+    - [Princípios do RAII](#princípios-do-raii)
+    - [Smart Pointers](#smart-pointers)
+    - [Vantagens do RAII](#vantagens-do-raii)
+    - [Custo de Performance das Exceções](#custo-de-performance-das-exceções)
+    - [Garantias de Exceção](#garantias-de-exceção)
+        - [Smart Pointers: RAII para Gerenciamento de Memória](#smart-pointers-raii-para-gerenciamento-de-memória)
+    - [Tipos Específicos de Exceção em C++](#tipos-específicos-de-exceção-em-c++)
+    - [Separar Tratamento de Erros da Lógica Principal](#separar-tratamento-de-erros-da-lógica-principal)
+    - [Recuperação Controlada](#recuperação-controlada)
+    - [Proteger Recursos Críticos](#proteger-recursos-críticos)
+        - [RAII e Exceções: Uma Parceria Poderosa](#raii-e-exceções-uma-parceria-poderosa)
 - [Por que Usar Try/Catch como Fluxo Lógico é Errado](#por-que-usar-trycatch-como-fluxo-lógico-é-errado)
-  - [Contrato Implícito](#contrato-implícito)
-  - [Interrupção Abrupta do Fluxo](#interrupção-abrupta-do-fluxo)
-  - [Impacto no Desempenho](#impacto-no-desempenho)
-  - [Legibilidade e Manutenção](#legibilidade-e-manutenção)
-- [Diretrizes Práticas](#diretrizes-práticas-quando-usar-exceções-vs-alternativas)
-  - [Quando Usar Exceções](#quando-usar-exceções)
-  - [Quando Evitar Exceções](#quando-evitar-exceções)
-  - [Boas Práticas de Tratamento de Erros](#boas-práticas-de-tratamento-de-erros)
-- [Padrões de Projeto para Tratamento de Erros](#padrões-de-projeto-para-tratamento-de-erros)
-  - [Result Objects](#result-objects)
-  - [Monads para Tratamento de Erros](#monads-para-tratamento-de-erros)
-  - [Type-Safe Error Handling](#type-safe-error-handling)
-- [Exemplos em Outras Linguagens](#exemplos-em-outras-linguagens)
-  - [Rust](#rust)
-  - [Clojure](#clojure)
-  - [TypeScript/JavaScript](#typescriptjavascript)
-- [Conclusão](#conclusão)
-- [Referências](#referências)
-  - [Desempenho e Custo das Exceções](#desempenho-e-custo-das-exceções)
+    - [Violação do Princípio do Menor Espanto](#violação-do-princípio-do-menor-espanto)
+    - [Separação Clara entre Tratamento de Erros e Controle de Fluxo](#separação-clara-entre-tratamento-de-erros-e-controle-de-fluxo)
+        - [O Problema Fundamental](#o-problema-fundamental)
+        - [O Abuso de Exceções para Controle de Fluxo](#o-abuso-de-exceções-para-controle-de-fluxo)
+        - [A Abordagem Correta](#a-abordagem-correta)
+        - [Por que Evitar Exceções para Controle de Fluxo?](#por-que-evitar-exceções-para-controle-de-fluxo)
+        - [Quando Usar Exceções?](#quando-usar-exceções)
+        - [Exemplo de Uso Correto de Exceções](#exemplo-de-uso-correto-de-exceções)
+    - [Entendendo o Desenrolamento da Pilha](#entendendo-o-desenrolamento-da-pilha)
+        - [O Que Acontece Durante o Desenrolamento](#o-que-acontece-durante-o-desenrolamento)
+        - [Exemplo Detalhado](#exemplo-detalhado)
+        - [Pontos Importantes sobre o Desenrolamento](#pontos-importantes-sobre-o-desenrolamento)
+        - [Boas Práticas](#boas-práticas)
+    - [Exception Safety e Funções Make](#exception-safety-e-funções-make)
+        - [O Problema da Segurança Contra Exceções](#o-problema-da-segurança-contra-exceções)
+        - [A Solução: Factory Functions](#a-solução-factory-functions)
+        - [Por que isso é Importante](#por-que-isso-é-importante)
+        - [Boas Práticas para Exception Safety](#boas-práticas-para-exception-safety)
+    - [Impacto no Design de APIs](#impacto-no-design-de-apis)
+        - [Documentação Clara de Exceções](#documentação-clara-de-exceções)
+        - [Hierarquia de Exceções Significativas](#hierarquia-de-exceções-significativas)
+        - [Garantias de Exceção](#garantias-de-exceção)
+        - [Interfaces Resilientes](#interfaces-resilientes)
+        - [Testabilidade](#testabilidade)
+        - [Consistência no Tratamento de Erros](#consistência-no-tratamento-de-erros)
+        - [Compatibilidade Binária](#compatibilidade-binária)
+        - [Logging e Diagnóstico](#logging-e-diagnóstico)
+    - [Performance e Otimizações de Exceções](#performance-e-otimizações-de-exceções)
+        - [O Modelo Zero-Cost Exceptions em Compiladores Modernos](#o-modelo-zero-cost-exceptions-em-compiladores-modernos)
+        - [Otimizações Avançadas em Compiladores Modernos](#otimizações-avançadas-em-compiladores-modernos)
+        - [Custo no Caminho de Exceção](#custo-no-caminho-de-exceção)
+        - [Comparação: Exceções vs. Códigos de Retorno](#comparação-exceções-vs-códigos-de-retorno)
+        - [Boas Práticas para Otimizar o Uso de Exceções](#boas-práticas-para-otimizar-o-uso-de-exceções)
+        - [Quando o Custo é Justificável](#quando-o-custo-é-justificável)
+        - [Comparação com Verificações Condicionais](#comparação-com-verificações-condicionais)
+        - [Por que o Lançamento de Exceções é Custo?](#por-que-o-lançamento-de-exceções-é-custo)
     - [O Impacto do `noexcept` nas Otimizações](#o-impacto-do-noexcept-nas-otimizações)
-- [Quando Usar Try/Catch?](#quando-usar-trycatch)
-  - [Falhas de Sistema e Recursos Externos](#falhas-de-sistema-e-recursos-externos)
-  - [Validação de Entrada em APIs Públicas](#validação-de-entrada-em-apis-públicas)
-  - [Recuperação de Estados Inconsistentes](#recuperação-de-estados-inconsistentes)
-  - [Em Ambientes de Alto Nível](#em-ambientes-de-alto-nível)
-- [Alternativas ao Try/Catch para Fluxo Lógico](#alternativas-ao-trycatch-para-fluxo-lógico)
-  - [Verificações Condicionais](#verificações-condicionais)
-  - [Tipos de Resultado](#tipos-de-resultado)
-  - [Objetos de Resultado](#objetos-de-resultado)
-  - [Validações Prévias](#validações-prévias)
-  - [Abordagens em Outras Linguagens](#abordagens-em-outras-linguagens)
-- [Boas Práticas para Uso do Try/Catch](#boas-práticas-para-uso-do-trycatch)
-- [Referências](#referências)
+    - [O Custo Oculto das Exceções para Controle de Fluxo](#o-custo-oculto-das-exceções-para-controle-de-fluxo)
+    - [Quando Usar `noexcept`?](#quando-usar-noexcept)
+    - [Quando Não Usar `noexcept`?](#quando-não-usar-noexcept)
+    - [Impacto no Tamanho do Binário](#impacto-no-tamanho-do-binário)
+    - [Boas Práticas com `noexcept`](#boas-práticas-com-noexcept)
+- [Quando Usar Try/Catch? Os Casos de Uso Apropriados](#quando-usar-trycatch-os-casos-de-uso-apropriados)
+    
+        
+
 
 ## Propósito do Try/Catch
 
@@ -120,7 +142,7 @@ Como Stroustrup afirma: **"Se uma função encontra um erro que não consegue tr
 
 ### Principais Usos do Try/Catch
 
-#### 1. Lidar com Situações Inesperadas
+#### Lidar com Situações Inesperadas
 
 O `try/catch` existe principalmente para gerenciar problemas que fogem do normal. São aquelas situações que não dá para prever facilmente e que quebram o fluxo comum do programa. Alguns exemplos são:
 - Quando o computador não consegue reservar memória (`std::bad_alloc` em C++)
@@ -179,7 +201,7 @@ int main() {
 
 Stroustrup enfatiza que exceções são um mecanismo para lidar com erros que não podem ser gerenciados através de simples valores de retorno, especialmente quando a função chamada não pode completar sua tarefa fundamental. O exemplo acima com `std::bad_alloc` ilustra perfeitamente esse princípio: quando a alocação de memória falha, a função não tem como retornar um ponteiro válido, então ela lança uma exceção para sinalizar essa condição excepcional.
 
-### 1.2 RAII e Segurança de Exceção
+### RAII e Segurança de Exceção
 
 O C++ adota uma abordagem poderosa para gerenciamento de recursos chamada [**RAII**](https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization) (Resource Acquisition Is Initialization), que é fundamental para escrever código seguro contra exceções. A ideia central é simples, porém poderosa:
 
@@ -236,7 +258,7 @@ Este é o verdadeiro poder do RAII em C++ moderno: ele torna seu código mais se
 
 O RAII (Resource Acquisition Is Initialization) é um padrão de design fundamental em C++ que garante que os recursos (como memória, arquivos, locks) sejam liberados automaticamente quando o objeto que os gerencia sai do escopo. Isso é especialmente útil para evitar vazamentos de recursos em caso de exceções.
 
-### 1.3.1 Princípios do RAII
+### Princípios do RAII
 
 1. **Aquisição de Recurso é Inicialização**:
    - Um recurso é adquirido no construtor de um objeto
@@ -276,7 +298,7 @@ No exemplo acima, a classe `ArquivoLogger` é uma demonstração perfeita do [RA
 Os smart pointers funcionam de maneira parecida, mas para memória alocada dinamicamente. O `std::unique_ptr` é como um dono ciumento que não compartilha seu recurso com ninguém (não pode ser copiado), enquanto o `std::shared_ptr` é mais sociável e permite que vários objetos "compartilhem a posse" do mesmo recurso. Ambos garantem que a memória será liberada no momento certo - quando o último dono desaparecer. Isso elimina a necessidade de chamar `delete` manualmente e evita os temidos vazamentos de memória que costumavam ser o pesadelo de programadores C++. É como ter um sistema de coleta de lixo automático, mas com controle preciso sobre quando a limpeza acontece!
 
 
-### 1.3.2 Smart Pointers
+### Smart Pointers
 
 Os smart pointers são uma implementação do padrão RAII para gerenciamento de memória:
 
@@ -317,7 +339,7 @@ O exemplo com `std::shared_ptr` mostra como funciona o compartilhamento de recur
 > Cada vez que você cria uma cópia do ponteiro, o contador aumenta; quando um ponteiro é destruído, o contador diminui. Quando chega a zero, o recurso é liberado automaticamente. Esta é uma solução elegante para situações onde vários componentes do seu programa precisam acessar e potencialmente modificar o mesmo objeto, sem se preocupar com quem é responsável por limpá-lo no final.
 
 
-### 1.3.3 Vantagens do RAII
+### Vantagens do RAII
 
 1. **Segurança**:
    - Os recursos são sempre liberados, mesmo em caso de exceções
@@ -331,7 +353,7 @@ O exemplo com `std::shared_ptr` mostra como funciona o compartilhamento de recur
    - Reduz a chance de erros de gerenciamento de recursos
    - Facilita a refatoração do código
 
-### 1.3.4 Custo de Performance das Exceções
+### Custo de Performance das Exceções
 
 Embora as exceções sejam uma ferramenta poderosa para tratamento de erros, é importante entender seu impacto no desempenho:
 
@@ -486,7 +508,7 @@ Esse jeito de programar, separando o "caminho feliz" do "e se der ruim", é supe
 
 ---
 
-### 1.1 Tipos Específicos de Exceção em C++
+### Tipos Específicos de Exceção em C++
 
 No exemplo acima, usamos `std::bad_alloc`, mas o C++ oferece vários outros tipos de exceções padrão para diferentes situações de erro. Como Stroustrup demonstra na Seção 4.6.1 do seu livro, é uma boa prática criar tipos específicos de exceção para diferentes classes de erros. Por exemplo:
 
@@ -556,7 +578,7 @@ Usar esses tipos específicos (ou criar os seus próprios) torna o tratamento de
 
 ---
 
-### 2. Separar Tratamento de Erros da Lógica Principal
+### Separar Tratamento de Erros da Lógica Principal
 
 Em programação, erros acontecem o tempo todo – arquivos que não existem, dados errados, memória que acaba. Como lidamos com esses problemas faz toda diferença na qualidade do nosso código. Uma dica de ouro é separar o que o programa deve fazer normalmente do que ele faz quando algo dá errado. Sem essa separação, seu código vira uma bagunça de verificações que dificulta entender o que ele realmente deveria estar fazendo. Existem dois jeitos principais de lidar com erros:
 
@@ -669,7 +691,7 @@ Olhando o diagrama, dá pra ver na hora a diferença: o lado esquerdo parece uma
 
 ---
 
-### 3. **Recuperação Controlada**
+### Recuperação Controlada
 
 Usar `try/catch` ajuda a **separar claramente** a lógica principal do tratamento de erros, tornando o código mais **organizado e legível**. Enquanto isso, a abordagem sem `try/catch` exige verificações manuais, poluindo o fluxo do programa.  
 
@@ -793,7 +815,7 @@ O exemplo em código demonstra três pilares da resiliência: registro preciso d
 
 ---
 
-### 4. Proteger Recursos Críticos
+### Proteger Recursos Críticos
 
 O `try/catch` é essencial para **proteger recursos importantes** do seu programa. Pense em recursos como arquivos abertos, [**mutexes**](https://pt.wikipedia.org/wiki/Mutex) (que evitam que duas partes do código acessem algo ao mesmo tempo), conexões de banco de dados ou de rede. Sem proteção adequada, você pode acabar com vazamentos de recursos ou travamentos.
 
@@ -925,7 +947,7 @@ O objeto `std::ifstream arquivo` é esperto! Se o programa abrir o arquivo mas d
 
 ## Por que Usar Try/Catch como Fluxo Lógico é Errado
 
-### 1. Violação do Princípio do Menor Espanto
+### Violação do Princípio do Menor Espanto
 
 Usar `try/catch` como fluxo lógico viola o princípio do menor espanto (em inglês, [**Principle of Least Astonishment**](https://en.wikipedia.org/wiki/Principle_of_least_astonishment) ou **POLA**). Este princípio de design de software afirma que um sistema deve ser projetado de forma que as ações mais comuns sejam as mais fáceis de realizar, e as ações menos comuns sejam as mais difíceis de realizar.
 
@@ -1043,7 +1065,7 @@ Já no Java, a coisa é diferente. Lá existe uma divisão clara: exceções ver
 > **Nota:** Tanto em Java quanto em C++, as exceções devem ser usadas para situações excepcionais que indicam falhas ou condições de erro inesperadas. Em Java, exceções verificadas (checked exceptions) são usadas para erros recuperáveis que o chamador deve lidar, enquanto em C++, o foco está em erros que não deveriam ocorrer em condições normais de execução. Em ambas as linguagens, divisão por zero, acesso a índices inválidos e violações de invariantes são considerados erros de programação que, quando detectados, normalmente resultam em exceções (como `ArithmeticException` ou `ArrayIndexOutOfBoundsException` em Java, ou `std::runtime_error` em C++).
 
 
-### 2. Separação Clara entre Tratamento de Erros e Controle de Fluxo
+### Separação Clara entre Tratamento de Erros e Controle de Fluxo
 
 #### O Problema Fundamental
 
@@ -1154,7 +1176,7 @@ Neste exemplo, a exceção é usada corretamente porque a falha ao abrir um arqu
 
 ---
 
-### 3. **Entendendo o Desenrolamento da Pilha (Stack Unwinding)**
+### Entendendo o Desenrolamento da Pilha
 
 Quando uma exceção é lançada em C++, ocorre um processo chamado [desenrolamento da pilha](https://en.cppreference.com/w/cpp/language/throw#Stack_unwinding) (stack unwinding). Este é um dos aspectos mais poderosos, mas também mais complexos, do sistema de exceções do C++.
 
@@ -1302,7 +1324,7 @@ Essa mistura faz com que quem chama a função precise ficar "por dentro" de tod
 
 ---
 
-### 3. Exception Safety e Funções Make
+### Exception Safety e Funções Make
 
 #### O Problema da Segurança Contra Exceções
 
@@ -1431,11 +1453,11 @@ Esta abordagem demonstra como o C++ moderno foi projetado para lidar com exceç�
 
 ---
 
-### 4. Impacto no Design de APIs
+### Impacto no Design de APIs
 
 O uso adequado de exceções tem um impacto profundo no design de APIs robustas e fáceis de usar. Uma API bem projetada deve ser clara sobre quais erros podem ocorrer e como lidar com eles, sem surpresas para quem a consome.
 
-#### 1. Documentação Clara de Exceções
+#### Documentação Clara de Exceções
 
 Uma boa prática é documentar explicitamente quais exceções uma função pode lançar e sob quais condições. Em C++, isso geralmente é feito nos comentários da documentação:
 
@@ -1451,7 +1473,7 @@ Uma boa prática é documentar explicitamente quais exceções uma função pode
 int processarPedido(const Pedido& pedido);
 ```
 
-#### 2. Hierarquia de Exceções Significativas
+#### Hierarquia de Exceções Significativas
 
 Crie uma hierarquia de exceções que faça sentido para o seu domínio. Herde de `std::exception` ou suas classes derivadas:
 
@@ -1473,7 +1495,7 @@ public:
 };
 ```
 
-#### 3. Garantias de Exceção
+#### Garantias de Exceção
 
 Documente o nível de garantia de exceção que sua função oferece:
 
@@ -1492,7 +1514,7 @@ void swap(T& a, T& b) noexcept {
 }
 ```
 
-#### 4. Interfaces Resilientes
+#### Interfaces Resilientes
 
 Projete suas interfaces para serem resilientes a erros:
 
@@ -1521,7 +1543,7 @@ private:
 };
 ```
 
-#### 5. Testabilidade
+#### Testabilidade
 
 Facilite o teste de código que usa suas APIs:
 
@@ -1553,7 +1575,7 @@ public:
 };
 ```
 
-#### 6. Consistência no Tratamento de Erros
+#### Consistência no Tratamento de Erros
 
 Escolha uma estratégia consistente para tratamento de erros em toda a API:
 
@@ -1561,7 +1583,7 @@ Escolha uma estratégia consistente para tratamento de erros em toda a API:
 - **Exceções para todos os erros**: Documente claramente todas as exceções possíveis
 - **Sistema híbrido**: Use exceções para erros graves e códigos de retorno para erros de negócio
 
-#### 7. Compatibilidade Binária
+#### Compatibilidade Binária
 
 Em APIs públicas, especialmente bibliotecas, evite lançar exceções através de limites de biblioteca, pois isso pode causar problemas de compatibilidade binária. Em vez disso, use funções de retorno de erro ou callbacks:
 
@@ -1574,7 +1596,7 @@ extern "C" {
 }
 ```
 
-#### 8. Logging e Diagnóstico
+#### Logging e Diagnóstico
 
 Inclua informações úteis nas mensagens de erro para facilitar o diagnóstico:
 
@@ -1605,7 +1627,7 @@ Seguindo essas diretrizes, suas APIs se tornarão mais robustas, previsíveis e 
 
 ---
 
-### 5. Performance e Otimizações de Exceções
+### Performance e Otimizações de Exceções
 
 O modelo de exceções em C++ moderno é projetado para ter um impacto mínimo no desempenho quando nenhuma exceção é lançada. Este modelo, conhecido como "[zero-cost exceptions](https://en.cppreference.com/w/cpp/language/except_handling#Stack_unwinding)", é amplamente otimizado pelos compiladores modernos para minimizar o overhead no caminho de execução normal.
 
@@ -1994,6 +2016,7 @@ Quando uma exceção é lançada, o C++ realiza uma série de operações comple
    ```
    
    A versão otimizada evita completamente o custo do desenrolamento da pilha para casos de erro comuns, mantendo a clareza do código.
+
 ### O Impacto do `noexcept` nas Otimizações
 
 Como discutido por Scott Meyers no Item 14 de "Effective Modern C++", a palavra-chave `noexcept` é uma ferramenta poderosa para otimização em C++ moderno. Quando usada corretamente, ela permite que o compilador gere código significativamente mais eficiente:
@@ -2180,129 +2203,6 @@ Em sistemas embarcados ou com restrições de memória, esse overhead pode ser s
 
 A biblioteca padrão do C++ é um ótimo exemplo: funções como `std::move_if_noexcept` mostram como o design da linguagem incentiva o uso correto de `noexcept` para obter o máximo desempenho.
 
-### Benchmark: Exceções vs If/Else
-
-Vamos comparar o desempenho entre usar exceções e verificações condicionais com um exemplo prático. O código a seguir testa as duas abordagens:
-
-```c
-#include <chrono>
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-
-// Abordagem com exceções
-int dividirComExcecao(int a, int b) {
-    if (b == 0) {
-        throw std::runtime_error("Divisão por zero");
-    }
-    return a / b;
-}
-
-// Abordagem com verificação condicional
-bool dividirComIf(int a, int b, int& resultado) {
-    if (b == 0) {
-        return false; // Indica falha
-    }
-    resultado = a / b;
-    return true; // Indica sucesso
-}
-
-int main() {
-    const int NUM_ITERACOES = 1'000'000;
-    int resultado;
-    
-    // Teste com exceções
-    auto inicio = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < NUM_ITERACOES; ++i) {
-        try {
-            resultado = dividirComExcecao(10, (i % 10) ? 2 : 0);
-        } catch (const std::exception&) {
-            // Tratamento da exceção
-        }
-    }
-    auto fim = std::chrono::high_resolution_clock::now();
-    auto duracao_excecoes = std::chrono::duration_cast<std::chrono::microseconds>(fim - inicio).count();
-
-    // Teste com if/else
-    inicio = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < NUM_ITERACOES; ++i) {
-        if (!dividirComIf(10, (i % 10) ? 2 : 0, resultado)) {
-            // Tratamento do erro
-        }
-    }
-    fim = std::chrono::high_resolution_clock::now();
-    auto duracao_if = std::chrono::duration_cast<std::chrono::microseconds>(fim - inicio).count();
-
-    std::cout << "Tempo com exceções: " << duracao_excecoes << " microssegundos\n";
-    std::cout << "Tempo com if/else: " << duracao_if << " microssegundos\n";
-    std::cout << "Razão: ~" << (duracao_excecoes / (double)duracao_if) << "x mais lento\n";
-
-    return 0;
-}
-```
-
-**Resultados típicos em um sistema moderno (pode variar por compilador/plataforma):**
-- **Com exceções:** ~50,000-100,000 microssegundos
-- **Com if/else:** ~500-1,000 microssegundos
-- **Diferença:** As exceções podem ser **50-200x mais lentas** quando lançadas frequentemente
-
-Pense assim: usar exceções para controle de fluxo é como chamar os bombeiros para apagar um fósforo. Funciona, mas é um exagero para problemas pequenos e previsíveis! Veja o diagrama abaixo:
-
-```mermaid
-graph TD
-    A["Inicio da Execucao"] --> B{"Excecao Lancada (throw)"}
-    B --> C["Criacao/Copia do Objeto de Excecao<br/>Custo: Variavel depende do objeto"]
-    C --> D["Inicio do Desempilhamento da Pilha<br/>Custo: Depende do numero e complexidade dos destrutores"]
-    D --> E["Busca por Bloco catch Adequado<br/>Custo: Depende da profundidade da pilha e da implementacao"]
-    E --> F["Execucao do Manipulador catch"]
-    F --> G["Continuacao ou Termino"]
-
-    subgraph "Overhead Significativo Quando Excecao Ocorre"
-        direction LR
-        C
-        D
-        E
-    end
-
-    style D fill:#ff9999,stroke:#ff0000
-    style E fill:#ffcccc,stroke:#ff0000
-    style C fill:#ffe6e6,stroke:#ff0000
-```
-
-Este diagrama mostra o que acontece quando uma exceção é lançada em C++. A parte mais pesada é quando o programa "volta no tempo" (D), chamando todos os destrutores, e quando ele precisa procurar qual bloco `catch` vai resolver o problema (E). É como se o computador tivesse que desarmar uma bomba enquanto corre uma maratona! Abaixo está um exemplo de como isso pode afetar o desempenho de um loop:
-
-```mermaid
-graph TD
-    A["Início do Loop"] --> B["Iteração"]
-    B -->|"Condição de 'erro' previsível"| C{"Uso de Exceção para Fluxo"}
-    C -->|"throw"| D1["Criação Objeto Exceção"]
-    D1 --> D2["Desempilhamento + Busca `catch`"]
-    D2 --> E["Tratamento no `catch` e Próxima Iteração"]
-    B -->|"Condição normal"| E
-    E -->|"Mais Iterações"| B
-    E --> F["Fim do Loop"]
-
-    style D2 fill:#ff9999,stroke:#ff0000
-    style D1 fill:#ffe6e6,stroke:#ff0000
-
-```
-
-Este diagrama mostra como o desempenho piora quando usamos exceções em loops. Cada vez que um `throw` acontece, o programa precisa fazer todo aquele trabalho pesado de desempilhar a pilha e procurar o `catch` certo. Isso é MUITO mais lento que um simples `if`. É como comparar andar de bicicleta (verificação condicional) com ter que parar, desmontar e remontar a bicicleta (exceção) a cada quarteirão! Por exemplo, se você tem um loop que roda 10 milhões de vezes e em cada iteração pode lançar uma exceção, o custo de desempilhar a pilha e procurar o `catch` pode ser substancialmente mais lento do que uma simples verificação condicional. O diagrama abaixo mostra como isso pode afetar o desempenho:
-
-```mermaid
-graph TD
-    A["Comparação de Performance Relativa em C++"] --> B["Verificação Condicional (if/else, std::optional check)<br/>Custo: Muito Baixo (poucos ciclos de CPU)"]
-    A --> C["Exceção Lançada e Capturada<br/>Custo: Significativamente Mais Alto<br/>(Pode ser 100x-1000x+ mais lento que um if)"]
-
-    style B fill:#99ff99,stroke:#00ff00
-    style C fill:#ffcccc,stroke:#ff0000
-
-    B --> E["Preferível para fluxo lógico e erros esperados"]
-    C --> F["Reservado para condições verdadeiramente excepcionais e inesperadas"]
-```
-
-Este diagrama compara os custos. A diferença de velocidade é gigante em código que precisa ser rápido, como loops importantes, processamento de muitos dados ou sistemas que não podem atrasar. No mundo C++, principalmente em áreas como jogos, dispositivos com poucos recursos ou sistemas financeiros de alta velocidade, lançar exceções custa caro! Por isso, muitas equipes simplesmente proíbem exceções nesses tipos de projeto. 
-
 ---
 
 ## Quando Usar Try/Catch? Os Casos de Uso Apropriados
@@ -2405,40 +2305,21 @@ private:
 };
 ```
 
-#### Vantagens Desta Abordagem:
+Essas abordagens são particularmente úteis em cenários onde a consistência do estado do sistema é crucial, como em transações bancárias ou operações de banco de dados. As vantagens de usar `try/catch` nesses casos incluem:
+
 1. **Atomicidade**: Garante que todas as operações sejam concluídas com sucesso, ou nenhuma delas seja aplicada
 2. **Consistência**: Mantém o sistema em um estado consistente mesmo após falhas
 3. **Rastreabilidade**: Permite rastrear e auditar operações bem-sucedidas e falhas
 4. **Segurança**: Protege contra corrupção de dados em cenários de falha
 
-#### Boas Práticas:
+Boas práticas para usar `try/catch` em cenários atômicos incluem:
+
 - Sempre reverta as alterações na ordem inversa em que foram feitas
 - Documente claramente quais operações são atômicas
 - Considere usar o padrão Command para operações complexas que precisam ser desfeitas
 - Registre falhas de forma detalhada para facilitar a depuração
 
-### 4. Em Ambientes de Alto Nível
-
-Em certos contextos, a clareza e a manutenibilidade do código podem ser priorizadas em relação ao desempenho bruto. Nestes casos, o uso de exceções pode ser mais apropriado.
-
-#### Cenários Adequados:
-
-1. **Aplicações de Negócios**
-   - Sistemas com lógica complexa de negócios
-   - Aplicações onde o tempo de desenvolvimento é crítico
-   - Código que será mantido por uma equipe diversificada
-
-2. **Scripts e Ferramentas**
-   - Scripts de automação
-   - Ferramentas de linha de comando
-   - Protótipos e provas de conceito
-
-3. **APIs de Alto Nível**
-   - Frameworks de aplicação
-   - Bibliotecas de domínio específico
-   - Camadas de apresentação
-
-#### Exemplo: API de Processamento de Pedidos
+Em certos contextos, a clareza e a manutenibilidade do código podem ser priorizadas em relação ao desempenho bruto. Nestes casos, o uso de exceções pode ser mais apropriado. Abaixo está um exemplo de API de Processamento de Pedidos que usa exceções para gerenciar falhas:
 
 ```c
 class ProcessadorPedidos {
@@ -2502,24 +2383,23 @@ private:
     void registrarErro(const std::string&, const std::exception&) {}
 };
 ```
-
-### Regra de Ouro para Uso de Exceções
-
+s
 Use exceções de forma estratégica, considerando as seguintes diretrizes:
 
-#### Use Exceções Para:
 - **Condições excepcionais** que quebram o fluxo normal de execução
 - **Erros que não podem ser tratados localmente** e precisam ser propagados
 - **Falhas em recursos externos** (banco de dados, rede, sistema de arquivos)
 - **Violações de pré-condições** em APIs públicas
 
-#### Evite Exceções Para:
+E evite usar exceções para:
+
 - **Controle de fluxo** normal do programa
 - **Validação de entrada do usuário** (use validação explícita)
 - **Cenários esperados** que fazem parte da lógica de negócios
 - **Em loops de alto desempenho** onde o custo das exceções é proibitivo
 
 #### Alternativas para Cenários de Erro Comum:
+
 1. **`std::optional<T>`** - Para valores opcionais
    ```c
    std::optional<Usuario> buscarUsuario(int id);
@@ -2554,16 +2434,14 @@ Ao escolher entre exceções e códigos de erro, considere:
 - As convenções da base de código existente
 - As expectativas dos desenvolvedores que usarão sua API
 
----
-
 Eles preferem usar alternativas como códigos de erro, `std::optional`, `std::variant` (com um tipo de erro) ou `std::expected` (novidade do C++23). Essas opções lidam com erros de um jeito mais rápido e previsível. Usar exceções para controlar o fluxo normal nesses casos é como usar uma escavadeira para plantar uma florzinha - um exagero que vai deixar seu programa muito mais lento!
 
 
 ---
 
-### 4. Tipagem Fraca e Má Prática de Design
+### Tipagem Fraca e Má Prática de Design
 
-## Type Safety em TypeScript: Tratamento Adequado de Erros
+#### Type Safety em TypeScript: Tratamento Adequado de Erros
 
 Em TypeScript, quando usamos um bloco `catch`, o tipo do erro é `unknown` por padrão (a partir do TypeScript 4.4). Isso é uma melhoria em relação ao antigo comportamento padrão de usar `any`, pois força uma verificação de tipo antes de acessar propriedades do erro.
 
