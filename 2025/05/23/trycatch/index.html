@@ -135,7 +135,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 130 min
+                Estimated reading time: 132 min
             </div>
             
             
@@ -245,12 +245,12 @@
 <li><a href="/2025/05/23/trycatch/#conclus%c3%a3o">Conclusão</a></li>
 </ul>
 <h2 id="propósito-do-trycatch">Propósito do Try/Catch</h2>
-<p>A linguagem <a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a>, precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções no modelo <code>try/catch</code>, seu uso de <em>ON-actions</em> para lidar com condições excepcionais (como falhas em operações de <a href="https://en.wikipedia.org/wiki/Input/output">I/O</a>) representou um avanço inicial no controle de fluxo em situações de erro.</p>
-<p>Nesse contexto, o tratamento de exceções era implementado por meio de <strong>blocos protegidos</strong> e <strong>handlers</strong> associados. A estrutura básica consistia em:</p>
+<p>A linguagem <a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a>, precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções idêntico ao modelo <code>try/catch</code> atual, seu mecanismo de <em>ON-actions</em> para lidar com condições excepcionais (como falhas em operações de <a href="https://en.wikipedia.org/wiki/Input/output">I/O</a>) foi conceitualmente similar e representou um avanço significativo no controle de fluxo em situações de erro. O tratamento de exceções em SIMULA 67 utilizava estruturas análogas às atuais, mas com implementação distinta, organizadas em:</p>
 <ol>
-<li><strong>Bloco Protegido (<em>Try</em>)</strong>: Delimitava o código no qual erros poderiam ocorrer.</li>
-<li><strong>Handler (<em>Catch</em>)</strong>: Definido via <em>ON-actions</em>, executado caso uma exceção fosse detectada. O exemplo a seguir ilustra essa abordagem:</li>
+<li><strong>Bloco Protegido</strong>: Conceitualmente similar ao moderno bloco <em>Try</em>, delimitava o código no qual erros poderiam ocorrer.</li>
+<li><strong>Handler</strong>: Implementado via <em>ON-actions</em>, funcionava de forma análoga ao atual <em>Catch</em>, sendo executado caso uma exceção fosse detectada.</li>
 </ol>
+<p>Vejamos como essa abordagem era estruturada na sintaxe da época:</p>
 
 
   <pre><code class="language-simula">BEGIN  
@@ -260,12 +260,28 @@
    ! Bloco protegido (try).  
    ...  
 END;  </code></pre>
- <p>Esse modelo permitia <strong>desacoplar</strong> a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ herdou e refinou esse conceito, formalizando-o como parte do sistema de exceções por meio das estruturas <code>try</code> e <code>catch</code>. As principais semelhanças incluem:</p>
-<ul>
-<li><strong>Bloco <em>Try</em></strong>: Delimita operações críticas.</li>
-<li><strong>Bloco <em>Catch</em></strong>: Captura exceções lançadas por <code>throw</code>, análogo às <em>ON-actions</em> em SIMULA 67.</li>
-</ul>
-<p>O exemplo a seguir demonstra a sintaxe do tratamento de exceções em C++:</p>
+ <p>Esse modelo permitia desacoplar a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ posteriormente herdou e refinou esse conceito, formalizando-o como parte do sistema de exceções por meio das estruturas <code>try</code> e <code>catch</code>.</p>
+<p>Na linha evolutiva do tratamento de exceções, o <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">Lisp</a> ocupa posição fundamental, estabelecendo as bases conceituais para o que viria a ser o moderno tratamento de exceções. Embora não utilizasse exatamente a sintaxe <code>try/catch</code> como conhecemos hoje, o Lisp introduziu primitivas como <code>catch</code> e <code>throw</code> que permitiam desviar o fluxo de execução quando situações excepcionais ocorriam.</p>
+<p>A abordagem do Lisp para tratamento de erros foi revolucionária para sua época, pois permitia que um programa detectasse condições anômalas e reagisse a elas sem precisar verificar explicitamente o resultado de cada operação. Esta capacidade de &ldquo;sinalizar&rdquo; problemas e &ldquo;capturá-los&rdquo; em outro ponto do programa estabeleceu um paradigma que influenciaria praticamente todas as linguagens modernas, desde C++ e Java até Python e JavaScript.</p>
+<p>O sistema de exceções do Lisp se integra elegantemente com o modelo de computação simbólica da linguagem. Em vez de tratar exceções como um mecanismo separado, elas são implementadas usando as mesmas primitivas fundamentais que compõem o restante da linguagem, demonstrando a flexibilidade que tornou o Lisp tão influente no desenvolvimento da ciência da computação.</p>
+<p>No Lisp, o tratamento de exceções baseia-se em <em>tags</em> simbólicas e desvio de controle. A função <code>catch</code> define um ponto de captura associado a uma tag, enquanto <code>throw</code> transfere a execução para o <code>catch</code> correspondente. Por exemplo:</p>
+
+
+  <pre><code class="language-lisp">(defun operacao-arriscada (x)
+  (if (&lt; x 0)
+      (throw &#39;valor-invalido &#34;x não pode ser negativo&#34;)
+      (sqrt x)))
+
+(defun teste ()
+  (catch &#39;valor-invalido
+    (format t &#34;Resultado: ~a~%&#34; (operacao-arriscada 4))
+    (format t &#34;Resultado: ~a~%&#34; (operacao-arriscada -1))
+    (format t &#34;Esta linha não será executada.&#34;)))
+
+(teste)  ; Output: &#39;Resultado: 2.0&#39; (o segundo print não é executado devido ao throw)</code></pre>
+ <p>Neste exemplo, a chamada <code>(operacao-arriscada -1)</code> sinaliza uma condição excepcional via <code>throw</code>, interrompendo o fluxo normal e retornando ao bloco <code>catch</code> correspondente. Quando o <code>throw</code> é acionado com a tag &lsquo;valor-invalido&rsquo;, o controle é imediatamente transferido para o <code>catch</code> mais próximo com essa mesma tag, pulando qualquer código intermediário. Como resultado, apenas o primeiro <code>format</code> é executado, mostrando &ldquo;Resultado: 2.0&rdquo;, enquanto o segundo <code>format</code> e a mensagem final nunca são processados.</p>
+<p>Embora a sintaxe do Lisp difira das linguagens modernas, sua abordagem com <code>catch/throw</code> demonstra como exceções podem ser implementadas de forma elegante usando primitivas mínimas, eliminando a necessidade de verificações manuais após cada operação e antecipando o propósito dos mecanismos modernos de exceções.</p>
+<p>Consolidando essa evolução histórica, o C++ moderno formalizou o tratamento de exceções por meio das estruturas <code>try</code> e <code>catch</code>, que permitem que um bloco de código seja protegido contra exceções e que um tratamento adequado seja feito caso uma exceção seja lançada:</p>
 
 
   <pre><code class="language-cpp">try {  
@@ -274,7 +290,11 @@ END;  </code></pre>
 } catch (const std::exception&amp; e) {  
    // Tratamento da exceção.  
 }  </code></pre>
- <p>Seu objetivo principal é ajudar os programadores a tratar problemas que acontecem durante a execução do programa de forma organizada. Bjarne Stroustrup, criador do C++, discute em seu livro <a href="https://a.co/d/3Wy2dFE">&ldquo;Programming: Principles and Practice Using C++&rdquo;</a> que as exceções foram criadas para resolver problemas fundamentais com os métodos tradicionais de retorno de códigos de erro:</p>
+ <p>Seu objetivo principal é ajudar os programadores a tratar problemas que acontecem durante a execução do programa de forma organizada.</p>
+<blockquote>
+<p><strong>Bjarne Stroustrup afirma:</strong><br>
+<em>&ldquo;As exceções foram criadas para resolver problemas fundamentais com os métodos tradicionais de retorno de códigos de erro. Elas permitem separar claramente o código de tratamento de erros da lógica normal do programa, tornando ambos mais compreensíveis e melhores estruturados.&rdquo;</em></p></blockquote>
+<p>Esta visão é detalhada em seu livro <a href="https://a.co/d/3Wy2dFE">&ldquo;Programming: Principles and Practice Using C++&rdquo;</a>, onde ele explica os principais problemas que as exceções resolvem:</p>
 <ol>
 <li>
 <p><strong>Problemas com Códigos de Erro</strong>:</p>
@@ -346,8 +366,8 @@ END;  </code></pre>
     style G fill:#f99,stroke:#900</div>
  <p>O diagrama acima ilustra o fluxo de execução de um programa com exceções. Ele mostra dois caminhos possíveis: o caminho normal (em que a função executa sem problemas, imprime uma mensagem no console, retorna à função main e o programa termina com sucesso) e o caminho de erro (em que a função lança uma exceção do tipo <code>std::runtime_error</code> que, por não ser capturada, causa a terminação imediata do programa).</p>
 <p>O nó da função que pode falhar está destacado em rosa claro, enquanto os nós relacionados à exceção não tratada e à terminação do programa estão destacados em vermelho, enfatizando visualmente o caminho de erro.</p>
-<p>Stroustrup afirma: <strong>&ldquo;Se uma função encontra um erro que não consegue tratar, ela lança uma exceção. Qualquer chamador direto ou indireto pode capturá-la&hellip; Se nenhum chamador capturar uma exceção, o programa termina.&rdquo;</strong> Esta abordagem impede que erros críticos sejam acidentalmente ignorados.</p>
-<p>Apesar das diferenças de implementação entre <a href="https://en.wikipedia.org/wiki/SIMULA_67">SIMULA 67</a> e <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>, o propósito central permanece: <strong>garantir controle sobre fluxos excepcionais</strong>, promovendo código mais confiável e organizado.</p>
+<p>Stroustrup afirma: <em>&ldquo;Se uma função encontra um erro que não consegue tratar, ela lança uma exceção. Qualquer chamador direto ou indireto pode capturá-la&hellip; Se nenhum chamador capturar uma exceção, o programa termina.&rdquo;</em> Esta abordagem impede que erros críticos sejam acidentalmente ignorados.</p>
+<p>Desde as primitivas <em>ON-actions</em> em SIMULA 67 até o refinado sistema <code>try/catch</code> em C++, a evolução do tratamento de exceções representa um avanço significativo na engenharia de software. Enquanto códigos de retorno misturavam lógica de negócio e tratamento de erros (<code>if (error_code != SUCCESS) { /* tratamento */ }</code>), os mecanismos modernos de exceções permitem clara separação dessas responsabilidades, resultando em código principal mais limpo e focado, com tratamento de erros centralizado e garantias de liberação de recursos mesmo em situações críticas. Esta evolução transformou sistemas propensos a falhas em aplicações robustas capazes de lidar graciosamente com condições excepcionais.</p>
 <hr>
 <h3 id="principais-usos-do-trycatch">Principais Usos do Try/Catch</h3>
 <p>O <code>try/catch</code> existe principalmente para gerenciar problemas que fogem do normal. São aquelas situações que não dá para prever facilmente e que quebram o fluxo comum do programa. Alguns exemplos são:</p>
