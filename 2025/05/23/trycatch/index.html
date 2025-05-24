@@ -158,7 +158,8 @@
 <p>Neste artigo, vamos explorar de onde veio o <code>try/catch</code>, para que ele foi criado originalmente e por que usá-lo para controlar o fluxo lógico do programa é uma péssima ideia. Embora o <code>try/catch</code> seja uma ferramenta poderosa para lidar com erros, ele foi feito para situações excepcionais, e não para gerenciar a lógica do negócio.</p>
 <h2 id="sumário">Sumário</h2>
 <ul>
-<li><a href="/2025/05/23/trycatch/#diretrizes-pr%c3%a1ticas-quando-usar-exce%c3%a7%c3%b5es-vs-alternativas">Diretrizes Práticas</a></li>
+<li><a href="/2025/05/23/trycatch/#introdu%c3%a7%c3%a3o">Introdução</a></li>
+<li><a href="/2025/05/23/trycatch/#hist%c3%b3rico-e-origens">Histórico e Origens</a></li>
 <li><a href="/2025/05/23/trycatch/#prop%c3%b3sito-do-trycatch">Propósito do Try/Catch</a>
 <ul>
 <li><a href="/2025/05/23/trycatch/#problemas-com-c%c3%b3digos-de-erro">Problemas com Códigos de Erro</a></li>
@@ -176,8 +177,34 @@
 <ul>
 <li><a href="/2025/05/23/trycatch/#contrato-impl%c3%adcito">Contrato Implícito</a></li>
 <li><a href="/2025/05/23/trycatch/#interrup%c3%a7%c3%a3o-abrupta-do-fluxo">Interrupção Abrupta do Fluxo</a></li>
-<li><a href="/2025/05/23/trycatch/#exception-safety-e-fun%c3%a7%c3%b5es-make">Exception Safety e Funções Make</a></li>
-<li><a href="/2025/05/23/trycatch/#impacto-no-design-de-apis">Impacto no Design de APIs</a></li>
+<li><a href="/2025/05/23/trycatch/#impacto-no-desempenho">Impacto no Desempenho</a></li>
+<li><a href="/2025/05/23/trycatch/#legibilidade-e-manuten%c3%a7%c3%a3o">Legibilidade e Manutenção</a></li>
+</ul>
+</li>
+<li><a href="/2025/05/23/trycatch/#diretrizes-pr%c3%a1ticas-quando-usar-exce%c3%a7%c3%b5es-vs-alternativas">Diretrizes Práticas</a>
+<ul>
+<li><a href="/2025/05/23/trycatch/#quando-usar-exce%c3%a7%c3%b5es">Quando Usar Exceções</a></li>
+<li><a href="/2025/05/23/trycatch/#quando-evitar-exce%c3%a7%c3%b5es">Quando Evitar Exceções</a></li>
+<li><a href="/2025/05/23/trycatch/#boas-pr%c3%a1ticas-de-tratamento-de-erros">Boas Práticas de Tratamento de Erros</a></li>
+</ul>
+</li>
+<li><a href="/2025/05/23/trycatch/#padr%c3%b5es-de-projeto-para-tratamento-de-erros">Padrões de Projeto para Tratamento de Erros</a>
+<ul>
+<li><a href="/2025/05/23/trycatch/#result-objects">Result Objects</a></li>
+<li><a href="/2025/05/23/trycatch/#monads-para-tratamento-de-erros">Monads para Tratamento de Erros</a></li>
+<li><a href="/2025/05/23/trycatch/#type-safe-error-handling">Type-Safe Error Handling</a></li>
+</ul>
+</li>
+<li><a href="/2025/05/23/trycatch/#exemplos-em-outras-linguagens">Exemplos em Outras Linguagens</a>
+<ul>
+<li><a href="/2025/05/23/trycatch/#rust">Rust</a></li>
+<li><a href="/2025/05/23/trycatch/#clojure">Clojure</a></li>
+<li><a href="/2025/05/23/trycatch/#typescriptjavascript">TypeScript/JavaScript</a></li>
+</ul>
+</li>
+<li><a href="/2025/05/23/trycatch/#conclus%c3%a3o">Conclusão</a></li>
+<li><a href="/2025/05/23/trycatch/#refer%c3%aancias">Referências</a>
+<ul>
 <li><a href="/2025/05/23/trycatch/#desempenho-e-custo-das-exce%c3%a7%c3%b5es">Desempenho e Custo das Exceções</a>
 <ul>
 <li><a href="/2025/05/23/trycatch/#o-impacto-do-noexcept-nas-otimiza%c3%a7%c3%b5es">O Impacto do <code>noexcept</code> nas Otimizações</a></li>
