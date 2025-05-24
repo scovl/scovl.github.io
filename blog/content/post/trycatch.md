@@ -26,58 +26,32 @@ Neste artigo, vamos explorar de onde veio o `try/catch`, para que ele foi criado
 ## Sumário
 
 - [Propósito do Try/Catch](#propósito-do-trycatch)
-  - [Principais Usos do Try/Catch](#principais-usos-do-trycatch)
-  - [Tratamento de Exceções em Diferentes Contextos](#tratamento-de-exceções-em-diferentes-contextos)
-     - [Transações Atômicas](#transações-atômicas)
-  - [Smart Pointers](#smart-pointers)
-  - [Custo de Performance das Exceções](#custo-de-performance-das-exceções)
-    - [Garantias de Exceção](#garantias-de-exceção)
-    - [Tipos Específicos de Exceção em C++](#tipos-específicos-de-exceção-em-c)
-  - [Separar Tratamento de Erros da Lógica Principal](#separar-tratamento-de-erros-da-lógica-principal)
-  - [Recuperação Controlada](#recuperação-controlada)
-  - [Proteger Recursos Críticos](#proteger-recursos-críticos)
-    - [Ponteiros Inteligentes: RAII em Ação](#ponteiros-inteligentes-raii-em-acão)
+    - [Principais Usos do Try/Catch](#principais-usos-do-trycatch)
+- [Tratamento de Exceções em Diferentes Contextos](#tratamento-de-exceções-em-diferentes-contextos)
+    - [Operações de I/O](#operações-de-i-o)
+    - [Gerenciamento de Recursos](#gerenciamento-de-recursos)
+    - [Validação de Dados](#validação-de-dados)
+    - [Transações Atômicas](#transações-atômicas)
+    - [Tratamento de Erros em Múltiplas Camadas](#tratamento-de-erros-em-múltiplas-camadas)
+    - [Tratamento de Exceções em Construtores e Destrução de Recursos](#tratamento-de-exceções-em-construtores-e-destruição-de-recursos)
+    - [Tipos Específicos de Exceção em C++](#tipos-específicos-de-exceção-em-c++)
+    - [Separar Tratamento de Erros da Lógica Principal](#separar-tratamento-de-erros-da-lógica-principal)
+    - [Recuperação Controlada](#recuperação-controlada)
+    - [Proteger Recursos Críticos](#proteger-recursos-críticos)
 - [Por que Usar Try/Catch como Fluxo Lógico é Errado](#por-que-usar-trycatch-como-fluxo-lógico-é-errado)
-  - [Separação Clara entre Tratamento de Erros e Controle de Fluxo](#separação-clara-entre-tratamento-de-erros-e-controle-de-fluxo)
-  - [A Abordagem Correta](#a-abordagem-correta)
-  - [Por que Evitar Exceções para Controle de Fluxo?](#por-que-evitar-exceções-para-controle-de-fluxo)
-    - [Entendendo o Desenrolamento da Pilha](#entendendo-o-desenrolamento-da-pilha)
-    - [Exception Safety e Funções Make](#exception-safety-e-funções-make)
-  - [Impacto no Design de APIs](#impacto-no-design-de-apis)
-    - [Hierarquia de Exceções Significativas](#hierarquia-de-exceções-significativas)
-    - [Interfaces Resilientes](#interfaces-resilientes)
-  - [Testabilidade](#testabilidade)
-  - [Consistência no Tratamento de Erros](#consistência-no-tratamento-de-erros)
-  - [Compatibilidade Binária](#compatibilidade-binária)
-  - [Logging e Diagnóstico](#logging-e-diagnóstico)
-- [Performance e Otimizações de Exceções](#performance-e-otimizações-de-exceções)
-  - [O Modelo Zero-Cost Exceptions em Compiladores Modernos](#o-modelo-zero-cost-exceptions-em-compiladores-modernos)
-  - [Otimizações Avançadas em Compiladores Modernos](#otimizações-avançadas-em-compiladores-modernos)
-  - [Comparação: Exceções vs. Códigos de Retorno](#comparação-exceções-vs-códigos-de-retorno)
-  - [Quando o Custo é Justificável](#quando-o-custo-é-justificável)
-  - [Por que o Lançamento de Exceções é Custo?](#por-que-o-lançamento-de-exceções-é-custo)
-  - [O Impacto do noexcept nas Otimizações](#o-impacto-do-noexcept-nas-otimizações)
-  - [O Custo Oculto das Exceções para Controle de Fluxo](#o-custo-oculto-das-exceções-para-controle-de-fluxo)
-    - [Quando Usar noexcept?](#quando-usar-noexcept)
-    - [Quando Evitar noexcept?](#quando-evitar-noexcept)
-  - [Impacto no Tamanho do Binário](#impacto-no-tamanho-do-binário)
-  - [Ferramentas de Análise Estática](#ferramentas-de-análise-estática)
-  - [Boas Práticas com noexcept](#boas-práticas-com-noexcept)
-- [Quando Usar Try/Catch? Os Casos de Uso Apropriados](#quando-usar-trycatch-os-casos-de-uso-apropriados)
-  - [Tipagem Fraca e Má Prática de Design](#tipagem-fraca-e-má-prática-de-design)
-  - [Má Prática de Design](#má-prática-de-design)
-  - [Abordagens em Outras Linguagens](#abordagens-em-outras-linguagens)
-  - [O Princípio "Crash Early"](#o-princípio-crash-early)
-  - [Design by Contract e Programação com Asserções](#design-by-contract-e-programação-com-asserções)
-    - [Programação com Asserções](#programação-com-asserções)
-    - [Integrando DbC, Asserções e Exceções](#integrando-dbcs-asserções-e-exceções)
-  - [Desacoplamento e Manutenibilidade](#desacoplamento-e-manutenibilidade)
-  - [Programação por Coincidência](#programação-por-coincidência)
-  - [Configuração como Metadados](#configuração-como-metadados)
-  - [Testabilidade e Caminhos de Erro](#testabilidade-e-caminhos-de-erro)
-- [Diretrizes Práticas: Quando Usar Exceções vs. Alternativas](#diretrizes-práticas-quando-usar-exceções-vs-alternativas)
-- [Conclusão](#conclusão)
-    
+    - [Separação Clara entre Tratamento de Erros e Controle de Fluxo](#separação-clara-entre-tratamento-de-erros-e-controle-de-fluxo)
+    - [A Abordagem Correta](#a-abordagem-correta)
+- [Quando Usar `noexcept`?](#quando-usar-noexcept)
+- [Quando Evitar `noexcept`?](#quando-evitar-noexcept)
+- [Quando usar Try/Catch? Os Casos de Uso Apropriados](#quando-usar-trycatch-os-casos-de-uso-apropriados)
+- [Má Prática de Design](#má-prática-de-design)
+- [Design by Contract e Programação com Asserções](#design-by-contract-e-programação-com-asserções)
+- [Desacoplamento e Manutenibilidade](#desacoplamento-e-manutenibilidade)
+- [Programação por Coincidência](#programação-por-coincidência)
+- [Configuração como Metadados](#configuração-como-metadados)
+- [Testabilidade e Caminhos de Erro](#testabilidade-e-caminhos-de-erro)
+- [Diretrizes Práticas: Quando usar Exceções vs. Alternativas](#diretrizes-práticas-quando-usar-exceções-vs-alternativas)
+- [Referências](#referências)
 
 ## Propósito do Try/Catch
 
@@ -129,7 +103,7 @@ Embora a sintaxe do Lisp difira das linguagens modernas, sua abordagem com `catc
 
 Consolidando essa evolução histórica, o C++ moderno formalizou o tratamento de exceções por meio das estruturas `try` e `catch`, que permitem que um bloco de código seja protegido contra exceções e que um tratamento adequado seja feito caso uma exceção seja lançada: 
 
-```cpp  
+```c  
 try {  
    // Código potencialmente problemático.  
    throw std::runtime_error("Erro!");  
@@ -445,7 +419,7 @@ flowchart TD
 
 Em operações que precisam ser atômicas (ou tudo acontece ou nada acontece), o tratamento de exceções é essencial. O código a seguir ilustra como usar `try/catch` para garantir a atomicidade de uma operação, assegurando que ela seja completamente bem-sucedida ou não tenha efeito persistente.
 
-```cpp
+```c
 void transferir(Conta& origem, Conta& destino, double valor) {
     if (valor <= 0) {
         throw std::invalid_argument("Valor da transferência deve ser positivo");
@@ -476,11 +450,11 @@ A função `transferir` demonstra dois conceitos importantes:
 
 Esta técnica garante a integridade do sistema financeiro: ou a transferência é completada com sucesso, ou o sistema retorna ao estado inicial e propaga o erro para tratamento em níveis superiores.
 
-### 5. Tratamento de Erros em Múltiplas Camadas
+### Tratamento de Erros em Múltiplas Camadas
 
 Em sistemas complexos, as exceções frequentemente atravessam várias camadas de abstração. A estratégia a seguir demonstra como enriquecer o contexto das exceções à medida que elas se propagam:
 
-```cpp
+```c
 void camadaAlta() {
     try {
         camadaMedia();
@@ -516,7 +490,7 @@ Este encadeamento de informações cria uma trilha de diagnóstico valiosa. Uma 
 
 Esta abordagem facilita significativamente a depuração, permitindo que os desenvolvedores rastreiem o caminho exato da falha através das diferentes camadas do sistema, sem perder o contexto original do erro.
 
-### 6. Tratamento de Exceções em Construtores e Destrução de Recursos
+### Tratamento de Exceções em Construtores e Destrução de Recursos
 
 Os construtores representam um caso especial no tratamento de exceções, pois não possuem valor de retorno para indicar falha. Se um construtor não conseguir concluir sua tarefa, a única forma de sinalizar o problema é lançando uma exceção. Isso cria um desafio: como garantir que recursos adquiridos antes da falha sejam liberados adequadamente?
 
@@ -4887,13 +4861,11 @@ O uso adequado de exceções é uma habilidade essencial para desenvolvedores de
    *Explica o sistema de `Result` e `Option` do Rust, que evita exceções.*
 5. [**"Clojure for the Brave and True"** - Daniel Higginbotham](https://a.co/d/4geTFbr)  
    *Aborda a filosofia de tratamento de erros em Clojure usando valores e mapas.*
-6. [**"Zig Programming Language Documentation"** (Online)](https://ziglang.org/documentation/)  
-   *Explica o sistema único de erros como valores em Zig.*
-7. [**"Designing Data-Intensive Applications"** - Martin Kleppmann](https://a.co/d/8oEH9z4)  
+6. [**"Designing Data-Intensive Applications"** - Martin Kleppmann](https://a.co/d/8oEH9z4)  
    *Discute tolerância a falhas em sistemas distribuídos, complementando o conceito de "graceful failure".*
-8. [**"Release It!: Design and Deploy Production-Ready Software"** - Michael T. Nygard](https://a.co/d/66ya4UP)  
+7. [**"Release It!: Design and Deploy Production-Ready Software"** - Michael T. Nygard](https://a.co/d/66ya4UP)  
     *Ensina padrões como "Circuit Breaker" para lidar com erros em produção.*
-9. [**"Functional Light JavaScript"** - Kyle Simpson](https://a.co/d/5bg0IIB)  
+8. [**"Functional Light JavaScript"** - Kyle Simpson](https://a.co/d/5bg0IIB)  
     *Mostra como aplicar conceitos funcionais (incluindo tratamento de erros sem exceções) em JavaScript.*
-10. [**"Domain Modeling Made Functional"** - Scott Wlaschin](https://a.co/d/9S37n8W)  
+9. [**"Domain Modeling Made Functional"** - Scott Wlaschin](https://a.co/d/9S37n8W)  
     *Usa F# para demonstrar como tipos como `Result` podem modelar erros de forma explícita.*
