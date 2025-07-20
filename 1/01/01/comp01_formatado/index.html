@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title> | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-lisp.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title"></h1>
+        <div class="post-meta">
+            
+            
+            
+            
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 58 min
+            </div>
+            
+            
+            
+        </div>
+    </header>
+    
+    <div class="post-content content-wrapper">
+        <h2 id="1-introdução">1. INTRODUÇÃO</h2>
+<p>Sabe quando você tem uma ideia e quer que o computador a transforme em um aplicativo, um jogo ou um site? A gente usa <a href="https://www.linguagensdeprogramacao.com.br/"><strong>linguagens de programação</strong></a> pra isso. Elas são como a nossa forma de conversar com a máquina, dando instruções detalhadas para resolver problemas ou criar coisas novas.</p>
+<p>De apps no seu celular a sistemas que controlam carros, redes sociais ou até satélites, tudo começa com código. Mas tem um detalhe: o computador, na sua forma mais básica, não entende a nossa linguagem. Ele só entende uma coisa: a linguagem de máquina, que é basicamente uma sequência de zeros e uns. É aí que entra o herói da história: o <strong>compilador</strong>.</p>
+<p>Pense no compilador como um tradutor superinteligente. Ele pega o código que a gente escreve (que é bem mais fácil de entender) e o traduz para a linguagem que o computador entende. Essa tradução pode ser direta para a linguagem da máquina ou para um formato intermediário, como o <a href="https://en.wikipedia.org/wiki/Bytecode">bytecode</a> ou <a href="https://webassembly.org/">WebAssembly</a>, que pode rodar em diferentes lugares, seja no seu PC, no celular ou até no seu navegador.</p>
+<p>É por causa dos compiladores que linguagens como <a href="https://www.rust-lang.org/">Rust</a>, <a href="https://go.dev/">Go</a> e <a href="https://www.typescriptlang.org/">TypeScript</a> conseguem criar programas super-rápidos, seguros e que funcionam em qualquer plataforma. Eles são a mágica por trás do desempenho de quase tudo que a gente usa no mundo digital.</p>
+<p>Hoje em dia, saber como um compilador funciona não é só coisa de professor de faculdade. É o tipo de conhecimento que te dá superpoderes para criar suas próprias linguagens, otimizar programas para rodarem mais rápido em diferentes computadores, ou até para entender como ferramentas como o <a href="https://v8.dev/">V8</a> (o motor do Google Chrome) ou a <a href="https://www.oracle.com/java/technologies/javase/jvms.html">JVM</a> (da linguagem Java) funcionam por dentro. É um campo que junta várias áreas, de lógica a engenharia, e que é essencial para o futuro da <a href="https://www.inteligenciaartificial.com.br/">Inteligência Artificial</a>, <a href="https://www.ciberseguranca.com.br/">cibersegurança</a> e <a href="https://www.games.com.br/">desenvolvimento de games</a>.</p>
+<p>Neste artigo, a gente vai desvendar esse mistério de forma prática. Vamos ver o que acontece a cada etapa da tradução do código e entender por que esse conhecimento é cada vez mais valioso num mundo cheio de nuvens, IA e sistemas conectados. Se você sempre quis saber como seu código vira algo real e funcional, prepare-se, porque esta jornada é para você.</p>
+<h3 id="11-processadores-de-linguagem">1.1 PROCESSADORES DE LINGUAGEM</h3>
+<p>De maneira bem simples, um compilador é um programa que pega o seu código-fonte e o converte para um código &ldquo;traduzido&rdquo; (o código objeto). Durante essa tradução, ele também te avisa se você cometeu algum erro na escrita, como uma palavra fora do lugar ou um comando que não existe, o que facilita muito a nossa vida.</p>
+
+
+  
+    
+  
+  <div class="mermaid">graph TD
+    A[Código Fonte] --&gt; B[Compilador]
+    B --&gt; C[Código Objeto]</div>
+ <p><strong>FIGURA 1.1</strong> O papel de um compilador.</p>
+<p>Depois que o compilador faz a mágica e gera o código que o computador entende, esse novo arquivo pode ser executado para receber uma entrada (por exemplo, um dado que o usuário digita) e gerar uma saída (o resultado ou a ação que a gente espera).</p>
+
+
+  
+  <div class="mermaid">graph LR
+    A[Entrada] --&gt; B[Código Objeto]
+    B --&gt; C[Saída]</div>
+ <p><strong>FIGURA 1.2</strong> O programa em ação.</p>
+<h3 id="o-que-é-o-outro-cara-o-interpretador">O que é o &ldquo;outro cara&rdquo;: O Interpretador</h3>
+<p>Além do compilador, que é como um tradutor profissional que converte um livro inteiro de uma vez, existe o <strong>interpretador</strong>. Pense nele como um tradutor simultâneo, daqueles que você vê em conferências.</p>
+<p>Em vez de traduzir o código-fonte todo de uma vez para um arquivo final, ele vai &ldquo;lendo&rdquo; seu código linha por linha, na hora, e executando cada instrução baseada no que você dá de entrada. É por isso que linguagens como <strong>Python</strong> e <strong>JavaScript</strong> são tão flexíveis e ótimas para ambientes interativos. Se você comete um erro, o interpretador te avisa na mesma hora!</p>
+
+
+  
+  <div class="mermaid">graph LR
+    A[Seu Código Escrito] --&gt; B[O Interpretador]
+    C[O que você dá de Entrada] --&gt; B
+    B --&gt; D[O Resultado na Hora]</div>
+ <p><strong>FIGURA 1.3</strong> Como o interpretador trabalha.</p>
+<p>Enquanto o compilador geralmente gera programas super-rápidos (já que a tradução foi feita antes), o interpretador brilha na hora de encontrar bugs, pois ele executa o código &ldquo;ao vivo&rdquo;. Isso é perfeito para ferramentas como o <strong>Jupyter Notebook</strong>, que te permitem ver o resultado de cada linha de código imediatamente.</p>
+<h3 id="o-melhor-dos-dois-mundos-o-caso-do-java">O Melhor dos Dois Mundos: O Caso do Java</h3>
+<p>A linguagem <strong>Java</strong> é um exemplo de como podemos usar o melhor das duas abordagens. A mágica acontece em duas etapas:</p>
+<ol>
+<li><strong>A Primeira Tradução:</strong> O código-fonte em Java é compilado para um formato intermediário, o <strong>bytecode</strong>. Pense no bytecode como uma &ldquo;linguagem universal&rdquo; que nenhuma máquina entende diretamente, mas que é fácil de traduzir para qualquer uma delas.</li>
+<li><strong>A Tradução Final:</strong> Esse bytecode é então rodado dentro de uma <strong>Máquina Virtual Java (JVM)</strong>. A JVM é como um ambiente virtual dentro do seu computador que pega o bytecode e o executa. Ela pode tanto interpretá-lo linha a linha quanto usar uma técnica chamada <strong>JIT</strong> (<em>Just-In-Time</em>).</li>
+</ol>
+<p>Esse modelo híbrido é o que permite que um mesmo código Java rode sem problemas em um servidor gigante, no seu PC ou até no seu celular. É o famoso lema do Java: <strong>&ldquo;escreva uma vez, rode em qualquer lugar&rdquo;</strong>.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Código Fonte Java] --&gt; B[Compilador Java]
+    B --&gt; C[O Bytecode]
+    D[A Entrada] --&gt; E[Máquina Virtual Java - JVM]
+    C --&gt; E
+    E --&gt; F[A Saída]</div>
+ <p><strong>FIGURA 1.4</strong> O sistema híbrido de Java.</p>
+<p>O <strong>JIT</strong> é como um turbo para a JVM. Ele observa quais partes do bytecode são mais usadas e, em vez de interpretá-las toda vez, as traduz na hora para o código de máquina mais rápido possível. É o mesmo truque que o <strong>V8</strong> (o motor do JavaScript no Chrome e Node.js) usa para deixar a navegação na web super veloz.</p>
+<h3 id="a-equipe-completa-de-compilação">A Equipe Completa de Compilação</h3>
+<p>Quando você está em um projeto grande, o compilador não trabalha sozinho. Ele faz parte de uma equipe que transforma seu código em um programa executável.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Seu Código Inicial] --&gt; B[Pré-processador]
+    B --&gt; C[Código Modificado]
+    C --&gt; D[O Compilador]
+    D --&gt; E[Código Assembly]
+    E --&gt; F[Montador]
+    F --&gt; G[Código de Máquina Relocável]
+    H[Outras Bibliotecas] --&gt; I[Linker/Carregador]
+    J[Outros Arquivos de Código] --&gt; I
+    G --&gt; I
+    I --&gt; K[O Programa Executável Final]</div>
+ <p><strong>FIGURA 1.5</strong> Todo o fluxo de trabalho de compilação.</p>
+<p>O processo pode ser resumido assim:</p>
+<ol>
+<li><strong>Pré-processador:</strong> Antes de tudo, um assistente dá uma primeira passada no seu código. Ele resolve tarefas simples, como incluir códigos de outras bibliotecas (<code>#include</code>) ou expandir atalhos.</li>
+<li><strong>Montador (Assembler):</strong> O compilador pode não gerar o código de máquina final. Em vez disso, ele gera um código &ldquo;irmão&rdquo;, o <strong>assembly</strong>, que é mais fácil de ler e otimizar. O montador é quem pega esse código e o traduz para o código de máquina.</li>
+<li><strong>Linker (Editor de Ligação):</strong> Em projetos complexos, seu código é dividido em vários arquivos. O linker é o grande organizador. Ele junta todos os pedacinhos do seu projeto, conecta eles com bibliotecas externas (como bibliotecas de matemática ou de gráficos) e cria um único arquivo executável.</li>
+<li><strong>Carregador (Loader):</strong> Por fim, o carregador é a parte do sistema operacional que coloca seu programa na memória para que ele possa ser executado.</li>
+</ol>
+<p>Ferramentas modernas, como o <strong>LLVM</strong>, fazem a maior parte desse trabalho de forma automática, garantindo que seu código funcione em diferentes arquiteturas (como chips de celular e chips de PC) sem que você precise se preocupar com cada etapa.</p>
+<h3 id="12-a-estrutura-por-dentro-de-um-compilador">1.2 A Estrutura por Dentro de um Compilador</h3>
+<p>Um compilador não faz todo o trabalho de uma vez. Ele é como um time de especialistas que tem um processo bem definido para traduzir o seu código. Esse processo é dividido em duas grandes etapas: <strong>Análise</strong> e <strong>Síntese</strong>.</p>
+<p>Pense assim:</p>
+<ul>
+<li>A <strong>Análise</strong> (o &ldquo;Front-End&rdquo;) é como um time de editores. Eles pegam seu rascunho de texto (o código-fonte) e trabalham nele para entender cada detalhe e garantir que não tem erros de gramática ou de lógica.</li>
+<li>A <strong>Síntese</strong> (o &ldquo;Back-End&rdquo;) é como a equipe de produção. Eles pegam o texto final, revisado e aprovado, e o transformam em um produto final que pode ser lido e executado (o código de máquina).</li>
+</ul>
+<p>Vamos dar uma olhada em cada uma dessas partes, com foco nas ferramentas modernas que fazem tudo isso acontecer de forma muito mais inteligente.</p>
+<h4 id="o-front-end-entendendo-o-que-você-escreveu">O Front-End: Entendendo o que Você Escreveu</h4>
+<p>O front-end de um compilador tem a missão de &ldquo;desmontar&rdquo; o seu código para entender exatamente o que ele significa. Para isso, ele passa por três fases:</p>
+<ol>
+<li><strong>Análise Léxica (O Scanner):</strong> Esta é a primeira fase. O compilador lê seu código como se fosse uma sequência gigante de letras, números e símbolos. O trabalho dele é agrupar essas sequências em &ldquo;palavrinhas&rdquo; com significado, que a gente chama de <strong>tokens</strong>. Por exemplo, ele entende que <code>if</code>, <code>while</code> ou <code>int</code> são palavras-chave, que <code>minha_variavel</code> é um nome de variável e que <code>100</code> é um número.</li>
+<li><strong>Análise Sintática (O Professor de Gramática):</strong> Depois de ter todos os tokens, essa fase é como um professor de gramática. Ela verifica se as &ldquo;palavrinhas&rdquo; estão na ordem certa, formando frases válidas, de acordo com as regras da linguagem. Se você esquecer um ponto e vírgula ou um parêntese, é aqui que o compilador te pega. O resultado é uma <strong>Árvore Sintática Abstrata (AST)</strong>, que é como um mapa visual da estrutura do seu código.</li>
+<li><strong>Análise Semântica (O Professor de Lógica):</strong> A lógica é a cereja do bolo. Essa fase verifica a coerência do seu código. Por exemplo, ela checa se você está tentando somar um texto com um número ou se está usando uma variável que nunca foi declarada.</li>
+</ol>
+<p>Durante todo esse processo de análise, o compilador anota tudo em uma <strong>tabela de símbolos</strong>. Pense nela como um &ldquo;caderninho de anotações&rdquo; onde ele guarda informações sobre cada variável e função: o nome, o tipo de dado (se é um número, texto, etc.), e onde ela pode ser usada. Ferramentas modernas, como o <strong>Clang</strong> e o <strong>Rustc</strong>, usam essa tabela para dar mensagens de erro super detalhadas e úteis.</p>
+<h4 id="o-back-end-criando-o-programa-de-verdade">O Back-End: Criando o Programa de Verdade</h4>
+<p>Depois que o front-end &ldquo;entendeu&rdquo; tudo, o back-end entra em ação. Ele pega a representação intermediária do seu código (como a árvore sintática) e começa a traduzi-la para a linguagem final. Essa linguagem pode ser o código de máquina que a CPU entende, ou algo como o <strong>WebAssembly</strong> para rodar no navegador.</p>
+<p>É aqui que a mágica da <strong>otimização</strong> acontece! O back-end busca jeitos de fazer seu código rodar mais rápido, gastar menos energia (ótimo para celulares e dispositivos IoT) ou aproveitar recursos de hardware específicos. O <strong>LLVM</strong> é uma das ferramentas mais importantes nesse campo, pois permite que o mesmo back-end crie programas otimizados para chips diferentes, de PCs a smartphones.</p>
+<h3 id="13-as-fases-do-compilador-em-ação">1.3 As Fases do Compilador em Ação</h3>
+<p>O processo de compilação completo é como uma linha de montagem, com várias etapas que se alimentam umas das outras. Aqui está o fluxo completo:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Seu Código Fonte] --&gt; B[Pré-processador]
+    B --&gt; C[Código Modificado]
+    C --&gt; D[Análise Léxica]
+    D --&gt; E[Análise Sintática]
+    E --&gt; F[Análise Semântica]
+    F --&gt; G[Geração de Código Intermediário]
+    G --&gt; H[Otimização Independente de Máquina]
+    H --&gt; I[Geração de Código Final]
+    I --&gt; J[Otimização Dependente de Máquina]
+    J --&gt; K[O Código Objeto]</div>
+ <p><strong>FIGURA 1.6</strong> As fases de um compilador moderno.</p>
+<h4 id="121-análise-léxica-o-detetive-de-palavras">1.2.1 Análise Léxica: O Detetive de Palavras</h4>
+<p>Vamos pegar um exemplo real para entender a primeira fase. Imagine a seguinte linha de código em C:</p>
+
+
+  <pre><code class="language-bash">position = initial &#43; rate * 60</code></pre>
+ <ol>
+<li>O <strong>Analisador Léxico</strong> passa por essa linha e, em vez de ver um texto corrido, ele &ldquo;peneira&rdquo; o código e o quebra em pedaços significativos. Ele descarta os espaços e cria uma &ldquo;ficha&rdquo; (<strong>token</strong>) para cada pedaço, com um tipo e um valor:
+<ul>
+<li><code>position</code> → ele entende que é um nome de variável (<code>id</code> - identificador).</li>
+<li><code>=</code> → ele entende que é um operador de atribuição.</li>
+<li><code>initial</code> → de novo, um nome de variável (<code>id</code>).</li>
+<li><code>+</code> → um operador de soma.</li>
+<li><code>rate</code> → mais um nome de variável (<code>id</code>).</li>
+<li><code>*</code> → um operador de multiplicação.</li>
+<li><code>60</code> → um número.</li>
+</ul>
+</li>
+<li>Para cada nome de variável (<code>id</code>) e número, ele anota os detalhes em sua <strong>tabela de símbolos</strong>. Por exemplo, ele guarda que <code>position</code> é a variável <code>1</code>, <code>initial</code> é a <code>2</code>, e assim por diante.</li>
+</ol>
+<p>No final, essa linha de código se transforma em uma sequência de fichas, sem os espaços, pronta para a próxima fase (o &ldquo;professor de gramática&rdquo;) analisar:</p>
+
+
+  <pre><code class="language-bash">id,1 atribuicao id,2 soma id,3 multiplicacao numero,4</code></pre>
+ <p>É assim que o compilador começa a &ldquo;enxergar&rdquo; seu código, um pequeno passo de cada vez. E em linguagens como <strong>Rust</strong> ou <strong>TypeScript</strong>, essa etapa já ajuda a verificar se o código é seguro ou se os tipos estão corretos.</p>
+<hr>
+<h3 id="122-análise-sintática-o-professor-de-gramática">1.2.2 Análise Sintática: O Professor de Gramática</h3>
+<p>Depois que o &ldquo;faxineiro do código&rdquo; (o analisador léxico) separou tudo em &ldquo;fichas&rdquo; (os tokens), é hora de o <strong>Analisador Sintático</strong> entrar em ação. Pense nele como um professor de gramática: sua missão é garantir que todas as &ldquo;fichas&rdquo; estão na ordem certa e que formam frases válidas. Ele não se preocupa com o significado, só com a estrutura.</p>
+<p>O resultado do trabalho dele é uma <strong>Árvore Sintática Abstrata (AST)</strong>. Essa árvore é um mapa visual do seu código, que mostra a hierarquia e a ordem de importância de cada operação. Ela é fundamental para que o compilador entenda o que deve ser feito primeiro (como a multiplicação em uma equação matemática) antes de seguir para a próxima etapa.</p>
+<p>Vamos voltar ao nosso exemplo:</p>
+
+
+  <pre><code class="language-bash">position = initial &#43; rate * 60</code></pre>
+ <p>Para o analisador sintático, a sequência de fichas (<code>id</code>, <code>atribuicao</code>, <code>id</code>, <code>soma</code>, etc.) não é só uma lista. Ele a organiza em uma árvore, priorizando as operações mais importantes, como a multiplicação (<code>*</code>), que tem que ser feita antes da soma (<code>+</code>).</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[=] --&gt; B[id,1: position]
+    A --&gt; C[&#43;]
+    C --&gt; D[id,2: initial]
+    C --&gt; E[*]
+    E --&gt; F[id,3: rate]
+    E --&gt; G[60]</div>
+ <p><strong>FIGURA 1.7</strong> A Árvore Sintática Abstrata para o nosso código.</p>
+<p>Note como a multiplicação e a soma estão &ldquo;dentro&rdquo; do sinal de atribuição (<code>=</code>). Isso mostra a ordem: primeiro a multiplicação, depois a soma e, por fim, a atribuição. Depois de ter essa árvore em mãos, o compilador passa para as próximas fases.</p>
+<h3 id="123-análise-semântica-o-professor-de-lógica">1.2.3 Análise Semântica: O Professor de Lógica</h3>
+<p>Essa é a fase onde o compilador verifica se o seu código faz sentido de verdade, e não só se ele está escrito corretamente. O <strong>Analisador Semântico</strong> usa a árvore sintática e o &ldquo;caderninho de anotações&rdquo; (a tabela de símbolos) para checar a lógica do programa.</p>
+<p>Ele é o cara que vai te avisar se você está:</p>
+<ul>
+<li>Tentando somar um texto com um número.</li>
+<li>Usando uma variável que você esqueceu de declarar.</li>
+<li>Tentando usar um tipo de dado errado, como usar um texto (<code>&quot;texto&quot;</code>) para indexar um array.</li>
+</ul>
+<p>É também nesta fase que o compilador faz conversões automáticas (<code>coerções</code>), quando o seu código precisa. Por exemplo, se você tenta somar um número inteiro e um número com vírgula, ele transforma o inteiro para o tipo de número com vírgula para que a operação funcione.</p>
+<h3 id="124-o-fluxo-completo-da-tradução">1.2.4 O Fluxo Completo da Tradução</h3>
+<p>A partir da árvore sintática, a mágica do back-end começa. A árvore é o mapa para as próximas fases:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Seu Código Escrito] --&gt; B[Análise Léxica]
+    B --&gt; C[Tokens]
+    C --&gt; D[Análise Sintática]
+    D --&gt; E[Árvore Sintática Abstrata]
+    E --&gt; F[Análise Semântica]
+    F --&gt; G[Código Intermediário]
+    G --&gt; H[Otimização]
+    H --&gt; I[Geração de Código Final]
+    I --&gt; J[O Código Objeto]</div>
+ <p><strong>FIGURA 1.8</strong> O fluxo de trabalho completo da tradução.</p>
+<h3 id="124-geração-de-código-intermediário-a-receita-universal">1.2.4 Geração de Código Intermediário: A Receita Universal</h3>
+<p>Depois de passar pela análise, o compilador traduz a AST para uma linguagem que ele entende melhor, chamada <strong>Código Intermediário (IR)</strong>. Pense nisso como uma &ldquo;receita de cozinha&rdquo; universal, com passos super claros e simples.</p>
+<p>Essa receita é fácil de entender para qualquer compilador, não importa qual computador ou sistema operacional você esteja usando. Por exemplo, a nossa linha de código <code>position = initial + rate * 60</code> vira uma sequência de passos bem detalhados:</p>
+
+
+  <pre><code class="language-bash">t1 = inttofloat(60)
+t2 = id3 * t1
+t3 = id2 &#43; t2
+id1 = t3</code></pre>
+ <h3 id="125-otimização-a-receita-melhorada">1.2.5 Otimização: A Receita Melhorada</h3>
+<p>Otimizar é deixar o código mais eficiente. O compilador usa o Código Intermediário para procurar jeitos de melhorar a performance. Ele é como um chef experiente que olha a receita e diz: &ldquo;Podemos pular alguns passos aqui para ir mais rápido e usar menos ingredientes.&rdquo;</p>
+<p>No nosso exemplo, ele perceberia que a conversão de <code>60</code> para um número com vírgula pode ser feita na hora, e que as variáveis <code>t2</code> e <code>t3</code> podem ser eliminadas, já que os resultados podem ser guardados em outro lugar. O código final ficaria mais enxuto:</p>
+
+
+  <pre><code class="language-bash">t1 = id3 * 60.0
+id1 = id2 &#43; t1</code></pre>
+ <p>Esse processo é super importante para jogos, sistemas de IA ou apps de celular, onde cada milissegundo e cada bit de energia contam.</p>
+<h3 id="126-geração-de-código-final-o-prato-servido">1.2.6 Geração de Código Final: O Prato Servido</h3>
+<p>Esta é a etapa final. O compilador pega a &ldquo;receita melhorada&rdquo; (o código otimizado) e a traduz para a &ldquo;língua nativa&rdquo; do seu computador (o <strong>código de máquina</strong>). É aqui que ele decide onde guardar cada valor na memória do computador, usando os espaços disponíveis chamados <strong>registradores</strong>.</p>
+<p>O nosso código otimizado vira algo parecido com isso:</p>
+
+
+  <pre><code class="language-bash">LDF R2, id3      // Carregue a variável &#39;rate&#39; no registrador R2
+MULF R2, R2, #60.0 // Multiplique o valor de R2 por 60.0
+LDF R1, id2      // Carregue a variável &#39;initial&#39; no registrador R1
+ADDF R1, R1, R2    // Some o valor de R1 com R2
+STF id1, R1      // Guarde o resultado final em &#39;position&#39;</code></pre>
+ <p>É assim que o seu código, uma ideia que começou em texto, passa por uma série de etapas até se transformar em instruções que o computador pode executar. Incrível, né?</p>
+<hr>
+<h3 id="127-gerenciamento-da-tabela-de-símbolos">1.2.7 Gerenciamento da Tabela de Símbolos</h3>
+<p>A tabela de símbolos é uma estrutura fundamental em compiladores modernos, armazenando informações sobre variáveis, funções e seus atributos, como tipo, escopo e, no caso de funções, parâmetros e tipos de retorno. Em linguagens como TypeScript ou Go, que possuem sistemas de tipos avançados, a tabela de símbolos é essencial para suportar inferência de tipos e verificações de escopo em tempo de compilação. Estruturas de dados eficientes, como tabelas de hash ou árvores balanceadas, são usadas para garantir acesso rápido a essas informações.</p>
+<h3 id="128-agrupamento-de-fases-em-passos">1.2.8 Agrupamento de Fases em Passos</h3>
+<p>Na prática, as fases de compilação são frequentemente agrupadas em passos para otimizar o desempenho. Por exemplo, em compiladores como Clang ou Rustc, o front-end (análise léxica, sintática, semântica e geração de código intermediário) pode ser combinado em um único passo, enquanto otimizações e geração de código para a máquina alvo formam passos separados.</p>
+<p>O uso de representações intermediárias padronizadas, como a IR do LLVM, permite criar compiladores modulares, combinando front-ends para diferentes linguagens com back-ends para várias arquiteturas, um modelo amplamente adotado em ferramentas modernas. Essa abordagem reflete a evolução dos compiladores, que hoje lidam com linguagens mais complexas e arquiteturas diversas, mantendo a eficiência e a portabilidade como prioridades.</p>
+<h3 id="129-ferramentas-para-construção-de-compilador">1.2.9 Ferramentas para Construção de Compilador</h3>
+<p>No desenvolvimento de compiladores modernos, os projetistas contam com uma ampla gama de ferramentas especializadas que simplificam e aceleram a construção de diferentes fases do compilador. Além de ferramentas genéricas de desenvolvimento de software, como editores de texto avançados (e.g., VS Code), sistemas de controle de versão (e.g., Git), e depuradores, ferramentas específicas para compiladores têm evoluído significativamente, integrando algoritmos complexos e interfaces que facilitam sua adoção. Essas ferramentas frequentemente utilizam linguagens declarativas ou especificações formais para definir componentes do compilador, permitindo integração fluida com o restante do sistema. As principais ferramentas incluem:</p>
+<ol>
+<li>
+<p><strong>Geradores de Analisadores Sintáticos</strong>: Ferramentas como <a href="https://www.gnu.org/software/bison/">Bison</a> e <a href="https://www.gnu.org/software/yacc/">Yacc</a> geram analisadores sintáticos a partir de gramáticas livres de contexto, descritas em linguagens como BNF (Backus-Naur Form). Essas ferramentas são amplamente usadas em projetos como GCC e Clang para automatizar a construção de parsers.</p>
+</li>
+<li>
+<p><strong>Geradores de Analisadores Léxicos</strong>: Ferramentas como <a href="https://github.com/westes/flex">Flex</a> e <a href="https://github.com/westes/flex">Lex</a> criam analisadores léxicos com base em expressões regulares que descrevem os tokens de uma linguagem. Elas são essenciais para identificar palavras-chave, identificadores e outros elementos léxicos em linguagens como C++ ou Rust.</p>
+</li>
+<li>
+<p><strong>Mecanismos de Tradução Dirigida por Sintaxe</strong>: Ferramentas como <a href="https://www.antlr.org/">ANTLR</a> permitem a geração de código intermediário a partir de árvores de derivação, utilizando regras sintáticas anotadas. Elas são amplamente usadas em compiladores modernos para traduzir construções de alto nível em representações intermediárias.</p>
+</li>
+<li>
+<p><strong>Geradores de Gerador de Código</strong>: Essas ferramentas, como as usadas no framework LLVM, geram código de máquina a partir de especificações de tradução para diferentes arquiteturas (e.g., x86, ARM, RISC-V). Elas permitem que o compilador produza código otimizado para plataformas específicas.</p>
+</li>
+<li>
+<p><strong>Mecanismos de Análise de Fluxo de Dados</strong>: Ferramentas como as integradas ao LLVM ou ao GCC realizam análises de fluxo de dados para rastrear como valores são propagados no programa. Essas análises são fundamentais para otimizações como eliminação de código morto e propagação de constantes.</p>
+</li>
+<li>
+<p><strong>Conjuntos de Ferramentas para Construção de Compiladores</strong>: Frameworks como <a href="https://llvm.org/">LLVM</a> e <a href="https://gcc.gnu.org/">GCC</a> oferecem um ecossistema integrado de rotinas para todas as fases do compilador, desde a análise léxica até a geração de código. Esses frameworks são amplamente adotados em projetos de compiladores para linguagens como Rust, Swift e WebAssembly.</p>
+</li>
+</ol>
+<p>Essas ferramentas, combinadas com avanços em algoritmos e arquiteturas de software, tornam o desenvolvimento de compiladores mais eficiente e escalável, permitindo lidar com a complexidade de linguagens modernas e arquiteturas heterogêneas.</p>
+<h3 id="13-evolução-das-linguagens-de-programação">1.3 Evolução das Linguagens de Programação</h3>
+<p>A evolução das linguagens de programação reflete avanços tanto em hardware quanto em paradigmas de desenvolvimento de software. Na década de 1940, os primeiros computadores eram programados diretamente em linguagem de máquina, usando sequências binárias para especificar operações de baixo nível, como movimentação de dados ou operações aritméticas. Esse processo era extremamente propenso a erros e difícil de manter.</p>
+<h3 id="131-mudança-para-linguagens-de-alto-nível">1.3.1 Mudança para Linguagens de Alto Nível</h3>
+<p>Na década de 1950, linguagens assembly introduziram mnemônicos para instruções de máquina, facilitando a programação. A adição de macros permitiu abstrações simples, mas ainda assim a programação permanecia intimamente ligada ao hardware. O grande salto veio com o surgimento de linguagens de alto nível, como <a href="https://en.wikipedia.org/wiki/Fortran">Fortran</a> (para computação científica), <a href="https://en.wikipedia.org/wiki/COBOL">Cobol</a> (para aplicações comerciais) e <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">Lisp</a> (para computação simbólica).</p>
+<p>Essas linguagens introduziram construções que abstraíam detalhes de hardware, permitindo que programadores se concentrassem na lógica do programa. Hoje, versões modernas de Fortran e Lisp ainda são usadas em nichos específicos, enquanto Cobol persiste em sistemas legados bancários. Nas décadas seguintes, linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>, <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> trouxeram inovações como modularidade, orientação a objetos e segurança de memória. A classificação das linguagens evoluiu para incluir:</p>
+<ul>
+<li><strong>Linguagens de Primeira Geração</strong>: Linguagens de máquina (binárias).</li>
+<li><strong>Linguagens de Segunda Geração</strong>: Linguagens assembly.</li>
+<li><strong>Linguagens de Terceira Geração</strong>: Linguagens procedurais de alto nível, como C, C++, Java e Go.</li>
+<li><strong>Linguagens de Quarta Geração</strong>: Linguagens voltadas para aplicações específicas, como <a href="https://en.wikipedia.org/wiki/SQL">SQL</a> (bancos de dados) e <a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">R</a> (análise de dados).</li>
+<li><strong>Linguagens de Quinta Geração</strong>: Linguagens baseadas em lógica, como <a href="https://en.wikipedia.org/wiki/Prolog">Prolog</a>, usadas em inteligência artificial.</li>
+</ul>
+<p>Além disso, linguagens são classificadas como <strong>imperativas</strong> (e.g., C++, Java), que manipulam o estado do programa, ou <strong>declarativas</strong> (e.g., Haskell, Prolog), que especificam o quê deve ser computado sem detalhar o como. Linguagens orientadas a objetos, como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> e <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>, e linguagens de script, como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a> e <a href="https://en.wikipedia.org/wiki/Ruby_%28programming_language%29">Ruby</a>, dominam o desenvolvimento moderno devido à sua flexibilidade e produtividade.</p>
+<h3 id="132-impactos-nos-compiladores">1.3.2 Impactos nos Compiladores</h3>
+<p>O avanço das linguagens de programação e das arquiteturas de hardware impõe desafios constantes aos projetistas de compiladores. Linguagens modernas, como Rust (com ênfase em segurança de memória) ou TypeScript (com tipagem estática em JavaScript), exigem compiladores que suportem verificações complexas de tipos e otimizações avançadas. Arquiteturas modernas, como GPUs e processadores multicore, requerem que os compiladores gerem código que explore paralelismo e eficiência energética.</p>
+<p>Compiladores como <a href="https://clang.llvm.org/">Clang</a>, <a href="https://www.rust-lang.org/">Rustc</a> e o <a href="https://v8.dev/">V8</a> (para JavaScript) minimizam o custo de execução de linguagens de alto nível, permitindo que sejam amplamente adotadas. Além disso, compiladores são usados para avaliar novas arquiteturas antes da fabricação, como em simulações de chips RISC-V. A complexidade dos compiladores modernos, que frequentemente integram múltiplas linguagens e alvos, exige boas práticas de engenharia de software, como modularidade e testes automatizados.</p>
+<h3 id="14-a-ciência-da-criação-de-um-compilador">1.4 A Ciência da Criação de um Compilador</h3>
+<p>O projeto de compiladores combina teoria e prática, utilizando modelos matemáticos para resolver problemas complexos. Um compilador deve processar um conjunto potencialmente infinito de programas, preservando sua semântica, o que torna o desenvolvimento de compiladores um desafio único.</p>
+<h3 id="141-modelagem-no-projeto-e-implementação-do-compilador">1.4.1 Modelagem no Projeto e Implementação do Compilador</h3>
+<p>Modelos como <strong>máquinas de estado finito</strong> e <strong>expressões regulares</strong> (Capítulo 3) são usados para análise léxica, enquanto <strong>gramáticas livres de contexto</strong> (Capítulo 4) descrevem a sintaxe das linguagens. <strong>Árvores sintáticas</strong> (Capítulo 5) representam a estrutura do programa e sua tradução para código objeto. Esses modelos garantem que o compilador seja robusto e eficiente, equilibrando generalização e simplicidade.</p>
+<h3 id="142-a-ciência-da-otimização-do-código">1.4.2 A Ciência da Otimização do Código</h3>
+<p>A otimização de código busca melhorar a eficiência do código gerado, seja em termos de velocidade, tamanho ou consumo de energia. Em arquiteturas modernas, como processadores multicore ou GPUs, otimizações como paralelização e vetorização são cruciais. No entanto, a otimização é um problema indecidível, exigindo heurísticas baseadas em modelos como grafos de fluxo de dados e álgebra linear (Capítulo 9).</p>
+<p>Os objetivos de otimização incluem:</p>
+<ul>
+<li><strong>Correção</strong>: Preservar a semântica do programa.</li>
+<li><strong>Desempenho</strong>: Melhorar a eficiência para a maioria dos programas.</li>
+<li><strong>Tempo de Compilação</strong>: Manter a compilação rápida para ciclos de desenvolvimento ágeis.</li>
+<li><strong>Manutenibilidade</strong>: Garantir que o compilador seja fácil de manter.</li>
+</ul>
+<p>A exatidão é fundamental, pois um compilador incorreto pode gerar código inválido. O desenvolvimento de compiladores combina teoria (modelos formais) e experimentação (validação empírica), oferecendo lições valiosas sobre resolução de problemas complexos.</p>
+<h3 id="15-aplicações-da-tecnologia-de-compiladores">1.5 APLICAÇÕES DA TECNOLOGIA DE COMPILADORES</h3>
+<p>O projeto de um compilador não diz respeito apenas a compiladores, e muitas pessoas usam a tecnologia aprendida pelo estudo de compiladores na escola, embora nunca tenham, estritamente falando, nem mesmo escrito parte de um compilador para uma linguagem de programação conhecida. A tecnologia de compiladores possui também outras aplicações importantes. Além do mais, o projeto de um compilador tem impacto em várias outras áreas da ciência da computação. Nesta seção, veremos as interações e aplicações mais importantes dessa tecnologia.</p>
+<h3 id="151-implementação-de-linguagens-de-programação-de-alto-nível">1.5.1 IMPLEMENTAÇÃO DE LINGUAGENS DE PROGRAMAÇÃO DE ALTO NÍVEL</h3>
+<p>Uma linguagem de programação de alto nível define uma abstração de programação: o programador escreve um algoritmo usando a linguagem, e o compilador deve traduzir esse programa para a linguagem objeto. Em geral, é mais fácil programar em linguagens de programação de alto nível, mas elas são menos eficientes, ou seja, os programas objetos são executados mais lentamente.</p>
+<p>Os programadores que usam uma linguagem de baixo nível têm mais controle sobre uma computação e podem, a princípio, produzir código mais eficiente. Infelizmente, os programas feitos desta forma são mais difíceis de escrever e – pior ainda – menos transportáveis para outras máquinas, mais passíveis de erros e mais difíceis de manter. Os compiladores otimizadores dispõem de técnicas para melhorar o desempenho do código gerado, afastando assim a ineficiência introduzida pelas abstrações de alto nível.</p>
+<p><strong>EXEMPLO 1.2</strong>: A palavra-chave register da linguagem de programação C é um velho exemplo da interação entre a tecnologia de compiladores e a evolução da linguagem. Quando a linguagem C foi criada em meados da década de 1970, considerou-se importante permitir o controle pelo programador de quais variáveis do programa residiam nos registradores. Esse controle tornou-se desnecessário quando foram desenvolvidas técnicas eficazes de alocação de registradores, e a maioria dos programas modernos não usa mais esse recurso da linguagem.</p>
+<p>Na verdade, os programas que usam a palavra-chave register podem perder a eficiência, pois os programadores normalmente não são os melhores juízes em questões de muito baixo nível, como a alocação de registradores. A escolha de uma boa estratégia para a alocação de registradores depende muito de detalhes específicos de uma arquitetura de máquina. Tomar decisões sobre o gerenciamento de recursos de baixo nível, como a alocação de registradores, pode de fato prejudicar o desempenho, especialmente se o programa for executado em máquinas diferentes daquela para a qual ele foi A adoção de novas linguagens de programação tem sido na direção daquelas que oferecem maior nível de abstração.</p>
+<p>Nos anos 80, C foi a linguagem de programação de sistemas predominante; muitos dos novos projetos iniciados nos anos 1990 escolheram C++ como a linguagem de programação de sistemas. A linguagem Java, introduzida em 1995, rapidamente ganhou popularidade no final da década de 1990. Os novos recursos de linguagem de programação introduzidos a cada rodada incentivaram novas pesquisas sobre otimização de compilador. A seguir, apresentamos uma visão geral dos principais recursos de linguagens de programação que têm estimulado avanços significativos na tecnologia de compilação.</p>
+<p>Praticamente todas as linguagens de programação comuns, incluindo C, Fortran e Cobol, admitem que os usuários definam tipos de dados compostos, como arranjo e estruturas, e fluxo de controle de alto nível, como loops e chamadas de procedimentos. Se simplesmente traduzirmos diretamente para código de máquina cada construção de alto nível ou operação de acesso, o resultado será ineficaz.</p>
+<p>Um conjunto de otimizações, conhecido como otimizações de fluxo de dados,foi desenvolvido para analisar o fluxo de dados de um programa, e remover as redundâncias encontradas nessas construções. Essas otimizações têm-se revelado eficazes, e o código gerado se assemelha ao código escrito em um nível mais baixo por um programador habilidoso.</p>
+<p>A orientação por objeto foi introduzida inicialmente na linguagem Simula em 1967, e incorporada em linguagens como Smalltalk, C++, C# e Java. As principais idéias por trás da orientação por objeto são:</p>
+<ol>
+<li>Abstração de dados e</li>
+<li>Herança de propriedades,</li>
+</ol>
+<p>ambas consideradas fundamentais para tornar os programas mais modulares e mais fáceis de manter. Os programas orientados por objeto são diferentes daqueles escritos em várias outras linguagens, pois possuem mais, porém menores, procedimentos (chamados métodos no contexto da orientação por objeto). Assim, as otimizações presentes no compilador precisam ser eficazes além dos limites de procedimento do programa fonte. A “expansão em linha” (do inglês, inlining) de procedimento, que corresponde à substituição de uma chamada de procedimento pelo seu corpo, é particularmente útil neste contexto.</p>
+<p>Também têm sido desenvolvidas otimizações para agilizar os disparos dos métodos virtuais.<br>
+A linguagem Java possui muitos recursos que tornam a programação mais fácil, e muitos deles foram introduzidos anteriormente em outras linguagens. A linguagem é segura em termos de tipo; ou seja, um objeto não pode ser usado como um objeto de um tipo não relacionado. Todos os acessos a arranjos são verificados para garantir que estejam dentro dos limites do arranjo. Java não possui apontadores nem permite aritmética de apontadores. Ela possui uma função primitiva (built-in) para a coleta de lixo, a qual libera automaticamente a memória das variáveis que não são mais usadas.</p>
+<p>Embora todos esses recursos facilitem a programação, eles geram um custo adicional no tempo de execução. Foram desenvolvidas otimizações no compilador para reduzir esse custo adicional, por exemplo, eliminando verificações de limites desnecessárias e alocando na pilha, ao invés de na heap, os objetos que não são acessíveis fora de um procedimento. Algoritmos eficientes também foram desenvolvidos para reduzir o custo adicional atribuído à coleta de lixo.</p>
+<p>Além disso, a linguagem Java é projetada para prover código transportável e móvel. Os programas são distribuídos como bytecode Java, que precisa ser interpretado ou compilado para o código nativo dinamicamente, ou seja, em tempo de execução. A compilação dinâmica também tem sido estudada em outros contextos, nos quais a informação é extraída dinamicamente em tempo de execução e usada para produzir um código mais otimizado. Na otimização dinâmica, é importante minimizar o tempo de compilação, pois ele faz parte do custo adicional da execução. Uma técnica muito utilizada é compilar e otimizar apenas as partes do programa que serão executadas com mais frequência.</p>
+<h3 id="152-otimizações-para-arquiteturas-de-computador">1.5.2 OTIMIZAÇÕES PARA ARQUITETURAS DE COMPUTADOR</h3>
+<p>A rápida evolução das arquiteturas de computador também gerou uma demanda insaciável por novas técnicas de compilação. Quase todos os sistemas de alto desempenho tiram proveito de duas técnicas básicas: o paralelismo e as hierarquias de memória. O paralelismo pode ser encontrado em diversos níveis: em nível de instrução, onde várias operações são executadas simultaneamente; e em nível de processador, onde diferentes threads da mesma aplicação são executadas em diferentes processadores. As hierarquias de memória são uma resposta à limitação básica de que podemos construir um dispositivo de armazenamento muito rápido ou muito grande, mas não um dispositivo de armazenamento que seja tanto rápido quanto grande.</p>
+<p><strong>Paralelismo</strong>: Todos os microprocessadores modernos exploram o paralelismo em nível de instrução. No entanto, esse paralelismo pode não ser visível ao programador. Os programas são escritos como se todas as instruções fossem executadas seqüencialmente; o hardware verifica dinamicamente se há dependências no fluxo seqüencial das instruções e, quando possível, as emite em paralelo. Em alguns casos, a máquina inclui no hardware um escalonador que pode alterar a ordem das instruções para aumentar o paralelismo do programa. Independentemente de o hardware reordenar as instruções ou não, os compiladores podem rearranjá-las para tornar mais eficiente o paralelismo em nível de instrução.</p>
+<p><strong>Máquinas VLIW</strong>: Máquinas VLIW (Very Long Instruction Word) possuem instruções que podem emitir várias operações em paralelo. A máquina Intel IA64 é um exemplo bem conhecido desse tipo de arquitetura. Todos os microprocessadores de alto desempenho de uso geral também incluem instruções que podem operar sobre um vetor de dados ao mesmo tempo. Técnicas de compiladores têm sido desenvolvidas para gerar automaticamente código para essas máquinas a partir de programas seqüenciais.</p>
+<p><strong>Multiprocessadores</strong>: Os multiprocessadores também se tornaram predominantes; até mesmo os computadores pessoais normalmente possuem múltiplos processadores. Os programadores podem escrever código multithreaded para multiprocessadores, ou o código para paralelo pode ser gerado automaticamente por um compilador a partir de programas seqüenciais convencionais. Esse compilador esconde dos programadores os detalhes para localizar o paralelismo em um programa, distribuindo a computação pela máquina e minimizando a sincronização e a comunicação entre os processadores. Muitas aplicações de computação científica e engenharia fazem cálculos intensivos e podem beneficiar-se muito com o processamento paralelo. Técnicas de paralelismo têm sido desenvolvidas para traduzir automaticamente os programas científicos seqüenciais em código multiprocessável.</p>
+<p><strong>Hierarquias de memória</strong>: Uma hierarquia de memória consiste em vários níveis de armazenamento com diferentes velocidades e tamanhos, com o nível mais próximo do processador sendo o mais rápido, porém o menor. O tempo médio de acesso à memória de um programa é reduzido se a maior parte dos seus acessos for satisfeita pelos níveis mais rápidos da hierarquia. Tanto o paralelismo quanto a existência de uma hierarquia de memória melhoram o desempenho potencial de uma máquina, mas ambos precisam ser utilizados de modo eficaz pelo compilador, a fim de oferecer um desempenho real em uma aplicação.</p>
+<p>As hierarquias de memória são encontradas em todas as máquinas. Um processador normalmente possui uma pequena quantidade de registradores consistindo em centenas de bytes, vários níveis de caches contendo kilobytes a megabytes, memória física contendo de megabytes a gigabytes, e finalmente uma memória secundária que contém gigabytes. Desta forma, a velocidade dos acessos entre os níveis adjacentes da hierarquia de memória pode diferir entre duas ou três ordens de grandeza. O desempenho de um sistema normalmente é limitado não pela velocidade do processador, mas pelo desempenho do subsistema de memória. Embora os compiladores tradicionalmente focalizem a otimização da execução do processador, a ênfase maior agora está em tornar a hierarquia de memória mais eficiente.</p>
+<p>O uso eficaz dos registradores provavelmente é o problema mais importante na otimização de um programa. Ao contrário dos registradores que precisam ser gerenciados explicitamente no software, os caches e as memórias físicas não são visíveis no conjunto de instruções e, portanto são gerenciados pelo hardware. Descobriu-se que as políticas de gerenciamento de cache implementadas pelo hardware não são eficientes em alguns casos, especialmente em códigos científicos que possuem grandes estruturas de dados (normalmente, arranjos). É possível melhorar a eficácia da hierarquia de memória alterando o leiaute dos dados, ou alterando a ordem das instruções que acessam os dados. Também podemos alterar o leiaute do código para melhorar a eficácia dos caches de instrução.</p>
+<h3 id="153-projeto-de-novas-arquiteturas-de-computador">1.5.3 PROJETO DE NOVAS ARQUITETURAS DE COMPUTADOR</h3>
+<p>Nos primeiros projetos de arquiteturas de computadores, os compiladores só eram desenvolvidos após a construção das máquinas. Mas isso mudou. Como o usual é programar em linguagens de alto nível, o desempenho de um sistema de computação é determinado não somente por sua inerente velocidade, mas também pela forma como os compiladores podem explorar seus recursos. Assim, no desenvolvimento de arquiteturas de computadores modernas, os compiladores são desenvolvidos no estágio de projeto do processador, e o código compilado, executando em simuladores, é usado para avaliar os recursos arquitetônicos propostos.</p>
+<p><strong>RISC</strong>: Um dos exemplos mais conhecidos de como os compiladores influenciaram o projeto da arquitetura de computador foi a invenção da arquitetura RISC (Reduced Instruction-Set Computer – computador com um conjunto reduzido de instruções). Antes dessa invenção, a tendência era desenvolver gradativamente conjuntos de instruções cada vez mais complexos, com o objetivo de tornar a programação assembler mais fácil; essas arquiteturas eram conhecidas como CISC (Complex Instruction Set Computer – computador com um conjunto de instruções complexas). Por exemplo, os conjuntos de instruções CISC incluem modos de endereçamento de memória complexos para dar suporte aos acessos a estruturas de dados e instruções de chamada de procedimento que salvam registradores e passam parâmetros na pilha.</p>
+<p><strong>Otimizações de compiladores</strong>: Normalmente, as otimizações de compiladores podem reduzir essas instruções a um pequeno número de operações mais simples, eliminando as redundâncias das instruções complexas. Assim, é desejável construir conjuntos de instruções simples; os compiladores podem usá-las de forma mais eficiente e torna-se mais fácil otimizar o hardware.</p>
+<p><strong>Arquiteturas especializadas</strong>: A maioria das arquiteturas de processadores de uso geral, incluindo PowerPC, SPARC, MIPS, Alpha e PA-RISC, é baseada no conceito de RISC. Embora a arquitetura x86 – o microprocessador mais popular – possua um conjunto de instruções CISC, muitas das idéias desenvolvidas para máquinas RISC são usadas nas implementações do próprio processador. Além disso, o modo mais eficiente de usar uma máquina x86 de alto desempenho é usar apenas suas instruções mais simples.</p>
+<p><strong>Arquiteturas especializadas</strong>: Durante as três últimas décadas, foram propostos muitos conceitos arquitetônicos. Eles incluem máquinas de fluxo de dados, máquinas de vetor, máquinas VLIW (Very Long Instruction Word – palavra de instrução muito longa), arranjos de processadores SIMD (Single Instruction, Multiple Data – única instrução, múltiplos dados), arranjos sistólicos, multiprocessadores com memória compartilhada e multiprocessadores com memória distribuída. O desenvolvimento de cada um desses conceitos arquitetônicos foi acompanhado pela pesquisa e desenvolvimento de novas tecnologias de compilação.</p>
+<p><strong>Máquinas embutidas</strong>: Algumas dessas idéias deram origem aos projetos de máquinas embutidas. Uma vez que sistemas inteiros podem caber em um único chip, os processadores não precisam mais ser unidades tipo produto pré-empacotado, mas podem ser feitos sob medida para melhorar a relação custo-benefício de determinada aplicação. Assim, ao contrário dos processadores de uso geral, nos quais as economias de escala levaram à convergência das arquiteturas de computador, os processadores de aplicações específicas apresentam uma diversidade de arquiteturas de computador. A tecnologia de compiladores é necessária não apenas para dar suporte à programação para essas arquiteturas, mas também para avaliar os projetos arquitetônicos propostos.</p>
+<h3 id="154-traduções-de-programa">1.5.4 TRADUÇÕES DE PROGRAMA</h3>
+<p>Embora normalmente pensemos na compilação como uma tradução de uma linguagem de alto nível para o nível de máquina, a mesma tecnologia pode ser aplicada para traduzir entre diferentes tipos de linguagens. A seguir são apresentadas algumas aplicações importantes das técnicas de tradução de programa.</p>
+<p><strong>Tradução binária</strong>: A tradução binária também foi usada pela Transmeta Inc. em sua implementação do conjunto de instruções x86. Em vez de executar este complexo conjunto de instruções diretamente no hardware, o processador Transmeta Crusoe é um processador VLIW que usa a tradução binária para converter o código x86 em código VLIW nativo.</p>
+<p><strong>Tradução binária</strong>: A tradução binária também pode ser usada para prover compatibilidade para trás (backward compatibility). Por exemplo, quando o processador Motorola MC 68040 foi substituído pelo PowerPC no Apple Macintosh em 1994, usou-se a tradução binária para permitir que os processadores PowerPC executassem o código legado do MC 68040.</p>
+<p><strong>Síntese de hardware</strong>: Assim como a maioria do software é escrita em linguagens de programação de alto nível, os projetos de hardware também o são. Estes são especificados principalmente em linguagens de descrição de arquitetura de alto nível, como, por exemplo, Verilog e VHDL (Very high-speed integrated circuit Hardware Description Language – linguagem de descrição de hardware para circuito integrado de altíssima velocidade). Os projetos de hardware são tipicamente descritos em RTL (Register Transfer Level), onde as variáveis representam registradores e as expressões representam lógica combinatória.</p>
+<p><strong>Ferramentas de síntese de hardware</strong>: Ferramentas de síntese de hardware traduzem automaticamente descrições RTL para portas, que são então mapeadas para transistores e eventualmente para um leiaute físico. Diferentemente dos compiladores para linguagens de programação, essas ferramentas normalmente gastam horas otimizando o circuito. Também existem técnicas para traduzir projetos em níveis mais altos, como o nível de comportamento ou funcional.</p>
+<p><strong>Interpretadores de consulta de banco de dados</strong>: Além de especificar software e hardware, as linguagens de programação são úteis em muitas outras aplicações. Por exemplo, as linguagens de consulta, especialmente SQL (Structured Query Language – linguagem de consulta estruturada), são usadas para pesquisas em bancos de dados. As consultas em banco de dados consistem em predicados contendo operadores relacionais e boolianos, os quais podem ser interpretados ou compilados para comandos que consultam registros de um banco de dados satisfazendo esse predicado.</p>
+<p><strong>Simulação compilada</strong>: Simulação é uma técnica geral utilizada em muitas disciplinas científicas e de engenharia para compreender um fenômeno ou validar um projeto. As entradas de um simulador usualmente incluem a descrição do projeto e parâmetros de entrada específicos para que uma simulação em particular execute. As simulações podem ser muito dispendiosas. Normalmente, precisamos simular muitas das possíveis alternativas de projeto em vários conjuntos de entrada diferentes, e cada experimento pode levar dias para ser concluído em uma máquina de alto desempenho. Em vez de escrever um simulador que interprete o projeto, é mais rápido compilar o projeto para produzir código de máquina que simula esse projeto em particular nativamente.</p>
+<p><strong>Simulação compilada</strong>: A simulação compilada pode ser executada muitas vezes mais rapidamente do que uma abordagem interpretada. A simulação compilada é usada em muitas ferramentas de última geração que simulam projetos escritos em Verilog ou VHDL.</p>
+<h3 id="155-ferramentas-de-produtividade-de-software">1.5.5 FERRAMENTAS DE PRODUTIVIDADE DE SOFTWARE</h3>
+<p>Os programas são comprovadamente os artefatos de engenharia mais complicados já produzidos; eles consistem em muitos e muitos detalhes, cada um devendo estar correto antes que o programa funcione completamente. Como resultado, os erros são como rompantes nos programas; eles podem arruinar um sistema, produzir resultados errados, tornar um sistema vulnerável a ataques de segurança, ou, ainda, levar a falhas catastróficas em sistemas críticos. O teste é a principal técnica para localizar erros nos programas.</p>
+<p><strong>Análise de fluxo de dados</strong>: Uma técnica complementar interessante e promissora é usar a análise de fluxo de dados para localizar erros estaticamente, ou seja, antes que o programa seja executado. A análise de fluxo de dados pode localizar erros em todos os caminhos de execução possíveis, e não apenas aqueles exercidos pelos conjuntos de dados de entrada, como no caso do teste do programa. Muitas das técnicas de análise de fluxo de dados, originalmente desenvolvidas para otimizações de compilador, podem ser usadas para criar ferramentas que auxiliam os programadores em suas tarefas de engenharia de software.</p>
+<p><strong>Análise de fluxo de dados</strong>: O problema de localizar todos os erros de um programa é indeciso. Uma ferramenta para a análise de fluxo de dados pode ser criada para avisar aos programadores sobre todas as instruções que podem infringir determinada categoria de erros. Mas, se a maioria desses avisos forem alarmes falsos, os usuários não usarão a ferramenta. Assim, os detectores de erro práticos normalmente não são seguros nem completos. Ou seja, eles podem não encontrar todos os erros no programa, e não há garantias de que todos os erros relatados sejam erros reais. Apesar disso, diversas análises estáticas têm sido desenvolvidas e consideradas eficazes na localização de erros, tais como tentativas de acessos via apontadores nulos ou liberados, nos programas reais.</p>
+<p>O fato de os detectores de erro poderem ser inseguros os torna significativamente diferentes das otimizações de compiladores. Os otimizadores de código precisam ser conservadores e não podem alterar a semântica do programa sob circunstância alguma.</p>
+<p>No fim desta seção, mencionaremos diversas maneiras pelas quais a análise do programa, baseada nas técnicas desenvolvidas originalmente para otimizar o código nos compiladores, melhorou a produtividade do software. Técnicas que detectam estaticamente quando um programa pode ter uma vulnerabilidade de segurança são de especial importância.</p>
+<p>A verificação de tipos é uma técnica eficaz e bastante estabelecida para identificar inconsistências nos programas. Ela pode ser usada para detectar erros, por exemplo, quando uma operação é aplicada ao tipo errado de objeto, ou se os parâmetros passados a um procedimento não casam com a assinatura do procedimento. A análise do programa pode ir além de encontrar erros de tipo, analisando o fluxo de dados ao longo de um programa. Por exemplo, se for atribuído um valor null ao apontador e depois ele for imediatamente utilizado para acesso, o programa conterá claramente um erro.</p>
+<p>A mesma abordagem pode ser usada para identificar diversas brechas na segurança, em que um invasor fornece uma cadeia de caracteres ou outro dado que seja usado descuidadamente pelo programa. Uma cadeia de caracteres fornecida pelo usuário pode ser rotulada com um tipo “perigoso”. Se essa cadeia de caracteres não tiver o formato correto verificado, ela permanece “perigosa”, e, se uma cadeia de caracteres desse tipo for capaz de influenciar o fluxo de controle do código em algum ponto no programa, então existe uma falha de segurança potencial.</p>
+<h3 id="verificação-de-limites">Verificação de limites</h3>
+<p>É mais fácil cometer erros ao programar em uma linguagem de baixo nível do que em uma linguagem de alto nível. Por exemplo, muitas brechas de segurança nos sistemas são causadas por estouros de buffer em programas escritos na linguagem C. Como C não possui verificação de limites de arranjos, fica a critério do usuário garantir que os arranjos não sejam acessados fora dos limites. Deixando de verificar se os dados fornecidos pelo usuário podem estourar um buffer, o programa pode ser enganado e armazenar dados do usuário fora do buffer. Um invasor pode manipular dados de entrada que causem um comportamento errôneo no programa e comprometer a segurança do sistema. Foram desenvolvidas técnicas para encontrar estouros de buffer nos programas, mas com um sucesso limitado.</p>
+<p>Se o programa tivesse sido escrito em uma linguagem segura, que inclui verificação automática de limites de arranjo, esse problema não teria ocorrido. A mesma análise de fluxo de dados usada para eliminar verificações de limites redundantes também pode ser utilizada para localizar estouros de buffer. No entanto, a principal diferença é que deixar de eliminar uma verificação de limites só resulta em um pequeno custo em tempo de execução, enquanto deixar de identificar um estouro de buffer potencial pode comprometer a segurança do sistema. Assim, embora seja adequado usar técnicas simples para otimizar as verificações de limites, para conseguir resultados de alta qualidade nas ferramentas de detecção de erros são necessárias análises sofisticadas, tais como o rastreamento dos valores de apontadores entre procedimentos.</p>
+<p>A coleta de lixo é outro exemplo excelente de compromisso entre a eficiência e uma combinação de facilidade de programação e confiabilidade de software. O gerenciamento automático da memória suprime todos os erros de gerenciamento de memória (por exemplo, “vazamento de memória”), que são uma grande fonte de problemas nos programas em C e C++. Diversas ferramentas foram desenvolvidas para auxiliar os programadores a encontrar erros de gerenciamento de memória. Por exemplo, Purify é uma ferramenta muito utilizada para detectar erros de gerenciamento de memória dinamicamente, à medida que acontecem. Também foram desenvolvidas ferramentas que ajudam a identificar alguns desses problemas estaticamente.</p>
+<h2 id="16-fundamentos-da-linguagem-de-programação">1.6 FUNDAMENTOS DA LINGUAGEM DE PROGRAMAÇÃO</h2>
+<p>Nesta seção, discutiremos a terminologia e as diferenças mais importantes que aparecem no estudo das linguagens de programação. Não é nossa intenção abordar todos os conceitos ou todas as linguagens de programação populares. Consideraremos que o leitor domina pelo menos uma dentre C, C++, C# ou Java, e pode ter visto outras linguagens também.</p>
+<h3 id="161-a-diferença-entre-estático-e-dinâmico">1.6.1 A DIFERENÇA ENTRE ESTÁTICO E DINÂMICO</h3>
+<p>Um dos aspectos mais importantes ao projetar um compilador para uma linguagem diz respeito às decisões que o compilador pode tomar sobre um programa. Se uma linguagem utiliza uma política que permite ao compilador decidir a respeito de uma questão, dizemos que a linguagem usa uma política estática ou que a questão pode ser decidida em tempo de compilação. Por outro lado, uma política que só permite que uma decisão seja tomada quando executamos o programa é considerada uma política dinâmica, ou que exige decisão em tempo de execução.</p>
+<p>Uma questão na qual nos concentraremos é o escopo das declarações. O escopo de uma declaração de x é a região do programa em que os usos de x se referem a essa declaração. Uma linguagem usa escopo estático ou escopo léxico se for possível determinar o escopo de uma declaração examinando-se apenas o programa. Caso contrário, a linguagem utiliza escopo dinâmico. Com o escopo dinâmico, enquanto o programa é executado, o mesmo uso de x poderia referir-se a qualquer uma dentre as várias declarações diferentes de x.</p>
+<p>A maioria das linguagens, como C e Java, utiliza escopo estático. Discutiremos sobre escopo estático na Seção 1.6.3.</p>
+<p>EXEMPLO 1.3: Como outro exemplo da distinção entre estático e dinâmico, considere o uso do termo static aplicado aos dados em uma declaração de classe Java. Em Java, uma variável é um nome que designa uma localização de memória usada para armazenar o valor de um dado. Neste contexto, static refere-se não ao escopo da variável, mas sim à capacidade de o compilador determinar a localização na memória onde a variável declarada pode ser encontrada. Uma declaração como</p>
+
+
+  <pre><code class="language-bash">public static int x;</code></pre>
+ <p>torna x uma variável de classe e diz que existe apenas uma única cópia de x, não importa quantos objetos dessa classe sejam criados. Além disso, o compilador pode determinar uma localização na memória onde esse inteiro x será mantido. Ao contrário, se “static” fosse omitido dessa declaração, cada objeto da classe teria sua própria localização onde x seria mantido, e o compilador não poderia determinar todos esses lugares antes da execução do programa.</p>
+<h3 id="162-ambientes-e-estados">1.6.2 AMBIENTES E ESTADOS</h3>
+<p>Outra distinção importante que precisamos fazer ao discutir linguagens de programação é se as mudanças que ocorrem enquanto o programa é executado afetam os <strong>valores dos elementos de dados</strong> ou afetam a <strong>interpretação dos nomes</strong> para esses dados. Por exemplo, a execução de uma atribuição como <code>x = y + 1</code> muda o valor denotado pelo nome <code>x</code>. Mais especificamente, a atribuição muda o valor em alguma localização designada para <code>x</code>.</p>
+<p>Pode não ser tão claro que a <strong>localização</strong> denotada por <code>x</code> pode mudar durante a execução. Por exemplo, conforme discutimos no Exemplo 1.3, se <code>x</code> não for uma variável (ou “classe”) estática, cada objeto da classe tem sua própria localização para uma instância da variável <code>x</code>. Nesse caso, a atribuição para <code>x</code> pode mudar qualquer uma dessas variáveis de “instância”, dependendo do objeto ao qual é aplicado um método contendo essa atribuição.</p>
+<p>A associação dos nomes às localizações na memória (o armazenamento) e depois aos valores pode ser descrita por <strong>dois mapeamentos</strong> que mudam à medida que o programa é executado (ver Figura 1.8):</p>
+<ol>
+<li><strong>Ambiente</strong>: é um mapeamento de um nome para uma posição de memória. Como as variáveis se referem a localizações (“valores-l” ou “valores à esquerda”, do inglês <em>left-value</em>, na terminologia da linguagem C), poderíamos, alternativamente, definir um ambiente como um mapeamento entre nomes e variáveis.</li>
+<li><strong>Estado</strong>: é um mapeamento de uma posição de memória ao valor que ela contém. Ou seja, o estado mapeia os “valores-l” aos “valores-r” (“valores à direita”, do inglês <em>right-value</em>, na terminologia da linguagem C) correspondentes.</li>
+</ol>
+
+
+  
+  <div class="mermaid">graph TD
+    A[nomes] --&gt;|ambiente| B[&#34;locais (variáveis)&#34;]
+    B --&gt;|estado| C[valores]
+
+    style A fill:#fff,stroke:#000,stroke-width:2px;
+    style B fill:#fff,stroke:#000,stroke-width:2px;
+    style C fill:#fff,stroke:#000,stroke-width:2px;</div>
+ <p>FIGURA 1.8 Mapeamento em dois estágios entre nomes e valores.</p>
+<h3 id="escopo-e-variáveis-em-linguagens-de-programação">Escopo e Variáveis em Linguagens de Programação</h3>
+<p>Os ambientes mudam de acordo com as regras de escopo de uma linguagem.</p>
+<h2 id="exemplo-14-variáveis-globais-e-locais-em-c">EXEMPLO 1.4: Variáveis Globais e Locais em C</h2>
+<p>Considere o fragmento de programa em C que aparece na Figura 1.9. O inteiro <code>i</code> é declarado como uma variável global, e também é declarado como uma variável local à função <code>f</code>. Quando <code>f</code> está sendo executada, o ambiente se ajusta de modo que <code>i</code> se refira à localização reservada para <code>i</code> que é local a <code>f</code>, e qualquer uso de <code>i</code>, como a atribuição <code>i = 3</code> mostrada explicitamente, se refira a essa localização. Normalmente, a variável local <code>i</code> é armazenada em uma localização na pilha em tempo de execução.</p>
+
+
+  <pre><code class="language-c">int i; /* i global */
+...
+void f(...) {
+    int i; /* i local */
+    ...
+    i = 3; /* uso do i local */
+    ...
+}
+...
+x = i &#43; 1; /* uso do i global */</code></pre>
+ <p><strong>FIGURA 1.9</strong> Duas declarações do nome <code>i</code></p>
+<p>Sempre que uma função <code>g</code> diferente de <code>f</code> estiver sendo executada, os usos de <code>i</code> não poderão referir-se ao <code>i</code> que é local a <code>f</code>. Os usos do nome <code>i</code> em <code>g</code> precisam estar dentro do escopo de alguma outra declaração de <code>i</code>. Um exemplo é a instrução <code>x = i+1</code> mostrada explicitamente, e que está dentro de algum procedimento cuja definição não é exibida. Presume-se que o <code>i</code> em <code>i + 1</code> se refira ao <code>i</code> global. Assim como na maioria das linguagens, as declarações em C precisam preceder seu uso, de modo que uma função que vem antes do <code>i</code> global não pode referir-se a ele.</p>
+<h2 id="dinâmica-do-ambiente">Dinâmica do Ambiente</h2>
+<p>O ambiente e os mapeamentos de estado na Figura 1.8 são dinâmicos, mas existem algumas exceções:</p>
+<ol>
+<li><strong>Vínculo estático versus dinâmico dos nomes para as localizações.</strong> A maior parte do vínculo dos nomes para as localizações é dinâmica, e discutiremos várias abordagens para esse tipo de vínculo no decorrer da seção. Algumas declarações, como o <code>i</code> global da Figura 1.9, podem ser colocadas em uma localização de memória definitivamente, enquanto o compilador gera o código objeto.</li>
+<li><strong>Vínculo estático versus dinâmico das localizações para os valores.</strong> O vínculo de localizações para valores (ver segundo estágio da Figura 1.8) geralmente também é dinâmico, pois não sabemos qual é o valor em uma localização até que o programa seja executado. As constantes declaradas são exceções à regra. Por exemplo, a definição na linguagem C:
+
+
+  <pre><code class="language-c">#define ARRAYSIZE 1000</code></pre>
+ </li>
+</ol>
+<h2 id="nomes-identificadores-e-variáveis">Nomes, Identificadores e Variáveis</h2>
+<p>Embora os termos “nome” e “variável” normalmente se refiram à mesma coisa, vamos usá-los cuidadosamente para distinguir entre os nomes usados em tempo de compilação e as localizações em tempo de execução denotadas pelos nomes.</p>
+<p>Um <strong>identificador</strong> é uma cadeia de caracteres, normalmente letras ou dígitos, que se refere a (identifica) uma entidade, como um objeto de dados, um procedimento, uma classe ou um tipo. Todos os identificadores são nomes, mas nem todos os nomes são identificadores. Os nomes também podem ser expressões. Por exemplo, o nome <code>x.y</code> poderia designar o campo <code>y</code> de uma estrutura representada por <code>x</code>. Neste contexto, <code>x</code> e <code>y</code> são identificadores, enquanto <code>x.y</code> é um nome, mas não um identificador. Nomes compostos como <code>x.y</code> são chamados de <strong>nomes qualificados</strong>.</p>
+<p>Uma <strong>variável</strong> refere-se a um endereço particular de memória. É comum que o mesmo identificador seja declarado mais de uma vez, sendo que cada declaração introduz uma nova variável. Mesmo que cada identificador seja declarado apenas uma vez, um identificador local a um procedimento recursivo continuará referindo-se a diferentes endereços de memória em diferentes momentos.</p>
+<p>Tecnicamente, o compilador C atribuirá um endereço na memória virtual para o <code>i</code> global, deixando para o carregador e para o sistema operacional determinar onde <code>i</code> estará localizado na memória física da máquina. No entanto, não devemos ficar preocupados com questões de “relocação” como estas, que não causam impacto na compilação. Em vez disso, vamos tratar o espaço de endereços que o compilador usa para o seu código de saída como se fosse localizações da memória física. O comando <code>#define ARRAYSIZE 1000</code> vincula estaticamente o nome <code>ARRAYSIZE</code> ao valor <code>1000</code>. Podemos determinar esse vínculo examinando o comando, e sabemos que é impossível que esse vínculo mude quando o programa for executado.</p>
+<h1 id="163-escopo-estático-e-estrutura-de-blocos">1.6.3 Escopo Estático e Estrutura de Blocos</h1>
+<p>A maioria das linguagens, incluindo C e sua família, utiliza <strong>escopo estático</strong>. As regras de escopo para C são baseadas na estrutura do programa; o escopo de uma declaração é determinado implicitamente pelo local onde a declaração aparece no programa. Outras linguagens mais modernas, como C++, Java e C#, também oferecem controle explícito sobre escopos, por meio de palavras-chave como <code>public</code>, <code>private</code> e <code>protected</code>.</p>
+<p>Nesta seção, consideramos as regras de escopo estático para uma linguagem com blocos, onde um <strong>bloco</strong> é um agrupamento de declarações e comandos. C utiliza chaves <code>{</code> e <code>}</code> para delimitar um bloco; o uso alternativo de <code>begin</code> e <code>end</code> para a mesma finalidade teve origem na linguagem Algol.</p>
+<h2 id="exemplo-15-política-de-escopo-estático-de-c">Exemplo 1.5: Política de Escopo Estático de C</h2>
+<p>Para uma primeira visão, a política de escopo estático de C é a seguinte:</p>
+<ol>
+<li>Um programa C consiste em uma sequência de <strong>declarações globais</strong> (top-level) de variáveis e funções.</li>
+<li>As funções podem conter declarações de variável; estas variáveis incluem as <strong>variáveis locais</strong> e <strong>parâmetros</strong>. O escopo de cada declaração desse tipo é restrito à função em que ela aparece.</li>
+</ol>
+<h3 id="procedimentos-funções-e-métodos">Procedimentos, Funções e Métodos</h3>
+<p>Para evitar dizer “procedimentos, funções ou métodos” toda vez que quisermos falar sobre um subprograma que pode ser chamado, normalmente nos referimos a todos eles como <strong>“procedimentos”</strong>. A exceção é que, quando se fala explicitamente de programas em linguagens como C, que só possuem funções, nos referimos a eles como <strong>“funções”</strong>. Ou, se estivermos discutindo sobre uma linguagem como Java, que possui apenas métodos, também usamos esse termo.</p>
+<ul>
+<li>Uma <strong>função</strong> geralmente retorna um valor de algum tipo (o “tipo de retorno”), enquanto um <strong>procedimento</strong> não retorna nenhum valor.</li>
+<li>A linguagem C e outras semelhantes, que possuem apenas funções, tratam os procedimentos como funções, mas com um tipo de retorno especial <strong>“void”</strong>, que significa nenhum valor de retorno.</li>
+<li>As linguagens orientadas por objeto, como Java e C++, utilizam o termo <strong>“métodos”</strong>. Estes podem comportar-se como funções ou procedimentos, mas estão associados a uma classe em particular.</li>
+</ul>
+<ol start="3">
+<li>O escopo de uma <strong>declaração global</strong> de um nome <code>x</code> consiste de todo o programa que se segue, com a exceção dos comandos que estão dentro de uma função que também possui uma declaração de <code>x</code>.</li>
+</ol>
+<p>O detalhe adicional em relação à política de escopo estático de C trata de declarações de variável dentro de comandos. Examinamos essas declarações em seguida e no Exemplo 1.6.</p>
+<h2 id="sintaxe-dos-blocos-em-c">Sintaxe dos Blocos em C</h2>
+<p>Em C, a sintaxe dos blocos é dada por:</p>
+<ol>
+<li><strong>Bloco</strong> é um tipo de comando. Os blocos podem aparecer em qualquer lugar em que outros tipos de comandos (como os comandos de atribuição) podem aparecer.</li>
+<li>Um bloco é uma sequência de <strong>declarações</strong> seguida por uma sequência de <strong>comandos</strong>, todos entre chaves <code>{</code> e <code>}</code>.</li>
+</ol>
+<p>Observe que essa sintaxe permite que os blocos sejam <strong>aninhados</strong> um dentro do outro. Essa propriedade de encaixamento é chamada de <strong>estrutura de bloco</strong>. A família de linguagens C possui estrutura de bloco, exceto pelo fato de que uma função não pode ser definida dentro de outra função.</p>
+<h3 id="regra-de-escopo-estático">Regra de Escopo Estático</h3>
+<p>Dizemos que uma declaração <code>D</code> “pertence” a um bloco <code>B</code> se <code>B</code> for o bloco aninhado mais próximo contendo <code>D</code>; ou seja, <code>D</code> está localizada dentro de <code>B</code>, mas não dentro de qualquer bloco que esteja aninhado dentro de <code>B</code>.</p>
+<p>A regra de escopo estático para declarações de variável em uma linguagem com estrutura de bloco é a seguinte: se a declaração <code>D</code> do nome <code>x</code> pertence ao bloco <code>B</code>, então o escopo de <code>D</code> é todo o <code>B</code>, exceto por quaisquer blocos <code>B’</code> aninhados em qualquer profundidade dentro de <code>B</code>, em que <code>x</code> é redeclarado. Aqui, <code>x</code> é redeclarado em <code>B’</code> se alguma outra declaração <code>D’</code> com o mesmo nome <code>x</code> pertencer a <code>B’</code>.</p>
+<p>Uma forma equivalente de expressar essa regra é focar um uso de um nome <code>x</code>. Considere que <code>B1, B2, ..., Bk</code> sejam todos os blocos que envolvem esse uso de <code>x</code>, com <code>Bk</code> sendo o menor, aninhado dentro de <code>Bk-1</code>, que está aninhado dentro de <code>Bk-2</code>, e assim por diante. Procure o maior <code>i</code> de modo que haja uma declaração de <code>x</code> pertencente a <code>Bi</code>. Esse uso de <code>x</code> refere-se à declaração <code>Bi</code>. Alternativamente, esse uso de <code>x</code> está dentro do escopo da declaração em <code>Bi</code>.</p>
+<h2 id="exemplo-16-blocos-em-um-programa-c">Exemplo 1.6: Blocos em um Programa C++</h2>
+
+
+  <pre><code class="language-cpp">main() {
+    int a = 1; // B1
+    int b = 1; // B1
+    {
+        int b = 2; // B2
+        {
+            int a = 3; // B3
+            cout &lt;&lt; a &lt;&lt; b; // Imprime: 3 2
+        }
+        {
+            int b = 4; // B4
+            cout &lt;&lt; a &lt;&lt; b; // Imprime: 1 4
+        }
+        cout &lt;&lt; a &lt;&lt; b; // Imprime: 1 2
+    }
+    cout &lt;&lt; a &lt;&lt; b; // Imprime: 1 1
+}</code></pre>
+ <p><strong>Figura 1.10</strong>: Blocos em um programa C++.</p>
+<ul>
+<li><strong>B1</strong>: Bloco principal.</li>
+<li><strong>B2</strong>: Bloco aninhado dentro de B1.</li>
+<li><strong>B3</strong>: Bloco aninhado dentro de B2.</li>
+<li><strong>B4</strong>: Bloco aninhado dentro de B2.</li>
+</ul>
+<p>O programa C++ na Figura 1.10 tem quatro blocos, com várias definições das variáveis <code>a</code> e <code>b</code>. Para facilitar, cada declaração inicia a sua variável com o número do bloco ao qual ela pertence.</p>
+<p>Por exemplo, considere a declaração <code>int a = 1</code> no bloco <code>B1</code>. Seu escopo é todo o <code>B1</code>, exceto por aqueles blocos aninhados (talvez profundamente) dentro de <code>B1</code> que têm sua própria declaração de <code>a</code>. <code>B2</code>, aninhado imediatamente dentro de <code>B1</code>, não possui uma declaração de <code>a</code>, mas <code>B3</code> possui. <code>B4</code> não possui uma declaração de <code>a</code>, de modo que o bloco <code>B3</code> é o único local no programa inteiro que está fora do escopo da declaração do nome <code>a</code> que pertence a <code>B1</code>. Ou seja, esse escopo inclui <code>B4</code> e todo o <code>B2</code>, exceto pela parte de <code>B2</code> que está dentro de <code>B3</code>.</p>
+<p>Os escopos de todas as cinco declarações são resumidos na <strong>Figura 1.11</strong>:</p>
+<table>
+  <thead>
+      <tr>
+          <th><strong>Declaração</strong></th>
+          <th><strong>Escopo</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>int a = 1</code></td>
+          <td><code>B1 - B3</code></td>
+      </tr>
+      <tr>
+          <td><code>int b = 1</code></td>
+          <td><code>B1</code></td>
+      </tr>
+      <tr>
+          <td><code>int b = 2</code></td>
+          <td><code>B2 - B4</code></td>
+      </tr>
+      <tr>
+          <td><code>int a = 3</code></td>
+          <td><code>B3</code></td>
+      </tr>
+      <tr>
+          <td><code>int b = 4</code></td>
+          <td><code>B4</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>Olhando por outro ângulo, vamos considerar o comando de saída no bloco <code>B4</code> e vincular as variáveis <code>a</code> e <code>b</code> usadas lá às declarações apropriadas. A lista de blocos envolventes, em ordem crescente de tamanho, é <code>B4</code>, <code>B2</code>, <code>B1</code>. Observe que <code>B3</code> não envolve o ponto em questão. <code>B4</code> contém uma declaração de <code>b</code>, portanto é a essa declaração que esse uso de <code>b</code> se refere, e o valor de <code>b</code> impresso é <code>4</code>. No entanto, <code>B4</code> não possui uma declaração de <code>a</code>, de modo que em seguida examinamos <code>B2</code>. Esse bloco também não tem uma declaração de <code>a</code>, então prosseguimos para <code>B1</code>. Felizmente, existe uma declaração <code>int a = 1</code> pertencente a esse bloco, portanto o valor impresso de <code>a</code> é <code>1</code>. Se não houvesse tal declaração, o programa apresentaria um erro.</p>
+<h2 id="164-controle-de-acesso-explícito">1.6.4 Controle de Acesso Explícito</h2>
+<p>Classes e estruturas introduzem um novo <strong>escopo</strong> para seus membros. Se <code>p</code> é um objeto de uma classe com um campo (membro) <code>x</code>, então o uso de <code>x</code> em <code>p.x</code> refere-se ao campo <code>x</code> na definição da classe. Em analogia com a estrutura de blocos, o escopo de uma declaração do membro <code>x</code> em uma classe <code>C</code> se estende a qualquer <strong>subclasse</strong> <code>C’</code>, exceto se <code>C’</code> tiver uma declaração local com o mesmo nome <code>x</code>.</p>
+<p>Com o uso de palavras-chave como <code>public</code>, <code>private</code> e <code>protected</code>, as linguagens orientadas por objeto, como <strong>C++</strong> ou <strong>Java</strong>, oferecem <strong>controle explícito</strong> sobre o acesso aos nomes de membros em uma superclasse. Essas palavras-chave admitem a <strong>encapsulação</strong> pela restrição do acesso:</p>
+<ul>
+<li><strong>Nomes privados</strong> recebem propositadamente um escopo que inclui apenas as declarações e definições de método associadas a essa classe e a quaisquer classes “amigas” (ou “friend”, o termo da C++).</li>
+<li><strong>Nomes protegidos</strong> são acessíveis às subclasses.</li>
+<li><strong>Nomes públicos</strong> são acessíveis de fora da classe.</li>
+</ul>
+<p>Em <strong>C++</strong>, uma definição de uma classe pode estar separada das definições de alguns ou de todos os seus métodos. Portanto, um nome <code>x</code> associado à classe <code>C</code> pode ter uma região do código que está <strong>fora do seu escopo</strong>, seguida por outra região (uma definição de método) que está <strong>dentro do seu escopo</strong>. De fato, as regiões dentro e fora do escopo podem alternar-se, até que todos os métodos tenham sido definidos.</p>
+<h2 id="declarações-e-definições">Declarações e Definições</h2>
+<p>Os termos aparentemente semelhantes <strong>“declaração”</strong> e <strong>“definição”</strong> para conceitos da linguagem de programação são, na realidade, bem diferentes:</p>
+<ul>
+<li><strong>Declarações</strong> dizem respeito aos <strong>tipos</strong> das construções.</li>
+<li><strong>Definições</strong> se referem aos seus <strong>valores</strong>. Definições têm o efeito de criar uma associação.</li>
+</ul>
+<p>Por exemplo:</p>
+<ul>
+<li><code>int i</code> é uma <strong>declaração</strong> de <code>i</code>.</li>
+<li><code>i = 1</code> é uma <strong>definição</strong> de <code>i</code>.</li>
+</ul>
+<p>A diferença é mais significativa quando tratamos de métodos ou outros procedimentos. Em <strong>C++</strong>, um método é <strong>declarado</strong> em uma definição de classe, dando os tipos dos argumentos e resultado do método (normalmente chamado de <strong>assinatura do método</strong>). O método é então <strong>definido</strong>, ou seja, o código para executar o método é dado em outro local. De modo semelhante, é comum definir uma função <strong>C</strong> em um arquivo e declará-la em outros arquivos, onde a função é usada.</p>
+<h1 id="165-escopo-dinâmico">1.6.5 Escopo Dinâmico</h1>
+<p>Tecnicamente, qualquer política de escopo é <strong>dinâmica</strong> se for baseada em fatores que possam ser conhecidos apenas quando o programa é executado. O termo <strong>escopo dinâmico</strong>, porém, normalmente se refere à seguinte política: um uso de um nome <code>x</code> se refere à <strong>declaração de <code>x</code></strong> no procedimento chamado mais recentemente com tal declaração. O escopo dinâmico desse tipo aparece apenas em situações especiais. Vamos considerar dois exemplos de políticas dinâmicas: <strong>expansão de macro</strong> no pré-processador <strong>C</strong> e <strong>resolução de método</strong> na programação orientada por objeto.</p>
+<h2 id="exemplo-17-macro-com-escopo-dinâmico">Exemplo 1.7: Macro com Escopo Dinâmico</h2>
+
+
+  <pre><code class="language-c">#define a (x&#43;1)
+int x = 2;
+void b() { int x = 1; printf(&#34;%d\n&#34;, a); }
+void c() { printf(&#34;%d\n&#34;, a); }
+void main() { b(); c(); }</code></pre>
+ <p><strong>Figura 1.12</strong>: Uma macro cujos nomes precisam ter escopo dinâmico.</p>
+<p>Na verdade, para interpretar <code>x</code>, temos de usar a regra usual de <strong>escopo dinâmico</strong>. Examinamos todas as chamadas de função que estão atualmente ativas e pegamos a função chamada mais recentemente que tenha uma declaração de <code>x</code>. É a essa declaração que o uso de <code>x</code> se refere.</p>
+<p>No exemplo da Figura 1.12:</p>
+<ul>
+<li>A função <code>main</code> chama primeiramente a função <code>b</code>. Quando <code>b</code> executa, ela imprime o valor da macro <code>a</code>. Como <code>(x+1)</code> precisa ser substituído por <code>a</code>, resolvemos esse uso de <code>x</code> para a declaração <code>int x = 1</code> na função <code>b</code>. O motivo é que <code>b</code> possui uma declaração de <code>x</code>, de modo que o <code>(x+1)</code> no <code>printf</code> de <code>b</code> se refere a esse <code>x</code>. Assim, o valor impresso é <code>2</code>.</li>
+<li>Depois que <code>b</code> termina e <code>c</code> é chamada, precisamos novamente imprimir o valor da macro <code>a</code>. Porém, o único <code>x</code> acessível a <code>c</code> é o <code>x</code> global. A instrução <code>printf</code> em <code>c</code>, portanto, refere-se a essa declaração de <code>x</code>, e o valor <code>3</code> é impresso.</li>
+</ul>
+<h2 id="analogia-entre-escopo-estático-e-dinâmico">Analogia entre Escopo Estático e Dinâmico</h2>
+<p>Embora possa haver diversas políticas para o escopo estático ou dinâmico, existe um relacionamento interessante entre a regra de escopo estático normal (estruturado em bloco) e a política dinâmica normal. De certa forma, a regra dinâmica está para o <strong>tempo</strong> assim como a regra estática está para o <strong>espaço</strong>. Enquanto a regra estática nos pede para encontrar a declaração cuja unidade (bloco) cerca mais de perto a <strong>localização física</strong> do uso, a regra dinâmica nos pede para encontrar a declaração cuja unidade (chamada de procedimento) cerca mais de perto o <strong>tempo do uso</strong>.</p>
+<p>A resolução do <strong>escopo dinâmico</strong> também é essencial para <strong>procedimentos polimórficos</strong>, aqueles que possuem duas ou mais definições para o mesmo nome, dependendo apenas dos tipos dos argumentos. Em algumas linguagens, como <strong>ML</strong>, é possível determinar estaticamente os tipos para todos os usos dos nomes, nos quais o compilador pode substituir cada uso de um procedimento de nome <code>p</code> por uma referência ao código para o procedimento apropriado. Porém, em outras linguagens, como <strong>Java</strong> e <strong>C++</strong>, há ocasiões em que o compilador não pode fazer essa determinação.</p>
+<h2 id="exemplo-18-resolução-de-método-em-programação-orientada-por-objeto">Exemplo 1.8: Resolução de Método em Programação Orientada por Objeto</h2>
+<p>Um recurso que distingue a programação orientada por objeto é a capacidade de cada objeto invocar o <strong>método apropriado</strong> em resposta a uma mensagem. Em outras palavras, o procedimento chamado quando <code>x.m()</code> é executado depende da <strong>classe de objeto</strong> denotada por <code>x</code> naquele momento. Um exemplo típico é o seguinte:</p>
+<ol>
+<li>Existe uma classe <code>C</code> com um método chamado <code>m()</code>.</li>
+<li>Há uma subclasse de <code>C</code>, e <code>D</code> tem seu próprio método chamado <code>m()</code>.</li>
+<li>Existe um uso de <code>m</code> na forma <code>x.m()</code>, onde <code>x</code> é um objeto da classe <code>C</code>.</li>
+</ol>
+<p>Normalmente, é impossível saber durante a compilação se <code>x</code> será da classe <code>C</code> ou da subclasse <code>D</code>. Se a aplicação do método ocorre várias vezes, é altamente provável que algumas sejam sobre objetos indicados por <code>x</code> que estão na classe <code>C</code>, mas não <code>D</code>, enquanto outras estarão na classe <code>D</code>. Somente no momento da execução é que pode ser decidida qual definição de <code>m</code> é a correta. Assim, o código gerado pelo compilador precisa determinar a classe do objeto <code>x</code> e chamar um ou outro método denominado <code>m</code>.</p>
+<h1 id="166-mecanismos-de-passagem-de-parâmetros">1.6.6 Mecanismos de Passagem de Parâmetros</h1>
+<p>Todas as linguagens de programação possuem a noção de <strong>procedimento</strong>, mas elas podem diferir no modo como esses procedimentos recebem seus argumentos. Nesta seção, vamos considerar como os <strong>parâmetros reais</strong> (os parâmetros usados na chamada de um procedimento) estão associados aos <strong>parâmetros formais</strong> (aqueles usados na definição do procedimento). O mecanismo utilizado determina como o código na sequência de chamada trata os parâmetros. A grande maioria das linguagens utiliza <strong>chamada por valor</strong>, <strong>chamada por referência</strong>, ou ambas. Vamos explicar esses termos, além de outro método, conhecido como <strong>chamada por nome</strong>, cujo principal interesse é histórico.</p>
+<h2 id="chamada-por-valor">Chamada por Valor</h2>
+<p>Na <strong>chamada por valor</strong>, o parâmetro real é <strong>avaliado</strong> (se for uma expressão) ou <strong>copiado</strong> (se for uma variável). O valor é armazenado em uma localização pertencente ao parâmetro formal correspondente do procedimento chamado. Esse método é usado em <strong>C</strong> e <strong>Java</strong>, e é uma opção comum em <strong>C++</strong>, bem como na maioria das outras linguagens. A chamada por valor tem o efeito de que toda a computação envolvendo os parâmetros formais feita pelo procedimento chamado é <strong>local</strong> a esse procedimento, e os próprios parâmetros reais não podem ser alterados.</p>
+<p>Observe, porém, que em <strong>C</strong> podemos passar um <strong>apontador</strong> a uma variável para permitir que a variável seja alterada pelo procedimento chamado. De forma semelhante, os nomes de <strong>arranjos</strong> passados como parâmetros em <strong>C</strong>, <strong>C++</strong> ou <strong>Java</strong> dão ao procedimento chamado o que é de fato um <strong>apontador</strong> ou uma <strong>referência</strong> para o próprio arranjo. Assim, se <code>a</code> é o nome de um arranjo do procedimento que chama, e ele é passado por valor ao parâmetro formal <code>x</code> correspondente, então uma atribuição como <code>x[i] = 2</code> na realidade muda o elemento do arranjo <code>a[2]</code>. A razão para isso é que, embora <code>x</code> receba uma cópia do valor de <code>a</code>, esse valor na realidade é um <strong>apontador</strong> para o início da área de armazenamento onde está localizado o arranjo chamado <code>a</code>.</p>
+<p>De forma semelhante, em <strong>Java</strong>, muitas variáveis são na realidade <strong>referências</strong> (ou apontadores) para as construções que elas representam. Essa observação se aplica a arranjos, cadeias de caracteres e objetos de todas as classes. Embora <strong>Java</strong> utilize exclusivamente a chamada por valor, sempre que passamos o nome de um objeto a um procedimento chamado, o valor recebido por esse procedimento é na verdade um <strong>apontador</strong> para o objeto. Assim, o procedimento chamado é capaz de afetar o valor do próprio objeto.</p>
+<h2 id="chamada-por-referência">Chamada por Referência</h2>
+<p>Na <strong>chamada por referência</strong>, o <strong>endereço</strong> do parâmetro real é passado ao procedimento chamado como o valor do parâmetro formal correspondente. Os usos do parâmetro formal no código chamado são implementados seguindo-se esse apontador para o local indicado por quem chamou. As mudanças no parâmetro formal, portanto, aparecem como mudanças no parâmetro real.</p>
+<p>Porém, se o parâmetro real for uma <strong>expressão</strong>, então a expressão é avaliada antes da chamada, e seu valor é armazenado em um local próprio. As mudanças no parâmetro formal mudam essa localização, mas podem não ter efeito algum sobre os dados de quem chamou.</p>
+<p>A chamada por referência é usada para parâmetros <code>ref</code> em <strong>C++</strong> e é uma opção em muitas outras linguagens. Ela é quase essencial quando o parâmetro formal é um <strong>objeto</strong>, um <strong>arranjo</strong> ou uma <strong>estrutura grande</strong>. A razão para isso é que a chamada por valor estrita exige que quem chama copie o parâmetro real inteiro para o espaço pertencente ao parâmetro formal correspondente. Essa cópia é dispendiosa quando o parâmetro é grande. Conforme observamos ao discutir sobre a chamada por valor, linguagens como <strong>Java</strong> solucionam o problema passando arranjos, strings ou outros objetos copiando apenas uma <strong>referência</strong> a esses objetos. O efeito é que <strong>Java</strong> se comporta como se usasse a chamada por referência para qualquer coisa fora um tipo básico, como um número inteiro ou real.</p>
+<h2 id="chamada-por-nome">Chamada por Nome</h2>
+<p>Um terceiro mecanismo – a <strong>chamada por nome</strong> – era usado na antiga linguagem de programação <strong>Algol 60</strong>. Ele exige que o procedimento chamado seja executado como se o parâmetro formal fosse substituído literalmente pelo parâmetro real no código chamado, como se o parâmetro formal fosse uma <strong>macro</strong> significando o parâmetro real (renomeando nomes locais no procedimento chamado, para mantê-los distintos). Quando o parâmetro real é uma expressão, em vez de uma variável, ocorrem alguns comportamentos não intuitivos, motivo pelo qual esse mecanismo não tem a preferência da maioria atualmente.</p>
+<h1 id="167-sinônimos">1.6.7 Sinônimos</h1>
+<p>Existe uma consequência interessante da passagem de parâmetros na <strong>chamada por referência</strong> ou sua simulação, como em <strong>Java</strong>, onde as referências a objetos são passadas por valor. É possível que dois parâmetros formais se refiram ao <strong>mesmo local</strong>; tais variáveis são consideradas <strong>sinônimos</strong> (aliases) uma da outra. Como resultado, duas variáveis quaisquer, que correspondem a dois parâmetros formais distintos, também podem tornar-se sinônimos uma da outra.</p>
+<h2 id="exemplo-19-sinônimos-em-passagem-de-parâmetros">Exemplo 1.9: Sinônimos em Passagem de Parâmetros</h2>
+<p>Suponha que <code>a</code> seja um arranjo pertencente a um procedimento <code>p</code>, e <code>p</code> chama outro procedimento <code>q(x, y)</code> com uma chamada <code>q(a, a)</code>. Suponha também que os parâmetros sejam passados por valor, mas que os nomes de arranjo sejam na realidade referências às localizações onde o arranjo está armazenado, como em <strong>C</strong> ou em linguagens semelhantes. Agora, <code>x</code> e <code>y</code> se tornaram <strong>sinônimos</strong> um do outro. O ponto importante é que, se dentro de <code>q</code> houver uma atribuição do tipo <code>x[10] = 2</code>, então o valor de <code>y[10]</code> também se torna <code>2</code>.</p>
+<p>Acontece que entender os <strong>sinônimos</strong> e os mecanismos que os criam é essencial se um compilador tiver de otimizar um programa. Conforme veremos a partir do Capítulo 9, existem muitas situações em que só podemos otimizar o código se tivermos certeza de que certas variáveis <strong>não são sinônimos</strong> uma da outra. Por exemplo, poderíamos determinar que <code>x = 2</code> é o único local em que a variável <code>x</code> é atribuída. Nesse caso, podemos substituir um uso de <code>x</code> por um uso de <code>2</code>; por exemplo, substituir <code>a = x+3</code> pela atribuição mais simples <code>a = 5</code>. Mas suponha que existisse outra variável <code>y</code> que fosse um alias de <code>x</code>. Então a atribuição <code>y = 4</code> poderia ter um efeito inesperado ao alterar <code>x</code>. Isso também poderia significar que a substituição de <code>a = x+3</code> por <code>a = 5</code> seria um erro; o valor apropriado de <code>a</code> poderia ser <code>7</code> nesse caso.</p>
+<h1 id="referências">Referências</h1>
+<p>Para saber mais sobre o desenvolvimento das linguagens de programação que foram criadas e estiveram em uso por volta de 1967, incluindo <strong>Fortran</strong>, <strong>Algol</strong>, <strong>Lisp</strong> e <strong>Simula</strong>, ver [7]. Para estudar sobre as linguagens que foram criadas por volta de 1982, incluindo <strong>C</strong>, <strong>C++</strong>, <strong>Pascal</strong> e <strong>Smalltalk</strong>, ver [1].</p>
+<p>A <strong>GNU Compiler Collection</strong>, <strong>gcc</strong>, é uma ferramenta popular de código-fonte aberto de compiladores para <strong>C</strong>, <strong>C++</strong>, <strong>Fortran</strong>, <strong>Java</strong> e outras linguagens [2]. <strong>Phoenix</strong> é um kit de ferramentas de construção de compiladores que oferece uma estrutura integrada para a construção das fases de análise, geração e otimização de código dos compiladores discutidos neste livro [3].</p>
+<p>Para obter mais informações sobre conceitos de linguagem de programação, recomendamos [5 e 6]. Para ver mais sobre arquitetura de computadores e seu impacto sobre a compilação, sugerimos [4].</p>
+<ol>
+<li>BERGIN, T. J. e GIBSON R. G. <em>History of programming languages</em>. Nova York: ACM Press, 1996.</li>
+<li><a href="http://gcc.gnu.org/">http://gcc.gnu.org/</a>.</li>
+<li><a href="http://research.microsoft.com/phoenix/default.aspx">http://research.microsoft.com/phoenix/default.aspx</a>.</li>
+<li>HENNESSY, J. L. e PATTERSON D. A. <em>Computer organization and design: the hardware/software interface</em>. San Francisco: Morgan-Kaufmann, 2004.</li>
+<li>SCOTT, M. L. <em>Programming language pragmatics</em>. 2ed. São Francisco: Morgan-Kaufmann, 2006.</li>
+<li>SETHI, R. <em>Programming languages: concepts and constructs</em>. Addison-Wesley, 1996.</li>
+<li>WEXELBLAT, R. L. <em>History of programming languages</em>. Nova York: Academic Press, 1981.</li>
+</ol>
+
+    </div>
+    
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+    
+</article>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Inferência de Tipos em Rust e C&#43;&#43; | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Por que isso pode facilitar sua vida.">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/syntax.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-lisp.min.js"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    <div class="container">
+        
+        
+        <header class="site-header">
+    <div class="header-inner">
+        <div class="site-branding">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+        </div>
+        
+        <nav class="site-nav">
+            <ul>
+                
+                
+                <li>
+                    <a href="/page/about/" class="">
+                        About
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/page/contact/" class="">
+                        Contact
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header> 
+        
+        
+        
+        <main>
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Inferência de Tipos em Rust e C&#43;&#43;</h1>
+        <div class="post-meta">
+            
+            <time datetime="2025-07-18T23:18:18-03:00">
+                Fri, Jul 18, 2025
+            </time>
+            
+            
+            
+            
+            
+            <div class="post-tags">
+                
+                <a href="/tags/infer%C3%AAncia-de-tipos/" class="tag">Inferência de Tipos</a>
+                
+                <a href="/tags/programa%C3%A7%C3%A3o/" class="tag">Programação</a>
+                
+                <a href="/tags/rust/" class="tag">Rust</a>
+                
+                <a href="/tags/c&#43;&#43;/" class="tag">C&#43;&#43;</a>
+                
+                <a href="/tags/swift/" class="tag">Swift</a>
+                
+            </div>
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 8 min
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Por que isso pode facilitar sua vida.
+            </div>
+            
+        </div>
+    </header>
+    
+    <div class="post-content content-wrapper">
+        <p>Inferência de tipos é um recurso de muitas linguagens de programação que permite ao compilador descobrir o tipo de uma variável sem que você precise especificá-lo explicitamente. Este artigo explica como a inferência de tipos funciona em Rust e C++, por que eles são diferentes e o que isso significa para você como programador. Também faremos uma comparação divertida com Swift no final.</p>
+<p><img src="../post/images/retropc01.png" alt=""></p>
+<h2 id="o-que-é-inferência-de-tipos">O que é Inferência de Tipos?</h2>
+<p>Em programação, um <strong>tipo</strong> indica ao computador que tipo de dado uma variável contém — como um número, texto ou algo mais específico, como um endereço de e-mail. Em linguagens <strong>estaticamente tipadas</strong> como Rust e C++, você geralmente precisa especificar os tipos para que o compilador possa verificar se seu código faz sentido. A inferência de tipos facilita isso, permitindo que o compilador deduza o tipo com base em como você usa a variável, assim você não precisa escrevê-lo toda vez.</p>
+<p>Por exemplo, em C++, você pode escrever:</p>
+
+
+  <pre><code class="language-c">std::vector&lt;int&gt; get_vector(); // Uma função que retorna uma lista de inteiros
+int main() {
+    std::vector&lt;int&gt; v = get_vector(); // Diz explicitamente que v é um vetor de inteiros
+    auto w = get_vector();             // Deixa o compilador descobrir o tipo de w
+}</code></pre>
+ <p>Aqui, <code>auto</code> diz ao compilador para deduzir que <code>w</code> é um <code>std::vector&lt;int&gt;</code> com base no que <code>get_vector()</code> retorna. Isso economiza tempo, especialmente quando os tipos são longos ou complexos, como em lambdas (funções anônimas) que não têm um tipo nomeável. Rust faz algo semelhante, mas de uma maneira diferente, como veremos.</p>
+<p><img src="images/retropc02.png" alt=""></p>
+<h2 id="como-o-c-lida-com-inferência-de-tipos">Como o C++ Lida com Inferência de Tipos</h2>
+<p>No C++, a inferência de tipos é direta. Quando você usa <code>auto</code>, o compilador olha o valor atribuído a uma variável e usa isso para decidir o tipo. Por exemplo:</p>
+
+
+  <pre><code class="language-c">auto x = 42; // x é um int porque 42 é um int</code></pre>
+ <p>O C++ também tem <code>decltype</code>, que permite reutilizar o tipo de uma expressão existente:</p>
+
+
+  <pre><code class="language-c">auto x = 42;
+std::vector&lt;decltype(x)&gt; v; // v é um vetor de inteiros</code></pre>
+ <p>O compilador do C++ trabalha &ldquo;olhando para trás&rdquo;, usando informações de valores e funções já definidos para determinar os tipos. Ele processa o código linha por linha, resolvendo tipos com base no que já sabe. Isso significa que o compilador nunca tenta adivinhar como uma variável será usada no futuro para determinar seu tipo.</p>
+<p>Por exemplo, em C++, você não pode fazer algo assim e esperar que o compilador descubra o tipo com base em usos futuros:</p>
+
+
+  <pre><code class="language-c">auto x = {};
+foo(x); // Isso não funciona — o compilador não sabe o tipo de x</code></pre>
+ <p>Essa abordagem mantém as coisas previsíveis, mas exige que você seja mais explícito em alguns casos, especialmente com templates ou tipos complexos.</p>
+<p><img src="images/retropc03.png" alt=""></p>
+<h2 id="como-o-rust-lida-com-inferência-de-tipos">Como o Rust Lida com Inferência de Tipos</h2>
+<p>Rust usa um sistema chamado <strong>Hindley-Milner</strong>, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:</p>
+
+
+  <pre><code class="language-rust">fn foo(v: Vec&lt;i32&gt;) {} // Função que aceita um vetor de inteiros
+fn bar(v: Vec&lt;String&gt;) {} // Função que aceita um vetor de strings
+
+fn main() {
+    let x = Vec::new(); // Cria um vetor vazio
+    let y = Vec::new(); // Outro vetor vazio
+    foo(x); // x é deduzido como Vec&lt;i32&gt;
+    bar(y); // y é deduzido como Vec&lt;String&gt;
+}</code></pre>
+ <p>Aqui, <code>x</code> e <code>y</code> são inicializados da mesma forma, mas têm tipos diferentes porque o compilador olha como eles são usados (em <code>foo</code> e <code>bar</code>). Isso é poderoso, mas pode surpreender programadores acostumados com C++ ou Go, onde o tipo depende apenas do valor inicial.</p>
+<p>O Rust exige que os tipos sejam únicos e sem ambiguidades. Se o compilador não conseguir decidir o tipo ou encontrar uma contradição, ele gera um erro:</p>
+
+
+  <pre><code class="language-rust">fn bar(v: Vec&lt;String&gt;) {}
+fn main() {
+    let x: Vec&lt;i32&gt; = Vec::new(); // Especifica que x é Vec&lt;i32&gt;
+    bar(x); // ERRO: tipos incompatíveis, esperado Vec&lt;String&gt;
+}</code></pre>
+ <p>Essa abordagem faz com que o Rust pareça mais <strong>declarativo</strong>. Você não precisa especificar tipos em todos os lugares, porque o compilador conecta todas as pistas do seu código para entender o que você quer.</p>
+<h2 id="diferenças-práticas">Diferenças Práticas</h2>
+<p>As diferenças entre C++ e Rust têm grandes impactos:</p>
+<ul>
+<li><strong>C++</strong>: A inferência é local e limitada. O compilador usa apenas as informações disponíveis na linha atual, o que torna o comportamento previsível, mas exige mais anotações de tipo, especialmente com templates. Por exemplo, em C++20, você pode usar <code>auto</code> em parâmetros de função, que é apenas um atalho para templates:</li>
+</ul>
+
+
+  <pre><code class="language-c">auto twice(auto x) {
+    return x &#43; x; // Funciona para qualquer tipo com operador &#43;
+}</code></pre>
+ <p>Isso é semelhante a um template, mas não é exatamente inferência de tipos no sentido mais amplo.</p>
+<ul>
+<li><strong>Rust</strong>: A inferência é global e mais flexível. O compilador analisa todo o contexto, permitindo que você escreva menos anotações de tipo. Por exemplo:</li>
+</ul>
+
+
+  <pre><code class="language-rust">fn parse_strings_to_ints(v: Vec&lt;&amp;str&gt;) -&gt; Result&lt;Vec&lt;i64&gt;, ParseIntError&gt; {
+    v.into_iter()
+        .map(|x| x.parse())
+        .collect()
+}</code></pre>
+ <p>Aqui, o compilador deduz que <code>.parse()</code> retorna <code>Result&lt;i64, ParseIntError&gt;</code> através de um processo de inferência reversa: ele sabe que a função retorna um <code>Result&lt;Vec&lt;i64&gt;, ParseIntError&gt;</code> e, portanto, o <code>.collect()</code> deve coletar elementos do tipo <code>Result&lt;i64, ParseIntError&gt;</code>. Com base nisso, ele infere que o <code>.map</code> deve produzir esse tipo, o que por sua vez define o tipo de retorno de <code>x.parse()</code>.</p>
+<p>Essa flexibilidade do Rust permite coisas como a função <code>parse</code>, que converte uma string em qualquer tipo que você precisar (como um inteiro ou até um endereço IP), desde que o contexto deixe claro.</p>
+<p><img src="images/retropc04.png" alt=""></p>
+<h2 id="por-que-isso-importa-e-um-pouco-sobre-swift">Por que Isso Importa? (E um Pouco sobre Swift)</h2>
+<p>A abordagem do Rust funciona bem porque ele evita certos recursos que complicam a inferência de tipos, como:</p>
+<ul>
+<li><strong>Sem sobrecarga de funções</strong>: Diferente do C++, onde você pode ter várias funções com o mesmo nome, mas assinaturas diferentes, o Rust usa <strong>traits</strong> para evitar ambiguidades.</li>
+<li><strong>Sem conversões implícitas</strong>: O Rust não converte tipos automaticamente (como transformar um <code>int</code> em <code>float</code>), o que reduz confusão.</li>
+<li><strong>Sem herança</strong>: O Rust usa traits em vez de herança, simplificando a resolução de tipos.</li>
+<li><strong>Sem especialização</strong>: Você não pode criar implementações diferentes de uma função para tipos específicos, o que mantém o sistema de tipos mais simples.</li>
+</ul>
+<p>O C++ permite todos esses recursos, o que torna sua inferência de tipos mais limitada, mas também mais previsível em alguns casos. Agora, sobre o Swift: ele tenta combinar a inferência de tipos avançada (como a do Rust) com recursos como sobrecarga de funções e conversões implícitas. Isso pode levar a problemas. Por exemplo, em Swift, uma expressão simples como:</p>
+
+
+  <pre><code class="language-swift">let a: Double = -(1 &#43; 2) &#43; -(3 &#43; 4) &#43; -(5)</code></pre>
+ <p>Pode fazer o compilador travar com um erro de &ldquo;expressão muito complexa para ser verificada em tempo razoável&rdquo;. Isso acontece porque o Swift permite que literais (como <code>1</code>) sejam convertidos em muitos tipos diferentes, criando uma explosão de possibilidades que o compilador precisa verificar. <a href="https://www.rust-lang.org/">Rust</a> e <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> abordam a inferência de tipos de maneiras muito diferentes.</p>
+<p>O C++ é mais rígido, deduzindo tipos apenas com base no que está na linha atual, enquanto o Rust usa um sistema mais inteligente (<a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley-Milner</a>) que analisa o contexto todo. Isso torna o Rust mais flexível, mas exige que a linguagem evite recursos como sobrecarga de funções ou conversões implícitas para manter tudo sob controle.</p>
+<p><a href="https://www.swift.org/">Swift</a>, por outro lado, mostra o que acontece quando você tenta misturar tudo isso: o compilador pode ficar sobrecarregado. No final, a escolha entre esses sistemas reflete um equilíbrio entre flexibilidade, previsibilidade e desempenho do compilador. Se você gosta de C++ ou Rust, da próxima vez que quiser discutir linguagens de programação, que tal falar sobre inferência de tipos? É um tópico bem mais interessante do que apenas segurança ou sintaxe!</p>
+<h3 id="o-que-isso-muda-na-prática">O que isso muda na prática?</h3>
+<p>A forma como uma linguagem lida com a inferência de tipos tem um impacto direto no seu dia a dia como programador. A escolha entre sistemas como os de C++ e Rust reflete um compromisso entre flexibilidade, previsibilidade e o chamado &ldquo;custo cognitivo&rdquo;.</p>
+<ul>
+<li>
+<p><strong>Para o C++:</strong> A inferência é uma ferramenta de conveniência. Você a usa para evitar a repetição de tipos longos (<code>std::vector&lt;std::string&gt;::iterator</code>) ou para simplificar o código em situações específicas, como com lambdas. A previsibilidade de <code>auto</code> significa que você raramente terá surpresas — o tipo é sempre óbvio pela linha de código. No entanto, se o tipo for complexo ou se a expressão não fornecer informação suficiente, o compilador vai exigir que você seja explícito. Isso mantém o código robusto, mas pode levar a mais anotações de tipo.</p>
+</li>
+<li>
+<p><strong>Para o Rust:</strong> A inferência de tipos é um pilar da linguagem. Ela permite que você se concentre na lógica do seu programa, e não em como os dados fluem. Em vez de decorar o código com tipos, você escreve o que quer que aconteça, e o compilador &ldquo;conecta os pontos&rdquo;. Isso resulta em um código mais limpo e conciso, pois o compilador trabalha nos bastidores para garantir que tudo se encaixe. A contrapartida é que, quando algo dá errado, a mensagem de erro pode ser mais abstrata, pois o problema pode estar longe de onde o tipo deveria ser óbvio.</p>
+</li>
+</ul>
+<p>A história do <strong>Swift</strong>, que mencionei acima, nos mostra um perigo real: misturar um sistema de inferência avançado com recursos que criam ambiguidades (como sobrecarga e conversões implícitas) pode levar a um compilador que &ldquo;pensa demais&rdquo;, resultando em erros complexos e tempos de compilação longos.</p>
+<p>No fim das contas, a escolha da linguagem reflete um compromisso. Se você valoriza a previsibilidade e o controle explícito sobre cada tipo, a abordagem do C++ pode parecer mais confortável. Mas se você prefere um fluxo de trabalho onde a linguagem cuida da complexidade dos tipos, permitindo que você se concentre no que seu código faz, a filosofia de design do Rust se destacará.</p>
+<p>A inferência de tipos não é apenas uma característica; é uma decisão de design que molda a experiência de escrever, ler e depurar código. E, como vimos, as abordagens dessas linguagens são tão distintas quanto as filosofias que as criaram.</p>
+
+    </div>
+    
+    
+    <div class="post-comments">
+        <div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "scovl" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+    
+</article>
+
+        </main>
+        
+        
+        
+        <footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-content">
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+            
+            <div class="social-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="social-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                    RSS
+                </a>
+                
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="/js/code-escaper.js"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+</body>
+</html> 
+        
+    </div>
+    
+    
+    <script src="/js/main.js"></script>
+    
+    
+    
+</body>
+</html> 
