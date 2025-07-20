@@ -10,7 +10,7 @@ weight = 1
 
 Inferência de tipos é um recurso de muitas linguagens de programação que permite ao compilador descobrir o tipo de uma variável sem que você precise especificá-lo explicitamente. Este artigo explica como a inferência de tipos funciona em Rust e C++, por que eles são diferentes e o que isso significa para você como programador. Também faremos uma comparação divertida com Swift no final.
 
-![](../post/images/retropc01.png)	
+![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc01.png)	
 
 ## O que é Inferência de Tipos?
 
@@ -28,7 +28,7 @@ int main() {
 
 Aqui, `auto` diz ao compilador para deduzir que `w` é um `std::vector<int>` com base no que `get_vector()` retorna. Isso economiza tempo, especialmente quando os tipos são longos ou complexos, como em lambdas (funções anônimas) que não têm um tipo nomeável. Rust faz algo semelhante, mas de uma maneira diferente, como veremos.
 
-![](images/retropc02.png)	
+![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc02.png)	
 
 ## Como o C++ Lida com Inferência de Tipos
 
@@ -56,7 +56,7 @@ foo(x); // Isso não funciona — o compilador não sabe o tipo de x
 
 Essa abordagem mantém as coisas previsíveis, mas exige que você seja mais explícito em alguns casos, especialmente com templates ou tipos complexos.
 
-![](images/retropc03.png)	
+![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc03.png)	
 
 ## Como o Rust Lida com Inferência de Tipos
 
@@ -117,7 +117,7 @@ Aqui, o compilador deduz que `.parse()` retorna `Result<i64, ParseIntError>` atr
 
 Essa flexibilidade do Rust permite coisas como a função `parse`, que converte uma string em qualquer tipo que você precisar (como um inteiro ou até um endereço IP), desde que o contexto deixe claro.
 
-![](images/retropc04.png)	
+![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc04.png)	
 
 ## Por que Isso Importa? (E um Pouco sobre Swift)
 
