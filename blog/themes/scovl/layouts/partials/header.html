@@ -1,20 +1,20 @@
-<header class="site-header">
-    <div class="header-inner">
-        <div class="site-branding">
+<header class="header">
+    <div class="container">
+        <div class="header-content">
             <a href="{{ .Site.BaseURL }}" class="site-title">{{ .Site.Title }}</a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    {{ $currentPage := . }}
+                    {{ range .Site.Menus.main }}
+                    <li>
+                        <a href="{{ .URL | relLangURL }}" class="nav-link {{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
+                            {{ .Name }}
+                        </a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </nav>
         </div>
-        
-        <nav class="site-nav">
-            <ul>
-                {{ $currentPage := . }}
-                {{ range .Site.Menus.main }}
-                <li>
-                    <a href="{{ .URL | relLangURL }}" class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
-                        {{ .Name }}
-                    </a>
-                </li>
-                {{ end }}
-            </ul>
-        </nav>
     </div>
 </header> 

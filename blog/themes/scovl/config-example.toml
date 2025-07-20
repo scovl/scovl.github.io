@@ -1,0 +1,96 @@
+# Configuração de Exemplo para o Tema Scovl
+# Copie este arquivo para config.toml e personalize conforme necessário
+
+baseURL = "https://exemplo.com/"
+languageCode = "pt-BR"
+title = "Meu Blog"
+theme = "scovl"
+
+# Configurações do site
+[params]
+  # Informações básicas
+  description = "Um blog sobre tecnologia, desenvolvimento e inovação"
+  author = "Seu Nome"
+  
+  # Links sociais
+  github = "https://github.com/seu-usuario"
+  linkedin = "https://linkedin.com/in/seu-usuario"
+  email = "seu@email.com"
+  mastodon = "https://mastodon.social/@seu-usuario"
+  rss = "/index.xml"
+  
+  # Funcionalidades
+  readingTime = true
+  readingTimeText = "Tempo de leitura:"
+  
+  # Mermaid para diagramas
+  mermaid = true
+  [params.mermaid]
+    theme = "default"
+    align = "center"
+  
+  # JavaScript customizado
+  customJS = [
+    "js/analytics.js",
+    "js/custom.js"
+  ]
+
+# Configurações de menu
+[menu]
+  [[menu.main]]
+    name = "Início"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Posts"
+    url = "/post/"
+    weight = 2
+  [[menu.main]]
+    name = "Sobre"
+    url = "/page/about/"
+    weight = 3
+  [[menu.main]]
+    name = "Contato"
+    url = "/page/contact/"
+    weight = 4
+
+# Configurações de taxonomia
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# Configurações de paginação
+[params.pagination]
+  pagesPerSection = 10
+
+# Configurações de SEO
+[params.seo]
+  googleAnalytics = "UA-XXXXXXXXX-X"
+  googleTagManager = "GTM-XXXXXXX"
+  
+# Configurações de comentários
+[params.comments]
+  disqusShortname = "seu-disqus-shortname"
+
+# Configurações de compartilhamento
+[params.sharing]
+  twitter = true
+  facebook = true
+  linkedin = true
+
+# Configurações de busca
+[params.search]
+  enabled = true
+  placeholder = "Buscar posts..."
+
+# Configurações de tema escuro
+[params.darkMode]
+  enabled = true
+  auto = true  # Detectar preferência do sistema
+
+# Configurações de performance
+[params.performance]
+  lazyLoad = true
+  preloadFonts = true
+  minifyCSS = true
+  minifyJS = true 

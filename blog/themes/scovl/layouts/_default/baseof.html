@@ -5,25 +5,25 @@
     {{ partial "head.html" . }}
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        {{ block "header" . }}
-        {{ partial "header.html" . }}
-        {{ end }}
-        
-        <!-- Main content -->
-        <main>
+    <!-- Header -->
+    {{ block "header" . }}
+    {{ partial "header.html" . }}
+    {{ end }}
+    
+    <!-- Main content -->
+    <main>
+        <div class="container">
             {{ block "main" . }}{{ end }}
-        </main>
-        
-        <!-- Footer -->
-        {{ block "footer" . }}
-        {{ partial "footer.html" . }}
-        {{ end }}
-    </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    {{ block "footer" . }}
+    {{ partial "footer.html" . }}
+    {{ end }}
     
     <!-- JavaScript -->
-    <script src="{{ "js/main.js" | relURL }}"></script>
+    <script src="{{ "js/main-minimal.js" | relURL }}"></script>
     
     <!-- Custom JS from config if any -->
     {{ range .Site.Params.customJS }}

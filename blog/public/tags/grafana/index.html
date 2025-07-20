@@ -7,49 +7,12 @@
 <meta name="description" content="">
 
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/css/styles.css">
-<link rel="stylesheet" href="/css/syntax.css">
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-typescript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-rust.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-lisp.min.js"></script>
-
-
-
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false},
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ]
-        });
-    });
-</script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -65,39 +28,39 @@
  
 </head>
 <body>
+    
+    
+    <header class="header">
     <div class="container">
-        
-        
-        <header class="site-header">
-    <div class="header-inner">
-        <div class="site-branding">
+        <div class="header-content">
             <a href="http://localhost:1313/" class="site-title">scovl</a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    
+                    
+                    <li>
+                        <a href="/page/about/" class="nav-link ">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/page/contact/" class="nav-link ">
+                            Contact
+                        </a>
+                    </li>
+                    
+                </ul>
+            </nav>
         </div>
-        
-        <nav class="site-nav">
-            <ul>
-                
-                
-                <li>
-                    <a href="/page/about/" class="">
-                        About
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="/page/contact/" class="">
-                        Contact
-                    </a>
-                </li>
-                
-            </ul>
-        </nav>
     </div>
 </header> 
-        
-        
-        
-        <main>
+    
+    
+    
+    <main>
+        <div class="container">
             
 <div class="post-list">
     <h1 class="page-title">
@@ -181,70 +144,53 @@
     
 </div>
 
-        </main>
-        
-        
-        
-        <footer class="site-footer">
-    <div class="footer-inner">
+        </div>
+    </main>
+    
+    
+    
+    <footer class="footer">
+    <div class="container">
         <div class="footer-content">
-            <div class="copyright">
-                &copy; 2025 Vitor Lobo
-            </div>
-            
-            <div class="social-links">
+            <div class="footer-links">
                 
-                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="footer-link">
                     GitHub
                 </a>
                 
                 
                 
-                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="footer-link">
                     LinkedIn
                 </a>
                 
                 
                 
-                <a href="mailto:lobocode@gmail.com" class="social-link">
+                <a href="mailto:lobocode@gmail.com" class="footer-link">
                     Email
                 </a>
                 
 
                 
-                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="footer-link">
                     Mastodon
                 </a>
                 
 
                 
-                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="footer-link">
                     RSS
                 </a>
                 
-
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
             </div>
         </div>
     </div>
-</footer>
-
-
-<script src="/js/code-escaper.js"></script>
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
+</footer> 
     
-    if (typeof Prism !== 'undefined') {
-      Prism.highlightAll();
-    }
-  });
-</script>
-
-</body>
-</html> 
-        
-    </div>
     
     
     <script src="/js/main.js"></script>

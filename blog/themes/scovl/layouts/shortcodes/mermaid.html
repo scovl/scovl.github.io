@@ -1,0 +1,20 @@
+{{ $id := printf "mermaid-%d" .Ordinal }}
+{{ $align := .Get "align" | default "center" }}
+
+<div class="mermaid-container">
+    <div class="mermaid" id="{{ $id }}" style="text-align: {{ $align }};">
+        {{ .Inner }}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: '{{ .Get "theme" | default "default" }}',
+            align: '{{ $align }}'
+        });
+    }
+});
+</script> 

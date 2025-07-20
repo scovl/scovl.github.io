@@ -1,58 +1,41 @@
-<footer class="site-footer">
-    <div class="footer-inner">
+<footer class="footer">
+    <div class="container">
         <div class="footer-content">
-            <div class="copyright">
-                &copy; {{ now.Format "2006" }} {{ .Site.Copyright | default .Site.Title }}
-            </div>
-            
-            <div class="social-links">
+            <div class="footer-links">
                 {{ if .Site.Params.github }}
-                <a href="{{ .Site.Params.github }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="{{ .Site.Params.github }}" target="_blank" rel="noopener noreferrer" class="footer-link">
                     GitHub
                 </a>
                 {{ end }}
                 
                 {{ if .Site.Params.linkedin }}
-                <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="{{ .Site.Params.linkedin }}" target="_blank" rel="noopener noreferrer" class="footer-link">
                     LinkedIn
                 </a>
                 {{ end }}
                 
                 {{ if .Site.Params.email }}
-                <a href="mailto:{{ .Site.Params.email }}" class="social-link">
+                <a href="mailto:{{ .Site.Params.email }}" class="footer-link">
                     Email
                 </a>
                 {{ end }}
 
                 {{ if .Site.Params.mastodon }}
-                <a href="{{ .Site.Params.mastodon }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="{{ .Site.Params.mastodon }}" target="_blank" rel="noopener noreferrer" class="footer-link">
                     Mastodon
                 </a>
                 {{ end }}
 
                 {{ if .Site.Params.rss }}
-                <a href="{{ .Site.Params.rss }}" target="_blank" rel="noopener noreferrer" class="social-link">
+                <a href="{{ .Site.Params.rss }}" target="_blank" rel="noopener noreferrer" class="footer-link">
                     RSS
                 </a>
                 {{ end }}
-
+            </div>
+            
+            <div class="copyright">
+                &copy; {{ now.Format "2006" }} {{ .Site.Copyright | default .Site.Title }}
             </div>
         </div>
     </div>
-</footer>
-
-<!-- Code Escaper Script -->
-<script src="{{ "js/code-escaper.js" | relURL }}"></script>
-
-<!-- Prism.js Initialization -->
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // Ensure Prism highlights all code blocks
-    if (typeof Prism !== 'undefined') {
-      Prism.highlightAll();
-    }
-  });
-</script>
-
-</body>
-</html> 
+</footer> 
