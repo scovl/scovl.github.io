@@ -129,7 +129,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 8 min
+                Estimated reading time: 7 min
             </div>
             
             
@@ -173,7 +173,7 @@ foo(x); // Isso não funciona — o compilador não sabe o tipo de x</code></pre
  <p>Essa abordagem mantém as coisas previsíveis, mas exige que você seja mais explícito em alguns casos, especialmente com templates ou tipos complexos.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc03.png" alt=""></p>
 <h2 id="como-o-rust-lida-com-inferência-de-tipos">Como o Rust Lida com Inferência de Tipos</h2>
-<p>Rust usa um sistema chamado <strong>Hindley-Milner</strong>, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:</p>
+<p>Rust usa um sistema chamado <strong><a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley-Milner</a></strong>, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:</p>
 
 
   <pre><code class="language-rust">fn foo(v: Vec&lt;i32&gt;) {} // Função que aceita um vetor de inteiros
@@ -222,7 +222,7 @@ fn main() {
 <ul>
 <li><strong>Sem sobrecarga de funções</strong>: Diferente do C++, onde você pode ter várias funções com o mesmo nome, mas assinaturas diferentes, o Rust usa <strong>traits</strong> para evitar ambiguidades.</li>
 <li><strong>Sem conversões implícitas</strong>: O Rust não converte tipos automaticamente (como transformar um <code>int</code> em <code>float</code>), o que reduz confusão.</li>
-<li><strong>Sem herança</strong>: O Rust usa traits em vez de herança, simplificando a resolução de tipos.</li>
+<li><strong>Sem herança</strong>: O Rust usa <a href="https://doc.rust-lang.org/book/ch10-02-traits.html">traits</a> em vez de herança, simplificando a resolução de tipos.</li>
 <li><strong>Sem especialização</strong>: Você não pode criar implementações diferentes de uma função para tipos específicos, o que mantém o sistema de tipos mais simples.</li>
 </ul>
 <p>O C++ permite todos esses recursos, o que torna sua inferência de tipos mais limitada, mas também mais previsível em alguns casos. Agora, sobre o Swift: ele tenta combinar a inferência de tipos avançada (como a do Rust) com recursos como sobrecarga de funções e conversões implícitas. Isso pode levar a problemas. Por exemplo, em Swift, uma expressão simples como:</p>
@@ -231,7 +231,6 @@ fn main() {
   <pre><code class="language-swift">let a: Double = -(1 &#43; 2) &#43; -(3 &#43; 4) &#43; -(5)</code></pre>
  <p>Pode fazer o compilador travar com um erro de &ldquo;expressão muito complexa para ser verificada em tempo razoável&rdquo;. Isso acontece porque o Swift permite que literais (como <code>1</code>) sejam convertidos em muitos tipos diferentes, criando uma explosão de possibilidades que o compilador precisa verificar. <a href="https://www.rust-lang.org/">Rust</a> e <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> abordam a inferência de tipos de maneiras muito diferentes.</p>
 <p>O C++ é mais rígido, deduzindo tipos apenas com base no que está na linha atual, enquanto o Rust usa um sistema mais inteligente (<a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley-Milner</a>) que analisa o contexto todo. Isso torna o Rust mais flexível, mas exige que a linguagem evite recursos como sobrecarga de funções ou conversões implícitas para manter tudo sob controle.</p>
-<p><a href="https://www.swift.org/">Swift</a>, por outro lado, mostra o que acontece quando você tenta misturar tudo isso: o compilador pode ficar sobrecarregado. No final, a escolha entre esses sistemas reflete um equilíbrio entre flexibilidade, previsibilidade e desempenho do compilador. Se você gosta de C++ ou Rust, da próxima vez que quiser discutir linguagens de programação, que tal falar sobre inferência de tipos? É um tópico bem mais interessante do que apenas segurança ou sintaxe!</p>
 <h3 id="o-que-isso-muda-na-prática">O que isso muda na prática?</h3>
 <p>A forma como uma linguagem lida com a inferência de tipos tem um impacto direto no seu dia a dia como programador. A escolha entre sistemas como os de C++ e Rust reflete um compromisso entre flexibilidade, previsibilidade e o chamado &ldquo;custo cognitivo&rdquo;.</p>
 <ul>
