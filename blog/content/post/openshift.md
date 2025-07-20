@@ -1,8 +1,14 @@
 +++
 title = "OpenShift"
-description = "Arrumando a casa"
-date = 2019-06-08T19:47:57-03:00
+description = "Instalando e configurando On-Premise"
+date = 2025-07-19T19:47:57-03:00
 tags = [
+    "openshift",
+    "kubernetes",
+    "cri-o",
+    "linux",
+    "rhel",
+    "centos",
     "fedora",
 ]
 author = "Vitor Lobo Ramos"
@@ -10,53 +16,15 @@ weight = 6
 draft = true
 +++
 
-> Este material foi elaborado com o propósito de compreender melhor o funcionamento do OpenShift, e de plataformas agregadas. Se houver por minha parte alguma informação errada, por favor, entre em contato ou me mande um pull request em meu perfil no [github](https://github.com/scovl/scovl.github.io/blob/master/_posts/2018-06-25-openshift.md). As referências usadas para o estudo além da experiência prática, estarão no rodapé da página. Artigo em constante atualização e revisão.
-
----
-
-### CAPÍTULO 1 - O CONCEITO
-
-* **[Breve introdução](#breve-introducao)**
-* **[Plataforma em contêineres](#plataforma-em-conteineres)**
-* **[Casos de Uso](#casos-de-uso)**
-* **[Escalando Aplicações](#escalando-aplicacoes)**
-
-### CAPÍTULO 2 - PREPARANDO O AMBIENTE
-
-* **[Preparando para instalar o OpenShift](#preparando-para-instalar-o-openshift)**
-* **[Configurando o NetworkManager](#configurando-o-networkmanager)**
-* **[Instalando ferramentas no servidor master](#instalando-ferramentas-no-servidor-master)**
-* **[Configurando o conteiner storage](#configurando-o-conteiner-storage)**
-* **[Configurando o SElinux em seus nodes](#configurando-o-selinux-em-seus-nodes)**
-* **[Instalando o OpenShift](#instalando-o-openshift)**
-* **[Executando o Playbook](#executando-o-playbook)**
-
-### CAPÍTULO 3 - TEST DRIVE
-
-* **[Criando Projetos](#criando-projetos)**
-* **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
-* **[Trabalhando diretamente com docker](#trabalhando-diretamente-com-docker)**
-
-### CAPÍTULO 4 - APROFUNDANDO
-
-* **[Compreendendo o processo](#compreendendo-o-processo)**
-* **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
-* **[Um pouco sobre Docker](#um-pouco-sobre-docker)**
-* **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
-* **[O namespace MOUNT](#o-namespace-mount)**
-* **[O namespace UTS](#o-namespace-uts)**
-* **[O namespace PID](#o-namespace-pid)**
-
-
----
-
-### BREVE INTRODUCAO
-
 Imagine o seguinte cenário:
 
-Você contém diversos servidores rodando diversas aplicações em produção e homologação que precisam ser monitoradas, os deploy's precisam ser rápidos e eficientes com o menor risco possível de queda. Além disso a sua infraEstrutura precisa ser escalável, precisa suportar todas as requesições necessárias para atender à demanda esperada pelo cliente. Imagine este cenário com integração contínua, com deploy contínuo onde ao desenvolvedor, caberá apenas trabalhar com a ferramenta de controle de versão (git, svn, etc..). Imagine um sistema inteligente o suficiente para detectar alterações em código, falhas, ser capaz de voltar a versão automaticamente se algo der errado, ser capaz de escalar horizontalmente automaticamente se as requisições e os acessos aumentarem de repente, e também ser capaz de voltar ao seu estado normal assim que os acessos cessarem.
+Você contém diversos servidores rodando diversas aplicações em produção e homologação que precisam ser monitoradas, os deploy's precisam ser rápidos e eficientes com o menor risco possível de queda. Além disso a sua infraEstrutura precisa ser escalável, precisa suportar todas as requesições necessárias para atender à demanda esperada pelo cliente. Imagine este cenário com integração contínua, com deploy contínuo onde ao desenvolvedor, caberá apenas trabalhar com a ferramenta de controle de versão ([git](https://git-scm.com/), [svn](https://subversion.apache.org/), etc..). 
 
-Além de tudo isso, este sistema inteligente é capaz de prolongar a vida útil dos servidores por entrar em estado IDLE quando nenhuma requisição estiver rodando, e retornar ao estado normal a partir da primeira requisição. E tudo de maneira automática. Este sistema também é capaz de fazer canary teste, para descobrir a aceitação em produção de um determinado sistema. Imaginou o cenário? Pois bem, é sobre esta tecnologia que irei escrever aqui. Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o **[LXC](https://en.wikipedia.org/wiki/LXC)**.
+Imagine um sistema inteligente o suficiente para detectar alterações em código, falhas, ser capaz de voltar a versão automaticamente se algo der errado, ser capaz de escalar horizontalmente automaticamente se as requisições e os acessos aumentarem de repente, e também ser capaz de voltar ao seu estado normal assim que os acessos cessarem. Além de tudo isso, este sistema inteligente é capaz de prolongar a vida útil dos servidores por entrar em estado IDLE quando nenhuma requisição estiver rodando, e retornar ao estado normal a partir da primeira requisição. 
+
+E tudo de maneira automática. Este sistema também é capaz de fazer canary teste, para descobrir a aceitação em produção de um determinado sistema. Imaginou o cenário? Pois bem, é sobre esta tecnologia que irei escrever aqui. Devido ao crescimento da demanda por máquinas virtuais e grande dificuldade na operação desse ambiente, surgiu a necessidade de melhorar esse modelo. 
+
+Com isso empresas que buscam melhores soluções para administradores de sistemas, e desenvolvedores tanto do meio corporativo, quanto da própria comunidade, perceberam que não havia a necessidade de recriar um sistema complexo bastando apenas reutilizar alguns recursos da própria arquitetura e engenharia do kernel Linux. Lançando mão de uma funcionalidade nativa do Kernel Linux para facilitar a criação e gestão destes ambientes virtuais, eles conseguiram ótimos resultados. Assim surgiu o **[LXC](https://en.wikipedia.org/wiki/LXC)**.
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/lxc.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/lxc.png#center)
 
@@ -64,11 +32,50 @@ O Linux Container ou **[LXC](https://en.wikipedia.org/wiki/LXC)** como é mais c
 
 Essa implementação já introduzia a ideia de segregação de rede e limitação dos acessos de superusuários aos processos que passou a ser adotada com maiores funcionalidades pelas distribuições Linux. Posteriormente foi melhor definido em alguns sistemas como o **[AIX WPAR](https://en.wikipedia.org/wiki/Workload_Partitions)** e o **[Solaris Containers](https://en.wikipedia.org/wiki/Solaris_Containers)**. Nesses dois sistemas já havia o conceito de virtualização de sistema operacional, mas não o conceito de contêineres.
 
-Nas distribuições Linux o chroot era uma maneira fácil de criar uma jail para as conexões dos servidores FTP, mas acabou ficando mais conhecido pela sua vulnerabilidade do que pela sua segurança. Mais tarde o chroot acabou ajudando a cunhar um termo **[jailbreak](https://pt.wikipedia.org/wiki/Jailbreak_(iOS))**. A grande diferença entre o chroot e o LXC é o nível de segurança que se pode alcançar. Com relação à virtualização, a diferença está no fato do LXC não necessitar de uma camada de sistema operacional para cada aplicação. Ao comparar com a virtualização tradicional, fica mais claro que uma aplicação sendo executada em um LXC demanda muito menos recursos, consumindo menos espaço em disco, e com um nível de portabilidade difícil de ser alcançado por outras plataformas. Mas não foi só a adoção de desenvolvedores e administradores de sistemas que tornou essa tecnologia tão popular. A consolidação da virtualização no mercado e a crescente demanda por computação em nuvem criaram o ambiente perfeito para o LXC se espalhar rapidamente. Aplicações podem ser portadas direto do laptop do desenvolvedor, para o servidor de produção, ou ainda para uma instância virtual em uma nuvem pública ou privada.
+Nas distribuições Linux o chroot era uma maneira fácil de criar uma jail para as conexões dos servidores FTP, mas acabou ficando mais conhecido pela sua vulnerabilidade do que pela sua segurança. Mais tarde o chroot acabou ajudando a cunhar um termo **[jailbreak](https://pt.wikipedia.org/wiki/Jailbreak_(iOS))**. A grande diferença entre o chroot e o LXC é o nível de segurança que se pode alcançar. 
+
+Com relação à virtualização, a diferença está no fato do LXC não necessitar de uma camada de sistema operacional para cada aplicação. Ao comparar com a virtualização tradicional, fica mais claro que uma aplicação sendo executada em um LXC demanda muito menos recursos, consumindo menos espaço em disco, e com um nível de portabilidade difícil de ser alcançado por outras plataformas. Mas não foi só a adoção de desenvolvedores e administradores de sistemas que tornou essa tecnologia tão popular. A consolidação da virtualização no mercado e a crescente demanda por computação em nuvem criaram o ambiente perfeito para o LXC se espalhar rapidamente. Aplicações podem ser portadas direto do laptop do desenvolvedor, para o servidor de produção, ou ainda para uma instância virtual em uma nuvem pública ou privada.
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/docker.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/docker.png#center)
 
 Hoje um dos mais conhecidos LXC's do mercado é o **[Docker](https://pt.wikipedia.org/wiki/Docker_(programa))**, escrito em **[GO](https://golang.org/)**, que nasceu como um projeto open source da **[DotCloud](https://cloud.docker.com/)**, uma empresa de **[PaaS (Platform as a Service)](https://pt.wikipedia.org/wiki/Plataforma_como_servi%C3%A7o)** que apesar de estar mais interessada em utilizar LXC apenas em suas aplicações, acabou desenvolvendo um produto que foi muito bem aceito pelo mercado. Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de extender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift.
+
+### CAPÍTULO 1 - O CONCEITO
+
+* **[Plataforma em contêineres](#plataforma-em-conteineres)**
+* **[Casos de Uso](#casos-de-uso)**
+* **[Escalando Aplicações](#escalando-aplicacoes)**
+
+### CAPÍTULO 2 - PREPARANDO O AMBIENTE
+
+* **[Pré-requisitos Fundamentais](#pré-requisitos-fundamentais)**
+* **[Instalando as Ferramentas Necessárias](#instalando-as-ferramentas-necessárias)**
+* **[Criando o Arquivo de Configuração (install-config.yaml)](#criando-o-arquivo-de-configuração-install-configyaml)**
+* **[Obtendo o Pull Secret e a Chave SSH](#obtendo-o-pull-secret-e-a-chave-ssh)**
+
+### CAPÍTULO 3 - EXECUTANDO A INSTALAÇÃO DO CLUSTER
+
+* **[Gerando os Manifests de Instalação](#gerando-os-manifests-de-instalação)**
+* **[O Processo de Instalação Automatizado](#o-processo-de-instalação-automatizado)**
+* **[Verificando a Instalação e Acessando o Cluster](#verificando-a-instalação-e-acessando-o-cluster)**
+* **[Configuração Pós-Instalação](#configuração-pós-instalação)**
+
+### CAPÍTULO 4 - TEST DRIVE
+
+* **[Criando Projetos](#criando-projetos)**
+* **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
+* **[Trabalhando diretamente com CRI-O](#trabalhando-diretamente-com-cri-o)**
+
+### CAPÍTULO 5 - APROFUNDANDO
+
+* **[Compreendendo o processo](#compreendendo-o-processo)**
+* **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
+* **[Um pouco sobre CRI-O](#um-pouco-sobre-cri-o)**
+* **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
+* **[O namespace MOUNT](#o-namespace-mount)**
+* **[O namespace UTS](#o-namespace-uts)**
+* **[O namespace PID](#o-namespace-pid)**
+
 
 ---
 
@@ -78,25 +85,45 @@ Hoje um dos mais conhecidos LXC's do mercado é o **[Docker](https://pt.wikipedi
 
 Trata-se de uma plataforma que usa contêineres para gerar build, deploy, servir e orquestrar os aplicativos em execução dentro dele. Os contêineres contém todas as bibliotecas e códigos necessários para que as aplicações funcionem adequadamente e de maneira isolada. Existem basicamente, cinco tipos de recursos são isolados em contêineres. São eles:
 
-* Sistemas de arquivos montados.
-* Recursos de memória compartilhada.
-* Hostname e nome de domínio (dns).
-* Recursos de rede (endereço IP, endereço MAC, buffers de memória).
-* Contadores de processo.
+* **Sistemas de arquivos montados** - `/etc`, `/dev`, `/proc`, `/sys`, `/run`, `/var/run`
+* **Recursos de memória compartilhada** - `shmget()`, `shmctl()`, `shmat()`, `shmdt()`
+* **Hostname e nome de domínio (dns)** - `hostname`, `domainname`
+* **Recursos de rede (endereço IP, endereço MAC, buffers de memória)** - `ip`, `ifconfig`, `route`, `netstat`
+* **Contadores de processo** - `ps`, `top`, `htop`
 
-Embora o docker engine gerencie contêineres facilitando os recursos do kernel do Linux, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalável. Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O **[OpenShift](https://www.openshift.com/)** usa o **[Kubernetes](https://kubernetes.io)** como seu mecanismo de orquestração de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google. Em 2015, foi doado para a **[Cloud Native Computing Foundation](http://www.cncf.io)**.
+Embora o **[CRI-O](https://cri-o.io/)** (Container Runtime Interface) gerencie contêineres facilitando os recursos do **[kernel do Linux](https://www.kernel.org/)**, ele é limitado a um único sistema operacional no host. Para orquestrar contêineres em vários servidores com eficiência, é necessário usar um mecanismo de orquestração de contêineres. Isto é, um aplicativo que gerencia contêineres em tempo de execução em um cluster de hosts para fornecer uma plataforma de aplicativo escalável. 
 
-O Kubernetes emprega uma arquitetura master/node. Os servidores master do Kubernetes mantêm as informações sobre o cluster de servidores e os nodes executam as cargas de trabalho reais do aplicativo. A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. A baixo uma visão geral da arquitetura do Kubernetes:
+Existem alguns orquestradores conhecidos na comunidade e no mercado como o Rancher, Heroku, Apache Mesos, Docker Swarm, Kubernetes e o OpenShift. O **[OpenShift](https://www.openshift.com/)** 4.x usa o **[Kubernetes](https://kubernetes.io)** como seu mecanismo de orquestração de contêineres, mas com uma arquitetura significativamente redesenhada e o **[CRI-O](https://cri-o.io/)** como runtime padrão de contêineres. O Kubernetes é um projeto de código aberto que foi iniciado pelo Google e em 2015 foi doado para a **[Cloud Native Computing Foundation](https://www.cncf.io/)**.
+
+O **[OpenShift 4.x](https://www.openshift.com/)** introduz uma nova arquitetura baseada em **Operadores**, que são responsáveis por automatizar a instalação, atualização e gerenciamento do ciclo de vida dos componentes do cluster e das aplicações. Os Operadores substituem a arquitetura master/node tradicional por uma abordagem mais distribuída e resiliente, onde cada componente é gerenciado por seu próprio operador especializado.
+
+Esta arquitetura baseada em Operadores representa uma mudança fundamental no **[OpenShift 4.x](https://www.openshift.com/)**, automatizando todo o ciclo de vida não só das aplicações, mas do próprio cluster. Como veremos em detalhe no Capítulo 5, funções como atualizações, monitoramento e logging são gerenciadas por Operadores específicos que vêm por padrão na plataforma.
+
+**Principais componentes da arquitetura OpenShift 4.x:**
+
+* **Control Plane**: Gerenciado por operadores especializados (API Server, Controller Manager, Scheduler)
+* **Worker Nodes**: Nós de trabalho que executam as aplicações
+* **RHCOS**: Sistema operacional imutável baseado em Red Hat Enterprise Linux CoreOS
+* **CRI-O**: Runtime padrão de contêineres, mais leve e otimizado que o Docker
+* **Operators**: Automatizam a instalação, configuração e gerenciamento de componentes
+
+A grande vantagem de usar o OpenShift ao invés de seu concorrente Heroku, é que o OpenShift é gratuito, de código aberto, e roda tanto em rede pública, quanto em rede privada. O Heroku roda em plataforma fechada e somente em redes públicas. Abaixo uma visão geral da arquitetura do OpenShift 4.x:
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/2wzeZJt.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/2wzeZJt.png#center)
 
-> NOTA: Um NODE é uma máquina de trabalho no OpenShift, anteriormente conhecida como minion no Kubernetes. Um node pode ser uma máquina virtual ou física, dependendo do cluster. Cada node tem os serviços necessários para executar pods e é gerenciado pelos componentes principais. Os serviços em um node incluem [Docker](https://www.docker.com/what-docker), [kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) e [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/). Consulte a seção sobre nodes do Kubernetes no [documento de design da arquitetura](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/architecture/architecture.md#the-kubernetes-node) para obter mais detalhes.
+> NOTA: Um NODE é uma máquina de trabalho no OpenShift, anteriormente conhecida como minion no Kubernetes. Um node pode ser uma máquina virtual ou física, dependendo do cluster. Cada node tem os serviços necessários para executar pods e é gerenciado pelos componentes principais. Os serviços em um node incluem [CRI-O](https://cri-o.io/) (Container Runtime Interface), [kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) e [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/). No OpenShift 4.x, os nodes executam RHCOS (Red Hat Enterprise Linux CoreOS), um sistema operacional imutável otimizado para contêineres. Consulte a seção sobre nodes do Kubernetes no [documento de design da arquitetura](https://kubernetes.io/docs/concepts/architecture/nodes/) para obter mais detalhes.
 
-Para tirar proveito de todo o potencial de uma plataforma de contêiner como o Kubernetes, é necessário alguns componentes adicionais. O OpenShift usa o docker e o Kubernetes como ponto de partida e adiciona mais algumas ferramentas para proporcionar uma melhor experiência aos usuários. O OpenShift usa a arquitetura master/node do Kubernetes e partir daí, se expande para fornecer serviços adicionais.
+Para tirar proveito de todo o potencial de uma plataforma de contêiner como o Kubernetes, é necessário alguns componentes adicionais. O OpenShift 4.x usa o **CRI-O** como runtime padrão de contêineres, que é uma implementação mais leve e otimizada da Interface de Runtime de Contêiner (CRI) do Kubernetes. A partir do OpenShift 4.x, o CRI-O não é apenas uma opção, mas o **único runtime de contêiner suportado**, substituindo completamente o Docker. Esta foi uma decisão estratégica para ter um runtime mais leve, seguro e alinhado ao ciclo de vida do Kubernetes.
 
-Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando ocorre o deploy das aplicações, ou quando as imagens são atualizadas. Para ser eficaz, as imagens devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um **[DockerHub](https://hub.docker.com/)** local). No Kubernetes, os contêineres são criados nos nodes usando componentes chamados **pods**. Os pods são a menor unidade dentro de um cluster Kubernetes e nada mais é do que containers rodando dentro do seu cluster. Quando um aplicativo consiste em mais de um pods, o acesso ao aplicativo é gerenciado por meio de um componente chamado service.
+Como veremos em detalhe na seção "UM POUCO SOBRE CRI-O E O KERNEL LINUX", o CRI-O oferece vantagens significativas em termos de segurança, performance e integração nativa com Kubernetes. O OpenShift 4.x usa uma arquitetura baseada em operadores e controladores customizados, expandindo-se para fornecer serviços adicionais com maior resiliência e automação.
 
-Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. A camada de roteamento é um software balanceador de carga. Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
+Em uma plataforma de contêiner como o OpenShift, as imagens são criadas quando ocorre o deploy das aplicações, ou quando as imagens são atualizadas. Para ser eficaz, as imagens devem estar disponíveis rapidamente em todos os nodes em um cluster. Para tornar isto possível, o OpenShift inclui um registro de imagens integrado como parte de sua configuração padrão. O registro de imagem é um local central que pode servir imagens dos contêineres para vários locais (tipo um **[DockerHub](https://hub.docker.com/)** local). 
+
+No Kubernetes, os contêineres são criados nos nodes usando componentes chamados **pods**. Os pods são a menor unidade dentro de um cluster Kubernetes e nada mais é do que containers rodando dentro do seu cluster. O CRI-O gerencia esses contêineres de forma mais eficiente que o Docker, usando menos recursos e sendo mais otimizado para Kubernetes. 
+
+Quando um aplicativo consiste em mais de um pods, o acesso ao aplicativo é gerenciado por meio de um componente chamado service. Um service é um proxy que conecta vários pods e os mapeia para um endereço IP em um ou mais nodes no cluster. Os endereços IP podem ser difíceis de gerenciar e compartilhar, especialmente quando estão por trás de um firewall. O OpenShift ajuda a resolver esse problema fornecendo uma camada de roteamento integrada. 
+
+A camada de roteamento é um software balanceador de carga. Quando é feito um deploy de uma aplicação no OpenShift, um registro DNS é criado automaticamente para ele. Esse registro DNS é adicionado ao balanceador de carga, e o balanceador de carga faz interface com o serviço Kubernetes para lidar eficientemente com as conexões entre o deploy da aplicação e seus usuários. Dessa forma, não interessa saber o IP do pod uma vez que quando o container for derrubado e subir outro contêiner para substituí-lo, haverá outro IP em seu lugar.
 
 Nesse caso o registro DNS que fora criado automaticamente será nosso mapeamento de rede daquela respectiva aplicação. Com as aplicações sendo executadas em pods em vários nodes e solicitações de gerenciamento vindas do node master, há bastante comunicação entre os servidores em um cluster do OpenShift. Assim, você precisa ter certeza de que o tráfego está corretamente criptografado e que poderá separar quando necessário. Visão geral da arquitetura OpenShift:
 
@@ -129,9 +156,9 @@ expande as funcionalidades do Kubernetes, visite **[www.openshift.com/container-
 
 Se parar-mos para refletir um pouco sobre tecnologias que vieram com a proposta de isolar processos e serviços como os mainframes, e a revolução da virtualização onde várias máquinas virtuais podem ser executadas em um único servidor físico, podemos compreender melhor o rumo em que as tecnologias hoje tem avançado. Por exemplo, com máquinas virtuais, cada processo é isolado em sua própria máquina virtual. Como cada máquina virtual possui um sistema operacional completo e um kernel completo, ele deve ter todos os sistemas de arquivos necessários para um sistema operacional completo. Isso também significa que ele deve ser corrigido, gerenciado e tratado como uma infraestrutura tradicional. Contêineres são o próximo passo nessa evolução. Um contêiner contém tudo o que a aplicação precisa para rodar com sucesso. Como por exemplo:
 
-* Código-fonte ou o código compilado
-* Bibliotecas e aplicativos necessários para rodar corretamente
-* Configurações e informações sobre como conectar-se a fontes de dados compartilhadas
+* **Código-fonte ou o código compilado** 
+* **Bibliotecas e aplicativos necessários para rodar corretamente** 
+* **Configurações e informações sobre como conectar-se a fontes de dados compartilhadas** 
 
 Máquinas virtuais podem ser usadas para isolamento do processo:
 
@@ -174,7 +201,21 @@ Para aplicações stateless, escalar para cima e para baixo é simples. Como nã
 
 Se seus aplicativos forem stateful, o que significa que eles precisam armazenar ou recuperar dados compartilhados, como um banco de dados ou dados que um usuário carregou, então você precisará fornecer armazenamento persistente para eles. Esse armazenamento precisa ser ampliado e reduzido automaticamente em suas aplicações no OpenShift. Para aplicações com informações de estado, o armazenamento persistente é um componente-chave que deve ser totalmente integrado ao seu design.
 
-À medida que você começa a separar os aplicativos tradicionais e monolíticos em serviços menores que funcionam de forma eficaz em contêineres, você começará a visualizar suas necessidades de dados de uma maneira diferente. Esse processo é geralmente chamado de design de aplicativos como microsserviços. Integrando aplicativos stateful e stateless:
+À medida que você começa a separar os aplicativos tradicionais e monolíticos em serviços menores que funcionam de forma eficaz em contêineres, você começará a visualizar suas necessidades de dados de uma maneira diferente. Esse processo é geralmente chamado de design de aplicativos como microsserviços.
+
+**OpenShift Service Mesh (baseado em Istio):**
+
+Para gerenciar a comunicação, segurança e observabilidade entre microsserviços, o OpenShift oferece o **Service Mesh**, uma solução baseada no Istio que é instalada e gerenciada via Operador. O Service Mesh fornece:
+
+* **Comunicação entre Serviços**: Gerenciamento inteligente de tráfego entre microsserviços
+* **Segurança**: Autenticação e autorização automática entre serviços
+* **Observabilidade**: Monitoramento, logging e tracing distribuído
+* **Políticas de Rede**: Controle granular sobre como os serviços se comunicam
+* **Resiliência**: Circuit breakers, retry policies e fault injection
+
+O Service Mesh é especialmente útil em arquiteturas de microsserviços complexas, onde a comunicação entre serviços precisa ser gerenciada de forma centralizada e segura.
+
+Integrando aplicativos stateful e stateless:
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/cG69vhp.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/cG69vhp.png#center)
 
@@ -184,413 +225,763 @@ Como cada serviço é executado em seu próprio contêiner, os serviços podem s
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/8sPOhGu.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/8sPOhGu.png#center)
 
-Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o docker e o Kubernetes. Osbenefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.
+Isso nos leva ao fim do nosso passo inicial inicial do OpenShift e como ele implementa, gerencia e orquestra os aplicativos implantados com contêineres usando o CRI-O e o Kubernetes. Os benefícios fornecidos pelo OpenShift economizam tempo para humanos e usam os recursos do servidor com mais eficiência. Além disso, a natureza de como os contêineres funcionam oferece melhor escalabilidade e velocidade de implantação em relação às implantações de máquinas virtuais.
 
 ---
 
-### PREPARANDO PARA INSTALAR O OPENSHIFT
+## CAPÍTULO 2 - PREPARANDO O AMBIENTE DE INSTALAÇÃO
 
-Para este artigo, usarei a distribuição GNU/Linux Centos 7. Ele pode ser executado em servidores físicos, máquinas virtuais (VMs) ou VMs em uma nuvem pública, como o Amazon Web Services (AWS) EC2 ou Google Cloud. Essa instalação deve levar aproximadamente uma hora, dependendo da velocidade da sua conexão com a Internet. Na maior parte do tempo configurando o OpenShift, darei ênfase à linha de comando para controlar o cluster. Para instalar o `oc`, você precisará ser super usuário, ou ter acesso ao **root**. Para compreender melhor do que se trata o comando `oc`, recomendo acessar **[https://goo.gl/9n8DbQ](https://goo.gl/9n8DbQ)** documentação completa do comando `oc`. A configuração padrão do OpenShift usa a porta **TCP 8443** para acessar a API, e a interface Web. Acessaremos o servidor master nessa porta.
+O processo de instalação do OpenShift 4.x é fundamentalmente diferente das versões anteriores. O OpenShift Installer automatiza grande parte do processo, mas requer uma preparação adequada do ambiente. Este capítulo aborda os pré-requisitos essenciais para uma instalação bem-sucedida.
 
-Para garantir que o cluster possa se comunicar adequadamente, várias portas TCP e UDP precisam estar abertas no master e nos nodes. Você poderá encontrar mais detalhes em **[https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#required-ports)**. Em nosso caso, faremos isto de maneira mais simples. Por exemplo, caso você esteja criando este ambiente uma rede isolada, como em seu laptop, poderá deixar todas as portas abertas. Ou se preferir, abaixo uma lista de portas que usaremos inicialmente:
+### PRÉ-REQUISITOS FUNDAMENTAIS
 
-![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/SH20A4i.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/SH20A4i.png#center)
+#### **1. Sistema de Desenvolvimento**
+Como o RHCOS é um sistema imutável, todas as ferramentas de instalação devem ser executadas em um sistema de desenvolvimento separado (laptop, servidor de jump host, ou VM dedicada). Este sistema deve ter:
 
-No OpenShift, os hostnames para todos os nodes devem ter um registro DNS. Isso permite que o tráfego criptografado rede entre os nodes funcione corretamente. Basicamente você precisará configurar um **[registro DNS curinga](https://tools.ietf.org/html/rfc4592)** que apontará para o seu cluster afim de acessar os aplicativos que você implementar futuramente. Se você já tem um servidor DNS já resolve a questão. Caso contrário, você poderá usar o domínio **[nip.io](nip.io)**.
+* **Sistema Operacional**: RHEL 8/9, CentOS 8/9, ou Ubuntu 20.04+
+* **Conectividade de Rede**: Acesso à internet para download de imagens
+* **Recursos Mínimos**: 4GB RAM, 20GB disco, 2 vCPUs
+* **Ferramentas**: Python 3, curl, wget, tar
 
-> NOTA: Se você tem experiência com servidores Linux, poderá estar se perguntando: "Por que não posso simplesmente usar o arquivo `/etc/hosts` para este fim? A resposta é bem simples: esta configuração só funcionaria bem em um host pois não há propagação do DNS na rede. Serviria bem para um Minishift por exemplo. Mas para clusters distribuídos, o melhor é ter um DNS propagado.
+#### **2. RHCOS e Infraestrutura Imutável**
 
-O domínio **[nip.io](http://nip.io/)** quebra um galho enorme neste aspecto. Em vez de configurar e gerenciar um servidor DNS, você poderá criar registros DNS que resolvam qualquer endereço IP escolhido. A única desvantagem do **[nip.io](http://nip.io/)** em comparação ao um servidor DNS próprio, é que você dependerá do acesso á Internet. O único requisito para nossa instalação, no entanto, é que todos os seus servidores possam acessar um servidor DNS público. Como tenho que escolher qual DNS usarei para este artigo, então, escolhi usar o **[nip.io](http://nip.io/)**.  A baixo, um exemplo do que poderemos configurar como modelo:
+O **Red Hat Enterprise Linux CoreOS (RHCOS)** representa uma mudança fundamental na arquitetura do OpenShift 4.x. Diferente do OpenShift 3.x, onde os administradores gerenciam manualmente o sistema operacional base (RHEL), no OpenShift 4.x o RHCOS é gerenciado automaticamente pelo próprio cluster através do **Machine Config Operator (MCO)**.
 
-![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/LKIgIoQ.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/LKIgIoQ.png#center)
+**Principais características da infraestrutura imutável:**
 
-O CentOS 7 com o OpenShift terá endereço IP estático para garantir que o DNS e os hostnames configurados funcionem de maneira consistente. Se você não usasse endereço IP estático, seria necessário gerenciar um servidor DHCP em seu ambiente o que de todo modo não é uma boa prática.
+* **Sistema Imutável**: O sistema de arquivos raiz é somente leitura, garantindo consistência e segurança
+* **Gerenciamento Automático**: Atualizações e configurações são gerenciadas pelo cluster OpenShift
+* **Sem Acesso Manual**: Não se deve fazer login nos nós para instalar pacotes ou alterar configurações manualmente
+* **Configuração Declarativa**: Todas as mudanças são feitas através de MachineConfigs aplicados pelo MCO
+* **Atualizações Atômicas**: O RPM-OSTree permite atualizações atômicas e rollbacks seguros
 
-> NOTA: O servidor DNS que estamos usando é o 8.8.8.8, que é um dos servidores DNS públicos do Google. Você pode usar qualquer servidor DNS que desejar, mas, para funcionar, ele deve resolver consultas DNS públicas para o domínio nip.io.
+**Machine Config Operator (MCO):**
 
-Consulte os **[requisitos oficiais de hardware](https://docs.openshift.org/3.6/install_config/install/prerequisites.html#system-requirements)** para a instalação do OpenShift Origin. Eles são baseados na premissa de que você montará um cluster grande em produção. Em nosso caso, vamos testar algo menor:
+O MCO é responsável por gerenciar todo o ciclo de vida do sistema operacional nos nós:
 
-![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/qAChvCm.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/qAChvCm.png#center)
-
-
-Agora como já vimos como preparar o ambiente, vamos à primeira etapa de instalação do OpenShift. Primeiro, vamos instalar o repositório **[Extra Packages for Enterprise Linux - EPEL]()** e em seguida o OpenShift Origin. Para tal, execute o seguinte comando:
-
-
-```bash
-sudo yum -y install epel-release centos-release-openshift-origin36
+```yaml
+# Exemplo de MachineConfig para configurar NTP
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  name: 99-master-chrony
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,...
+        mode: 0644
+        path: /etc/chrony.conf
+  machineConfigPool:
+    - master
 ```
 
-Em seguida, alguns pacotes adicionais:
+**Vantagens da Infraestrutura Imutável:**
+
+* **Segurança**: Reduz a superfície de ataque e previne configurações inconsistentes
+* **Consistência**: Todos os nós usam a mesma imagem base, garantindo uniformidade
+* **Automação**: Elimina a necessidade de configuração manual de hosts
+* **Confiabilidade**: Sistema operacional otimizado especificamente para contêineres
+* **Escalabilidade**: Facilita a adição de novos nós ao cluster
+
+#### **2. Infraestrutura de Rede**
+O OpenShift 4.x requer uma infraestrutura de rede bem configurada:
+
+* **DNS**: Servidor DNS com registros para o cluster
+* **DHCP** (opcional): Para instalação UPI (User-Provisioned Infrastructure)
+* **Conectividade**: Todos os nós devem se comunicar entre si
+* **Portas**: Configuração adequada de firewall
+
+#### **3. Registros DNS Necessários**
+Para um cluster funcional, você precisa dos seguintes registros DNS:
 
 ```bash
-sudo yum -y install origin origin-clients vim-enhanced atomic-openshift-utils
+# Registros para API e aplicações
+api.<cluster-name>.<base-domain>     → IP do load balancer ou master
+*.apps.<cluster-name>.<base-domain>  → IP do load balancer ou ingress
+# Exemplo com nip.io
+api.openshift-cluster.192.168.100.2.nip.io
+*.apps.openshift-cluster.192.168.100.2.nip.io
 ```
 
-Agora o NetworkManager e o certificado:
+#### **4. Configuração de Rede**
+O OpenShift 4.x usa o NetworkManager para gerenciar configurações de rede. Para ambientes de desenvolvimento com `nip.io`:
 
 ```bash
-sudo yum -y install NetworkManager python-rhsm-certificates
-```
-
-Com esses pacotes instalados, precisaremos iniciar o NetworkManager pois o OpenShift usa o NetworkManager para gerenciar as configurações de rede de todos os servidores no cluster:
-
-```bash
-sudo systemctl enable NetworkManager --now
-```
-
-Mais a diante irei configurar a resolução do DNS nos dois servidores, será necessário configurar o servidor master, configurar o contêiner responsável pelo armazenamento de dados da aplicação, ativar e iniciar o docker nos nodes do OpenShift, e configurar o SELinux, e de fato instalar o OpenShift com a criação de Playbooks no Ansible. Ou seja, bastante trabalho pela frente.
-
----
-
-### CONFIGURANDO O NETWORKMANAGER
-
-Como o DNS é usado pelo OpenShift para tudo, desde o tráfego criptografado até a comunicação entre os serviços implementados, a configuração do DNS nos nodes é essencial.
-
-> NOTA: Estas etapas se aplicam somente se você estiver usando o **[nip.io](nip.io)** para seus hostnames.
-
-Vamos então editar o  client DNS do CentOs através do arquivo `/etc/resolv.conf`, que foi gerado quando instalamos o NetworkManager. O parâmetro `nameserver` se refere ao servidor DNS do qual seu servidor irá se conectar. Você pode ter até três parâmetros `nameserver` listados no resolv.conf. O outro parâmetro padrão do `resolv.conf`, é o `search`. O valor do `search` é usado para qualquer consulta no DNS que não seja FQDN. Isto é, nome de domínio completo. Os FQDNs são registros DNS completos - isso significa que um FQDN contém um hostname, e um domínio de nível superior.
-
-Caso não esteja familiarizado com a abreviação FQDN,  acesse **[https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html](https://wikibase.adentrocloud.com.br/index.php?rp=/knowledgebase/63/Fully-Qualified-Domain-Name-FQDN-e-Hostname.html)** para saber mais. Usando o domínio **[nip.io]()**, perceba que cada octeto no endereço IP é separado por um período. Isso significa que cada número no endereço IP é um nível no domínio sendo o **[nip.io]()** de nível superior. Devido a algumas configurações que o OpenShift adiciona a cada contêiner, isso pode causar confusão ao extrair imagens de nosso **[registro intergrado]()**. Sendo assim, o recomendado é editar o parâmetro `search` para ter apenas o domínio de nível superior (no caso, **[nip.io](nip.io)**), conforme mostrado seguir:
-
-Editando o `/etc/resolv.conf`:
-```bash
-# Generated by NetworkManager
-search nip.io
+# Configurar DNS para nip.io
+cat > /etc/resolv.conf << EOF
 nameserver 8.8.8.8
-```
-
-Esta configuração, no entanto, só permanecerá assim até você reiniciar os servidores. Isso ocorre porque o NetworkManager controla o `/etc/resolv.conf` e naturalmente adicionará ao parâmetro `search` que retornará o valor anterior à reset da máquina. Para impedir que isso aconteça, você precisa configurar o NetworkManager para não fazer mais alterações no `/etc/resolv.conf`. No CentOS 7, o arquivo de configuração do NetworkManager está localizado em `/etc/NetworkManager/NetworkManager.conf`.
-
-Exemplo do `/etc/NetworkManager/NetworkManager.conf` padrão:
-
-```bash
-# Configuration file for NetworkManager.
-#
-# See "man 5 NetworkManager.conf" for details.
-#
-# The directory /etc/NetworkManager/conf.d/ can contain additional configuration
-# snippets. Those snippets override the settings from this main file.
-#
-# The files within conf.d/ directory are read in asciibetical order.
-#
-# If two files define the same key, the one that is read afterwards will overwrite
-# the previous one.
-
-[main]
-plugins=ifcfg-rh
-[logging]
-#level=DEBUG
-#domains=ALL
-```
-
-Você precisa adicionar uma linha à seção `[main]` para que o NetworkManager não altere o arquivo `/etc/resolv.conf`. Desta maneira:
-
-
-```bash
-[main]
-plugins=ifcfg-rh
-dns=none
-```
-
-Depois que você reiniciar o NetworkManager, a alteração feita no `/etc/resolv.conf` persistirá nas reinicializações do servidor. Para reiniciar o NetworkManager, execute o seguinte comando systemctl:
-
-```bash
-sudo systemctl restart NetworkManager
-```
-
-Depois de concluído, confirme se o NetworkManager está sendo executado usando o status do systemctl:
-
-```bash
-systemctl status NetworkManager
-? NetworkManager.service - Network Manager
-Loaded: loaded (/usr/lib/systemd/system/NetworkManager.service; enabled;
-➥ vendor preset: enabled)
-Active: active (running) Because Sat 2017-05-13 17:05:12 EDT; 6s ago
-...
-```
-
-Pós reiniciar o NetworkManager, confira se de fato o arquivo `/etc/resolv.conf` foi alterado. Se não houver o parâmetro `search`, tudo estará como deveria, e você estará pronto para seguir em frente. Agora vamos configurar um software específico para os servidores master e o node.
-
-### Uma visão mais aprofundada dos subdomínios curinga e do OpenShift:
-
-O domínio usar precisará apontar para o servidor do node. Isso ocorre porque o OpenShift usa o **[HAProxy]()** para rotear o tráfego corretamente entre seu DNS, e os contêineres apropriados. O **[HAProxy]()** é um balanceador de carga popular, software livre. No OpenShift, ele é executado em um contêiner e em um host específico em seu cluster. Tratando-se de DNS, ter um domínio curinga significa que qualquer host desse domínio apontará automaticamente para o mesmo endereço IP. Vamos ver alguns exemplos. Primeiro, aqui está um domínio curinga real que configuramos em um domínio:
-
-```bash
-$ dig +short *.apps.jeduncan.com
-12.207.21.2
-```
-
-Observe que se você procurar qualquer outro registro terminado em .apps.jeduncan.com, e ele retornará o mesmo IP:
-
-```bash
-$ dig +short app1.apps.jeduncan.com
-12.207.21.2
-```
-
-ou
-
-```bash
-$ dig +short someother.apps.jeduncan.com
-12.207.21.2
-```
-
-O OpenShift usa a mesma lógica. Cada aplicativo um DNS que é membro do domínio curinga criado. Dessa forma, todas as entradas do DNS para seus aplicativos funcionam sem qualquer configuração adicional.
-
----
-
-### INSTALANDO FERRAMENTAS NO SERVIDOR MASTER
-
-Vários pacotes precisam ser instalados apenas no servidor master. O processo de instalação do OpenShift é escrito usando o Ansible.
-Para instalar o OpenShift, você criará um arquivo de configuração escrito em YAML. Esse arquivo será lido pelo mecanismo Ansible para implementar o OpenShift exatamente como deve ser. Criaremos um arquivo de configuração relativamente simples. Para instalações mais elaboradas, existe uma documentação em **[https://goo.gl/rngdLy](https://goo.gl/rngdLy)**. O instalador do OpenShift é escrito e testado em relação a uma versão específica do Ansible. Isso significa que você precisa verificar se a versão do Ansible está instalada no seu servidor master.
-
-> NOTA: Precisamos nos preocupar apenas com Ansible no servidor master. Isso porque não há agente nos nodes. O Ansible não usa um agente nos sistemas que está controlando; em vez disso, ele usa o SSH como um mecanismo de transporte e para executar comandos remotos.
-
-Inicie este processo executando o seguinte comando yum:
-
-```bash
-sudo yum -y install httpd-tools gcc python-devel python-pip
-```
-
-O pacote python-pip instala o gerenciador de pacotes de aplicativos Python chamado pip. Ele é usado para instalar aplicativos escritos em Python e disponíveis no Índice de pacotes do Python (www.pypi.org). Com pip instalado, você pode usá-lo para instalar o Ansible e garantir que você instale a versão 2.2.2.0, que é a usada com o OpenShift 3.6:
-
-```bash
-pip -v install ansible==2.2.2.0
-```
-
-Para que o instalador do OpenShift funcione corretamente, você precisa criar um par de chaves SSH no seu servidor master e distribuir a chave pública para o seu node. Para criar um novo par de chaves SSH em seu servidor master, você pode usar o comando `ssh-keygen` como neste exemplo:
-
-```bash
-sudo ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
-```
-
-Esse comando cria um par de chaves SSH no diretório inicial do usuário `/root`, na subpasta `.ssh`. No Linux, esse é o local padrão para as chaves SSH de um usuário. Em seguida, execute o seguinte comando `ssh-copy-id` para distribuir sua chave pública SSH recém-criada para o seu node OpenShift (se você usou endereços IP diferentes para seu mestre e node, ajuste o comando de acordo):
-
-```bash
-for i in 192.168.100.1 192.168.100.2;do ssh-copy-id root@$i;done
-```
-
-Este comando adicionará a chave pública SSH ao arquivo authorized_keys em `/root/.ssh` no node OpenShift. Isso permitirá que o instalador do OpenShift se conecte ao master e ao node para executar as etapas de instalação. Os requisitos de software para os nodes são um pouco diferentes. A maior diferença, é que é no node que é onde o docker será instalado. O pacote `libcgroup-tools` fornece utilitários que você usará para inspecionar como os aplicativos são isolados usando grupos de controle de kernel. Para instalar esses pacotes, execute o seguinte comando yum:
-
-```bash
-sudo yum -y install docker libcgroup-tools
-```
-
-A partir daquí, estaremos prontos para configurar o contêiner de armazenamento de dados do OpenShift.
-
----
-
-### CONFIGURANDO O CONTEINER STORAGE
-
-Um aplicativo chamado `docker-storage-setup` configura o armazenamento desejado para o Docker usar quando ele cria contêineres para o OpenShift.
-
-> NOTA: Neste artigo estou usando uma configuração de gerenciamento baseado no volume lógico (LVM). Esta configuração cria um volume LVM para cada contêiner sob demanda.
-
-Inicialmente, eles são pequenos, mas podem crescer até o tamanho máximo configurado no OpenShift para seus contêineres. Você pode encontrar detalhes adicionais sobre a configuração de armazenamento na documentação do OpenShift em **[https://goo.gl/knBqkk](https://goo.gl/knBqkk)**. A primeira etapa desse processo é criar um arquivo de configuração para o `docker-storage-setup` em seu nó OpenShift. O disco especificado em `/etc/sysconfig/docker-storage-setup` é o segundo disco que você criou para sua VM.
-
-> NOTA: Dependendo da sua distribuição Linux, o nome do particionamento de disco `/dev /vdb em nosso exemplo` pode variar, mas a operação não.
-
-Criando o arquivo de configuração do `docker-storage-setup`:
-
-```bash
-cat <<EOF > /etc/sysconfig/docker-storage-setup
-DEVS=/dev/vdb
-VG=docker-vg
+search nip.io
 EOF
+
+# Configurar NetworkManager para não sobrescrever
+cat > /etc/NetworkManager/conf.d/90-dns-none.conf << EOF
+[main]
+dns=none
+EOF
+
+systemctl restart NetworkManager
 ```
 
-Perceba que o particionamento `/dev/vdb`, trata-se do volume de 20 GB que você criou para os nodes.
+### INSTALANDO AS FERRAMENTAS NECESSÁRIAS
 
-> NOTA: Se você não tiver certeza sobre o nome do disco a ser usado para o armazenamento em contêiner, o comando `lsblk` fornecerá uma lista de todos os discos em seu servidor. A saída está em um diagrama de árvore fácil de entender.
-
-Depois de criar o arquivo `/etc/sysconfig/docker-storage-setup`, execute o `docker-storage-setup` que deverá gerar uma saída parecida com esta:
+#### **1. OpenShift CLI (oc)**
+O CLI do OpenShift é a ferramenta principal para interação com o cluster:
 
 ```bash
-docker-storage-setup
+# Baixar e instalar o OpenShift CLI
+curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar -xz
+sudo mv oc kubectl /usr/local/bin/
 
-Checking that no-one is using this disk right now ...
-OK
-Disk /dev/vdb: 41610 cylinders, 16 heads, 63 sectors/track
-...
-Rounding up size to full physical extent 24.00 MiB
-Logical volume "docker-pool" created.
-Logical volume docker-vg/docker-pool changed.
+# Verificar a instalação
+oc version
 ```
 
-Com o contêiner storage configurado, é hora de iniciar o serviço do docker no node do OpenShift. Observe que este é o tempo de execução médio que os serviços irão iniciar daquí em diante usando o OpenShift:
+#### **2. OpenShift Installer**
+O OpenShift Installer é a ferramenta oficial para instalação do cluster:
 
 ```bash
-sudo systemctl enable docker.service --now
+# Baixar e instalar o OpenShift Installer
+curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-install-linux.tar.gz | tar -xz
+sudo mv openshift-install /usr/local/bin/
+
+# Verificar a instalação
+openshift-install version
 ```
 
-Agora verifique se o serviço docker iniciou corretamente:
+#### **3. Ferramentas Adicionais**
+Para ambientes bare metal, você pode precisar de ferramentas adicionais:
 
 ```bash
-sudo systemctl status docker
-```
+# Para RHEL/CentOS
+sudo dnf install -y httpd-tools jq
 
-A saída esperada do comando acima, será algo semelhante a isto:
-
-```bash
-? docker.service - Docker Application Container Engine
-Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
-Drop-In: /etc/systemd/system/docker.service.d
-??custom.conf
-Active: active (running) since Fri 2017-11-10 18:45:12 UTC; 12 secs ago
-Docs: http://docs.docker.com
-Main PID: 2352 (dockerd-current)
-Memory: 121.4M
-CGroup: /system.slice/docker.service
-```
-
-O próximo passo é modificar o **[SELinux]()** para permitir que o OpenShift se conecte ao **[NFS]()** como uma fonte de armazenamento persistente.
-
----
-
-### CONFIGURANDO O SELINUX EM SEUS NODES
-
-No geral, as aplicações OpenShift precisarão de volumes NFS para atuar como armazenamento persistente. Para fazer isso com sucesso, você precisa informar ao SELinux sobre seus nodes para permitir que os contêineres usem o NFS. Você faz isso usando o utilitário de linha de comando `setsebool`:
-
-```bash
-sudo setsebool -P virt_use_nfs 1
-sudo setsebool -P virt_sandbox_use_nfs 1
+# Para Ubuntu
+sudo apt install -y apache2-utils jq
 ```
 
 ---
 
-### INSTALANDO O OPENSHIFT
+### CRIANDO O ARQUIVO DE CONFIGURAÇÃO (install-config.yaml)
 
-O OpenShift é instalado usando um playbook Ansible. Isto é, uma coleção de tarefas e parâmetros necessários para executar uma tarefa. Para executar um playbook Ansible, três coisas devem estar presentes no seu servidor:
+O arquivo `install-config.yaml` é o coração do processo de instalação do OpenShift 4.x. Ele define toda a configuração do cluster de forma declarativa.
 
-* **Ansible Engine** - Executa o código do manual. Se você seguiu o artigo desde o início, certamente já o tem instalado.
-* **Playbook** - O código que é executado propriamente. Quando você instalou os pacotes do OpenShift, diversos playbooks foram incluídos.
-* **Inventário** - A lista de hosts onde os playbooks serão executados. Os inventários podem ser divididos em grupos, e conter quaisquer variáveis necessárias para executar os playbooks nos hosts.
+#### **Estrutura Básica do install-config.yaml**
 
-O inventário Ansible para o OpenShift contém informações sobre seus dois hosts e especifica quais funções cada node terá em seu cluster. Se você estiver usando os endereços IP e os hostnames que estamos usando neste artigo, poderá fazer o download de um inventário preparado para o seu node master a seguir:
-
-```bash
-sudo curl -o /root/hosts https://raw.githubusercontent.com/OpenShiftInAction/AppendixA/master/hosts
+```yaml
+apiVersion: v1
+baseDomain: 192.168.100.2.nip.io
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 2
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: openshift-cluster
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: '{"auths":{"fake":{"auth":"fake"}}}'
+sshKey: 'ssh-rsa AAAA...'
 ```
 
-Para aqueles que desejam personalizar a instalação, vamos analisar os componentes do inventário e como eles são projetados. Inventários fatíveis são divididos em grupos. Cada grupo consiste em hosts que são definidos pelo hostname ou pelo endereço IP. Em um inventário, um grupo também pode ser definido listando os grupos filho usando a sintaxe `:children`. No exemplo a seguir, o grupo `master_group` é formado pelos hosts no grupo1 e group2:
+#### **Componentes Principais**
 
-```bash
-[master_group:children]
-group1
-group2
+* **apiVersion**: Versão da API do OpenShift Installer
+* **baseDomain**: Domínio base para todos os serviços do cluster
+* **metadata.name**: Nome do cluster
+* **compute/controlPlane**: Configuração dos nós worker e master
+* **networking**: Configuração de rede do cluster
+* **platform**: Plataforma de infraestrutura (none, baremetal, aws, etc.)
+* **pullSecret**: Credenciais para acessar o registro de imagens do Red Hat
+* **sshKey**: Chave SSH para acesso aos nós
 
-[group1]
-host1
-host2
+#### **Configuração para Bare Metal**
 
-[group2]
-host3
-host4
+Para instalação em bare metal, você precisa especificar os hosts:
 
-[group3]
-host5
-host6
+```yaml
+platform:
+  baremetal:
+    apiVIP: 192.168.100.10
+    ingressVIP: 192.168.100.11
+    hosts:
+    - name: master-0
+      role: master
+      bmc:
+        address: ipmi://192.168.100.1
+        username: admin
+        password: password
+      bootMACAddress: 52:54:00:00:00:01
+      rootDeviceHints:
+        deviceName: /dev/sda
+    - name: worker-0
+      role: worker
+      bmc:
+        address: ipmi://192.168.100.2
+        username: admin
+        password: password
+      bootMACAddress: 52:54:00:00:00:02
+      rootDeviceHints:
+        deviceName: /dev/sda
 ```
 
-Outra capacidade dos inventários é que você pode definir variáveis para os hosts, e grupos de hosts. Você pode definir variáveis para um grupo inteiro usando um cabeçalho de grupo e a sintaxe `:vars`. Para definir uma variável para um único host, adicione-a à mesma linha usada para definir o host em um grupo. Por exemplo:
+### OBTENDO O PULL SECRET
+
+O pull secret é necessário para baixar imagens do Red Hat Container Registry:
+
+1. Acesse [https://console.redhat.com/openshift/install/pull-secret](https://console.redhat.com/openshift/install/pull-secret)
+2. Faça login com sua conta Red Hat
+3. Copie o pull secret JSON
+4. Substitua no `install-config.yaml`
+
+### GERANDO CHAVES SSH
+
+Para acesso aos nós durante a instalação:
 
 ```bash
-[group1]
-host1 var2=False var3=42
-host1 foo=bar
+# Gerar chave SSH
+ssh-keygen -t rsa -b 4096 -N '' -f ~/.ssh/id_rsa
 
-[group1:vars]
-var1=True
+# Copiar a chave pública para o install-config.yaml
+cat ~/.ssh/id_rsa.pub
 ```
 
-Seu inventário inicial no OpenShift usa vários grupos e muitas variáveis:
+### PROCESSO DE INSTALAÇÃO
 
-* **OSEv3** - O grupo que representa seu cluster inteiro. É composto pelos nós de grupos secundários, mestres, nfs e etcd.
-* **nodes** - Todos os grupos em seu cluster, incluindo todos os mestres e todos os nós de aplicativos.
-* **masters** - os nós no seu cluster que serão designados como mestres.
-* **nfs** - Nós usados para fornecer armazenamento compartilhado do NFS para vários serviços nos nós principais. Isso é necessário se você tiver vários servidores mestres. Não estamos aproveitando vários mestres neste cluster inicial, mas o grupo ainda é necessário para implantar o OpenShift.
-* **etcd** - Os nós onde o etcd será implantado. O etcd é o banco de dados do Kubernetes e do OpenShift. Seu cluster usará o servidor master para abrigar o banco de dados do etcd. Para clusters maiores, o etcd pode ser separado em seus próprios nós do cluster.
-
-Para os grupos de nodes e masters, você desabilitará algumas das verificações do sistema que o manual de implantação executa antes da implantação. Essas verificações verificam a quantidade de espaço livre e memória disponível no sistema; Para um cluster inicial, você poderá usar valores menores que as recomendações que são apontadas por um dessas verificações. (Você poderá aprender mais sobre essas tais verificações em **[https://goo.gl/8C65s7](https://goo.gl/8C65s7)**. Para desabilitar as verificações, você define variáveis para cada um desses grupos:
+#### **1. Gerar Manifests**
+O OpenShift Installer gera os manifests necessários:
 
 ```bash
-[nodes:vars]
-openshift_disable_check=disk_availability,memory_availability,docker_storage
+# Criar diretório para a instalação
+mkdir openshift-install
+cd openshift-install
 
-[masters:vars]
-openshift_disable_check=disk_availability,memory_availability,docker_storage
+# Copiar install-config.yaml
+cp /path/to/install-config.yaml .
+
+# Gerar manifests
+openshift-install create manifests
 ```
 
-Os comandos acima desativam as verificações de armazenamento e memória para o grupo masters.
+#### **2. Arquivos Gerados**
+O instalador gera vários arquivos importantes:
 
-Seu inventário poderá conter definições de variáveis para a maioria dos hosts. A variável `ansible_connection` informa ao mecanismo Ansible para se conectar ao host a partir do sistema local onde o playbook está sendo executado. Variáveis Ansible adicionais são discutidas em **[https://goo.gl/kAvqKz](https://goo.gl/kAvqKz)**.
+* **bootstrap.ign**: Configuração Ignition para o nó bootstrap
+* **master.ign**: Configuração Ignition para nós master
+* **worker.ign**: Configuração Ignition para nós worker
+* **auth/kubeconfig**: Credenciais de acesso ao cluster
 
-> NOTA: Os endereços IP e os hostnames usados neste inventário são específicos para um exemplo de cluster. Se seus endereços IP e hostnames forem diferentes, você precisará alterá-los no inventário para implementar o OpenShift com êxito.
-
-As demais variáveis são específicas do manual do OpenShift e estão documentadas na listagem a seguir, que é um exemplo completo do inventário do OpenShift.
+#### **3. Iniciar Instalação**
+Para instalação em bare metal:
 
 ```bash
-[OSEv3:children]
-nodes
-nfs
-masters
-etcd
-
-[OSEv3:vars]
-openshift_master_cluster_public_hostname=None
-openshift_master_default_subdomain=apps.192.168.100.2.nip.io
-ansible_ssh_user=root
-openshift_master_cluster_hostname=None
-openshift_override_hostname_check=true
-deployment_type=origin
-
-[nodes:vars]
-openshift_disable_check=disk_availability,memory_availability,docker_storage
-
-[masters:vars]
-openshift_disable_check=disk_availability,memory_availability,docker_storage
-
-[nodes]
-192.168.122.100 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 openshift_schedulable=False ansible_connection=local
-192.168.100.2 openshift_public_ip=192.168.100.2 openshift_ip=192.168.100.2 openshift_public_hostname=ocp2.192.168.100.2.nip.io openshift_hostname=ocp2.192.168.100.2.nip.io connect_to=192.168.100.2 openshift_node_labels="{'region': 'infra'}" openshift_schedulable=True
-
-[nfs]
-192.168.100.1 connect_to=192.168.100.1 ansible_connection=local
-
-[masters]
-192.168.100.1 openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
-
-[etcd]
-192.168.100.1  openshift_public_ip=192.168.100.1 openshift_ip=192.168.100.1 openshift_public_hostname=ocp1.192.168.100.1.nip.io openshift_hostname=ocp1.192.168.100.1.nip.io connect_to=192.168.100.1 ansible_connection=local
+# Iniciar instalação
+openshift-install create cluster --log-level=info
 ```
 
-> NOTA: O node ocp1 possui uma variável chamada `openshift_node_labels`. Os labels dos nodes são valores arbitrários que você pode aplicar a nodes em seu cluster. O label aplicado durante o nosso deployment, `region = infra`, por exemplo, informa ao OpenShift os componentes de infraestrutura como o router, o registro integrado, métricas etc..
+### RHCOS E IGNITION
 
-Depois de fazer qualquer edição de inventário necessária para corresponder ao seu ambiente, salve seu inventário em seu node master como `/root/ hosts`. O próximo passo é iniciar a implementação do OpenShift.
+O RHCOS usa o sistema Ignition para configuração inicial:
+
+#### **O que é Ignition?**
+Ignition é o sistema de configuração do RHCOS que permite personalizar o sistema durante a inicialização. Ele é baseado em JSON e é executado apenas uma vez durante o primeiro boot.
+
+#### **Arquivos de Configuração Ignition**
+* **bootstrap.ign**: Configura o nó bootstrap temporário
+* **master.ign**: Configura os nós master
+* **worker.ign**: Configura os nós worker
+
+#### **Como Funciona**
+1. O RHCOS baixa o arquivo Ignition apropriado
+2. Executa a configuração durante o primeiro boot
+3. Configura rede, usuários, serviços, etc.
+4. Inicia o processo de instalação do cluster
+
+### PRÉ-REQUISITOS DE DNS E DHCP
+
+#### **DNS**
+Para um cluster funcional, você precisa:
+
+```bash
+# Registros DNS necessários
+api.<cluster-name>.<base-domain>     → IP do load balancer
+*.apps.<cluster-name>.<base-domain>  → IP do load balancer
+
+# Exemplo com nip.io
+api.openshift-cluster.192.168.100.2.nip.io → 192.168.100.10
+*.apps.openshift-cluster.192.168.100.2.nip.io → 192.168.100.11
+```
+
+#### **DHCP (Opcional)**
+Para instalação UPI (User-Provisioned Infrastructure):
+
+* **Configuração de PXE**: Para boot automático dos nós
+* **Reservas de IP**: Para IPs estáticos
+* **Opções DHCP**: Para configuração de rede
+
+### CONFIGURAÇÃO DE ARMAZENAMENTO
+
+Com RHCOS e CRI-O, não há necessidade de configuração manual de armazenamento:
+
+#### **Armazenamento Automático**
+* **RHCOS**: Gerencia automaticamente o armazenamento para CRI-O
+* **OverlayFS**: Sistema de arquivos padrão para contêineres
+* **Sem LVM**: Não é necessário configurar LVM manualmente
+* **Gerenciamento Automático**: O cluster gerencia o armazenamento
+
+#### **Storage Classes**
+O OpenShift 4.x inclui storage classes padrão:
+
+```bash
+# Verificar storage classes disponíveis
+oc get storageclass
+
+# Storage classes padrão
+# - ocs-storagecluster-ceph-rbd (se ODF estiver instalado)
+# - ocs-storagecluster-cephfs (se ODF estiver instalado)
+```
+
+### VERIFICAÇÃO DE PRÉ-REQUISITOS
+
+Antes de iniciar a instalação, verifique:
+
+```bash
+# Verificar conectividade de rede
+ping -c 3 8.8.8.8
+
+# Verificar resolução DNS
+nslookup api.openshift-cluster.192.168.100.2.nip.io
+
+# Verificar ferramentas instaladas
+openshift-install version
+oc version
+
+# Verificar arquivo de configuração
+openshift-install create manifests --dir=.
+```
+
+### PRÓXIMOS PASSOS
+
+Com o ambiente preparado e o `install-config.yaml` configurado, você está pronto para:
+
+1. **Gerar Manifests**: Executar `openshift-install create manifests`
+2. **Iniciar Instalação**: Executar `openshift-install create cluster`
+3. **Monitorar Progresso**: Acompanhar logs da instalação
+4. **Acessar Cluster**: Usar o kubeconfig gerado
+
+O processo de instalação do OpenShift 4.x é muito mais automatizado que nas versões anteriores, mas requer uma preparação adequada do ambiente e configuração correta do `install-config.yaml`.
+
+Com o ambiente preparado e o `install-config.yaml` configurado, você está pronto para iniciar a instalação do cluster OpenShift 4.x. O processo é automatizado pelos Operadores, mas requer uma preparação adequada do ambiente.
 
 ---
 
-### EXECUTANDO O PLAYBOOK
+## CAPÍTULO 3 - EXECUTANDO A INSTALAÇÃO DO CLUSTER
 
-O Ansible usa o SSH para efetuar login em cada node e executar as tarefas para implementar o OpenShift, portanto, esse comando precisa ser executado como o usuário root no master, que possui as chaves de acesso SSH em cada node. Para executar o playbook adequado, execute o comando `ansible-playbook`, especificando o arquivo de inventário, e a implementação de playbook instalado em `/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml`:
+O processo de instalação do OpenShift 4.x é completamente automatizado pelo OpenShift Installer. Este capítulo aborda os passos para gerar os manifests de instalação e executar a instalação do cluster.
 
-```bash
-# ansible-playbook -i /root/hosts \
-/usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+### GERANDO OS MANIFESTS DE INSTALAÇÃO
+
+Com o `install-config.yaml` configurado, o próximo passo é gerar os manifests de instalação. Estes arquivos incluem as configurações Ignition que serão usadas pelos nós RHCOS durante o primeiro boot.
+
+#### **O Papel do Ignition no Processo de Bootstrap**
+
+O **Ignition** é o sistema de configuração do RHCOS que permite personalizar o sistema durante a inicialização. Os arquivos `.ign` são usados apenas no primeiro boot para configurar os nós de forma declarativa, sendo uma peça central na automação da instalação.
+
+**Como funciona o Ignition:**
+
+* **Configuração Declarativa**: Define o estado desejado do sistema em formato JSON
+* **Primeiro Boot Apenas**: Os arquivos Ignition são aplicados apenas durante a inicialização inicial
+* **Automação Completa**: Elimina a necessidade de configuração manual dos nós
+* **Segurança**: Configurações são aplicadas de forma segura e consistente
+
+**Tipos de arquivos Ignition gerados:**
+
+* **bootstrap.ign**: Configuração para o nó de bootstrap (temporário)
+* **master.ign**: Configuração para os nós do control plane
+* **worker.ign**: Configuração para os nós de trabalho
+
+**Exemplo de configuração Ignition:**
+
+```json
+{
+  "ignition": {
+    "version": "3.2.0"
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/etc/hostname",
+        "mode": 420,
+        "contents": {
+          "source": "data:text/plain;charset=utf-8;base64,bWFzdGVyLTA="
+        }
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "name": "kubelet.service",
+        "enabled": true
+      }
+    ]
+  }
+}
 ```
 
-Isso inicia o processo de deploy. Dependendo da velocidade da sua conexão com a Internet, o deploy pode levar cerca de 30 a 45 minutos. Se tudo for bem sucedido, a saída indicará que o processo foi concluído com sucesso. Do contrário, observe o erro que estará em vermelho no terminal e busque debuga-lo. Quando a instalação estiver concluída, você poderá acessar seu host `https://ocp1.192.168.1.100.nip.io:8443`:
+```bash
+# Gerar os manifests de instalação
+openshift-install create manifests --dir=.
 
-![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tela.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tela.png#center)
+# Verificar os arquivos gerados
+ls -la
+```
 
-> NOTA: Provavelmente você receberá um aviso sobre o site estar inseguro porque o certificado SSL não foi assinado corretamente. Não se preocupe com isso - o OpenShift criou seus próprios certificados SSL como parte do processo de instalação. Em nossa configuração, como o deploy do cluster foi feito em um laptop, o cluster está disponível apenas no laptop onde os nodes da VM estão instalados.
+Os arquivos gerados incluem:
 
-Se você conseguir acessar a interface da figura acima, o seu Openshift foi instalado com sucesoo! Nos próximos capítulos irei aprofundar melhor nas funcionalidades da ferramenta.
+* **bootstrap.ign**: Configuração Ignition para o nó de bootstrap
+* **master.ign**: Configuração Ignition para os nós do control plane
+* **worker.ign**: Configuração Ignition para os nós de trabalho
+* **auth/kubeconfig**: Arquivo de configuração para acesso ao cluster
+* **auth/kubeadmin-password**: Senha do usuário kubeadmin
+
+### O PROCESSO DE INSTALAÇÃO AUTOMATIZADO
+
+O OpenShift Installer automatiza todo o processo de instalação através dos Operadores. Este instalador é fundamentalmente diferente das versões anteriores, oferecendo dois modos de instalação:
+
+#### **IPI - Installer-Provisioned Infrastructure**
+
+Para provedores de nuvem suportados (AWS, Azure, GCP, VMware), o OpenShift Installer automatiza a criação de toda a infraestrutura necessária:
+
+* **Provisionamento Automático**: Cria VMs, redes, load balancers automaticamente
+* **Configuração Integrada**: Configura DNS, certificados SSL, e outros componentes
+* **Simplificação**: Reduz significativamente o trabalho manual de configuração
+
+#### **UPI - User-Provisioned Infrastructure**
+
+Para ambientes on-premise ou nuvens não suportadas, o instalador gera os artefatos necessários para uma infraestrutura pré-existente:
+
+* **Artefatos Gerados**: Ignition files, manifests, e scripts de configuração
+* **Flexibilidade**: Permite usar infraestrutura existente
+* **Controle Total**: Mantém controle sobre toda a infraestrutura
+
+#### **Agent-Based Installer (OpenShift 4.12+)**
+
+Para instalações on-premise, especialmente em ambientes desconectados (air-gapped), o **Agent-Based Installer** é uma novidade importante que simplifica o processo:
+
+**Vantagens do Agent-Based Installer:**
+
+* **Sem Nó de Bootstrap**: Elimina a necessidade de um nó de bootstrap temporário
+* **Ambientes Desconectados**: Funciona em ambientes air-gapped
+* **Instalação Simplificada**: Processo mais direto e menos complexo
+* **Menos Recursos**: Reduz os requisitos de infraestrutura
+
+**Como usar o Agent-Based Installer:**
+
+```bash
+# Baixar o Agent-Based Installer
+curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/agent-installer-linux.tar.gz | tar -xz
+
+# Criar configuração para Agent-Based Installer
+openshift-install agent create config
+
+# Gerar imagens ISO para os nós
+openshift-install agent create image
+
+# Instalar usando os ISOs gerados
+```
+
+**Comparação dos Métodos de Instalação:**
+
+| **Método** | **Uso** | **Complexidade** | **Automação** |
+|------------|---------|------------------|---------------|
+| **IPI** | Nuvens suportadas | Baixa | Total |
+| **UPI** | On-premise/Cloud customizada | Média | Parcial |
+| **Agent-Based** | On-premise/Air-gapped | Baixa | Alta |
+
+```bash
+# Iniciar a instalação do cluster
+openshift-install create cluster --dir=.
+
+# Monitorar o progresso da instalação
+openshift-install create cluster --dir=. --log-level=info
+```
+
+**Fases da Instalação:**
+
+1. **Bootstrap**: O nó de bootstrap inicia e configura o control plane
+2. **Control Plane**: Os nós do control plane são instalados e configurados
+3. **Workers**: Os nós de trabalho são instalados e ingressam no cluster
+4. **Operators**: Os Operadores do cluster são instalados e configurados
+5. **Finalização**: Configuração final e limpeza do bootstrap
+
+### VERIFICANDO A INSTALAÇÃO
+
+Após a conclusão da instalação, você pode verificar o status do cluster:
+
+```bash
+# Verificar o status dos nós
+oc get nodes
+
+# Verificar os Operadores do cluster
+oc get clusteroperators
+
+# Verificar os pods do sistema
+oc get pods -n kube-system
+
+# Acessar a console web
+oc get route console -n openshift-console
+```
+
+### ACESSANDO O CLUSTER
+
+O OpenShift Installer gera automaticamente as credenciais de acesso:
+
+```bash
+# Usar o kubeconfig gerado
+export KUBECONFIG=$(pwd)/auth/kubeconfig
+
+# Fazer login como kubeadmin
+oc login -u kubeadmin -p $(cat auth/kubeadmin-password)
+
+# Verificar o acesso
+oc whoami
+oc get projects
+```
+
+### CONFIGURAÇÃO PÓS-INSTALAÇÃO
+
+Após a instalação bem-sucedida, você pode configurar:
+
+* **Storage Classes**: Configurar armazenamento persistente
+* **Users e Groups**: Configurar autenticação e autorização
+* **Monitoring**: Configurar monitoramento e alertas
+* **Logging**: Configurar coleta de logs centralizada
+
+#### **OPÇÕES DE ARMAZENAMENTO NO OPENSHIFT 4.X**
+
+O OpenShift 4.x oferece várias opções para armazenamento persistente, cada uma com suas vantagens específicas:
+
+**OpenShift Data Foundation (ODF) - Solução Integrada**
+
+O **OpenShift Data Foundation (ODF)** é a solução de armazenamento definida por software integrada da Red Hat para OpenShift 4.x. O ODF substituiu o **OpenShift Container Storage (OCS)** 3.x e utiliza o **Red Hat Ceph Storage** como base, oferecendo:
+
+* **Armazenamento Distribuído**: Ceph Storage para alta disponibilidade
+* **Múltiplos Tipos de Storage**: Block, File e Object storage
+* **Integração Nativa**: Operadores OpenShift para gerenciamento automático
+* **Escalabilidade**: Crescimento horizontal sem downtime
+* **Backup e Disaster Recovery**: Recursos avançados de proteção de dados
+* **Monitoramento Integrado**: Dashboards e alertas nativos
+
+**NFS - Opção Tradicional**
+
+O **NFS (Network File System)** continua sendo uma opção válida e amplamente utilizada:
+
+* **Simplicidade**: Fácil de configurar e gerenciar
+* **Compatibilidade**: Funciona com qualquer servidor NFS
+* **Custo**: Solução econômica para ambientes menores
+* **Flexibilidade**: Pode ser usado com storage existente
+
+**Storage Classes Disponíveis**
+
+O OpenShift 4.x suporta múltiplas storage classes:
+
+```yaml
+# Exemplo de StorageClass para NFS
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storage
+provisioner: nfs
+parameters:
+  server: nfs-server.example.com
+  path: /exports
+---
+# Exemplo de StorageClass para ODF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ocs-storagecluster-ceph-rbd
+provisioner: openshift-storage.rbd.csi.ceph.com
+parameters:
+  clusterID: openshift-storage
+  pool: ocs-storagecluster-cephblockpool
+```
+
+**EVOLUÇÃO DO ARMAZENAMENTO: OCS → ODF**
+
+A solução de armazenamento da Red Hat evoluiu significativamente no OpenShift 4.x:
+
+**OpenShift Container Storage (OCS) 3.x**
+* **Base**: GlusterFS
+* **Arquitetura**: Storage distribuído baseado em Gluster
+* **Limitações**: Escalabilidade limitada, complexidade de gerenciamento
+* **Compatibilidade**: OpenShift 3.x e 4.x inicial
+
+**OpenShift Data Foundation (ODF) 4.x**
+* **Base**: Red Hat Ceph Storage
+* **Arquitetura**: Storage distribuído baseado em Ceph
+* **Vantagens**: 
+  - Maior escalabilidade e performance
+  - Múltiplos tipos de storage (Block, File, Object)
+  - Melhor integração com Operadores OpenShift
+  - Recursos avançados de backup e disaster recovery
+* **Compatibilidade**: OpenShift 4.x
+
+**Migração de OCS para ODF**
+
+Para clusters que usavam OCS 3.x, a migração para ODF 4.x envolve:
+
+```bash
+# Verificar storage classes existentes
+oc get storageclass
+
+# Backup dos dados antes da migração
+oc get pv,pvc -A
+
+# Instalar ODF 4.x
+oc apply -f https://raw.githubusercontent.com/red-hat-storage/ocs-operator/release-4.10/deploy/olm-catalog/ocs-operator/manifests/ocs-operator.v4.10.0.clusterserviceversion.yaml
+```
+
+**Comparação de Recursos**
+
+| **Recurso** | **OCS 3.x (GlusterFS)** | **ODF 4.x (Ceph)** |
+|-------------|-------------------------|-------------------|
+| **Performance** | Boa | Superior |
+| **Escalabilidade** | Limitada | Alta |
+| **Tipos de Storage** | File | Block, File, Object |
+| **Backup/DR** | Básico | Avançado |
+| **Monitoramento** | Básico | Integrado |
+
+
+O RHCOS representa uma mudança fundamental na forma como o OpenShift gerencia a infraestrutura, tornando o processo mais seguro, consistente e automatizado.
+
+
+
+
+
+### EVOLUÇÃO DAS FERRAMENTAS DE DESENVOLVIMENTO
+
+O ecossistema de desenvolvimento do OpenShift evoluiu significativamente:
+
+#### **Ferramentas de Desenvolvimento Local**
+* **Minishift** → **CodeReady Containers (CRC)** → **OpenShift Local**
+* **OpenShift All-in-One VM** → **OpenShift Local**
+* **Docker Desktop** → **Podman Desktop** (para desenvolvimento de contêineres)
+
+#### **Ferramentas de Instalação**
+* **Ansible Playbooks** → **OpenShift Installer**
+* **Inventários Ansible** → **install-config.yaml**
+* **Instalação Manual** → **Instalação Automatizada**
+
+#### **Ferramentas de Gerenciamento**
+* **oc adm** → **oc adm** (mantido, mas com novas funcionalidades)
+* **Docker CLI** → **crictl** (para debugging em nós)
+* **kubectl** → **oc** (CLI unificado do OpenShift)
+
+---
+
+### ARQUITETURA BASEADA EM OPERADORES
+
+Um dos pilares fundamentais do OpenShift 4.x é a arquitetura baseada em **Operadores**. Os Operadores são aplicações que estendem o Kubernetes para automatizar tarefas complexas de gerenciamento de aplicações e serviços. Eles encapsulam o conhecimento operacional específico de uma aplicação e automatizam tarefas como instalação, configuração, atualização e recuperação.
+
+#### O QUE SÃO OPERADORES?
+
+Os Operadores são controladores customizados do Kubernetes que implementam o padrão de design "Operator Pattern". Eles monitoram continuamente o estado desejado de uma aplicação e tomam ações para garantir que o estado atual corresponda ao estado desejado. Os Operadores são essencialmente "controladores de aplicação" que conhecem como gerenciar aplicações específicas.
+
+#### TIPOS DE OPERADORES NO OPENSHIFT 4.X
+
+O OpenShift 4.x inclui vários tipos de operadores:
+
+* **Cluster Operators**: Gerenciam componentes fundamentais do cluster como API server, scheduler, etcd, etc.
+* **Machine Config Operators**: Gerenciam a configuração dos nós RHCOS
+* **Node Operators**: Gerenciam aspectos específicos dos nós do cluster
+* **Application Operators**: Gerenciam aplicações específicas como databases, monitoring, etc.
+
+#### VANTAGENS DOS OPERADORES
+
+A arquitetura baseada em operadores traz várias vantagens significativas:
+
+* **Automação Completa**: Elimina a necessidade de intervenção manual para tarefas operacionais
+* **Conhecimento Operacional Codificado**: O conhecimento específico de cada aplicação é codificado no operador
+* **Recuperação Automática**: Operadores podem detectar e corrigir problemas automaticamente
+* **Atualizações Automáticas**: Gerenciam atualizações de aplicações de forma transparente
+* **Escalabilidade**: Facilitam o gerenciamento de aplicações complexas em escala
+* **Consistência**: Garantem que todos os ambientes sejam configurados de forma consistente
+
+#### OPERADORES PRINCIPAIS DO OPENSHIFT 4.X
+
+Alguns dos operadores mais importantes no OpenShift 4.x incluem:
+
+* **Cluster Version Operator**: Gerencia atualizações do cluster OpenShift
+* **Machine Config Operator**: Gerencia configurações dos nós RHCOS
+* **Authentication Operator**: Gerencia autenticação e autorização
+* **Console Operator**: Gerencia a interface web do OpenShift
+* **Ingress Operator**: Gerencia o roteamento de tráfego externo
+* **Storage Operator**: Gerencia provisionamento de storage
+* **Monitoring Operator**: Gerencia stack de monitoramento (Prometheus, Grafana)
+
+#### COMO OS OPERADORES FUNCIONAM
+
+Os Operadores funcionam através de um loop de controle contínuo:
+
+1. **Observação**: O operador monitora constantemente o estado atual da aplicação
+2. **Análise**: Compara o estado atual com o estado desejado
+3. **Ação**: Executa ações necessárias para alinhar o estado atual com o desejado
+4. **Repetição**: Volta ao passo 1 para continuar o monitoramento
+
+Este ciclo garante que a aplicação sempre esteja no estado desejado, mesmo quando ocorrem falhas ou mudanças no ambiente.
+
+#### IMPACTO NA OPERAÇÃO
+
+A arquitetura baseada em operadores transforma fundamentalmente a forma como o OpenShift é operado:
+
+* **Redução de Tarefas Manuais**: Muitas tarefas que antes requeriam intervenção manual agora são automatizadas
+* **Maior Confiabilidade**: Operadores podem detectar e corrigir problemas mais rapidamente que humanos
+* **Operação em Escala**: Facilita o gerenciamento de clusters grandes e complexos
+* **Consistência**: Garante que todos os ambientes sejam configurados e operados de forma consistente
+
+Nos próximos capítulos irei aprofundar melhor nas funcionalidades da ferramenta.
 
 ---
 
 ### CRIANDO PROJETOS
 
-Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful](https://docs.openshift.com/container-platform/3.5/rest_api/index.html)**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift Origin distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[Minishift](https://github.com/minishift/minishift)** isto é, um projeto **[all-in-one](https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/)**. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes.
+Existem três maneiras de interagir com o OpenShift: por linha de comando, por interface web e pela **[API RESTful](https://docs.openshift.com/container-platform/4.12/rest_api/index.html)**. Quase todas as ações no OpenShift podem ser realizadas usando os três métodos de acesso. Antes de começar a usar o OpenShift, é importante atentar ao fato de que a minha proposta aqui é a de orientar na montagem, e configuração de um servidor OpenShift 4.x distribuído. No entanto, se a sua intenção é a de testar o funcionamento do OpenShift de maneira simples, tudo em uma coisa só, saiba que existe o projeto **[OpenShift Local](https://developers.redhat.com/products/openshift-local/overview)** (anteriormente conhecido como CodeReady Containers/CRC), que é a ferramenta recomendada para executar um cluster OpenShift localmente para desenvolvimento e teste. Para desenvolvimento é ótimo pois você conseguirá levantar o ambiente com bastante praticidade em uma máquina virtual simples, rodando em seu laptop. No entanto, se o seu objetivo for mais refinado certamente que terá problemas quando começar a trabalhar com armazenamento persistente, métricas, deployments complexos de aplicativos e redes.
+
+### FERRAMENTAS DE DESENVOLVIMENTO LOCAL
+
+Para desenvolvimento e teste local, o OpenShift 4.x oferece várias opções:
+
+#### **OpenShift Local (Recomendado)**
+* **Sucessor**: Substituiu o Minishift e CodeReady Containers (CRC)
+* **Funcionalidades**: Cluster OpenShift completo em uma única VM
+* **Recursos**: Inclui console web, CLI, e todas as funcionalidades do OpenShift
+* **Uso**: Ideal para desenvolvimento, testes e demonstrações
+* **Download**: Disponível em [developers.redhat.com](https://developers.redhat.com/products/openshift-local/overview)
+
+#### **Minikube com OpenShift**
+* **Alternativa**: Para testes básicos de Kubernetes
+* **Limitações**: Não inclui funcionalidades específicas do OpenShift
+* **Uso**: Apenas para testes de aplicações Kubernetes básicas
+
+#### **Kind (Kubernetes in Docker)**
+* **Alternativa**: Para testes de Kubernetes puro
+* **Limitações**: Não inclui OpenShift
+* **Uso**: Desenvolvimento de aplicações Kubernetes nativas
 
 No OpenShift, toda ação requer autenticação. Isso permite que todas as ações sejam regidas por regras de segurança e acesso configuradas para todos os usuários em um cluster. Por padrão, a configuração inicial do OpenShift é definida para permitir que qualquer definição de usuário e senha possam efetuar o login. Esta configuração inicial é chamada de _Allow All identity provider_. Isto é, cada nome de usuário é exclusivo, e a senha pode ser qualquer coisa, exceto um campo vazio. Essa configuração é segura e recomendada apenas para configurações de teste. O primeiro usuário que irei usar como exemplo neste artigo, se chamará _fulano_. Este usuário representará um usuário final do OpenShift.
 
@@ -613,7 +1004,7 @@ No OpenShift as aplicações são organizadas em projetos. Os projetos permitem 
 $ oc new-project image-uploader --display-name='Image Uploader Project'
 ```
 
-> NOTA: Você poderá encontrar na documentação todos os recursos do comando `oc` em **[https://goo.gl/Y3soGH](https://goo.gl/Y3soGH)**.
+> NOTA: Você poderá encontrar na documentação todos os recursos do comando `oc` em **[https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html](https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html)**.
 
 Além do nome do seu projeto, você pode opcionalmente fornecer um `display name`. O display name é um nome mais amigável para o seu projeto visto que o nome do projeto, tem uma sintaxe restrita porque se torna parte da URL de todos os aplicativos implementados no OpenShift. Agora que você criou seu primeiro projeto, vamos fazer o deploy do nosso primeiro aplicativo. Digamos que o Image Uploader seja um aplicativo escrito em [Golang]() usado para carregar e exibir arquivos. Antes de efetuar o deploy do aplicativo, vou explicar o funcionamento de todos os seus componentes para que você entenda como todas as partes se encaixam e funcionam juntas. Aplicações no OpenShift não são estruturas monolíticas; elas consistem em vários componentes diferentes em um projeto que trabalham em conjunto para implantar, atualizar e manter seu aplicativo durante seu ciclo de vida. Esses componentes são:
 
@@ -664,7 +1055,185 @@ Esses tipos de eventos são monitorados pelo _image streams_ no OpenShift.De uma
 
 ### IMPLEMENTANDO NOSSO PRIMEIRO APLICATIVO
 
-Para fazer o deployment dos aplicativos usamos o comando `oc new-app`. Executando este comando em nosso aplicativo, no caso, o Image Uploader, será necessário fornecer três informações:
+O OpenShift 4.x oferece múltiplas abordagens para fazer o deployment de aplicativos. Embora o comando `oc new-app` ainda exista, o OpenShift 4.x incentiva o uso de abordagens mais declarativas, como a utilização de manifestos YAML e a interface gráfica do console, que por sua vez, utiliza o `oc new-app` por baixo dos panos.
+
+#### **oc new-app vs. Manifestos YAML: Abordagem Imperativa vs. Declarativa**
+
+**Abordagem Imperativa (oc new-app):**
+
+O `oc new-app` é uma abordagem imperativa que executa comandos para criar recursos. É útil para desenvolvimento rápido e prototipagem:
+
+```bash
+# Abordagem imperativa
+oc new-app --image-stream=golang \
+  --code=https://github.com/scovl/image-uploader.git \
+  --name=app-cli
+```
+
+**Vantagens do oc new-app:**
+* **Rapidez**: Comando único para criar aplicação completa
+* **Simplicidade**: Ideal para desenvolvimento e testes
+* **Automação**: Cria automaticamente Deployment, Service, Route
+
+**Desvantagens:**
+* **Menos Controle**: Configurações padrão podem não ser ideais
+* **Difícil Versionamento**: Não há arquivo de configuração para versionar
+* **Limitado**: Menos flexibilidade para configurações complexas
+
+**Abordagem Declarativa (Manifestos YAML):**
+
+Para ambientes de produção e práticas de GitOps, o uso de YAML é o recomendado por garantir reprodutibilidade, versionamento e auditoria:
+
+```yaml
+# Abordagem declarativa - deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-cli
+  labels:
+    app: app-cli
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-cli
+  template:
+    metadata:
+      labels:
+        app: app-cli
+    spec:
+      containers:
+      - name: app-cli
+        image: docker.io/scovl/golang-app:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+```
+
+**Vantagens dos Manifestos YAML:**
+* **Versionamento**: Controle de versão com Git
+* **Reprodutibilidade**: Mesmo resultado em qualquer ambiente
+* **Auditoria**: Histórico completo de mudanças
+* **Flexibilidade**: Controle total sobre configurações
+* **GitOps**: Integração com práticas de DevOps
+
+**Comparação das Abordagens:**
+
+| **Aspecto** | **oc new-app** | **Manifestos YAML** |
+|-------------|----------------|---------------------|
+| **Velocidade** | Rápido | Mais lento |
+| **Controle** | Limitado | Total |
+| **Versionamento** | Não | Sim |
+| **Reprodutibilidade** | Baixa | Alta |
+| **Uso Recomendado** | Desenvolvimento | Produção |
+| **GitOps** | Não adequado | Ideal |
+
+**Evolução das Ferramentas Locais:**
+
+O artigo menciona o OpenShift Local (sucessor do CodeReady Containers - CRC) e o Minishift. É importante esclarecer essa evolução:
+
+* **Minishift**: Era para OpenShift 3.x, baseado em Minikube
+* **CodeReady Containers (CRC)**: Sucessor do Minishift para OpenShift 4.x
+* **OpenShift Local**: Nome atual do CRC, ferramenta oficial para desenvolvimento local com OpenShift 4.x
+
+**Instalação do OpenShift Local:**
+
+```bash
+# Baixar OpenShift Local
+curl -L https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz | tar -xJ
+
+# Instalar
+sudo mv crc-linux-amd64/crc /usr/local/bin/
+
+# Iniciar cluster local
+crc start
+```
+
+#### Usando o Console Web (Recomendado)
+
+A forma mais intuitiva é usar o console web do OpenShift:
+
+1. Acesse o console web do OpenShift
+2. Navegue para o projeto desejado
+3. Clique em "Add" → "From Catalog" ou "From Git"
+4. Selecione a aplicação desejada ou configure um repositório Git
+
+#### Usando Manifestos YAML (Abordagem Declarativa)
+
+Crie um arquivo `deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-cli
+  template:
+    metadata:
+      labels:
+        app: app-cli
+    spec:
+      containers:
+      - name: app-cli
+        image: docker.io/scovl/golang-app:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-cli-service
+spec:
+  selector:
+    app: app-cli
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: app-cli-route
+spec:
+  to:
+    kind: Service
+    name: app-cli-service
+  port:
+    targetPort: 8080
+```
+
+Aplique o manifesto:
+
+```bash
+oc apply -f deployment.yaml
+```
+
+#### Usando oc new-app (Método Tradicional)
+
+Para fazer o deployment dos aplicativos usando o método tradicional, usamos o comando `oc new-app`. Executando este comando em nosso aplicativo, no caso, o Image Uploader, será necessário fornecer três informações:
 
 * O tipo do image stream que você deseja usar - o OpenShift envia várias imagens chamadas de `builder images` que você pode usar como ponto de partida para os aplicativos. Neste exemplo, usaremos o builder image do [Golang]() para criar o aplicativo.
 * Um nome para o seu aplicativo - neste exemplo, usarei `app-cli`, porque esta versão do seu aplicativo será implementado em linha de comando.
@@ -761,11 +1330,13 @@ Todo este processo de deployment da nossa aplicação poderia ter sido feita pel
 
 ---
 
-### TRABALHANDO DIRETAMENTE COM DOCKER
+### TRABALHANDO DIRETAMENTE COM CRI-O
 
-O [Docker](https://www.docker.com/what-docker) possui em uma ferramenta de linha de comando apropriadamente chamada de `docker`. Para obter as informações necessárias para aprofundar o modo como os contêineres isolam os aplicativos no OpenShift, o comando `docker` deve ser o seu ponto de partida. Para interagir diretamente com o docker, você precisa do SSH e preferencialmente executar os comandos em modo `root` no node da aplicação. A primeira coisa a percorreremos, é a lista de todos os contêineres atualmente em execução.
+O [CRI-O](https://cri-o.io/) é o runtime padrão de contêineres do OpenShift 4.x e possui uma ferramenta de linha de comando chamada `crictl` (Container Runtime Interface command line tool). Para obter as informações necessárias para aprofundar o modo como os contêineres isolam os aplicativos no OpenShift, o comando `crictl` deve ser o seu ponto de partida. A interação com os contêineres em nível de nó é feita principalmente com esta ferramenta.
 
-Entre no node da aplicação e execute o comando `docker ps`. Este comando retorna uma lista de todos os contêineres atualmente em execução no node do aplicativo. Cada linha na saída do comando `docker ps` representa um contêiner em execução. O primeiro valor em cada linha é uma versão abreviada do ID desse contêiner. Você pode também confirmar com qual aplicação está lidando ao observar o nome dado ao contêiner. Se você seguiu os passos acima, certamente que a saída do `docker ps` será grande pois inclui informações sobre contêineres que hospedam o registro interno e o balanceador de carga HAProxy.
+Para interagir diretamente com o CRI-O, você precisa do SSH e preferencialmente executar os comandos em modo `root` no node da aplicação. A primeira coisa a percorreremos, é a lista de todos os contêineres atualmente em execução.
+
+Entre no node da aplicação e execute o comando `crictl ps`. Este comando retorna uma lista de todos os contêineres atualmente em execução no node do aplicativo. Cada linha na saída do comando `crictl ps` representa um contêiner em execução. O primeiro valor em cada linha é uma versão abreviada do ID desse contêiner. Você pode também confirmar com qual aplicação está lidando ao observar o nome dado ao contêiner. Se você seguiu os passos acima, certamente que a saída do `crictl ps` será grande pois inclui informações sobre contêineres que hospedam o registro interno e o balanceador de carga HAProxy.
 
 A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estranho se você já fez o download de uma imagem de qualquer aplicação ou ferramenta antes. Uma URL padrão de solicitação de registro contém um nome de contêiner e uma tag correspondente, como _docker.io/scovl/golang-app:latest_ por exemplo. Essa URL do registro pode ser dividida em quatro componentes:
 
@@ -774,22 +1345,24 @@ A URL que aponta para a imagem no registro OpenShift pode parecer um pouco estra
 * golang-app - Nome da imagem do contêiner para download.
 * latest - Tag ou versão específica da imagem do contêiner.
 
+> NOTA: Embora o Docker Hub ainda seja usado como exemplo, o CRI-O é compatível com qualquer registro de imagens que siga o padrão OCI (Open Container Initiative), incluindo registros privados e públicos.
+
 > NOTA: A URL _docker.io/scovl/golang-app:latest_, é meramente ilustrativa. Sinta-se livre para testar quaisquer aplicações consultando o [Dockerhub](https://hub.docker.com/).
 
-O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes [SHA256](https://en.wikipedia.org/wiki/SHA-2) são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
+O valor _latest_ se refere a tag da imagem que você deseja baixar. As Tags das images são valores arbitrários que especificam uma versão da imagem a ser baixada. Em vez de usar tags para especificar uma versão de uma imagem, o OpenShift 4.x com CRI-O usa o valor de hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) exclusivo para cada versão de uma imagem. O download de uma imagem pelo hash [SHA256](https://en.wikipedia.org/wiki/SHA-2) é um benefício de segurança para o OpenShift. As tags são mutáveis, o que significa que várias tags podem apontar para diferentes versões de imagem em momentos diferentes. As hashes [SHA256](https://en.wikipedia.org/wiki/SHA-2) são imutáveis ​​e sempre apontam para uma única imagem, independentemente de quaisquer tags associadas a ela. Se uma imagem for alterada por algum motivo, a hash SHA256 será alterada, mesmo que suas tags não sejam alteradas.
 
-O comando `docker inspect` exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o `docker inspect` retornará uma longa lista de informações sobre o contêiner no formato [JSON](https://pt.wikipedia.org/wiki/JSON). Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o `docker ps`, é possível também obter o PID do contêiner app-cli usando o `docker inspect`, conforme demonstrado no exemplo a seguir:
+O comando `crictl inspect` exibe todas as informações de tempo de execução de baixo nível sobre um contêiner. Se você não especificar nenhum parâmetro, o `crictl inspect` retornará uma longa lista de informações sobre o contêiner no formato [JSON](https://pt.wikipedia.org/wiki/JSON). Usando o parâmetro -f, você pode especificar uma parte da saída JSON que deseja visualizar. Usando o ID do contêiner app-cli obtido usando o `crictl ps`, é possível também obter o PID do contêiner app-cli usando o `crictl inspect`, conforme demonstrado no exemplo a seguir:
 
 ```bash
-# docker inspect -f '&#123;&#123; .State.Pid &#125;&#125;' fae9e245e6a7 4470
+# crictl inspect -f '&#123;&#123; .info.pid &#125;&#125;' fae9e245e6a7 4470
 ```
 
-O `Property accessors` é uma maneira de descrever e acessar uma parte específica de dados em um conjunto de dados JSON. (Você pode aprender mais sobre em [https://goo.gl/ZY9vNt](https://goo.gl/ZY9vNt).) É possível executar o docker inspect <ID do contêiner> no node do aplicativo para ver todos os dados disponíveis no Docker sobre um contêiner em execução.
+O `Property accessors` é uma maneira de descrever e acessar uma parte específica de dados em um conjunto de dados JSON. (Você pode aprender mais sobre em [https://goo.gl/ZY9vNt](https://goo.gl/ZY9vNt).) É possível executar o crictl inspect <ID do contêiner> no node do aplicativo para ver todos os dados disponíveis no CRI-O sobre um contêiner em execução.
 
-Se você excluir o pode app-cli ou parar o contêiner usando o docker diretamente, o OpenShift criará um novo contêiner usando a mesma imagem e configuração, mas terá um PID diferente. O PID também será alterado se você reiniciar o node do aplicativo ou fizer redeploy dos seus aplicativos. De forma semelhante, o ID do contêiner será alterado nas mesmas circunstâncias. Estes não são valores permanentes no seu node. Para iniciar uma sessão de shell interativa em um contêiner em execução, edite o seguinte comando para fazer referência ao ID do seu contêiner:
+Se você excluir o pode app-cli ou parar o contêiner usando o crictl diretamente, o OpenShift criará um novo contêiner usando a mesma imagem e configuração, mas terá um PID diferente. O PID também será alterado se você reiniciar o node do aplicativo ou fizer redeploy dos seus aplicativos. De forma semelhante, o ID do contêiner será alterado nas mesmas circunstâncias. Estes não são valores permanentes no seu node. Para iniciar uma sessão de shell interativa em um contêiner em execução, edite o seguinte comando para fazer referência ao ID do seu contêiner:
 
 ```bash
-# docker exec -it fae9e245e6a7 bash
+# crictl exec -it fae9e245e6a7 bash
 ```
 
 A opção `-i` fornece uma sessão de usuário interativa, `-t` cria uma sessão `TTY` no contêiner e o `bash` inicia o programa terminal do shell bash no TTY que você criou no contêiner. Você entrou efetivamente no seu contêiner em execução. Em vez de apenas fornecer a saída do comando, o parâmetro interativo fornece um shell bash ativo.
@@ -814,7 +1387,7 @@ A imagem abaixo mostra como esses componentes estão interligados. Quando um des
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco01.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco01.png#center)
 
-O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. Na imagem acima observe que os usuários estão sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do docker para obter o deployment do aplicativo para o usuário.
+O build config cria uma imagem customizada específica do aplicativo usando o builder image e o código-fonte especificado. Esta imagem é armazenada no registro de imagens e o componente do deployment config cria um deploy exclusivo para cada versão do aplicativo. O image stream é criado e monitora as alterações na configuração de deployment e nas imagens relacionadas no registro interno. A rota do DNS também é criada e será vinculada a um objeto do Kubernetes. Na imagem acima observe que os usuários estão sem acesso ao aplicativo. Não há aplicação. O OpenShift depende do Kubernetes, bem como do CRI-O para obter o deployment do aplicativo para o usuário.
 
 ---
 
@@ -832,25 +1405,25 @@ O relacionamento entre o deployment e os replication controllers pode ser explic
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco02.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco02.png#center)
 
-O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do [docker](https://www.docker.com/what-docker) para criar os contêineres das aplicações.
+O Kubernetes é usado para orquestrar contêineres em um cluster do OpenShift. Mas em cada node do aplicativo, o Kubernetes depende do **[CRI-O](https://cri-o.io/)** para criar os contêineres das aplicações.
 
 ---
 
-### UM POUCO SOBRE DOCKER
+### UM POUCO SOBRE CRI-O E O KERNEL LINUX
 
-O [Docker](https://www.docker.com/what-docker) é um contêiner runtime. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.
+O [CRI-O](https://cri-o.io/) é o contêiner runtime padrão do OpenShift 4.x. Isto é, é uma aplicação em servidor que cria, mantém e remove contêineres. Basicamente um contêiner runtime pode atuar como uma ferramenta independente em um laptop ou em um único servidor, mas é mais poderoso quando está sendo orquestrado em um cluster por uma ferramenta como o Kubernetes.
 
-Posso dizer, então, que o Docker é o contêiner runtime do OpenShift. No entanto, não é o único, pois, um novo runtime é suportado a partir do OpenShift 3.9 e é chamado cri-o e você pode encontra-lo em [http://cri-o.io](http://cri-o.io). O Kubernetes controla o docker para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o [docker](https://www.docker.com/what-docker) usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
+O CRI-O é mais leve e otimizado especificamente para Kubernetes. O Kubernetes controla o CRI-O para criar contêineres que hospedam o aplicativo. Para isolar as bibliotecas e aplicativos na imagem, juntamente com outros recursos do servidor, o CRI-O usa componentes do kernel do Linux. Esses recursos no nível do kernel são os componentes que isolam os aplicativos em seu contêiner.
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco03.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco03.png#center)
 
-O Docker usa três componentes do kernel Linux para isolar os aplicativos em execução nos contêineres que são criados e limita seu acesso aos recursos no host. São eles:
+O CRI-O usa três componentes do kernel Linux para isolar os aplicativos em execução nos contêineres que são criados e limita seu acesso aos recursos no host. São eles:
 
 * Linux namespaces - forneça isolamento para os recursos em execução no contêiner. Embora o termo seja o mesmo, esse é um conceito diferente dos namespaces do Kubernetes [https://goo.gl/GYZQ4a](https://goo.gl/GYZQ4a), que são mais ou menos análogos a um projeto do OpenShift.
 * Control groups (cgroups) - fornecem limites máximos de acesso garantido para CPU e memória no node do aplicativo.
 * SELinux contexts - Impede que os aplicativos em um contêiner acessem indevidamente recursos no host ou em outros contêineres. Um SELinux context é um rótulo exclusivo do aplicado aos recursos de um contêiner no node. Esse rótulo exclusivo impede que o contêiner acesse qualquer coisa que não tenha um marcador correspondente no host.
 
-O [daemon](https://pt.wikipedia.org/wiki/Daemon_(computa%C3%A7%C3%A3o)) do docker cria esses recursos do kernel dinamicamente quando o contêiner é criado. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
+O [daemon](https://pt.wikipedia.org/wiki/Daemon_(computa%C3%A7%C3%A3o)) do CRI-O cria esses recursos do kernel dinamicamente quando o contêiner é criado. Aplicativos no OpenShift são executados e associados a esses componentes do kernel. Eles fornecem o isolamento que você vê de dentro de um contêiner.
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco04.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco04.png#center)
 
 Um servidor Linux é separado em dois grupos de recursos principais: o espaço do usuário e o espaço do kernel. O espaço do usuário é onde os aplicativos são executados. Qualquer processo que não faz parte do kernel é considerado parte do espaço do usuário em um servidor Linux. O [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html) é o próprio kernel. Sem privilégios especiais de administrador, como os usuário root, os usuários não podem fazer alterações no código em execução no [kernelspace](http://www.uniriotec.br/~morganna/guia/kernel.html).
@@ -861,13 +1434,13 @@ Os aplicativos em um contêiner são executados no espaço do usuário, mas os c
 
 ### FLUXO DE TRABALHO AUTOMATIZADO
 
-O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o docker e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:
+O fluxo de trabalho automatizado executado após um deploy de um aplicativo no OpenShift inclui o Kubernetes, o CRI-O e o kernel do Linux. As interações e dependências se estendem por vários serviços, conforme descrito na imagem abaixo:
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco05.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/appco05.png#center)
 
 O OpenShift trabalha com o Kubernetes para garantir que as solicitações dos usuários sejam atendidas e que os aplicativos sejam entregue. Como qualquer outro processo em execução em um servidor Linux, cada contêiner tem um identificador do processo (PID) no node da aplicação.
 
-Você pode analisar como os contêineres isolam recursos de processo com namespaces do Linux testando o PID atual do contêiner `app-cli`. O Docker cria um conjunto exclusivo de namespaces para isolar os recursos em cada contêiner. A aplicação está vinculada aos namespaces porque elas são exclusivas para cada contêiner. O [Cgroups](https://en.wikipedia.org/wiki/Cgroups) e o [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux) são configurados para incluir informações para um contêiner recém-criado, mas esses recursos do kernel Linux são compartilhados entre todos os contêineres em execução no node do aplicativo.
+Você pode analisar como os contêineres isolam recursos de processo com namespaces do Linux testando o PID atual do contêiner `app-cli`. O CRI-O cria um conjunto exclusivo de namespaces para isolar os recursos em cada contêiner. A aplicação está vinculada aos namespaces porque elas são exclusivas para cada contêiner. O [Cgroups](https://en.wikipedia.org/wiki/Cgroups) e o [SELinux](https://en.wikipedia.org/wiki/Security-Enhanced_Linux) são configurados para incluir informações para um contêiner recém-criado, mas esses recursos do kernel Linux são compartilhados entre todos os contêineres em execução no node do aplicativo.
 
 Para obter uma lista dos namespaces criados para o `app-cli`, use o comando `lsns`. Você precisa que o PID para `app-cli` passe como parâmetro para `lsns`. O comando `lsns` aceita um PID com a opção `-p` e gera os namespaces associados a esse PID. A saída para `lsns` possui as seis colunas a seguir:
 
@@ -923,25 +1496,28 @@ O namespace _mount_ isola o conteúdo do sistema de arquivos, garantindo que o c
 
 ![https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/namespace-mount.png#center](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/namespace-mount.png#center)
 
-Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o docker a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o gerenciamento de volume lógico [LVM]() neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio volume lógico [LV]() quando é criado. Essa solução de armazenamento é rápida se adapta bem a grandes clusters em produção. Para visualizar todos os LVs criados pelo docker no seu host, execute o comando `lsblk`. O dispositivo LV que o contêiner _app-cli_ usa para armazenamento é registrado nas informações do `docker inspect`. Para obter o LV para seu contêiner _app-cli_, execute o seguinte comando:
+Quando configuramos o OpenShift, especificamos um dispositivo de bloco para o CRI-O a ser usado para armazenamento em contêiner. Sua configuração do OpenShift usa o sistema de arquivos overlay neste dispositivo para armazenamento em contêiner. Cada contêiner recebe seu próprio sistema de arquivos overlay quando é criado. Essa solução de armazenamento é rápida e se adapta bem a grandes clusters em produção. Para visualizar todos os sistemas de arquivos overlay criados pelo CRI-O no seu host, execute o comando `lsblk`. O sistema de arquivos que o contêiner app-cli usa para armazenamento é registrado nas informações do `crictl inspect`. Para obter o PID e o caminho dos logs do seu contêiner app-cli, execute o seguinte comando, substituindo `<container-id>` pelo ID real do seu contêiner:
 
 ```bash
-docker inspect -f '&#123;&#123; .GraphDriver.Data.DeviceName &#125;&#125;' fae8e211e7a7
-```
+# Obter o PID e o caminho do log para um contêiner específico
+crictl inspect --output go-template \
+  --template '{{.info.pid}}, {{.info.logPath}}' \
+  <container-id>
+``` 
 
-Você receberá um valor semelhante ao `docker-253: 1-10125-8bd64caed0421039e83ee4f1cdcbcf25708e3da97081d43a99b6d20a3eb09c98`. Esse é o nome do LV que está sendo usado como o sistema de arquivos _root_ do contêiner _app-cli_. O namespace _mount_ para os contêineres das suas aplicações é criado em um namespace de montagem diferente do sistema operacional do node. Quando o daemon do docker é iniciado, ele cria seu próprio namespace _mount_ para conter o conteúdo do sistema de arquivos para os contêineres que cria. Você pode confirmar isso executando `lsns` para o processo docker. Para obter o PID do processo docker principal, execute o seguinte comando `pgrep` (o processo `dockerd-current` é o nome do processo principal do daemon do docker):
+O namespace _mount_ para os contêineres das suas aplicações é criado em um namespace de montagem diferente do sistema operacional do node. Quando o daemon do CRI-O é iniciado, ele cria seu próprio namespace _mount_ para conter o conteúdo do sistema de arquivos para os contêineres que cria. Você pode confirmar isso executando `lsns` para o processo CRI-O. Para obter o PID do processo CRI-O principal, execute o seguinte comando `pgrep` (o processo `crio` é o nome do processo principal do daemon do CRI-O):
 
 ```bash
-# pgrep -f dockerd-current
+# pgrep -f crio
 ```
 
-Depois de ter o PID do daemon do docker, você pode usar o comando `lsns` para visualizar seus namespaces. Você pode também usar uma ferramenta de linha de comando chamada `nsenter` caso deseje inserir um namespace ativo para outro aplicativo. É uma ótima ferramenta para usar quando você precisa solucionar problemas de um contêiner que não está funcionando como deveria. Para usar o `nsenter`, você dá a ele um PID para o container com a opção `--target` e, em seguida, instrui-o a respeito de quais namespaces você deseja inserir para esse PID:
+Depois de ter o PID do daemon do CRI-O, você pode usar o comando `lsns` para visualizar seus namespaces. Você pode também usar uma ferramenta de linha de comando chamada `nsenter` caso deseje inserir um namespace ativo para outro aplicativo. É uma ótima ferramenta para usar quando você precisa solucionar problemas de um contêiner que não está funcionando como deveria. Para usar o `nsenter`, você dá a ele um PID para o container com a opção `--target` e, em seguida, instrui-o a respeito de quais namespaces você deseja inserir para esse PID:
 
 ```bash
 $ nsenter --target 2385
 ```
 
-De dentro do namespace _mount_ do docker, a saída do comando `mount` inclui o ponto de montagem do sistema de arquivos root do app-cli. O LV que o docker criou para o app-cli é montado no node do aplicativo em `/var/lib/docker/devicemapper/mnt/8bd64cae...`. Vá para esse diretório enquanto estiver no namespace _mount_ do daemon do docker e você encontrará um diretório chamado _rootfs_. Este diretório é o sistema de arquivos da sua aplicação app-cli no contêiner:
+De dentro do namespace _mount_ do CRI-O, a saída do comando `mount` inclui o ponto de montagem do sistema de arquivos root do app-cli. O sistema de arquivos overlay que o CRI-O criou para o app-cli é montado no node do aplicativo em `/var/lib/containers/storage/overlay/8bd64cae...`. Vá para esse diretório enquanto estiver no namespace _mount_ do daemon do CRI-O e você encontrará um diretório chamado _rootfs_. Este diretório é o sistema de arquivos da sua aplicação app-cli no contêiner:
 
 ```bash
 # ls -al rootfs
@@ -967,10 +1543,14 @@ Entender como esse processo funciona e onde os artefatos são criados é importa
 
 ### O NAMESPACE UTS
 
-O namespace _UTS_ ou  _Unix time sharing_ permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace _UTS_ não tem nada a ver com o gerenciamento do relógio do sistema. O namespace _UTS_ é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando `uname -a` em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace _UTS_ segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, digite o comando `docker exec` com o ID do contêiner e o mesmo comando do nome do host que você deseja executar no contêiner. O hostname de cada contêiner do OpenShift é o nome do seu pod:
+O namespace _UTS_ ou  _Unix time sharing_ permite que cada contêiner tenha seu próprio hostname e domain name. Mas não se engane, o namespace _UTS_ não tem nada a ver com o gerenciamento do relógio do sistema. O namespace _UTS_ é onde o hostname, o domain name e outras informações do sistema são retidos. Basicamente se você executar o comando `uname -a` em um servidor Linux para obter informações de hostname ou domain name, saiba que o namespace _UTS_ segue basicamente a mesma estrutura de dados. Para obter o valor do hostname de um contêiner em execução, você pode usar o comando `crictl exec` (quando no nó) ou `oc exec` (a partir do cliente). O hostname de cada contêiner do OpenShift é o nome do seu pod:
 
 ```bash
-# docker exec fae8e211e7a7 hostname
+# Para obter o hostname do contêiner a partir do nó (via SSH)
+# crictl exec <container-id> hostname
+
+# Para obter o hostname a partir do cliente oc (forma mais comum)
+oc exec <pod-name> -- hostname
 ```
 
 Se você escalar a sua aplicação, o container em cada pod terá um hostname único também. Para confirmar que cada contêiner possui um hostname exclusivo, efetue login no seu cluster como seu usuário desenvolvedor:
@@ -979,7 +1559,7 @@ Se você escalar a sua aplicação, o container em cada pod terá um hostname ú
 oc login -u developer -p developer https://ocp1.192.168.100.1.nip.io:8443
 ```
 
-A ferramenta de linha de comando `oc` tem uma funcionalidade semelhante ao `docker exec`. Em vez de passar o ID para o contêiner, no entanto, você pode passar o pod no qual deseja executar o comando. Depois de efetuar login no seu cliente oc, dimensione sua aplicação para dois pods com o seguinte comando:
+A ferramenta de linha de comando `oc` tem uma funcionalidade semelhante ao `crictl exec`. Em vez de passar o ID para o contêiner, no entanto, você pode passar o pod no qual deseja executar o comando. Depois de efetuar login no seu cliente oc, dimensione sua aplicação para dois pods com o seguinte comando:
 
 ```bash
 oc scale dc/app-cli --replicas=2
@@ -991,7 +1571,7 @@ Isso causará uma atualização no deployment config da aplicação e acionará 
 $ oc get pods --show-all=false
 ```
 
-Para obter o hostname de seu novo pod, use o comando `oc exec`. É semelhante ao `docker exec`, mas, em vez do ID de um contêiner, você usa o nome do pod para especificar onde deseja que o comando seja executado. O hostname do novo pod corresponde ao nome do pod, assim como o seu pod original:
+Para obter o hostname de seu novo pod, use o comando `oc exec`. É semelhante ao `crictl exec`, mas, em vez do ID de um contêiner, você usa o nome do pod para especificar onde deseja que o comando seja executado. O hostname do novo pod corresponde ao nome do pod, assim como o seu pod original:
 
 ```bash
 $ oc exec app-cli-1-9hsz1 hostname
@@ -1011,14 +1591,18 @@ Podemos usar o comando `ps` com a opção `--ppid` para visualizarmos os process
 $ oc exec app-cli ps
 ```
 
-Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos próximos capítulos irei abordar sobre os services, como testar uma aplicação uma aplicação resiliente, compreender melhor o replication controller, labels e seletores, como escalar aplicações com auto-scaling e metrics, como configurar um storage persistente com nfs e lvm, operações de segurança com SElinux, quotas, cgroups, e compreender melhor sobre HAPROXY. Por fim, irei concluir este artigo com a integração de tudo isso ao Jenkins.
+Agora que você pode acompanhar um pouco sobre namespaces no OpenShift, nos próximos capítulos irei abordar sobre os services, como testar uma aplicação resiliente, compreender melhor o replication controller, labels e seletores, como escalar aplicações com auto-scaling e metrics, como configurar opções de storage persistente incluindo NFS, OpenShift Data Foundation (ODF), operações de segurança com SELinux, quotas, cgroups, e compreender melhor sobre HAProxy. Por fim, irei concluir este artigo com a integração de tudo isso ao Jenkins.
 
 ---
 
 ### REFERÊNCIAS
 
+* OpenShift 4.x Documentation - [https://docs.openshift.com/container-platform/4.12/](https://docs.openshift.com/container-platform/4.12/)
+* OpenShift Data Foundation Documentation - [https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation](https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation)
+* Red Hat Ceph Storage Documentation - [https://access.redhat.com/documentation/en-us/red_hat_ceph_storage](https://access.redhat.com/documentation/en-us/red_hat_ceph_storage)
+* OpenShift Local Documentation - [https://developers.redhat.com/products/openshift-local/overview](https://developers.redhat.com/products/openshift-local/overview)
 * OpenShift in Action - [https://www.manning.com/books/openshift-in-action](https://www.manning.com/books/openshift-in-action)
 * Kubernetes in Action - [https://www.manning.com/books/kubernetes-in-action](https://www.manning.com/books/kubernetes-in-action)
-* Docker in Practice, Second Edition - [https://www.manning.com/books/docker-in-practice-second-edition](https://www.manning.com/books/docker-in-practice-second-edition)
+* CRI-O Documentation - [https://cri-o.io/](https://cri-o.io/)
 * GO in Action - [https://www.manning.com/books/go-in-action](https://www.manning.com/books/go-in-action)
 * Go Web Programming - [https://www.manning.com/books/go-web-programming](https://www.manning.com/books/go-web-programming)
