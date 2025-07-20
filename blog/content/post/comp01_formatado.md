@@ -1,3 +1,13 @@
++++
+title = "2"
+description = "2"
+date = 2025-03-28T12:00:00-00:00
+tags = ["RAG", "LLM", "AI", "Optimização", "Produção", "PostgreSQL", "Ollama"]
+draft = true
+weight = 3
+author = "Vitor Lobo Ramos"
++++
+
 ## 1. INTRODUÇÃO
 
 Sabe quando você tem uma ideia e quer que o computador a transforme em um aplicativo, um jogo ou um site? A gente usa [**linguagens de programação**](https://www.linguagensdeprogramacao.com.br/) pra isso. Elas são como a nossa forma de conversar com a máquina, dando instruções detalhadas para resolver problemas ou criar coisas novas.

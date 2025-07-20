@@ -1,0 +1,35 @@
+{{ if or (.Paginator.HasPrev) (.Paginator.HasNext) }}
+<nav class="pagination" role="navigation" aria-label="Navegação de páginas">
+    {{ if .Paginator.HasPrev }}
+        <a href="{{ .Paginator.Prev.URL }}" class="pagination-item pagination-prev" rel="prev">
+            Anterior
+        </a>
+    {{ else }}
+        <span class="pagination-item pagination-prev disabled">Anterior</span>
+    {{ end }}
+
+    {{ $current := .Paginator.PageNumber }}
+    {{ $total := .Paginator.TotalPages }}
+    {{ $delta := 2 }}
+
+    {{ range $i := seq 1 $total }}
+        {{ if or (eq $i 1) (eq $i $total) (and (ge $i (sub $current $delta)) (le $i (add $current $delta))) }}
+            {{ if eq $i $current }}
+                <span class="pagination-item active">{{ $i }}</span>
+            {{ else }}
+                <a href="{{ (index $.Paginator.Pagers (sub $i 1)).URL }}" class="pagination-item">{{ $i }}</a>
+            {{ end }}
+        {{ else if or (eq $i (sub $current $delta 1)) (eq $i (add $current $delta 1)) }}
+            <span class="pagination-ellipsis">…</span>
+        {{ end }}
+    {{ end }}
+
+    {{ if .Paginator.HasNext }}
+        <a href="{{ .Paginator.Next.URL }}" class="pagination-item pagination-next" rel="next">
+            Próxima
+        </a>
+    {{ else }}
+        <span class="pagination-item pagination-next disabled">Próxima</span>
+    {{ end }}
+</nav>
+{{ end }} 
