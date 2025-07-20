@@ -55,10 +55,10 @@ Neste artigo, vamos explorar de onde veio o `try/catch`, para que ele foi criado
 
 ## Propósito do Try/Catch
 
-A linguagem [SIMULA 67](https://en.wikipedia.org/wiki/SIMULA_67), precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções idêntico ao modelo `try/catch` atual, seu mecanismo de *ON-actions* para lidar com condições excepcionais (como falhas em operações de [I/O](https://en.wikipedia.org/wiki/Input/output)) foi conceitualmente similar e representou um avanço significativo no controle de fluxo em situações de erro. O tratamento de exceções em SIMULA 67 utilizava estruturas análogas às atuais, mas com implementação distinta, organizadas em:  
+A linguagem [SIMULA 67](https://en.wikipedia.org/wiki/SIMULA_67), precursora dos conceitos modernos de programação orientada a objetos, introduziu mecanismos inovadores para a estruturação de código, como classes e herança. Embora não possuísse um sistema de tratamento de exceções idêntico ao modelo `try/catch` atual, seu mecanismo de *ON-actions* para lidar com condições excepcionais (como falhas em operações de [I/O](https://en.wikipedia.org/wiki/Input/output)) pode ser considerado um equivalente conceitual que inspirou abordagens posteriores. Este mecanismo representou um avanço significativo no controle de fluxo em situações de erro, organizando o tratamento em estruturas que, embora diferentes na implementação, eram análogas em propósito às atuais:  
 
-1. **Bloco Protegido**: Conceitualmente similar ao moderno bloco *Try*, delimitava o código no qual erros poderiam ocorrer.  
-2. **Handler**: Implementado via *ON-actions*, funcionava de forma análoga ao atual *Catch*, sendo executado caso uma exceção fosse detectada. 
+1. **Bloco Protegido**: Funcionalmente equivalente ao moderno bloco *Try*, delimitava o código no qual erros poderiam ocorrer.  
+2. **Handler**: Implementado via *ON-actions*, servia como uma abordagem análoga ao atual *Catch*, sendo executado caso uma condição excepcional fosse detectada. 
 
 Vejamos como essa abordagem era estruturada na sintaxe da época:  
 
@@ -72,11 +72,11 @@ BEGIN
 END;  
 ```  
 
-Esse modelo permitia desacoplar a lógica principal da tratativa de falhas, um avanço significativo para a época. O C++ posteriormente herdou e refinou esse conceito, formalizando-o como parte do sistema de exceções por meio das estruturas `try` e `catch`.
+Esse modelo pioneiro permitia desacoplar a lógica principal da tratativa de falhas, um avanço significativo que inspirou desenvolvimentos posteriores. Embora diferente em sintaxe e implementação, o conceito fundamental de separar o código normal do código de tratamento de erros estabeleceu as bases para o que viria a ser refinado nas décadas seguintes.
 
-Na linha evolutiva do tratamento de exceções, o [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) ocupa posição fundamental, estabelecendo as bases conceituais para o que viria a ser o moderno tratamento de exceções. Embora não utilizasse exatamente a sintaxe `try/catch` como conhecemos hoje, o Lisp introduziu primitivas como `catch` e `throw` que permitiam desviar o fluxo de execução quando situações excepcionais ocorriam.
+Na linha evolutiva do tratamento de exceções, o [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) ocupa posição fundamental, contribuindo com paradigmas que influenciaram profundamente os sistemas modernos. O Lisp não utilizava a sintaxe `try/catch` como conhecemos hoje, mas introduziu primitivas como `catch` e `throw` que estabeleceram o importante paradigma de desviar o fluxo de execução sem a necessidade de retornar códigos de erro explícitos.
 
-A abordagem do Lisp para tratamento de erros foi revolucionária para sua época, pois permitia que um programa detectasse condições anômalas e reagisse a elas sem precisar verificar explicitamente o resultado de cada operação. Esta capacidade de "sinalizar" problemas e "capturá-los" em outro ponto do programa estabeleceu um paradigma que influenciaria praticamente todas as linguagens modernas, desde C++ e Java até Python e JavaScript.
+A contribuição paradigmática do Lisp para o tratamento de erros foi revolucionária para sua época, pois permitia que um programa detectasse condições anômalas e reagisse a elas sem precisar verificar explicitamente o resultado de cada operação. Esta capacidade de "sinalizar" problemas e "capturá-los" em outro ponto do programa estabeleceu um modelo conceitual que influenciaria praticamente todas as linguagens modernas, mesmo que a implementação baseada em tags simbólicas seja diferente dos sistemas baseados em tipos de exceção que vemos em C++ e Java.
 
 O sistema de exceções do Lisp se integra elegantemente com o modelo de computação simbólica da linguagem. Em vez de tratar exceções como um mecanismo separado, elas são implementadas usando as mesmas primitivas fundamentais que compõem o restante da linguagem, demonstrando a flexibilidade que tornou o Lisp tão influente no desenvolvimento da ciência da computação.
 
@@ -99,9 +99,9 @@ No Lisp, o tratamento de exceções baseia-se em *tags* simbólicas e desvio de 
 
 Neste exemplo, a chamada `(operacao-arriscada -1)` sinaliza uma condição excepcional via `throw`, interrompendo o fluxo normal e retornando ao bloco `catch` correspondente. Quando o `throw` é acionado com a tag 'valor-invalido', o controle é imediatamente transferido para o `catch` mais próximo com essa mesma tag, pulando qualquer código intermediário. Como resultado, apenas o primeiro `format` é executado, mostrando "Resultado: 2.0", enquanto o segundo `format` e a mensagem final nunca são processados. 
 
-Embora a sintaxe do Lisp difira das linguagens modernas, sua abordagem com `catch/throw` demonstra como exceções podem ser implementadas de forma elegante usando primitivas mínimas, eliminando a necessidade de verificações manuais após cada operação e antecipando o propósito dos mecanismos modernos de exceções.
+Embora a sintaxe e implementação do Lisp difira significativamente das linguagens modernas, sua abordagem com `catch/throw` demonstra o importante paradigma de desviar o fluxo de execução sem verificações explícitas de códigos de erro, um conceito fundamental que inspirou os mecanismos modernos de exceções, mesmo que com implementações técnicas diferentes.
 
-Consolidando essa evolução histórica, o C++ moderno formalizou o tratamento de exceções por meio das estruturas `try` e `catch`, que permitem que um bloco de código seja protegido contra exceções e que um tratamento adequado seja feito caso uma exceção seja lançada: 
+Consolidando essa evolução histórica, o C++ moderno formalizou e refinou esses conceitos pioneiros através das estruturas `try` e `catch`, introduzindo um sistema baseado em tipos que permite que um bloco de código seja protegido contra exceções e que um tratamento adequado seja feito caso uma exceção seja lançada: 
 
 ```c  
 try {  
@@ -112,7 +112,7 @@ try {
 }  
 ```  
 
-Seu objetivo principal é ajudar os programadores a tratar problemas que acontecem durante a execução do programa de forma organizada. 
+Seu objetivo principal é ajudar os programadores a tratar problemas que acontecem durante a execução do programa de forma organizada, levando adiante e refinando os princípios conceituais introduzidos por SIMULA e Lisp, mas com uma implementação mais sofisticada e integrada à tipagem estática da linguagem.
 
 > **Bjarne Stroustrup afirma:**  
 > *"As exceções foram criadas para resolver problemas fundamentais com os métodos tradicionais de retorno de códigos de erro. Elas permitem separar claramente o código de tratamento de erros da lógica normal do programa, tornando ambos mais compreensíveis e melhores estruturados."*
