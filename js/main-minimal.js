@@ -1,14 +1,8 @@
 // ===== FUNCIONALIDADES PRINCIPAIS =====
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Prism.js para syntax highlighting (com tratamento de erro)
-    try {
-        if (typeof Prism !== 'undefined') {
-            Prism.highlightAll();
-        }
-    } catch (error) {
-        console.warn('Prism.js não carregou corretamente:', error);
-    }
+    // Inicializar Mermaid se disponível
+    initMermaid();
     
     // Smooth scroll para links internos
     initSmoothScroll();
@@ -18,12 +12,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Adicionar funcionalidade de tema escuro (opcional)
     initDarkMode();
-    
-    // Adicionar animações de scroll (desabilitado temporariamente para evitar problemas)
-    // if (!document.querySelector('.post')) {
-    //     initScrollAnimations();
-    // }
 });
+
+// ===== MERMAID =====
+function initMermaid() {
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            align: 'center',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                useMaxWidth: true,
+                diagramMarginX: 50,
+                diagramMarginY: 10
+            },
+            gantt: {
+                useMaxWidth: true
+            }
+        });
+    }
+}
 
 // ===== SMOOTH SCROLL =====
 function initSmoothScroll() {
@@ -108,9 +120,6 @@ function initCodeCopy() {
 
 // ===== TEMA ESCURO =====
 function initDarkMode() {
-    // Verificar se o usuário prefere tema escuro
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    
     // Criar botão de alternar tema (opcional)
     const themeToggle = document.createElement('button');
     themeToggle.className = 'theme-toggle';
@@ -146,62 +155,6 @@ function initDarkMode() {
     });
 }
 
-// ===== ANIMAÇÕES DE SCROLL =====
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    
-    // Observar apenas elementos específicos para animação (não todos os posts)
-    const animatedElements = document.querySelectorAll('.post-header, .post-content h1, .post-content h2, .post-content h3');
-    
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-}
-
-// ===== UTILITÁRIOS =====
-
-// Função para debounce
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Função para throttle
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
 // ===== EVENT LISTENERS ADICIONAIS =====
 
 // Adicionar classe ativa ao link de navegação atual
@@ -214,29 +167,4 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
-});
-
-// Adicionar funcionalidade de busca (se implementada)
-function initSearch() {
-    const searchInput = document.querySelector('.search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce(function(e) {
-            const query = e.target.value.toLowerCase();
-            const posts = document.querySelectorAll('.post-item');
-            
-            posts.forEach(post => {
-                const title = post.querySelector('.post-item-title').textContent.toLowerCase();
-                const excerpt = post.querySelector('.post-item-excerpt')?.textContent.toLowerCase() || '';
-                
-                if (title.includes(query) || excerpt.includes(query)) {
-                    post.style.display = 'block';
-                } else {
-                    post.style.display = 'none';
-                }
-            });
-        }, 300));
-    }
-}
-
-// Inicializar busca se existir
-document.addEventListener('DOMContentLoaded', initSearch); 
+}); 
