@@ -143,7 +143,7 @@
     
     <div class="post-content content-wrapper">
         <p>Inferência de tipos é um recurso de muitas linguagens de programação que permite ao compilador descobrir o tipo de uma variável sem que você precise especificá-lo explicitamente. Este artigo explica como a inferência de tipos funciona em Rust e C++, por que eles são diferentes e o que isso significa para você como programador. Também faremos uma comparação divertida com Swift no final.</p>
-<p><img src="../post/images/retropc01.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc01.png" alt=""></p>
 <h2 id="o-que-é-inferência-de-tipos">O que é Inferência de Tipos?</h2>
 <p>Em programação, um <strong>tipo</strong> indica ao computador que tipo de dado uma variável contém — como um número, texto ou algo mais específico, como um endereço de e-mail. Em linguagens <strong>estaticamente tipadas</strong> como Rust e C++, você geralmente precisa especificar os tipos para que o compilador possa verificar se seu código faz sentido. A inferência de tipos facilita isso, permitindo que o compilador deduza o tipo com base em como você usa a variável, assim você não precisa escrevê-lo toda vez.</p>
 <p>Por exemplo, em C++, você pode escrever:</p>
@@ -155,7 +155,7 @@ int main() {
     auto w = get_vector();             // Deixa o compilador descobrir o tipo de w
 }</code></pre>
  <p>Aqui, <code>auto</code> diz ao compilador para deduzir que <code>w</code> é um <code>std::vector&lt;int&gt;</code> com base no que <code>get_vector()</code> retorna. Isso economiza tempo, especialmente quando os tipos são longos ou complexos, como em lambdas (funções anônimas) que não têm um tipo nomeável. Rust faz algo semelhante, mas de uma maneira diferente, como veremos.</p>
-<p><img src="images/retropc02.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc02.png" alt=""></p>
 <h2 id="como-o-c-lida-com-inferência-de-tipos">Como o C++ Lida com Inferência de Tipos</h2>
 <p>No C++, a inferência de tipos é direta. Quando você usa <code>auto</code>, o compilador olha o valor atribuído a uma variável e usa isso para decidir o tipo. Por exemplo:</p>
 
@@ -173,7 +173,7 @@ std::vector&lt;decltype(x)&gt; v; // v é um vetor de inteiros</code></pre>
   <pre><code class="language-c">auto x = {};
 foo(x); // Isso não funciona — o compilador não sabe o tipo de x</code></pre>
  <p>Essa abordagem mantém as coisas previsíveis, mas exige que você seja mais explícito em alguns casos, especialmente com templates ou tipos complexos.</p>
-<p><img src="images/retropc03.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc03.png" alt=""></p>
 <h2 id="como-o-rust-lida-com-inferência-de-tipos">Como o Rust Lida com Inferência de Tipos</h2>
 <p>Rust usa um sistema chamado <strong>Hindley-Milner</strong>, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:</p>
 
@@ -220,7 +220,7 @@ fn main() {
 }</code></pre>
  <p>Aqui, o compilador deduz que <code>.parse()</code> retorna <code>Result&lt;i64, ParseIntError&gt;</code> através de um processo de inferência reversa: ele sabe que a função retorna um <code>Result&lt;Vec&lt;i64&gt;, ParseIntError&gt;</code> e, portanto, o <code>.collect()</code> deve coletar elementos do tipo <code>Result&lt;i64, ParseIntError&gt;</code>. Com base nisso, ele infere que o <code>.map</code> deve produzir esse tipo, o que por sua vez define o tipo de retorno de <code>x.parse()</code>.</p>
 <p>Essa flexibilidade do Rust permite coisas como a função <code>parse</code>, que converte uma string em qualquer tipo que você precisar (como um inteiro ou até um endereço IP), desde que o contexto deixe claro.</p>
-<p><img src="images/retropc04.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc04.png" alt=""></p>
 <h2 id="por-que-isso-importa-e-um-pouco-sobre-swift">Por que Isso Importa? (E um Pouco sobre Swift)</h2>
 <p>A abordagem do Rust funciona bem porque ele evita certos recursos que complicam a inferência de tipos, como:</p>
 <ul>
