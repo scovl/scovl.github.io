@@ -14,9 +14,7 @@ Inferência de tipos é um recurso de muitas linguagens de programação que per
 
 ## O que é Inferência de Tipos?
 
-Em programação, um **tipo** indica ao computador que tipo de dado uma variável contém — como um número, texto ou algo mais específico, como um endereço de e-mail. Em linguagens **estaticamente tipadas** como Rust e C++, você geralmente precisa especificar os tipos para que o compilador possa verificar se seu código faz sentido. A inferência de tipos facilita isso, permitindo que o compilador deduza o tipo com base em como você usa a variável, assim você não precisa escrevê-lo toda vez.
-
-Por exemplo, em C++, você pode escrever:
+Em programação, um **tipo** indica ao computador que tipo de dado uma variável contém — como um número, texto ou algo mais específico, como um endereço de e-mail. Em linguagens **estaticamente tipadas** como Rust e C++, você geralmente precisa especificar os tipos para que o compilador possa verificar se seu código faz sentido. A inferência de tipos facilita isso, permitindo que o compilador deduza o tipo com base em como você usa a variável, assim você não precisa escrevê-lo toda vez. Por exemplo, em C++, você pode escrever:
 
 ```c    
 std::vector<int> get_vector(); // Uma função que retorna uma lista de inteiros
@@ -45,9 +43,7 @@ auto x = 42;
 std::vector<decltype(x)> v; // v é um vetor de inteiros
 ```
 
-O compilador do C++ trabalha "olhando para trás", usando informações de valores e funções já definidos para determinar os tipos. Ele processa o código linha por linha, resolvendo tipos com base no que já sabe. Isso significa que o compilador nunca tenta adivinhar como uma variável será usada no futuro para determinar seu tipo.
-
-Por exemplo, em C++, você não pode fazer algo assim e esperar que o compilador descubra o tipo com base em usos futuros:
+O compilador do C++ trabalha "olhando para trás", usando informações de valores e funções já definidos para determinar os tipos. Ele processa o código linha por linha, resolvendo tipos com base no que já sabe. Isso significa que o compilador nunca tenta adivinhar como uma variável será usada no futuro para determinar seu tipo. Por exemplo, em C++, você não pode fazer algo assim e esperar que o compilador descubra o tipo com base em usos futuros:
 
 ```c    
 auto x = {};
@@ -74,9 +70,7 @@ fn main() {
 }
 ```
 
-Aqui, `x` e `y` são inicializados da mesma forma, mas têm tipos diferentes porque o compilador olha como eles são usados (em `foo` e `bar`). Isso é poderoso, mas pode surpreender programadores acostumados com C++ ou Go, onde o tipo depende apenas do valor inicial.
-
-O Rust exige que os tipos sejam únicos e sem ambiguidades. Se o compilador não conseguir decidir o tipo ou encontrar uma contradição, ele gera um erro:
+Aqui, `x` e `y` são inicializados da mesma forma, mas têm tipos diferentes porque o compilador olha como eles são usados (em `foo` e `bar`). Isso é poderoso, mas pode surpreender programadores acostumados com C++ ou Go, onde o tipo depende apenas do valor inicial. O Rust exige que os tipos sejam únicos e sem ambiguidades. Se o compilador não conseguir decidir o tipo ou encontrar uma contradição, ele gera um erro:
 
 ```rust
 fn bar(v: Vec<String>) {}
@@ -87,7 +81,6 @@ fn main() {
 ```
 
 Essa abordagem faz com que o Rust pareça mais **declarativo**. Você não precisa especificar tipos em todos os lugares, porque o compilador conecta todas as pistas do seu código para entender o que você quer.
-
 
 ## Diferenças Práticas
 
@@ -113,9 +106,7 @@ fn parse_strings_to_ints(v: Vec<&str>) -> Result<Vec<i64>, ParseIntError> {
 }
 ```
 
-Aqui, o compilador deduz que `.parse()` retorna `Result<i64, ParseIntError>` através de um processo de inferência reversa: ele sabe que a função retorna um `Result<Vec<i64>, ParseIntError>` e, portanto, o `.collect()` deve coletar elementos do tipo `Result<i64, ParseIntError>`. Com base nisso, ele infere que o `.map` deve produzir esse tipo, o que por sua vez define o tipo de retorno de `x.parse()`.
-
-Essa flexibilidade do Rust permite coisas como a função `parse`, que converte uma string em qualquer tipo que você precisar (como um inteiro ou até um endereço IP), desde que o contexto deixe claro.
+Aqui, o compilador deduz que `.parse()` retorna `Result<i64, ParseIntError>` através de um processo de inferência reversa: ele sabe que a função retorna um `Result<Vec<i64>, ParseIntError>` e, portanto, o `.collect()` deve coletar elementos do tipo `Result<i64, ParseIntError>`. Com base nisso, ele infere que o `.map` deve produzir esse tipo, o que por sua vez define o tipo de retorno de `x.parse()`. Essa flexibilidade do Rust permite coisas como a função `parse`, que converte uma string em qualquer tipo que você precisar (como um inteiro ou até um endereço IP), desde que o contexto deixe claro.
 
 ![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc04.png)	
 
@@ -150,6 +141,4 @@ A forma como uma linguagem lida com a inferência de tipos tem um impacto direto
 
 A história do **Swift**, que mencionei acima, nos mostra um perigo real: misturar um sistema de inferência avançado com recursos que criam ambiguidades (como sobrecarga e conversões implícitas) pode levar a um compilador que "pensa demais", resultando em erros complexos e tempos de compilação longos.
 
-No fim das contas, a escolha da linguagem reflete um compromisso. Se você valoriza a previsibilidade e o controle explícito sobre cada tipo, a abordagem do C++ pode parecer mais confortável. Mas se você prefere um fluxo de trabalho onde a linguagem cuida da complexidade dos tipos, permitindo que você se concentre no que seu código faz, a filosofia de design do Rust se destacará.
-
-A inferência de tipos não é apenas uma característica; é uma decisão de design que molda a experiência de escrever, ler e depurar código. E, como vimos, as abordagens dessas linguagens são tão distintas quanto as filosofias que as criaram.
+No fim das contas, a escolha da linguagem reflete um compromisso. Se você valoriza a previsibilidade e o controle explícito sobre cada tipo, a abordagem do C++ pode parecer mais confortável. Mas se você prefere um fluxo de trabalho onde a linguagem cuida da complexidade dos tipos, permitindo que você se concentre no que seu código faz, a filosofia de design do Rust se destacará. A inferência de tipos não é apenas uma característica; é uma decisão de design que molda a experiência de escrever, ler e depurar código. E, como vimos, as abordagens dessas linguagens são tão distintas quanto as filosofias que as criaram.
