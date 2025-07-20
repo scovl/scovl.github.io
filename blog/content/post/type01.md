@@ -56,7 +56,7 @@ Essa abordagem mantém as coisas previsíveis, mas exige que você seja mais exp
 
 ## Como o Rust Lida com Inferência de Tipos
 
-Rust usa um sistema chamado **Hindley-Milner**, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:
+Rust usa um sistema chamado **[Hindley-Milner](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)**, que é bem diferente. Em vez de deduzir tipos apenas com base no valor atribuído, o Rust analisa todo o contexto do código, incluindo como a variável é usada mais adiante. Veja este exemplo:
 
 ```rust
 fn foo(v: Vec<i32>) {} // Função que aceita um vetor de inteiros
@@ -116,7 +116,7 @@ A abordagem do Rust funciona bem porque ele evita certos recursos que complicam 
 
 - **Sem sobrecarga de funções**: Diferente do C++, onde você pode ter várias funções com o mesmo nome, mas assinaturas diferentes, o Rust usa **traits** para evitar ambiguidades.
 - **Sem conversões implícitas**: O Rust não converte tipos automaticamente (como transformar um `int` em `float`), o que reduz confusão.
-- **Sem herança**: O Rust usa traits em vez de herança, simplificando a resolução de tipos.
+- **Sem herança**: O Rust usa [traits](https://doc.rust-lang.org/book/ch10-02-traits.html) em vez de herança, simplificando a resolução de tipos.
 - **Sem especialização**: Você não pode criar implementações diferentes de uma função para tipos específicos, o que mantém o sistema de tipos mais simples.
 
 O C++ permite todos esses recursos, o que torna sua inferência de tipos mais limitada, mas também mais previsível em alguns casos. Agora, sobre o Swift: ele tenta combinar a inferência de tipos avançada (como a do Rust) com recursos como sobrecarga de funções e conversões implícitas. Isso pode levar a problemas. Por exemplo, em Swift, uma expressão simples como:
@@ -128,8 +128,6 @@ let a: Double = -(1 + 2) + -(3 + 4) + -(5)
 Pode fazer o compilador travar com um erro de "expressão muito complexa para ser verificada em tempo razoável". Isso acontece porque o Swift permite que literais (como `1`) sejam convertidos em muitos tipos diferentes, criando uma explosão de possibilidades que o compilador precisa verificar. [Rust](https://www.rust-lang.org/) e [C++](https://en.wikipedia.org/wiki/C%2B%2B) abordam a inferência de tipos de maneiras muito diferentes. 
 
 O C++ é mais rígido, deduzindo tipos apenas com base no que está na linha atual, enquanto o Rust usa um sistema mais inteligente ([Hindley-Milner](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)) que analisa o contexto todo. Isso torna o Rust mais flexível, mas exige que a linguagem evite recursos como sobrecarga de funções ou conversões implícitas para manter tudo sob controle.
-
-[Swift](https://www.swift.org/), por outro lado, mostra o que acontece quando você tenta misturar tudo isso: o compilador pode ficar sobrecarregado. No final, a escolha entre esses sistemas reflete um equilíbrio entre flexibilidade, previsibilidade e desempenho do compilador. Se você gosta de C++ ou Rust, da próxima vez que quiser discutir linguagens de programação, que tal falar sobre inferência de tipos? É um tópico bem mais interessante do que apenas segurança ou sintaxe!
 
 ### O que isso muda na prática? 
 
