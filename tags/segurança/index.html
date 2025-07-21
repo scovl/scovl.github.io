@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <title>Rust | scovl</title>
+    <title>Segurança | scovl</title>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
@@ -65,7 +65,7 @@
 <div class="post-list">
     <h1 class="page-title">
         
-            Rust
+            Segurança
         
     </h1>
 
@@ -121,112 +121,6 @@
             <p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende. Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
             
             <a href="https://scovl.github.io/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="https://scovl.github.io/2025/07/18/type01/">Inferência de Tipos em Rust e C&#43;&#43;</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-07-18T23:18:18-03:00">
-                Fri, Jul 18, 2025
-            </time>
-            
-            
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/infer%C3%AAncia-de-tipos/" class="tag">Inferência de Tipos</a>
-                
-                <a href="/tags/programa%C3%A7%C3%A3o/" class="tag">Programação</a>
-                
-                <a href="/tags/rust/" class="tag">Rust</a>
-                
-                <a href="/tags/c&#43;&#43;/" class="tag">C&#43;&#43;</a>
-                
-                <a href="/tags/swift/" class="tag">Swift</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Por que isso pode facilitar sua vida.
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <p><em>Inferência de tipos</em> é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa. Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem. Exploramos também brevemente o caso do <strong><a href="https://en.wikipedia.org/wiki/Swift_%28programming_language%29">Swift</a></strong>, comparando sua estratégia híbrida e os desafios de desempenho que ela acarreta. Ao final, refletimos sobre o impacto dessas escolhas de design na experiência de programação.</p>
-            
-            <a href="https://scovl.github.io/2025/07/18/type01/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="https://scovl.github.io/2025/05/23/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-05-23T19:41:45-03:00">
-                Fri, May 23, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/tratamento-de-erros/" class="tag">tratamento de erros</a>
-                
-                <a href="/tags/exce%C3%A7%C3%B5es/" class="tag">exceções</a>
-                
-                <a href="/tags/javascript/" class="tag">javascript</a>
-                
-                <a href="/tags/typescript/" class="tag">typescript</a>
-                
-                <a href="/tags/rust/" class="tag">rust</a>
-                
-                <a href="/tags/clojure/" class="tag">clojure</a>
-                
-                <a href="/tags/zig/" class="tag">zig</a>
-                
-                <a href="/tags/boas-pr%C3%A1ticas/" class="tag">boas práticas</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Entenda quando, por que e para que o try/catch foi criado, e por que ele não deve ser usado como controle de fluxo lógico.
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <p>O conceito de <a href="https://en.wikipedia.org/wiki/Exception_handling">tratamento de exceções</a> tem raízes mais antigas do que muitos imaginam. Embora tenha se popularizado nos anos 70, suas origens remontam ao final dos anos 50 e início dos 60, com linguagens como <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">LISP</a> (1958) e <a href="https://en.wikipedia.org/wiki/Simula">SIMULA 67</a>, que introduziram conceitos fundamentais de manipulação de condições excepcionais. No entanto, foi nos anos 70 com linguagens como <strong><a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a></strong> e posteriormente <strong><a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a></strong> que vimos o surgimento de formas mais estruturadas e organizadas de lidar com erros, incluindo construções mais próximas ao que hoje reconhecemos como <code>try/catch</code>.</p>
-            
-            <a href="https://scovl.github.io/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
             
         </div>
         
