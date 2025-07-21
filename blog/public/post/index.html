@@ -116,10 +116,7 @@
         
         
         <div class="post-item-summary">
-            <p>Inferência de tipos é um recurso de muitas linguagens de programação que permite ao compilador descobrir o tipo de uma variável sem que você precise especificá-lo explicitamente. Este artigo explica como a inferência de tipos funciona em Rust e C++, por que eles são diferentes e o que isso significa para você como programador. Também faremos uma comparação divertida com Swift no final.</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc01.png" alt=""></p>
-<h2 id="o-que-é-inferência-de-tipos">O que é Inferência de Tipos?</h2>
-<p>Em programação, um <strong>tipo</strong> indica ao computador que tipo de dado uma variável contém — como um número, texto ou algo mais específico, como um endereço de e-mail. Em linguagens <strong>estaticamente tipadas</strong> como Rust e C++, você geralmente precisa especificar os tipos para que o compilador possa verificar se seu código faz sentido. A inferência de tipos facilita isso, permitindo que o compilador deduza o tipo com base em como você usa a variável, assim você não precisa escrevê-lo toda vez. Por exemplo, em C++, você pode escrever:</p>
+            <p><em>Inferência de tipos</em> é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa. Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem. Exploramos também brevemente o caso do <strong><a href="https://en.wikipedia.org/wiki/Swift_%28programming_language%29">Swift</a></strong>, comparando sua estratégia híbrida e os desafios de desempenho que ela acarreta. Ao final, refletimos sobre o impacto dessas escolhas de design na experiência de programação.</p>
             
             <a href="http://localhost:1313/2025/07/18/type01/" class="read-more">Leia mais →</a>
             
@@ -414,51 +411,46 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/03/28/comp01/"></a>
+            <a href="http://localhost:1313/2025/07/21/rustcomp/">Como o compilador do Rust funciona?</a>
         </h2>
         
         <div class="post-item-meta">
             
-            <time datetime="2025-03-28T12:00:00Z">
-                Fri, Mar 28, 2025
+            <time datetime="2025-07-21T12:00:00Z">
+                Mon, Jul 21, 2025
             </time>
             
             
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
             
             
             
             <div class="post-item-tags">
                 
-                <a href="/tags/rag/" class="tag">RAG</a>
+                <a href="/tags/rust/" class="tag">Rust</a>
                 
-                <a href="/tags/llm/" class="tag">LLM</a>
+                <a href="/tags/compiladores/" class="tag">Compiladores</a>
                 
-                <a href="/tags/ai/" class="tag">AI</a>
+                <a href="/tags/llvm/" class="tag">LLVM</a>
                 
-                <a href="/tags/optimiza%C3%A7%C3%A3o/" class="tag">Optimização</a>
+                <a href="/tags/mem%C3%B3ria/" class="tag">Memória</a>
                 
-                <a href="/tags/produ%C3%A7%C3%A3o/" class="tag">Produção</a>
-                
-                <a href="/tags/postgresql/" class="tag">PostgreSQL</a>
-                
-                <a href="/tags/ollama/" class="tag">Ollama</a>
+                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
                 
             </div>
             
             
             
+            <div class="post-description">
+                Uma visão geral do compilador do Rust
+            </div>
+            
         </div>
         
         
         <div class="post-item-summary">
-            <h1 id="1-introdução">1. INTRODUÇÃO</h1>
-<p>Linguagens de programação são notações para se descrever computações para pessoas e para máquinas. O mundo conforme o conhecemos depende de linguagens de programação, pois todo o software executando em todos os computadores foi escrito em alguma linguagem de programação. Mas, antes que possa rodar, um programa primeiro precisa ser
-traduzido para um formato que lhe permita ser executado por um computador.</p>
-<p>Os sistemas de software que fazem essa tradução são denominados compiladores.</p>
+            <p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende. Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
             
-            <a href="http://localhost:1313/2025/03/28/comp01/" class="read-more">Leia mais →</a>
+            <a href="http://localhost:1313/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -570,62 +562,6 @@ traduzido para um formato que lhe permita ser executado por um computador.</p>
 <p>Olá pessoal! 👋</p>
             
             <a href="http://localhost:1313/2025/03/28/rag02/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/07/19/openshift/">OpenShift</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-07-19T19:47:57-03:00">
-                Sat, Jul 19, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/openshift/" class="tag">openshift</a>
-                
-                <a href="/tags/kubernetes/" class="tag">kubernetes</a>
-                
-                <a href="/tags/docker/" class="tag">docker</a>
-                
-                <a href="/tags/linux/" class="tag">linux</a>
-                
-                <a href="/tags/rhel/" class="tag">rhel</a>
-                
-                <a href="/tags/centos/" class="tag">centos</a>
-                
-                <a href="/tags/fedora/" class="tag">fedora</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Arrumando a casa
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <p>Imagine o seguinte cenário:</p>
-<p>Você contém diversos servidores rodando diversas aplicações em produção e homologação que precisam ser monitoradas, os deploy&rsquo;s precisam ser rápidos e eficientes com o menor risco possível de queda. Além disso a sua infraEstrutura precisa ser escalável, precisa suportar todas as requesições necessárias para atender à demanda esperada pelo cliente. Imagine este cenário com integração contínua, com deploy contínuo onde ao desenvolvedor, caberá apenas trabalhar com a ferramenta de controle de versão (<a href="https://git-scm.com/">git</a>, <a href="https://subversion.apache.org/">svn</a>, etc..).</p>
-            
-            <a href="http://localhost:1313/2025/07/19/openshift/" class="read-more">Leia mais →</a>
             
         </div>
         
