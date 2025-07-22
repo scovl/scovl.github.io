@@ -72,15 +72,9 @@ BEGIN
 END;  
 ```  
 
-Esse modelo pioneiro permitia desacoplar a lógica principal da tratativa de falhas, um avanço significativo que inspirou desenvolvimentos posteriores. Embora diferente em sintaxe e implementação, o conceito fundamental de separar o código normal do código de tratamento de erros estabeleceu as bases para o que viria a ser refinado nas décadas seguintes.
+Desde o começo, a ideia de separar o código principal do tratamento de erros já era vista como um baita avanço, porque deixava o programa mais organizado e fácil de entender. O SIMULA trouxe esse conceito lá atrás, mas quem realmente mudou o jogo foi o Lisp. Ele não tinha o famoso `try/catch` que a gente vê hoje, mas já usava as funções `catch` e `throw` para lidar com situações inesperadas, sem precisar ficar checando código de erro toda hora. 
 
-Na linha evolutiva do tratamento de exceções, o [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language)) ocupa posição fundamental, contribuindo com paradigmas que influenciaram profundamente os sistemas modernos. O Lisp não utilizava a sintaxe `try/catch` como conhecemos hoje, mas introduziu primitivas como `catch` e `throw` que estabeleceram o importante paradigma de desviar o fluxo de execução sem a necessidade de retornar códigos de erro explícitos.
-
-A contribuição paradigmática do Lisp para o tratamento de erros foi revolucionária para sua época, pois permitia que um programa detectasse condições anômalas e reagisse a elas sem precisar verificar explicitamente o resultado de cada operação. Esta capacidade de "sinalizar" problemas e "capturá-los" em outro ponto do programa estabeleceu um modelo conceitual que influenciaria praticamente todas as linguagens modernas, mesmo que a implementação baseada em tags simbólicas seja diferente dos sistemas baseados em tipos de exceção que vemos em C++ e Java.
-
-O sistema de exceções do Lisp se integra elegantemente com o modelo de computação simbólica da linguagem. Em vez de tratar exceções como um mecanismo separado, elas são implementadas usando as mesmas primitivas fundamentais que compõem o restante da linguagem, demonstrando a flexibilidade que tornou o Lisp tão influente no desenvolvimento da ciência da computação.
-
-No Lisp, o tratamento de exceções baseia-se em *tags* simbólicas e desvio de controle. A função `catch` define um ponto de captura associado a uma tag, enquanto `throw` transfere a execução para o `catch` correspondente. Por exemplo:  
+Isso era revolucionário porque permitia que o programa "avisasse" que algo deu errado e pulasse direto para um ponto de tratamento, sem enrolação. O mais legal é que, no Lisp, esse mecanismo de exceção era totalmente integrado à linguagem, usando as mesmas ferramentas que o resto do código, o que mostra o quanto ele era flexível e à frente do seu tempo. Basicamente, você marcava um ponto de captura com uma tag usando `catch`, e se algo desse errado, usava `throw` para saltar direto pra lá. Esse jeito de pensar influenciou praticamente todas as linguagens modernas, mesmo que hoje a gente use tipos de exceção em vez de tags simbólicas como no Lisp. Observe o exemplo abaixo:
 
 ```lisp
 (defun operacao-arriscada (x)
@@ -121,9 +115,7 @@ Esta visão é detalhada em seu livro ["Programming: Principles and Practice Usi
 
 1. **Problemas com Códigos de Erro**:
    
-   O chamador pode facilmente esquecer de verificar o valor de retorno de erro. Quando isso acontece, o programa continua executando como se tudo estivesse normal, mesmo quando há um problema sério. 
-   
-   O exemplo abaixo mostra como isso pode levar a problemas. Aqui, `read_int()` retorna um código de erro se a leitura falhar, mas o chamador não verifica o valor de retorno, resultando em um valor inválido sendo usado em uma operação:
+   O chamador pode facilmente esquecer de verificar o valor de retorno de erro. Quando isso acontece, o programa continua executando como se tudo estivesse normal, mesmo quando há um problema sério. O exemplo abaixo mostra como isso pode levar a problemas. Aqui, `read_int()` retorna um código de erro se a leitura falhar, mas o chamador não verifica o valor de retorno, resultando em um valor inválido sendo usado em uma operação:
 
 ```mermaid
 graph TD
@@ -137,9 +129,7 @@ Este diagrama ilustra o problema do não tratamento de códigos de erro. Ele mos
 
 2. **Separação de Preocupações**:
    
-   As exceções separam a detecção de erros (na função chamada) do tratamento de erros (na função chamadora). Isso permite um código mais limpo, onde a lógica principal não fica poluída com verificações de erro em cada etapa.
-   
-   O exemplo abaixo mostra como o tratamento de erros pode ser centralizado em um único lugar, sem poluir o fluxo normal de execução:
+   As exceções separam a detecção de erros (na função chamada) do tratamento de erros (na função chamadora). Isso permite um código mais limpo, onde a lógica principal não fica poluída com verificações de erro em cada etapa. O exemplo abaixo mostra como o tratamento de erros pode ser centralizado em um único lugar, sem poluir o fluxo normal de execução:
 
 ```mermaid
 graph TD
@@ -162,15 +152,11 @@ graph TD
     style G fill:#ffe0e0,stroke:#cc6666
 ```
 
-Este diagrama ilustra o fluxo de execução de um programa com tratamento de exceções. No caminho principal (azul), o programa inicia, processa dados, salva resultados e envia notificações, terminando com sucesso. Porém, se em qualquer uma dessas etapas azuis ocorrer uma exceção, o fluxo é desviado para o bloco de tratamento de erros (vermelho), onde o erro é registrado e o programa termina de forma controlada. 
-
-Esta é a essência do `try/catch`: permitir que o código principal se concentre na lógica do negócio, enquanto o tratamento de erros fica centralizado em um único local, tornando o código mais limpo e organizado.
+Este diagrama ilustra o fluxo de execução de um programa com tratamento de exceções. No caminho principal (azul), o programa inicia, processa dados, salva resultados e envia notificações, terminando com sucesso. Porém, se em qualquer uma dessas etapas azuis ocorrer uma exceção, o fluxo é desviado para o bloco de tratamento de erros (vermelho), onde o erro é registrado e o programa termina de forma controlada. sEsta é a essência do `try/catch`: permitir que o código principal se concentre na lógica do negócio, enquanto o tratamento de erros fica centralizado em um único local, tornando o código mais limpo e organizado.
 
 3. **Erros Não Podem Ser Ignorados**:
    
-   Se uma exceção não for capturada, o programa terminará de forma controlada. Isso garante que erros críticos não passem despercebidos, diferente do que acontece com os códigos de retorno que podem ser ignorados silenciosamente.
-   
-   O exemplo abaixo mostra como o tratamento de erros se torna obrigatório, pois sem captura da exceção, o programa termina:
+   Se uma exceção não for capturada, o programa terminará de forma controlada. Isso garante que erros críticos não passem despercebidos, diferente do que acontece com os códigos de retorno que podem ser ignorados silenciosamente. O exemplo abaixo mostra como o tratamento de erros se torna obrigatório, pois sem captura da exceção, o programa termina:
 
 ```mermaid
 graph TD
@@ -187,13 +173,11 @@ graph TD
     style G fill:#f99,stroke:#900
 ```
 
-O diagrama acima ilustra o fluxo de execução de um programa com exceções. Ele mostra dois caminhos possíveis: o caminho normal (em que a função executa sem problemas, imprime uma mensagem no console, retorna à função main e o programa termina com sucesso) e o caminho de erro (em que a função lança uma exceção do tipo `std::runtime_error` que, por não ser capturada, causa a terminação imediata do programa). 
+O diagrama acima mostra de forma bem clara como funciona o fluxo de um programa quando usamos exceções. Basicamente, temos dois caminhos: o normal, onde tudo dá certo, a função roda, imprime a mensagem e o programa termina feliz; e o caminho do erro, onde a função encontra um problema, lança uma exceção (`std::runtime_error`), ninguém captura essa exceção e, por isso, o programa é encerrado na hora. Os nós do diagrama até ajudam a visualizar isso: o ponto onde pode dar ruim está em rosa claro, e o caminho do erro (quando ninguém trata a exceção) fica destacado em vermelho, mostrando que ali é o fim da linha. 
 
-O nó da função que pode falhar está destacado em rosa claro, enquanto os nós relacionados à exceção não tratada e à terminação do programa estão destacados em vermelho, enfatizando visualmente o caminho de erro.
+O próprio Stroustrup (criador do C++) cita que: "se uma função encontra um erro que não consegue resolver, ela lança uma exceção; qualquer função acima pode capturar, mas se ninguém pegar, o programa termina". 
 
-Stroustrup afirma: *"Se uma função encontra um erro que não consegue tratar, ela lança uma exceção. Qualquer chamador direto ou indireto pode capturá-la... Se nenhum chamador capturar uma exceção, o programa termina."* Esta abordagem impede que erros críticos sejam acidentalmente ignorados.
-
-Desde as primitivas *ON-actions* em SIMULA 67 até o refinado sistema `try/catch` em C++, a evolução do tratamento de exceções representa um avanço significativo na engenharia de software. Enquanto códigos de retorno misturavam lógica de negócio e tratamento de erros (`if (error_code != SUCCESS) { /* tratamento */ }`), os mecanismos modernos de exceções permitem clara separação dessas responsabilidades, resultando em código principal mais limpo e focado, com tratamento de erros centralizado e garantias de liberação de recursos mesmo em situações críticas. Esta evolução transformou sistemas propensos a falhas em aplicações robustas capazes de lidar graciosamente com condições excepcionais.
+Isso é ótimo porque evita que erros graves passem batido. Antigamente, com códigos de retorno, era fácil esquecer de checar um erro e o programa seguia como se nada tivesse acontecido. Com exceções, a separação entre a lógica principal e o tratamento de erro fica muito mais clara: o código principal fica limpo, focado no que interessa, e o tratamento de erro fica centralizado, garantindo que recursos sejam liberados mesmo quando tudo dá errado. Essa evolução, desde os tempos do SIMULA 67 até o `try/catch` moderno, deixou os programas muito mais robustos e preparados para lidar com situações inesperadas.
 
 ---
 
@@ -486,15 +470,9 @@ Cada camada captura a exceção da camada inferior e cria uma nova exceção que
 1. Preserva a informação original através da inclusão de `e.what()` na mensagem
 2. Adiciona contexto específico da camada atual
 
-Este encadeamento de informações cria uma trilha de diagnóstico valiosa. Uma exceção originada em `camadaBaixa` ("Erro na camada baixa") se transforma em uma mensagem mais informativa ao passar por `camadaMedia` ("Falha na camada média: Erro na camada baixa") e finalmente por `camadaAlta` ("Falha na camada alta: Falha na camada média: Erro na camada baixa").
+Quando a gente encadeia as mensagens de exceção desse jeito, cria uma trilha super útil para entender o que deu errado e onde. Por exemplo: se um erro começa lá embaixo, na `camadaBaixa`, ele sobe para a `camadaMedia` e depois para a `camadaAlta`, cada uma acrescentando seu próprio contexto na mensagem. Assim, ao final, você tem uma mensagem bem detalhada, tipo "Falha na camada alta: Falha na camada média: Erro na camada baixa". Isso ajuda demais na hora de depurar, porque fica fácil seguir o rastro do erro e descobrir exatamente em qual parte do sistema ele aconteceu, sem perder nenhuma informação importante do que rolou no caminho.
 
-Esta abordagem facilita significativamente a depuração, permitindo que os desenvolvedores rastreiem o caminho exato da falha através das diferentes camadas do sistema, sem perder o contexto original do erro.
-
-### Tratamento de Exceções em Construtores e Destrução de Recursos
-
-Os construtores representam um caso especial no tratamento de exceções, pois não possuem valor de retorno para indicar falha. Se um construtor não conseguir concluir sua tarefa, a única forma de sinalizar o problema é lançando uma exceção. Isso cria um desafio: como garantir que recursos adquiridos antes da falha sejam liberados adequadamente?
-
-A resposta está na combinação do tratamento de exceções com o padrão RAII (Resource Acquisition Is Initialization), implementado elegantemente através de smart pointers:
+Agora, falando de construtores: eles são um caso especial quando o assunto é exceção, porque não têm como retornar um valor para avisar que deu ruim. Se algo falha durante a construção de um objeto, a única saída é lançar uma exceção mesmo. O problema é: e se você já tinha alocado algum recurso antes da falha? Como garantir que não vai ficar nada "vazando"? Aí entra o padrão RAII (Resource Acquisition Is Initialization), que resolve isso de forma elegante usando smart pointers. Assim, mesmo se der erro no meio do caminho, os recursos são liberados automaticamente, sem dor de cabeça. O código abaixo ilustra isso:
 
 ```c
 class RecursoExclusivo {
@@ -516,9 +494,7 @@ public:
 };
 ```
 
-Neste exemplo, o `std::unique_ptr<Recurso>` é construído antes do bloco `try`. Se a inicialização falhar e lançar uma exceção, o mecanismo de tratamento de exceções do C++ garante que o destrutor do `unique_ptr` seja chamado durante o desenrolamento da pilha, liberando automaticamente o recurso alocado.
-
-Esta integração entre exceções e RAII é fundamental para criar código robusto que não vaze recursos mesmo em situações de erro. Os smart pointers da biblioteca padrão do C++ são projetados especificamente para implementar este padrão:
+Neste exemplo, o `std::unique_ptr<Recurso>` é construído antes do bloco `try`. Se a inicialização falhar e lançar uma exceção, o mecanismo de tratamento de exceções do C++ garante que o destrutor do `unique_ptr` seja chamado durante o desenrolamento da pilha, liberando automaticamente o recurso alocado. Esta integração entre exceções e RAII é fundamental para criar código robusto que não vaze recursos mesmo em situações de erro. Os smart pointers da biblioteca padrão do C++ são projetados especificamente para implementar este padrão:
 
 #### Smart Pointers: Automatizando a Gestão de Recursos
 
@@ -692,13 +668,9 @@ if (auto resultado = dividir(10, 2)) {
 }
 ```
 
-Este código demonstra como C++ lida com situações extremas de alocação de memória. Ele tenta alocar uma quantidade absurdamente grande de memória (praticamente impossível de satisfazer em qualquer sistema), usando um cálculo que multiplica o tamanho máximo de um size_t por si mesmo. 
+Saca só: esse exemplo mostra como o C++ lida de forma elegante com situações absurdas, tipo quando você tenta alocar uma quantidade gigantesca de memória (daquelas que nenhum computador aguenta). Em vez de simplesmente travar ou explodir, o programa usa o `try/catch` pra capturar a exceção `std::bad_alloc` que o `new` dispara quando não consegue reservar a memória. Assim, o código não só evita um crash feio, mas ainda avisa o usuário com uma mensagem amigável e termina de forma controlada. É como se fosse um airbag pro seu programa: você bate na parede da falta de memória, mas sai inteiro, sem desastre! 
 
-O que torna este exemplo tão interessante é que, em vez de simplesmente travar quando a memória acaba, o programa captura elegantemente a exceção `std::bad_alloc` que é lançada automaticamente pelo operador `new` quando a alocação falha.
-
-A beleza desta abordagem está na forma como o programa mantém o controle mesmo diante do impossível. Em linguagens menos robustas, uma tentativa dessas resultaria em um crash descontrolado ou comportamento imprevisível. 
-
-Aqui, graças ao mecanismo de exceções do C++, conseguimos detectar o problema, explicar ao usuário o que aconteceu com uma mensagem amigável, e encerrar o programa de forma limpa e controlada. É como ter um airbag para seu código - você ainda bate na parede da memória insuficiente, mas pelo menos não sofre danos catastróficos! Há três níveis de garantias de exceção que uma função pode oferecer:
+Há três níveis de garantias de exceção que uma função pode oferecer:
 
 1. **Garantia Básica**: Se uma exceção for lançada, não há vazamento de recursos e os invariantes do objeto são mantidos.
 2. **Garantia Forte (Commit-or-Rollback)**: A operação é concluída com sucesso ou, se falhar, o estado do programa permanece como estava antes da chamada.
@@ -734,11 +706,7 @@ void exemploSmartPointers() {
 }
 ```
 
-O código começa importando algumas bibliotecas básicas: `<iostream>` pra mostrar mensagens, `<new>` pra lidar com o erro `std::bad_alloc`, e `<limits>` pra acessar valores máximos com `std::numeric_limits`. Dentro do bloco `try`, o código tenta algo quase impossível: alocar uma quantidade absurda de memória com `new`. A expressão usada é calculada pra estourar os limites do sistema de propósito.
-
-Quando essa alocação falha (o que é praticamente garantido), o `new` dispara uma exceção `std::bad_alloc`. Nesse momento, o código dentro do `try` para na hora e o programa pula direto pro bloco `catch` que sabe lidar com esse tipo de erro. No bloco `catch`, o programa mostra uma mensagem de erro na tela e termina com código 1, que é uma forma de dizer "deu problema, mas pelo menos terminei de forma controlada".
-
-Se por algum milagre a alocação funcionasse, o programa mostraria uma mensagem de sucesso e liberaria a memória. Tem também um segundo `catch` como rede de segurança pra pegar outros tipos de erros que possam acontecer. Em resumo, o diagrama mostra o caminho que o programa segue:
+O código acima importa algumas bibliotecas essenciais do C++ — `<iostream>` pra exibir mensagens, `<new>` pra capturar o erro de falta de memória (`std::bad_alloc`) e `<limits>` pra pegar o maior valor possível de um tipo numérico. A ideia é simples: dentro do `try`, ele tenta alocar uma quantidade absurda de memória usando `new`, só pra forçar o sistema a não conseguir atender o pedido. Quando isso acontece (e vai acontecer!), o `new` lança uma exceção do tipo `std::bad_alloc`, interrompendo o fluxo normal e pulando direto pro bloco `catch`, onde o programa mostra uma mensagem de erro e termina de forma controlada (com código de saída 1, indicando que deu ruim, mas sem crashar feio). Se, por algum motivo bizarro, a alocação desse certo, o código só imprime uma mensagem de sucesso e libera a memória normalmente. E ainda tem um segundo `catch` pra garantir que qualquer outro erro inesperado também seja tratado. Ou seja, o programa separa direitinho o que é fluxo normal do que é tratamento de erro, deixando tudo mais organizado e fácil de entender. Abaixo, temos o diagrama que ilustra o que acontece:
 
 ```mermaid
 graph TD
@@ -759,9 +727,7 @@ graph TD
     class I error
 ```
 
-O diagrama mostra o que acontece: o programa tenta algo arriscado (pedir memória demais). Se funcionar (quase impossível), tudo certo. Se falhar, o `catch` pega o problema e encerra o programa sem pânico. Sem tratamento, o programa simplesmente trava. É pra isso que o `try/catch` existe - evitar que tudo desabe quando algo inesperado acontece.
-
-Esse jeito de programar, separando o "caminho feliz" do "e se der ruim", é super útil quando seu código tem várias coisas que podem falhar. O `try/catch` deixa tudo mais organizado: a parte principal do código fica limpa e os tratamentos de erro ficam agrupados, tornando muito mais fácil entender o que está acontecendo.
+O diagrama mostra o que acontece: o programa tenta algo arriscado (pedir memória demais). Se funcionar (quase impossível), tudo certo. Se falhar, o `catch` pega o problema e encerra o programa sem pânico. Sem tratamento, o programa simplesmente trava. É pra isso que o `try/catch` existe - evitar que tudo desabe quando algo inesperado acontece. Esse jeito de programar, separando o "caminho feliz" do "e se der ruim", é super útil quando seu código tem várias coisas que podem falhar. O `try/catch` deixa tudo mais organizado: a parte principal do código fica limpa e os tratamentos de erro ficam agrupados, tornando muito mais fácil entender o que está acontecendo.
 
 ---
 
