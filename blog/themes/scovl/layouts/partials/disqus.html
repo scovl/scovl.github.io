@@ -1,6 +1,6 @@
 {{ $disqusShortname := .Site.Params.disqusShortname }}
 
-{{ if and (not .Params.draft) (and $disqusShortname .Site.Params.disqusEnabled) (not .Params.disableComments) }}
+{{ if and (not .Params.draft) (and $disqusShortname .Site.Params.disqusEnabled) (not .Params.disableComments) (.IsPage) (not (eq .Type "page")) }}
 <div class="post-comments">
     <h3>{{ .Site.Params.disqusTitle | default "Comentários" }}</h3>
     <div id="disqus_thread"></div>

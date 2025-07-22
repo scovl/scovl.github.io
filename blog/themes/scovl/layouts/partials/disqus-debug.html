@@ -7,12 +7,14 @@
     <p><strong>Page URL:</strong> {{ .Permalink }}</p>
     <p><strong>Page Identifier:</strong> {{ .RelPermalink }}</p>
     <p><strong>Page Title:</strong> {{ .Title }}</p>
+    <p><strong>Page Type:</strong> {{ .Type }}</p>
+    <p><strong>Is Page:</strong> {{ .IsPage }}</p>
     <p><strong>Is Draft:</strong> {{ .Params.draft }}</p>
     <p><strong>Disqus Enabled:</strong> {{ .Site.Params.disqusEnabled }}</p>
     <p><strong>Disable Comments:</strong> {{ .Params.disableComments }}</p>
 </div>
 
-{{ if and (not .Params.draft) (and $disqusShortname .Site.Params.disqusEnabled) (not .Params.disableComments) }}
+{{ if and (not .Params.draft) (and $disqusShortname .Site.Params.disqusEnabled) (not .Params.disableComments) (.IsPage) (not (eq .Type "page")) }}
 <div class="post-comments">
     <h3>{{ .Site.Params.disqusTitle | default "Comentários" }}</h3>
     <div id="disqus_thread"></div>
@@ -40,6 +42,8 @@
         <li>Disqus shortname configured: {{ if $disqusShortname }}✅{{ else }}❌{{ end }}</li>
         <li>Disqus enabled globally: {{ if .Site.Params.disqusEnabled }}✅{{ else }}❌{{ end }}</li>
         <li>Comments not disabled for this post: {{ if .Params.disableComments }}❌{{ else }}✅{{ end }}</li>
+        <li>Is a page (not a static page): {{ if .IsPage }}✅{{ else }}❌{{ end }}</li>
+        <li>Page type is not "page": {{ if (eq .Type "page") }}❌{{ else }}✅{{ end }}</li>
     </ul>
 </div>
 {{ end }} 
