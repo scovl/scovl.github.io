@@ -90,4 +90,5 @@ Enquanto o compilador do Rust atua como um inspetor de qualidade rigoroso, rejei
 - [Rust Compiler Architecture Overview](https://rustc-dev-guide.rust-lang.org/overview.html) - Uma visão geral da arquitetura do compilador do Rust.
 - [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html) - A referência oficial do LLVM sobre a linguagem intermediária.
 - [C++23](https://en.cppreference.com/w/cpp/23) - A referência oficial do C++23.
+- [Solana Blogs](https://github.com/baindlapranayraj/SolanaBlogs/blob/main/) - Onde o artigo se baseou.
 
