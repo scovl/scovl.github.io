@@ -1,0 +1,20 @@
+{{ if and (not .Params.draft) (and .Site.Params.disqusShortname .Site.Params.disqusEnabled) (not .Params.disableComments) }}
+<div class="post-comments">
+    <h3>{{ .Site.Params.disqusTitle | default "Comentários" }}</h3>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+            this.page.url = '{{ .Permalink }}';
+            this.page.identifier = '{{ .RelPermalink }}';
+            this.page.title = '{{ .Title }}';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://{{ .Site.Params.disqusShortname }}.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Por favor, habilite JavaScript para ver os comentários do <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+</div>
+{{ end }} 
