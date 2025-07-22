@@ -96,7 +96,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 30 min
+                Estimated reading time: 29 min
             </div>
             
             
@@ -329,8 +329,8 @@ const resultado = pipe(
 <h2 id="propriedades-avançadas-do-either">Propriedades Avançadas do Either</h2>
 <p>O <code>Either</code> vai muito além de ser apenas um container para sucesso ou erro - ele é um conceito fundamental da programação funcional que implementa padrões poderosos que nos permitem compor operações de forma elegante e segura. Na programação funcional, o <code>Either</code> é classificado como um tipo algebráico que implementa interfaces importantes como <a href="https://en.wikipedia.org/wiki/Functor">Functor</a> e <a href="https://en.wikipedia.org/wiki/Monad_%28category_theory%29">Monad</a>. Vamos entender o que isso significa na prática e como isso nos ajuda a escrever código mais robusto:</p>
 <ol>
-<li>
-<p><strong>Functor</strong>: O <code>Either</code> é um functor porque implementa a operação <code>map</code>, que permite transformar o valor dentro de um <code>Right</code> sem alterar a estrutura do container. Se for um <code>Left</code>, o erro é simplesmente propagado sem alteração.</p>
+<li><strong>Functor</strong>: O <code>Either</code> é um functor porque implementa a operação <code>map</code>, que permite transformar o valor dentro de um <code>Right</code> sem alterar a estrutura do container. Se for um <code>Left</code>, o erro é simplesmente propagado sem alteração.</li>
+</ol>
 
 
   <pre><code class="language-typescript">// map transforma apenas o lado Right
@@ -344,63 +344,55 @@ const resultadoErro = pipe(
   dividir(10, 0), // Left(&#34;Divisão por zero!&#34;)
   E.map(valor =&gt; valor * 2) // Continua Left(&#34;Divisão por zero!&#34;)
 );</code></pre>
- </li>
-<li>
-<p><strong>Monad</strong>: O <code>Either</code> também é uma monad porque implementa a operação <code>chain</code> (também chamada de <code>flatMap</code> ou <code>bind</code> em outras linguagens). Isso permite compor operações que também podem falhar, evitando o aninhamento de <code>E.Either&lt;E, E.Either&lt;E, A&gt;&gt;</code>.</p>
-
-
-  <pre><code class="language-typescript">// Outra função que pode falhar</code></pre>
- </li>
+ <ol start="2">
+<li><strong>Monad</strong>: O <code>Either</code> também é uma monad porque implementa a operação <code>chain</code> (também chamada de <code>flatMap</code> ou <code>bind</code> em outras linguagens). Isso permite compor operações que também podem falhar, evitando o aninhamento de <code>E.Either&lt;E, E.Either&lt;E, A&gt;&gt;</code>.</li>
 </ol>
-<p>const raizQuadrada = (n: number): E.Either&lt;string, number&gt; =&gt;
-n &lt; 0 ? E.left(&ldquo;Não existe raiz de número negativo&rdquo;) : E.right(Math.sqrt(n));</p>
-<p>// Usando chain para compor operações falíveis
+
+
+  <pre><code class="language-typescript">// Outra função que pode falhar
+const raizQuadrada = (n: number): E.Either&lt;string, number&gt; =&gt;
+n &lt; 0 ? E.left(&#34;Não existe raiz de número negativo&#34;) : E.right(Math.sqrt(n));
+
+// Usando chain para compor operações falíveis
 const calcularRaizDaDivisao = (a: number, b: number) =&gt; pipe(
-dividir(a, b),        // E.Either&lt;string, number&gt;
+  dividir(a, b),        // E.Either&lt;string, number&gt;
 E.chain(raizQuadrada) // E.Either&lt;string, number&gt;
-);</p>
-<p>console.log(calcularRaizDaDivisao(16, 4));  // Right(2)
-console.log(calcularRaizDaDivisao(16, 0));  // Left(&ldquo;Divisão por zero!&rdquo;)
-console.log(calcularRaizDaDivisao(-16, 4)); // Left(&ldquo;Não existe raiz de número negativo&rdquo;)</p>
+);
+
+console.log(calcularRaizDaDivisao(16, 4));  // Right(2)
+console.log(calcularRaizDaDivisao(16, 0));  // Left(&#34;Divisão por zero!&#34;)
+console.log(calcularRaizDaDivisao(-16, 4)); // Left(&#34;Não existe raiz de número negativo&#34;)</code></pre>
+ <p>Estas propriedades tornam o <code>Either</code> extremamente poderoso para composição de operações, permitindo criar fluxos complexos de tratamento de erros de forma elegante e type-safe. O <code>map</code> nos permite transformar valores de sucesso, enquanto o <code>chain</code> nos permite sequenciar operações que podem falhar, com propagação automática de erros.</p>
+<h2 id="usando-match-para-extrair-valores-de-either">Usando <code>match</code> para Extrair Valores de <code>Either</code></h2>
+<p>Agora que entendemos o conceito de <code>pipe</code>, vamos explorar a função <code>match</code>, que é fundamental para extrair valores de um <code>Either</code>. Esta função permite definir duas funções: uma para o caso <code>Left</code> (erro) e outra para o caso <code>Right</code> (sucesso), funcionando essencialmente como um <code>if/else</code> especializado para o tipo <code>Either</code>. Com <code>match</code>, podemos transformar nosso <code>Either</code> em qualquer outro tipo, garantindo que ambos os casos sejam tratados explicitamente.</p>
+<p>O <code>match</code> é uma forma de &ldquo;pattern matching&rdquo; funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes &ldquo;casos&rdquo; ou &ldquo;formas&rdquo; que um valor pode ter. No caso do <code>Either</code>, temos dois padrões possíveis: <code>Left</code> e <code>Right</code>. O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garanta que não podemos acessar o valor interno de um <code>Either</code> sem primeiro &ldquo;desempacotá-lo&rdquo; usando <code>match</code> ou funções similares.</p>
+<p>Agora que você já entendeu o conceito de <code>pipe</code>, vamos ver como usar <code>match</code> para extrair valores de um <code>Either</code> acompanhando o gráfico abaixo:</p>
 
 
-  <pre><code class="language-">
-Estas propriedades tornam o `Either` extremamente poderoso para composição de operações, permitindo criar fluxos complexos de tratamento de erros de forma elegante e type-safe. O `map` nos permite transformar valores de sucesso, enquanto o `chain` nos permite sequenciar operações que podem falhar, com propagação automática de erros.
+  
+  <div class="mermaid">graph LR
+    A[Either&lt;E, A&gt;] --&gt; B{É Right?}
+    B --&gt;|Sim| C[Right&lt;A&gt;]
+    B --&gt;|Não| D[Left&lt;E&gt;]
+    C --&gt; E[fnSucesso: A → B]
+    D --&gt; F[fnErro: E → B]
+    E --&gt; G[Resultado Final: B]
+    F --&gt; G
 
+    subgraph &#34;pipe &#43; match&#34;
+    A
+    B
+    C
+    D
+    E
+    F
+    G
+    end
 
-
-## Usando `match` para Extrair Valores de `Either`
-
-Agora que entendemos o conceito de `pipe`, vamos explorar a função `match`, que é fundamental para extrair valores de um `Either`. Esta função permite definir duas funções: uma para o caso `Left` (erro) e outra para o caso `Right` (sucesso), funcionando essencialmente como um `if/else` especializado para o tipo `Either`. Com `match`, podemos transformar nosso `Either` em qualquer outro tipo, garantindo que ambos os casos sejam tratados explicitamente.
-
-O `match` é uma forma de &#34;pattern matching&#34; funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes &#34;casos&#34; ou &#34;formas&#34; que um valor pode ter. No caso do `Either`, temos dois padrões possíveis: `Left` e `Right`. O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garanta que não podemos acessar o valor interno de um `Either` sem primeiro &#34;desempacotá-lo&#34; usando `match` ou funções similares.
-
-Agora que você já entendeu o conceito de `pipe`, vamos ver como usar `match` para extrair valores de um `Either` acompanhando o gráfico abaixo:
-
-```mermaid
-graph LR
- A[Either&lt;E, A&gt;] --&gt; B{É Right?}
- B --&gt;|Sim| C[Right&lt;A&gt;]
- B --&gt;|Não| D[Left&lt;E&gt;]
- C --&gt; E[fnSucesso: A → B]
- D --&gt; F[fnErro: E → B]
- E --&gt; G[Resultado Final: B]
- F --&gt; G
-
- subgraph &#34;pipe &#43; match&#34;
- A
- B
- C
- D
- E
- F
- G
- end
-
- style A fill:#f9f9f9,stroke:#666
- style C fill:#d5f5e3,stroke:#2ecc71
- style D fill:#ffdddd,stroke:#e74c3c
- style G fill:#d6eaf8,stroke:#3498db,stroke-width:2px</code></pre>
+    style A fill:#f9f9f9,stroke:#666
+    style C fill:#d5f5e3,stroke:#2ecc71
+    style D fill:#ffdddd,stroke:#e74c3c
+    style G fill:#d6eaf8,stroke:#3498db,stroke-width:2px</div>
  <p>O processo começa com uma entrada <code>E.Either&lt;E, A&gt;</code>, que representa um valor que pode ser um sucesso (<code>Right&lt;A&gt;</code>) ou um erro (<code>Left&lt;E&gt;</code>). Quando aplicamos a função <code>match</code>, ela toma uma decisão baseada no tipo do <code>Either</code>: se for um <code>Right</code>, aplica a função de sucesso (<code>fnSucesso</code>) ao valor interno, transformando <code>A</code> em <code>B</code>; se for um <code>Left</code>, aplica a função de erro (<code>fnErro</code>) ao erro interno, transformando <code>E</code> também em <code>B</code>.</p>
 <p>O resultado final deste processo é sempre um valor do tipo <code>B</code>, independentemente do caminho seguido. Esta é a beleza do <code>match</code>: ele unifica os dois caminhos possíveis (sucesso e erro) em um único tipo de saída, permitindo que o código subsequente trabalhe com um valor concreto sem precisar verificar constantemente se estamos lidando com um sucesso ou um erro. Vamos ver um exemplo prático em código:</p>
 
@@ -838,7 +830,7 @@ async function processarUsuarios() {
 <h2 id="referências">Referências</h2>
 <ul>
 <li><a href="https://github.com/gcanti/fp-ts">fp-ts</a> - Documentação oficial</li>
-<li><a href="https://a.co/d/3LxV0CO">Hands-On Functional Programming with Typescript</a> - Livro do Remo H. Jansen publicado pela Packt. O livro aborda conceitos fundamentais para o tratamento funcional de erros, discutindo na seção &ldquo;side-effects&rdquo; como podemos usar técnicas de programação funcional para tornar explícitos os efeitos colaterais em TypeScript. Apresenta exemplos como <code>safeFindUserAgeByName</code> usando <code>Promise&lt;number&gt;</code> que conceitualmente se alinham com o uso de <code>Either</code> e <code>TaskEither</code>. No Capítulo 7 sobre Teoria das Categorias, o autor explora tipos como <code>Maybe</code> e <code>Either</code>, demonstrando como implementam a especificação de Functor e como podem ser usados para representar sucesso/falha em operações, inclusive em contextos assíncronos com <code>Promise&lt;Either&lt;Response, Error&gt;&gt;</code> - abordagem conceitualmente equivalente ao uso de <code>TaskEither</code> da fp-ts.</li>
+<li><a href="https://a.co/d/3LxV0CO">Hands-On Functional Programming with Typescript</a> - Livro do Remo H. Jansen publicado pela Packt. O livro aborda conceitos fundamentais para o tratamento funcional de erros, discutindo na seção &ldquo;side-effects&rdquo; como podemos usar técnicas de programação funcional para tornar explícitos os efeitos colaterais em TypeScript.</li>
 </ul>
 
     </div>
