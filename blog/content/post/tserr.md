@@ -264,41 +264,39 @@ O `Either` vai muito além de ser apenas um container para sucesso ou erro - ele
 
 1. **Functor**: O `Either` é um functor porque implementa a operação `map`, que permite transformar o valor dentro de um `Right` sem alterar a estrutura do container. Se for um `Left`, o erro é simplesmente propagado sem alteração.
 
-   ```typescript
-   // map transforma apenas o lado Right
-   const resultado = pipe(
-     dividir(10, 2), // Right(5)
-     E.map(valor => valor * 2) // Right(10)
-   );
-   
-   // Se for Left, map não faz nada
-   const resultadoErro = pipe(
-     dividir(10, 0), // Left("Divisão por zero!")
-     E.map(valor => valor * 2) // Continua Left("Divisão por zero!")
-   );
-   ```
+```typescript
+// map transforma apenas o lado Right
+const resultado = pipe(
+  dividir(10, 2), // Right(5)
+  E.map(valor => valor * 2) // Right(10)
+);
+
+// Se for Left, map não faz nada
+const resultadoErro = pipe(
+  dividir(10, 0), // Left("Divisão por zero!")
+  E.map(valor => valor * 2) // Continua Left("Divisão por zero!")
+);
+```
 
 2. **Monad**: O `Either` também é uma monad porque implementa a operação `chain` (também chamada de `flatMap` ou `bind` em outras linguagens). Isso permite compor operações que também podem falhar, evitando o aninhamento de `E.Either<E, E.Either<E, A>>`.
 
-   ```typescript
-   // Outra função que pode falhar
+```typescript
+// Outra função que pode falhar
 const raizQuadrada = (n: number): E.Either<string, number> =>
-  n < 0 ? E.left("Não existe raiz de número negativo") : E.right(Math.sqrt(n));
-   
-   // Usando chain para compor operações falíveis
-   const calcularRaizDaDivisao = (a: number, b: number) => pipe(
-     dividir(a, b),        // E.Either<string, number>
+n < 0 ? E.left("Não existe raiz de número negativo") : E.right(Math.sqrt(n));
+
+// Usando chain para compor operações falíveis
+const calcularRaizDaDivisao = (a: number, b: number) => pipe(
+  dividir(a, b),        // E.Either<string, number>
 E.chain(raizQuadrada) // E.Either<string, number>
-   );
-   
-   console.log(calcularRaizDaDivisao(16, 4));  // Right(2)
-   console.log(calcularRaizDaDivisao(16, 0));  // Left("Divisão por zero!")
-   console.log(calcularRaizDaDivisao(-16, 4)); // Left("Não existe raiz de número negativo")
-   ```
+);
+
+console.log(calcularRaizDaDivisao(16, 4));  // Right(2)
+console.log(calcularRaizDaDivisao(16, 0));  // Left("Divisão por zero!")
+console.log(calcularRaizDaDivisao(-16, 4)); // Left("Não existe raiz de número negativo")
+```
 
 Estas propriedades tornam o `Either` extremamente poderoso para composição de operações, permitindo criar fluxos complexos de tratamento de erros de forma elegante e type-safe. O `map` nos permite transformar valores de sucesso, enquanto o `chain` nos permite sequenciar operações que podem falhar, com propagação automática de erros.
-
-
 
 ## Usando `match` para Extrair Valores de `Either`
 
@@ -797,4 +795,4 @@ Embora as abstrações funcionais como `Either` e `TaskEither` ofereçam benefí
 ## Referências
 
 - [fp-ts](https://github.com/gcanti/fp-ts) - Documentação oficial
-- [Hands-On Functional Programming with Typescript](https://a.co/d/3LxV0CO) - Livro do Remo H. Jansen publicado pela Packt. O livro aborda conceitos fundamentais para o tratamento funcional de erros, discutindo na seção "side-effects" como podemos usar técnicas de programação funcional para tornar explícitos os efeitos colaterais em TypeScript. Apresenta exemplos como `safeFindUserAgeByName` usando `Promise<number>` que conceitualmente se alinham com o uso de `Either` e `TaskEither`. No Capítulo 7 sobre Teoria das Categorias, o autor explora tipos como `Maybe` e `Either`, demonstrando como implementam a especificação de Functor e como podem ser usados para representar sucesso/falha em operações, inclusive em contextos assíncronos com `Promise<Either<Response, Error>>` - abordagem conceitualmente equivalente ao uso de `TaskEither` da fp-ts.
+- [Hands-On Functional Programming with Typescript](https://a.co/d/3LxV0CO) - Livro do Remo H. Jansen publicado pela Packt. O livro aborda conceitos fundamentais para o tratamento funcional de erros, discutindo na seção "side-effects" como podemos usar técnicas de programação funcional para tornar explícitos os efeitos colaterais em TypeScript. 
