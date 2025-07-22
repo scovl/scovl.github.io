@@ -57,9 +57,7 @@ try {
 > **Nota:** O uso de `any` para o tipo do erro é uma prática comum, mas não é a melhor opção. Em um sistema mais complexo, isso pode levar a erros de tipo que são difíceis de detectar.
 
 
-O uso de exceções apresenta sérios problemas de design: a assinatura da função `dividirLegado` não revela ao compilador a possibilidade de exceções, criando um contrato implícito onde o chamador precisa adivinhar a necessidade de um `try/catch`. Além disso, o `throw` interrompe abruptamente o fluxo de execução, dificultando o rastreamento e comprometendo a pureza funcional, enquanto a facilidade de esquecer blocos `try/catch` pode resultar em erros não capturados que derrubam aplicações inteiras.
-
-Uma alternativa comum é retornar valores especiais como `null`, `undefined` ou objetos de erro para sinalizar falhas, embora essa abordagem também apresente suas próprias limitações. Por exemplo:
+O uso de exceções apresenta sérios problemas de design: a assinatura da função `dividirLegado` não revela ao compilador a possibilidade de exceções, criando um contrato implícito onde o chamador precisa adivinhar a necessidade de um `try/catch`. Além disso, o `throw` interrompe abruptamente o fluxo de execução, dificultando o rastreamento e comprometendo a pureza funcional, enquanto a facilidade de esquecer blocos `try/catch` pode resultar em erros não capturados que derrubam aplicações inteiras. Uma alternativa comum é retornar valores especiais como `null`, `undefined` ou objetos de erro para sinalizar falhas, embora essa abordagem também apresente suas próprias limitações. Por exemplo:
 
 ```typescript
 interface ResultadoDivisao {
@@ -91,17 +89,13 @@ if (resultadoNull === null) console.error("Divisão por zero!");
 ```
 
 
-Essa abordagem infelizmente também apresenta problemas significativos de usabilidade e segurança. O código se torna verboso e menos legível devido às constantes verificações manuais como `if (resultado.erro)` ou `if (resultado === null)`, enquanto a perda de contexto é inevitável, especialmente com valores `null` que não informam o motivo da falha - mesmo objetos de erro exigem disciplina manual consistente.
-
-Além disso, há um risco constante de erros silenciosos no sistema, pois esquecer de verificar o `null` ou a propriedade `erro` pode facilmente resultar em erros do tipo `TypeError: Cannot read property '...' of null` em partes subsequentes do código, comprometendo a robustez da aplicação como um todo.
+Essa abordagem infelizmente também apresenta problemas significativos de usabilidade e segurança. O código se torna verboso e menos legível devido às constantes verificações manuais como `if (resultado.erro)` ou `if (resultado === null)`, enquanto a perda de contexto é inevitável, especialmente com valores `null` que não informam o motivo da falha - mesmo objetos de erro exigem disciplina manual consistente. Além disso, há um risco constante de erros silenciosos no sistema, pois esquecer de verificar o `null` ou a propriedade `erro` pode facilmente resultar em erros do tipo `TypeError: Cannot read property '...' of null` em partes subsequentes do código, comprometendo a robustez da aplicação como um todo.
 
 ---
 
 ## Erros Como Cidadãos de Primeira Classe
 
-A Programação Funcional (FP) encara os erros de uma maneira fundamentalmente diferente: **erros são simplesmente valores**. Em vez de lançar exceções que quebram o fluxo, as funções retornam tipos de dados explícitos que representam tanto o sucesso quanto a falha. `fp-ts` nos fornece estruturas de dados poderosas para isso, como `Option` e `Either`.
-
-Antes de `Either`, vamos entender `Option`. Ele é usado para representar um valor que pode ou não estar presente. Pense nele como um substituto type-safe para `null` ou `undefined`.
+A Programação Funcional (FP) encara os erros de uma maneira fundamentalmente diferente: **erros são simplesmente valores**. Em vez de lançar exceções que quebram o fluxo, as funções retornam tipos de dados explícitos que representam tanto o sucesso quanto a falha. `fp-ts` nos fornece estruturas de dados poderosas para isso, como `Option` e `Either`. Antes de `Either`, vamos entender `Option`. Ele é usado para representar um valor que pode ou não estar presente. Pense nele como um substituto type-safe para `null` ou `undefined`.
 
 *   **`Some<A>`**: Contém um valor do tipo `A`.
 *   **`None`**: Representa a ausência de um valor.
@@ -218,9 +212,8 @@ const resultado2 = dividir(10, 0); // Left("Divisão por zero!")
 console.log(resultado1);
 console.log(resultado2);
 ```
-O tipo de retorno `E.Either<string, number>` diz claramente: "esta função retorna um número em caso de sucesso, OU uma string de erro em caso de falha." O compilador TypeScript agora *sabe* dos possíveis resultados.
 
-Nunca acessamos diretamente `Left` ou `Right` (ou `Some`/`None`). Em vez disso, usamos funções de alta ordem que operam sobre esses "containers". A função `pipe` de `fp-ts/function` é crucial aqui para compor essas operações de forma legível.
+O tipo de retorno `E.Either<string, number>` diz claramente: "esta função retorna um número em caso de sucesso, OU uma string de erro em caso de falha." O compilador TypeScript agora *sabe* dos possíveis resultados. Nunca acessamos diretamente `Left` ou `Right` (ou `Some`/`None`). Em vez disso, usamos funções de alta ordem que operam sobre esses "containers". A função `pipe` de `fp-ts/function` é crucial aqui para compor essas operações de forma legível.
 
 A função `pipe(valorInicial, fn1, fn2, fn3)` é equivalente a `fn3(fn2(fn1(valorInicial)))`, simplificando a composição de funções. Ela recebe um valor inicial e o encaminha através de uma sequência de transformações, criando um fluxo de dados da esquerda para a direita que é intuitivo e fácil de acompanhar, melhorando significativamente a legibilidade do código em comparação com as chamadas aninhadas tradicionais. Veja o gráfico abaixo:
 
@@ -302,9 +295,7 @@ Estas propriedades tornam o `Either` extremamente poderoso para composição de 
 
 Agora que entendemos o conceito de `pipe`, vamos explorar a função `match`, que é fundamental para extrair valores de um `Either`. Esta função permite definir duas funções: uma para o caso `Left` (erro) e outra para o caso `Right` (sucesso), funcionando essencialmente como um `if/else` especializado para o tipo `Either`. Com `match`, podemos transformar nosso `Either` em qualquer outro tipo, garantindo que ambos os casos sejam tratados explicitamente.
 
-O `match` é uma forma de "pattern matching" funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes "casos" ou "formas" que um valor pode ter. No caso do `Either`, temos dois padrões possíveis: `Left` e `Right`. O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garanta que não podemos acessar o valor interno de um `Either` sem primeiro "desempacotá-lo" usando `match` ou funções similares.
-
-Agora que você já entendeu o conceito de `pipe`, vamos ver como usar `match` para extrair valores de um `Either` acompanhando o gráfico abaixo:
+O `match` é uma forma de "pattern matching" funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes "casos" ou "formas" que um valor pode ter. No caso do `Either`, temos dois padrões possíveis: `Left` e `Right`. O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garanta que não podemos acessar o valor interno de um `Either` sem primeiro "desempacotá-lo" usando `match` ou funções similares. Agora que você já entendeu o conceito de `pipe`, vamos ver como usar `match` para extrair valores de um `Either` acompanhando o gráfico abaixo:
 
 ```mermaid
 graph LR
@@ -332,9 +323,7 @@ graph LR
     style G fill:#d6eaf8,stroke:#3498db,stroke-width:2px
 ```
 
-O processo começa com uma entrada `E.Either<E, A>`, que representa um valor que pode ser um sucesso (`Right<A>`) ou um erro (`Left<E>`). Quando aplicamos a função `match`, ela toma uma decisão baseada no tipo do `Either`: se for um `Right`, aplica a função de sucesso (`fnSucesso`) ao valor interno, transformando `A` em `B`; se for um `Left`, aplica a função de erro (`fnErro`) ao erro interno, transformando `E` também em `B`.
-
-O resultado final deste processo é sempre um valor do tipo `B`, independentemente do caminho seguido. Esta é a beleza do `match`: ele unifica os dois caminhos possíveis (sucesso e erro) em um único tipo de saída, permitindo que o código subsequente trabalhe com um valor concreto sem precisar verificar constantemente se estamos lidando com um sucesso ou um erro. Vamos ver um exemplo prático em código:
+O processo começa com uma entrada `E.Either<E, A>`, que representa um valor que pode ser um sucesso (`Right<A>`) ou um erro (`Left<E>`). Quando aplicamos a função `match`, ela toma uma decisão baseada no tipo do `Either`: se for um `Right`, aplica a função de sucesso (`fnSucesso`) ao valor interno, transformando `A` em `B`; se for um `Left`, aplica a função de erro (`fnErro`) ao erro interno, transformando `E` também em `B`. O resultado final deste processo é sempre um valor do tipo `B`, independentemente do caminho seguido. Esta é a beleza do `match`: ele unifica os dois caminhos possíveis (sucesso e erro) em um único tipo de saída, permitindo que o código subsequente trabalhe com um valor concreto sem precisar verificar constantemente se estamos lidando com um sucesso ou um erro. Vamos ver um exemplo prático em código:
 
 ```typescript
 import * as E from "fp-ts/Either";
@@ -356,10 +345,7 @@ const result = pipe(
 console.log(result); // "Erro: Divisão por zero!"
 ```
 
-
-O método `match` é particularmente útil quando você precisa **transformar** o resultado final de uma operação em um formato específico, como preparar dados para exibição na interface do usuário ou formatar mensagens para logging. Esta função é essencial para unificar os caminhos de sucesso e erro em um único tipo de retorno.
-
-Além disso, `match` serve como uma excelente maneira de **encerrar** uma cadeia de operações com um valor concreto, permitindo que você conclua o processamento de um `Either` e obtenha um resultado final que não é mais um tipo monádico. 
+O método `match` é particularmente útil quando você precisa **transformar** o resultado final de uma operação em um formato específico, como preparar dados para exibição na interface do usuário ou formatar mensagens para logging. Esta função é essencial para unificar os caminhos de sucesso e erro em um único tipo de retorno. Além disso, `match` serve como uma excelente maneira de **encerrar** uma cadeia de operações com um valor concreto, permitindo que você conclua o processamento de um `Either` e obtenha um resultado final que não é mais um tipo monádico. 
 
 ## Usando `map` para Transformar o Valor de Sucesso
 
@@ -505,14 +491,9 @@ E quando nossas operações são assíncronas, como chamadas de API ou interaç�
 
 3. O `TaskEither<E, A>` combina o conceito de `Task` com `Either`. Formalmente, é um `Task<Either<E, A>>`, ou seja, uma função que retorna uma promessa que resolverá para um `Either<E, A>`.
 
-Isso nos dá o melhor dos dois mundos: a capacidade de lidar com operações assíncronas (como o `Promise`) e um tratamento de erros explícito e tipado (como o `Either`).
+Isso nos dá o melhor dos dois mundos: a capacidade de lidar com operações assíncronas (como o `Promise`) e um tratamento de erros explícito e tipado (como o `Either`). Na prática, o `TaskEither` é perfeito para operações que demoram para completar e podem falhar, como buscar dados de um servidor ou ler um arquivo. Em vez de usar `try/catch` espalhados pelo código ou verificar erros manualmente, você encadeia operações de forma elegante e o TypeScript garanta que você não esqueça de tratar os erros.
 
-Na prática, o `TaskEither` é perfeito para operações que demoram para completar e podem falhar, como buscar dados de um servidor ou ler um arquivo. Em vez de usar `try/catch` espalhados pelo código ou verificar erros manualmente, você encadeia operações de forma elegante e o TypeScript garanta que você não esqueça de tratar os erros.
-
-A grande vantagem é que, diferente de uma `Promise` comum que mistura o fluxo de sucesso e erro em callbacks separados (`.then()` e `.catch()`), o `TaskEither` mantém ambos os caminhos dentro do mesmo tipo, permitindo composição mais segura e previsível de operações assíncronas que podem falhar.
-
-Vamos ver um exemplo prático de como usar `TaskEither` no código abaixo:
-
+A grande vantagem é que, diferente de uma `Promise` comum que mistura o fluxo de sucesso e erro em callbacks separados (`.then()` e `.catch()`), o `TaskEither` mantém ambos os caminhos dentro do mesmo tipo, permitindo composição mais segura e previsível de operações assíncronas que podem falhar. Vamos ver um exemplo prático de como usar `TaskEither` no código abaixo:
 
 ```typescript
 import * as TE from "fp-ts/TaskEither";
