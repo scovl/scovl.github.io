@@ -79,6 +79,57 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
+            <a href="http://localhost:1313/2025/07/23/rustconc/">Compreendendo a concorrência em Rust</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-07-23T12:00:00Z">
+                Wed, Jul 23, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/rust/" class="tag">Rust</a>
+                
+                <a href="/tags/concorr%C3%AAncia/" class="tag">Concorrência</a>
+                
+                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
+                
+                <a href="/tags/threads/" class="tag">Threads</a>
+                
+                <a href="/tags/async/" class="tag">Async</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Thread safety em Rust não é magia: é matemática
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>O Rust costuma ser apresentado como <strong>a linguagem que impede aqueles bugs de memória cabeludos</strong> antes mesmo do seu código rodar. Mas essa história não para no <strong><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker">borrow checker</a></strong>: ela se estende à concorrência. O pessoal da comunidade fala em <strong>fearless concurrenc</strong> — “concorrência sem medo”. Mas o que isso significa realmente? Como explicar isso para alguém que vem de outras linguagens? Em resumo, Rust transforma muitos erros de concorrência em erros de compilação em vez de runtime, graças ao seu sistema de <em>ownership</em> e tipos. Esse aspecto é o que chamamos de <strong>concorrência sem medo</strong>, onde escrever código concorrente não precisa ser uma roleta-russa de bugs sutis.</p>
+            
+            <a href="http://localhost:1313/2025/07/23/rustconc/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
             <a href="http://localhost:1313/2025/07/21/rustcomp/">Como o compilador do Rust funciona?</a>
         </h2>
         
@@ -281,7 +332,7 @@
 <ul>
 <li><a href="https://github.com/purify-ts/purify-ts"><strong>Purify-ts</strong></a>: Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either</li>
 <li><a href="https://github.com/microsoft/neverthrow"><strong>Neverthrow</strong></a>: Biblioteca especializada em tratamento de erros com Result/Either</li>
-<li><a href="https://github.com/Effect-TS/effect"><strong>Effect-ts</strong></a>: Uma biblioteca mais recente que expande os conceitos do fp-ts com um foco em efeitos</li>
+<li><a href="https://github.com/Effect-TS/effect"><strong>Effect</strong></a>: Uma biblioteca mais recente que expande os conceitos do fp-ts com foco em STM (Software Transactional Memory), concorrência e gerenciamento de recursos</li>
 <li><a href="https://github.com/zio/zio-ts"><strong>Zio-ts</strong></a>: Inspirada na biblioteca ZIO de Scala, oferecendo abstrações para IO, concorrência e recursos</li>
 </ul>
 <p>Cada uma dessas bibliotecas tem seus pontos fortes, mas o <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> se destaca pela sua maturidade, documentação abrangente e ecossistema rico de bibliotecas complementares. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.</p>
@@ -453,63 +504,6 @@
 <p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
             
             <a href="http://localhost:1313/2025/03/25/semantic-postgresql/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/03/28/comp01_formatado/">2</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-03-28T12:00:00Z">
-                Fri, Mar 28, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/rag/" class="tag">RAG</a>
-                
-                <a href="/tags/llm/" class="tag">LLM</a>
-                
-                <a href="/tags/ai/" class="tag">AI</a>
-                
-                <a href="/tags/optimiza%C3%A7%C3%A3o/" class="tag">Optimização</a>
-                
-                <a href="/tags/produ%C3%A7%C3%A3o/" class="tag">Produção</a>
-                
-                <a href="/tags/postgresql/" class="tag">PostgreSQL</a>
-                
-                <a href="/tags/ollama/" class="tag">Ollama</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                2
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <h2 id="1-introdução">1. INTRODUÇÃO</h2>
-<p>Sabe quando você tem uma ideia e quer que o computador a transforme em um aplicativo, um jogo ou um site? A gente usa <a href="https://www.linguagensdeprogramacao.com.br/"><strong>linguagens de programação</strong></a> pra isso. Elas são como a nossa forma de conversar com a máquina, dando instruções detalhadas para resolver problemas ou criar coisas novas.</p>
-<p>De apps no seu celular a sistemas que controlam carros, redes sociais ou até satélites, tudo começa com código. Mas tem um detalhe: o computador, na sua forma mais básica, não entende a nossa linguagem. Ele só entende uma coisa: a linguagem de máquina, que é basicamente uma sequência de zeros e uns. É aí que entra o herói da história: o <strong>compilador</strong>.</p>
-            
-            <a href="http://localhost:1313/2025/03/28/comp01_formatado/" class="read-more">Leia mais →</a>
             
         </div>
         
