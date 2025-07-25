@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Compreendendo a concorrência em Rust | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Thread safety em Rust não é magia: é matemática">
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });
+    });
+</script>
+ 
+</head>
+<body>
+    
+    
+    <header class="header">
+    <div class="container">
+        <div class="header-content">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    
+                    
+                    <li>
+                        <a href="/page/about/" class="nav-link ">
+                            About
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/page/contact/" class="nav-link ">
+                            Contact
+                        </a>
+                    </li>
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header> 
+    
+    
+    
+    <main>
+        <div class="container">
+            
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Compreendendo a concorrência em Rust</h1>
+        <div class="post-meta">
+            
+            <time datetime="2025-07-23T12:00:00Z">
+                Wed, Jul 23, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-tags">
+                
+                <a href="/tags/rust/" class="tag">Rust</a>
+                
+                <a href="/tags/concorr%C3%AAncia/" class="tag">Concorrência</a>
+                
+                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
+                
+                <a href="/tags/threads/" class="tag">Threads</a>
+                
+                <a href="/tags/async/" class="tag">Async</a>
+                
+            </div>
+            
+            
+            
+            <div class="reading-time">
+                Estimated reading time: 46 min
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Thread safety em Rust não é magia: é matemática
+            </div>
+            
+        </div>
+    </header>
+    
+    <div class="post-content">
+        <p>O Rust costuma ser apresentado como <strong>a linguagem que impede aqueles bugs de memória cabeludos</strong> antes mesmo do seu código rodar. Mas essa história não para no <strong><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker">borrow checker</a></strong>: ela se estende à concorrência. O pessoal da comunidade fala em <strong>fearless concurrenc</strong> — “concorrência sem medo”. Mas o que isso significa realmente? Como explicar isso para alguém que vem de outras linguagens? Em resumo, Rust transforma muitos erros de concorrência em erros de compilação em vez de runtime, graças ao seu sistema de <em>ownership</em> e tipos. Esse aspecto é o que chamamos de <strong>concorrência sem medo</strong>, onde escrever código concorrente não precisa ser uma roleta-russa de bugs sutis.</p>
+<h2 id="1-por-que-concorrência-costuma-dar-ruim">1. Por que concorrência costuma dar ruim?</h2>
+<p>Um exemplo clássico de problema de concorrência aconteceu no <a href="https://www.kernel.org/">Linux</a>, documentado no <a href="https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2022-49443">CVE‑2022‑49443</a>. Nesse caso, duas partes diferentes do sistema tentaram acessar e modificar a mesma lista na memória ao mesmo tempo, sem nenhum mecanismo de sincronização para coordenar esse acesso. Como resultado, ocorreu um <a href="https://en.wikipedia.org/wiki/Data_race">data race</a>, em que as operações simultâneas causaram inconsistências e corromperam o estado interno da lista.</p>
+<p>O kernel do Linux detectou esse acesso inseguro e emitiu um alerta, mostrando exatamente onde a leitura e a escrita concorrentes aconteceram. Esse tipo de bug é difícil de prever e reproduzir, pois depende do momento exato em que as threads acessam o recurso compartilhado, podendo causar falhas imprevisíveis e difíceis de depurar. Abaixo está o alerta gerado pelo <a href="https://www.kernel.org/doc/html/latest/dev-tools/kcsan.html">KCSAN</a>:</p>
+
+
+  <pre><code class="language-text">BUG: KCSAN: data-race in do_epoll_wait / do_epoll_wait
+write to 0xffff88810480c7d8 ...
+    ep_poll fs/eventpoll.c:1806
+read to 0xffff88810480c7d8 ...
+    list_empty_careful include/linux/list.h:329</code></pre>
+ <p>Para resolver esse tipo de problema, é preciso adicionar mecanismos de sincronização — como se fosse um &ldquo;sinal vermelho&rdquo; — para garantir que apenas uma thread por vez possa acessar ou modificar o recurso compartilhado, evitando a bagunça causada por acessos simultâneos. Ferramentas como o <strong><a href="https://www.chromium.org/developers/testing/threadsanitizer-tsan-v2/">ThreadSanitizer (TSan)</a></strong> e o <strong><a href="https://www.kernel.org/doc/html/latest/dev-tools/kcsan.html">KCSAN</a></strong> ajudam a identificar essas <a href="https://en.wikipedia.org/wiki/Race_condition">race conditions</a> durante os testes, monitorando a execução do programa e apontando exatamente onde ocorreu o acesso inseguro como mostra a imagem abaixo:</p>
+<p><img src="" alt="KCSAN alerta"></p>
+<p>No entanto, essas ferramentas só conseguem flagrar o erro se ele realmente acontecer durante os testes; caso contrário, o bug pode passar despercebido e só se manifestar depois que o sistema já estiver em produção, como já ocorreu em projetos conhecidos como <a href="https://github.com/curl/curl/issues/4915">cURL</a> e <a href="https://github.com/grpc/grpc/issues/21729">gRPC</a> onde o problema só foi detectado após subir em produção. Em Rust, olha só o que acontece se você tentar rodar esse código que é um exemplo de um <a href="https://en.wikipedia.org/wiki/Data_race">data race</a>:</p>
+
+
+  <pre><code class="language-rust">use std::{rc::Rc, thread};
+
+fn main() {
+    let rc = Rc::new(5);
+    thread::spawn(move || println!(&#34;{rc}&#34;));
+}</code></pre>
+ <p>O compilador já reclama assim:</p>
+
+
+  <pre><code class="language-">error[E0277]: `Rc&lt;i32&gt;` cannot be sent between threads safely</code></pre>
+ <p>O Rust impede esse tipo de erro já na compilação! Mas vale lembrar: se você recorrer a trechos <code>unsafe</code>, a responsabilidade volta para você — e aí, se não tomar cuidado, ainda pode acabar com bugs difíceis, como já aconteceu <a href="https://github.com/m-ou-se/evmap/issues/1">evmap</a>, em que o programa travou por causa de um <a href="https://en.wikipedia.org/wiki/Data_race">data race</a>. Ou seja, mesmo com as ferramentas certas, atenção e boas práticas continuam essenciais. Mas, como o Rust impede esse tipo de erro? como ele sabe que o <code>Rc&lt;i32&gt;</code> não é seguro de ser enviado entre threads? Que bruxaria é essa?</p>
+<h2 id="por-baixo-do-capô-a-mágica-dos-traits-send-e-sync">Por baixo do capô: a mágica dos traits <code>Send</code> e <code>Sync</code></h2>
+<p>A segurança de concorrência do Rust vem de regras inteligentes no sistema de tipos, usando <strong><a href="https://doc.rust-lang.org/book/ch16-03-shared-state.html#using-traits-to-define-shared-state">traits especiais</a></strong>. A documentação oficial do Rust explica: <em>&ldquo;Cada tipo de dado sabe se pode ser enviado ou compartilhado entre threads com segurança, e o Rust força essas regras. Não há corridas de dados!&rdquo;</em>.</p>
+<p>Em outras palavras, o compilador verifica automaticamente, em tempo de compilação, se um tipo pode ou não ser usado por múltiplas threads ao mesmo tempo. Esses verificadores são dois <em>marker traits</em> (traits de marcação) chamados <code>Send</code> e <code>Sync</code>. Eles não têm funções nem implementações ativas em tempo de execução; são apenas etiquetas que dizem ao compilador: &ldquo;Este tipo é seguro para enviar para outra thread&rdquo; ou &ldquo;Este tipo é seguro para compartilhar entre threads&rdquo;.</p>
+<p><strong><code>Send</code>:</strong> Indica que um tipo pode <strong>ser enviado</strong> (transferido em propriedade) de uma thread para outra com segurança. Se um tipo implementa <code>Send</code>, você pode movê-lo para outra thread (por exemplo, passando como argumento para <code>std::thread::spawn</code>) sem risco de corromper dados. A maior parte dos tipos básicos do Rust é <code>Send</code>: números primitivos (<code>i32</code>, <code>f64</code> etc.), booleanos, <em>strings</em> (<code>String</code>), vetores (<code>Vec&lt;T&gt;</code> se <code>T</code> for <code>Send</code>), entre outros. Isso equivale a dizer: &ldquo;Pode levar este dado para outra thread que não vai ter problema – ele é seguro para transferência!&rdquo;.</p>
+<p>No diagrama abaixo, ilustramos a verificação do compilador para o trait <code>Send</code>. A &ldquo;Thread 1&rdquo; quer enviar um dado (caixa) para a &ldquo;Thread 2&rdquo;. O compilador Rust atua como uma ponte de inspeção: ele confere se o tipo do dado tem o selo <code>Send</code>. Se tiver, a transferência é permitida, isto é, a caixa atravessa a ponte e chega à outra thread. Caso contrário, o compilador emite um erro em tempo de compilação e não deixa o programa seguir. No desenho, representamos o dado com a etiqueta <code>Send</code> sendo entregue através da ponte (compilador) da Thread 1 para a Thread 2, indicando que a passagem foi aprovada.</p>
+
+
+  
+    
+  
+  <div class="mermaid">graph LR
+    subgraph Thread1 [Thread 1]
+        A1((🦀))
+    end
+    subgraph Thread2 [Thread 2]
+        B1((🦀))
+    end
+
+    %% Ponte (Compilador Rust verificando Send)
+    A1 -- Entrega Caixa --&gt; P[Ponte: Compilador Rust, Aprovado ✅]
+    P -- Caixa Segura --&gt; B1
+
+    %% Caixa de dados com etiqueta Send sendo transportada
+    DADO[&#34;Dado&lt;br/&gt;&lt;span class=&#39;sendTag&#39;&gt;Send&lt;/span&gt;&#34;]
+    style DADO fill:#fff,stroke:#888,stroke-width:2px
+    style P fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style A1 fill:#fef08a,stroke:#fbbf24,stroke-width:2px
+    style B1 fill:#fed7aa,stroke:#fb923c,stroke-width:2px
+
+    %% Mostrar caixa sobre a ponte durante a transferência
+    P --- DADO
+    DADO -.-&gt; B1</div>
+ <p>No exemplo acima, a Thread 1 (esquerda) está enviando um dado para a Thread 2 (direita). A “ponte” representa o compilador Rust checando o tipo desse dado. Como o dado possui o marcador <code>Send</code>, o compilador permite a transferência (indicada pelo símbolo ✅). Se o tipo não fosse <code>Send</code>, essa transferência seria barrada com um erro de compilação.</p>
+<blockquote>
+<p>Esse mecanismo garante que não existirá <em>data race</em> simplesmente por mover dados de uma thread para outra, pois somente tipos seguros (ou seja, que não têm referências não sincronizadas apontando para dados compartilhados) podem ser movidos entre threads.</p></blockquote>
+<p><strong><code>Sync</code>:</strong> Indica que um tipo pode <strong>ser compartilhado</strong> entre threads através de referências imutáveis de forma segura. Mais formalmente, um tipo <code>T</code> é <code>Sync</code> se uma referência imutável <code>&amp;T</code> pode ser enviada para outra thread (ou seja, <code>&amp;T</code> implementa <code>Send</code>). Na prática, se vários threads podem acessar simultaneamente o mesmo dado <strong>sem modificar</strong>, esse tipo é <code>Sync</code>.</p>
+<p>Tipos primitivos como números e referências imutáveis a qualquer <code>Send</code> também são <code>Sync</code> naturalmente, já que lê-los simultaneamente não causa condição de corrida. Por exemplo, uma referência imutável (<code>&amp;String</code>) de uma string pode ser compartilhada entre threads diferentes para leitura, se <code>String</code> for <code>Sync</code> (e é, pois você não pode modificá-la através de uma <code>&amp;String</code>).</p>
+<p>O diagrama a seguir representa visualmente a verificação do trait <code>Sync</code>. Temos um dado (representado pela bola com a etiqueta <code>Sync</code>) que várias threads tentam acessar ao mesmo tempo para leitura. O compilador Rust, indicado pelo selo verde de &ldquo;OK seguro para compartilhar&rdquo;, garante que isso só é possível porque o tipo do dado é <code>Sync</code>. Assim, Thread 1, Thread 2 e Thread 3 conseguem observar (acessar) o mesmo dado simultaneamente sem conflito, pois todas apenas leem o valor, e o compilador certificou-se de que esse acesso concorrente é seguro.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Dado (bola) com etiqueta Sync
+    Bola([&lt;span style=&#39;font-size:2em&#39;&gt;🦀&lt;/span&gt;&lt;br/&gt;Dado&lt;br/&gt;&lt;span style=&#39;background:#bbf7d0;color:#15803d;padding:2px 10px;border-radius:8px&#39;&gt;Sync&lt;/span&gt;])
+
+    %% Threads observando (leitura concorrente)
+    Thread1([🧑‍💻&lt;br/&gt;Thread 1&lt;br/&gt;🔭])
+    Thread2([🧑‍🎨&lt;br/&gt;Thread 2&lt;br/&gt;🔭])
+    Thread3([🧑‍🔬&lt;br/&gt;Thread 3&lt;br/&gt;🔭])
+    Thread1 -- &#34;ler&#34; --&gt; Bola
+    Thread2 -- &#34;ler&#34; --&gt; Bola
+    Thread3 -- &#34;ler&#34; --&gt; Bola
+
+    %% Sinal do compilador indicando aprovação
+    Sinal([&lt;b style=&#39;background:#d1fae5;color:#166534;padding:8px 18px;border-radius:12px&#39;&gt;✅ Compilador Rust&lt;br/&gt;Seguro para compartilhar!&lt;/b&gt;])
+    Bola --- Sinal
+
+    %% Estilos visuais
+    style Bola fill:#f1f5f9,stroke:#22c55e,stroke-width:3px
+    style Sinal fill:#d1fae5,stroke:#16a34a,stroke-width:2px
+    style Thread1 fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px
+    style Thread2 fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style Thread3 fill:#fef9c3,stroke:#a16207,stroke-width:2px</div>
+ <p>O <code>Send</code> e <code>Sync</code> funcionam como etiquetas de segurança verificadas em tempo de compilação. O compilador do Rust age como um fiscal rigoroso: se você tentar transferir para outra thread um tipo que <strong>não</strong> implemente <code>Send</code>, ou se tentar compartilhar entre threads um tipo que <strong>não</strong> seja <code>Sync</code>, o compilador emitirá um erro de compilação e recusará rodar o programa.</p>
+<p>Por exemplo, se você tentar enviar um ponteiro inteligente <code>Rc&lt;i32&gt;</code> (contador de referência não atômico) para outra thread, o Rust vai reclamar com um erro parecido com <code>E0277</code>, indicando que aquele tipo não implementa <code>Send</code> ou <code>Sync</code>. Isso evita, já na compilação, as chamadas <strong>data races</strong> – situação em que duas threads acessam e modificam o mesmo dado simultaneamente, causando corrupção de memória ou resultados imprevisíveis.</p>
+<p>Para concretizar, veja o caso do <code>Rc&lt;T&gt;</code> abaixo. O tipo <code>Rc</code> (Reference Counted) da biblioteca padrão <strong>não</strong> implementa <code>Send</code> nem <code>Sync</code>. Ele foi projetado apenas para uso em single-thread, pois não utiliza travas ou atomicidade para atualizar seu contador de referências. O diagrama seguinte ilustra o compilador barrando o uso de <code>Rc&lt;i32&gt;</code> em contexto multi-thread: o compilador (representado pelo fiscal) detecta um <code>Rc&lt;i32&gt;</code> sendo compartilhado e imediatamente levanta uma placa de “proibido”, impedindo a passagem desse valor para outra thread:</p>
+
+
+  
+  <div class="mermaid">graph LR
+    %% Compilador flagra o uso indevido de Rc&lt;i32&gt; entre threads
+    Compilador([&#34;👮&lt;br/&gt;Compilador Rust&#34;])
+    Sinal([🔴&lt;br/&gt;Rc&amp;lt;i32&amp;gt;&lt;br/&gt;&lt;span style=&#39;font-size:32px&#39;&gt;❌&lt;/span&gt;])
+    Placa([&#34;🚫 Proibido compartilhar entre threads!&lt;br/&gt;Tipo não é Send/Sync&#34;])
+
+    Compilador -- identifica erro --&gt; Sinal
+    Sinal -- aviso --&gt; Placa
+
+    style Sinal fill:#e11d48,stroke:#b91c1c,stroke-width:4px,color:#fff
+    style Placa fill:#334155,stroke:#334155,stroke-width:3px,color:#fff
+    style Compilador fill:#fbbf24,stroke:#a16207,stroke-width:2px</div>
+ <p>Acima, o <code>Rc&lt;i32&gt;</code> aparece em vermelho com um &ldquo;X&rdquo;, indicando que falha nos requisitos de segurança. O compilador Rust exibe uma placa de aviso proibindo enviar esse tipo para outra thread. Essa imagem traduz visualmente a mensagem de erro que o Rust daria nesse caso, reforçando: se um tipo não for seguro para uso concorrente, o Rust nem permite compilar o código que tentasse fazê-lo, garantindo assim a segurança em <em>tempo de compilação</em>.</p>
+<h2 id="quando-o-rc-falha-entra-o-arc">Quando o <code>Rc</code> falha, entra o <code>Arc</code>!</h2>
+<p>Como vimos, <code>Rc&lt;T&gt;</code> não pode ser usado entre threads diferentes. Então, o que fazer se você <strong>precisa</strong> compartilhar dados entre várias threads? A resposta do Rust é usar <strong><code>Arc&lt;T&gt;</code></strong> – que significa <em>Atomic Reference Counted</em>. O <code>Arc</code> é uma variante do <code>Rc</code> projetada para ambientes concorrentes: ele realiza a contagem de referências de forma <strong>atômica</strong>, isto é, usando instruções de hardware que garantem atualização consistente mesmo quando múltiplas threads tentam incrementar ou decrementar o contador ao mesmo tempo.</p>
+<blockquote>
+<p>Graças a essa sincronização interna, <code>Arc&lt;T&gt;</code> implementa <code>Send</code> e <code>Sync</code> (desde que o tipo <code>T</code> contido também seja seguro para enviar/compartilhar). Em termos simples, você pode imaginar o <code>Arc</code> como um <code>Rc</code> com colete à prova de balas para threads: ele faz o mesmo trabalho de compartilhar posse de um valor, só que de forma segura em ambientes multi-thread.</p></blockquote>
+<p><strong>Exemplo de uso:</strong> Suponha que você tinha um <code>Rc&lt;Algo&gt;</code> no seu código single-thread e quer portar para multi-thread. Basta trocar para <code>Arc&lt;Algo&gt;</code>. Assim, diferentes threads podem possuir clones do <code>Arc</code> apontando para o mesmo dado. O compilador, que antes bloqueava o <code>Rc</code>, agora vai permitir o <code>Arc</code> porque reconhece que ele é thread-safe. Internamente, cada incremento ou decremento no contador de referências do <code>Arc</code> é feito atomicamente (isso tem um pequeno custo de desempenho em comparação ao <code>Rc</code>, mas garante a segurança). Portanto, use <code>Arc</code> somente quando for realmente necessário compartilhar dados entre threads; se o seu código é single-thread ou não precisa dividir posse de dados, prefira <code>Rc</code> pelo menor overhead.</p>
+<p>No diagrama abaixo, visualizamos o funcionamento seguro do <code>Arc</code>. A caixa maior representa um valor protegido por <code>Arc&lt;T&gt;</code>, ostentando os selos <code>Send</code> e <code>Sync</code> (porque <code>Arc</code> implementa essas traits quando o conteúdo é apropriado). O compilador Rust (novamente como fiscal) confere e <strong>aprova</strong> o uso do <code>Arc</code>, permitindo que várias threads tenham acesso ao dado.</p>
+<p>Cada thread está conectada à caixa por uma espécie de corda, ilustrando que elas compartilham a posse daquele mesmo valor por meio de referências do tipo <code>Arc&lt;T&gt;</code>. Em contraste, ao lado, um caixote menor rotulado <code>Rc</code> com um &ldquo;X&rdquo; vermelho lembra que <code>Rc</code> não pode fazer isso – ele serve apenas para uma thread única. A comparação destaca que, em cenário multi-thread, deve-se usar <code>Arc</code> no lugar de <code>Rc</code>.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Caixa representando Arc&lt;T&gt; com etiquetas Send e Sync
+    ArcBox([&#34;Arc&lt;T&gt;&lt;br/&gt;&lt;span style=&#39;background:#bae6fd;color:#0369a1;padding:1px 8px;border-radius:8px&#39;&gt;Send&lt;/span&gt; &lt;span style=&#39;background:#bbf7d0;color:#15803d;padding:1px 8px;border-radius:8px&#39;&gt;Sync&lt;/span&gt;&#34;])
+
+    %% Sinal de aprovado do compilador Rust
+    Aprovado([&#34;✅&lt;br/&gt;Compilador Rust&lt;br/&gt;Aprovado&#34;])
+    ArcBox -- &#34;verificação&#34; --&gt; Aprovado
+
+    %% Múltiplas threads conectadas ao mesmo Arc&lt;T&gt;
+    Thread1([&#34;🧑‍💻&lt;br/&gt;Thread 1&#34;])
+    Thread2([&#34;🧑‍🚀&lt;br/&gt;Thread 2&#34;])
+    Thread3([&#34;🧑‍🔬&lt;br/&gt;Thread 3&#34;])
+    Thread4([&#34;🧑‍🎨&lt;br/&gt;Thread 4&#34;])
+    Thread1 -- &#34;possui ref&#34; --&gt; ArcBox
+    Thread2 -- &#34;possui ref&#34; --&gt; ArcBox
+    Thread3 -- &#34;possui ref&#34; --&gt; ArcBox
+    Thread4 -- &#34;possui ref&#34; --&gt; ArcBox
+
+    %% Caixa menor representando Rc com X (uso apenas single-thread)
+    RcBox([&#34;Rc&lt;T&gt;&lt;br/&gt;&lt;span style=&#39;color:#b91c1c;font-size:2em&#39;&gt;❌&lt;/span&gt;&lt;br/&gt;&lt;span style=&#39;font-size:0.8em&#39;&gt;só 1 thread&lt;/span&gt;&#34;])
+    ArcBox -. comparativo .-&gt; RcBox
+
+    %% Estilos para distinção visual
+    style ArcBox fill:#f1f5f9,stroke:#0284c7,stroke-width:3px
+    style RcBox fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style Aprovado fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Thread1 fill:#fff7ed,stroke:#fbbf24,stroke-width:2px
+    style Thread2 fill:#f3e8ff,stroke:#a21caf,stroke-width:2px
+    style Thread3 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style Thread4 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px</div>
+ <p>No diagrama, vemos claramente que o <code>Arc&lt;T&gt;</code> permite múltiplas threads acessando o mesmo dado: cada thread segura uma &ldquo;corda&rdquo; ligada à caixa <code>Arc&lt;T&gt;</code>, simbolizando um ponteiro compartilhado. O compilador dá o sinal verde (✅) para essa configuração. Já o <code>Rc</code> aparece riscado em vermelho ao lado, indicando que ele ficaria de fora numa situação de threads concorrentes. Em suma, quando <code>Rc</code> falha por não ser <code>Send/Sync</code>, o <code>Arc</code> entra como a alternativa segura, embora com um custo de desempenho um pouco maior devido ao uso de operações atômicas para manter a contagem de referências consistente entre threads.</p>
+<h2 id="outros-ajudantes-para-threads">Outros ajudantes para threads</h2>
+<p>Além de <code>Arc</code>, o Rust oferece várias estruturas na biblioteca padrão para garantir segurança e sincronização ao compartilhar ou trocar dados entre threads. Cada uma serve a propósitos diferentes, e escolher a ferramenta correta ajuda a manter seu código conciso e seguro:</p>
+<p><strong><code>Mutex&lt;T&gt;</code>:</strong> Mutual Exclusion (exclusão mútua). Um <code>Mutex</code> é essencialmente um cadeado que protege um dado do tipo <code>T</code>. Apenas uma thread por vez pode adquirir o lock (trancar o mutex) e acessar ou modificar o valor dentro do <code>Mutex</code>. Enquanto uma thread está com o cadeado, as outras que tentarem acessá-lo vão esperar. Isso previne que duas threads alterem o mesmo dado simultaneamente.</p>
+<p>O <code>Mutex&lt;T&gt;</code> implementa <code>Send</code> e <code>Sync</code> <em>desde que</em> <code>T</code> seja <code>Send</code> – ou seja, você pode enviar um <code>Mutex</code> para outra thread ou compartilhar sua referência, contanto que o conteúdo também possa ser enviado com segurança. Quando uma thread termina de usar o dado e libera o cadeado, outra thread pode então adquiri-lo e acessar o dado. Em resumo, é como uma porta com fechadura: só um pode entrar de cada vez.</p>
+<p><strong><code>RwLock&lt;T&gt;</code>:</strong> Leitura/Escrita com bloqueio. É parecido com um <code>Mutex</code>, mas mais flexível em termos de acesso concorrente. Um <code>RwLock</code> (Read-Write Lock) permite que várias threads adquiram simultaneamente um <em>lock</em> de leitura imutável para inspecionar o dado (várias pessoas podem ler um livro ao mesmo tempo, se nenhuma estiver escrevendo nele). Porém, se alguma thread precisar escrever/modificar o valor, ela deve adquirir um <em>lock</em> de escrita exclusivo – e enquanto a escrita não terminar, nenhuma outra thread pode acessar (nem para ler nem para escrever).</p>
+<blockquote>
+<p>Em termos de thread safety, um <code>RwLock&lt;T&gt;</code> é <code>Sync</code> (se <code>T</code> for <code>Send</code>), pois múltiplas threads podem ter referências de leitura simultaneamente com segurança garantida pelo mecanismo de lock interno. Use <code>RwLock</code> quando o padrão de acesso for muitas leituras e poucas escritas, pois assim você evita bloquear leitores entre si desnecessariamente.</p></blockquote>
+<p><strong>Tipos Atômicos (<code>AtomicBool</code>, <code>AtomicUsize</code>, etc.):</strong> Esses são tipos primitivos especializados que suportam operações atômicas de forma segura entre threads, sem necessidade de um mutex. Por exemplo, um <code>AtomicUsize</code> é como um número inteiro cujo incremento, decremento ou comparação são feitas de modo <em>atômico</em> (indivisível), garantindo que duas threads não consigam interferir uma na outra nessas operações. Os tipos atômicos implementam <code>Sync</code> e <code>Send</code> (são projetados para uso thread-safe intrínseco) e costumam ser muito eficientes para casos simples, como contadores, flags booleanas ou índices compartilhados. Porém, eles só funcionam para dados simples (geralmente números ou ponteiros).</p>
+<blockquote>
+<p>Pense neles como variáveis globais thread-safe que utilizam instruções de hardware para sincronização. Por exemplo, um <code>AtomicBool</code> pode ser usado para um “flag” que várias threads verificam e definem sem precisar de trava.</p></blockquote>
+<p><strong>Canais de Mensagem (ex: <code>std::sync::mpsc</code>):</strong> Em muitos casos, a forma mais fácil e segura de coordenar threads é <strong>não compartilhar</strong> diretamente a posse de dados, mas sim mandar mensagens de uma thread para outra. O módulo <code>mpsc</code> (multiple producer, single consumer) fornece canais de comunicação pelo qual você pode <strong>enviar</strong> valores de um thread (produtor) e recebê-los em outro thread (consumidor).</p>
+<p>Pense em um canal como uma esteira transportadora ou uma fila: em vez de duas threads acessarem o mesmo objeto em memória, a thread A envia uma cópia ou propriedade do dado para a thread B processar. Assim, evita-se completamente condições de corrida, já que cada dado só é possuído por uma thread de cada vez (transferido pelo canal). Os canais são excelentes para designs baseados em passagem de mensagens (similar ao modelo do Erlang ou Go) e muitas vezes simplificam a sincronização, pois não requerem locks manuais. O diagrama a seguir ilustra essas diferentes ferramentas de sincronização de forma visual:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Mutex representado como um dado trancado por cadeado
+    Mutex[&#34;🔒 Mutex&lt;T&gt;&lt;br/&gt;(exclusão única)&#34;]
+    
+    %% RwLock representado como uma estante de livros com múltiplos leitores
+    RwLock[&#34;RwLock&lt;T&gt;&lt;br/&gt;(várias leituras, uma escrita)&#34;]
+    Livro1[&#34;📖 Dado&#34;]
+    Livro2[&#34;📖 Dado&#34;]
+    Livro3[&#34;📖 Dado&#34;]
+    Leitor1[&#34;🧑‍🎓 Thread lendo&#34;]
+    Leitor2[&#34;🧑‍💼 Thread lendo&#34;]
+    Leitor3[&#34;🧑‍🎨 Thread lendo&#34;]
+    Leitor1 -- &#34;lê&#34; --&gt; Livro1
+    Leitor2 -- &#34;lê&#34; --&gt; Livro2
+    Leitor3 -- &#34;lê&#34; --&gt; Livro3
+    RwLock --&gt; Livro1
+    RwLock --&gt; Livro2
+    RwLock --&gt; Livro3
+
+    %% Canal: esteira transportadora de caixas (mensagens) da Thread A para Thread B
+    ThreadA[&#34;🧑‍💻 Thread A&#34;]
+    ThreadB[&#34;🧑‍🔧 Thread B&#34;]
+    Esteira[&#34;Canal de Mensagens&lt;br/&gt;📦→📦→📦&#34;]
+    ThreadA -- &#34;envia dado&#34; --&gt; Esteira
+    Esteira -- &#34;recebe dado&#34; --&gt; ThreadB
+    
+    %% Layout / separações
+    Mutex --- RwLock
+    RwLock --- Esteira
+    style Mutex fill:#c7d2fe,stroke:#4338ca,stroke-width:3px
+    style Esteira fill:#dcfce7,stroke:#22c55e,stroke-width:2px
+    style ThreadA fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style ThreadB fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style RwLock fill:#f1f5f9,stroke:#0ea5e9,stroke-width:2px
+    style Livro1 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px
+    style Livro2 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px
+    style Livro3 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px
+    style Leitor1 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px
+    style Leitor2 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px
+    style Leitor3 fill:#f1f5f9,stroke:#0ea5e9,stroke-width:1px</div>
+ <p>Na imagem acima, cada componente ilustra um mecanismo diferente de gerenciar concorrência:</p>
+<ul>
+<li>
+<p>O <strong>Mutex</strong> (à esquerda) aparece como uma caixa com um cadeado, indicando que o conteúdo está protegido e apenas uma thread por vez pode acessar. Imagine que uma thread tenha a chave do cadeado: enquanto ela estiver usando o recurso dentro do <code>Mutex</code>, nenhuma outra entra. Quando termina, ela libera o cadeado para outra thread poder usar.</p>
+</li>
+<li>
+<p>O <strong>RwLock</strong> (centro) é mostrado como uma estante de livros onde várias threads (pessoas) leem em paralelo. Isso representa que várias threads podem ter acesso de leitura simultaneamente ao dado. Se alguma delas precisasse escrever, teríamos que “fechar a estante” para todos os leitores e dar acesso exclusivo ao escritor (no diagrama não tem um escritor desenhado, mas essa é a ideia). Só depois de terminar a escrita é que outros leitores podem pegar os livros novamente. Assim funciona o <code>RwLock</code>: múltiplos leitores ou um único escritor de cada vez.</p>
+</li>
+<li>
+<p>O <strong>Canal</strong> (à direita) é simbolizado por uma esteira transportadora passando caixas da Thread A para a Thread B. Cada caixa seria uma mensagem ou dado sendo transferido. Note que a Thread B recebe a caixa inteira – ou seja, ela agora tem posse daquele dado, e a Thread A não precisa mais acessá-lo. Isso evita compartilhamento simultâneo. Na prática, usar canais é uma forma de <strong>transferir</strong> dados entre threads em vez de compartilhá-los, o que elimina a necessidade de locks e simplifica muito o raciocínio (não tem duas threads brigando pelo mesmo dado, uma entregou para a outra processar).</p>
+</li>
+</ul>
+<p>E os tipos <strong>Atômicos</strong> (<code>AtomicUsize</code>, <code>AtomicBool</code>, etc.)? Eles não estão ilustrados explicitamente no diagrama, mas podemos imaginar um cenário simples: se quiséssemos representar um contador atômico, poderíamos desenhar um contador cujo valor várias threads podem incrementar sem conflitos.</p>
+<blockquote>
+<p>O ponto-chave é que uma operação atômica age como se tivesse um mini-lock invisível embutido em nível de hardware apenas para aquele valor, garantindo que, por exemplo, duas threads incrementando um contador ao mesmo tempo não causem erro (cada incremento será realizado completamente um após o outro, mesmo sem um mutex explícito no código). Por isso, no texto do diagrama mencionamos &ldquo;Atomic*&rdquo; ao lado do Mutex e do RwLock: os tipos atômicos são outra ferramenta na caixa de ferramentas do Rust para garantir segurança, mas aplicados a casos específicos de variáveis simples.</p></blockquote>
+<h2 id="mutabilidade-interior-e-o-sync">Mutabilidade interior e o <code>Sync</code></h2>
+<p>Até agora falamos de acesso concorrente a dados considerando que as referências compartilhadas são imutáveis (exceto quando usamos locks para mutar). Entretanto, o Rust possui tipos especiais que permitem modificar um valor mesmo através de referências imutáveis – é o chamado <strong>interior mutability</strong> (mutabilidade interna).</p>
+<p>Esses tipos usam artifícios como operações não seguras (<em>unsafe</em>) ou checagens em tempo de execução para contornar as restrições usualmente impostas pelo sistema de empréstimo do Rust. Exemplos incluem <code>Cell&lt;T&gt;</code> e <code>RefCell&lt;T&gt;</code>. Embora sejam muito úteis em contextos de single-thread (permitindo mutação onde o compilador normalmente não deixaria, como dentro de um <code>&amp;T</code>), eles trazem implicações para o mundo multi-thread.</p>
+<p>Em termos de <code>Send</code> e <code>Sync</code>, a <strong>regra geral</strong> é: se um tipo permite <em>interior mutability</em> sem garantir sincronização entre threads, ele <strong>não será <code>Sync</code></strong>. O motivo é claro – se várias threads acessassem simultaneamente um mesmo objeto que pode mudar internamente de forma não sincronizada, teríamos uma condição de corrida. Vamos aos casos comuns:</p>
+<ul>
+<li><strong><code>Cell&lt;T&gt;</code> e <code>RefCell&lt;T&gt;</code>:</strong> não são <code>Sync</code>. Você não pode compartilhar referências a um <code>Cell</code> ou <code>RefCell</code> entre threads ao mesmo tempo, nem mesmo só para leitura, porque internamente eles permitem modificações ou verificações de empréstimo que não são protegidas contra acesso concorrente. O <code>RefCell</code> em particular realiza checagens de empréstimo em tempo de execução (panica se violar regras de referência única mutável ou múltiplas imutáveis), mas essas checagens não são implementadas para funcionar com múltiplas threads – são apenas dentro de uma única thread.</li>
+</ul>
+<p>Portanto, o compilador marca esses tipos como não <code>Sync</code> exatamente para prevenir que alguém tente compartilhá-los entre threads (seria inseguro). Inclusive, <code>RefCell</code> e <code>Cell</code> também não implementam <code>Send</code> se o tipo contido não for <code>Copy</code>, porque mover eles para outra thread poderia quebrar invariantes de empréstimo pendentes.</p>
+<ul>
+<li>
+<p><strong>Tipos Atômicos (<code>AtomicX</code>):</strong> são <code>Sync</code>. Apesar de permitirem mutação interna (você pode alterar o valor atômico através de uma referência compartilhada, já que os métodos deles recebem <code>&amp;self</code> em vez de <code>&amp;mut self</code>), eles fazem isso de forma segura para threads, utilizando instruções atômicas. Assim, você pode ter múltiplas threads segurando referências ao mesmo <code>AtomicUsize</code>, por exemplo, e realizando operações nele concorrentemente, que estará tudo bem – não haverá data race. Por isso, os atômicos implementam <code>Sync</code> (e <code>Send</code> também).</p>
+</li>
+<li>
+<p><strong><code>Mutex&lt;T&gt;</code> e <code>RwLock&lt;T&gt;</code>:</strong> também são <code>Sync</code> (desde que <code>T</code> seja <code>Send</code>). Parece contra-intuitivo à primeira vista, pois tanto o <code>Mutex</code> quanto o <code>RwLock</code> permitem mudança do valor interno mesmo através de uma referência imutável ao lock (por exemplo, você pode chamar <code>lock()</code> em um <code>&amp;Mutex&lt;T&gt;</code> e então obter um <code>&amp;mut T</code>). Contudo, a diferença é que essa mutação interna está <em>sincronizada</em> por mecanismos de lock.</p>
+</li>
+</ul>
+<p>Ou seja, se duas threads tiverem referências (imutáveis) ao mesmo <code>Mutex&lt;T&gt;</code>, quando uma thread entrar no lock, a outra ficará esperando, garantindo exclusão mútua. Assim, o <code>Mutex</code> em si pode ser compartilhado entre threads (<code>Sync</code>) com segurança, pois evita acesso simultâneo ao interior. O mesmo vale para <code>RwLock</code>: várias threads podem compartilhar um <code>&amp;RwLock&lt;T&gt;</code>; internamente o lock gerencia quem pode ler ou escrever de cada vez, mantendo a segurança.</p>
+<p>O diagrama abaixo exemplifica a diferença de comportamento entre um tipo com mutabilidade interna <strong>não</strong> segura (<code>Cell</code>) e um tipo atômico que fornece mutabilidade interna <strong>segura</strong>:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Caixa Cell com um X vermelho indicando não Sync
+    Cell([&#34;Cell&lt;i32&gt;&lt;br/&gt;&lt;span style=&#39;color:#b91c1c;font-size:2em&#39;&gt;❌&lt;/span&gt;&lt;br/&gt;&lt;span style=&#39;font-size:0.8em&#39;&gt;não Sync&lt;/span&gt;&#34;])
+    
+    %% Caixa AtomicUsize com sinal verde indicando Sync
+    Atomic([&#34;AtomicUsize&lt;br/&gt;&lt;span style=&#39;color:#16a34a;font-size:2em&#39;&gt;✅&lt;/span&gt;&lt;br/&gt;&lt;span style=&#39;font-size:0.8em&#39;&gt;Sync&lt;/span&gt;&#34;])
+
+    %% Threads tentando acessar o Cell simultaneamente
+    Thread1([🧑‍💻 Thread 1])
+    Thread2([🧑‍🎨 Thread 2])
+    Thread3([🧑‍🔬 Thread 3])
+    Thread1 -- &#34;acesso?&#34; --&gt; Cell
+    Thread2 -- &#34;acesso?&#34; --&gt; Cell
+    Thread3 -- &#34;acesso?&#34; --&gt; Cell
+
+    %% Compilador bloqueia acesso ao Cell entre threads
+    Compilador([👮 Compilador Rust])
+    Compilador -. &#34;erro: !Sync&#34; .- Cell
+    
+    %% As mesmas threads acessando AtomicUsize (permitido)
+    Thread1 -- &#34;acessa&#34; --&gt; Atomic
+    Thread2 -- &#34;acessa&#34; --&gt; Atomic
+    Thread3 -- &#34;acessa&#34; --&gt; Atomic
+
+    %% Estilos dos nós para visual
+    style Cell fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style Atomic fill:#dcfce7,stroke:#22c55e,stroke-width:2px
+    style Compilador fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style Thread1 fill:#f1f5f9,stroke:#0369a1,stroke-width:2px
+    style Thread2 fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px
+    style Thread3 fill:#f0fdf4,stroke:#22c55e,stroke-width:2px</div>
+ <p>No diagrama, o <code>Cell&lt;i32&gt;</code> aparece marcado com um X vermelho e a indicação de que não é <code>Sync</code>. As três threads 1, 2 e 3 tentam acessá-lo simultaneamente, mas o compilador (o &ldquo;guarda&rdquo; representado) impede isso, gerando um erro em tempo de compilação. Já do lado direito, temos um <code>AtomicUsize</code> marcado com ✅ (pois é <code>Sync</code>): as três threads conseguem acessá-lo &ldquo;normalmente&rdquo; ao mesmo tempo. Essa figura ajuda a fixar que tipos com mutabilidade interna só serão considerados seguros para compartilhamento (<code>Sync</code>) se incluírem mecanismos internos de sincronização. Caso contrário, o Rust proíbe seu uso simultâneo entre threads, prevenindo possíveis condições de corrida.</p>
+<h2 id="dica-de-ouro">Dica de ouro</h2>
+<p>Diante de tantas ferramentas de concorrência, pode surgir a dúvida: <strong>qual usar e quando?</strong> Uma dica de ouro para projetar programas multi-thread em Rust (e em geral) é preferir a solução mais simples que atenda ao seu caso de uso, privilegiando a transferência de dados entre threads em vez de compartilhamento, sempre que possível. Em termos práticos:</p>
+<ul>
+<li>
+<p><strong>Prefira usar canais (<code>mpsc</code>) para comunicar threads</strong> sempre que isso fizer sentido. Mandar mensagens evita muitos dos problemas de sincronização porque, ao transferir a posse de um dado de uma thread para outra, você não precisa lidar com locks naquele dado específico – a lógica passa a ser &ldquo;um produtor envia, um consumidor recebe&rdquo;. Muitas vezes dá para estruturar o programa de forma que threads trabalhem em pipeline (cada uma fazendo uma parte do trabalho e passando resultados adiante), o que é naturalmente seguro e fácil de entender.</p>
+</li>
+<li>
+<p>Se realmente for necessário que várias threads acessem o <strong>mesmo dado</strong> (por exemplo, um cache compartilhado, um contador global, ou uma configuração global que várias threads leem), escolha a estrutura apropriada:</p>
+<ul>
+<li>Para <strong>contadores simples ou flags booleanas</strong>, considere usar os tipos <strong>Atômicos</strong>. Eles são leves e muito eficientes para esses propósitos específicos.</li>
+<li>Para estruturas de dados mais complexas que muitas threads precisam <strong>ler frequentemente e raramente escrever</strong>, um <strong><code>RwLock&lt;T&gt;</code></strong> pode oferecer melhor desempenho, pois permite múltiplas leituras simultâneas.</li>
+<li>Para casos em que pode haver necessidade de <strong>escrita frequente ou acesso exclusivo</strong>, um <strong><code>Mutex&lt;T&gt;</code></strong> simples pode ser mais adequado, garantindo que apenas uma thread por vez modifique ou leia o dado protegido (às vezes um Mutex acaba sendo suficiente e mais simples do que um RwLock, dependendo do padrão de acesso).</li>
+</ul>
+</li>
+<li>
+<p><strong>Evite compartilhar desnecessariamente.</strong> Muitas vezes, duplicar alguns dados para cada thread ou organizar seu programa para minimizar compartilhamento pode eliminar a necessidade de sincronização complexa. Lembre-se: dados que estão confinados a uma única thread não precisam de <code>Arc</code> ou <code>Mutex</code> – eles podem ser usados livremente. Use mecanismos de compartilhamento apenas quando o design exigir realmente acesso concorrente ao mesmo recurso.</p>
+</li>
+</ul>
+<p>A grande vantagem do Rust é que ele atua como um guardião em tempo de compilação. Se você seguir as regras e usar essas ferramentas, o compilador vai <strong>impedir</strong> que você cometa enganos como esquecer de proteger um dado compartilhado. Por exemplo, se tentar compartilhar um tipo que não seja <code>Sync</code> sem proteção, não compila; se tentar enviar um tipo não <code>Send</code> para outra thread, não compila.</p>
+<p>Assim, boa parte dos problemas de concorrência são pegos antes mesmo de rodar o programa. O desenvolvedor fica então livre para se concentrar no <em>design</em> da sincronização (como dividir tarefas, onde realmente precisa de compartilhamento etc.), e não em caçar <em>race conditions</em> na depuração.</p>
+<p>Para visualizar essa ideia, o diagrama a seguir mostra uma “estrada” hipotética onde threads trafegam. As threads que carregam apenas dados marcados como <code>Send</code>/<code>Sync</code> recebem sinal verde do &ldquo;Guarda (compilador) Rust&rdquo; e podem prosseguir. Já as threads que tentam carregar algo como um <code>Rc</code> ou um <code>Cell</code> (que não são seguras para multiplas threads) são barradas pelo compilador – não podem entrar na via de multi-threading.</p>
+<p>Somente após resolver isso (por exemplo, trocando <code>Rc</code> por <code>Arc</code>, ou removendo o <code>Cell</code> ou encapsulando em um <code>Mutex</code>) o compilador permitirá o tráfego. Essa metáfora reforça: siga a sinalização (as traits) que o Rust providencia, e você evitará acidentes na estrada da concorrência!</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Threads representadas por carros com &#34;placas&#34; indicando seus dados
+    Carro1([🚗&lt;br/&gt;Thread 1&lt;br/&gt;&lt;span style=&#39;background:#d1fae5;color:#166534;padding:2px 7px;border-radius:6px&#39;&gt;Send&lt;/span&gt; &lt;span style=&#39;background:#d1fae5;color:#166534;padding:2px 7px;border-radius:6px&#39;&gt;Sync&lt;/span&gt;])
+    Carro2([🚙&lt;br/&gt;Thread 2&lt;br/&gt;&lt;span style=&#39;background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:6px&#39;&gt;Rc&lt;/span&gt;])
+    Carro3([🚕&lt;br/&gt;Thread 3&lt;br/&gt;&lt;span style=&#39;background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:6px&#39;&gt;Cell&lt;/span&gt;])
+    Carro4([🚓&lt;br/&gt;Thread 4&lt;br/&gt;&lt;span style=&#39;background:#d1fae5;color:#166534;padding:2px 7px;border-radius:6px&#39;&gt;Send&lt;/span&gt; &lt;span style=&#39;background:#d1fae5;color:#166534;padding:2px 7px;border-radius:6px&#39;&gt;Sync&lt;/span&gt;])
+
+    %% Estrada representando o caminho para execução multi-thread
+    Estrada([🛣️&lt;br/&gt;Execução concorrente segura])
+    
+    %% Guarda (compilador) verificando as &#34;placas&#34; dos carros (traits)
+    Guarda([👮&lt;br/&gt;Compilador Rust&lt;br/&gt;Checagem&lt;br/&gt;Send/Sync])
+
+    %% Fluxo: Carros com dados seguros passam, inseguros são barrados
+    Carro1 -- &#34;pode prosseguir&#34; --&gt; Estrada
+    Carro4 -- &#34;pode prosseguir&#34; --&gt; Estrada
+    Carro2 -- &#34;barrado&#34; --&gt; Guarda
+    Carro3 -- &#34;barrado&#34; --&gt; Guarda
+    Guarda -- &#34;apenas tipos seguros passam&#34; --&gt; Estrada
+
+    %% Estilização visual
+    style Estrada fill:#f1f5f9,stroke:#6366f1,stroke-width:4px
+    style Guarda fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style Carro1 fill:#dcfce7,stroke:#22c55e,stroke-width:2px
+    style Carro2 fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style Carro3 fill:#fef9c3,stroke:#a16207,stroke-width:2px
+    style Carro4 fill:#dcfce7,stroke:#22c55e,stroke-width:2px</div>
+ <h2 id="cuidado-com-o-unsafe">Cuidado com o <code>unsafe</code></h2>
+<p>Todas as garantias que discutimos sobre <code>Send</code> e <code>Sync</code> se aplicam apenas ao código Rust <strong>seguro</strong> (safe). Ou seja, quando você programa sem recorrer a <code>unsafe</code>, pode contar que o compilador não vai deixar passar nenhuma violação das regras de thread safety estabelecidas pelos traits. <strong>Porém</strong>, o Rust também permite, em casos necessários, utilizar código marcado como <code>unsafe</code> para realizar operações que fogem à verificação normal do compilador.</p>
+<p>Isso inclui implementar manualmente traits como <code>Send</code> e <code>Sync</code> para seus próprios tipos. Ao fazer isso, você está dizendo ao Rust: &ldquo;Confie em mim, eu garanto que isto é seguro&rdquo;. A partir desse ponto, a responsabilidade é toda sua – se estiver enganado, as consequências podem ser graves (comportamento indefinido, crashes, corrupção de memória etc.).</p>
+<p>Portanto, use <code>unsafe</code> com extrema cautela, especialmente no contexto de concorrência. Só deve-se implementar <code>Send</code> ou <code>Sync</code> manualmente (via <code>unsafe impl</code>) se você tiver absoluta certeza do que está fazendo. Um exemplo real foi o caso de uma biblioteca (crate) que fez um <code>unsafe impl Send</code> para um tipo que na verdade não era seguro para threads, resultando em travamentos e comportamento incorreto quando usado em cenários concorrentes.</p>
+<p>Esse tipo de erro escapa do compilador porque você essencialmente burlou o guardião. Então, a dica é: confie no sistema de tipos do Rust e nas abstrações fornecidas; evite reinventar a roda com <code>unsafe</code> a não ser que seja realmente necessário e, se for, siga rigorosamente as referências do Rustonomicon (guia de coisas perigosas do Rust) para não violar invariantes de segurança.</p>
+<h2 id="o-que-send-e-sync-não-evitam">O que <code>Send</code> e <code>Sync</code> <strong>não</strong> evitam</h2>
+<p>Com <code>Send</code> e <code>Sync</code>, o Rust resolve de forma robusta o problema de <em>data races</em> (duas threads escrevendo/lendo o mesmo dado simultaneamente sem sincronização). No entanto, é importante entender que essas regras não previnem todos os problemas possíveis em programação concorrente. Dois problemas notórios que ainda podem ocorrer são:</p>
+<ul>
+<li><strong>Deadlocks (impasses):</strong> Isso acontece quando duas ou mais threads ficam bloqueadas esperando umas às outras indefinidamente. Por exemplo, a Thread A adquire o Mutex X e em seguida tenta adquirir o Mutex Y, enquanto simultaneamente a Thread B já tem o Mutex Y e tenta adquirir o Mutex X. Nenhuma das duas libera o que a outra precisa, e assim elas ficam travadas para sempre.</li>
+</ul>
+<blockquote>
+<p>O Rust não tem como detectar ou impedir deadlocks automaticamente, porque eles resultam da lógica de travas adquiridas em ordem desfavorável, algo que está além da análise de tipo local. Portanto, mesmo que <code>Mutex</code> e <code>RwLock</code> lhe protejam de condições de corrida, você deve planejar o uso deles cuidadosamente para evitar deadlocks (por exemplo, seguindo sempre a mesma ordem ao adquirir múltiplos locks, ou usando ferramentas de tempo de execução para detectar deadlocks durante testes).</p></blockquote>
+<ul>
+<li><strong>Outras condições de sincronização incorreta:</strong> Por exemplo, <em>starvation</em> (quando uma thread nunca consegue tempo de execução porque outras monopolizam recursos), ou ainda erros lógicos na divisão de trabalho (como esquecer de enviar um sinal ou mensagem, deixando outra thread esperando eternamente). Essas questões também não são magicamente resolvidas por <code>Send</code>/<code>Sync</code> – elas exigem cuidado do desenvolvedor na arquitetura do programa.</li>
+</ul>
+<p>O diagrama a seguir ilustra um caso de deadlock simples entre duas threads. Cada thread está segurando um recurso (representado pelo cadeado 🔒) que a outra precisa, e ambas estão esperando pela outra liberar. Nenhuma das duas pode prosseguir, caracterizando o impasse. Colocamos um sinal de alerta para lembrar: mesmo com toda a ajuda do compilador, cabe a nós projetarmos bem a interação entre threads para que situações assim não ocorram.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Threads cada uma segurando um lock e esperando o do outro (deadlock)
+    Thread1([🧑‍💻&lt;br/&gt;Thread 1&lt;br/&gt;🔒 Recurso A])
+    Thread2([🧑‍🔬&lt;br/&gt;Thread 2&lt;br/&gt;🔒 Recurso B])
+
+    %% Cada thread esperando o recurso oposto
+    Thread1 -- &#34;esperando Recurso B&#34; --&gt; Thread2
+    Thread2 -- &#34;esperando Recurso A&#34; --&gt; Thread1
+
+    %% Sinal de alerta sobre deadlock
+    Sinal([&lt;b style=&#39;background:#fef08a;color:#b91c1c;padding:8px 18px;border-radius:12px&#39;&gt;⚠️ Deadlock! Planeje a ordem de travas&lt;/b&gt;])
+    Thread1 -. parado .- Sinal
+    Thread2 -. parado .- Sinal
+
+    %% Estilos visuais
+    style Thread1 fill:#f3e8ff,stroke:#a21caf,stroke-width:2px
+    style Thread2 fill:#fee2e2,stroke:#b91c1c,stroke-width:2px
+    style Sinal fill:#fef08a,stroke:#fbbf24,stroke-width:2px</div>
+ <p>Em resumo, <code>Send</code> e <code>Sync</code> nos livram de uma classe enorme de problemas (as condições de corrida de dados), o que já é um alívio enorme para quem lida com múltiplas threads. Mas eles não substituem o bom design de concorrência. Ainda precisamos pensar na coordenação entre threads: qual vai esperar por qual, que recurso deve ser bloqueado primeiro, quando usar um canal em vez de um lock, etc.</p>
+<p>O Rust fornece as ferramentas e garantias de baixo nível, mas o alto nível da lógica concorrente – garantir progresso sem deadlocks, sem starvation e com corretude lógica – fica sob nossa responsabilidade. A boa notícia é que, livre das preocupações com <em>data races</em>, podemos focar nesses aspectos de design com muito mais tranquilidade.</p>
+<p>O Rust, com seus traits <code>Send</code> e <code>Sync</code> e suas primitivas de sincronização, praticamente elimina os erros de concorrência mais comuns antes mesmo que seu programa rode. Isso permite escrever código multithreaded eficiente e, principalmente, confiável. Adotar uma mentalidade de &ldquo;segurança em primeiro lugar&rdquo; – seguindo as regras do compilador e usando as estruturas adequadas – nos dá a base sólida para então construir lógicas de paralelismo mais complexas de forma controlada.</p>
+<blockquote>
+<p>Em outras linguagens, é fácil cair em armadilhas sutis de concorrência; em Rust, o compilador age como um guardião incansável que nos protege do descuido, restando a nós projetar conscientemente a interação entre threads. Com atenção e as abstrações corretas, é possível aproveitar o potencial do paralelismo sem abrir mão da segurança e previsibilidade do software. Boa programação concorrente!</p></blockquote>
+<h2 id="2-ownership-além-da-memória-banindo-data-races">2. Ownership além da memória: banindo <em>data races</em></h2>
+<p>O Rust garante segurança de memória com duas regras fundamentais:</p>
+<ol>
+<li>Cada valor tem um único dono responsável por sua liberação.</li>
+<li>Você só pode ter várias referências imutáveis <strong>ou</strong> uma referência mutável exclusiva a um dado — nunca ambos ao mesmo tempo.</li>
+</ol>
+<p><img src="" alt="Ownership"></p>
+<p>O <strong><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker">borrow checker</a></strong> do compilador fiscaliza essas regras, impedindo que duas partes do mesmo programa modifiquem um valor simultaneamente. Isso já elimina muitos bugs de concorrência dentro de uma única thread.Quando o assunto é multithread, essas mesmas regras continuam valendo, mas o Rust vai além: ele utiliza dois marcadores especiais, chamados de <strong>traits</strong> <code>Send</code> e <code>Sync</code>, para garantir que apenas tipos seguros possam ser compartilhados ou transferidos entre threads.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Assim, o compilador consegue detectar em tempo de compilação se um dado pode causar problemas de concorrência, bloqueando usos inseguros antes mesmo do programa rodar.</p>
+<h3 id="send-e-sync-em-uma-frase"><code>Send</code> e <code>Sync</code> em uma frase</h3>
+<ul>
+<li><strong><code>Send</code></strong> → “Posso ser <strong>movido</strong> com segurança para outra thread.” (Ou seja, é seguro transferir a posse desse valor para uma outra thread).</li>
+<li><strong><code>Sync</code></strong> → “Posso ser <strong>acessado</strong> de múltiplas threads ao mesmo tempo (desde que você só leia ou use sincronização adequada).” Em outras palavras, um tipo <code>T</code> é <code>Sync</code> se, e somente se, <code>&amp;T</code> (referência a ele) for <code>Send</code>.</li>
+</ul>
+<p>A maioria dos tipos “normais” – números primitivos (<code>i32</code>, <code>f64</code>&hellip;), <code>String</code>, <code>Vec&lt;T&gt;</code> etc. – implementa <code>Send</code> e <code>Sync</code> automaticamente. Isso porque eles não guardam <em>ponteiros brutos</em> ou outros recursos que poderiam causar condições de corrida por baixo dos panos. O Rust possui uma derivação automática dessas <em>traits</em>: se todas as partes internas de um tipo são <code>Send</code>, o tipo em si torna-se <code>Send</code> (mesma lógica para <code>Sync</code>). Assim, praticamente todos os tipos que você usa no dia a dia acabam sendo <code>Send</code>/<code>Sync</code> sem esforço, exceto algumas <strong>notáveis exceções</strong>:</p>
+<ul>
+<li>Tipos como <code>std::rc::Rc&lt;T&gt;</code> <strong>não</strong> implementam <code>Send</code>/<code>Sync</code>. O <code>Rc</code> mantém um contador de referências <strong>não atômico</strong>; usá-lo em duas threads sem proteção causaria atualizações concorrentes nesse contador – algo inseguro. Portanto, <code>Rc&lt;T&gt;</code> é deliberadamente marcado como não-thread-safe (nem <code>Send</code> nem <code>Sync</code>).</li>
+<li>Da mesma forma, <code>Cell&lt;T&gt;</code> e <code>RefCell&lt;T&gt;</code> (que usam internamente <code>UnsafeCell</code>) permitem mutação interior não sincronizada e por isso <strong>não</strong> são <code>Sync</code>.</li>
+<li>Ponteiros brutos (<code>*const T</code>/<code>*mut T</code>) também não são <code>Send</code>/<code>Sync</code> por si sós, pois o compilador não tem como garantir nada sobre o que eles apontam.</li>
+</ul>
+<p><img src="" alt="Ownership"></p>
+<p>O compilador usa essas <em>marker traits</em> para restringir o que pode ser compartilhado ou enviado entre threads. Por exemplo, se você tentar enviar um <code>Rc&lt;T&gt;</code> para outra thread, verá um <strong>erro de compilação</strong> informando que <code>Rc&lt;T&gt;</code> não implementa <code>Send</code>. Considere este código:</p>
+
+
+  <pre><code class="language-rust">use std::rc::Rc;
+use std::thread;
+
+fn main() {
+    let rc = Rc::new(5);
+
+    // Erro de compilação: Rc&lt;i32&gt; não é Send
+    thread::spawn(move || {
+        println!(&#34;{}&#34;, rc);
+    });
+}</code></pre>
+ <p>Aqui, o closure da nova thread tenta capturar <code>rc</code> (um <code>Rc&lt;i32&gt;</code>) por movimento. Como <code>Rc&lt;i32&gt;</code> não é <code>Send</code>, o Rust se recusa a compilar o programa – em vez de permitir um possível acesso concorrente errado. De fato, o erro é detectado estaticamente: <em>&quot;<code>Rc&lt;..&gt;</code> cannot be sent between threads safely &hellip; trait <code>Send</code> is not implemented for <code>Rc&lt;..&gt;</code>&quot;</em>. Ou seja, o Rust previne a situação antes que ela aconteça, em vez de você descobrir o bug durante a execução.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Para compartilhar dados entre threads de forma segura, o Rust oferece alternativas apropriadas. Por exemplo, o tipo <code>Arc&lt;T&gt;</code> (Atomic Reference Counted) é uma versão thread-safe de <code>Rc&lt;T&gt;</code>, usando contador atômico. Ele implementa <code>Send</code> e <code>Sync</code>, podendo ser utilizado em múltiplas threads simultaneamente. Se você <strong>precisa compartilhar</strong> um valor entre threads (mesmo que apenas para leitura), use <code>std::sync::Arc&lt;T&gt;</code> em vez de <code>Rc&lt;T&gt;</code> – o compilador, novamente, força você a fazer a coisa certa.</p>
+<h2 id="3-três-jeitos-de-fazer-concorrência-sem-perder-o-sono">3. Três jeitos de fazer concorrência sem perder o sono</h2>
+<p>O Rust não impõe um único estilo de concorrência; em vez disso, oferece várias ferramentas de baixo nível para você construir o modelo que preferir. Vamos abordar três abordagens comuns no Rust <em>moderno</em> para coordenar computações concorrentes, todas beneficiando-se da segurança garantida pelo compilador.</p>
+<h3 id="31-threads-nativas-stdthread">3.1 Threads nativas (<code>std::thread</code>)</h3>
+<p>O modelo mais básico de concorrência é trabalhar com <strong>threads do sistema operacional</strong>. Em Rust, isso é feito via <code>std::thread</code>. Você lança uma nova thread chamando <code>thread::spawn</code> com um closure que será executado em paralelo. Exemplo simples e seguro:</p>
+
+
+  <pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let v = vec![1, 2, 3];       // Vec&lt;i32&gt; é Send
+    let handle = thread::spawn(move || {
+        println!(&#34;Vector = {:?}&#34;, v);
+    });
+    handle.join().unwrap();
+}</code></pre>
+ <p>Acima, criamos um vetor <code>v</code> no thread principal e então geramos uma thread filha com <code>spawn</code>. Repare no <code>move ||</code>: isso faz com que o closure capture <code>v</code> por <strong>movimento</strong>, transferindo a posse do vetor para a thread nova. Como <code>Vec&lt;i32&gt;</code> implementa <code>Send</code> (inteiros são <code>Send</code>, então <code>Vec</code> de inteiro também é), essa transferência é permitida. Após o <code>spawn</code>, a variável <code>v</code> <strong>não pode mais ser usada</strong> na thread original – ela foi movida.</p>
+<p>Assim, evitamos qualquer aliasing simultâneo: apenas a thread filha acessa o vetor, garantindo segurança sem necessidade de locks. No final, usamos <code>handle.join().unwrap()</code> para esperar a thread terminar antes de encerrar o programa.</p>
+<h3 id="32-asyncawait-o-modelo-moderno-de-concorrência">3.2 Async/Await: O modelo moderno de concorrência</h3>
+<p>No ecossistema Rust moderno, <strong>async/await</strong> é frequentemente preferido para I/O concorrente. Diferente de threads do SO, async permite ter milhares de tarefas concorrentes executando em um pool limitado de threads através de um executor (como Tokio ou async-std).</p>
+
+
+  <pre><code class="language-rust">use tokio;
+
+#[tokio::main]
+async fn main() {
+    let v = vec![1, 2, 3];
+    
+    // Spawn de uma task async
+    let handle = tokio::spawn(async move {
+        println!(&#34;Vector = {:?}&#34;, v);
+    });
+    
+    handle.await.unwrap();
+}</code></pre>
+ <p><strong>O trait <code>Send</code> continua sendo crucial em async/await!</strong> Quando você usa um executor multi-thread (como o Tokio por padrão), as futures podem ser movidas entre threads diferentes durante a execução. Isso significa que qualquer dado capturado pela future deve implementar <code>Send</code>.</p>
+
+
+  <pre><code class="language-rust">use tokio;
+use std::rc::Rc;
+
+#[tokio::main]
+async fn main() {
+    let rc = Rc::new(5);
+    
+    // ERRO: Rc não é Send!
+    tokio::spawn(async move {
+        println!(&#34;{}&#34;, rc);
+    });
+}</code></pre>
+ <p>O compilador barra esse código porque <code>Rc&lt;T&gt;</code> não implementa <code>Send</code>, e o executor multi-thread pode mover a future para outra thread entre pontos de await.</p>
+<p><strong>Pontos de await são críticos</strong>: Cada <code>.await</code> marca onde uma task pode ser suspensa e retomada em uma thread diferente. O Rust exige que dados não-<code>Send</code> não atravessem pontos de await em futures que precisam ser <code>Send</code>:</p>
+
+
+  <pre><code class="language-rust">use tokio;
+use std::rc::Rc;
+
+async fn problematic_function() {
+    let rc = Rc::new(5);
+    
+    // ERRO: Rc não pode atravessar .await em future Send
+    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    
+    println!(&#34;{}&#34;, rc); // rc não é mais válido aqui!
+}</code></pre>
+ <p>Para resolver, use <code>Arc&lt;T&gt;</code> em vez de <code>Rc&lt;T&gt;</code> quando precisar compartilhar dados em contextos async multi-thread.</p>
+<p><img src="" alt="Ownership"></p>
+<blockquote>
+<p><strong>Dica:</strong> Se você precisa que múltiplas threads <strong>compartilhem leitura</strong> de alguns dados (ao invés de mover a posse para uma única thread), pode usar um <code>Arc&lt;T&gt;</code> para encapsular esses dados e então cloná-lo para cada thread. O <code>Arc</code> fornece contagem de referência atômica, permitindo referência imutável de múltiplas threads com segurança. Apenas lembre-se: quando qualquer thread precisar <em>mutar</em> um valor compartilhado, aí já entramos no próximo tópico (locks).</p></blockquote>
+<p>Em resumo, <code>thread::spawn</code> em Rust já garante em tempo de compilação que qualquer dado capturado pelo novo thread seja seguro de acessar lá. Isso ocorre porque a assinatura da função <code>spawn</code> exige que o closure (e seu retorno) implementem <code>Send + 'static</code> – ou seja, que possam ser movidos para outra thread e que não tenham referências não válidas.</p>
+<p>Esses bounds impedem, por exemplo, que você passe um ponteiro ou referência para algo na stack da thread original (que poderia não existir mais) ou um tipo não thread-safe. O Rust só deixa você enviar para outra thread valores que ele sabe que podem ser usados com segurança lá. Resultado: <strong>se compila, provavelmente está correto</strong> no que tange a uso de memória entre threads.</p>
+<h3 id="33-passagem-de-mensagens-stdsyncmpsc">3.3 Passagem de mensagens (<code>std::sync::mpsc</code>)</h3>
+<p>Muitas vezes é <strong>mais simples mandar dados entre threads do que compartilhar estado mutable</strong>. A biblioteca padrão do Rust segue o estilo CSP (comunicação por passagem de mensagem) oferecendo <em>channels</em> (canais) multi-produtor, single-consumer (<em>mpsc</em>). A ideia é: uma ou mais threads <strong>enviam</strong> mensagens, e uma thread as <strong>recebe</strong> do outro lado. Assim, evitamos compartilhar memória; em vez disso, transferimos a propriedade das mensagens de um lugar para outro.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Um canal é criado com <code>mpsc::channel()</code>, que retorna uma dupla <code>(tx, rx)</code> – o transmissor e o receptor, respectivamente. Enviar uma mensagem com <code>tx.send(msg)</code> <strong>move</strong> a mensagem para dentro do canal (o <code>msg</code> sai da posse do sender), e fazer <code>rx.recv()</code> do outro lado bloqueia até receber e então <strong>retorna a posse</strong> ao thread receptor. Veja um exemplo:</p>
+
+
+  <pre><code class="language-rust">use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        tx.send(String::from(&#34;Olá, de outra thread!&#34;)).unwrap();
+    });
+
+    // rx é Drop‑based; a chamada abaixo bloqueia até chegar uma msg
+    println!(&#34;Recebi: {}&#34;, rx.recv().unwrap());
+}</code></pre>
+ <p>No código acima, a thread filha envia uma <code>String</code> para o canal, e a thread principal espera recebê-la. Note que após fazer <code>tx.send(val)</code>, você não pode mais usar <code>val</code> na thread emissora – ele foi movido (se tentar, dará erro de uso de valor movido). De fato, se tentássemos usar a variável <code>val</code> depois do <code>send</code>, o compilador reclamaria: ele sabe que o valor agora pertence a outro thread. Esse mecanismo de transferência de ownership garante que <strong>nenhuma thread fique com um ponteiro “pendurado” para dados que agora estão em posse de outra</strong>. Sem locks, sem necessidade de cópias manuais desnecessárias – e tudo verificado na compilação.</p>
+<p>Outra vantagem de canais é a <strong>sincronização implícita</strong>: no exemplo, <code>rx.recv()</code> bloqueou a thread principal até que a mensagem chegasse. Isso nos poupa de usar outras primitivas de sincronização para coordenar o momento de leitura. Quando o <code>tx</code> é dropado (todas as senders são dropadas), o <code>rx.recv()</code> começa a retornar erro, indicando que não haverá mais mensagens.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Em suma, canais promovem um estilo de concorrência onde dados têm <strong>um dono por vez</strong>, saltando de thread em thread. Esse modelo elimina condições de corrida porque, por construção, duas threads nunca acessam o mesmo dado simultaneamente – a posse está sempre com apenas uma (até ser transferida). O Rust ainda checa em tempo de compilação que os tipos das mensagens são <code>Send</code> (senão, você nem conseguiria criar o thread ou enviar pelo canal). Isso possibilita <strong>concorrência sem medo</strong> também via passagem de mensagens.</p>
+<h3 id="34-memória-compartilhada-com-locks-mutex-rwlock">3.4 Memória compartilhada com locks (<code>Mutex</code>, <code>RwLock</code>)</h3>
+<p>Quando você <em>realmente</em> precisa de estado mutável compartilhado entre threads (por exemplo, um contador global sendo incrementado por vários threads), o padrão idiomático é usar um <strong>mutex</strong> (exclusão mútua) para proteger esse dado. Em Rust, os mutexes vivem no módulo <code>std::sync</code>. O combo típico é usar <code>Arc&lt;Mutex&lt;T&gt;&gt;</code>: um <code>Arc</code> para permitir múltiplas owners do mesmo dado, e um <code>Mutex</code> para serializar o acesso a ele. Exemplo clássico, incrementando um contador de forma concorrente em 10 threads:</p>
+
+
+  <pre><code class="language-rust">use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&amp;counter);
+        let h = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num &#43;= 1;
+        });
+        handles.push(h);
+    }
+    for h in handles {
+        h.join().unwrap();
+    }
+
+    println!(&#34;Resultado = {}&#34;, *counter.lock().unwrap());
+}</code></pre>
+ <p>Nesse código, <code>counter</code> é um <code>Arc&lt;Mutex&lt;i32&gt;&gt;</code>. Cada thread clona o <code>Arc</code> (incrementando o contador atômico de referência) e, dentro do closure, chama <code>counter.lock().unwrap()</code>. O método <code>lock()</code> trava o mutex e retorna um <strong><code>MutexGuard</code></strong> – um guardião que representa a permissão exclusiva de acesso ao dado. Enquanto esse <em>guard</em> (aqui chamado <code>num</code>) está em scope, ele empresta uma referência mutável para o valor interno (<code>i32</code>), permitindo-nos fazer <code>*num += 1</code>.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Nenhuma outra thread consegue travar o mutex nesse meio tempo – se tentasse, ficaria bloqueada até o guard ser liberado. Quando o guard sai de escopo (no fim do closure ou se fosse dropado antes), ele automaticamente libera o lock do mutex. Alguns detalhes importantes:</p>
+<ul>
+<li><code>Mutex::lock()</code> devolve um <code>Result&lt;MutexGuard&lt;T&gt;, _&gt;</code>; usamos <code>.unwrap()</code> apenas por simplicidade. Em caso de outro thread ter panicado dentro do mutex, você receberia um erro (mutex “envenenado”). Ignorando isso por ora, o ponto é que você obtém um <code>MutexGuard</code>. Esse guard implementa <code>Deref</code> e <code>DerefMut</code> para permitir acesso ao dado protegido (como vimos, podemos usar <code>*num</code> para acessar o <code>i32</code>).</li>
+<li>O <code>MutexGuard</code> também implementa o trait <code>Drop</code>. Quando é dropado, ele automaticamente libera o lock. Isso significa que não há risco de esquecermos de chamar <code>unlock()</code> – a lib garante o unlock no fim do scope do guard. Esse é o idioma de RAII: aquisição de recurso (lock) e liberação acopladas na própria vida do objeto guard.</li>
+<li>Enquanto um thread estiver com o mutex travado, outros que chamarem <code>lock()</code> vão bloquear até poder prosseguir. Assim, garantimos exclusão mútua: só um thread por vez altera (ou lê, se for um Mutex normal) o valor dentro do lock.</li>
+</ul>
+<p><img src="" alt="Ownership"></p>
+<p>Uma variação do mutex é o <code>RwLock</code> (lock de leitura/escrita), que permite múltiplos leitores simultâneos ou um único escritor de cada vez. Em casos onde o acesso de leitura é muito mais frequente que escrita, um <code>RwLock</code> pode aumentar desempenho permitindo paralelismo nas leituras. O uso em Rust é semelhante (também via <code>Arc</code> para compartilhar, e métodos <code>read()</code>/<code>write()</code> que fornecem guards de leitura ou escrita).</p>
+<blockquote>
+<p>Um detalhe de implementação: <code>Mutex&lt;T&gt;</code> em Rust só implementa <code>Sync</code> se <code>T</code> também for <code>Send</code> (ou <code>Sync</code>). Faz sentido – não adiantaria proteger um tipo que em si não pode ser acessado entre threads. Por baixo dos panos, o Rust usa um truque de <em>interior mutability</em> seguro: o <code>Mutex</code> contém um <code>UnsafeCell</code> internamente (permite mutação através de referência imutável, necessária para a implementação), mas como o acesso é protegido pelo lock, isso é “domado”.</p></blockquote>
+<p>O compilador confia na corretude do <code>Mutex</code> porque ele foi escrito usando <code>unsafe</code> de forma sound, então marca <code>Mutex&lt;T&gt;</code> como <code>Send + Sync</code> se possível. Tudo isso para dizer: você pode guardar qualquer coisa que seja Send dentro de um Mutex e compartilhar entre threads via Arc, com garantia de que está protegido.</p>
+<p><img src="" alt="Ownership"></p>
+<p>Resumindo, com <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> conseguimos <strong>compartilhar e mutar</strong> um valor <code>T</code> entre várias threads de forma segura. O mesmo compilador que impede aliasing mutável em uma thread garante que, se você precisar mutação entre threads, você vai usar as ferramentas certas (como Mutex) para sincronizar. O resultado é um código concorrente <strong>sem <em>data races</em></strong>, mesmo usando memória compartilhada. A contrapartida é que problemas de <strong>deadlock</strong> podem acontecer se você não tomar cuidado (mais sobre isso adiante). Mas novamente, o Rust lhe fornece as ferramentas (e até patterns, como RAII) para minimizar esses riscos.</p>
+<h2 id="4-e-o-asyncawait">4. E o <code>async</code>/<code>await</code>?</h2>
+<p>Concorrência não é sinônimo apenas de threads de SO. Rust também suporta <strong>programação assíncrona</strong> usando <code>async/await</code> e <em>executors</em> (como Tokio, async-std, etc.). Nesse modelo, você pode ter milhares de tarefas concorrentes executando em um número limitado de threads, através de um agendador. A grande sacada: <strong>o mesmo alicerce de segurança vale para tasks assíncronas</strong>. Alguns pontos de engenharia sobre o async em Rust:</p>
+<ul>
+<li>O tipo fundamental é o <code>Future</code>. Quando você escreve uma função <code>async fn</code>, por baixo dos panos ela retorna um tipo que implementa a trait <code>Future</code>. Importante: um <code>Future</code> em Rust <strong>pode ou não ser <code>Send</code>/<code>Sync</code></strong>, dependendo de seus campos internos. Se todos os dados usados na state machine do futuro forem <code>Send</code>, o futuro será marcado automaticamente como <code>Send</code>. Se não, não será. Isso significa que você <strong>pode ter futures que não são seguros de enviar para outra thread</strong> – e o Rust vai usar essa informação. Por exemplo, um <code>Future</code> que contém um <code>Rc&lt;T&gt;</code> capturado em um <code>.await</code> <em>não</em> será <code>Send</code>.</li>
+<li>Um runtime multithread (como o Tokio por padrão) exige que os futures que ele move entre threads sejam <code>Send</code>. De fato, se você tentar usar <code>.spawn()</code> de Tokio em uma future que não é <code>Send</code>, não vai compilar. O compilador verifica no momento em que você tenta mover a futura para outro thread (similar ao <code>thread::spawn</code>) e acusa erro se ela não for <code>Send</code>. Isso força você, por exemplo, a não segurar referências não thread-safe através de pontos de espera.</li>
+<li>Falando em pontos de espera: cada <code>.await</code> marca claramente onde uma tarefa assíncrona pode pausar e eventualmente retomar em outra thread. O Rust impõe que <strong>nenhuma variável capturada que não seja <code>Send</code> atravesse um <code>.await</code></strong> se a future precisar ser sendável. Se você tentar manter um <code>Rc</code> vivo entre dois awaits e depois mandar a task para o executor multi-thread, será erro de compilação. Esse comportamento evita situações onde uma task poderia suspender segurando, por exemplo, uma referência para algo no stack e retomar em outra thread acessando algo inválido – novamente, o Rust proíbe no compile time.</li>
+<li>Em suma, <strong>futures e tasks Rust também não têm <em>data races</em></strong>. Se você conseguir rodar seu código async, ele obedece as mesmas regras: ou só há acesso único/mutável a um dado, ou acessos simultâneos ocorrem somente a dados sincronizados (por exemplo, usando <code>Arc&lt;Mutex&lt;_&gt;</code> mesmo dentro de async, se necessário). Não é porque usamos um modelo cooperativo que magicamente escapa das garantias – o Rust estende a lei a esse reino também. Como disse Aaron Turon, <em>“Thread safety isn&rsquo;t just documentation; it&rsquo;s law.”</em>. O resultado prático é que você obtém <strong>I/O assíncrono com zero _data race</strong>* – tasks podem trocar mensagens, compartilhar Arcs, tudo com a tranquilidade de que se compilar, as condições de corrida de dados foram eliminadas.</li>
+</ul>
+<p>Naturalmente, o código async pode interagir com threads nativas. Por exemplo, você pode ter uma tarefa async que dentro usa <code>spawn_blocking</code> para delegar trabalho pesado a uma threadpool, ou pode controlar tasks em múltiplos cores. O importante é: <strong>as mesmas regras de <code>Send</code>/<code>Sync</code> continuam valendo</strong>.</p>
+<p><img src="" alt="Ownership"></p>
+<p>A combinação de Rust + Tokio consegue atingir concorrência altamente eficiente (evitando custos de thread onde não precisa) sem sacrificar a segurança. Mais uma vez, erros como “ duas tasks acessaram ao mesmo tempo um objeto e corromperam-no” são evitados antes de virar bug.</p>
+<h2 id="5-nem-tudo-são-flores-deadlocks-e-lógica-de-concorrência">5. Nem tudo são flores: deadlocks e lógica de concorrência</h2>
+<p>O compilador barra <em>data races</em>, mas <strong>não</strong> pode detectar outros problemas clássicos de concorrência, por exemplo:</p>
+<ul>
+<li><strong>Deadlocks</strong> – quando duas ou mais threads ficam esperando eternamente por locks em ordem invertida. Por exemplo, thread A trava <code>Mutex A</code> e em seguida <code>Mutex B</code>, enquanto thread B trava <code>Mutex B</code> e depois quer <code>Mutex A</code>. Nenhuma libera o que a outra precisa, e ambas congelam. O Rust <strong>não</strong> detecta isso em tempo de compilação (problema indecidível em geral). Esses erros ainda podem ocorrer se você não planejar bem seu locking. (Vale notar: isso não viola segurança de memória – é um <em>liveness bug</em>, não um <em>safety bug</em>. Por isso, Rust permite deadlocks acontecerem, assim como permite leaks de memória, por exemplo.)</li>
+<li><strong>Starvation</strong> – uma thread ou task fica eternamente sem acesso ao recurso porque outra domina (por exemplo, um mutex que é sempre adquirido rapidamente por outras threads e nunca libera chance para uma certa thread). Também entra na conta do desenvolvedor evitar.</li>
+<li><strong>Erros de lógica</strong> – aqui entram todas as condições de corrida não relacionadas à memória. Por exemplo, ler valores em ordem errada (mesmo com locks, você pode implementar lógica incorreta), perder mensagens em um sistema de filas, não tratar corretamente a simultaneidade de eventos etc. O compilador não tem como saber se seu protocolo de comunicação entre threads está certo.</li>
+</ul>
+<p>Esses continuam sendo problemas difíceis que exigem cuidado de engenharia, testes, design adequado. As dicas clássicas para mitigá-los continuam valendo no mundo Rust:</p>
+<ul>
+<li>Mantenha uma <strong>ordem global de travamento</strong> de recursos. Se sua aplicação tem vários mutexes, defina uma ordem (por exemplo, sempre travar primeiro o de ID menor, depois o de ID maior) e <strong>siga essa ordem consistentemente</strong> em todos os lugares. Isso evita deadlock circular. Essa recomendação é agnóstica de linguagem, mas no Rust é igualmente aplicável (lembre-se: Rust não impede deadlocks!).</li>
+<li>Prefira usar <strong>channels</strong> e passagem de mensagem sempre que possível, em vez de ficar compartilhando estado mutável. Se você consegue modelar o problema com threads isoladas trocando mensagens, você elimina uma grande categoria de problemas – não há deadlock se não há dois locks 😉. Go popularizou esse conceito com o slogan “não compartilhe memória, passe mensagens” (que o Rust também cita).</li>
+<li>Se performance for crítica e você quiser evitar bloqueios, considere usar <strong>primitivas atômicas</strong> ou tentar dividir o trabalho de forma que não precise de lock. O Rust oferece coisas como <code>std::sync::atomic</code> (tipos atômicos de inteiros, booleans, etc.) que permitem algumas operações lock-free de forma segura. Porém, use com cautela: embora atômicos individuais não causem <em>data race</em>, você ainda pode introduzir <em>race conditions</em> lógicas. Além disso, atômicos além de muito simples (como incrementos) podem ficar complexos rapidamente.</li>
+<li>Timeout e <em>try_lock</em>: Ao usar locks, às vezes é saudável programar timeouts ou usar tentativas não bloqueantes (<code>try_lock</code>) para evitar esperar para sempre por um recurso que talvez indique um deadlock. Claro, isso não resolve a condição de corrida em si, mas pode tornar o sintoma menos catastrófico (o thread pode detectar que não conseguiu o lock e talvez logar um aviso, etc.).</li>
+</ul>
+<p>Resumindo: Rust te blinda dos problemas de <strong>segurança de memória</strong> em concorrência (ou seja, <em>data races</em> virando corrupção de dados), mas <strong>não elimina a necessidade de projetar bem a sincronização</strong>. Você continua responsável por garantir que a concorrência faça a coisa certa em termos de lógica e progresso do programa.</p>
+<h2 id="6-comparativo-rápido">6. Comparativo rápido</h2>
+<p>Para colocar em perspectiva, vejamos como Rust se compara a algumas outras linguagens populares quanto à segurança da concorrência:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Linguagem</th>
+          <th><em>Data race</em> em código seguro?</th>
+          <th>Verificação</th>
+          <th>GC?</th>
+          <th>Observações</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Rust</strong></td>
+          <td><strong>Impossível</strong> (em Rust <em>safe</em>) 🔒</td>
+          <td>100% em tempo de compilação (via <code>Send</code>/<code>Sync</code> + borrow checker)</td>
+          <td>Não</td>
+          <td>Zero-cost: sem overhead de runtime; deadlocks ainda são possíveis e precisam de cuidado</td>
+      </tr>
+      <tr>
+          <td><strong>C/C++</strong></td>
+          <td>Possível → <strong>UB</strong> 💣</td>
+          <td>Nenhuma verificação estática (precisa de ferramentas como TSAN em runtime)</td>
+          <td>Não</td>
+          <td>Máximo desempenho, porém <strong>qualquer data race invalida o programa</strong>; responsabilidade toda do programador</td>
+      </tr>
+      <tr>
+          <td><strong>Go</strong></td>
+          <td>Possível ⚠️</td>
+          <td>Detectável em runtime com opção <code>-race</code> (não obrigatório)</td>
+          <td>Sim</td>
+          <td>Goroutines + canais incentivam evitar compartilhamento, mas não impedem – data races produzem comportamento indefinido no modelo de memória Go também (embora com consequências limitadas)</td>
+      </tr>
+      <tr>
+          <td><strong>Java</strong></td>
+          <td>Possível ⚠️</td>
+          <td>Nenhuma verificação estática (depende de <code>volatile</code>/<code>synchronized</code> corretos)</td>
+          <td>Sim</td>
+          <td>Modelo de memória define que data races produzem resultados imprevisíveis; dev deve usar <code>synchronized</code> para exclusão mútua. Sem uso correto, condições de corrida ocorrem e são bugs de lógica difíceis de rastrear</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Legenda:</strong> 🔒 <em>Data race</em> proibido pelo compilador; 💣 <em>Data race</em> causa comportamento indefinido explosivo; ⚠️ <em>Data race</em> possível, mas linguagem/plataforma fornece alguma ajuda (ferramentas ou runtime) para detectar ou mitigar.</p>
+<blockquote>
+<p>Em Go, por exemplo, se você habilitar o detector de corrida, a runtime pode avisar e até matar o programa se detectar duas goroutines acessando memória compartilhada sem sincronização. Mas se você não usar a flag <code>-race</code>, o programa roda e pode produzir resultados incorretos de forma sutil. Já Java opta por um modelo onde data races não quebram a memória completamente como em C++, porém as leituras podem retornar valores desatualizados ou incoerentes. Em ambos os casos, a carga de evitar esses bugs recai sobre o desenvolvedor, enquanto no Rust o compilador não te deixa nem começar algo potencialmente problemático.</p></blockquote>
+<h2 id="7-conclusão">7. Conclusão</h2>
+<p>O mesmo compilador que te impede de acessar memória liberada <strong>também</strong> impede duas threads de corromperem o mesmo valor ao mesmo tempo. No Rust, <strong>“se compila, você já eliminou uma classe inteira de bugs”</strong> – e isso sem precisar de <em>sanitizers</em> em runtime nem pagar o preço de um coletor de lixo para gerenciar memória compartilhada. A linguagem, através do seu sistema de tipos e ownership, consegue encapsular invariantes matemáticos que garantem segurança em cenários onde, historicamente, era muito fácil errar.</p>
+<p>Claro, isso não significa que escrever código concorrente em Rust é <strong>fácil</strong>. Concorrência continua sendo concorrência: você ainda precisa pensar em possíveis interleavings, planejar comunicação entre threads ou tasks, escolher entre usar threads do SO ou async (ou ambas), evitar deadlocks, etc. O que muda drasticamente é o nível de confiança e tranquilidade: aquele medo crônico de <em>data race</em> simplesmente desaparece. Você pode focar nos desafios de alto nível (dividir bem o trabalho, evitar condições de disputa lógicas), certo de que o compilador cobre suas costas nos punhos de ferro (ou melhor, punhos de compilação) no que tange a integridade de memória.</p>
+<p>Em suma, <strong>concorrência continua difícil, mas não é mais uma roleta-russa</strong>. Com Rust, nós desenvolvedores ganhamos um parceiro que diz “pode ir sem medo que eu garanto que duas threads não vão pisar no mesmo calo de memória”. E essa garantia – <em>fearless concurrency</em> – muda completamente o jogo de escrever sistemas paralelos seguros e eficientes.</p>
+<hr>
+<h2 id="referências">REFERÊNCIAS</h2>
+<ul>
+<li><a href="https://doc.rust-lang.org/book/ch16-00-concurrency.html">The Rust Programming Language (Rust Book) — <strong>Fearless Concurrency</strong></a> – Capítulo do livro oficial do Rust sobre concorrência segura e paradigmas suportados.</li>
+<li><a href="https://doc.rust-lang.org/reference/behavior-considered-undefined.html#data-races">Rust Reference — <strong>Behavior considered undefined: Data Races</strong></a> – Referência formal: <em>data race</em> em Rust é considerado <em>undefined behavior</em> (por isso é proibido em código seguro).</li>
+<li><a href="https://doc.rust-lang.org/std/marker/index.html">Documentação Rust – <strong>Send e Sync</strong> (std::marker)</a> – Explicação das marker traits <code>Send</code> e <code>Sync</code> na biblioteca padrão (o compilador implementa automaticamente para a maioria dos tipos).</li>
+<li><a href="https://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html">Aaron Turon – <strong>Fearless Concurrency in Rust</strong> (Rust Blog, 2015)</a> – Post no blog oficial introduzindo o slogan <em>concorrência sem medo</em> e discutindo como o modelo de ownership do Rust previne bugs comuns.</li>
+<li><a href="https://doc.rust-lang.org/nomicon/shared-mutatability.html">The Rustonomicon – <strong>Sharing &amp; Mutation</strong></a> – Capítulo do “Rustonomicon” detalhando como Rust lida com mutabilidade compartilhada de forma segura, incluindo o papel de <code>UnsafeCell</code>, <code>Send</code> e <code>Sync</code>.</li>
+<li><a href="https://rust-lang.github.io/async-book/03_async_await/01_chapter.html">Async in Rust – <strong>Pinning and <code>Send</code> in Futures</strong></a> – Documentação do Async Book enfatizando que futures precisam ser <code>Send</code> para uso em executores multi-thread, e como o compilador verifica isso.</li>
+<li><a href="https://go.dev/ref/mem">Go Language Spec – <strong>The Go Memory Model</strong></a> – Documento oficial do Go descrevendo o modelo de memória. Ressalta que data races são erros e que programas sem data race se comportam como se fossem sequenciais (DRF-SC).</li>
+<li><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rconc-avoid-data-races">C++ Core Guidelines – <strong>CP.2: Avoid data races</strong></a> – Guia de melhores práticas de C++: <em>“Unless you do, nothing is guaranteed to work.”</em> Discute o perigo extremo de data races em C/C++.</li>
+<li><a href="https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2022-49443">2348240 – (CVE-2022-49443) CVE-2022-49443 kernel: list: fix a data-race around ep-&gt;rdllist</a> – Bugzilla do Red Hat com relatório de data race no kernel Linux.</li>
+<li><a href="https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2022-49443&amp;utm_source=chatgpt.com">list: fix a data-race around ep-&gt;rdllist - Red Hat Bugzilla</a> – Bugzilla do Red Hat com relatório de data race no kernel Linux.</li>
+<li><a href="https://www.chromium.org/developers/testing/threadsanitizer-tsan-v2/?utm_source=chatgpt.com">ThreadSanitizer (TSan) v. 2 - The Chromium Projects</a> – Documentação do ThreadSanitizer (TSan) v. 2.</li>
+<li><a href="https://research.google.com/pubs/archive/35604.pdf?utm_source=chatgpt.com">PDF ThreadSanitizer: data race detection in practice - Google Research</a> – Artigo do Google Research sobre detecção de data races com ThreadSanitizer.</li>
+<li><a href="https://github.com/curl/curl/issues/4915?utm_source=chatgpt.com">tsan: data race in multi.c when shared connection cache · Issue #4915</a> – Issue do GitHub com relatório de data race no cURL.</li>
+<li><a href="https://github.com/grpc/grpc/issues/21729?utm_source=chatgpt.com">Data race in C++ example greeter_async_client2 #21729 - GitHub</a> – Issue do GitHub com relatório de data race no gRPC.</li>
+<li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1704227&amp;utm_source=chatgpt.com">CVE-2021-29952) ThreadSanitizer: data race @ mozilla::layers &hellip;</a> – Issue do Bugzilla do Mozilla com relatório de data race no Firefox.</li>
+<li><a href="https://github.com/ClickHouse/ClickHouse/issues/69520?utm_source=chatgpt.com">Data race in <code>WriteBufferFromHTTPServerResponse</code> · Issue #69520 &hellip;</a> – Issue do GitHub com relatório de data race no ClickHouse.</li>
+<li><a href="https://stackoverflow.com/questions/72987598/rust-why-is-rc-not-send-in-the-following-scenario?utm_source=chatgpt.com">Rust - Why is Rc not Send in the following scenario? - Stack Overflow</a></li>
+<li><a href="https://github.com/jonhoo/evmap/issues/1">Current implementation is unsound. Segfault and double free are possible with out-of-sync maps from a bad <code>PartialEq</code> implementation. · Issue #1 · jonhoo/evmap · GitHub</a></li>
+</ul>
+
+    </div>
+    
+    
+
+
+<div class="post-comments">
+    <h3>Comentários</h3>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+            this.page.url = 'https:\/\/scovl.github.io\/2025\/07\/23\/rustconc\/';
+            this.page.identifier = '\/2025\/07\/23\/rustconc\/';
+            this.page.title = 'Compreendendo a concorrência em Rust';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://lobocode.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Por favor, habilite JavaScript para ver os comentários do <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+</div>
+ 
+</article>
+
+        </div>
+    </main>
+    
+    
+    
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="footer-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    RSS
+                </a>
+                
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 Vitor Lobo
+            </div>
+        </div>
+    </div>
+</footer> 
+    
+    
+    
+    <script src="/js/main-minimal.js"></script>
+    
+    
+    
+</body>
+</html> 

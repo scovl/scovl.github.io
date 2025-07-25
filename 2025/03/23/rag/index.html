@@ -92,7 +92,7 @@
             
             
             <div class="reading-time">
-                Estimated reading time: 26 min
+                Estimated reading time: 38 min
             </div>
             
             
@@ -193,6 +193,49 @@
 <li><strong>Pesquisa em tempo real:</strong> O LLM não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O LLM, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
 <li><strong>Combinação de conhecimento base com dados novos:</strong> Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.</li>
 </ol>
+<h3 id="etapas-avançadas-do-rag">Etapas Avançadas do RAG</h3>
+<p>Sistemas RAG modernos frequentemente incluem etapas adicionais para melhorar a precisão:</p>
+<h4 id="4-re-ranking-re-ranqueamento"><strong>4. Re-ranking (Re-ranqueamento)</strong></h4>
+<p>Após a busca inicial, um modelo especializado re-avalia a relevância dos documentos recuperados:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Busca Inicial] --&gt; B[Top-K Resultados]
+    B --&gt; C[Re-ranker Model]
+    C --&gt; D[Resultados Re-ranqueados]
+    D --&gt; E[Top-N Mais Relevantes]</div>
+ <p><strong>Exemplo prático:</strong></p>
+<ul>
+<li>Busca inicial retorna 100 documentos</li>
+<li>Re-ranker analisa cada um e atribui scores de relevância</li>
+<li>Seleciona os 10 mais relevantes para o contexto</li>
+</ul>
+<h4 id="5-merge-rerank-fusão-e-re-ranqueamento"><strong>5. Merge-Rerank (Fusão e Re-ranqueamento)</strong></h4>
+<p>Combina resultados de múltiplas estratégias de busca:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Query] --&gt; B[Busca Semântica]
+    A --&gt; C[Busca Lexical]
+    A --&gt; D[Busca Híbrida]
+    B --&gt; E[Resultados Semânticos]
+    C --&gt; F[Resultados Lexicais]
+    D --&gt; G[Resultados Híbridos]
+    E --&gt; H[Fusão]
+    F --&gt; H
+    G --&gt; H
+    H --&gt; I[Re-ranqueamento Final]
+    I --&gt; J[Contexto Otimizado]</div>
+ <p><strong>Vantagens:</strong></p>
+<ul>
+<li><strong>Diversidade</strong>: Diferentes estratégias capturam diferentes aspectos</li>
+<li><strong>Robustez</strong>: Reduz dependência de uma única abordagem</li>
+<li><strong>Precisão</strong>: Combina forças de múltiplos métodos</li>
+</ul>
+<blockquote>
+<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca semântica simples. Sistemas de produção frequentemente implementam re-ranking e merge-rerank para maximizar a qualidade das respostas.</p></blockquote>
 <p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
 <p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos LLMs quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
 <blockquote>
@@ -230,7 +273,7 @@
 </li>
 </ol>
 <blockquote>
-<p><strong>Observação:</strong> Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a>.</p></blockquote>
+<p><strong>Observação:</strong> Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a> como <strong>prova de conceito</strong>. Para aplicações em produção, recomendamos fortemente o uso de embeddings densos.</p></blockquote>
 <h3 id="tf-idf">TF-IDF</h3>
 <p>O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:</p>
 <ol>
@@ -279,7 +322,95 @@
 <li>Encontrar os documentos mais relevantes para uma consulta</li>
 <li>Priorizar termos distintivos ao buscar informações</li>
 </ol>
-<h3 id="configuração-do-projeto">Configuração do Projeto</h3>
+<h3 id="requisitos-de-hardware">Requisitos de Hardware</h3>
+<p>A performance do sistema RAG depende significativamente do hardware disponível. Aqui estão as configurações recomendadas:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Componente</th>
+          <th>Mínimo</th>
+          <th>Recomendado</th>
+          <th>Alto Desempenho</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>CPU</strong></td>
+          <td>4 cores (Intel i5/AMD Ryzen 5)</td>
+          <td>8 cores (Intel i7/AMD Ryzen 7)</td>
+          <td>16+ cores (Intel i9/AMD Ryzen 9)</td>
+      </tr>
+      <tr>
+          <td><strong>RAM</strong></td>
+          <td>8 GB</td>
+          <td>16 GB</td>
+          <td>32+ GB</td>
+      </tr>
+      <tr>
+          <td><strong>GPU</strong></td>
+          <td>Integrada</td>
+          <td>NVIDIA RTX 3060 (8GB VRAM)</td>
+          <td>NVIDIA RTX 4090 (24GB VRAM)</td>
+      </tr>
+      <tr>
+          <td><strong>VRAM</strong></td>
+          <td>-</td>
+          <td>8 GB</td>
+          <td>16+ GB</td>
+      </tr>
+      <tr>
+          <td><strong>Storage</strong></td>
+          <td>SSD 256 GB</td>
+          <td>SSD 512 GB</td>
+          <td>NVMe 1 TB+</td>
+      </tr>
+      <tr>
+          <td><strong>Rede</strong></td>
+          <td>100 Mbps</td>
+          <td>1 Gbps</td>
+          <td>10 Gbps</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></h4>
+<p><strong>🟢 Desenvolvimento/Teste</strong></p>
+<ul>
+<li>CPU: 4 cores, RAM: 8GB</li>
+<li>Modelo: <code>deepseek-r1</code> (CPU only)</li>
+<li>Documentos: &lt; 1GB</li>
+<li>Performance: ~2-5 segundos por consulta</li>
+</ul>
+<p><strong>🟡 Produção Pequena</strong></p>
+<ul>
+<li>CPU: 8 cores, RAM: 16GB, GPU: RTX 3060</li>
+<li>Modelo: <code>deepseek-r1</code> (GPU)</li>
+<li>Documentos: 1-10GB</li>
+<li>Performance: ~1-3 segundos por consulta</li>
+</ul>
+<p><strong>🔴 Produção Grande</strong></p>
+<ul>
+<li>CPU: 16+ cores, RAM: 32GB+, GPU: RTX 4090</li>
+<li>Modelo: <code>deepseek-r1</code> + embeddings densos</li>
+<li>Documentos: 10GB+</li>
+<li>Performance: &lt; 1 segundo por consulta</li>
+</ul>
+<h4 id="otimizações-por-hardware"><strong>Otimizações por Hardware</strong></h4>
+<p><strong>CPU Only:</strong></p>
+
+
+  <pre><code class="language-bash"># Usar modelo otimizado para CPU
+ollama pull deepseek-r1:3b  # Versão menor</code></pre>
+ <p><strong>GPU Disponível:</strong></p>
+
+
+  <pre><code class="language-bash"># Usar versão completa com aceleração GPU
+ollama pull deepseek-r1</code></pre>
+ <p><strong>Múltiplas GPUs:</strong></p>
+
+
+  <pre><code class="language-bash"># Distribuir carga entre GPUs
+CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
+ <h3 id="configuração-do-projeto">Configuração do Projeto</h3>
 <ol>
 <li>Crie um novo projeto Clojure:</li>
 </ol>
@@ -326,7 +457,7 @@ cd docai</code></pre>
 (defn extract-text-from-markdown [content]
   (try
     (let [hiccup-result (md/md-&gt;hiccup content)
-          text-nodes (filter is-string? (flatten hiccup-result))]
+          text-nodes (filter string? (flatten hiccup-result))]
       text-nodes)
     (catch Exception e
       (println &#34;Erro ao processar Markdown:&#34; (.getMessage e))
@@ -336,11 +467,14 @@ cd docai</code></pre>
   (try
     (let [dom (html/parse content)
           hiccup-result (html/as-hiccup dom)
-          text-nodes (filter is-string? (flatten hiccup-result))]
+          text-nodes (filter string? (flatten hiccup-result))]
       text-nodes)
     (catch Exception e
       (println &#34;Erro ao processar HTML:&#34; (.getMessage e))
       [content])))
+
+;; Declare functions that will be defined later
+(declare create-token-aware-chunks)
 
 (defn extract-text
   &#34;Extrai texto de documentação (Markdown ou HTML)&#34;
@@ -353,15 +487,69 @@ cd docai</code></pre>
                (extract-text-from-markdown content)
                (extract-text-from-html content))
         _ (println &#34;Quantidade de nós de texto extraídos:&#34; (count text))
-        chunks (partition-all 512 text)]  ; 512 tokens por chunk
+        ;; Usar tokens reais em vez de caracteres para chunking preciso
+        chunks (create-token-aware-chunks text 512)]
     (println &#34;Quantidade de chunks gerados:&#34; (count chunks))
     chunks))
+
+(defn count-tokens
+  &#34;Conta tokens usando heurística (para desenvolvimento)&#34;
+  [text]
+  ;; ⚠️ ATENÇÃO: Esta é uma heurística aproximada
+  ;; Para produção, use [clojure-tiktoken](https://github.com/justone/clojure-tiktoken)
+  ;; ou API do Ollama para contagem precisa
+  (try
+    (let [words (str/split text #&#34;\s&#43;&#34;)
+          ;; Estimativa melhorada para português brasileiro
+          ;; Ainda pode errar 2x em textos muito curtos/longos
+          estimated-tokens (reduce &#43; 
+                                 (map (fn [word]
+                                        (cond
+                                          ;; Palavras muito longas (composição)
+                                          (&gt; (count word) 15) (* (count word) 0.8)
+                                          ;; Palavras longas (derivação)
+                                          (&gt; (count word) 10) (* (count word) 0.6)
+                                          ;; Palavras médias
+                                          (&gt; (count word) 5) (* (count word) 0.4)
+                                          ;; Palavras curtas
+                                          :else 1.0))
+                                      words))]
+      (int estimated-tokens))
+    (catch Exception e
+      (println &#34;Erro ao contar tokens:&#34; (.getMessage e))
+      ;; Fallback conservador: 1 token por caractere
+      (count text))))
+
+(defn create-token-aware-chunks
+  &#34;Cria chunks baseados em tokens reais, não caracteres&#34;
+  [text-nodes max-tokens]
+  (loop [nodes text-nodes
+         current-chunk []
+         current-tokens 0
+         all-chunks []]
+    (if (empty? nodes)
+      (if (seq current-chunk)
+        (conj all-chunks (str/join &#34; &#34; current-chunk))
+        all-chunks)
+      (let [node (first nodes)
+            node-tokens (count-tokens node)
+            new-total (&#43; current-tokens node-tokens)]
+        (if (and (&gt; new-total max-tokens) (seq current-chunk))
+          ;; Chunk cheio, salva e inicia novo
+          (recur (rest nodes)
+                 [node]
+                 node-tokens
+                 (conj all-chunks (str/join &#34; &#34; current-chunk)))
+          ;; Adiciona ao chunk atual
+          (recur (rest nodes)
+                 (conj current-chunk node)
+                 new-total
+                 all-chunks))))))
 
 (defn preprocess-chunks
   &#34;Limpa e prepara os chunks de texto&#34;
   [chunks]
   (let [processed (map #(-&gt; %
-                            (str/join &#34; &#34;)
                             (str/replace #&#34;\s&#43;&#34; &#34; &#34;)
                             (str/trim))
                        chunks)]
@@ -380,7 +568,15 @@ cd docai</code></pre>
     E --&gt; F[Divide em Chunks]
     F --&gt; G[Limpa e Formata]
     G --&gt; H[Chunks Prontos]</div>
- <p>O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) de 512 tokens cada, e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.</p>
+ <p>O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) baseados em tokens reais (não caracteres), e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.</p>
+<blockquote>
+<p><strong>Importante</strong>: Usamos chunking baseado em tokens reais em vez de caracteres para evitar estourar o contexto do modelo ou desperdiçar largura.</p>
+<p><strong>⚠️ Limitação</strong>: A heurística atual pode errar até 2x em textos muito curtos ou longos. Para produção, use:</p>
+<ul>
+<li><strong><a href="https://github.com/justone/clojure-tiktoken">clojure-tiktoken</a></strong>: Biblioteca nativa Clojure</li>
+<li><strong>API do Ollama</strong>: <code>count-tokens-ollama</code> para contagem precisa</li>
+<li><strong>Interop com Python</strong>: <code>tiktoken</code> via GraalVM</li>
+</ul></blockquote>
 <h4 id="sistema-de-embeddings">Sistema de Embeddings</h4>
 <p>Agora vamos implementar o sistema de embeddings. Ele é responsável por criar embeddings para o texto para que possamos usar na busca semântica.</p>
 
@@ -408,13 +604,12 @@ cd docai</code></pre>
   [tokens]
   (frequencies tokens))
 
-(defn string-doc? [x]
-  (instance? String x))
+
 
 (defn doc-freq
   &#34;Calcula a frequência dos documentos&#34;
   [docs]
-  (let [string-docs (filter string-doc? docs)  ; Use our own predicate function
+  (let [string-docs (filter string? docs)  ; Use Clojure&#39;s built-in string? function
         _ (println (str &#34;Processando &#34; (count string-docs) &#34; documentos válidos de &#34; (count docs) &#34; total&#34;))
         doc-tokens (map tokenize string-docs)  
         all-tokens (distinct (flatten doc-tokens))
@@ -427,31 +622,32 @@ cd docai</code></pre>
 
 (defn tf-idf
   &#34;Calcula TF-IDF para um documento&#34;
-  [doc doc-freq]
+  [doc doc-freq doc-count]
   (if (empty? doc-freq)
     {}
     (let [tokens (tokenize doc)
-          tf (term-freq tokens)
-          n-docs (count (keys doc-freq))]
+          tf (term-freq tokens)]
       (zipmap (keys tf)
-              (map #(* (get tf %) (Math/log (/ n-docs (get doc-freq % 1))))
+              (map #(* (get tf %) (Math/log (/ doc-count (get doc-freq % 1))))
                    (keys tf))))))
 
 (defn vectorize
   &#34;Converte um documento em um vetor TF-IDF&#34;
-  [doc doc-freq]
-  (let [tf-idf-scores (tf-idf doc doc-freq)]
-    (if (empty? doc-freq)
+  [doc doc-freq doc-count vocab]
+  (let [tf-idf-scores (tf-idf doc doc-freq doc-count)]
+    (if (empty? vocab)
       []
-      (map #(get tf-idf-scores % 0.0)
-           (keys doc-freq)))))
+      (map #(get tf-idf-scores % 0.0) vocab))))
 
 (defn create-embeddings
   &#34;Gera embeddings para uma lista de textos usando TF-IDF&#34;
   [texts]
   (try
-    (let [doc-freq (doc-freq texts)]
-      (map #(vectorize % doc-freq) texts))
+    (let [doc-freq (doc-freq texts)
+          doc-count (count (filter string? texts))
+          ;; Vocabulário ordenado para garantir ordem estável
+          vocab (sort (keys doc-freq))]
+      (map #(vectorize % doc-freq doc-count vocab) texts))
     (catch Exception e
       (println &#34;Erro ao criar embeddings: &#34; (.getMessage e))
       (vec (repeat (count texts) [])))))
@@ -600,9 +796,19 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
 </ul>
 </li>
 <li><strong>Dimensão</strong>: O vetor final pode ser muito grande (uma dimensão para cada termo único)</li>
+<li><strong>Sinonímia</strong>: Não reconhece palavras com significados similares
+<ul>
+<li>&ldquo;rápido&rdquo;, &ldquo;veloz&rdquo;, &ldquo;ligeiro&rdquo; são tratados como termos distintos</li>
+</ul>
+</li>
+<li><strong>Polissemia</strong>: Não diferencia múltiplos significados da mesma palavra
+<ul>
+<li>&ldquo;java&rdquo; (linguagem) vs &ldquo;java&rdquo; (ilha) vs &ldquo;java&rdquo; (café)</li>
+</ul>
+</li>
 </ol>
 <blockquote>
-<p>Por isso, em sistemas RAG modernos, é mais comum usar embeddings gerados por modelos de linguagem, que capturam melhor a semântica e o contexto das palavras.</p></blockquote>
+<p><strong>Importante</strong>: Esta implementação TF-IDF é uma <strong>prova de conceito</strong> para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como <a href="https://www.sbert.net/">SBERT</a>, <a href="https://huggingface.co/intfloat/e5-large">E5</a>, <a href="https://huggingface.co/BAAI/bge-large-en">BGE</a> ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.</p></blockquote>
 <h4 id="interface-com-ollama">Interface com Ollama</h4>
 <p>Agora vamos implementar a interface com o Ollama. Ele é responsável por gerar a resposta para a query do usuário (essa parte aqui é super divertida, pois é onde vamos usar o LLM).</p>
 
@@ -628,7 +834,8 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
       (-&gt; response
           :body
           (json/read-str :key-fn keyword)
-          :response)
+          ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
+          (#(or (:response %) (:message %))))
       (str &#34;Erro ao chamar a API do Ollama: &#34; (:status response) &#34; - &#34; (:body response)))))
 
 ;; Funções de utilidade para uso futuro:
@@ -642,14 +849,22 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
 ;;   (extract-summary &#34;# Título\nConteúdo longo...&#34; 50) =&gt; &#34;Conteúdo longo...&#34;
 
 (defn format-prompt
-  &#34;Formata o prompt para o LLM&#34;
+  &#34;Formata o prompt para o LLM com delimitação segura do contexto&#34;
   [context query]
-  (str &#34;Você é um assistente especializado em documentação técnica. Com base no seguinte contexto da documentação:\n\n&#34;
+  (str &#34;Você é um assistente especializado em documentação técnica. &#34;
+       &#34;Use APENAS as informações do contexto fornecido para responder.\n\n&#34;
+       &#34;DOCUMENTO:\n&#34;
+       &#34;```\n&#34;
        context
-       &#34;\n\nPergunta: &#34; query
-       &#34;\n\nForneça uma resposta técnica precisa e, se possível, inclua exemplos de código. &#34;
-       &#34;Se a documentação não contiver informações relevantes para a pergunta, &#34;
-       &#34;indique isso claramente e forneça uma resposta geral com base em seu conhecimento.&#34;))
+       &#34;\n```\n\n&#34;
+       &#34;Pergunta: &#34; query
+       &#34;\n\n&#34;
+       &#34;Instruções:\n&#34;
+       &#34;- Responda baseado APENAS no contexto fornecido\n&#34;
+       &#34;- Se a informação não estiver no contexto, indique claramente\n&#34;
+       &#34;- Forneça exemplos de código quando relevante\n&#34;
+       &#34;- Se o contexto for limitado, mencione essa limitação\n&#34;
+       &#34;- NÃO invente informações que não estão no contexto&#34;))
 
 (defn generate-response
   &#34;Gera resposta usando o LLM com base no contexto&#34;
@@ -662,7 +877,25 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
       (str &#34;Erro ao gerar resposta: &#34; (.getMessage e) 
            &#34;\n\nPor favor, verifique se o Ollama está em execução no endereço &#34; 
            ollama-url 
-           &#34;\n\nVocê pode iniciar o Ollama com o comando: ollama serve&#34;))))</code></pre>
+           &#34;\n\nVocê pode iniciar o Ollama com o comando: ollama serve&#34;))))
+
+;; Exemplo de prompt seguro gerado:
+;; Você é um assistente especializado em documentação técnica. 
+;; Use APENAS as informações do contexto fornecido para responder.
+;;
+;; DOCUMENTO:
+;; ```
+;; [contexto aqui]
+;; ```
+;;
+;; Pergunta: [pergunta do usuário]
+;;
+;; Instruções:
+;; - Responda baseado APENAS no contexto fornecido
+;; - Se a informação não estiver no contexto, indique claramente
+;; - Forneça exemplos de código quando relevante
+;; - Se o contexto for limitado, mencione essa limitação
+;; - NÃO invente informações que não estão no contexto</code></pre>
  <p>A parte mais importante aqui é a função <code>call-ollama-api</code>, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função <code>format-prompt</code> super importante, que estrutura a mensagem enviada ao modelo. Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa &ldquo;engenharia de prompt&rdquo; é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.</p>
 <p>A função <code>generate-response</code> amarra tudo isso, pegando a pergunta e o contexto, formatando o prompt, enviando para o Ollama e tratando possíveis erros. Tem até uma mensagem amigável caso o Ollama não esteja rodando, sugerindo como iniciar o serviço. É um exemplo clássico de como interfaces com LLMs funcionam: você prepara um prompt bem estruturado, envia para o modelo, e recebe de volta texto gerado que (esperamos!) responda à pergunta original com base no contexto fornecido.</p>
 <h4 id="módulo-principal">Módulo Principal</h4>
@@ -702,10 +935,24 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
             (println &#34;DEBUG - Primeiros chunks:&#34;)
             (doseq [chunk (take 5 processed-chunks)]
               (println (str &#34;Chunk: &#39;&#34; (subs chunk 0 (min 50 (count chunk))) &#34;...&#39;&#34;))))
-        embeddings (emb/create-embeddings processed-chunks)]
-    {:chunks processed-chunks
-     :embeddings embeddings
+        doc-freq (emb/doc-freq processed-chunks)
+        doc-count (count (filter string? processed-chunks))
+        ;; Vocabulário ordenado para garantir ordem estável entre execuções
+        vocab (sort (keys doc-freq))
+        embeddings (map #(emb/vectorize % doc-freq doc-count vocab) processed-chunks)]
+          {:chunks processed-chunks
+       :embeddings embeddings
+       :doc-freq doc-freq
+       :doc-count doc-count
+            :vocab vocab  ; Persistir vocabulário ordenado
      :original-files doc-files}))
+
+;; Função para forçar recálculo (útil para desenvolvimento)
+(defn force-recalculate-kb []
+  (let [kb-file &#34;resources/knowledge-base.json&#34;]
+    (when (.exists (io/file kb-file))
+      (.delete (io/file kb-file)))
+  (setup-knowledge-base))
 
 (defn get-file-content
   &#34;Lê o conteúdo completo de um arquivo&#34;
@@ -716,13 +963,31 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
       (println &#34;Erro ao ler arquivo:&#34; file-path)
       &#34;&#34;)))
 
+(defn get-limited-fallback-content
+  &#34;Obtém conteúdo limitado para fallback (evita estourar contexto)&#34;
+  [file-path]
+  (try
+    (let [content (slurp file-path)
+          max-chars 8000  ; Limite de ~8KB para evitar estourar contexto
+          limited-content (if (&gt; (count content) max-chars)
+                           (str (subs content 0 max-chars) 
+                                &#34;\n\n[Conteúdo truncado - arquivo muito grande]&#34;)
+                           content)]
+      (str &#34;Informações limitadas da documentação:\n\n&#34; limited-content))
+    (catch Exception _
+      (println &#34;Erro ao ler arquivo para fallback:&#34; file-path)
+      &#34;Não foi possível acessar a documentação.&#34;)))
+
 (defn query-rag
   &#34;Processa uma query usando o pipeline RAG&#34;
   [knowledge-base query]
-  (println &#34;DEBUG - Processando query:&#34; query)
-  (if (and (seq (:chunks knowledge-base)) 
-           (seq (:embeddings knowledge-base)))
-    (let [query-emb (first (emb/create-embeddings [query]))
+  (cond
+    (str/blank? query)
+    &#34;Por favor, digite uma pergunta válida.&#34;
+    
+    (and (seq (:chunks knowledge-base)) 
+         (seq (:embeddings knowledge-base)))
+    (let [query-emb (emb/vectorize query (:doc-freq knowledge-base) (:doc-count knowledge-base) (:vocab knowledge-base))
           similar-idxs (emb/similarity-search query-emb 
                                             (:embeddings knowledge-base)
                                             3)
@@ -733,10 +998,10 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
                               (map #(nth (:chunks knowledge-base) %))
                               (str/join &#34;\n\n&#34;))
           
-          ;; Se não houver chunks relevantes, use o conteúdo original
+          ;; Se não houver chunks relevantes, use fallback inteligente
           context (if (str/blank? context-chunks)
                     (if (seq (:original-files knowledge-base))
-                      (get-file-content (first (:original-files knowledge-base)))
+                      (get-limited-fallback-content (first (:original-files knowledge-base)))
                       &#34;Não foi possível encontrar informações relevantes.&#34;)
                     context-chunks)]
       
@@ -745,6 +1010,8 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
       
       ;; Gerar resposta usando o LLM
       (llm/generate-response query context))
+    
+    :else
     &#34;Não foi possível encontrar informações relevantes na base de conhecimento.&#34;))
 
 (defn -main
@@ -761,11 +1028,21 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
     (try
       (loop []
         (when-let [input (read-line)]
-          (when-not (= input &#34;sair&#34;)
-            (println &#34;Processando...&#34;)
-            (println (query-rag kb input))
-            (println &#34;\nPróxima pergunta (ou &#39;sair&#39; para terminar):&#34;)
-            (recur))))
+          (cond
+            (= input &#34;sair&#34;) 
+            (println &#34;Obrigado por usar o DocAI. Até a próxima!&#34;)
+            
+            (str/blank? input)
+            (do
+              (println &#34;Digite uma pergunta ou &#39;sair&#39; para terminar.&#34;)
+              (recur))
+            
+            :else
+            (do
+              (println &#34;Processando...&#34;)
+              (println (query-rag kb input))
+              (println &#34;\nPróxima pergunta (ou &#39;sair&#39; para terminar):&#34;)
+              (recur)))))
       (catch Exception e
         (println &#34;Erro: &#34; (.getMessage e))
         (println &#34;Detalhes: &#34; (ex-data e))))
@@ -963,27 +1240,291 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
 
   <pre><code class="language-clojure">(defn format-advanced-prompt
-  &#34;Formata um prompt mais sofisticado para o LLM&#34;
+  &#34;Formata um prompt mais sofisticado para o LLM com delimitação segura&#34;
   [context query]
   (str &#34;Você é um especialista em documentação técnica de software, &#34;
        &#34;com foco em Clojure e desenvolvimento web.\n\n&#34;
-       &#34;Contexto da documentação:\n&#34;
+       &#34;DOCUMENTO:\n&#34;
+       &#34;```\n&#34;
        context
-       &#34;\n\nPergunta: &#34; query
-       &#34;\n\nPor favor, siga estas diretrizes:\n&#34;
-       &#34;1. Seja preciso e técnico\n&#34;
-       &#34;2. Inclua exemplos de código quando relevante\n&#34;
-       &#34;3. Cite as partes da documentação que você está usando\n&#34;
-       &#34;4. Se a informação não estiver na documentação, indique claramente\n&#34;
-       &#34;5. Mantenha a resposta concisa mas completa\n&#34;
-       &#34;6. Use formatação Markdown para melhor legibilidade&#34;))</code></pre>
+       &#34;\n```\n\n&#34;
+       &#34;Pergunta: &#34; query
+       &#34;\n\n&#34;
+       &#34;Diretrizes:\n&#34;
+       &#34;1. Use APENAS informações do contexto fornecido\n&#34;
+       &#34;2. Seja preciso e técnico\n&#34;
+       &#34;3. Inclua exemplos de código quando relevante\n&#34;
+       &#34;4. Cite as partes da documentação que você está usando\n&#34;
+       &#34;5. Se a informação não estiver no contexto, indique claramente\n&#34;
+       &#34;6. Mantenha a resposta concisa mas completa\n&#34;
+       &#34;7. Use formatação Markdown para melhor legibilidade\n&#34;
+       &#34;8. Se o contexto for limitado, mencione essa limitação\n&#34;
+       &#34;9. NÃO invente informações que não estão no contexto&#34;))</code></pre>
  <p>Para criar prompts efetivos, é essencial ser específico e claro nas instruções, utilizar formatação adequada para melhorar a legibilidade e incluir exemplos ilustrativos sempre que possível. Também é recomendável definir limites e restrições claras, solicitar ao modelo que explique seu raciocínio e utilizar um processo iterativo para refinar continuamente o prompt até obter os resultados desejados.</p>
 <p>A avaliação sistemática de prompts envolve testar diferentes variações da mesma instrução e comparar as respostas para identificar qual estrutura produz os melhores resultados. Este processo deve incluir a coleta de feedback dos usuários finais e a manutenção de um registro detalhado dos prompts que demonstraram bom desempenho, permitindo assim o desenvolvimento de um conjunto de melhores práticas específicas para cada caso de uso.</p>
 <blockquote>
 <p><strong>Nota</strong>: O <a href="https://www.promptingguide.ai/">Prompt Engineering</a> é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.</p></blockquote>
 <h2 id="próximos-passos">Próximos Passos</h2>
 <p>Abaixo uma lista de melhorias que podem ser feitas no projeto atual.</p>
-<h3 id="melhorias-propostas">Melhorias Propostas</h3>
+<h3 id="melhorias-rápidas-implementação-imediata">Melhorias Rápidas (Implementação Imediata)</h3>
+<h4 id="1-persistência-da-base-de-conhecimento"><strong>1. Persistência da Base de Conhecimento</strong></h4>
+
+
+  <pre><code class="language-clojure">;; src/docai/persistence.clj
+(ns docai.persistence
+  (:require [clojure.data.json :as json]
+            [clojure.edn :as edn]))
+
+(defn calculate-checksum
+  &#34;Calcula checksum dos arquivos de documentação&#34;
+  [doc-files]
+  (let [checksums (map #(hash (slurp %)) doc-files)]
+    (hash checksums)))
+
+(defn save-knowledge-base
+  &#34;Salva a base de conhecimento em disco com checksum&#34;
+  [kb filename]
+  (let [doc-files (:original-files kb)
+        checksum (calculate-checksum doc-files)
+        serializable-kb (-&gt; kb
+                           (select-keys [:chunks :embeddings :doc-freq :doc-count :vocab])
+                           (assoc :checksum checksum :doc-files doc-files))]
+    (spit filename (json/write-str serializable-kb))))
+
+(defn load-knowledge-base
+  &#34;Carrega a base de conhecimento do disco com verificação de mudanças&#34;
+  [filename doc-files]
+  (try
+    (let [content (slurp filename)
+          data (json/read-str content :key-fn keyword)
+          cached-checksum (:checksum data)
+          current-checksum (calculate-checksum doc-files)]
+      (if (= cached-checksum current-checksum)
+        (do
+          (println &#34;Cache válido - carregando embeddings...&#34;)
+          (assoc data :original-files doc-files))
+        (do
+          (println &#34;Arquivos modificados - recalculando embeddings...&#34;)
+          nil)))
+    (catch Exception e
+      (println &#34;Erro ao carregar KB:&#34; (.getMessage e))
+      nil)))
+
+;; Uso no core.clj
+(defn setup-knowledge-base
+  &#34;Configura a base de conhecimento (com cache inteligente)&#34;
+  []
+  (let [kb-file &#34;resources/knowledge-base.json&#34;
+        doc-files (load-documentation)]
+    (if (.exists (io/file kb-file))
+      (if-let [cached-kb (load-knowledge-base kb-file doc-files)]
+        cached-kb
+        (do
+          (println &#34;Recriando KB devido a mudanças nos arquivos...&#34;)
+          (let [kb (create-knowledge-base)]
+            (save-knowledge-base kb kb-file)
+            kb)))
+      (do
+        (println &#34;Criando nova KB...&#34;)
+        (let [kb (create-knowledge-base)]
+          (save-knowledge-base kb kb-file)
+          kb)))))</code></pre>
+ <h4 id="2-testes-unitários"><strong>2. Testes Unitários</strong></h4>
+
+
+  <pre><code class="language-clojure">;; test/docai/embedding_test.clj
+(ns docai.embedding-test
+  (:require [clojure.test :refer :all]
+            [docai.embedding :as emb]))
+
+(deftest test-tokenize
+  (testing &#34;Tokenização básica&#34;
+    (is (= [&#34;hello&#34; &#34;world&#34;] (emb/tokenize &#34;Hello World!&#34;)))
+    (testing &#34;Filtra palavras curtas&#34;
+      (is (= [] (emb/tokenize &#34;a b c&#34;)))))
+
+(deftest test-tf-idf
+  (testing &#34;Cálculo TF-IDF&#34;
+    (let [doc &#34;hello world hello&#34;
+          doc-freq {&#34;hello&#34; 2 &#34;world&#34; 1}
+          doc-count 2
+          result (emb/tf-idf doc doc-freq doc-count)]
+      (is (contains? result &#34;hello&#34;))
+      (is (contains? result &#34;world&#34;)))))
+
+(deftest test-cosine-similarity
+  (testing &#34;Similaridade do cosseno&#34;
+    (is (= 1.0 (emb/cosine-similarity [1 0] [1 0])))
+    (is (= 0.0 (emb/cosine-similarity [1 0] [0 1])))
+    (is (= 0.707 (emb/cosine-similarity [1 1] [1 0]) :delta 0.001))))</code></pre>
+ <h4 id="3-streaming-de-respostas"><strong>3. Streaming de Respostas</strong></h4>
+
+
+  <pre><code class="language-clojure">;; src/docai/streaming.clj
+(ns docai.streaming
+  (:require [clojure.data.json :as json]
+            [org.httpkit.client :as http]))
+
+(defn stream-ollama-response
+  &#34;Streaming de resposta do Ollama&#34;
+  [prompt]
+  (let [url &#34;http://localhost:11434/api/generate&#34;
+        request-body {:model &#34;deepseek-r1&#34;
+                     :prompt prompt
+                     :stream true}]
+    (with-open [conn @(http/post url {:body (json/write-str request-body)
+                                      :as :stream})]
+      (doseq [line (line-seq (:body conn))]
+        (when-not (str/blank? line)
+          (let [data (json/read-str line :key-fn keyword)]
+            ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
+            (when-let [content (or (:response data) (:message data))]
+              (print content)
+              (flush))))))))</code></pre>
+ <h4 id="4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></h4>
+
+
+  <pre><code class="language-clojure">;; src/docai/cache.clj
+(ns docai.cache
+  (:require [clojure.core.cache :as cache]))
+
+;; Cache LRU com limite de memória (evita vazamentos)
+(def embedding-cache (atom (cache/lru-cache-factory {} :threshold 1000))) ; Máximo 1000 embeddings
+
+(defn cached-embedding
+  &#34;Embedding com cache LRU&#34;
+  [text doc-freq doc-count vocab]
+  (if-let [cached (cache/lookup @embedding-cache text)]
+    cached
+    (let [embedding (emb/vectorize text doc-freq doc-count vocab)]
+      (swap! embedding-cache cache/miss text embedding)
+      embedding)))
+
+;; Cache para respostas do LLM (também LRU)
+(def response-cache (atom (cache/lru-cache-factory {} :threshold 500))) ; Máximo 500 respostas
+
+(defn cached-llm-response
+  &#34;Resposta do LLM com cache LRU&#34;
+  [prompt]
+  (if-let [cached (cache/lookup @response-cache prompt)]
+    cached
+    (let [response (llm/call-ollama-api prompt)]
+      (swap! response-cache cache/miss prompt response)
+      response)))
+
+;; Função para limpar cache manualmente se necessário
+(defn clear-caches []
+  (reset! embedding-cache (cache/lru-cache-factory {} :threshold 1000))
+  (reset! response-cache (cache/lru-cache-factory {} :threshold 500))
+  (println &#34;Caches limpos!&#34;))
+
+;; Monitoramento de cache
+(defn cache-stats []
+  (let [embedding-size (count @embedding-cache)
+        response-size (count @response-cache)]
+    (println (str &#34;Embedding cache: &#34; embedding-size &#34;/1000&#34;))
+    (println (str &#34;Response cache: &#34; response-size &#34;/500&#34;))))</code></pre>
+ <p><strong>Vantagens do Cache LRU:</strong></p>
+<ul>
+<li><strong>🔄 Auto-limpeza</strong>: Remove itens menos usados automaticamente</li>
+<li><strong>💾 Controle de memória</strong>: Limite máximo de itens</li>
+<li><strong>⚡ Performance</strong>: Acesso rápido a dados frequentes</li>
+<li><strong>🛡️ Estabilidade</strong>: Evita vazamentos de memória</li>
+</ul>
+<p><strong>Cache Inteligente de Embeddings:</strong></p>
+<ul>
+<li><strong>📁 Persistência</strong>: Embeddings salvos em disco</li>
+<li><strong>🔍 Verificação de Mudanças</strong>: Checksum dos arquivos</li>
+<li><strong>⚡ Recarregamento Rápido</strong>: Só recalcula se necessário</li>
+<li><strong>🔄 Invalidação Automática</strong>: Detecta modificações nos arquivos</li>
+</ul>
+<h4 id="5-banco-vetorial-simples-bm25-manual"><strong>5. Banco Vetorial Simples (BM25 Manual)</strong></h4>
+
+
+  <pre><code class="language-clojure">;; src/docai/vector_store.clj
+(ns docai.vector-store
+  (:require [clojure.string :as str]))
+
+(defn create-simple-vector-store
+  &#34;Store vetorial simples com BM25 (implementação manual)&#34;
+  [documents]
+  (let [index (atom {})
+        doc-freq (emb/doc-freq documents)
+        vocab (sort (keys doc-freq))]  ; Vocabulário ordenado
+    (doseq [[idx doc] (map-indexed vector documents)]
+      (let [tokens (emb/tokenize doc)
+            tf (emb/term-freq tokens)]
+        (swap! index assoc idx {:doc doc :tf tf})))
+    {:index index :doc-freq doc-freq :vocab vocab}))
+
+(defn calculate-bm25
+  &#34;Calcula score BM25 para um documento&#34;
+  [query-tokens doc-tf doc-freq]
+  (let [k1 1.2  ; Parâmetro de saturação de termo
+        b 0.75   ; Parâmetro de normalização de comprimento
+        avg-doc-len 100  ; Comprimento médio do documento (aproximação)
+        doc-len (reduce &#43; (vals doc-tf))
+        
+        ;; IDF para cada termo da query
+        idf-scores (map (fn [term]
+                          (let [df (get doc-freq term 0)
+                                n (count doc-freq)]
+                            (if (zero? df)
+                              0
+                              (Math/log (/ (- n df 0.5) (&#43; df 0.5)))))
+                        query-tokens)
+        
+        ;; TF para cada termo da query no documento
+        tf-scores (map (fn [term]
+                         (let [tf (get doc-tf term 0)]
+                           (/ (* tf (&#43; k1 1))
+                              (&#43; tf (* k1 (- 1 b (* b (/ doc-len avg-doc-len)))))))
+                       query-tokens)]
+    
+    ;; Soma ponderada de IDF * TF
+    (reduce &#43; (map * idf-scores tf-scores))))
+
+(defn search-bm25
+  &#34;Busca híbrida: BM25 &#43; similaridade semântica&#34;
+  [query vector-store top-k]
+  (let [query-tokens (emb/tokenize query)
+        query-embedding (emb/vectorize query (:doc-freq vector-store) (:doc-count vector-store) (:vocab vector-store))
+        
+        ;; BM25 scores
+        bm25-scores (map-indexed 
+                      (fn [idx {:keys [tf]}]
+                        [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store))])
+                      (vals @(:index vector-store)))
+        
+        ;; Semantic scores
+        semantic-scores (map-indexed
+                          (fn [idx _]
+                            [idx (emb/cosine-similarity query-embedding 
+                                                       (emb/vectorize (get-in @(:index vector-store) [idx :doc])
+                                                                      (:doc-freq vector-store)
+                                                                      (:doc-count vector-store)
+                                                                      (:vocab vector-store)))])
+                          (vals @(:index vector-store)))
+        
+        ;; Combine scores (weighted average)
+        combined-scores (map (fn [[idx bm25] [idx2 semantic]]
+                              [idx (&#43; (* 0.3 bm25) (* 0.7 semantic))])
+                            bm25-scores semantic-scores)]
+    
+    (-&gt;&gt; combined-scores
+         (sort-by second &gt;)
+         (take top-k)
+         (map first))))</code></pre>
+ <p><strong>Sobre o Algoritmo BM25:</strong></p>
+<ul>
+<li><strong>k1 = 1.2</strong>: Controla saturação de frequência de termos</li>
+<li><strong>b = 0.75</strong>: Normaliza pelo comprimento do documento</li>
+<li><strong>IDF</strong>: Mede raridade dos termos na coleção</li>
+<li><strong>TF</strong>: Frequência dos termos no documento</li>
+<li><strong>Combinação</strong>: 30% BM25 + 70% similaridade semântica</li>
+</ul>
+<p><strong>Nota</strong>: Esta é uma implementação manual do BM25. Para produção, considere usar Apache Lucene (veja dependências acima) que oferece BM25 nativo e otimizado.</p>
+<h3 id="melhorias-avançadas">Melhorias Avançadas</h3>
 
 
   
@@ -1021,7 +1562,176 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     Langchain4j
       Abstração
       Integração</div>
- <p>Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo <a href="https://en.wikipedia.org/wiki/Byte_pair_encoding">BPE</a> ou <a href="https://en.wikipedia.org/wiki/WordPiece">WordPiece</a> - idealmente o mesmo que o modelo usa. E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda!</p>
+ <h3 id="dependências-e-próximos-passos">Dependências e Próximos Passos</h3>
+<h4 id="dependências-recomendadas"><strong>Dependências Recomendadas</strong></h4>
+<p>Para implementar as funcionalidades avançadas mencionadas no artigo, adicione estas dependências ao <code>project.clj</code>:</p>
+
+
+  <pre><code class="language-clojure">;; Dependências para produção
+[com.github.justone/clojure-tiktoken &#34;0.1.0&#34;]  ; Contagem precisa de tokens
+[org.apache.lucene/lucene-core &#34;9.10.0&#34;]       ; Busca textual avançada
+[org.apache.lucene/lucene-analyzers-common &#34;9.10.0&#34;]  ; Analisadores de texto
+[org.apache.lucene/lucene-queryparser &#34;9.10.0&#34;] ; Parser de queries
+[com.github.clojure-lsp/clojure-lsp &#34;2024.01.15-20.32.45&#34;]  ; LSP para IDE</code></pre>
+ <h4 id="implementação-com-lucene"><strong>Implementação com Lucene</strong></h4>
+
+
+  <pre><code class="language-clojure">;; src/docai/lucene_store.clj
+(ns docai.lucene-store
+  (:import [org.apache.lucene.analysis.standard StandardAnalyzer]
+           [org.apache.lucene.document Document Field Field$Store]
+           [org.apache.lucene.index IndexWriter IndexWriterConfig DirectoryReader]
+           [org.apache.lucene.search IndexSearcher QueryParser]
+           [org.apache.lucene.store RAMDirectory]))
+
+(defn create-lucene-index
+  &#34;Cria índice Lucene para busca textual&#34;
+  [documents]
+  (let [analyzer (StandardAnalyzer.)
+        directory (RAMDirectory.)
+        config (IndexWriterConfig. analyzer)
+        writer (IndexWriter. directory config)]
+    
+    ;; Adiciona documentos ao índice
+    (doseq [[idx doc] (map-indexed vector documents)]
+      (let [document (Document.)]
+        (.add document (Field. &#34;content&#34; doc Field$Store/YES))
+        (.add document (Field. &#34;id&#34; (str idx) Field$Store/YES))
+        (.addDocument writer document)))
+    
+    (.close writer)
+    
+    {:directory directory
+     :analyzer analyzer
+     :reader (DirectoryReader/open directory)
+     :searcher (IndexSearcher. (DirectoryReader/open directory))}))
+
+(defn search-lucene
+  &#34;Busca textual usando Lucene&#34;
+  [index query top-k]
+  (let [parser (QueryParser. &#34;content&#34; (:analyzer index))
+        query-obj (.parse parser query)
+        hits (.search (:searcher index) query-obj top-k)]
+    (map #(.doc (:searcher index) %) (.scoreDocs hits))))</code></pre>
+ <h3 id="upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</h3>
+<p>Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções:</p>
+<h4 id="1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></h4>
+
+
+  <pre><code class="language-clojure">;; Exemplo de upgrade usando Ollama embeddings
+(defn create-dense-embeddings [texts]
+  (let [embeddings-url &#34;http://localhost:11434/api/embeddings&#34;]
+    (map #(call-ollama-embeddings embeddings-url %) texts)))
+
+(defn call-ollama-embeddings [url text]
+  (let [request-body {:model &#34;deepseek-r1&#34; :prompt text}
+        response @(http/post url {:body (json/write-str request-body)})]
+    (if (= (:status response) 200)
+      (-&gt; response :body (json/read-str :key-fn keyword) :embedding)
+      (throw (ex-info &#34;Erro ao gerar embedding&#34; {:status (:status response)})))))
+
+;; Token counting preciso via Ollama API
+(defn count-tokens-ollama [text]
+  (let [url &#34;http://localhost:11434/api/generate&#34;
+        request-body {:model &#34;deepseek-r1&#34; 
+                     :prompt text 
+                     :stream false
+                     :options {:num_predict 0}}]
+    (try
+      (let [response @(http/post url {:body (json/write-str request-body)})]
+        (if (= (:status response) 200)
+          (-&gt; response :body (json/read-str :key-fn keyword) :eval_count)
+          0))
+      (catch Exception _ 0))))
+
+;; Implementação com clojure-tiktoken (recomendado para produção)
+(defn count-tokens-precise [text]
+  (try
+    ;; Requer: [com.github.justone/clojure-tiktoken &#34;0.1.0&#34;]
+    ;; (require &#39;[com.github.justone.clojure-tiktoken :as tiktoken])
+    ;; (tiktoken/count-tokens text &#34;cl100k_base&#34;)
+    (count-tokens text) ; Fallback para implementação atual
+    (catch Exception e
+      (println &#34;Erro ao usar tiktoken:&#34; (.getMessage e))
+      (count-tokens text))))
+
+;; Exemplo de implementação com API do Ollama (mais preciso)
+(defn count-tokens-ollama-precise [text]
+  (let [url &#34;http://localhost:11434/api/generate&#34;
+        request-body {:model &#34;deepseek-r1&#34; 
+                     :prompt text 
+                     :stream false
+                     :options {:num_predict 0}}]
+    (try
+      (let [response @(http/post url {:body (json/write-str request-body)})]
+        (if (= (:status response) 200)
+          (-&gt; response :body (json/read-str :key-fn keyword) :eval_count)
+          (count-tokens text))) ; Fallback para heurística
+      (catch Exception _
+        (count-tokens text))))) ; Fallback para heurística</code></pre>
+ <h4 id="2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></h4>
+
+
+  <pre><code class="language-clojure">;; Exemplo usando interop com Python/HuggingFace
+(defn create-hf-embeddings [texts]
+  (let [model-name &#34;sentence-transformers/all-MiniLM-L6-v2&#34;]
+    ;; Usar interop com Python para carregar modelo
+    ;; e gerar embeddings densos
+    ))
+
+;; Token counting preciso com tiktoken
+(defn count-tokens-tiktoken [text]
+  ;; Requer interop com Python tiktoken
+  ;; pip install tiktoken
+  ;; python -c &#34;import tiktoken; print(len(tiktoken.get_encoding(&#39;cl100k_base&#39;).encode(&#39;texto aqui&#39;)))&#34;
+  )</code></pre>
+ <h4 id="3-comparação-de-performance">3. <strong>Comparação de Performance</strong></h4>
+<table>
+  <thead>
+      <tr>
+          <th>Método</th>
+          <th>Semântica</th>
+          <th>Contexto</th>
+          <th>Performance</th>
+          <th>Complexidade</th>
+          <th>Hardware Mínimo</th>
+          <th>Precisão Tokens</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>TF-IDF</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>⚡⚡⚡</td>
+          <td>⚡</td>
+          <td>CPU 4 cores, 8GB RAM</td>
+          <td>⚠️ Heurística</td>
+      </tr>
+      <tr>
+          <td>Ollama Embeddings</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>⚡⚡</td>
+          <td>⚡⚡</td>
+          <td>CPU 8 cores, 16GB RAM</td>
+          <td>✅ Preciso</td>
+      </tr>
+      <tr>
+          <td>SBERT/E5</td>
+          <td>✅✅</td>
+          <td>✅✅</td>
+          <td>⚡</td>
+          <td>⚡⚡⚡</td>
+          <td>GPU 8GB VRAM, 32GB RAM</td>
+          <td>✅ Preciso</td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p><strong>Recomendação</strong>: Para aplicações em produção, comece com Ollama embeddings (simples de implementar) e evolua para modelos especializados como SBERT ou E5 conforme necessário. Considere seus recursos de hardware ao escolher a abordagem.</p>
+<p><strong>⚠️ Importante</strong>: A contagem de tokens heurística pode errar até 2x. Para produção, use <code>count-tokens-ollama-precise</code> ou <code>clojure-tiktoken</code> para precisão.</p></blockquote>
+<p>Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo <a href="https://en.wikipedia.org/wiki/Byte_pair_encoding">BPE</a> ou <a href="https://en.wikipedia.org/wiki/WordPiece">WordPiece</a> - idealmente o mesmo que o modelo usa. E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda! O TF-IDF que implementamos é ótimo para entender os conceitos, mas embeddings densos modernos capturam nuances semânticas que fazem toda a diferença em aplicações reais.</p>
 <p>Quando o projeto crescer, vai ser essencial ter um banco de dados vetorial decente. Imagina lidar com milhares de documentos usando nossa implementação atual? Seria um pesadelo! <a href="https://milvus.io/">Milvus</a>, <a href="https://github.com/facebookresearch/faiss">FAISS</a> ou <a href="https://qdrant.tech/">Qdrant</a> resolveriam isso numa boa. E não podemos esquecer do cache - tanto para embeddings quanto para respostas. Economiza um tempão e reduz a carga no sistema.</p>
 <p>A parte de tratamento de erros e logging também precisa de carinho. Já pensou o usuário esperando resposta e o Ollama tá offline? Ou um arquivo corrompido? Precisamos de mensagens amigáveis e um sistema de logging decente pra rastrear problemas. E claro, testes! Sem testes unitários e de integração, qualquer mudança vira uma roleta-russa.</p>
 <p>O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o langchain4j via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!</p>
