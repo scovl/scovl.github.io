@@ -3,12 +3,17 @@ title = "Compreendendo a concorrência em Rust"
 description = "Thread safety em Rust não é magia: é matemática"
 date = 2025-07-23T12:00:00-00:00
 tags = ["Rust", "Concorrência", "Segurança", "Threads", "Async"]
-draft = false
+draft = true
 weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
-O Rust costuma ser apresentado como **a linguagem que impede aqueles bugs de memória cabeludos** antes mesmo do seu código rodar. Mas essa história não para no **[borrow checker](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker)**: ela se estende à concorrência. O pessoal da comunidade fala em **fearless concurrenc** — “concorrência sem medo”. Mas o que isso significa realmente? Como explicar isso para alguém que vem de outras linguagens? Em resumo, Rust transforma muitos erros de concorrência em erros de compilação em vez de runtime, graças ao seu sistema de *ownership* e tipos. Esse aspecto é o que chamamos de **concorrência sem medo**, onde escrever código concorrente não precisa ser uma roleta-russa de bugs sutis.
+
+Sempre que ouço falar sobre uma abordagem diferente em uma linguagem de programação, fico me perguntando: **Como isso é possível? Como é possível fazer isso?** Na maioria das vezes, essas soluções acabam soando como mágica. Li em algum lugar que “se algo soa como mágica, é porque você ainda não entendeu o suficiente” — ou, ainda, que “quando algo é apresentado como extraordinário, é preciso ter uma explicação igualmente extraordinária”. É nesse espírito que escrevo este artigo.
+
+O Rust costuma ser apresentado como **a linguagem que impede aqueles bugs de memória cabeludos** antes mesmo do seu código rodar. Mas essa história não para no **[borrow checker](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker)**: ela se estende à concorrência. O pessoal da comunidade fala em **fearless concurrency** — “concorrência sem medo”. Mas o que isso significa realmente? 
+
+Como explicar isso para alguém que vem de outras linguagens? Em resumo, Rust transforma muitos erros de concorrência em erros de compilação em vez de runtime, graças ao seu sistema de **ownership** e **tipos**. Esse aspecto é o que chamamos de **concorrência sem medo**, onde escrever código concorrente não precisa ser uma roleta-russa de bugs sutis.
 
 ## 1. Por que concorrência costuma dar ruim?
 
