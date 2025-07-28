@@ -57,8 +57,36 @@
 }
 
 /* ===== TIPOGRAFIA ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+/* Fontes carregadas localmente via vendor/fonts/fonts.css */
+
+/* ===== PRISM.JS STYLES ===== */
+/* Garantir que os blocos de código tenham estilo consistente */
+pre[class*="language-"] {
+    background: #2d2d2d !important;
+    border-radius: var(--border-radius);
+    margin: var(--spacing-md) 0;
+    overflow-x: auto;
+}
+
+code[class*="language-"] {
+    font-family: var(--font-mono) !important;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+/* Melhorar contraste para dark mode */
+.dark-mode pre[class*="language-"] {
+    background: #1a1a1a !important;
+}
+
+/* Estilo para inline code */
+:not(pre) > code[class*="language-"] {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 0.2em 0.4em;
+    border-radius: 0.3em;
+    font-size: 0.9em;
+}
 
 body {
     font-family: var(--font-family);

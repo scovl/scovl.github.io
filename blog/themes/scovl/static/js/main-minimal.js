@@ -1,6 +1,62 @@
 // ===== FUNCIONALIDADES PRINCIPAIS =====
 
+// ===== PRISM.JS =====
+function initPrism() {
+    try {
+        if (typeof Prism !== 'undefined') {
+            // Aguardar um pouco para garantir que o DOM está pronto
+            setTimeout(() => {
+                Prism.highlightAll();
+                console.log('Prism.js inicializado com sucesso');
+                console.log('Linguagens disponíveis:', Object.keys(Prism.languages));
+                
+                // Verificar se C++ está disponível
+                if (Prism.languages.cpp) {
+                    console.log('✅ C++ disponível');
+                } else {
+                    console.warn('❌ C++ não disponível');
+                }
+                
+                // Verificar se Rust está disponível
+                if (Prism.languages.rust) {
+                    console.log('✅ Rust disponível');
+                } else {
+                    console.warn('❌ Rust não disponível');
+                }
+                
+                // Verificar se Clojure está disponível
+                if (Prism.languages.clojure) {
+                    console.log('✅ Clojure disponível');
+                } else {
+                    console.warn('❌ Clojure não disponível');
+                }
+                
+                // Verificar se Swift está disponível
+                if (Prism.languages.swift) {
+                    console.log('✅ Swift disponível');
+                } else {
+                    console.warn('❌ Swift não disponível');
+                }
+                
+                // Verificar se Bash está disponível
+                if (Prism.languages.bash) {
+                    console.log('✅ Bash disponível');
+                } else {
+                    console.warn('❌ Bash não disponível');
+                }
+            }, 100);
+        } else {
+            console.warn('Prism.js não está disponível');
+        }
+    } catch (error) {
+        console.warn('Erro ao inicializar Prism.js:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Prism.js para syntax highlighting
+    initPrism();
+    
     // Inicializar Mermaid se disponível
     initMermaid();
     
