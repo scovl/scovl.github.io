@@ -2,16 +2,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.Description }}{{ end }}">
 
+<!-- Otimizações de Performance -->
+{{ partial "performance.html" . }}
+
 <!-- CSS Principal -->
 <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
 
-<!-- Prism.js para syntax highlighting (temporariamente desabilitado para debug) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<!-- Fontes locais -->
+<link rel="stylesheet" href="{{ "vendor/fonts/fonts.css" | relURL }}">
+
+<!-- Prism.js local para syntax highlighting -->
+<link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}">
 
 {{ if .Site.Params.mermaid }}
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<!-- Mermaid local para diagramas -->
+<script src="{{ "vendor/mermaid/mermaid.min.js" | relURL }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -21,4 +26,19 @@
         });
     });
 </script>
-{{ end }} 
+{{ end }}
+
+<!-- Service Worker Registration -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{{ "sw.js" | relURL }}')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 

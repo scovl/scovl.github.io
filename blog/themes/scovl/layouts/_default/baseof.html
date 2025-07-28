@@ -22,8 +22,20 @@
     {{ partial "footer.html" . }}
     {{ end }}
     
+    <!-- Prism.js Scripts -->
+    <script src="{{ "vendor/prism/prism-core.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-clike.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-c.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-cpp.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-rust.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-clojure.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-swift.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-bash.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-autoloader.min.js" | relURL }}"></script>
+    
     <!-- JavaScript -->
     <script src="{{ "js/main-minimal.js" | relURL }}"></script>
+    <script src="{{ "js/lazy-loading.js" | relURL }}"></script>
     
     <!-- Custom JS from config if any -->
     {{ range .Site.Params.customJS }}
