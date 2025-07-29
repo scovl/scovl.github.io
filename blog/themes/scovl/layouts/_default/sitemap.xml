@@ -1,0 +1,51 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {{ range .Site.RegularPages }}
+  <url>
+    <loc>{{ .Permalink }}</loc>
+    <lastmod>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    <changefreq>{{ if .Params.changefreq }}{{ .Params.changefreq }}{{ else }}weekly{{ end }}</changefreq>
+    <priority>{{ if .Params.priority }}{{ .Params.priority }}{{ else }}0.5{{ end }}</priority>
+    
+    {{ if .IsTranslated }}
+    {{ range .Translations }}
+    <xhtml:link rel="alternate" hreflang="{{ .Lang }}" href="{{ .Permalink }}" />
+    {{ end }}
+    <xhtml:link rel="alternate" hreflang="{{ .Lang }}" href="{{ .Permalink }}" />
+    {{ end }}
+  </url>
+  {{ end }}
+  
+  {{ range .Site.Pages }}
+  {{ if not .IsPage }}
+  <url>
+    <loc>{{ .Permalink }}</loc>
+    <lastmod>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  {{ end }}
+  {{ end }}
+  
+  {{ if .Site.Params.tags }}
+  {{ range .Site.Taxonomies.tags }}
+  <url>
+    <loc>{{ .Page.Permalink }}</loc>
+    <lastmod>{{ .Page.Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  {{ end }}
+  {{ end }}
+  
+  {{ if .Site.Params.categories }}
+  {{ range .Site.Taxonomies.categories }}
+  <url>
+    <loc>{{ .Page.Permalink }}</loc>
+    <lastmod>{{ .Page.Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  {{ end }}
+  {{ end }}
+</urlset>

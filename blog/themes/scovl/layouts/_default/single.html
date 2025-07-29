@@ -3,33 +3,20 @@
     <header class="post-header">
         <h1 class="post-title">{{ .Title }}</h1>
         <div class="post-meta">
-            {{ if .Date }}
             <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
-                {{ .Date.Format (.Site.Params.dateFormat | default "January 2, 2006") }}
+                📅 {{ .Date.Format "02/01/2006" }}
             </time>
+            {{ if .Params.author }}
+            <span>👤 {{ .Params.author }}</span>
             {{ end }}
-            
-            {{ with .Params.author }}
-            <span class="post-author">por {{ . }}</span>
+            {{ if .Params.readingTime }}
+            <span>⏱️ {{ .Params.readingTime }} min de leitura</span>
             {{ end }}
-            
             {{ if .Params.tags }}
             <div class="post-tags">
                 {{ range .Params.tags }}
-                <a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/" class="tag">{{ . }}</a>
+                <a href="{{ "tags/" | relLangURL }}{{ . | urlize }}" class="tag">{{ . }}</a>
                 {{ end }}
-            </div>
-            {{ end }}
-            
-            {{ if .Site.Params.readingTime }}
-            <div class="reading-time">
-                {{ .Site.Params.readingTimeText | default "Tempo de leitura:" }} {{ math.Round (div (countwords .Content) 220.0) }} min
-            </div>
-            {{ end }}
-            
-            {{ if .Description }}
-            <div class="post-description">
-                {{ .Description }}
             </div>
             {{ end }}
         </div>
@@ -39,6 +26,10 @@
         {{ .Content }}
     </div>
     
-    {{ partial "disqus.html" . }}
+    <!-- Related Posts -->
+    {{ partial "related-posts.html" . }}
+    
+    <!-- Comments -->
+    {{ partial "comments.html" . }}
 </article>
 {{ end }} 

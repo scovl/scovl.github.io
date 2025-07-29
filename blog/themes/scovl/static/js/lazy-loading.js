@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Lazy loading para iframes (Disqus, etc.)
+// Lazy loading para iframes (Giscus, etc.)
 document.addEventListener('DOMContentLoaded', function() {
     const iframes = document.querySelectorAll('iframe[data-src]');
     

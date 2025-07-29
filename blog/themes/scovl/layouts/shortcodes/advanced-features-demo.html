@@ -1,0 +1,60 @@
+{{ $feature := .Get "feature" | default "all" }}
+
+<div class="advanced-features-demo">
+    <h3>🚀 Funcionalidades Avançadas</h3>
+    
+    {{ if or (eq $feature "all") (eq $feature "comments") }}
+    <div class="feature-section">
+        <h4>💬 Sistema de Comentários (Giscus)</h4>
+        <p>Comentários integrados com GitHub Discussions usando Giscus.</p>
+        <div class="demo-comments">
+            <div class="comment-demo">
+                <div class="comment-avatar">👤</div>
+                <div class="comment-content">
+                    <div class="comment-author">Usuário Exemplo</div>
+                    <div class="comment-text">Excelente post! Muito útil para o meu projeto.</div>
+                    <div class="comment-meta">há 2 horas • 👍 3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "related") }}
+    <div class="feature-section">
+        <h4>📚 Posts Relacionados</h4>
+        <p>Algoritmo inteligente que encontra posts relacionados baseado em tags.</p>
+        <div class="related-posts-demo">
+            <div class="related-post-item">
+                <h5>Post Relacionado 1</h5>
+                <p>Este post tem 2 tags em comum com o post atual.</p>
+                <modern-badge variant="info">2 tags em comum</modern-badge>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "rss") }}
+    <div class="feature-section">
+        <h4>📡 RSS Feed Melhorado</h4>
+        <p>Feed RSS com metadados completos e suporte a imagens.</p>
+        <div class="rss-demo">
+            <a href="/index.xml" class="rss-link">
+                📡 Assinar RSS Feed
+            </a>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "sitemap") }}
+    <div class="feature-section">
+        <h4>🗺️ Sitemap Automático</h4>
+        <p>Sitemap XML gerado automaticamente com prioridades e frequências.</p>
+        <div class="sitemap-demo">
+            <a href="/sitemap.xml" class="sitemap-link">
+                🗺️ Ver Sitemap
+            </a>
+        </div>
+    </div>
+    {{ end }}
+</div>

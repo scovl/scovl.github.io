@@ -1,0 +1,22 @@
+{{ if .Site.Params.giscus }}
+<div class="comments-section">
+    <h3 class="comments-title">💬 Comentários</h3>
+    <div class="comments-container">
+        <script src="https://giscus.app/client.js"
+                data-repo="{{ .Site.Params.giscus.repo }}"
+                data-repo-id="{{ .Site.Params.giscus.repoId }}"
+                data-category="{{ .Site.Params.giscus.category }}"
+                data-category-id="{{ .Site.Params.giscus.categoryId }}"
+                data-mapping="{{ .Site.Params.giscus.mapping | default "pathname" }}"
+                data-strict="{{ .Site.Params.giscus.strict | default "0" }}"
+                data-reactions-enabled="{{ .Site.Params.giscus.reactionsEnabled | default "1" }}"
+                data-emit-metadata="{{ .Site.Params.giscus.emitMetadata | default "0" }}"
+                data-input-position="{{ .Site.Params.giscus.inputPosition | default "bottom" }}"
+                data-theme="{{ .Site.Params.giscus.theme | default "preferred_color_scheme" }}"
+                data-lang="{{ .Site.LanguageCode | default "pt" }}"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
+</div>
+{{ end }}

@@ -3,13 +3,11 @@
 <link rel="preload" href="{{ "vendor/fonts/inter/Inter-600.ttf" | relURL }}" as="font" type="font/ttf" crossorigin>
 <link rel="preload" href="{{ "vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" | relURL }}" as="font" type="font/ttf" crossorigin>
 
-<!-- DNS prefetch para recursos externos (se necessário) -->
-<link rel="dns-prefetch" href="//disqus.com">
-<link rel="dns-prefetch" href="//{{ .Site.Params.disqusShortname }}.disqus.com">
-
-<!-- Preconnect para melhorar performance de recursos externos -->
-<link rel="preconnect" href="//disqus.com">
-<link rel="preconnect" href="//{{ .Site.Params.disqusShortname }}.disqus.com">
+{{ if .Site.Params.giscus }}
+<!-- Performance optimizations for Giscus -->
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
+{{ end }}
 
 <!-- Meta tags para performance -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">

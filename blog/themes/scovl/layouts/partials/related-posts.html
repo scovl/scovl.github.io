@@ -1,0 +1,63 @@
+{{ $currentPage := . }}
+{{ $relatedPosts := slice }}
+
+{{ if $currentPage.Params.tags }}
+    {{ $currentTags := $currentPage.Params.tags }}
+    
+    {{ range where .Site.RegularPages "Type" "post" }}
+        {{ if ne . $currentPage }}
+            {{ $score := 0 }}
+            {{ $commonTags := 0 }}
+            
+            {{ if .Params.tags }}
+                {{ range .Params.tags }}
+                    {{ if in $currentTags . }}
+                        {{ $score = add $score 10 }}
+                        {{ $commonTags = add $commonTags 1 }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+            
+            {{ if gt $score 0 }}
+                {{ $relatedPosts = $relatedPosts | append (dict "post" . "score" $score "commonTags" $commonTags) }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    
+    {{ if gt (len $relatedPosts) 0 }}
+        {{ $relatedPosts = sort $relatedPosts "score" "desc" }}
+        {{ $relatedPosts = first 3 $relatedPosts }}
+        
+        <div class="related-posts">
+            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
+            <div class="related-posts-grid">
+                {{ range $relatedPosts }}
+                    {{ $post := .post }}
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="{{ $post.RelPermalink }}">{{ $post.Title }}</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                {{ $post.Summary | default (truncate 150 $post.Content) }}
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">{{ $post.Date.Format "02/01/2006" }}</span>
+                                {{ if $post.Params.tags }}
+                                    <div class="related-post-tags">
+                                        {{ range first 2 $post.Params.tags }}
+                                            <span class="tag">{{ . }}</span>
+                                        {{ end }}
+                                    </div>
+                                {{ end }}
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">{{ .commonTags }} tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                {{ end }}
+            </div>
+        </div>
+    {{ end }}
+{{ end }}

@@ -1,96 +1,96 @@
-# Configuração de Exemplo para o Tema Scovl
-# Copie este arquivo para config.toml e personalize conforme necessário
+# Configuração do Tema Scovl - Funcionalidades Avançadas
 
-baseURL = "https://exemplo.com/"
-languageCode = "pt-BR"
-title = "Meu Blog"
-theme = "scovl"
-
-# Configurações do site
 [params]
-  # Informações básicas
-  description = "Um blog sobre tecnologia, desenvolvimento e inovação"
+  # Informações do site
+  title = "Meu Blog"
+  description = "Blog sobre tecnologia, programação e desenvolvimento"
   author = "Seu Nome"
+  image = "/images/og-image.jpg"
   
   # Links sociais
   github = "https://github.com/seu-usuario"
   linkedin = "https://linkedin.com/in/seu-usuario"
-  email = "seu@email.com"
+  email = "seu-email@exemplo.com"
   mastodon = "https://mastodon.social/@seu-usuario"
   rss = "/index.xml"
   
-  # Funcionalidades
-  readingTime = true
-  readingTimeText = "Tempo de leitura:"
+  # Configuração do Giscus (GitHub Discussions)
+  [params.giscus]
+    repo = "seu-usuario/seu-repo"
+    repoId = "R_kgDOGxxxxxxxx"
+    category = "Announcements"
+    categoryId = "DIC_kwDOGxxxxxxxx"
+    mapping = "pathname"
+    strict = "0"
+    reactionsEnabled = "1"
+    emitMetadata = "0"
+    inputPosition = "bottom"
+    theme = "preferred_color_scheme"
+    lang = "pt"
   
-  # Mermaid para diagramas
-  mermaid = true
+  # Configuração do Mermaid
   [params.mermaid]
     theme = "default"
     align = "center"
   
-  # JavaScript customizado
-  customJS = [
-    "js/analytics.js",
-    "js/custom.js"
-  ]
+  # Configuração de SEO
+  [params.seo]
+    googleAnalytics = "G-XXXXXXXXXX"
+    googleTagManager = "GTM-XXXXXXX"
+    facebookPixel = "XXXXXXXXXX"
+  
+  # Configuração de performance
+  [params.performance]
+    lazyLoading = true
+    preloadCritical = true
+    minifyCSS = true
+    minifyJS = true
 
-# Configurações de menu
-[menu]
-  [[menu.main]]
-    name = "Início"
-    url = "/"
-    weight = 1
-  [[menu.main]]
-    name = "Posts"
-    url = "/post/"
-    weight = 2
-  [[menu.main]]
-    name = "Sobre"
-    url = "/page/about/"
-    weight = 3
-  [[menu.main]]
-    name = "Contato"
-    url = "/page/contact/"
-    weight = 4
-
-# Configurações de taxonomia
+# Configuração de taxonomias
 [taxonomies]
   tag = "tags"
   category = "categories"
 
-# Configurações de paginação
-[params.pagination]
-  pagesPerSection = 10
+# Configuração de menus
+[[menu.main]]
+  name = "Início"
+  url = "/"
+  weight = 1
 
-# Configurações de SEO
-[params.seo]
-  googleAnalytics = "UA-XXXXXXXXX-X"
-  googleTagManager = "GTM-XXXXXXX"
-  
-# Configurações de comentários
-[params.comments]
-  disqusShortname = "seu-disqus-shortname"
+[[menu.main]]
+  name = "Posts"
+  url = "/post/"
+  weight = 2
 
-# Configurações de compartilhamento
-[params.sharing]
-  twitter = true
-  facebook = true
-  linkedin = true
+[[menu.main]]
+  name = "Sobre"
+  url = "/page/about/"
+  weight = 3
 
-# Configurações de busca
-[params.search]
-  enabled = true
-  placeholder = "Buscar posts..."
+[[menu.main]]
+  name = "Contato"
+  url = "/page/contact/"
+  weight = 4
 
-# Configurações de tema escuro
-[params.darkMode]
-  enabled = true
-  auto = true  # Detectar preferência do sistema
+# Configuração de RSS
+[outputFormats]
+  [outputFormats.rss]
+    mediaType = "application/rss+xml"
+    baseName = "index"
+    isPlainText = false
+    notAlternative = true
 
-# Configurações de performance
-[params.performance]
-  lazyLoad = true
-  preloadFonts = true
-  minifyCSS = true
-  minifyJS = true 
+# Configuração de sitemap
+[outputFormats.sitemap]
+  mediaType = "application/xml"
+  baseName = "sitemap"
+  isPlainText = false
+  notAlternative = true
+
+# Configuração de páginas
+[outputs]
+  home = ["HTML", "RSS", "Sitemap"]
+  section = ["HTML", "RSS", "Sitemap"]
+  taxonomy = ["HTML", "RSS", "Sitemap"]
+  term = ["HTML", "RSS", "Sitemap"]
+  page = ["HTML"] 

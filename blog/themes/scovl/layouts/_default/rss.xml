@@ -1,0 +1,52 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+  <channel>
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ with .Site.Params.description }}{{ . }}{{ else }}{{ .Site.Title }} - Blog sobre tecnologia, programação e desenvolvimento{{ end }}</description>
+    <language>{{ .Site.LanguageCode | default "pt-BR" }}</language>
+    <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</lastBuildDate>
+    <sy:updatePeriod>daily</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml" />
+    
+    {{ if .Site.Params.image }}
+    <image>
+      <url>{{ .Site.Params.image | absURL }}</url>
+      <title>{{ .Site.Title }}</title>
+      <link>{{ .Site.BaseURL }}</link>
+    </image>
+    {{ end }}
+    
+    {{ if .Site.Params.author }}
+    <dc:creator>{{ .Site.Params.author }}</dc:creator>
+    {{ end }}
+    
+    {{ range .Site.RegularPages }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <guid>{{ .Permalink }}</guid>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
+      <description><![CDATA[{{ .Summary | default (truncate 200 .Content) }}]]></description>
+      <content:encoded><![CDATA[{{ .Content }}]]></content:encoded>
+      
+      {{ if .Params.tags }}
+      <category>{{ delimit .Params.tags "," }}</category>
+      {{ end }}
+      
+      {{ if .Params.author }}
+      <dc:creator>{{ .Params.author }}</dc:creator>
+      {{ end }}
+      
+      {{ if .Params.image }}
+      <enclosure url="{{ .Params.image | absURL }}" type="image/jpeg" />
+      {{ end }}
+      
+      {{ if .Params.description }}
+      <description><![CDATA[{{ .Params.description }}]]></description>
+      {{ end }}
+    </item>
+    {{ end }}
+  </channel>
+</rss>
