@@ -1,0 +1,7 @@
+{{ $message := .Get "message" | default "Esta é uma notificação de exemplo" }}
+{{ $type := .Get "type" | default "info" }}
+{{ $title := .Get "title" | default "" }}
+
+<button class="btn" onclick="showToast('{{ $message }}', '{{ $type }}', '{{ $title }}')">
+    Mostrar Toast {{ $type }}
+</button>

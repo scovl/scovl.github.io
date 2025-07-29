@@ -1,0 +1,24 @@
+{{ $type := .Get "type" | default "post" }}
+{{ $count := .Get "count" | default "1" }}
+
+<div class="skeleton-demo">
+    {{ range seq $count }}
+    <div class="skeleton-container">
+        {{ if eq $type "post" }}
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+        {{ else if eq $type "list" }}
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-button" style="margin-top: 1rem;"></div>
+        {{ else if eq $type "image" }}
+            <div class="skeleton skeleton-image"></div>
+            <div class="skeleton skeleton-text" style="margin-top: 1rem;"></div>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>

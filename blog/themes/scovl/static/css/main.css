@@ -54,6 +54,182 @@
     
     /* Transições */
     --transition: all 0.2s ease-in-out;
+    --transition-fast: all 0.15s ease-in-out;
+    --transition-slow: all 0.3s ease-in-out;
+    
+    /* Micro-interações */
+    --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ===== SKELETON LOADING ===== */
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: var(--border-radius);
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: 0.5em;
+    border-radius: 4px;
+}
+
+.skeleton-text:last-child {
+    width: 60%;
+}
+
+.skeleton-title {
+    height: 2rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--border-radius);
+}
+
+.skeleton-button {
+    height: 2.5rem;
+    width: 120px;
+    border-radius: var(--border-radius);
+}
+
+/* Dark mode skeleton */
+.dark-mode .skeleton {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200px 100%;
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(100%);
+    opacity: 0;
+    animation: toast-slide-in 0.3s var(--elastic) forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.toast.success::before {
+    background: #10b981;
+}
+
+.toast.error::before {
+    background: #ef4444;
+}
+
+.toast.warning::before {
+    background: #f59e0b;
+}
+
+.toast.info::before {
+    background: #3b82f6;
+}
+
+.toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.toast-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.toast-close:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.toast-message {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+@keyframes toast-slide-in {
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-slide-out {
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.toast.removing {
+    animation: toast-slide-out 0.3s ease-in forwards;
+}
+
+/* Dark mode toast */
+.dark-mode .toast {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
 }
 
 /* ===== TIPOGRAFIA ===== */
@@ -1082,4 +1258,123 @@ main {
         font-size: 1.25rem;
         margin-bottom: 1rem;
     }
+}
+
+/* ===== MICRO-INTERAÇÕES ===== */
+/* Botões com micro-interações */
+.btn {
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Links com micro-interações */
+a {
+    transition: var(--transition);
+    position: relative;
+}
+
+a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s var(--elastic);
+}
+
+a:hover::after {
+    width: 100%;
+}
+
+/* Cards com micro-interações */
+.post-item {
+    transition: var(--transition);
+}
+
+.post-item:hover {
+    /* Removido o efeito de movimento */
+}
+
+/* Botão back to top melhorado */
+.back-to-top-btn {
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.back-to-top-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.back-to-top-btn:hover::before {
+    width: 200px;
+    height: 200px;
+}
+
+.back-to-top-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.back-to-top-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

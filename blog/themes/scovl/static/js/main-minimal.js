@@ -136,6 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicionar funcionalidade de back to top
     initBackToTop();
     
+    // Inicializar funcionalidades modernas de UX/UI
+    initToastSystem();
+    initSkeletonLoading();
+    
     console.log('✅ Inicialização da página concluída');
 });
 
@@ -222,18 +226,27 @@ function initCodeCopy() {
             const textToCopy = code.textContent;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                // Feedback visual
-                const originalText = this.innerHTML;
-                this.innerHTML = '✅ Copiado!';
-                this.style.background = 'rgba(34, 197, 94, 0.2)';
-                
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.style.background = 'rgba(255, 255, 255, 0.1)';
-                }, 2000);
+                // Feedback visual com toast
+                if (window.showToast) {
+                    window.showToast('Código copiado para a área de transferência!', 'success', 'Sucesso', 3000);
+                } else {
+                    // Fallback para navegadores antigos
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '✅ Copiado!';
+                    this.style.background = 'rgba(34, 197, 94, 0.2)';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }, 2000);
+                }
             }).catch(err => {
                 console.error('Erro ao copiar:', err);
-                this.innerHTML = '❌ Erro';
+                if (window.showToast) {
+                    window.showToast('Erro ao copiar código', 'error', 'Erro', 3000);
+                } else {
+                    this.innerHTML = '❌ Erro';
+                }
             });
         });
         
@@ -378,6 +391,8 @@ function checkUrlChange() {
             initCodeCopy();
             initDarkMode();
             initBackToTop();
+            initToastSystem();
+            initSkeletonLoading();
         }, 100);
     }
 }
@@ -394,4 +409,117 @@ document.addEventListener('visibilitychange', function() {
             initBackToTop();
         }, 50);
     }
-}); 
+});
+
+// ===== TOAST NOTIFICATIONS =====
+function initToastSystem() {
+    // Criar container de toast se não existir
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Função global para mostrar toast
+    window.showToast = function(message, type = 'info', title = null, duration = 5000) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const toastHeader = document.createElement('div');
+        toastHeader.className = 'toast-header';
+        
+        const toastTitle = document.createElement('div');
+        toastTitle.className = 'toast-title';
+        toastTitle.textContent = title || type.charAt(0).toUpperCase() + type.slice(1);
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'toast-close';
+        closeBtn.innerHTML = '×';
+        closeBtn.onclick = () => removeToast(toast);
+        
+        const toastMessage = document.createElement('div');
+        toastMessage.className = 'toast-message';
+        toastMessage.textContent = message;
+        
+        toastHeader.appendChild(toastTitle);
+        toastHeader.appendChild(closeBtn);
+        toast.appendChild(toastHeader);
+        toast.appendChild(toastMessage);
+        
+        toastContainer.appendChild(toast);
+        
+        // Auto-remover após duração
+        setTimeout(() => {
+            removeToast(toast);
+        }, duration);
+        
+        return toast;
+    };
+    
+    function removeToast(toast) {
+        toast.classList.add('removing');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }
+    
+    console.log('✅ Sistema de toast inicializado');
+}
+
+// ===== SKELETON LOADING =====
+function initSkeletonLoading() {
+    // Função para mostrar skeleton
+    window.showSkeleton = function(container, type = 'post') {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton-container';
+        
+        if (type === 'post') {
+            skeleton.innerHTML = `
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text" style="width: 60%;"></div>
+            `;
+        } else if (type === 'list') {
+            skeleton.innerHTML = `
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-button" style="margin-top: 1rem;"></div>
+            `;
+        }
+        
+        container.appendChild(skeleton);
+        return skeleton;
+    };
+    
+    // Função para remover skeleton
+    window.hideSkeleton = function(skeleton) {
+        if (skeleton && skeleton.parentNode) {
+            skeleton.parentNode.removeChild(skeleton);
+        }
+    };
+    
+    // Auto-skeleton para posts que estão carregando
+    const posts = document.querySelectorAll('.post');
+    posts.forEach(post => {
+        if (post.querySelector('img')) {
+            const images = post.querySelectorAll('img');
+            images.forEach(img => {
+                if (!img.complete) {
+                    img.style.opacity = '0';
+                    img.addEventListener('load', function() {
+                        this.style.transition = 'opacity 0.3s ease';
+                        this.style.opacity = '1';
+                    });
+                }
+            });
+        }
+    });
+    
+    console.log('✅ Sistema de skeleton loading inicializado');
+} 
