@@ -1,0 +1,226 @@
+{{ $feature := .Get "feature" | default "all" }}
+
+<div class="i18n-demo">
+    <h3>🌍 Internacionalização (i18n)</h3>
+    
+    {{ if or (eq $feature "all") (eq $feature "rtl") }}
+    <div class="i18n-section">
+        <h4>📝 Suporte RTL</h4>
+        <p>Suporte completo para idiomas da direita para a esquerda (RTL)</p>
+        <div class="i18n-examples">
+            <div class="i18n-example">
+                <h5>Idiomas RTL Suportados</h5>
+                <p>Árabe, Hebraico, Persa, Urdu</p>
+                <div class="result">
+                    <span data-i18n="rtl_support">Suporte RTL ativo</span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Direção do Texto</h5>
+                <p>Detecção automática de direção</p>
+                <div class="result">
+                    <span data-i18n="text_direction">Direção: {direction}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "dates") }}
+    <div class="i18n-section">
+        <h4>📅 Formatação de Datas</h4>
+        <p>Formatação localizada de datas e horários</p>
+        <div class="i18n-examples">
+            <div class="i18n-example">
+                <h5>Data Padrão</h5>
+                <p>Formato localizado padrão</p>
+                <div class="result">
+                    <span data-date="2024-01-15" data-date-format="default"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Data Relativa</h5>
+                <p>Tempo relativo localizado</p>
+                <div class="result">
+                    <span data-date="2024-01-10" data-date-format="relative"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Data Longa</h5>
+                <p>Formato completo localizado</p>
+                <div class="result">
+                    <span data-date="2024-01-15" data-date-format="long"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Data Curta</h5>
+                <p>Formato compacto localizado</p>
+                <div class="result">
+                    <span data-date="2024-01-15" data-date-format="short"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "numbers") }}
+    <div class="i18n-section">
+        <h4>🔢 Formatação de Números</h4>
+        <p>Formatação localizada de números e moedas</p>
+        <div class="i18n-examples">
+            <div class="i18n-example">
+                <h5>Número Decimal</h5>
+                <p>Formato decimal localizado</p>
+                <div class="result">
+                    <span data-number="1234.56" data-number-format="decimal"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Moeda (USD)</h5>
+                <p>Formato de moeda localizado</p>
+                <div class="result">
+                    <span data-number="1234.56" data-number-format="currency" data-currency="USD"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Moeda (EUR)</h5>
+                <p>Formato de moeda europeu</p>
+                <div class="result">
+                    <span data-number="1234.56" data-number-format="currency" data-currency="EUR"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Porcentagem</h5>
+                <p>Formato de porcentagem localizado</p>
+                <div class="result">
+                    <span data-number="75.5" data-number-format="percent"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "translations") }}
+    <div class="i18n-section">
+        <h4>🌐 Sistema de Traduções</h4>
+        <p>Gerenciamento completo de traduções</p>
+        <div class="i18n-examples">
+            <div class="i18n-example">
+                <h5>Tradução Simples</h5>
+                <p>Tradução básica de texto</p>
+                <div class="result">
+                    <span data-i18n="read_more"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Tradução com Parâmetros</h5>
+                <p>Tradução com variáveis</p>
+                <div class="result">
+                    <span data-i18n="welcome_message" data-i18n-params='{"name": "João"}'></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Tradução Dinâmica</h5>
+                <p>Tradução via JavaScript</p>
+                <div class="result">
+                    <span id="dynamic-translation"></span>
+                </div>
+            </div>
+            <div class="i18n-example">
+                <h5>Seletor de Idioma</h5>
+                <p>Troca de idioma em tempo real</p>
+                <div class="result">
+                    <button class="btn btn-primary" onclick="testTranslation()">
+                        <span data-i18n="test_translation">Testar Tradução</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+<script>
+// Test translation function
+function testTranslation() {
+    if (window.I18n) {
+        const testKey = 'test_message';
+        const translated = window.I18n.t(testKey);
+        showToast(translated, 'info');
+        
+        // Update dynamic translation
+        const dynamicElement = document.getElementById('dynamic-translation');
+        if (dynamicElement) {
+            dynamicElement.textContent = window.I18n.t('dynamic_text');
+        }
+    } else {
+        showToast('Sistema de tradução não disponível', 'error');
+    }
+}
+
+// Add missing translations for demo
+if (window.I18n) {
+    // Extend translations for demo
+    const demoTranslations = {
+        'en': {
+            'rtl_support': 'RTL Support Active',
+            'text_direction': 'Direction: {direction}',
+            'welcome_message': 'Welcome, {name}!',
+            'test_translation': 'Test Translation',
+            'test_message': 'This is a test message in English',
+            'dynamic_text': 'Dynamic translation loaded'
+        },
+        'pt': {
+            'rtl_support': 'Suporte RTL Ativo',
+            'text_direction': 'Direção: {direction}',
+            'welcome_message': 'Bem-vindo, {name}!',
+            'test_translation': 'Testar Tradução',
+            'test_message': 'Esta é uma mensagem de teste em Português',
+            'dynamic_text': 'Tradução dinâmica carregada'
+        },
+        'es': {
+            'rtl_support': 'Soporte RTL Activo',
+            'text_direction': 'Dirección: {direction}',
+            'welcome_message': '¡Bienvenido, {name}!',
+            'test_translation': 'Probar Traducción',
+            'test_message': 'Este es un mensaje de prueba en Español',
+            'dynamic_text': 'Traducción dinámica cargada'
+        },
+        'ar': {
+            'rtl_support': 'دعم RTL نشط',
+            'text_direction': 'الاتجاه: {direction}',
+            'welcome_message': 'مرحباً، {name}!',
+            'test_translation': 'اختبار الترجمة',
+            'test_message': 'هذه رسالة اختبار باللغة العربية',
+            'dynamic_text': 'تم تحميل الترجمة الديناميكية'
+        }
+    };
+    
+    // Merge demo translations
+    Object.keys(demoTranslations).forEach(lang => {
+        if (!window.I18n.translations) {
+            window.I18n.translations = {};
+        }
+        if (!window.I18n.translations[lang]) {
+            window.I18n.translations[lang] = {};
+        }
+        Object.assign(window.I18n.translations[lang], demoTranslations[lang]);
+    });
+    
+    // Update direction text
+    const directionElement = document.querySelector('[data-i18n="text_direction"]');
+    if (directionElement) {
+        const direction = window.I18n.isRTL ? 'RTL' : 'LTR';
+        directionElement.setAttribute('data-i18n-params', JSON.stringify({direction}));
+    }
+}
+
+// Initialize demo when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Update dynamic translation
+    const dynamicElement = document.getElementById('dynamic-translation');
+    if (dynamicElement && window.I18n) {
+        dynamicElement.textContent = window.I18n.t('dynamic_text');
+    }
+});
+</script>

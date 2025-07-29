@@ -147,6 +147,13 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Inicialização da página concluída');
 });
 
+// Initialize i18n when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.I18n) {
+        window.I18n.init();
+    }
+});
+
 // ===== MERMAID =====
 function initMermaid() {
     if (typeof mermaid !== 'undefined') {
@@ -372,6 +379,24 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
+});
+
+// ===== LANGUAGE SWITCHER =====
+function toggleLanguageMenu() {
+    const menu = document.getElementById('language-menu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// Close language menu when clicking outside
+document.addEventListener('click', function(event) {
+    const switcher = document.getElementById('language-switcher');
+    const menu = document.getElementById('language-menu');
+    
+    if (switcher && menu && !switcher.contains(event.target)) {
+        menu.classList.remove('show');
+    }
 });
 
 // ===== DETECÇÃO DE MUDANÇA DE PÁGINA =====

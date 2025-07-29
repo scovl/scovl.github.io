@@ -2,6 +2,7 @@
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">{{ .Title }}</h1>
+        {{ if .Date }}
         <div class="post-meta">
             <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
                 📅 {{ .Date.Format "02/01/2006" }}
@@ -20,6 +21,7 @@
             </div>
             {{ end }}
         </div>
+        {{ end }}
     </header>
     
     <div class="post-content">
@@ -29,7 +31,9 @@
     <!-- Related Posts -->
     {{ partial "related-posts.html" . }}
     
-    <!-- Comments -->
+    <!-- Comments - Only for posts, not for pages -->
+    {{ if eq .Type "post" }}
     {{ partial "comments.html" . }}
+    {{ end }}
 </article>
 {{ end }} 

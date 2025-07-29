@@ -1,0 +1,25 @@
+{{ $currentLang := .Site.Language.Lang | default "pt" }}
+{{ $baseURL := .Site.BaseURL }}
+
+<!-- Language Switcher -->
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">{{ .Site.Language.LanguageName | default "Português" }}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        {{ range .Site.Languages }}
+            {{ if eq .Lang "pt" }}
+                <a href="{{ $baseURL }}" class="language-option {{ if eq . $.Site.Language }}active{{ end }}">
+                    {{ .LanguageName }}
+                </a>
+            {{ else }}
+                <a href="{{ $baseURL }}{{ .Lang }}/" class="language-option {{ if eq . $.Site.Language }}active{{ end }}">
+                    {{ .LanguageName }}
+                </a>
+            {{ end }}
+        {{ end }}
+    </div>
+</div>

@@ -1,0 +1,390 @@
+{{ $currentLang := .Site.Language.Lang | default "en" }}
+{{ $isRTL := eq $currentLang "ar" "he" "fa" "ur" }}
+
+<!-- RTL Support -->
+{{ if $isRTL }}
+<style>
+    /* RTL Styles */
+    body {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    .container {
+        direction: rtl;
+    }
+    
+    .header,
+    .footer,
+    .post-content,
+    .sidebar {
+        direction: rtl;
+    }
+    
+    /* RTL specific adjustments */
+    .post-meta time,
+    .post-meta span {
+        margin-left: 0;
+        margin-right: var(--spacing-sm);
+    }
+    
+    .post-tags .tag {
+        margin-left: 0;
+        margin-right: var(--spacing-xs);
+    }
+    
+    .back-to-top-btn {
+        left: auto;
+        right: var(--spacing-lg);
+    }
+    
+    .toast-container {
+        left: auto;
+        right: var(--spacing-lg);
+    }
+    
+    /* RTL Grid adjustments */
+    .grid-container {
+        direction: rtl;
+    }
+    
+    .grid-item {
+        direction: rtl;
+    }
+    
+    /* RTL Navigation */
+    .nav-menu {
+        direction: rtl;
+    }
+    
+    .nav-menu li {
+        margin-left: 0;
+        margin-right: var(--spacing-md);
+    }
+    
+    /* RTL Forms */
+    input, textarea, select {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* RTL Code blocks */
+    pre, code {
+        direction: ltr;
+        text-align: left;
+    }
+    
+    /* RTL Tables */
+    table {
+        direction: rtl;
+    }
+    
+    th, td {
+        text-align: right;
+    }
+    
+    /* RTL Lists */
+    ul, ol {
+        padding-left: 0;
+        padding-right: var(--spacing-lg);
+    }
+    
+    /* RTL Buttons */
+    .btn {
+        direction: rtl;
+    }
+    
+    /* RTL Cards */
+    .card {
+        direction: rtl;
+    }
+    
+    /* RTL Metrics */
+    .metric {
+        direction: rtl;
+    }
+    
+    .metric-label {
+        margin-left: 0;
+        margin-right: var(--spacing-sm);
+    }
+</style>
+{{ end }}
+
+<!-- Internationalization JavaScript -->
+<script>
+// Internationalization utilities
+const I18n = {
+    currentLang: '{{ $currentLang }}',
+    isRTL: {{ $isRTL }},
+    
+    // Date formatting
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    // Number formatting
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    // Currency formatting
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    // Relative time formatting
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    // Get locale based on current language
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    // Translation function
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        // Replace parameters
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    // Initialize i18n
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    // Update page direction for RTL
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    // Update date formats throughout the page
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    // Update number formats throughout the page
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    // Update translations throughout the page
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            // Get parameters from data attributes
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+// Expose to global scope
+window.I18n = I18n;
+</script>
