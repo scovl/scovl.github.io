@@ -1,0 +1,12 @@
+{{ $type := .Get "type" | default "auto-fit" }}
+{{ $items := .Get "items" | default "6" }}
+
+<div class="grid-container {{ $type }}">
+    {{ range seq $items }}
+    <div class="grid-item animate-on-scroll">
+        <h3>Item {{ . }}</h3>
+        <p>Este é o conteúdo do item {{ . }}. Demonstra como o CSS Grid pode criar layouts responsivos e modernos.</p>
+        <modern-badge variant="primary">Grid Item</modern-badge>
+    </div>
+    {{ end }}
+</div>

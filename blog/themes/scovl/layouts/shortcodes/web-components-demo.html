@@ -1,0 +1,12 @@
+{{ $cards := .Get "cards" | default "3" }}
+
+<div class="animate-stagger">
+    {{ range seq $cards }}
+    <modern-card title="Card {{ . }}" image="/images/demo-{{ . }}.jpg" class="animate-on-scroll">
+        <p>Este é um Web Component personalizado. Ele usa Shadow DOM para encapsular estilos e comportamento.</p>
+        <modern-badge variant="warning">Web Component</modern-badge>
+        <br><br>
+        <modern-progress value="{{ mul . 25 }}" max="100"></modern-progress>
+    </modern-card>
+    {{ end }}
+</div>

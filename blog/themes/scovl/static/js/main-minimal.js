@@ -140,6 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initToastSystem();
     initSkeletonLoading();
     
+    // Inicializar tecnologias modernas
+    initIntersectionObserver();
+    initWebComponents();
+    
     console.log('✅ Inicialização da página concluída');
 });
 
@@ -393,6 +397,8 @@ function checkUrlChange() {
             initBackToTop();
             initToastSystem();
             initSkeletonLoading();
+            initIntersectionObserver();
+            initWebComponents();
         }, 100);
     }
 }
@@ -522,4 +528,238 @@ function initSkeletonLoading() {
     });
     
     console.log('✅ Sistema de skeleton loading inicializado');
+}
+
+// ===== INTERSECTION OBSERVER =====
+function initIntersectionObserver() {
+    // Verificar se Intersection Observer é suportado
+    if (!('IntersectionObserver' in window)) {
+        console.warn('❌ Intersection Observer não suportado');
+        return;
+    }
+    
+    // Configurações do observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+    
+    // Observer para animações de scroll
+    const animationObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                
+                // Parallax effect
+                if (entry.target.classList.contains('parallax')) {
+                    const speed = entry.target.dataset.speed || 0.5;
+                    const yPos = -(entry.boundingClientRect.top * speed);
+                    entry.target.style.transform = `translateY(${yPos}px)`;
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observer para lazy loading
+    const lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                lazyObserver.unobserve(img);
+            }
+        });
+    }, observerOptions);
+    
+    // Observar elementos com animações
+    document.querySelectorAll('.animate-on-scroll, .animate-stagger, .parallax').forEach(el => {
+        animationObserver.observe(el);
+    });
+    
+    // Observar imagens lazy
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        lazyObserver.observe(img);
+    });
+    
+    console.log('✅ Intersection Observer inicializado');
+}
+
+// ===== WEB COMPONENTS =====
+function initWebComponents() {
+    // Verificar se Custom Elements são suportados
+    if (!('customElements' in window)) {
+        console.warn('❌ Custom Elements não suportados');
+        return;
+    }
+    
+    // Componente de Card
+    class ModernCard extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+        }
+        
+        connectedCallback() {
+            this.render();
+        }
+        
+        render() {
+            const title = this.getAttribute('title') || 'Card Title';
+            const content = this.innerHTML || 'Card content goes here';
+            const image = this.getAttribute('image') || '';
+            
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        display: block;
+                        background: var(--bg-primary, #fff);
+                        border: 1px solid var(--border-color, #e2e8f0);
+                        border-radius: var(--border-radius, 0.5rem);
+                        padding: var(--spacing-lg, 1.5rem);
+                        transition: all 0.2s ease;
+                        box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+                    }
+                    
+                    :host(:hover) {
+                        transform: translateY(-2px);
+                        box-shadow: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+                    }
+                    
+                    .card-image {
+                        width: 100%;
+                        height: 200px;
+                        object-fit: cover;
+                        border-radius: var(--border-radius, 0.5rem);
+                        margin-bottom: var(--spacing-md, 1rem);
+                    }
+                    
+                    .card-title {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        margin-bottom: var(--spacing-sm, 0.5rem);
+                        color: var(--text-primary, #1e293b);
+                    }
+                    
+                    .card-content {
+                        color: var(--text-secondary, #64748b);
+                        line-height: 1.6;
+                    }
+                </style>
+                <div class="card">
+                    ${image ? `<img src="${image}" alt="${title}" class="card-image">` : ''}
+                    <h3 class="card-title">${title}</h3>
+                    <div class="card-content">${content}</div>
+                </div>
+            `;
+        }
+    }
+    
+    // Componente de Badge
+    class ModernBadge extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+        }
+        
+        connectedCallback() {
+            this.render();
+        }
+        
+        render() {
+            const text = this.textContent || 'Badge';
+            const variant = this.getAttribute('variant') || 'default';
+            
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        display: inline-block;
+                        padding: 0.25rem 0.75rem;
+                        border-radius: 9999px;
+                        font-size: 0.75rem;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    }
+                    
+                    :host([variant="primary"]) {
+                        background: var(--primary-color, #2563eb);
+                        color: white;
+                    }
+                    
+                    :host([variant="success"]) {
+                        background: #10b981;
+                        color: white;
+                    }
+                    
+                    :host([variant="warning"]) {
+                        background: #f59e0b;
+                        color: white;
+                    }
+                    
+                    :host([variant="error"]) {
+                        background: #ef4444;
+                        color: white;
+                    }
+                    
+                    :host([variant="default"]) {
+                        background: var(--bg-secondary, #f8fafc);
+                        color: var(--text-secondary, #64748b);
+                    }
+                </style>
+                <span>${text}</span>
+            `;
+        }
+    }
+    
+    // Componente de Progress
+    class ModernProgress extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+        }
+        
+        connectedCallback() {
+            this.render();
+        }
+        
+        render() {
+            const value = this.getAttribute('value') || 0;
+            const max = this.getAttribute('max') || 100;
+            const percentage = (value / max) * 100;
+            
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        display: block;
+                        width: 100%;
+                        height: 8px;
+                        background: var(--bg-tertiary, #f1f5f9);
+                        border-radius: 4px;
+                        overflow: hidden;
+                    }
+                    
+                    .progress-bar {
+                        height: 100%;
+                        background: var(--primary-color, #2563eb);
+                        border-radius: 4px;
+                        transition: width 0.3s ease;
+                        width: ${percentage}%;
+                    }
+                </style>
+                <div class="progress-bar"></div>
+            `;
+        }
+    }
+    
+    // Registrar componentes
+    try {
+        customElements.define('modern-card', ModernCard);
+        customElements.define('modern-badge', ModernBadge);
+        customElements.define('modern-progress', ModernProgress);
+        console.log('✅ Web Components registrados');
+    } catch (error) {
+        console.warn('❌ Erro ao registrar Web Components:', error);
+    }
 } 

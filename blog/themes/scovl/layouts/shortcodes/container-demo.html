@@ -1,0 +1,13 @@
+{{ $cards := .Get "cards" | default "4" }}
+
+<div class="container-responsive">
+    {{ range seq $cards }}
+    <div class="container-query">
+        <div class="card animate-on-scroll">
+            <h3>Card {{ . }}</h3>
+            <p>Este card se adapta ao tamanho do seu container usando Container Queries. Redimensione a janela para ver o efeito!</p>
+            <modern-badge variant="success">Responsivo</modern-badge>
+        </div>
+    </div>
+    {{ end }}
+</div>
