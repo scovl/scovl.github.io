@@ -710,6 +710,61 @@ main {
     color: var(--primary-color);
 }
 
+/* ===== BACK TO TOP BUTTON ===== */
+.back-to-top-container {
+    display: flex;
+    justify-content: center;
+    margin: var(--spacing-lg) 0;
+}
+
+.back-to-top-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    /* Debug: garantir que o botão é clicável */
+    position: relative;
+    z-index: 10;
+    user-select: none;
+}
+
+.back-to-top-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.back-to-top-btn:active {
+    transform: translateY(0);
+}
+
+.back-to-top-btn svg {
+    transition: var(--transition);
+}
+
+.back-to-top-btn:hover svg {
+    transform: translateY(-1px);
+}
+
+/* Dark mode support for back to top button */
+.dark-mode .back-to-top-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.dark-mode .back-to-top-btn:hover {
+    background: var(--primary-dark);
+}
+
 /* ===== RESPONSIVIDADE ===== */
 
 /* Desktop grande (acima de 1200px) */

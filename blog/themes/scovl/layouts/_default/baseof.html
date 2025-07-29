@@ -23,23 +23,23 @@
     {{ end }}
     
     <!-- Prism.js Scripts -->
-    <script src="{{ "vendor/prism/prism-core.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-clike.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-c.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-cpp.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-rust.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-clojure.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-swift.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-bash.min.js" | relURL }}"></script>
-    <script src="{{ "vendor/prism/prism-autoloader.min.js" | relURL }}"></script>
+    <script src="{{ "vendor/prism/prism-core.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-clike.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-c.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-cpp.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-rust.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-clojure.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-swift.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-bash.min.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "vendor/prism/prism-autoloader.min.js" | relURL }}?v={{ now.Unix }}"></script>
     
     <!-- JavaScript -->
-    <script src="{{ "js/main-minimal.js" | relURL }}"></script>
-    <script src="{{ "js/lazy-loading.js" | relURL }}"></script>
+    <script src="{{ "js/main-minimal.js" | relURL }}?v={{ now.Unix }}"></script>
+    <script src="{{ "js/lazy-loading.js" | relURL }}?v={{ now.Unix }}"></script>
     
     <!-- Custom JS from config if any -->
     {{ range .Site.Params.customJS }}
-    <script src="{{ . | relURL }}"></script>
+    <script src="{{ . | relURL }}?v={{ now.Unix }}"></script>
     {{ end }}
 </body>
 </html> 

@@ -1,5 +1,64 @@
 // ===== FUNCIONALIDADES PRINCIPAIS =====
 
+console.log('main-minimal.js carregado com sucesso - v{{ now.Unix }}');
+
+// ===== LIMPEZA E INICIALIZAÇÃO =====
+function cleanupPage() {
+    console.log('🧹 Iniciando limpeza da página...');
+    
+    // Remover elementos dinâmicos criados anteriormente
+    const existingThemeToggle = document.querySelector('.theme-toggle');
+    if (existingThemeToggle) {
+        existingThemeToggle.remove();
+        console.log('✅ Botão de tema removido');
+    }
+    
+    // Limpar event listeners duplicados
+    const backToTopButton = document.getElementById('back-to-top');
+    if (backToTopButton) {
+        backToTopButton.removeAttribute('data-initialized');
+        console.log('✅ Atributos do botão back-to-top limpos');
+    }
+    
+    // Forçar recarregamento de estilos
+    const styleSheets = document.styleSheets;
+    for (let i = 0; i < styleSheets.length; i++) {
+        try {
+            const rules = styleSheets[i].cssRules || styleSheets[i].rules;
+            if (rules) {
+                console.log(`📄 Estilos da folha ${i} carregados: ${rules.length} regras`);
+            }
+        } catch (e) {
+            console.log(`⚠️ Erro ao acessar folha de estilo ${i}:`, e);
+        }
+    }
+    
+    console.log('✅ Limpeza da página concluída');
+}
+
+// ===== REINICIALIZAÇÃO FORÇADA =====
+function forceReinitialize() {
+    console.log('🔄 Forçando reinicialização completa...');
+    
+    // Limpar tudo
+    cleanupPage();
+    
+    // Aguardar um pouco e reinicializar
+    setTimeout(() => {
+        console.log('🔄 Reinicializando funcionalidades...');
+        
+        // Reinicializar tudo
+        initPrism();
+        initMermaid();
+        initSmoothScroll();
+        initCodeCopy();
+        initDarkMode();
+        initBackToTop();
+        
+        console.log('✅ Reinicialização completa concluída');
+    }, 200);
+}
+
 // ===== PRISM.JS =====
 function initPrism() {
     try {
@@ -54,6 +113,11 @@ function initPrism() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔄 Inicializando página...');
+    
+    // Limpar elementos anteriores
+    cleanupPage();
+    
     // Inicializar Prism.js para syntax highlighting
     initPrism();
     
@@ -68,6 +132,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Adicionar funcionalidade de tema escuro (opcional)
     initDarkMode();
+    
+    // Adicionar funcionalidade de back to top
+    initBackToTop();
+    
+    console.log('✅ Inicialização da página concluída');
 });
 
 // ===== MERMAID =====
@@ -176,6 +245,13 @@ function initCodeCopy() {
 
 // ===== TEMA ESCURO =====
 function initDarkMode() {
+    // Verificar se já existe um botão de tema
+    const existingThemeToggle = document.querySelector('.theme-toggle');
+    if (existingThemeToggle) {
+        console.log('✅ Botão de tema já existe, pulando criação...');
+        return;
+    }
+    
     // Criar botão de alternar tema (opcional)
     const themeToggle = document.createElement('button');
     themeToggle.className = 'theme-toggle';
@@ -198,6 +274,7 @@ function initDarkMode() {
     
     // Adicionar ao body
     document.body.appendChild(themeToggle);
+    console.log('✅ Botão de tema criado');
     
     // Alternar tema
     themeToggle.addEventListener('click', function() {
@@ -209,6 +286,61 @@ function initDarkMode() {
             this.innerHTML = '🌙';
         }
     });
+}
+
+// ===== BACK TO TOP =====
+function initBackToTop() {
+    console.log('Iniciando funcionalidade "Voltar ao topo"...');
+    
+    // Aguardar um pouco para garantir que o DOM está completamente carregado
+    setTimeout(() => {
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        if (!backToTopButton) {
+            console.warn('❌ Botão "Voltar ao topo" não encontrado no DOM');
+            return;
+        }
+        
+        console.log('✅ Botão "Voltar ao topo" encontrado:', backToTopButton);
+        
+        // Verificar se já tem event listeners (evitar duplicação)
+        if (backToTopButton.hasAttribute('data-initialized')) {
+            console.log('✅ Botão já inicializado, pulando...');
+            return;
+        }
+        
+        // Marcar como inicializado
+        backToTopButton.setAttribute('data-initialized', 'true');
+        
+        // Smooth scroll to top when button is clicked
+        backToTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🎯 Botão "Voltar ao topo" clicado - iniciando scroll...');
+            
+            try {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                console.log('✅ Scroll iniciado com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao fazer scroll:', error);
+                // Fallback para navegadores que não suportam smooth scroll
+                window.scrollTo(0, 0);
+            }
+        });
+        
+        // Adicionar também um listener para tecla Enter
+        backToTopButton.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+        
+        console.log('✅ Funcionalidade "Voltar ao topo" inicializada com sucesso');
+    }, 100);
 }
 
 // ===== EVENT LISTENERS ADICIONAIS =====
@@ -223,4 +355,43 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
+});
+
+// ===== DETECÇÃO DE MUDANÇA DE PÁGINA =====
+// Para navegação SPA ou mudanças dinâmicas
+let currentUrl = window.location.href;
+
+// Verificar mudanças de URL
+function checkUrlChange() {
+    if (currentUrl !== window.location.href) {
+        console.log('🔄 URL mudou, limpando e reinicializando...');
+        currentUrl = window.location.href;
+        
+        // Aguardar um pouco para o DOM atualizar
+        setTimeout(() => {
+            cleanupPage();
+            
+            // Reinicializar funcionalidades
+            initPrism();
+            initMermaid();
+            initSmoothScroll();
+            initCodeCopy();
+            initDarkMode();
+            initBackToTop();
+        }, 100);
+    }
+}
+
+// Verificar mudanças a cada 100ms
+setInterval(checkUrlChange, 100);
+
+// Listener para mudanças de visibilidade da página
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log('📄 Página voltou a ficar visível, verificando estado...');
+        setTimeout(() => {
+            cleanupPage();
+            initBackToTop();
+        }, 50);
+    }
 }); 

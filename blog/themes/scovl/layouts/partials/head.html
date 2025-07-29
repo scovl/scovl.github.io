@@ -6,17 +6,17 @@
 {{ partial "performance.html" . }}
 
 <!-- CSS Principal -->
-<link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/main.css" | relURL }}?v={{ now.Unix }}">
 
 <!-- Fontes locais -->
-<link rel="stylesheet" href="{{ "vendor/fonts/fonts.css" | relURL }}">
+<link rel="stylesheet" href="{{ "vendor/fonts/fonts.css" | relURL }}?v={{ now.Unix }}">
 
 <!-- Prism.js local para syntax highlighting -->
-<link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}">
+<link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}?v={{ now.Unix }}">
 
 {{ if .Site.Params.mermaid }}
 <!-- Mermaid local para diagramas -->
-<script src="{{ "vendor/mermaid/mermaid.min.js" | relURL }}"></script>
+<script src="{{ "vendor/mermaid/mermaid.min.js" | relURL }}?v={{ now.Unix }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
