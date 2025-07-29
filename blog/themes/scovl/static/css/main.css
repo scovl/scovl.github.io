@@ -1715,6 +1715,138 @@ main {
     border-color: var(--border-color);
 }
 
+/* ===== A/B TESTING DEMO ===== */
+.ab-test-demo {
+    margin: var(--spacing-2xl) 0;
+    padding: var(--spacing-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.ab-test-demo h3 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.ab-test-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+.ab-test-controls .btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+.ab-test-info {
+    background: var(--bg-primary);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-top: var(--spacing-lg);
+}
+
+.ab-test-info p {
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.ab-test-info strong {
+    color: var(--text-primary);
+}
+
+/* Dark mode for A/B testing demo */
+.dark-mode .ab-test-demo {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.dark-mode .ab-test-info {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+/* ===== ANALYTICS DEMO ===== */
+.analytics-demo {
+    margin: var(--spacing-2xl) 0;
+    padding: var(--spacing-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.analytics-demo h3 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.web-vitals-demo,
+.performance-demo,
+.error-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background: var(--bg-primary);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.metric-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.metric-value {
+    font-family: var(--font-mono);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.error-demo {
+    grid-template-columns: 1fr 1fr;
+}
+
+.error-demo .btn {
+    width: 100%;
+}
+
+/* Dark mode for analytics demo */
+.dark-mode .analytics-demo {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+.dark-mode .web-vitals-demo,
+.dark-mode .performance-demo,
+.dark-mode .error-demo {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+}
+
+.dark-mode .metric {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
 /* ===== MICRO-INTERAÇÕES ===== */
 /* Botões com micro-interações */
 .btn {

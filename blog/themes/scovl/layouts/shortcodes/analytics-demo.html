@@ -1,0 +1,162 @@
+{{ $feature := .Get "feature" | default "all" }}
+
+<div class="analytics-demo">
+    <h3>📊 Analytics e Monitoramento</h3>
+    
+    {{ if or (eq $feature "all") (eq $feature "web-vitals") }}
+    <div class="feature-section">
+        <h4>⚡ Web Vitals</h4>
+        <p>Monitoramento dos Core Web Vitals: CLS, FID, FCP, LCP, TTFB</p>
+        <div class="web-vitals-demo">
+            <div class="metric">
+                <span class="metric-label">CLS:</span>
+                <span class="metric-value" id="cls-value">Carregando...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">FID:</span>
+                <span class="metric-value" id="fid-value">Carregando...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">LCP:</span>
+                <span class="metric-value" id="lcp-value">Carregando...</span>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "performance") }}
+    <div class="feature-section">
+        <h4>🚀 Performance Monitoring</h4>
+        <p>Monitoramento detalhado de performance da página</p>
+        <div class="performance-demo">
+            <div class="metric">
+                <span class="metric-label">DNS:</span>
+                <span class="metric-value" id="dns-value">-</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">TCP:</span>
+                <span class="metric-value" id="tcp-value">-</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">TTFB:</span>
+                <span class="metric-value" id="ttfb-value">-</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total:</span>
+                <span class="metric-value" id="total-value">-</span>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "error-tracking") }}
+    <div class="feature-section">
+        <h4>🐛 Error Boundary</h4>
+        <p>Captura e rastreamento de erros JavaScript</p>
+        <div class="error-demo">
+            <button class="btn btn-warning" onclick="triggerError()">
+                Simular Erro
+            </button>
+            <button class="btn btn-danger" onclick="triggerPromiseError()">
+                Simular Promise Error
+            </button>
+        </div>
+    </div>
+    {{ end }}
+    
+    {{ if or (eq $feature "all") (eq $feature "ab-testing") }}
+    <div class="feature-section">
+        <h4>🧪 A/B Testing</h4>
+        <p>Framework para testes A/B com tracking automático</p>
+        <div class="ab-test-demo" data-experiment="button-color" data-variant="control">
+            <h3>🧪 A/B Test Demo</h3>
+            <p>Este é um exemplo de A/B testing. Diferentes usuários verão diferentes versões.</p>
+            
+            <div class="ab-test-controls">
+                <button class="btn btn-primary" onclick="trackABConversion('button-color', 'click')">
+                    Teste A - Azul
+                </button>
+                <button class="btn btn-success" onclick="trackABConversion('button-color', 'click')">
+                    Teste B - Verde
+                </button>
+            </div>
+            
+            <div class="ab-test-info">
+                <p><strong>Experimento:</strong> button-color</p>
+                <p><strong>Variante Atual:</strong> <span id="current-variant">control</span></p>
+                <p><strong>User ID:</strong> <span id="user-id"></span></p>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+<script>
+// Web Vitals Demo
+if (typeof getCLS !== 'undefined') {
+    getCLS((metric) => {
+        document.getElementById('cls-value').textContent = metric.value.toFixed(3);
+    });
+    getFID((metric) => {
+        document.getElementById('fid-value').textContent = metric.value + 'ms';
+    });
+    getLCP((metric) => {
+        document.getElementById('lcp-value').textContent = metric.value + 'ms';
+    });
+}
+
+// Performance Demo
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const perfData = performance.getEntriesByType('navigation')[0];
+        if (perfData) {
+            document.getElementById('dns-value').textContent = 
+                (perfData.domainLookupEnd - perfData.domainLookupStart).toFixed(0) + 'ms';
+            document.getElementById('tcp-value').textContent = 
+                (perfData.connectEnd - perfData.connectStart).toFixed(0) + 'ms';
+            document.getElementById('ttfb-value').textContent = 
+                (perfData.responseStart - perfData.requestStart).toFixed(0) + 'ms';
+            document.getElementById('total-value').textContent = 
+                (perfData.loadEventEnd - perfData.fetchStart).toFixed(0) + 'ms';
+        }
+    }, 100);
+});
+
+// Error Demo Functions
+function triggerError() {
+    try {
+        throw new Error('Erro simulado para teste');
+    } catch (error) {
+        console.error('Erro capturado:', error);
+        showToast('Erro simulado capturado!', 'warning');
+    }
+}
+
+function triggerPromiseError() {
+    Promise.reject(new Error('Promise error simulado'));
+}
+
+// A/B Testing Demo Functions
+function trackABConversion(experiment, conversionType) {
+    if (window.ABTesting) {
+        window.ABTesting.trackConversion(experiment, conversionType);
+        showToast('Conversão registrada: ' + conversionType, 'success');
+    } else {
+        showToast('A/B Testing não disponível', 'error');
+    }
+}
+
+// Update variant display
+document.addEventListener('DOMContentLoaded', function() {
+    const currentVariant = document.getElementById('current-variant');
+    const userId = document.getElementById('user-id');
+    
+    if (currentVariant) {
+        currentVariant.textContent = 'control';
+    }
+    
+    if (userId) {
+        userId.textContent = localStorage.getItem('ab_user_id') || 'Não definido';
+    }
+});
+</script>
