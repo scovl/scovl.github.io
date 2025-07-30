@@ -247,6 +247,48 @@ Para contribuir com o tema:
 
 Este tema está sob a licença MIT. Veja o arquivo LICENSE para detalhes.
 
+## 📋 Sistema de Sumário Automático (TOC)
+
+O tema inclui um sistema de Table of Contents (Sumário) moderno e responsivo:
+
+### ✨ Características
+
+- **Geração automática** - Criado automaticamente baseado nos headings do post
+- **Design moderno** - Interface elegante com animações suaves
+- **Totalmente responsivo** - Comportamento otimizado para mobile e desktop
+- **Barra de progresso** - Indicador visual do progresso de leitura
+- **Navegação inteligente** - Destaque automático da seção atual
+- **Acessibilidade** - Suporte completo a screen readers e navegação por teclado
+- **Configurável** - Controle total sobre quando e como exibir
+
+### ⚙️ Configuração
+
+Adicione ao seu `config.yml`:
+
+```yaml
+params:
+  toc:
+    enabled: true      # Habilitar/desabilitar TOC
+    minHeadings: 2     # Mínimo de headings para mostrar TOC
+    maxDepth: 4        # Profundidade máxima dos headings (H1-H4)
+```
+
+### 🎮 Controles
+
+**Desktop:**
+- Clique no ícone de toggle para expandir/recolher
+- `Ctrl/Cmd + Shift + T` para toggle rápido via teclado
+
+**Mobile:**
+- Botão flutuante no canto inferior direito
+- Painel deslizante na parte inferior da tela
+- `ESC` para fechar
+- Toque fora do painel para fechar
+
+### 🎨 Personalização
+
+O TOC herda as cores do tema automaticamente e inclui suporte para modo escuro. Você pode personalizar os estilos editando o CSS em `static/css/main.css`.
+
 ## 🆘 Suporte
 
 Para suporte ou dúvidas:
