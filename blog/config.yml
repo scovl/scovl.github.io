@@ -1,21 +1,38 @@
-baseurl: "https://scovl.github.io"
-title: scovl
-theme: scovl
-languageCode: pt-br
-copyright: Vitor Lobo
+baseURL: 'https://scovl.github.io/'
+languageCode: 'pt-br'
+title: 'scovl'
+theme: 'scovl'
 
-# Add Disqus configuration
-disqusShortname: "lobocode"
+# Configuração de Idiomas
+languages:
+  pt:
+    languageName: "Português"
+    weight: 1
+    title: "scovl"
+    contentDir: "content"
+  en:
+    languageName: "English"
+    weight: 2
+    title: "scovl"
+    contentDir: "content/en"
 
+# Configuração do Menu
+menu:
+  main:
+    - identifier: about
+      name: About
+      url: /page/about/
+      weight: 1
+    - identifier: contact
+      name: Contact
+      url: /page/contact/
+      weight: 2
+
+# Configurações Gerais
 pygmentsUseClasses: true
 pygmentsCodeFences: true
 pygmentsStyle: "dracula"
 DefaultContentLanguage: pt
-
-languages:
-  pt:
-    languageName: Portugues
-    weight: 1
 
 markup:
   highlight:
@@ -32,11 +49,7 @@ markup:
     renderer:
       unsafe: true
 
-
-
 privacy:
-  disqus:
-    disable: false
   googleAnalytics:
     anonymizeIP: true
     respectDoNotTrack: true
@@ -63,13 +76,6 @@ params:
   shareTwitter: true
   shareLinkedIn: true
   dateFormat: "Mon, Jan 2, 2006"
-  disqusShortname: "lobocode"
-  disqusEnabled: true
-  disqusTitle: "Comentários"
-  exponeaJsUrl: ""
-  exponeaTarget: ""
-  exponeaToken: ""
-  exponeaTrackVisits: false
   readingTime: true
   readingTimeText: "Estimated reading time:"
   fathomUrl: ""
@@ -80,18 +86,90 @@ params:
   mermaid:
     theme: "light"
     align: "center"
+  
+  # Configuração do Giscus (GitHub Discussions)
+  giscus:
+    repo: "scovl/scovl.github.io"
+    repoId: "MDEwOlJlcG9zaXRvcnkxMzg1OTI2ODA="
+    category: "General"
+    categoryId: "DIC_kwDOCELBqM4CthUV"
+    mapping: "pathname"
+    strict: "0"
+    reactionsEnabled: "1"
+    emitMetadata: "0"
+    inputPosition: "bottom"
+    theme: "light"
+    lang: "pt"
+  
+  # Configuração de Analytics e Monitoramento
+  analytics:
+    webVitals: true
+    webVitalsEndpoint: "/api/web-vitals"
+    performance: true
+    performanceEndpoint: "/api/performance"
+    errorTracking: true
+    errorEndpoint: "/api/errors"
+    abTesting: true
+    abEndpoint: "/api/ab-testing"
+    
+    # Configuração de A/B Testing
+    abTesting:
+      "button-color":
+        variants:
+          - name: "control"
+            weight: 50
+            classes: ["ab-control"]
+          - name: "variant-a"
+            weight: 25
+            classes: ["ab-variant-a"]
+            script: "document.querySelector('.btn-primary').style.backgroundColor = '#10b981';"
+          - name: "variant-b"
+            weight: 25
+            classes: ["ab-variant-b"]
+            script: "document.querySelector('.btn-primary').style.backgroundColor = '#ef4444';"
+      
+      "header-style":
+        variants:
+          - name: "control"
+            weight: 50
+            classes: ["header-control"]
+          - name: "compact"
+            weight: 50
+            classes: ["header-compact"]
+            script: "document.querySelector('.header').style.padding = '0.5rem 0';"
+  
+  # Configuração de Internacionalização (i18n)
+  i18n:
+    enabled: true
+    defaultLanguage: "pt"
+    supportedLanguages:
+      - code: "pt"
+        name: "Português"
+        weight: 1
+      - code: "en"
+        name: "English"
+        weight: 2
+    rtlLanguages:
+      - "ar"
+      - "he"
+      - "fa"
+      - "ur"
+    dateFormats:
+      default: "long"
+      short: "short"
+      long: "long"
+      relative: "relative"
+    numberFormats:
+      decimal: "decimal"
+      currency: "currency"
+      percent: "percent"
+    translations:
+      autoLoad: true
+      fallbackLanguage: "en"
+  
   customSCSS:
     customSCSS:
       - "css/custom.scss"
 
 permalinks:
   post: "/:year/:month/:day/:contentbasename/"
-
-menu:
-  main:
-    - name: Contact
-      url: /page/contact/
-      weight: 4
-    - name: About
-      url: /page/about/
-      weight: 3
