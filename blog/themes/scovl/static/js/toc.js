@@ -1,12 +1,17 @@
 // ===== TABLE OF CONTENTS (TOC) FUNCTIONALITY =====
 
+// TOC script carregado
+
 document.addEventListener('DOMContentLoaded', function() {
     initTableOfContents();
 });
 
 function initTableOfContents() {
     const toc = document.getElementById('toc');
-    if (!toc) return;
+    if (!toc) {
+        console.warn('TOC não encontrado na página');
+        return;
+    }
 
     const tocToggle = document.getElementById('toc-toggle');
     const tocMobileToggle = document.getElementById('toc-mobile-toggle');

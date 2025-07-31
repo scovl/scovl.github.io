@@ -1,23 +1,19 @@
 // ===== FUNCIONALIDADES PRINCIPAIS =====
 
-console.log('main-minimal.js carregado com sucesso - v{{ now.Unix }}');
+// main-minimal.js carregado
 
 // ===== LIMPEZA E INICIALIZAÇÃO =====
 function cleanupPage() {
-    console.log('🧹 Iniciando limpeza da página...');
-    
     // Remover elementos dinâmicos criados anteriormente
     const existingThemeToggle = document.querySelector('.theme-toggle');
     if (existingThemeToggle) {
         existingThemeToggle.remove();
-        console.log('✅ Botão de tema removido');
     }
     
     // Limpar event listeners duplicados
     const backToTopButton = document.getElementById('back-to-top');
     if (backToTopButton) {
         backToTopButton.removeAttribute('data-initialized');
-        console.log('✅ Atributos do botão back-to-top limpos');
     }
     
     // Forçar recarregamento de estilos
@@ -25,28 +21,19 @@ function cleanupPage() {
     for (let i = 0; i < styleSheets.length; i++) {
         try {
             const rules = styleSheets[i].cssRules || styleSheets[i].rules;
-            if (rules) {
-                console.log(`📄 Estilos da folha ${i} carregados: ${rules.length} regras`);
-            }
         } catch (e) {
-            console.log(`⚠️ Erro ao acessar folha de estilo ${i}:`, e);
+            console.warn(`Erro ao acessar folha de estilo ${i}:`, e);
         }
     }
-    
-    console.log('✅ Limpeza da página concluída');
 }
 
 // ===== REINICIALIZAÇÃO FORÇADA =====
 function forceReinitialize() {
-    console.log('🔄 Forçando reinicialização completa...');
-    
     // Limpar tudo
     cleanupPage();
     
     // Aguardar um pouco e reinicializar
     setTimeout(() => {
-        console.log('🔄 Reinicializando funcionalidades...');
-        
         // Reinicializar tudo
         initPrism();
         initMermaid();
@@ -54,8 +41,6 @@ function forceReinitialize() {
         initCodeCopy();
         initDarkMode();
         initBackToTop();
-        
-        console.log('✅ Reinicialização completa concluída');
     }, 200);
 }
 
@@ -66,43 +51,6 @@ function initPrism() {
             // Aguardar um pouco para garantir que o DOM está pronto
             setTimeout(() => {
                 Prism.highlightAll();
-                console.log('Prism.js inicializado com sucesso');
-                console.log('Linguagens disponíveis:', Object.keys(Prism.languages));
-                
-                // Verificar se C++ está disponível
-                if (Prism.languages.cpp) {
-                    console.log('✅ C++ disponível');
-                } else {
-                    console.warn('❌ C++ não disponível');
-                }
-                
-                // Verificar se Rust está disponível
-                if (Prism.languages.rust) {
-                    console.log('✅ Rust disponível');
-                } else {
-                    console.warn('❌ Rust não disponível');
-                }
-                
-                // Verificar se Clojure está disponível
-                if (Prism.languages.clojure) {
-                    console.log('✅ Clojure disponível');
-                } else {
-                    console.warn('❌ Clojure não disponível');
-                }
-                
-                // Verificar se Swift está disponível
-                if (Prism.languages.swift) {
-                    console.log('✅ Swift disponível');
-                } else {
-                    console.warn('❌ Swift não disponível');
-                }
-                
-                // Verificar se Bash está disponível
-                if (Prism.languages.bash) {
-                    console.log('✅ Bash disponível');
-                } else {
-                    console.warn('❌ Bash não disponível');
-                }
             }, 100);
         } else {
             console.warn('Prism.js não está disponível');
@@ -113,8 +61,6 @@ function initPrism() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔄 Inicializando página...');
-    
     // Limpar elementos anteriores
     cleanupPage();
     
@@ -143,8 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar tecnologias modernas
     initIntersectionObserver();
     initWebComponents();
-    
-    console.log('✅ Inicialização da página concluída');
 });
 
 // Initialize i18n when DOM is loaded
@@ -272,7 +216,6 @@ function initDarkMode() {
     // Verificar se já existe um botão de tema
     const existingThemeToggle = document.querySelector('.theme-toggle');
     if (existingThemeToggle) {
-        console.log('✅ Botão de tema já existe, pulando criação...');
         return;
     }
     
@@ -298,7 +241,6 @@ function initDarkMode() {
     
     // Adicionar ao body
     document.body.appendChild(themeToggle);
-    console.log('✅ Botão de tema criado');
     
     // Alternar tema
     themeToggle.addEventListener('click', function() {
@@ -314,22 +256,17 @@ function initDarkMode() {
 
 // ===== BACK TO TOP =====
 function initBackToTop() {
-    console.log('Iniciando funcionalidade "Voltar ao topo"...');
-    
     // Aguardar um pouco para garantir que o DOM está completamente carregado
     setTimeout(() => {
         const backToTopButton = document.getElementById('back-to-top');
         
         if (!backToTopButton) {
-            console.warn('❌ Botão "Voltar ao topo" não encontrado no DOM');
+            console.warn('Botão "Voltar ao topo" não encontrado no DOM');
             return;
         }
         
-        console.log('✅ Botão "Voltar ao topo" encontrado:', backToTopButton);
-        
         // Verificar se já tem event listeners (evitar duplicação)
         if (backToTopButton.hasAttribute('data-initialized')) {
-            console.log('✅ Botão já inicializado, pulando...');
             return;
         }
         
@@ -340,16 +277,14 @@ function initBackToTop() {
         backToTopButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('🎯 Botão "Voltar ao topo" clicado - iniciando scroll...');
             
             try {
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
-                console.log('✅ Scroll iniciado com sucesso');
             } catch (error) {
-                console.error('❌ Erro ao fazer scroll:', error);
+                console.error('Erro ao fazer scroll:', error);
                 // Fallback para navegadores que não suportam smooth scroll
                 window.scrollTo(0, 0);
             }
@@ -362,8 +297,6 @@ function initBackToTop() {
                 this.click();
             }
         });
-        
-        console.log('✅ Funcionalidade "Voltar ao topo" inicializada com sucesso');
     }, 100);
 }
 
@@ -406,7 +339,6 @@ let currentUrl = window.location.href;
 // Verificar mudanças de URL
 function checkUrlChange() {
     if (currentUrl !== window.location.href) {
-        console.log('🔄 URL mudou, limpando e reinicializando...');
         currentUrl = window.location.href;
         
         // Aguardar um pouco para o DOM atualizar
@@ -434,7 +366,6 @@ setInterval(checkUrlChange, 100);
 // Listener para mudanças de visibilidade da página
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
-        console.log('📄 Página voltou a ficar visível, verificando estado...');
         setTimeout(() => {
             cleanupPage();
             initBackToTop();
@@ -497,7 +428,7 @@ function initToastSystem() {
         }, 300);
     }
     
-    console.log('✅ Sistema de toast inicializado');
+    // Sistema de toast inicializado
 }
 
 // ===== SKELETON LOADING =====
@@ -552,14 +483,14 @@ function initSkeletonLoading() {
         }
     });
     
-    console.log('✅ Sistema de skeleton loading inicializado');
+    // Sistema de skeleton loading inicializado
 }
 
 // ===== INTERSECTION OBSERVER =====
 function initIntersectionObserver() {
     // Verificar se Intersection Observer é suportado
     if (!('IntersectionObserver' in window)) {
-        console.warn('❌ Intersection Observer não suportado');
+        console.warn('Intersection Observer não suportado');
         return;
     }
     
@@ -608,14 +539,14 @@ function initIntersectionObserver() {
         lazyObserver.observe(img);
     });
     
-    console.log('✅ Intersection Observer inicializado');
+    // Intersection Observer inicializado
 }
 
 // ===== WEB COMPONENTS =====
 function initWebComponents() {
     // Verificar se Custom Elements são suportados
     if (!('customElements' in window)) {
-        console.warn('❌ Custom Elements não suportados');
+        console.warn('Custom Elements não suportados');
         return;
     }
     
@@ -783,8 +714,8 @@ function initWebComponents() {
         customElements.define('modern-card', ModernCard);
         customElements.define('modern-badge', ModernBadge);
         customElements.define('modern-progress', ModernProgress);
-        console.log('✅ Web Components registrados');
+        // Web Components registrados
     } catch (error) {
-        console.warn('❌ Erro ao registrar Web Components:', error);
+        console.warn('Erro ao registrar Web Components:', error);
     }
 } 

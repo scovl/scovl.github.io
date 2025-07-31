@@ -2,6 +2,12 @@
 {{ $minHeadings := .Site.Params.toc.minHeadings | default 2 }}
 {{ $maxDepth := .Site.Params.toc.maxDepth | default 4 }}
 
+<!-- Debug TOC -->
+<!-- TOC Enabled: {{ $tocEnabled }} -->
+<!-- Min Headings: {{ $minHeadings }} -->
+<!-- Max Depth: {{ $maxDepth }} -->
+<!-- Table of Contents exists: {{ if .TableOfContents }}YES{{ else }}NO{{ end }} -->
+
 {{ if $tocEnabled }}
 {{ if .TableOfContents }}
 

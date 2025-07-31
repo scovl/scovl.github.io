@@ -48,12 +48,13 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+  tableOfContents:
+    startLevel: 1
+    endLevel: 4
+    ordered: false
 
 privacy:
-  googleAnalytics:
-    anonymizeIP: true
-    respectDoNotTrack: true
-    useSessionStorage: false
+  # Analytics removido
 
 author:
   name: Vitor Lobo
@@ -107,42 +108,7 @@ params:
     theme: "light"
     lang: "pt"
   
-  # Configuração de Analytics e Monitoramento
-  analytics:
-    webVitals: true
-    webVitalsEndpoint: "/api/web-vitals"
-    performance: true
-    performanceEndpoint: "/api/performance"
-    errorTracking: true
-    errorEndpoint: "/api/errors"
-    abTesting: true
-    abEndpoint: "/api/ab-testing"
-    
-    # Configuração de A/B Testing
-    abTesting:
-      "button-color":
-        variants:
-          - name: "control"
-            weight: 50
-            classes: ["ab-control"]
-          - name: "variant-a"
-            weight: 25
-            classes: ["ab-variant-a"]
-            script: "document.querySelector('.btn-primary').style.backgroundColor = '#10b981';"
-          - name: "variant-b"
-            weight: 25
-            classes: ["ab-variant-b"]
-            script: "document.querySelector('.btn-primary').style.backgroundColor = '#ef4444';"
-      
-      "header-style":
-        variants:
-          - name: "control"
-            weight: 50
-            classes: ["header-control"]
-          - name: "compact"
-            weight: 50
-            classes: ["header-compact"]
-            script: "document.querySelector('.header').style.padding = '0.5rem 0';"
+
   
   # Configuração de Internacionalização (i18n)
   i18n:
