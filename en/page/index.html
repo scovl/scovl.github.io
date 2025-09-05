@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pages | scovl</title>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+
+
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
+
+
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
+
+
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030844">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030844">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030844">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030844"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'light',
+            align: 'center'
+        });SS
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'en',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
+</head>
+<body>
+    
+    
+    <header class="header">
+    <div class="container">
+        <div class="header-content">
+            <a href="https://scovl.github.io/" class="site-title">scovl</a>
+            
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">English</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="https://scovl.github.io/" class="language-option ">
+                    Português
+                </a>
+            
+        
+            
+                <a href="https://scovl.github.io/en/" class="language-option active">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</header> 
+    
+    
+    
+    <main>
+        <div class="container">
+            
+<div class="post-list">
+    <h1 class="page-title">
+        
+            Pages
+        
+    </h1>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/en/page/about/">About</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2024-01-15T00:00:00Z">
+                Mon, Jan 15, 2024
+            </time>
+            
+            
+            
+            
+            
+            
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="about">About</h1>
+<p>Hello! I&rsquo;m <strong>Vitor Lobo</strong>, a developer passionate about technology and programming.</p>
+<h2 id="about-me">About Me</h2>
+<ul>
+<li>🚀 <strong>Full Stack Developer</strong></li>
+<li>💻 <strong>JavaScript/TypeScript Specialist</strong></li>
+<li>🌐 <strong>Modern Web Technologies Enthusiast</strong></li>
+<li>📚 <strong>Always learning and sharing knowledge</strong></li>
+</ul>
+<h2 id="technologies">Technologies</h2>
+<ul>
+<li><strong>Frontend</strong>: React, Vue.js, Angular</li>
+<li><strong>Backend</strong>: Node.js, Python, Go</li>
+<li><strong>Database</strong>: PostgreSQL, MongoDB, Redis</li>
+<li><strong>Cloud</strong>: AWS, Google Cloud, Azure</li>
+<li><strong>DevOps</strong>: Docker, Kubernetes, CI/CD</li>
+</ul>
+<h2 id="contact">Contact</h2>
+<ul>
+<li>📧 <strong>Email</strong>: <a href="mailto:lobocode@gmail.com">lobocode@gmail.com</a></li>
+<li>💼 <strong>LinkedIn</strong>: <a href="https://linkedin.com/in/vitor-lobo">vitor-lobo</a></li>
+<li>🐙 <strong>GitHub</strong>: <a href="https://github.com/scovl">scovl</a></li>
+<li>🐘 <strong>Mastodon</strong>: <a href="https://hachyderm.io/@lobocode">@lobocode</a></li>
+</ul>
+<h2 id="blog">Blog</h2>
+<p>This blog is a space to share knowledge about:</p>
+            
+            <a href="https://scovl.github.io/en/page/about/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/en/page/contact/">Contact</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2024-01-15T00:00:00Z">
+                Mon, Jan 15, 2024
+            </time>
+            
+            
+            
+            
+            
+            
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="contact">Contact</h1>
+<p>Get in touch with me through the channels below:</p>
+<h2 id="-email">📧 Email</h2>
+<p><strong><a href="mailto:lobocode@gmail.com">lobocode@gmail.com</a></strong></p>
+<h2 id="-linkedin">💼 LinkedIn</h2>
+<p><a href="https://linkedin.com/in/vitor-lobo">Vitor Lobo</a></p>
+<h2 id="-github">🐙 GitHub</h2>
+<p><a href="https://github.com/scovl">scovl</a></p>
+<h2 id="-mastodon">🐘 Mastodon</h2>
+<p><a href="https://hachyderm.io/@lobocode">@lobocode</a></p>
+<h2 id="-social-media">📱 Social Media</h2>
+<ul>
+<li><strong>Twitter</strong>: <a href="https://twitter.com/lobocode">@lobocode</a></li>
+<li><strong>Instagram</strong>: <a href="https://instagram.com/lobocode">@lobocode</a></li>
+</ul>
+<h2 id="-direct-message">💬 Direct Message</h2>
+<p>Feel free to send a direct message through any of the channels above. I&rsquo;m always open to:</p>
+<ul>
+<li><strong>Collaborations</strong> on interesting projects</li>
+<li><strong>Discussions</strong> about technology</li>
+<li><strong>Mentoring</strong> for beginner developers</li>
+<li><strong>Job opportunities</strong></li>
+</ul>
+<h2 id="-availability">⏰ Availability</h2>
+<ul>
+<li><strong>Response</strong>: Usually respond within 24 hours</li>
+<li><strong>Hours</strong>: Monday to Friday, 9am to 6pm (BRT)</li>
+<li><strong>Languages</strong>: Portuguese and English</li>
+</ul>
+<hr>
+<p><em>Thank you for your interest in getting in touch!</em></p>
+            
+            <a href="https://scovl.github.io/en/page/contact/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+</div>
+
+        </div>
+    </main>
+    
+    
+    
+    <footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-links">
+                
+                <a href="https://github.com/scovl" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    GitHub
+                </a>
+                
+                
+                
+                <a href="https://linkedin.com/in/vitor-lobo" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    LinkedIn
+                </a>
+                
+                
+                
+                <a href="mailto:lobocode@gmail.com" class="footer-link">
+                    Email
+                </a>
+                
+
+                
+                <a href="https://hachyderm.io/@lobocode" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    Mastodon
+                </a>
+                
+
+                
+                <a href="https://scovl.github.io/index.xml" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    RSS
+                </a>
+                
+            </div>
+            
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Back to top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Back to top</span>
+                </button>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 scovl
+            </div>
+        </div>
+    </div>
+</footer> 
+    
+    
+    
+    <script src="/vendor/prism/prism-core.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030844"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030844"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030844"></script>
+    <script src="/js/lazy-loading.js?v=1757030844"></script>
+    <script src="/js/toc.js?v=1757030844"></script>
+    
+    
+    
+</body>
+</html> 

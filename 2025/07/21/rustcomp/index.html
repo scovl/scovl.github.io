@@ -7,25 +7,348 @@
 <meta name="description" content="Uma visão geral do compilador do Rust">
 
 
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
 
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030843">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030843">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030843">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030843"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'light',
             align: 'center'
-        });
+        });SS
     });
 </script>
- 
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'pt',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
 </head>
 <body>
     
@@ -35,24 +358,65 @@
         <div class="header-content">
             <a href="https://scovl.github.io/" class="site-title">scovl</a>
             
-            <nav>
-                <ul class="nav-menu">
-                    
-                    
-                    <li>
-                        <a href="/page/about/" class="nav-link ">
-                            About
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/page/contact/" class="nav-link ">
-                            Contact
-                        </a>
-                    </li>
-                    
-                </ul>
-            </nav>
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">Português</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="https://scovl.github.io/" class="language-option active">
+                    Português
+                </a>
+            
+        
+            
+                <a href="https://scovl.github.io/en/" class="language-option ">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header> 
@@ -65,64 +429,141 @@
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">Como o compilador do Rust funciona?</h1>
+        
         <div class="post-meta">
-            
             <time datetime="2025-07-21T12:00:00Z">
-                Mon, Jul 21, 2025
+                📅 21/07/2025
             </time>
             
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
+            <span>👤 Vitor Lobo Ramos</span>
             
             
             
             <div class="post-tags">
                 
-                <a href="/tags/rust/" class="tag">Rust</a>
+                <a href="/tags/rust" class="tag">Rust</a>
                 
-                <a href="/tags/compiladores/" class="tag">Compiladores</a>
+                <a href="/tags/compiladores" class="tag">Compiladores</a>
                 
-                <a href="/tags/llvm/" class="tag">LLVM</a>
+                <a href="/tags/llvm" class="tag">LLVM</a>
                 
-                <a href="/tags/mem%C3%B3ria/" class="tag">Memória</a>
+                <a href="/tags/mem%C3%B3ria" class="tag">Memória</a>
                 
-                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
+                <a href="/tags/seguran%C3%A7a" class="tag">Segurança</a>
                 
-            </div>
-            
-            
-            
-            <div class="reading-time">
-                Estimated reading time: 10 min
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Uma visão geral do compilador do Rust
             </div>
             
         </div>
+        
     </header>
     
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+<aside class="toc" id="toc" aria-labelledby="toc-title">
+    <div class="toc-container">
+        <div class="toc-header">
+            <h3 id="toc-title" class="toc-title">
+                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+                Sumário
+            </h3>
+            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+        <div class="toc-content" id="toc-content">
+            <div class="toc-progress">
+                <div class="toc-progress-bar" id="toc-progress-bar"></div>
+            </div>
+            <nav class="toc-nav">
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introdução">Introdução</a>
+      <ul>
+        <li><a href="#a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</a></li>
+        <li><a href="#o-compilador-do-rust">O compilador do Rust</a></li>
+        <li><a href="#o-mago-da-memória-entendendo-o-borrow-checker">O Mago da Memória: Entendendo o Borrow Checker</a></li>
+        <li><a href="#por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</a></li>
+        <li><a href="#referências">REFERÊNCIAS</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+            </nav>
+        </div>
+    </div>
+    
+    
+    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+    </button>
+</aside>
+
+
+
+    
     <div class="post-content">
-        <p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende. Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
-<p>Mostrarei como o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> (aquele que reclama dos seus empréstimos de variáveis), as representações intermediárias (com nomes esquisitos como <a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a>, <a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a> e <a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a>) e as otimizações finais trabalham juntos para impedir problemas como dois lugares mexendo na mesma memória ao mesmo tempo <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data race</a></strong> ou acessar algo que já foi apagado <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a></strong>. No fim das contas, a arquitetura em camadas do compilador do Rust permite que ele seja rápido como C, mas com muito mais garantias de que seu programa não vai dar pau por causa de bugs difíceis de achar. Tudo isso graças a essas etapas intermediárias e checagens automáticas que acontecem antes mesmo do programa rodar.</p>
-<p>Linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> ficam em um ponto intermediário: elas oferecem mais controle sobre o funcionamento do computador do que linguagens como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29">C#</a>, mas não são tão próximas do hardware quanto <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>. O que as diferencia é a forma como lidam com a memória: em C, o programador tem liberdade total para manipular ponteiros, mas também assume todos os riscos de erros; em Go, existe um coletor de lixo que gerencia a memória automaticamente; já o Rust criou um sistema próprio de &ldquo;posse e empréstimo&rdquo; (ownership e borrowing), que previne muitos problemas de memória já na fase de compilação, antes mesmo do programa rodar.</p>
+        <h1 id="introdução">Introdução</h1>
+<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
+<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
+<p>Mostrarei como o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> (aquele que reclama dos seus empréstimos de variáveis), as representações intermediárias (com nomes esquisitos como <a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a>, <a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a> e <a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a>) e as otimizações finais trabalham juntos para impedir problemas como dois lugares mexendo na mesma memória ao mesmo tempo <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data race</a></strong> ou acessar algo que já foi apagado <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a></strong>.</p>
+<p>No fim das contas, a arquitetura em camadas do compilador do Rust permite que ele seja rápido como C, mas com muito mais garantias de que seu programa não vai dar pau por causa de bugs difíceis de achar. Tudo isso graças a essas etapas intermediárias e checagens automáticas que acontecem antes mesmo do programa rodar.</p>
+<h2 id="a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</h2>
+<p>Linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> ficam em um ponto intermediário: elas oferecem mais controle sobre o funcionamento do computador do que linguagens como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29">C#</a>, mas não são tão próximas do hardware quanto <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>.</p>
+<p>O que as diferencia é a forma como lidam com a memória: em C, o programador tem liberdade total para manipular ponteiros, mas também assume todos os riscos de erros; em Go, existe um coletor de lixo que gerencia a memória automaticamente; já o Rust criou um sistema próprio de &ldquo;posse e empréstimo&rdquo; (ownership e borrowing), que previne muitos problemas de memória já na fase de compilação, antes mesmo do programa rodar.</p>
 <blockquote>
-<p>Quando falamos que linguagens como C, Go e Rust são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (Assembly) e &ldquo;alto nível&rdquo; (Java, Python) e que elas ficam sempre no meio. Na verdade, é só uma forma de dizer que elas misturam características dos dois lados: dão bastante controle sobre o computador (como Assembly), mas também oferecem recursos que facilitam a vida do programador (como Java ou Python).</p></blockquote>
+<p>Quando falamos que linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>) e &ldquo;alto nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>) e que elas ficam sempre no meio.</p></blockquote>
+<p>Na verdade, é só uma forma de dizer que elas misturam características dos dois lados: dão bastante controle sobre o computador (como <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>), mas também oferecem recursos que facilitam a vida do programador (como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>).</p>
 <blockquote>
-<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho. Ou seja, &ldquo;intermediária&rdquo; é só um jeito de dizer que essas linguagens conseguem equilibrar controle e facilidade, ficando entre o mundo das linguagens super próximas do hardware e o das linguagens super abstratas.</p></blockquote>
+<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho.</p></blockquote>
+<p>Ou seja, &ldquo;intermediária&rdquo; é só um jeito de dizer que essas linguagens conseguem equilibrar controle e facilidade, ficando entre o mundo das linguagens super próximas do hardware e o das linguagens super abstratas.</p>
+<h2 id="o-compilador-do-rust">O compilador do Rust</h2>
 <p>Quando a gente fala de compilador, normalmente ele é dividido em três partes: <strong>frontend</strong> (a parte que entende o seu código e transforma em uma estrutura de árvore chamada AST), <strong>middle-end</strong> (que faz otimizações que valem pra qualquer computador) e <strong>backend</strong> (que transforma tudo em código de máquina pra rodar no seu PC). O Rust segue esse modelo, mas adiciona umas etapas extras só pra garantir que ninguém vai fazer besteira com a memória.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp01.png" alt="Rust Compiler"></p>
 <p>A imagem acima mostra que o compilador do Rust funciona como uma linha de montagem em três etapas: primeiro ele lê e entende seu código (frontend), depois faz uma checagem rigorosa das regras de segurança de memória (middle, onde entra o <a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a>), e por fim transforma tudo em código de máquina que o computador entende (backend); assim, cada parte cuida de um tipo de problema e, no final, seu programa sai rápido e seguro, sem aquelas dores de cabeça típicas de bugs de memória.</p>
 <p>Quando você manda o Rust compilar seu arquivo <code>.rs</code>, a primeira coisa que acontece é que o compilador lê o texto e separa tudo em &ldquo;palavrinhas&rdquo; chamadas <em>tokens</em> (nomes de variáveis, números, símbolos, etc). Isso é o trabalho do <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">analisador léxico</a></strong>.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp02.png" alt="Lexing"></p>
-<p>A imagem acima mostra, de forma bem simples, como o compilador do Rust começa a entender seu código: primeiro ele lê o texto do programa e separa tudo em &ldquo;palavrinhas&rdquo; chamadas tokens (tipo nomes de variáveis, números, símbolos), e depois organiza esses tokens em uma espécie de árvore que mostra como as partes do seu código se encaixam — como se fosse um esqueleto do programa (a <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a></strong>). Ou seja, a figura mostra que o compilador transforma o texto que você escreveu em uma estrutura organizada, facilitando para as próximas etapas encontrarem erros e entenderem o que o programa realmente faz.</p>
+<p>A imagem acima mostra, de forma bem simples, como o compilador do Rust começa a entender seu código: primeiro ele lê o texto do programa e separa tudo em &ldquo;palavrinhas&rdquo; chamadas tokens (tipo nomes de variáveis, números, símbolos), e depois organiza esses tokens em uma espécie de árvore que mostra como as partes do seu código se encaixam — como se fosse um esqueleto do programa (a <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a></strong>).</p>
+<p>Ou seja, a figura mostra que o compilador transforma o texto que você escreveu em uma estrutura organizada, facilitando para as próximas etapas encontrarem erros e entenderem o que o programa realmente faz.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp03.png" alt="AST"></p>
-<p>Nessa etapa, o compilador também já expande as <strong>macros</strong>. Ou seja, se você usou algum &ldquo;atalho&rdquo; ou macro, ele já troca pelo código real, pra facilitar as próximas fases. Agora vem uma etapa crucial: o compilador pega a AST (que ainda tem comandos de alto nível, tipo o <code>for</code>) e faz um &ldquo;rebaixamento&rdquo; <strong><a href="https://en.wikipedia.org/wiki/Code_lowering">lowering</a></strong>: transforma a AST numa versão mais simples chamada <strong><a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a></strong> (High-level IR). Essa transformação é fundamental porque a HIR é mais próxima do que a linguagem realmente entende — ela remove a complexidade da sintaxe e deixa tudo mais &ldquo;quadradinho&rdquo; para as próximas análises.</p>
-<p>Em seguida, ele faz a análise de tipos e gera a <strong><a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a></strong> (Typed HIR), onde cada pedacinho do código já tem um tipo definido (int, string, etc). Antes de seguir, o compilador faz uma checagem de segurança chamada <strong>unsafety</strong>: ele olha a THIR pra garantir que coisas perigosas (tipo mexer direto na memória com ponteiros) só aconteçam dentro de blocos marcados como <code>unsafe</code>. Assim, ele já barra muita coisa errada antes mesmo de virar código de verdade.</p>
+<p>Nessa etapa, o compilador também já expande as <strong>macros</strong>. Ou seja, se você usou algum &ldquo;atalho&rdquo; ou macro, ele já troca pelo código real, pra facilitar as próximas fases. Agora vem uma etapa crucial: o compilador pega a AST (que ainda tem comandos de alto nível, tipo o <code>for</code>) e faz um &ldquo;rebaixamento&rdquo; <strong><a href="https://en.wikipedia.org/wiki/Code_lowering">lowering</a></strong>: transforma a AST numa versão mais simples chamada <strong><a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a></strong> (High-level IR).</p>
+<p>Essa transformação é fundamental porque a HIR é mais próxima do que a linguagem realmente entende — ela remove a complexidade da sintaxe e deixa tudo mais &ldquo;quadradinho&rdquo; para as próximas análises.</p>
+<p>Em seguida, ele faz a análise de tipos e gera a <strong><a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a></strong> (Typed HIR), onde cada pedacinho do código já tem um tipo definido (int, string, etc).</p>
+<p>Antes de seguir, o compilador faz uma checagem de segurança chamada <strong>unsafety</strong>: ele olha a THIR pra garantir que coisas perigosas (tipo mexer direto na memória com ponteiros) só aconteçam dentro de blocos marcados como <code>unsafe</code>. Assim, ele já barra muita coisa errada antes mesmo de virar código de verdade.</p>
 <p>A <strong><a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a></strong> converte o programa num <strong><a href="https://en.wikipedia.org/wiki/Control-flow_graph">Grafo de Fluxo de Controle (CFG)</a></strong> explícito. Esse grafo permite ao <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> rastrear, ao longo de todos os caminhos de execução, o estado de cada valor: possuído, emprestado mutável, emprestado imutável ou movido.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp04.png" alt="CFG"></p>
 <p>A imagem acima ilustra um exemplo simplificado de um <strong>Grafo de Fluxo de Controle (CFG)</strong>. Nela, o círculo azul no topo representa um ponto de decisão ou condição no seu código (como um <code>if</code> ou <code>match</code>). As setas que partem dele mostram os possíveis caminhos que o programa pode seguir: um para o caso <code>True</code> (círculo vermelho à esquerda) e outro para o caso <code>False</code> (círculo vermelho à direita).</p>
@@ -135,19 +576,25 @@
 <li><strong>Emprestado Mutável (Borrowed Mutable)</strong>: Apenas uma parte pode ler e modificar por vez</li>
 </ol>
 <p>Caso uma violação ocorra (uso de valor após movimento, criação de dados mutáveis e imutáveis simultâneos, etc.), o compilador rejeita o código. Esse mecanismo previne <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use‑after‑free</a></strong> sem custo em tempo de execução. O borrow checker é tão eficiente que muitos programadores Rust brincam que ele é &ldquo;o melhor professor de programação que você já teve&rdquo; — ele te ensina boas práticas de memória antes mesmo do programa rodar!</p>
-<p>Após otimizações em MIR (eliminação de código morto, <strong><a href="https://en.wikipedia.org/wiki/Inline_function">inlining</a></strong> local, etc.), a IR é traduzida para <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong>. A <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong> (Low Level Virtual Machine Intermediate Representation) é uma linguagem intermediária de baixo nível, mas independente da arquitetura do processador. É nela que o Rust traduz tudo o que foi checado e otimizado até aqui, para que a LLVM possa realizar o trabalho pesado de otimização de código. A LLVM IR não é literalmente &ldquo;entendida pelo processador&rdquo; — ela serve como uma representação intermediária que o LLVM usa para gerar o código nativo específico da arquitetura de destino (como x86-64, ARM, etc.).</p>
+<p>Após otimizações em MIR (eliminação de código morto, <strong><a href="https://en.wikipedia.org/wiki/Inline_function">inlining</a></strong> local, etc.), a IR é traduzida para <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong>. A <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong> (Low Level Virtual Machine Intermediate Representation) é uma linguagem intermediária de baixo nível, mas independente da arquitetura do processador.</p>
+<p>É nela que o Rust traduz tudo o que foi checado e otimizado até aqui, para que a LLVM possa realizar o trabalho pesado de otimização de código. A LLVM IR não é literalmente &ldquo;entendida pelo processador&rdquo; — ela serve como uma representação intermediária que o LLVM usa para gerar o código nativo específico da arquitetura de destino (como x86-64, ARM, etc.).</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp05.png" alt="LLVM IR"></p>
 <p>O LLVM aplica otimizações específicas de arquitetura e, por fim, gera código objeto para a plataforma‑alvo, como x86‑64 ou AArch64. Como consequência, um binário Rust é normalmente específico à arquitetura de destino, a menos que se utilize camadas de emulação.</p>
 <h2 id="por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</h2>
 <p>Pense assim: cada IR (representação intermediária) é como um filtro diferente que o compilador usa para checar seu código. Primeiro, a HIR guarda bastante informação para que o compilador possa te dar mensagens de erro detalhadas e entender o contexto do seu programa. Depois, a MIR simplifica tudo, deixando o código mais &ldquo;quadradinho&rdquo; e fácil de analisar — é nessa hora que o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> entra em ação, garantindo que ninguém vai mexer na memória de um jeito perigoso.</p>
-<p>Essa divisão em camadas faz com que cada parte do compilador só precise se preocupar com um tipo de problema por vez. Isso facilita encontrar erros antes mesmo do programa rodar, sem deixar o código final mais lento. E, pra fechar com chave de ouro, o Rust entrega a última etapa (gerar o código de máquina de verdade) pro LLVM, que já é um especialista em otimização e velocidade. Assim, o Rust foca em garantir segurança e o LLVM em deixar tudo rápido.</p>
+<p>Essa divisão em camadas faz com que cada parte do compilador só precise se preocupar com um tipo de problema por vez. Isso facilita encontrar erros antes mesmo do programa rodar, sem deixar o código final mais lento.</p>
+<p>E, pra fechar com chave de ouro, o Rust entrega a última etapa (gerar o código de máquina de verdade) pro LLVM, que já é um especialista em otimização e velocidade. Assim, o Rust foca em garantir segurança e o LLVM em deixar tudo rápido.</p>
 <p>No fim das contas, o compilador do Rust funciona como uma linha de montagem cheia de inspeções: cada etapa checa uma coisa diferente, pegando vários erros que em outras linguagens só apareceriam quando o programa já estivesse rodando (ou pior, em produção!). Por isso, muita gente acredita que esse modelo de &ldquo;camadas inteligentes&rdquo; vai ser cada vez mais comum nas linguagens do futuro, juntando robustez e desempenho sem dor de cabeça.</p>
-<p>Por fim, vale destacar: linguagens como C e C++ não adotam esse modelo de múltiplas camadas de checagem automática durante a compilação. Nelas, o compilador faz análises mais simples e deixa a maior parte dos cuidados com memória e segurança por conta do programador. Isso significa que muitos erros perigosos — como acessar memória já liberada, criar <em>data races</em> ou sobrescrever dados sem querer — só aparecem quando o programa já está rodando, e às vezes nem são detectados. O Rust, ao contrário, pega esses problemas antes mesmo do código virar um executável, tornando o desenvolvimento mais seguro sem sacrificar desempenho.</p>
+<p>Por fim, vale destacar: linguagens como C e C++ não adotam esse modelo de múltiplas camadas de checagem automática durante a compilação. Nelas, o compilador faz análises mais simples e deixa a maior parte dos cuidados com memória e segurança por conta do programador.</p>
+<p>Isso significa que muitos erros perigosos — como acessar memória já liberada, criar <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> ou sobrescrever dados sem querer — só aparecem quando o programa já está rodando, e às vezes nem são detectados. O Rust, ao contrário, pega esses problemas antes mesmo do código virar um executável, tornando o desenvolvimento mais seguro sem sacrificar desempenho.</p>
 <blockquote>
 <p><a href="https://www.abeacha.com/NIST_press_release_bugs_cost.html">Um estudo de 2002 e publicado em2019 da National Institute of Standards and Technology (NIST)</a> estimou que os erros de software custam à economia dos EUA mais de 59,5 bilhões de dólares anualmente, com uma parcela significativa desses custos vindo de vulnerabilidades de segurança e falhas de memória. A ausência de checagens automáticas em C/C++ contribui para que esses tipos de falhas se tornem uma preocupação constante.</p></blockquote>
-<p>Para não soar como injusto, é necessário dizer que o C++23 trouxe várias novidades para tentar deixar o código mais seguro e moderno, especialmente quando o assunto é evitar bugs de memória — mas sem mudar a linguagem de cabeça pra baixo. Agora, por exemplo, dá pra declarar de forma explícita quando um objeto começa a existir na memória (com o <strong><a href="https://en.cppreference.com/w/cpp/language/lifetime#start_lifetime_as">start_lifetime_as</a></strong>), o que ajuda a evitar aqueles bugs cabeludos que nem os detectores automáticos pegavam. Também ficou mais fácil e seguro conversar com APIs em C sem correr o risco de vazar memória, graças a novos adaptadores de ponteiros inteligentes.</p>
+<p>Para não soar como injusto, é necessário dizer que o C++23 trouxe várias novidades para tentar deixar o código mais seguro e moderno, especialmente quando o assunto é evitar bugs de memória — mas sem mudar a linguagem de cabeça pra baixo.</p>
+<p>Agora, por exemplo, dá pra declarar de forma explícita quando um objeto começa a existir na memória (com o <strong><a href="https://en.cppreference.com/w/cpp/language/lifetime#start_lifetime_as">start_lifetime_as</a></strong>), o que ajuda a evitar aqueles bugs cabeludos que nem os detectores automáticos pegavam. Também ficou mais fácil e seguro conversar com APIs em C sem correr o risco de vazar memória, graças a novos adaptadores de ponteiros inteligentes.</p>
 <p>Os containers ganharam versões que evitam acesso fora dos limites (tipo o <strong><a href="https://en.cppreference.com/w/cpp/container/mdspan">mdspan</a></strong> para matrizes), e ficou mais prático lidar com erros usando o <strong><a href="https://en.cppreference.com/w/cpp/utility/expected">std::expected</a></strong>, que incentiva o retorno explícito de falhas em vez de depender de códigos mágicos ou variáveis globais.</p>
-<p>Até a formatação de texto ficou mais fácil, <a href="https://en.cppreference.com/w/cpp/io/c/fprintf">com funções no estilo Python</a>, e agora dá pra gerar <a href="https://en.cppreference.com/w/cpp/error/stacktrace">stacktraces portáveis sem gambiarra</a>. Apesar desses avanços, algumas proteções automáticas que o Rust já oferece — como checagem de uso de ponteiros e detecção de data races — ainda não chegaram no C++ (ficaram pra próxima versão). Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p>
+<p>Até a formatação de texto ficou mais fácil, <a href="https://en.cppreference.com/w/cpp/io/c/fprintf">com funções no estilo Python</a>, e agora dá pra gerar <a href="https://en.cppreference.com/w/cpp/error/stacktrace">stacktraces portáveis sem gambiarra</a>. Apesar desses avanços, algumas proteções automáticas que o Rust já oferece — como checagem de uso de ponteiros e detecção de data races — ainda não chegaram no C++ (ficaram pra próxima versão).</p>
+<blockquote>
+<p>Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p></blockquote>
 <p>Enquanto o compilador do Rust atua como um inspetor de qualidade rigoroso, rejeitando qualquer código que possa violar as regras de segurança de memória, o compilador de C/C++ foca em traduzir o código de forma fiel e otimizada. Ele assume que o programador é o responsável por todas as garantias de segurança.</p>
 <hr>
 <h2 id="referências">REFERÊNCIAS</h2>
@@ -167,27 +614,269 @@
     </div>
     
     
+    
 
 
-<div class="post-comments">
-    <h3>Comentários</h3>
-    <div id="disqus_thread"></div>
-    <script>
-        var disqus_config = function () {
-            this.page.url = 'https:\/\/scovl.github.io\/2025\/07\/21\/rustcomp\/';
-            this.page.identifier = '\/2025\/07\/21\/rustcomp\/';
-            this.page.title = 'Como o compilador do Rust funciona?';
-        };
-        (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://lobocode.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <noscript>Por favor, habilite JavaScript para ver os comentários do <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+
+    
+    
+    
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+                
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+    
+    
+        
+        
+        
+        <div class="related-posts">
+            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
+            <div class="related-posts-grid">
+                
+                    
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="/2025/07/18/type01/">Inferência de Tipos em Rust e C&#43;&#43;</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                <h2 id="introdução">Introdução</h2>
+<p>Inferência de tipos é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa.</p>
+<p>Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem.</p>
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">18/07/2025</span>
+                                
+                                    <div class="related-post-tags">
+                                        
+                                            <span class="tag">Inferência de Tipos</span>
+                                        
+                                            <span class="tag">Programação</span>
+                                        
+                                    </div>
+                                
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">1 tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                
+            </div>
+        </div>
+    
+
+    
+    
+    
+    
+<div class="comments-section">
+    <h3 class="comments-title">💬 Comentários</h3>
+    <div class="comments-container">
+        <script src="https://giscus.app/client.js"
+                data-repo="scovl/scovl.github.io"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkxMzg1OTI2ODA="
+                data-category="General"
+                data-category-id="DIC_kwDOCELBqM4CthUV"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="light"
+                data-lang="pt"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
 </div>
- 
+
+    
 </article>
 
         </div>
@@ -230,8 +919,18 @@
                 
             </div>
             
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Voltar ao topo</span>
+                </button>
+            </div>
+            
             <div class="copyright">
-                &copy; 2025 Vitor Lobo
+                &copy; 2025 scovl
             </div>
         </div>
     </div>
@@ -239,7 +938,20 @@
     
     
     
-    <script src="/js/main-minimal.js"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030843"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030843"></script>
+    <script src="/js/lazy-loading.js?v=1757030843"></script>
+    <script src="/js/toc.js?v=1757030843"></script>
     
     
     

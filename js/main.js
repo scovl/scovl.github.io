@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicionar funcionalidade de tema escuro (opcional)
     initDarkMode();
     
+    // Adicionar funcionalidade de back to top
+    initBackToTop();
+    
     // Adicionar animações de scroll (desabilitado temporariamente para evitar problemas)
     // if (!document.querySelector('.post')) {
     //     initScrollAnimations();
@@ -144,6 +147,39 @@ function initDarkMode() {
             this.innerHTML = '🌙';
         }
     });
+}
+
+// ===== BACK TO TOP =====
+function initBackToTop() {
+    const backToTopButton = document.getElementById('back-to-top');
+    
+    if (!backToTopButton) {
+        return;
+    }
+    
+    // Smooth scroll to top when button is clicked
+    backToTopButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Optional: Show/hide button based on scroll position
+    // Uncomment the following code if you want the button to only appear when scrolling down
+    /*
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            backToTopButton.style.opacity = '1';
+            backToTopButton.style.pointerEvents = 'auto';
+        } else {
+            backToTopButton.style.opacity = '0.7';
+            backToTopButton.style.pointerEvents = 'none';
+        }
+    });
+    */
 }
 
 // ===== ANIMAÇÕES DE SCROLL =====

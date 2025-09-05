@@ -1,31 +1,354 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <title>RAG Simples com Clojure e Ollama | scovl</title>
+    <title>01 - RAG Simples com Clojure e Ollama | scovl</title>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Um protótipo funcional do zero">
 
 
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
 
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030843">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030843">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030843">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030843"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'light',
             align: 'center'
-        });
+        });SS
     });
 </script>
- 
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'pt',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
 </head>
 <body>
     
@@ -35,24 +358,65 @@
         <div class="header-content">
             <a href="https://scovl.github.io/" class="site-title">scovl</a>
             
-            <nav>
-                <ul class="nav-menu">
-                    
-                    
-                    <li>
-                        <a href="/page/about/" class="nav-link ">
-                            About
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/page/contact/" class="nav-link ">
-                            Contact
-                        </a>
-                    </li>
-                    
-                </ul>
-            </nav>
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">Português</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="https://scovl.github.io/" class="language-option active">
+                    Português
+                </a>
+            
+        
+            
+                <a href="https://scovl.github.io/en/" class="language-option ">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header> 
@@ -64,96 +428,267 @@
             
 <article class="post">
     <header class="post-header">
-        <h1 class="post-title">RAG Simples com Clojure e Ollama</h1>
+        <h1 class="post-title">01 - RAG Simples com Clojure e Ollama</h1>
+        
         <div class="post-meta">
-            
             <time datetime="2025-03-23T19:00:00Z">
-                Sun, Mar 23, 2025
+                📅 23/03/2025
             </time>
             
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
+            <span>👤 Vitor Lobo Ramos</span>
             
             
             
             <div class="post-tags">
                 
-                <a href="/tags/rag/" class="tag">RAG</a>
+                <a href="/tags/rag" class="tag">RAG</a>
                 
-                <a href="/tags/llm/" class="tag">LLM</a>
+                <a href="/tags/llm" class="tag">LLM</a>
                 
-                <a href="/tags/ai/" class="tag">AI</a>
+                <a href="/tags/ai" class="tag">AI</a>
                 
-                <a href="/tags/langchain/" class="tag">Langchain</a>
+                <a href="/tags/langchain" class="tag">Langchain</a>
                 
-            </div>
-            
-            
-            
-            <div class="reading-time">
-                Estimated reading time: 38 min
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Um protótipo funcional do zero
             </div>
             
         </div>
+        
     </header>
     
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+<aside class="toc" id="toc" aria-labelledby="toc-title">
+    <div class="toc-container">
+        <div class="toc-header">
+            <h3 id="toc-title" class="toc-title">
+                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+                Sumário
+            </h3>
+            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+        <div class="toc-content" id="toc-content">
+            <div class="toc-progress">
+                <div class="toc-progress-bar" id="toc-progress-bar"></div>
+            </div>
+            <nav class="toc-nav">
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introdução">Introdução</a></li>
+        <li><a href="#fundamentos-do-rag">Fundamentos do RAG</a>
+          <ul>
+            <li><a href="#o-que-é-rag">O que é RAG?</a></li>
+            <li><a href="#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
+            <li><a href="#os-três-pilares-do-rag">Os Três Pilares do RAG</a></li>
+            <li><a href="#rag-em-produção">RAG em Produção</a></li>
+            <li><a href="#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
+          </ul>
+        </li>
+        <li><a href="#implementação-prática">Implementação Prática</a>
+          <ul>
+            <li><a href="#preparando-o-ambiente">Preparando o Ambiente</a></li>
+            <li><a href="#estrutura-do-projeto">Estrutura do Projeto</a></li>
+            <li><a href="#tf-idf">TF-IDF</a></li>
+            <li><a href="#requisitos-mínimos">Requisitos Mínimos</a></li>
+            <li><a href="#configuração-do-projeto">Configuração do Projeto</a></li>
+            <li><a href="#implementação-dos-componentes">Implementação dos Componentes</a>
+              <ul>
+                <li><a href="#processamento-de-documentos">Processamento de Documentos</a></li>
+                <li><a href="#sistema-de-embeddings">Sistema de Embeddings</a></li>
+                <li><a href="#interface-com-ollama">Interface com Ollama</a></li>
+                <li><a href="#módulo-principal">Módulo Principal</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#como-usar">Como Usar</a>
+          <ul>
+            <li><a href="#instalação-do-ollama">Instalação do Ollama</a></li>
+            <li><a href="#executando-a-aplicação">Executando a Aplicação</a></li>
+          </ul>
+        </li>
+        <li><a href="#considerações-técnicas">Considerações Técnicas</a>
+          <ul>
+            <li><a href="#performance-e-otimizações">Performance e Otimizações</a></li>
+            <li><a href="#melhorando-os-prompts">Melhorando os Prompts</a></li>
+          </ul>
+        </li>
+        <li><a href="#próximos-passos">Próximos Passos</a>
+          <ul>
+            <li><a href="#melhorias-rápidas-implementação-imediata">Melhorias Rápidas (Implementação Imediata)</a>
+              <ul>
+                <li><a href="#1-persistência-da-base-de-conhecimento"><strong>1. Persistência da Base de Conhecimento</strong></a></li>
+                <li><a href="#2-testes-unitários"><strong>2. Testes Unitários</strong></a></li>
+                <li><a href="#3-streaming-de-respostas"><strong>3. Streaming de Respostas</strong></a></li>
+                <li><a href="#4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></a></li>
+                <li><a href="#5-banco-vetorial-simples-bm25-manual"><strong>5. Banco Vetorial Simples (BM25 Manual)</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#melhorias-avançadas">Melhorias Avançadas</a></li>
+            <li><a href="#dependências-e-próximos-passos">Dependências e Próximos Passos</a>
+              <ul>
+                <li><a href="#dependências-recomendadas"><strong>Dependências Recomendadas</strong></a></li>
+                <li><a href="#implementação-com-lucene"><strong>Implementação com Lucene</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</a>
+              <ul>
+                <li><a href="#1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></a></li>
+                <li><a href="#2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></a></li>
+                <li><a href="#3-comparação-de-performance">3. <strong>Comparação de Performance</strong></a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#apêndice">Apêndice</a>
+          <ul>
+            <li><a href="#requisitos-de-hardware-detalhados">Requisitos de Hardware Detalhados</a>
+              <ul>
+                <li><a href="#configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></a></li>
+                <li><a href="#otimizações-por-hardware"><strong>Otimizações por Hardware</strong></a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#referências">Referências</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+            </nav>
+        </div>
+    </div>
+    
+    
+    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+    </button>
+</aside>
+
+
+
+    
     <div class="post-content">
-        <h1 id="sumário">Sumário</h1>
-<ul>
-<li><strong><a href="/2025/03/23/rag/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/23/rag/#fundamentos-do-rag">Fundamentos do RAG</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#o-que-%c3%a9-rag">O que é RAG?</a></li>
-<li><a href="/2025/03/23/rag/#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
-<li><a href="/2025/03/23/rag/#os-tr%c3%aas-pilares-do-rag">Os Três Pilares do RAG</a></li>
-<li><a href="/2025/03/23/rag/#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#implementa%c3%a7%c3%a3o-pr%c3%a1tica">Implementação Prática</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#preparando-o-ambiente">Preparando o Ambiente</a></li>
-<li><a href="/2025/03/23/rag/#estrutura-do-projeto">Estrutura do Projeto</a></li>
-<li><a href="/2025/03/23/rag/#processamento-de-documentos">Processamento de Documentos</a></li>
-<li><a href="/2025/03/23/rag/#sistema-de-embeddings">Sistema de Embeddings</a></li>
-<li><a href="/2025/03/23/rag/#interface-com-ollama">Interface com Ollama</a></li>
-<li><a href="/2025/03/23/rag/#m%c3%b3dulo-principal">Módulo Principal</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#como-usar">Como Usar</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#instala%c3%a7%c3%a3o-do-ollama">Instalação do Ollama</a></li>
-<li><a href="/2025/03/23/rag/#tf-idf">TF-IDF</a></li>
-<li><a href="/2025/03/23/rag/#configura%c3%a7%c3%a3o-do-projeto">Configuração do Projeto</a></li>
-<li><a href="/2025/03/23/rag/#executando-a-aplica%c3%a7%c3%a3o">Executando a Aplicação</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#considera%c3%a7%c3%b5es-t%c3%a9cnicas">Considerações Técnicas</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#performance-e-otimiza%c3%a7%c3%b5es">Performance e Otimizações</a></li>
-<li><a href="/2025/03/23/rag/#prompt-engineering">Prompt Engineering</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#pr%c3%b3ximos-passos">Próximos Passos</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#melhorias-propostas">Melhorias Propostas</a></li>
-<li><a href="/2025/03/23/rag/#usando-langchain4j">Usando Langchain4j</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#refer%c3%aancias">Referências</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
+        <h2 id="introdução">Introdução</h2>
 <p>Olá, pessoal! 👋</p>
 <p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
 <h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
 <h3 id="o-que-é-rag">O que é RAG?</h3>
-<p>Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
+<p>Os Modelos de Linguagem de Grande Escala (<a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>), como o <a href="https://openai.com/api/">GPT</a>, <a href="https://openai.com/api/">ChatGPT</a> e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
 
 
   
@@ -167,10 +702,10 @@
     D --&gt; F[Não tem dados atualizados]
     D --&gt; G[Não conhece novas tecnologias]</div>
  <h3 id="por-que-precisamos-do-rag">Por que precisamos do RAG?</h3>
-<p>Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.</p>
+<p>Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (<a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>) tradicionais: seu conhecimento estático.</p>
 <p>O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento &ldquo;congelada&rdquo; no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.</p>
 <blockquote>
-<p>Confiar exclusivamente em um LLM &ldquo;puro&rdquo; nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.</p></blockquote>
+<p>Confiar exclusivamente em um <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM &ldquo;puro&rdquo;</a> nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.</p></blockquote>
 <h3 id="os-três-pilares-do-rag">Os Três Pilares do RAG</h3>
 
 
@@ -189,57 +724,18 @@
     D --&gt; I[Integração com LLM]
     D --&gt; J[Contextualização]</div>
  <ol>
-<li><strong>Conexão com uma base de dados atual:</strong> Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.</li>
-<li><strong>Pesquisa em tempo real:</strong> O LLM não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O LLM, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
-<li><strong>Combinação de conhecimento base com dados novos:</strong> Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.</li>
+<li><strong>Conexão com uma base de dados atual:</strong> Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.</li>
+<li><strong>Pesquisa em tempo real:</strong> O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
+<li><strong>Combinação de conhecimento base com dados novos:</strong> Este é o ponto crucial que diferencia o <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG</a> de uma simples busca em uma base de dados. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.</li>
 </ol>
-<h3 id="etapas-avançadas-do-rag">Etapas Avançadas do RAG</h3>
-<p>Sistemas RAG modernos frequentemente incluem etapas adicionais para melhorar a precisão:</p>
-<h4 id="4-re-ranking-re-ranqueamento"><strong>4. Re-ranking (Re-ranqueamento)</strong></h4>
-<p>Após a busca inicial, um modelo especializado re-avalia a relevância dos documentos recuperados:</p>
-
-
-  
-  <div class="mermaid">graph TD
-    A[Busca Inicial] --&gt; B[Top-K Resultados]
-    B --&gt; C[Re-ranker Model]
-    C --&gt; D[Resultados Re-ranqueados]
-    D --&gt; E[Top-N Mais Relevantes]</div>
- <p><strong>Exemplo prático:</strong></p>
-<ul>
-<li>Busca inicial retorna 100 documentos</li>
-<li>Re-ranker analisa cada um e atribui scores de relevância</li>
-<li>Seleciona os 10 mais relevantes para o contexto</li>
-</ul>
-<h4 id="5-merge-rerank-fusão-e-re-ranqueamento"><strong>5. Merge-Rerank (Fusão e Re-ranqueamento)</strong></h4>
-<p>Combina resultados de múltiplas estratégias de busca:</p>
-
-
-  
-  <div class="mermaid">graph TD
-    A[Query] --&gt; B[Busca Semântica]
-    A --&gt; C[Busca Lexical]
-    A --&gt; D[Busca Híbrida]
-    B --&gt; E[Resultados Semânticos]
-    C --&gt; F[Resultados Lexicais]
-    D --&gt; G[Resultados Híbridos]
-    E --&gt; H[Fusão]
-    F --&gt; H
-    G --&gt; H
-    H --&gt; I[Re-ranqueamento Final]
-    I --&gt; J[Contexto Otimizado]</div>
- <p><strong>Vantagens:</strong></p>
-<ul>
-<li><strong>Diversidade</strong>: Diferentes estratégias capturam diferentes aspectos</li>
-<li><strong>Robustez</strong>: Reduz dependência de uma única abordagem</li>
-<li><strong>Precisão</strong>: Combina forças de múltiplos métodos</li>
-</ul>
+<h3 id="rag-em-produção">RAG em Produção</h3>
+<p>Sistemas RAG em produção frequentemente incluem etapas adicionais para melhorar a precisão: <strong>re-ranking</strong> (onde um modelo especializado re-avalia a relevância dos documentos recuperados) e <strong>merge-rerank</strong> (que combina resultados de múltiplas estratégias de busca como semântica, lexical e híbrida). Essas técnicas aumentam significativamente a qualidade das respostas, mas adicionam complexidade ao sistema.</p>
 <blockquote>
-<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca semântica simples. Sistemas de produção frequentemente implementam re-ranking e merge-rerank para maximizar a qualidade das respostas.</p></blockquote>
-<p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
-<p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos LLMs quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
+<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca semântica simples com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar essas técnicas avançadas.</p></blockquote>
+<p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
+<p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a> quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
 <blockquote>
-<p>O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um &ldquo;sabe-tudo&rdquo; desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.</p></blockquote>
+<p>O RAG representa um avanço significativo na evolução dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> de um &ldquo;sabe-tudo&rdquo; desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.</p></blockquote>
 <h3 id="por-que-o-deepseek-r1">Por que o DeepSeek R1?</h3>
 <p>Ele trabalha muito bem com documentação técnica, o que é perfeito para nosso sistema <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG</a> focado em docs técnicas. O DeepSeek R1 consegue equilibrar qualidade e velocidade melhor que outros modelos do Ollama, rodando na sua máquina sem ficar alucinando com respostas que não fazem sentido.</p>
 <p>O modelo também se dá super bem com várias linguagens de programação, incluindo <a href="https://clojure.org/">Clojure</a>, então ele responde numa boa sobre implementações técnicas e documentação de código. E o melhor: mesmo quando você joga informações pela metade ou todas bagunçadas, ele ainda consegue manter o contexto e dar respostas que fazem sentido. Por isso ele é perfeito para o que estamos construindo!</p>
@@ -275,7 +771,7 @@
 <blockquote>
 <p><strong>Observação:</strong> Embora o RAG moderno utilize embeddings densos gerados por modelos de linguagem para capturar a semântica de forma mais rica, neste artigo, usaremos uma implementação simplificada de <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF (Term Frequency-Inverse Document Frequency)</a> como <strong>prova de conceito</strong>. Para aplicações em produção, recomendamos fortemente o uso de embeddings densos.</p></blockquote>
 <h3 id="tf-idf">TF-IDF</h3>
-<p>O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:</p>
+<p>O <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF</a> (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:</p>
 <ol>
 <li>
 <p><strong>Term Frequency (TF)</strong>: Mede a frequência de uma palavra em um documento.</p>
@@ -296,121 +792,19 @@
   <pre><code class="language-">TF-IDF(termo) = TF(termo) × IDF(termo)</code></pre>
  </li>
 </ol>
-<p><strong>Exemplo prático:</strong></p>
-<p>Imagine que temos três documentos técnicos:</p>
+<p>Vamos imaginar um cenário prático com três documentos técnicos:</p>
 <ul>
-<li>Doc1: &ldquo;Clojure é uma linguagem funcional baseada em Lisp.&rdquo;</li>
-<li>Doc2: &ldquo;Python é uma linguagem de programação versátil.&rdquo;</li>
-<li>Doc3: &ldquo;Clojure e Python são linguagens de programação populares.&rdquo;</li>
+<li>Doc1: &ldquo;Clojure é uma linguagem funcional baseada em <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">Lisp</a>&rdquo;</li>
+<li>Doc2: &ldquo;Python é uma linguagem de programação versátil&rdquo;</li>
+<li>Doc3: &ldquo;Clojure e Python são linguagens de programação populares&rdquo;</li>
 </ul>
-<p>Para calcular o TF-IDF da palavra &ldquo;Clojure&rdquo; no Doc1:</p>
-<ol>
-<li>TF(&ldquo;Clojure&rdquo;, Doc1) = 1/8 = 0.125 (aparece 1 vez em 8 palavras)</li>
-<li>IDF(&ldquo;Clojure&rdquo;) = log(3/2) ≈ 0.176 (aparece em 2 dos 3 documentos)</li>
-<li>TF-IDF(&ldquo;Clojure&rdquo;, Doc1) = 0.125 × 0.176 ≈ 0.022</li>
-</ol>
-<p>Comparando com a palavra &ldquo;linguagem&rdquo; no mesmo documento:</p>
-<ol>
-<li>TF(&ldquo;linguagem&rdquo;, Doc1) = 1/8 = 0.125</li>
-<li>IDF(&ldquo;linguagem&rdquo;) = log(3/3) = 0 (aparece em todos os documentos)</li>
-<li>TF-IDF(&ldquo;linguagem&rdquo;, Doc1) = 0.125 × 0 = 0</li>
-</ol>
-<p>Isso mostra que &ldquo;Clojure&rdquo; tem maior valor discriminativo que &ldquo;linguagem&rdquo; para o Doc1, pois &ldquo;linguagem&rdquo; é comum em todos os documentos.</p>
-<p>No nosso sistema RAG, usaremos o TF-IDF para:</p>
-<ol>
-<li>Indexar os documentos técnicos</li>
-<li>Encontrar os documentos mais relevantes para uma consulta</li>
-<li>Priorizar termos distintivos ao buscar informações</li>
-</ol>
-<h3 id="requisitos-de-hardware">Requisitos de Hardware</h3>
-<p>A performance do sistema RAG depende significativamente do hardware disponível. Aqui estão as configurações recomendadas:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Componente</th>
-          <th>Mínimo</th>
-          <th>Recomendado</th>
-          <th>Alto Desempenho</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><strong>CPU</strong></td>
-          <td>4 cores (Intel i5/AMD Ryzen 5)</td>
-          <td>8 cores (Intel i7/AMD Ryzen 7)</td>
-          <td>16+ cores (Intel i9/AMD Ryzen 9)</td>
-      </tr>
-      <tr>
-          <td><strong>RAM</strong></td>
-          <td>8 GB</td>
-          <td>16 GB</td>
-          <td>32+ GB</td>
-      </tr>
-      <tr>
-          <td><strong>GPU</strong></td>
-          <td>Integrada</td>
-          <td>NVIDIA RTX 3060 (8GB VRAM)</td>
-          <td>NVIDIA RTX 4090 (24GB VRAM)</td>
-      </tr>
-      <tr>
-          <td><strong>VRAM</strong></td>
-          <td>-</td>
-          <td>8 GB</td>
-          <td>16+ GB</td>
-      </tr>
-      <tr>
-          <td><strong>Storage</strong></td>
-          <td>SSD 256 GB</td>
-          <td>SSD 512 GB</td>
-          <td>NVMe 1 TB+</td>
-      </tr>
-      <tr>
-          <td><strong>Rede</strong></td>
-          <td>100 Mbps</td>
-          <td>1 Gbps</td>
-          <td>10 Gbps</td>
-      </tr>
-  </tbody>
-</table>
-<h4 id="configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></h4>
-<p><strong>🟢 Desenvolvimento/Teste</strong></p>
-<ul>
-<li>CPU: 4 cores, RAM: 8GB</li>
-<li>Modelo: <code>deepseek-r1</code> (CPU only)</li>
-<li>Documentos: &lt; 1GB</li>
-<li>Performance: ~2-5 segundos por consulta</li>
-</ul>
-<p><strong>🟡 Produção Pequena</strong></p>
-<ul>
-<li>CPU: 8 cores, RAM: 16GB, GPU: RTX 3060</li>
-<li>Modelo: <code>deepseek-r1</code> (GPU)</li>
-<li>Documentos: 1-10GB</li>
-<li>Performance: ~1-3 segundos por consulta</li>
-</ul>
-<p><strong>🔴 Produção Grande</strong></p>
-<ul>
-<li>CPU: 16+ cores, RAM: 32GB+, GPU: RTX 4090</li>
-<li>Modelo: <code>deepseek-r1</code> + embeddings densos</li>
-<li>Documentos: 10GB+</li>
-<li>Performance: &lt; 1 segundo por consulta</li>
-</ul>
-<h4 id="otimizações-por-hardware"><strong>Otimizações por Hardware</strong></h4>
-<p><strong>CPU Only:</strong></p>
-
-
-  <pre><code class="language-bash"># Usar modelo otimizado para CPU
-ollama pull deepseek-r1:3b  # Versão menor</code></pre>
- <p><strong>GPU Disponível:</strong></p>
-
-
-  <pre><code class="language-bash"># Usar versão completa com aceleração GPU
-ollama pull deepseek-r1</code></pre>
- <p><strong>Múltiplas GPUs:</strong></p>
-
-
-  <pre><code class="language-bash"># Distribuir carga entre GPUs
-CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
- <h3 id="configuração-do-projeto">Configuração do Projeto</h3>
+<p>O TF-IDF é uma técnica que nos ajuda a identificar quais palavras são mais importantes em cada documento, comparando a frequência de um termo no documento (TF) com a raridade desse termo em toda a coleção (IDF). Por exemplo, se &ldquo;Clojure&rdquo; aparece uma vez em um documento de oito palavras, seu TF é 0,125; como está presente em dois de três documentos, seu IDF é log(3/2) ≈ 0,176, resultando em um TF-IDF de aproximadamente 0,022. Já termos muito comuns, como &ldquo;linguagem&rdquo;, acabam com TF-IDF zero, pois não ajudam a diferenciar os documentos.</p>
+<p>Esse método é fundamental em sistemas de busca, pois destaca os termos que realmente caracterizam cada texto. No contexto do RAG, o TF-IDF permite indexar e encontrar rapidamente os documentos mais relevantes para uma consulta, servindo como uma base simples e eficiente para recuperação de informações, que pode ser aprimorada com técnicas mais avançadas como embeddings densos.</p>
+<h3 id="requisitos-mínimos">Requisitos Mínimos</h3>
+<p>Este experimento funciona com hardware básico: <strong>4 cores de CPU e 8GB de RAM</strong> são suficientes. Para máquinas mais lentas, use <code>ollama pull deepseek-r1:3b</code> (versão otimizada).</p>
+<blockquote>
+<p>Para requisitos detalhados de produção e otimizações avançadas, consulte o <a href="/2025/03/23/rag/#requisitos-de-hardware-detalhados">apêndice de hardware</a> ao final do artigo.</p></blockquote>
+<h3 id="configuração-do-projeto">Configuração do Projeto</h3>
 <ol>
 <li>Crie um novo projeto Clojure:</li>
 </ol>
@@ -442,7 +836,8 @@ cd docai</code></pre>
   :target-path &#34;target/%s&#34;
   :profiles {:uberjar {:aot :all
                        :jvm-opts [&#34;-Dclojure.compiler.direct-linking=true&#34;]}})</code></pre>
- <p>A estrutura do projeto acima define um aplicativo Clojure para RAG (Retrieval-Augmented Generation) com várias dependências essenciais: <code>markdown-to-hiccup</code> e <code>hickory</code> para processar documentos em Markdown e HTML, <code>data.json</code> e <code>http-kit</code> para comunicação com APIs (como a do Ollama), <code>tools.logging</code> para registro de eventos, <code>tools.namespace</code> para gerenciamento de namespaces, <code>core.async</code> para operações assíncronas (útil ao lidar com processamento de documentos grandes), e <code>core.memoize</code> e <code>core.cache</code> para implementar cache de resultados (como embeddings ou respostas do LLM), o que melhora significativamente a performance ao evitar recálculos desnecessários, especialmente em consultas repetidas ou similares.</p>
+ <p>A estrutura do projeto acima define um aplicativo Clojure para RAG (Retrieval-Augmented Generation) com várias dependências essenciais. Entre elas, <code>markdown-to-hiccup</code> e <code>hickory</code> são usadas para processar documentos em Markdown e HTML, enquanto <code>data.json</code> e <code>http-kit</code> facilitam a comunicação com APIs externas, como a do Ollama. Além disso, <code>tools.logging</code> é responsável pelo registro de eventos e logs, e <code>tools.namespace</code> auxilia no gerenciamento de namespaces do projeto.</p>
+<p>Já <code>core.async</code> permite operações assíncronas, o que é especialmente útil ao lidar com o processamento de documentos grandes. Por fim, <code>core.memoize</code> e <code>core.cache</code> são utilizados para implementar cache de resultados, como embeddings ou respostas do LLM, melhorando significativamente a performance ao evitar recálculos desnecessários, principalmente em consultas repetidas ou similares.</p>
 <h3 id="implementação-dos-componentes">Implementação dos Componentes</h3>
 <p>Agora vamos implementar os três componentes principais do nosso sistema RAG e vamos começar com o processamento de documentos. Pois, ele é o ponto de entrada para o RAG onde vamos processar os documentos e extrair o texto para ser usado nos outros componentes.</p>
 <h4 id="processamento-de-documentos">Processamento de Documentos</h4>
@@ -568,15 +963,11 @@ cd docai</code></pre>
     E --&gt; F[Divide em Chunks]
     F --&gt; G[Limpa e Formata]
     G --&gt; H[Chunks Prontos]</div>
- <p>O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) baseados em tokens reais (não caracteres), e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.</p>
+ <p>O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) baseados em tokens reais (não caracteres), e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho.</p>
+<p>O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados.</p>
+<p>Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.</p>
 <blockquote>
-<p><strong>Importante</strong>: Usamos chunking baseado em tokens reais em vez de caracteres para evitar estourar o contexto do modelo ou desperdiçar largura.</p>
-<p><strong>⚠️ Limitação</strong>: A heurística atual pode errar até 2x em textos muito curtos ou longos. Para produção, use:</p>
-<ul>
-<li><strong><a href="https://github.com/justone/clojure-tiktoken">clojure-tiktoken</a></strong>: Biblioteca nativa Clojure</li>
-<li><strong>API do Ollama</strong>: <code>count-tokens-ollama</code> para contagem precisa</li>
-<li><strong>Interop com Python</strong>: <code>tiktoken</code> via GraalVM</li>
-</ul></blockquote>
+<p><strong>Importante</strong>: Dividimos o texto em chunks usando tokens (não caracteres) para não ultrapassar o limite do modelo. A contagem de tokens é aproximada. Para produção, use uma biblioteca como <a href="https://github.com/justone/clojure-tiktoken">clojure-tiktoken</a> para maior precisão.</p></blockquote>
 <h4 id="sistema-de-embeddings">Sistema de Embeddings</h4>
 <p>Agora vamos implementar o sistema de embeddings. Ele é responsável por criar embeddings para o texto para que possamos usar na busca semântica.</p>
 
@@ -674,7 +1065,8 @@ cd docai</code></pre>
            (sort-by first &gt;)
            (take n)
            (map second)))))</code></pre>
- <p>O código acima implementa um sistema simples de embeddings usando TF-IDF (Term Frequency-Inverse Document Frequency) para transformar textos em vetores numéricos. Basicamente, ele pega documentos de texto, quebra em palavras (tokens), calcula a importância de cada palavra considerando tanto sua frequência no documento quanto sua raridade na coleção inteira, e cria vetores que representam cada documento. É como transformar textos em coordenadas matemáticas para que o computador possa entender a &ldquo;semelhança&rdquo; entre eles.</p>
+ <p>O código acima implementa um sistema simples de embeddings usando TF-IDF (Term Frequency-Inverse Document Frequency) para transformar textos em vetores numéricos.</p>
+<p>Basicamente, ele pega documentos de texto, quebra em palavras (tokens), calcula a importância de cada palavra considerando tanto sua frequência no documento quanto sua raridade na coleção inteira, e cria vetores que representam cada documento. É como transformar textos em coordenadas matemáticas para que o computador possa entender a &ldquo;semelhança&rdquo; entre eles.</p>
 
 
   
@@ -682,131 +1074,10 @@ cd docai</code></pre>
     A[Documentos] --&gt;|Tokenização| B[Tokens]
     B --&gt;|TF-IDF| C[Vetores Numéricos]
     C --&gt;|Similaridade do Cosseno| D[Documentos Similares]</div>
- <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional - quanto menor o ângulo entre dois pontos, mais similares eles são. O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.</p>
-<h4 id="entendendo-o-tf-idf">Entendendo o TF-IDF</h4>
-<p>O TF-IDF é uma técnica fundamental para representar documentos como vetores numéricos. Vamos entender como ele funciona através de um exemplo prático:</p>
-<h5 id="exemplo-numérico">Exemplo Numérico</h5>
-<p>Suponha que temos três documentos sobre programação:</p>
-<ol>
-<li>Doc1: &ldquo;Clojure é uma linguagem funcional&rdquo;</li>
-<li>Doc2: &ldquo;Clojure é uma linguagem Lisp&rdquo;</li>
-<li>Doc3: &ldquo;Python é uma linguagem dinâmica&rdquo;</li>
-</ol>
-<p>Vamos calcular o TF-IDF passo a passo:</p>
-<ol>
-<li>
-<p><strong>Tokenização e TF (Term Frequency)</strong></p>
-<ul>
-<li>Primeiro, convertemos para minúsculas e dividimos em palavras</li>
-<li>Removemos palavras muito curtas (menos de 3 caracteres)</li>
-<li>Calculamos a frequência de cada termo em cada documento</li>
-</ul>
-
-
-  <pre><code class="language-">Doc1: {&#34;clojure&#34;: 1, &#34;linguagem&#34;: 1, &#34;funcional&#34;: 1}
-Doc2: {&#34;clojure&#34;: 1, &#34;linguagem&#34;: 1, &#34;lisp&#34;: 1}
-Doc3: {&#34;python&#34;: 1, &#34;linguagem&#34;: 1, &#34;dinâmica&#34;: 1}</code></pre>
- </li>
-<li>
-<p><strong>IDF (Inverse Document Frequency)</strong></p>
-<ul>
-<li>Contamos em quantos documentos cada termo aparece</li>
-<li>Aplicamos a fórmula: IDF = log(N/DF), onde:
-<ul>
-<li>N = número total de documentos (3)</li>
-<li>DF = número de documentos que contêm o termo</li>
-</ul>
-</li>
-</ul>
-
-
-  <pre><code class="language-bash">&#34;clojure&#34;: log(3/2) = 0.405
-&#34;linguagem&#34;: log(3/3) = 0
-&#34;funcional&#34;: log(3/1) = 1.099
-&#34;lisp&#34;: log(3/1) = 1.099
-&#34;python&#34;: log(3/1) = 1.099
-&#34;dinâmica&#34;: log(3/1) = 1.099</code></pre>
- </li>
-<li>
-<p><strong>TF-IDF Final</strong></p>
-<ul>
-<li>Multiplicamos TF pelo IDF para cada termo</li>
-</ul>
-
-
-  <pre><code class="language-bash">Doc1: {&#34;clojure&#34;: 0.405, &#34;linguagem&#34;: 0, &#34;funcional&#34;: 1.099}
-Doc2: {&#34;clojure&#34;: 0.405, &#34;linguagem&#34;: 0, &#34;lisp&#34;: 1.099}
-Doc3: {&#34;python&#34;: 1.099, &#34;linguagem&#34;: 0, &#34;dinâmica&#34;: 1.099}</code></pre>
- </li>
-<li>
-<p><strong>Vetorização</strong></p>
-<ul>
-<li>Convertemos para vetores usando todos os termos únicos como dimensões</li>
-<li>Preenchemos com 0 para termos ausentes</li>
-</ul>
-
-
-  <pre><code class="language-bash">Doc1: [0.405, 0, 1.099, 0, 0, 0]
-Doc2: [0.405, 0, 0, 1.099, 0, 0]
-Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
- </li>
-</ol>
-<h5 id="por-que-usar-logaritmo-no-idf">Por que usar logaritmo no IDF?</h5>
-<p>O logaritmo no IDF serve para dois propósitos principais:</p>
-<ol>
-<li><strong>Suavização</strong>: Reduz o impacto de termos muito raros ou muito comuns</li>
-<li><strong>Escala</strong>: Mantém os valores em uma faixa mais gerenciável</li>
-</ol>
-<p>Por exemplo, sem o logaritmo:</p>
-<ul>
-<li>Um termo que aparece em 1/1000 documentos teria IDF = 1000</li>
-<li>Um termo que aparece em 1/2 documentos teria IDF = 2</li>
-</ul>
-<p>Com o logaritmo:</p>
-<ul>
-<li><code>log(1000) ≈ 6.9</code></li>
-<li><code>log(2) ≈ 0.7</code></li>
-</ul>
-<h4 id="similaridade-do-cosseno">Similaridade do Cosseno</h4>
-<p>A similaridade do cosseno mede o ângulo entre dois vetores TF-IDF. Quanto menor o ângulo, mais similares são os documentos. A fórmula é:</p>
-
-
-  <pre><code class="language-bash">cos(θ) = (A·B) / (||A|| ||B||)</code></pre>
- <p>Onde:</p>
-<ul>
-<li><code>A·B</code> é o produto escalar dos vetores</li>
-<li><code>||A||</code> e <code>||B||</code> são as normas (comprimentos) dos vetores</li>
-</ul>
-<h4 id="limitações-do-tf-idf">Limitações do TF-IDF</h4>
-<ol>
-<li><strong>Semântica</strong>: TF-IDF não captura o significado das palavras. Por exemplo:
-<ul>
-<li>&ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; são tratados como palavras diferentes</li>
-<li>&ldquo;bom&rdquo; e &ldquo;ruim&rdquo; são tratados como palavras diferentes</li>
-</ul>
-</li>
-<li><strong>Ordem</strong>: Não considera a ordem das palavras
-<ul>
-<li>&ldquo;gato come rato&rdquo; e &ldquo;rato come gato&rdquo; teriam o mesmo vetor TF-IDF</li>
-</ul>
-</li>
-<li><strong>Contexto</strong>: Não captura o contexto das palavras
-<ul>
-<li>&ldquo;banco&rdquo; (financeiro) e &ldquo;banco&rdquo; (assento) são tratados como a mesma palavra</li>
-</ul>
-</li>
-<li><strong>Dimensão</strong>: O vetor final pode ser muito grande (uma dimensão para cada termo único)</li>
-<li><strong>Sinonímia</strong>: Não reconhece palavras com significados similares
-<ul>
-<li>&ldquo;rápido&rdquo;, &ldquo;veloz&rdquo;, &ldquo;ligeiro&rdquo; são tratados como termos distintos</li>
-</ul>
-</li>
-<li><strong>Polissemia</strong>: Não diferencia múltiplos significados da mesma palavra
-<ul>
-<li>&ldquo;java&rdquo; (linguagem) vs &ldquo;java&rdquo; (ilha) vs &ldquo;java&rdquo; (café)</li>
-</ul>
-</li>
-</ol>
+ <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são.</p>
+<p>O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.</p>
+<p>O TF-IDF transforma textos em vetores numéricos ao combinar a frequência de cada palavra em um documento (TF) com o quanto essa palavra é rara em toda a coleção (IDF): palavras comuns como &ldquo;linguagem&rdquo; têm peso baixo, enquanto termos mais exclusivos como &ldquo;Clojure&rdquo; ganham peso alto, permitindo que o computador compare documentos de forma eficiente e encontre os mais relevantes para cada consulta.</p>
+<p>Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como &ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; como diferentes e podendo gerar vetores grandes.</p>
 <blockquote>
 <p><strong>Importante</strong>: Esta implementação TF-IDF é uma <strong>prova de conceito</strong> para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como <a href="https://www.sbert.net/">SBERT</a>, <a href="https://huggingface.co/intfloat/e5-large">E5</a>, <a href="https://huggingface.co/BAAI/bge-large-en">BGE</a> ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.</p></blockquote>
 <h4 id="interface-com-ollama">Interface com Ollama</h4>
@@ -896,7 +1167,8 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
 ;; - Forneça exemplos de código quando relevante
 ;; - Se o contexto for limitado, mencione essa limitação
 ;; - NÃO invente informações que não estão no contexto</code></pre>
- <p>A parte mais importante aqui é a função <code>call-ollama-api</code>, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função <code>format-prompt</code> super importante, que estrutura a mensagem enviada ao modelo. Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa &ldquo;engenharia de prompt&rdquo; é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.</p>
+ <p>A parte mais importante aqui é a função <code>call-ollama-api</code>, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função <code>format-prompt</code> super importante, que estrutura a mensagem enviada ao modelo.</p>
+<p>Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa &ldquo;engenharia de prompt&rdquo; é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.</p>
 <p>A função <code>generate-response</code> amarra tudo isso, pegando a pergunta e o contexto, formatando o prompt, enviando para o Ollama e tratando possíveis erros. Tem até uma mensagem amigável caso o Ollama não esteja rodando, sugerindo como iniciar o serviço. É um exemplo clássico de como interfaces com LLMs funcionam: você prepara um prompt bem estruturado, envia para o modelo, e recebe de volta texto gerado que (esperamos!) responda à pergunta original com base no contexto fornecido.</p>
 <h4 id="módulo-principal">Módulo Principal</h4>
 <p>Agora vamos implementar o módulo principal que vai ser o ponto de entrada para o RAG. Ele vai ser responsável por carregar os documentos, processar os chunks, criar os embeddings e gerar a resposta para a query do usuário.</p>
@@ -1047,9 +1319,12 @@ Doc3: [0, 0, 0, 0, 1.099, 1.099]</code></pre>
         (println &#34;Erro: &#34; (.getMessage e))
         (println &#34;Detalhes: &#34; (ex-data e))))
     (println &#34;Obrigado por usar o DocAI. Até a próxima!&#34;)))</code></pre>
- <p>Basicamente, quando você faz uma pergunta, o sistema primeiro transforma sua pergunta em números (embeddings) e depois procura nos documentos quais partes são mais parecidas com o que você perguntou. É como se ele estivesse destacando os trechos mais relevantes de um livro para responder sua dúvida. Você pode ver isso acontecendo quando ele imprime os &ldquo;índices similares&rdquo; no console - são as posições dos pedaços de texto que ele achou mais úteis.</p>
-<p>Depois de encontrar os trechos relevantes, o sistema junta tudo em um &ldquo;contexto&rdquo; - que é basicamente um resumo das informações importantes. Se ele não achar nada parecido com sua pergunta, ele tenta usar o documento inteiro ou avisa que não tem informação suficiente. Dá para ver que ele é bem transparente, mostrando no console o tamanho do contexto e até uma amostra do que encontrou, para você entender o que está acontecendo nos bastidores.</p>
-<p>Por fim, ele passa sua pergunta original junto com o contexto encontrado para o modelo de linguagem (LLM) gerar uma resposta personalizada. É como dar a um especialista tanto a sua pergunta quanto as páginas relevantes de um manual técnico - assim ele pode dar uma resposta muito mais precisa e fundamentada. Todo esse processo acontece em segundos, permitindo que você tenha uma conversa fluida com seus documentos, como se estivesse conversando com alguém que leu tudo e está pronto para responder suas dúvidas específicas.</p>
+ <p>Basicamente, quando você faz uma pergunta, o sistema primeiro transforma sua pergunta em números (embeddings) e depois procura nos documentos quais partes são mais parecidas com o que você perguntou.</p>
+<p>É como se ele estivesse destacando os trechos mais relevantes de um livro para responder sua dúvida. Você pode ver isso acontecendo quando ele imprime os &ldquo;índices similares&rdquo; no console - são as posições dos pedaços de texto que ele achou mais úteis.</p>
+<p>Depois de encontrar os trechos relevantes, o sistema junta tudo em um &ldquo;contexto&rdquo; - que é basicamente um resumo das informações importantes. Se ele não achar nada parecido com sua pergunta, ele tenta usar o documento inteiro ou avisa que não tem informação suficiente.</p>
+<p>Dá para ver que ele é bem transparente, mostrando no console o tamanho do contexto e até uma amostra do que encontrou, para você entender o que está acontecendo nos bastidores.</p>
+<p>Por fim, ele passa sua pergunta original junto com o contexto encontrado para o modelo de linguagem (LLM) gerar uma resposta personalizada. É como dar a um especialista tanto a sua pergunta quanto as páginas relevantes de um manual técnico - assim ele pode dar uma resposta muito mais precisa e fundamentada.</p>
+<p>Todo esse processo acontece em segundos, permitindo que você tenha uma conversa fluida com seus documentos, como se estivesse conversando com alguém que leu tudo e está pronto para responder suas dúvidas específicas.</p>
 <hr>
 <h2 id="como-usar">Como Usar</h2>
 <p>Abaixo um guia para você instalar e usar o DocAI (e ver o processo em ação).</p>
@@ -1156,7 +1431,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <h3 id="performance-e-otimizações">Performance e Otimizações</h3>
 <p>Nossa implementação atual oferece uma base funcional, mas pode ser significativamente otimizada em termos de performance através da adoção de bancos de dados vetoriais como <a href="https://milvus.io/">Milvus</a> ou <a href="https://github.com/facebookresearch/faiss">FAISS</a>, implementação de cache de embeddings e paralelização do processamento de chunks, permitindo consultas mais rápidas mesmo com grandes volumes de dados.</p>
 <p>Para lidar com documentações extensas, recomendo estratégias específicas de gerenciamento de memória, como o processamento de chunks em lotes menores, implementação de indexação incremental que constrói a base de conhecimento gradualmente, e utilização de técnicas de streaming para processar arquivos grandes sem sobrecarregar a memória disponível.</p>
-<p>Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> destaca-se na compreensão geral e geração de texto, o <a href="https://ollama.com/models/deepseek-coder">DeepSeek Coder</a> é especializado em código, o <a href="https://ollama.com/models/llama3">Llama 3</a> serve como excelente alternativa geral, o <a href="https://ollama.com/models/mistral">Mistral</a> demonstra eficácia em tarefas específicas, enquanto o <a href="https://ollama.com/models/gemma">Gemma</a> oferece uma solução leve e eficiente para ambientes com recursos limitados. Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:</p>
+<p>Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> destaca-se na compreensão geral e geração de texto, o <a href="https://ollama.com/models/deepseek-coder">DeepSeek Coder</a> é especializado em código, o <a href="https://ollama.com/models/llama3">Llama 3</a> serve como excelente alternativa geral, o <a href="https://ollama.com/models/mistral">Mistral</a> demonstra eficácia em tarefas específicas, enquanto o <a href="https://ollama.com/models/gemma">Gemma</a> oferece uma solução leve e eficiente para ambientes com recursos limitados.</p>
+<p>Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:</p>
 <ol>
 <li>
 <p><strong>Ollama Offline</strong></p>
@@ -1215,55 +1491,24 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 </li>
 </ol>
 <hr>
-<h3 id="prompt-engineering">Prompt Engineering</h3>
-<p>O Prompt Engineering é uma habilidade crucial para obter bons resultados com LLMs. Um prompt bem estruturado pode fazer a diferença entre uma resposta vaga e uma resposta precisa e útil.</p>
-<h4 id="estrutura-do-prompt">Estrutura do Prompt</h4>
-
-
-  <pre><code class="language-clojure">(defn format-prompt
-  &#34;Formata o prompt para o LLM&#34;
-  [context query]
-  (str &#34;Você é um assistente especializado em documentação técnica. &#34;
-       &#34;Com base no seguinte contexto da documentação:\n\n&#34;
-       context
-       &#34;\n\nPergunta: &#34; query
-       &#34;\n\nForneça uma resposta técnica precisa e, se possível, &#34;
-       &#34;inclua exemplos de código. Se a documentação não contiver &#34;
-       &#34;informações relevantes para a pergunta, indique isso claramente &#34;
-       &#34;e forneça uma resposta geral com base em seu conhecimento.&#34;))</code></pre>
- <p>O código acima define uma função <code>format-prompt</code> que estrutura a comunicação com o modelo de linguagem. Esta função recebe dois parâmetros principais: o <code>context</code>, que contém os trechos relevantes da documentação recuperados pelo sistema RAG, e a <code>query</code>, que é a pergunta do usuário. A função combina esses elementos em um prompt estruturado que orienta o comportamento do LLM.</p>
-<p>A estrutura do prompt é cuidadosamente projetada com vários elementos estratégicos: primeiro, define o papel do modelo como &ldquo;assistente especializado em documentação técnica&rdquo;, estabelecendo o tom e a expectativa; em seguida, fornece o contexto extraído da documentação para que o modelo tenha as informações necessárias; depois, apresenta claramente a pergunta do usuário; e finalmente, inclui instruções específicas sobre como o modelo deve responder, incentivando respostas técnicas precisas com exemplos de código quando apropriado, além de orientar como proceder quando a documentação não contém informações relevantes.</p>
-<p>O prompt engineering utiliza diversas técnicas para melhorar as respostas dos LLMs, incluindo: <a href="https://www.promptingguide.ai/techniques/role-prompting"><strong>Role Prompting</strong></a>, que define um papel específico para o modelo (como &ldquo;Você é um especialista em&hellip;&rdquo;); <a href="https://www.promptingguide.ai/techniques/few-shot"><strong>Few-shot Learning</strong></a>, que fornece exemplos de entradas e saídas desejadas; <a href="https://www.promptingguide.ai/techniques/chain-of-thought"><strong>Chain of Thought</strong></a>, que solicita ao modelo explicar seu raciocínio passo a passo; <a href="https://www.promptingguide.ai/techniques/format-specification"><strong>Format Specification</strong></a>, que especifica o formato exato desejado para a resposta; e <a href="https://www.promptingguide.ai/techniques/constraints"><strong>Constraints</strong></a>, que estabelece limites e requisitos específicos que a resposta deve seguir.</p>
-<h4 id="exemplo-de-prompt-avançado">Exemplo de Prompt Avançado</h4>
-<p>Este código implementa uma versão avançada de formatação de prompt para o LLM, criando uma estrutura mais detalhada e direcionada. Ele fornece um conjunto de diretrizes numeradas que orientam o comportamento do modelo, incluindo requisitos para precisão técnica, exemplos de código, citações da documentação, transparência sobre limitações de conhecimento, concisão e uso de formatação Markdown.</p>
-<p>A estrutura deste prompt segue princípios de engenharia de prompts mais sofisticados, incorporando técnicas como role prompting (definição clara do papel do modelo), constraint engineering (estabelecimento de diretrizes específicas) e format specification (solicitação de formatação Markdown). Esta abordagem mais estruturada ajuda a obter respostas mais consistentes, informativas e bem formatadas do modelo, especialmente para consultas técnicas complexas relacionadas à documentação de Clojure.</p>
+<h3 id="melhorando-os-prompts">Melhorando os Prompts</h3>
+<p>Para obter melhores respostas do sistema RAG, você pode usar prompts mais estruturados:</p>
 
 
   <pre><code class="language-clojure">(defn format-advanced-prompt
-  &#34;Formata um prompt mais sofisticado para o LLM com delimitação segura&#34;
+  &#34;Prompt otimizado com diretrizes claras&#34;
   [context query]
-  (str &#34;Você é um especialista em documentação técnica de software, &#34;
-       &#34;com foco em Clojure e desenvolvimento web.\n\n&#34;
-       &#34;DOCUMENTO:\n&#34;
-       &#34;```\n&#34;
-       context
-       &#34;\n```\n\n&#34;
-       &#34;Pergunta: &#34; query
-       &#34;\n\n&#34;
+  (str &#34;Você é um especialista em documentação técnica de software.\n\n&#34;
+       &#34;DOCUMENTO:\n```\n&#34; context &#34;\n```\n\n&#34;
+       &#34;Pergunta: &#34; query &#34;\n\n&#34;
        &#34;Diretrizes:\n&#34;
        &#34;1. Use APENAS informações do contexto fornecido\n&#34;
        &#34;2. Seja preciso e técnico\n&#34;
        &#34;3. Inclua exemplos de código quando relevante\n&#34;
-       &#34;4. Cite as partes da documentação que você está usando\n&#34;
-       &#34;5. Se a informação não estiver no contexto, indique claramente\n&#34;
-       &#34;6. Mantenha a resposta concisa mas completa\n&#34;
-       &#34;7. Use formatação Markdown para melhor legibilidade\n&#34;
-       &#34;8. Se o contexto for limitado, mencione essa limitação\n&#34;
-       &#34;9. NÃO invente informações que não estão no contexto&#34;))</code></pre>
- <p>Para criar prompts efetivos, é essencial ser específico e claro nas instruções, utilizar formatação adequada para melhorar a legibilidade e incluir exemplos ilustrativos sempre que possível. Também é recomendável definir limites e restrições claras, solicitar ao modelo que explique seu raciocínio e utilizar um processo iterativo para refinar continuamente o prompt até obter os resultados desejados.</p>
-<p>A avaliação sistemática de prompts envolve testar diferentes variações da mesma instrução e comparar as respostas para identificar qual estrutura produz os melhores resultados. Este processo deve incluir a coleta de feedback dos usuários finais e a manutenção de um registro detalhado dos prompts que demonstraram bom desempenho, permitindo assim o desenvolvimento de um conjunto de melhores práticas específicas para cada caso de uso.</p>
-<blockquote>
-<p><strong>Nota</strong>: O <a href="https://www.promptingguide.ai/">Prompt Engineering</a> é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.</p></blockquote>
+       &#34;4. Se a informação não estiver no contexto, indique claramente\n&#34;
+       &#34;5. Use formatação Markdown para melhor legibilidade&#34;))</code></pre>
+ <blockquote>
+<p>Para técnicas avançadas de prompt engineering, consulte o <a href="https://www.promptingguide.ai/">Guia Completo de Prompt Engineering</a>.</p></blockquote>
 <h2 id="próximos-passos">Próximos Passos</h2>
 <p>Abaixo uma lista de melhorias que podem ser feitas no projeto atual.</p>
 <h3 id="melhorias-rápidas-implementação-imediata">Melhorias Rápidas (Implementação Imediata)</h3>
@@ -1558,10 +1803,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     Prompt
       Few-shot
       Chain-of-thought
-      Formato
-    Langchain4j
-      Abstração
-      Integração</div>
+      Formato</div>
  <h3 id="dependências-e-próximos-passos">Dependências e Próximos Passos</h3>
 <h4 id="dependências-recomendadas"><strong>Dependências Recomendadas</strong></h4>
 <p>Para implementar as funcionalidades avançadas mencionadas no artigo, adicione estas dependências ao <code>project.clj</code>:</p>
@@ -1731,21 +1973,101 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <blockquote>
 <p><strong>Recomendação</strong>: Para aplicações em produção, comece com Ollama embeddings (simples de implementar) e evolua para modelos especializados como SBERT ou E5 conforme necessário. Considere seus recursos de hardware ao escolher a abordagem.</p>
 <p><strong>⚠️ Importante</strong>: A contagem de tokens heurística pode errar até 2x. Para produção, use <code>count-tokens-ollama-precise</code> ou <code>clojure-tiktoken</code> para precisão.</p></blockquote>
-<p>Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo <a href="https://en.wikipedia.org/wiki/Byte_pair_encoding">BPE</a> ou <a href="https://en.wikipedia.org/wiki/WordPiece">WordPiece</a> - idealmente o mesmo que o modelo usa. E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda! O TF-IDF que implementamos é ótimo para entender os conceitos, mas embeddings densos modernos capturam nuances semânticas que fazem toda a diferença em aplicações reais.</p>
+<p>Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo <a href="https://en.wikipedia.org/wiki/Byte_pair_encoding">BPE</a> ou <a href="https://en.wikipedia.org/wiki/WordPiece">WordPiece</a> - idealmente o mesmo que o modelo usa.</p>
+<p>E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda! O TF-IDF que implementamos é ótimo para entender os conceitos, mas embeddings densos modernos capturam nuances semânticas que fazem toda a diferença em aplicações reais.</p>
 <p>Quando o projeto crescer, vai ser essencial ter um banco de dados vetorial decente. Imagina lidar com milhares de documentos usando nossa implementação atual? Seria um pesadelo! <a href="https://milvus.io/">Milvus</a>, <a href="https://github.com/facebookresearch/faiss">FAISS</a> ou <a href="https://qdrant.tech/">Qdrant</a> resolveriam isso numa boa. E não podemos esquecer do cache - tanto para embeddings quanto para respostas. Economiza um tempão e reduz a carga no sistema.</p>
 <p>A parte de tratamento de erros e logging também precisa de carinho. Já pensou o usuário esperando resposta e o Ollama tá offline? Ou um arquivo corrompido? Precisamos de mensagens amigáveis e um sistema de logging decente pra rastrear problemas. E claro, testes! Sem testes unitários e de integração, qualquer mudança vira uma roleta-russa.</p>
-<p>O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o langchain4j via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!</p>
-<h3 id="usando-langchain4j">Usando Langchain4j</h3>
-<p>Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java.</p>
-<p>Vantagens de usar Langchain4j:</p>
+<p>O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta.</p>
+<h2 id="apêndice">Apêndice</h2>
+<h3 id="requisitos-de-hardware-detalhados">Requisitos de Hardware Detalhados</h3>
+<p>A performance do sistema RAG depende significativamente do hardware disponível. Aqui estão as configurações recomendadas:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Componente</th>
+          <th>Mínimo</th>
+          <th>Recomendado</th>
+          <th>Alto Desempenho</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>CPU</strong></td>
+          <td>4 cores (Intel i5/AMD Ryzen 5)</td>
+          <td>8 cores (Intel i7/AMD Ryzen 7)</td>
+          <td>16+ cores (Intel i9/AMD Ryzen 9)</td>
+      </tr>
+      <tr>
+          <td><strong>RAM</strong></td>
+          <td>8 GB</td>
+          <td>16 GB</td>
+          <td>32+ GB</td>
+      </tr>
+      <tr>
+          <td><strong>GPU</strong></td>
+          <td>Integrada</td>
+          <td>NVIDIA RTX 3060 (8GB VRAM)</td>
+          <td>NVIDIA RTX 4090 (24GB VRAM)</td>
+      </tr>
+      <tr>
+          <td><strong>VRAM</strong></td>
+          <td>-</td>
+          <td>8 GB</td>
+          <td>16+ GB</td>
+      </tr>
+      <tr>
+          <td><strong>Storage</strong></td>
+          <td>SSD 256 GB</td>
+          <td>SSD 512 GB</td>
+          <td>NVMe 1 TB+</td>
+      </tr>
+      <tr>
+          <td><strong>Rede</strong></td>
+          <td>100 Mbps</td>
+          <td>1 Gbps</td>
+          <td>10 Gbps</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></h4>
+<p><strong>🟢 Desenvolvimento/Teste</strong></p>
 <ul>
-<li><strong>Abstração</strong>: Fornece componentes pré-construídos para tarefas comuns</li>
-<li><strong>Modularidade</strong>: Permite trocar implementações facilmente</li>
-<li><strong>Integração</strong>: Oferece integrações com várias ferramentas e serviços</li>
-<li><strong>Comunidade e Suporte</strong>: Possui uma comunidade ativa e boa documentação</li>
+<li>CPU: 4 cores, RAM: 8GB</li>
+<li>Modelo: <code>deepseek-r1</code> (CPU only)</li>
+<li>Documentos: &lt; 1GB</li>
+<li>Performance: ~2-5 segundos por consulta</li>
 </ul>
-<blockquote>
-<p>Em um próximo artigo, escreverei sobre como usar <a href="https://github.com/langchain4j/langchain4j">Langchain4j</a> para criar um sistema RAG ainda neste mesmo projeto.</p></blockquote>
+<p><strong>🟡 Produção Pequena</strong></p>
+<ul>
+<li>CPU: 8 cores, RAM: 16GB, GPU: RTX 3060</li>
+<li>Modelo: <code>deepseek-r1</code> (GPU)</li>
+<li>Documentos: 1-10GB</li>
+<li>Performance: ~1-3 segundos por consulta</li>
+</ul>
+<p><strong>🔴 Produção Grande</strong></p>
+<ul>
+<li>CPU: 16+ cores, RAM: 32GB+, GPU: RTX 4090</li>
+<li>Modelo: <code>deepseek-r1</code> + embeddings densos</li>
+<li>Documentos: 10GB+</li>
+<li>Performance: &lt; 1 segundo por consulta</li>
+</ul>
+<h4 id="otimizações-por-hardware"><strong>Otimizações por Hardware</strong></h4>
+<p><strong>CPU Only:</strong></p>
+
+
+  <pre><code class="language-bash"># Usar modelo otimizado para CPU
+ollama pull deepseek-r1:3b  # Versão menor</code></pre>
+ <p><strong>GPU Disponível:</strong></p>
+
+
+  <pre><code class="language-bash"># Usar versão completa com aceleração GPU
+ollama pull deepseek-r1</code></pre>
+ <p><strong>Múltiplas GPUs:</strong></p>
+
+
+  <pre><code class="language-bash"># Distribuir carga entre GPUs
+CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
+ <hr>
 <h2 id="referências">Referências</h2>
 <ul>
 <li><a href="https://www.pinecone.io/learn/rag/">RAG</a> - Documentação do Pinecone</li>
@@ -1762,27 +2084,312 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     </div>
     
     
+    
 
 
-<div class="post-comments">
-    <h3>Comentários</h3>
-    <div id="disqus_thread"></div>
-    <script>
-        var disqus_config = function () {
-            this.page.url = 'https:\/\/scovl.github.io\/2025\/03\/23\/rag\/';
-            this.page.identifier = '\/2025\/03\/23\/rag\/';
-            this.page.title = 'RAG Simples com Clojure e Ollama';
-        };
-        (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://lobocode.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <noscript>Por favor, habilite JavaScript para ver os comentários do <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+
+    
+    
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+                
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                    
+                        
+                        
+                    
+                
+                    
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+                
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+    
+    
+        
+        
+        
+        <div class="related-posts">
+            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
+            <div class="related-posts-grid">
+                
+                    
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="/2025/03/28/rag02/">Técnicas Avançadas para RAG em Produção</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                <h2 id="introdução">Introdução</h2>
+<p>Olá pessoal! 👋</p>
+<p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
+<p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">28/03/2025</span>
+                                
+                                    <div class="related-post-tags">
+                                        
+                                            <span class="tag">RAG</span>
+                                        
+                                            <span class="tag">LLM</span>
+                                        
+                                    </div>
+                                
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">3 tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                
+                    
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="/2025/03/25/semantic-postgresql/">Busca Semântica com Ollama e PostgreSQL</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                <p>Olá, pessoal! 👋</p>
+<p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
+<p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral. Diferentemente do artigo anterior, vamos usar o <a href="https://ollama.com/">Ollama</a> via Docker assim como o <a href="https://www.postgresql.org/">PostgreSQL</a> e as extensões <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>.</p>
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">25/03/2025</span>
+                                
+                                    <div class="related-post-tags">
+                                        
+                                            <span class="tag">RAG</span>
+                                        
+                                            <span class="tag">PostgreSQL</span>
+                                        
+                                    </div>
+                                
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">1 tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                
+            </div>
+        </div>
+    
+
+    
+    
+    
+    
+<div class="comments-section">
+    <h3 class="comments-title">💬 Comentários</h3>
+    <div class="comments-container">
+        <script src="https://giscus.app/client.js"
+                data-repo="scovl/scovl.github.io"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkxMzg1OTI2ODA="
+                data-category="General"
+                data-category-id="DIC_kwDOCELBqM4CthUV"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="light"
+                data-lang="pt"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
 </div>
- 
+
+    
 </article>
 
         </div>
@@ -1825,8 +2432,18 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
                 
             </div>
             
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Voltar ao topo</span>
+                </button>
+            </div>
+            
             <div class="copyright">
-                &copy; 2025 Vitor Lobo
+                &copy; 2025 scovl
             </div>
         </div>
     </div>
@@ -1834,7 +2451,20 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     
     
     
-    <script src="/js/main-minimal.js"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030843"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030843"></script>
+    <script src="/js/lazy-loading.js?v=1757030843"></script>
+    <script src="/js/toc.js?v=1757030843"></script>
     
     
     

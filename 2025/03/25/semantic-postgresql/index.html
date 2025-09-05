@@ -7,25 +7,348 @@
 <meta name="description" content="Implementando busca semântica com PostgreSQL e Ollama">
 
 
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
 
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030843">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030843">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030843">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030843"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'light',
             align: 'center'
-        });
+        });SS
     });
 </script>
- 
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'pt',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
 </head>
 <body>
     
@@ -35,24 +358,65 @@
         <div class="header-content">
             <a href="https://scovl.github.io/" class="site-title">scovl</a>
             
-            <nav>
-                <ul class="nav-menu">
-                    
-                    
-                    <li>
-                        <a href="/page/about/" class="nav-link ">
-                            About
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/page/contact/" class="nav-link ">
-                            Contact
-                        </a>
-                    </li>
-                    
-                </ul>
-            </nav>
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">Português</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="https://scovl.github.io/" class="language-option active">
+                    Português
+                </a>
+            
+        
+            
+                <a href="https://scovl.github.io/en/" class="language-option ">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header> 
@@ -65,70 +429,154 @@
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">Busca Semântica com Ollama e PostgreSQL</h1>
+        
         <div class="post-meta">
-            
             <time datetime="2025-03-25T12:00:00Z">
-                Tue, Mar 25, 2025
+                📅 25/03/2025
             </time>
             
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
+            <span>👤 Vitor Lobo Ramos</span>
             
             
             
             <div class="post-tags">
                 
-                <a href="/tags/rag/" class="tag">RAG</a>
+                <a href="/tags/rag" class="tag">RAG</a>
                 
-                <a href="/tags/postgresql/" class="tag">PostgreSQL</a>
+                <a href="/tags/postgresql" class="tag">PostgreSQL</a>
                 
-                <a href="/tags/pgvector/" class="tag">pgvector</a>
+                <a href="/tags/pgvector" class="tag">pgvector</a>
                 
-                <a href="/tags/pgai/" class="tag">pgai</a>
+                <a href="/tags/pgai" class="tag">pgai</a>
                 
-                <a href="/tags/ollama/" class="tag">Ollama</a>
+                <a href="/tags/ollama" class="tag">Ollama</a>
                 
-                <a href="/tags/semantic-search/" class="tag">Semantic Search</a>
+                <a href="/tags/semantic-search" class="tag">Semantic Search</a>
                 
-            </div>
-            
-            
-            
-            <div class="reading-time">
-                Estimated reading time: 18 min
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Implementando busca semântica com PostgreSQL e Ollama
             </div>
             
         </div>
+        
     </header>
     
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+<aside class="toc" id="toc" aria-labelledby="toc-title">
+    <div class="toc-container">
+        <div class="toc-header">
+            <h3 id="toc-title" class="toc-title">
+                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"/>
+                </svg>
+                Sumário
+            </h3>
+            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </button>
+        </div>
+        <div class="toc-content" id="toc-content">
+            <div class="toc-progress">
+                <div class="toc-progress-bar" id="toc-progress-bar"></div>
+            </div>
+            <nav class="toc-nav">
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#entendendo-a-arquitetura">Entendendo a Arquitetura</a></li>
+        <li><a href="#pré-requisitos">Pré-requisitos</a></li>
+        <li><a href="#passos-para-construir-a-busca-semântica">Passos para Construir a Busca Semântica</a>
+          <ul>
+            <li><a href="#1-habilitando-as-extensões">1. Habilitando as Extensões</a></li>
+            <li><a href="#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
+            <li><a href="#3-inserindo-documentos">3. Inserindo Documentos</a></li>
+            <li><a href="#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
+            <li><a href="#5-realizando-busca-semântica">5. Realizando Busca Semântica</a></li>
+          </ul>
+        </li>
+        <li><a href="#integração-com-clojure">Integração com Clojure</a></li>
+        <li><a href="#configuração-de-contêineres-e-resolução-de-problemas">Configuração de Contêineres e Resolução de Problemas</a>
+          <ul>
+            <li><a href="#nomeação-de-contêineres-e-comunicação-entre-serviços">Nomeação de Contêineres e Comunicação entre Serviços</a></li>
+            <li><a href="#solução-de-problemas-de-conexão">Solução de Problemas de Conexão</a></li>
+            <li><a href="#persistência-de-modelos-entre-reinicializações">Persistência de Modelos entre Reinicializações</a></li>
+            <li><a href="#buscas-especializadas-para-tópicos-específicos">Buscas Especializadas para Tópicos Específicos</a></li>
+          </ul>
+        </li>
+        <li><a href="#conclusão">Conclusão</a></li>
+        <li><a href="#referências">Referências</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+            </nav>
+        </div>
+    </div>
+    
+    
+    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+    </button>
+</aside>
+
+
+
+    
     <div class="post-content">
-        <h1 id="sumário">Sumário</h1>
-<ul>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#entendendo-a-arquitetura">Entendendo a Arquitetura</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#pr%c3%a9-requisitos">Pré-requisitos</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-sem%c3%a2ntica">Passos para Construir a Busca Semântica</a></strong>
-<ul>
-<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extens%c3%b5es">1. Habilitando as Extensões</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#3-inserindo-documentos">3. Inserindo Documentos</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-sem%c3%a2ntica">5. Realizando Busca Semântica</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#integra%c3%a7%c3%a3o-com-clojure">Integração com Clojure</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#persist%c3%aancia-de-modelos-entre-reinicializa%c3%a7%c3%b5es">Persistência de Modelos entre Reinicializações</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#conclus%c3%a3o">Conclusão</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
-<p>Olá, pessoal! 👋</p>
+        <p>Olá, pessoal! 👋</p>
 <p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
 <p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral. Diferentemente do artigo anterior, vamos usar o <a href="https://ollama.com/">Ollama</a> via Docker assim como o <a href="https://www.postgresql.org/">PostgreSQL</a> e as extensões <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>.</p>
 <p>A combinação do <a href="https://www.postgresql.org/">PostgreSQL</a> com extensões como <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>, junto com o <a href="https://ollama.com/">Ollama</a> (que permite executar modelos de linguagem localmente), cria uma solução completa e de alto desempenho para <a href="https://en.wikipedia.org/wiki/Semantic_search">processamento semântico de dados</a>.</p>
@@ -571,27 +1019,311 @@ fi</code></pre>
     </div>
     
     
+    
 
 
-<div class="post-comments">
-    <h3>Comentários</h3>
-    <div id="disqus_thread"></div>
-    <script>
-        var disqus_config = function () {
-            this.page.url = 'https:\/\/scovl.github.io\/2025\/03\/25\/semantic-postgresql\/';
-            this.page.identifier = '\/2025\/03\/25\/semantic-postgresql\/';
-            this.page.title = 'Busca Semântica com Ollama e PostgreSQL';
-        };
-        (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://lobocode.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <noscript>Por favor, habilite JavaScript para ver os comentários do <a href="https://disqus.com/?ref_noscript">Disqus</a>.</noscript>
+
+    
+    
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+                
+            
+        
+    
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                    
+                
+                    
+                        
+                        
+                    
+                
+            
+            
+            
+                
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
+            
+            
+        
+    
+    
+    
+        
+        
+        
+        <div class="related-posts">
+            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
+            <div class="related-posts-grid">
+                
+                    
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="/2025/03/28/rag02/">Técnicas Avançadas para RAG em Produção</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                <h2 id="introdução">Introdução</h2>
+<p>Olá pessoal! 👋</p>
+<p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
+<p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">28/03/2025</span>
+                                
+                                    <div class="related-post-tags">
+                                        
+                                            <span class="tag">RAG</span>
+                                        
+                                            <span class="tag">LLM</span>
+                                        
+                                    </div>
+                                
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">3 tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                
+                    
+                    <article class="related-post-item animate-on-scroll">
+                        <div class="related-post-content">
+                            <h4 class="related-post-title">
+                                <a href="/2025/03/23/rag/">01 - RAG Simples com Clojure e Ollama</a>
+                            </h4>
+                            <p class="related-post-excerpt">
+                                <h2 id="introdução">Introdução</h2>
+<p>Olá, pessoal! 👋</p>
+<p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
+<h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
+<h3 id="o-que-é-rag">O que é RAG?</h3>
+<p>Os Modelos de Linguagem de Grande Escala (<a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>), como o <a href="https://openai.com/api/">GPT</a>, <a href="https://openai.com/api/">ChatGPT</a> e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
+                            </p>
+                            <div class="related-post-meta">
+                                <span class="related-post-date">23/03/2025</span>
+                                
+                                    <div class="related-post-tags">
+                                        
+                                            <span class="tag">RAG</span>
+                                        
+                                            <span class="tag">LLM</span>
+                                        
+                                    </div>
+                                
+                            </div>
+                            <div class="related-post-score">
+                                <modern-badge variant="info">1 tags em comum</modern-badge>
+                            </div>
+                        </div>
+                    </article>
+                
+            </div>
+        </div>
+    
+
+    
+    
+    
+    
+<div class="comments-section">
+    <h3 class="comments-title">💬 Comentários</h3>
+    <div class="comments-container">
+        <script src="https://giscus.app/client.js"
+                data-repo="scovl/scovl.github.io"
+                data-repo-id="MDEwOlJlcG9zaXRvcnkxMzg1OTI2ODA="
+                data-category="General"
+                data-category-id="DIC_kwDOCELBqM4CthUV"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="light"
+                data-lang="pt"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
 </div>
- 
+
+    
 </article>
 
         </div>
@@ -634,8 +1366,18 @@ fi</code></pre>
                 
             </div>
             
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Voltar ao topo</span>
+                </button>
+            </div>
+            
             <div class="copyright">
-                &copy; 2025 Vitor Lobo
+                &copy; 2025 scovl
             </div>
         </div>
     </div>
@@ -643,7 +1385,20 @@ fi</code></pre>
     
     
     
-    <script src="/js/main-minimal.js"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030843"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030843"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030843"></script>
+    <script src="/js/lazy-loading.js?v=1757030843"></script>
+    <script src="/js/toc.js?v=1757030843"></script>
     
     
     
