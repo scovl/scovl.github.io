@@ -137,7 +137,7 @@ try {
 * **Fluxo normal:** abrir, ler, processar.
 * **Fluxo de erro:** qualquer falha salta direto para o `catch`.
 
-**Importante sobre Streams C++**: Por padrão, as streams (`std::ifstream`, `std::ofstream`, etc.) **não lançam exceções** quando encontram erros — elas apenas definem bits de estado interno (`failbit`, `badbit`, `eofbit`) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método `exceptions()`.
+> **Importante sobre Streams C++**: Por padrão, as streams (`std::ifstream`, `std::ofstream`, etc.) **não lançam exceções** quando encontram erros — elas apenas definem bits de estado interno (`failbit`, `badbit`, `eofbit`) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método `exceptions()`.
 
 No exemplo acima, `arq.exceptions(std::ios::failbit | std::ios::badbit)` instrui a stream a lançar uma exceção do tipo `std::ios_base::failure` sempre que ocorrer uma falha de operação (`failbit`) ou um erro irrecuperável (`badbit`). Sem essa configuração, operações como `std::getline()` ou `read()` falhariam silenciosamente, exigindo verificações manuais de estado.
 
@@ -167,7 +167,7 @@ while (std::getline(arq, linha)) {
 
 **Comparação**: Com exceções habilitadas, o `try/catch` separa claramente o fluxo principal do tratamento de erros usando `std::ios_base::failure` específico. Sem exceções, você deve verificar manualmente os estados da stream (`bad()`, `fail()`, `eof()`) após cada operação. A abordagem com exceções mantém o código principal mais limpo, enquanto códigos de status oferecem controle mais granular sobre cada tipo de falha.
 
-> Conforme discutido por [Scott Meyers](https://en.wikipedia.org/wiki/Scott_Meyers) no seu livro **[Effective C++](https://en.wikipedia.org/wiki/Effective_C%2B%2B)**, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety.
+> Conforme discutido por [Scott Meyers](https://en.wikipedia.org/wiki/Scott_Meyers) no seu livro **[Effective C++](https://en.wikipedia.org/wiki/Effective_C%2B%2B)**, página 61-65, item 13, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety. Ver também Item 29, p.115.
 
 
 ---
@@ -360,7 +360,9 @@ Adicionalmente, mesmo quando não lançadas, exceções **podem** limitar certas
 
 > Essa ideia está diretamente alinhada ao conselho do livro **[The Pragmatic Programmer](https://en.wikipedia.org/wiki/The_Pragmatic_Programmer)**: trate apenas o que realmente é excepcional como exceção — caso contrário, você adiciona complexidade desnecessária e viola princípios como [Principle of Least Astonishment](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 
-> Além disso, conforme [Matt Klein](https://en.wikipedia.org/wiki/Matt_Klein) discute, verificações desnecessárias geram dívida de manutenção, e o único “erro checking” que importa são aqueles que realmente podem ocorrer no fluxo normal.
+> Além disso, conforme [Matt Klein](https://en.wikipedia.org/wiki/Matt_Klein) argumenta em seu artigo **"Crash early and crash often for more reliable software"** (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: *"The only error checking a program needs are for errors that can actually happen during normal control flow"* (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal). 
+
+Klein explica que checks desnecessários aumentam a complexidade e geram dívida de manutenção ao proliferarem ramos de código raramente exercitados, que por sua vez se tornam fontes de bugs ocultos e comportamentos imprevisíveis.
 
 Outro problema é que esse uso inadequado de exceções [polui o stack-trace](https://en.wikipedia.org/wiki/Stack_trace), tornando mais difícil depurar e analisar o comportamento do sistema. O excesso de exceções desnecessárias pode mascarar erros reais, dificultar o profiling e tornar o código mais difícil de manter. 
 

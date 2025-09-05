@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1757087164">
+<link rel="stylesheet" href="/css/main.css?v=1757088371">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757087164">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757088371">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757087164">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757088371">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1757087164"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1757088371"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -693,7 +693,8 @@ Se uma exceção não for capturada por nenhum handler correspondente, o C++ cha
 <li><strong>Fluxo normal:</strong> abrir, ler, processar.</li>
 <li><strong>Fluxo de erro:</strong> qualquer falha salta direto para o <code>catch</code>.</li>
 </ul>
-<p><strong>Importante sobre Streams C++</strong>: Por padrão, as streams (<code>std::ifstream</code>, <code>std::ofstream</code>, etc.) <strong>não lançam exceções</strong> quando encontram erros — elas apenas definem bits de estado interno (<code>failbit</code>, <code>badbit</code>, <code>eofbit</code>) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método <code>exceptions()</code>.</p>
+<blockquote>
+<p><strong>Importante sobre Streams C++</strong>: Por padrão, as streams (<code>std::ifstream</code>, <code>std::ofstream</code>, etc.) <strong>não lançam exceções</strong> quando encontram erros — elas apenas definem bits de estado interno (<code>failbit</code>, <code>badbit</code>, <code>eofbit</code>) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método <code>exceptions()</code>.</p></blockquote>
 <p>No exemplo acima, <code>arq.exceptions(std::ios::failbit | std::ios::badbit)</code> instrui a stream a lançar uma exceção do tipo <code>std::ios_base::failure</code> sempre que ocorrer uma falha de operação (<code>failbit</code>) ou um erro irrecuperável (<code>badbit</code>). Sem essa configuração, operações como <code>std::getline()</code> ou <code>read()</code> falhariam silenciosamente, exigindo verificações manuais de estado.</p>
 <p><strong>Alternativa com Códigos de Status</strong> (quando exceções não estão habilitadas):</p>
 
@@ -719,7 +720,7 @@ while (std::getline(arq, linha)) {
 }</code></pre>
  <p><strong>Comparação</strong>: Com exceções habilitadas, o <code>try/catch</code> separa claramente o fluxo principal do tratamento de erros usando <code>std::ios_base::failure</code> específico. Sem exceções, você deve verificar manualmente os estados da stream (<code>bad()</code>, <code>fail()</code>, <code>eof()</code>) após cada operação. A abordagem com exceções mantém o código principal mais limpo, enquanto códigos de status oferecem controle mais granular sobre cada tipo de falha.</p>
 <blockquote>
-<p>Conforme discutido por <a href="https://en.wikipedia.org/wiki/Scott_Meyers">Scott Meyers</a> no seu livro <strong><a href="https://en.wikipedia.org/wiki/Effective_C%2B%2B">Effective C++</a></strong>, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety.</p></blockquote>
+<p>Conforme discutido por <a href="https://en.wikipedia.org/wiki/Scott_Meyers">Scott Meyers</a> no seu livro <strong><a href="https://en.wikipedia.org/wiki/Effective_C%2B%2B">Effective C++</a></strong>, página 61-65, item 13, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety. Ver também Item 29, p.115.</p></blockquote>
 <hr>
 <h3 id="papel-do-raii-limpeza-automática">Papel do RAII: limpeza automática</h3>
 <p>Em C++ não há <code>finally</code>, porque o RAII resolve a liberação de recursos durante o “desenrolar” da pilha:</p>
@@ -877,7 +878,8 @@ function getItemPrice(item: { name: string; price?: number }): number {
 <blockquote>
 <p>Essa ideia está diretamente alinhada ao conselho do livro <strong><a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer">The Pragmatic Programmer</a></strong>: trate apenas o que realmente é excepcional como exceção — caso contrário, você adiciona complexidade desnecessária e viola princípios como <a href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">Principle of Least Astonishment</a>.</p></blockquote>
 <blockquote>
-<p>Além disso, conforme <a href="https://en.wikipedia.org/wiki/Matt_Klein">Matt Klein</a> discute, verificações desnecessárias geram dívida de manutenção, e o único “erro checking” que importa são aqueles que realmente podem ocorrer no fluxo normal.</p></blockquote>
+<p>Além disso, conforme <a href="https://en.wikipedia.org/wiki/Matt_Klein">Matt Klein</a> argumenta em seu artigo <strong>&ldquo;Crash early and crash often for more reliable software&rdquo;</strong> (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: <em>&ldquo;The only error checking a program needs are for errors that can actually happen during normal control flow&rdquo;</em> (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal).</p></blockquote>
+<p>Klein explica que checks desnecessários aumentam a complexidade e geram dívida de manutenção ao proliferarem ramos de código raramente exercitados, que por sua vez se tornam fontes de bugs ocultos e comportamentos imprevisíveis.</p>
 <p>Outro problema é que esse uso inadequado de exceções <a href="https://en.wikipedia.org/wiki/Stack_trace">polui o stack-trace</a>, tornando mais difícil depurar e analisar o comportamento do sistema. O excesso de exceções desnecessárias pode mascarar erros reais, dificultar o profiling e tornar o código mais difícil de manter.</p>
 <p>Por isso, para validações simples e previsíveis, prefira sempre estruturas de controle explícitas, reservando as exceções apenas para situações realmente inesperadas ou graves. Vamos ver um exemplo idiomático em TypeScript:</p>
 
@@ -1559,20 +1561,20 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1757087164"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757088372"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757088372"></script>
     
     
-    <script src="/js/main-minimal.js?v=1757087164"></script>
-    <script src="/js/lazy-loading.js?v=1757087164"></script>
-    <script src="/js/toc.js?v=1757087164"></script>
+    <script src="/js/main-minimal.js?v=1757088372"></script>
+    <script src="/js/lazy-loading.js?v=1757088372"></script>
+    <script src="/js/toc.js?v=1757088372"></script>
     
     
     
