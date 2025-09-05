@@ -260,10 +260,6 @@ function initBackToTop() {
     setTimeout(() => {
         const backToTopButton = document.getElementById('back-to-top');
         
-        if (!backToTopButton) {
-            console.warn('Botão "Voltar ao topo" não encontrado no DOM');
-            return;
-        }
         
         // Verificar se já tem event listeners (evitar duplicação)
         if (backToTopButton.hasAttribute('data-initialized')) {

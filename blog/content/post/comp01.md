@@ -6,6 +6,7 @@ tags = ["Compiladores", "Linguagens de Programação", "Arquitetura de Computado
 draft = true
 weight = 3
 author = "Vitor Lobo Ramos"
+showToc = true
 +++
 
 ## 1. INTRODUÇÃO

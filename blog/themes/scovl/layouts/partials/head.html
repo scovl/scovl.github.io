@@ -11,6 +11,9 @@
 <!-- Fontes locais -->
 <link rel="stylesheet" href="{{ "vendor/fonts/fonts.css" | relURL }}?v={{ now.Unix }}">
 
+<!-- Preload de fontes externas -->
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
 <!-- Prism.js local para syntax highlighting -->
 <link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}?v={{ now.Unix }}">
 
@@ -23,7 +26,7 @@
             startOnLoad: true,
             theme: '{{ .Site.Params.mermaid.theme }}',
             align: '{{ .Site.Params.mermaid.align }}'
-        });
+        });SS
     });
 </script>
 {{ end }}

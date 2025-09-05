@@ -20,17 +20,6 @@ Cada uma dessas bibliotecas tem seus pontos fortes, mas o [fp-ts](https://gcanti
 
 > **Nota sobre versões:** Este artigo utiliza a sintaxe do fp-ts 3.x (lançada em abril de 2025), que introduziu mudanças significativas na API, incluindo `fold` → `match`, `mapLeft` → `mapError`, e outros renomeamentos para maior clareza. Se você estiver usando fp-ts 2.x, consulte a [documentação de migração](https://gcanti.github.io/fp-ts/guides/migration-v3.html) para detalhes sobre as mudanças.
 
-## Sumário
-
-- [O dilema do tratamento de erros convencional](#o-dilema-do-tratamento-de-erros-convencional)
-- [Erros como cidadãos de primeira classe](#erros-como-cidadãos-de-primeira-classe)
-- [Propriedades avançadas do Either](#propriedades-avançadas-do-either)
-- [Usando `match` para extrair valores de `Either`](#usando-match-para-extrair-valores-de-either)
-- [TaskEither: Computação Assíncrona com Tratamento Explícito de Erros](#taskeither-computação-assíncrona-com-tratamento-explícito-de-erros)
-- [Compondo múltiplas requisições assíncronas](#compondo-múltiplas-requisições-assíncronas)
-- [Referências](#referências)
-
-
 ---
 
 ## O Dilema do Tratamento de Erros Convencional

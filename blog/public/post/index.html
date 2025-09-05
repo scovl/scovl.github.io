@@ -7,25 +7,348 @@
 <meta name="description" content="">
 
 
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
 
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030371">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030371">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030371">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030371"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'light',
             align: 'center'
-        });
+        });SS
     });
 </script>
- 
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'pt',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
 </head>
 <body>
     
@@ -35,24 +358,65 @@
         <div class="header-content">
             <a href="http://localhost:1313/" class="site-title">scovl</a>
             
-            <nav>
-                <ul class="nav-menu">
-                    
-                    
-                    <li>
-                        <a href="/page/about/" class="nav-link ">
-                            About
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/page/contact/" class="nav-link ">
-                            Contact
-                        </a>
-                    </li>
-                    
-                </ul>
-            </nav>
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">Português</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="http://localhost:1313/" class="language-option active">
+                    Português
+                </a>
+            
+        
+            
+                <a href="http://localhost:1313/en/" class="language-option ">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header> 
@@ -74,57 +438,6 @@
     
     
     
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/07/23/rustconc/">Compreendendo a concorrência em Rust</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-07-23T12:00:00Z">
-                Wed, Jul 23, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/rust/" class="tag">Rust</a>
-                
-                <a href="/tags/concorr%C3%AAncia/" class="tag">Concorrência</a>
-                
-                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
-                
-                <a href="/tags/threads/" class="tag">Threads</a>
-                
-                <a href="/tags/async/" class="tag">Async</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Thread safety em Rust não é magia: é matemática
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <p>O Rust costuma ser apresentado como <strong>a linguagem que impede aqueles bugs de memória cabeludos</strong> antes mesmo do seu código rodar. Mas essa história não para no <strong><a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html#the-borrow-checker">borrow checker</a></strong>: ela se estende à concorrência. O pessoal da comunidade fala em <strong>fearless concurrenc</strong> — “concorrência sem medo”. Mas o que isso significa realmente? Como explicar isso para alguém que vem de outras linguagens? Em resumo, Rust transforma muitos erros de concorrência em erros de compilação em vez de runtime, graças ao seu sistema de <em>ownership</em> e tipos. Esse aspecto é o que chamamos de <strong>concorrência sem medo</strong>, onde escrever código concorrente não precisa ser uma roleta-russa de bugs sutis.</p>
-            
-            <a href="http://localhost:1313/2025/07/23/rustconc/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
     
     
     
@@ -169,7 +482,9 @@
         
         
         <div class="post-item-summary">
-            <p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende. Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
+            <h1 id="introdução">Introdução</h1>
+<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
+<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
             
             <a href="http://localhost:1313/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
             
@@ -218,7 +533,9 @@
         
         
         <div class="post-item-summary">
-            <p><em>Inferência de tipos</em> é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa. Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem. Exploramos também brevemente o caso do <strong><a href="https://en.wikipedia.org/wiki/Swift_%28programming_language%29">Swift</a></strong>, comparando sua estratégia híbrida e os desafios de desempenho que ela acarreta. Ao final, refletimos sobre o impacto dessas escolhas de design na experiência de programação.</p>
+            <h2 id="introdução">Introdução</h2>
+<p>Inferência de tipos é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa.</p>
+<p>Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem.</p>
             
             <a href="http://localhost:1313/2025/07/18/type01/" class="read-more">Leia mais →</a>
             
@@ -259,9 +576,9 @@
                 
                 <a href="/tags/clojure/" class="tag">clojure</a>
                 
-                <a href="/tags/zig/" class="tag">zig</a>
-                
                 <a href="/tags/boas-pr%C3%A1ticas/" class="tag">boas práticas</a>
+                
+                <a href="/tags/c&#43;&#43;/" class="tag">c&#43;&#43;</a>
                 
             </div>
             
@@ -275,7 +592,9 @@
         
         
         <div class="post-item-summary">
-            <p>O conceito de <a href="https://en.wikipedia.org/wiki/Exception_handling">tratamento de exceções</a> tem raízes mais antigas do que muitos imaginam. Embora tenha se popularizado nos anos 70, suas origens remontam ao final dos anos 50 e início dos 60, com linguagens como <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">LISP</a> (1958) e <a href="https://en.wikipedia.org/wiki/Simula">SIMULA 67</a>, que introduziram conceitos fundamentais de manipulação de condições excepcionais. No entanto, foi nos anos 70 com linguagens como <strong><a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a></strong> e posteriormente <strong><a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a></strong> que vimos o surgimento de formas mais estruturadas e organizadas de lidar com erros, incluindo construções mais próximas ao que hoje reconhecemos como <code>try/catch</code>.</p>
+            <p>O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter.</p>
+<p>O modelo <code>try/catch</code> foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
+<p>O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar <code>try/catch</code> como controle de fluxo é um erro e qual é o seu propósito real.</p>
             
             <a href="http://localhost:1313/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
             
@@ -347,7 +666,7 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/03/23/rag/">RAG Simples com Clojure e Ollama</a>
+            <a href="http://localhost:1313/2025/03/23/rag/">01 - RAG Simples com Clojure e Ollama</a>
         </h2>
         
         <div class="post-item-meta">
@@ -384,51 +703,12 @@
         
         
         <div class="post-item-summary">
-            <h1 id="sumário">Sumário</h1>
-<ul>
-<li><strong><a href="/2025/03/23/rag/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/23/rag/#fundamentos-do-rag">Fundamentos do RAG</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#o-que-%c3%a9-rag">O que é RAG?</a></li>
-<li><a href="/2025/03/23/rag/#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
-<li><a href="/2025/03/23/rag/#os-tr%c3%aas-pilares-do-rag">Os Três Pilares do RAG</a></li>
-<li><a href="/2025/03/23/rag/#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#implementa%c3%a7%c3%a3o-pr%c3%a1tica">Implementação Prática</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#preparando-o-ambiente">Preparando o Ambiente</a></li>
-<li><a href="/2025/03/23/rag/#estrutura-do-projeto">Estrutura do Projeto</a></li>
-<li><a href="/2025/03/23/rag/#processamento-de-documentos">Processamento de Documentos</a></li>
-<li><a href="/2025/03/23/rag/#sistema-de-embeddings">Sistema de Embeddings</a></li>
-<li><a href="/2025/03/23/rag/#interface-com-ollama">Interface com Ollama</a></li>
-<li><a href="/2025/03/23/rag/#m%c3%b3dulo-principal">Módulo Principal</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#como-usar">Como Usar</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#instala%c3%a7%c3%a3o-do-ollama">Instalação do Ollama</a></li>
-<li><a href="/2025/03/23/rag/#tf-idf">TF-IDF</a></li>
-<li><a href="/2025/03/23/rag/#configura%c3%a7%c3%a3o-do-projeto">Configuração do Projeto</a></li>
-<li><a href="/2025/03/23/rag/#executando-a-aplica%c3%a7%c3%a3o">Executando a Aplicação</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#considera%c3%a7%c3%b5es-t%c3%a9cnicas">Considerações Técnicas</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#performance-e-otimiza%c3%a7%c3%b5es">Performance e Otimizações</a></li>
-<li><a href="/2025/03/23/rag/#prompt-engineering">Prompt Engineering</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#pr%c3%b3ximos-passos">Próximos Passos</a></strong>
-<ul>
-<li><a href="/2025/03/23/rag/#melhorias-propostas">Melhorias Propostas</a></li>
-<li><a href="/2025/03/23/rag/#usando-langchain4j">Usando Langchain4j</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/23/rag/#refer%c3%aancias">Referências</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
+            <h2 id="introdução">Introdução</h2>
 <p>Olá, pessoal! 👋</p>
+<p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
+<h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
+<h3 id="o-que-é-rag">O que é RAG?</h3>
+<p>Os Modelos de Linguagem de Grande Escala (<a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>), como o <a href="https://openai.com/api/">GPT</a>, <a href="https://openai.com/api/">ChatGPT</a> e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
             
             <a href="http://localhost:1313/2025/03/23/rag/" class="read-more">Leia mais →</a>
             
@@ -481,29 +761,66 @@
         
         
         <div class="post-item-summary">
-            <h1 id="sumário">Sumário</h1>
-<ul>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#entendendo-a-arquitetura">Entendendo a Arquitetura</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#pr%c3%a9-requisitos">Pré-requisitos</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#passos-para-construir-a-busca-sem%c3%a2ntica">Passos para Construir a Busca Semântica</a></strong>
-<ul>
-<li><a href="/2025/03/25/semantic-postgresql/#1-habilitando-as-extens%c3%b5es">1. Habilitando as Extensões</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#2-criando-a-tabela-de-documentos">2. Criando a Tabela de Documentos</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#3-inserindo-documentos">3. Inserindo Documentos</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#4-configurando-o-vectorizer">4. Configurando o Vectorizer</a></li>
-<li><a href="/2025/03/25/semantic-postgresql/#5-realizando-busca-sem%c3%a2ntica">5. Realizando Busca Semântica</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#integra%c3%a7%c3%a3o-com-clojure">Integração com Clojure</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#persist%c3%aancia-de-modelos-entre-reinicializa%c3%a7%c3%b5es">Persistência de Modelos entre Reinicializações</a></strong></li>
-<li><strong><a href="/2025/03/25/semantic-postgresql/#conclus%c3%a3o">Conclusão</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
-<p>Olá, pessoal! 👋</p>
+            <p>Olá, pessoal! 👋</p>
 <p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
+<p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral. Diferentemente do artigo anterior, vamos usar o <a href="https://ollama.com/">Ollama</a> via Docker assim como o <a href="https://www.postgresql.org/">PostgreSQL</a> e as extensões <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>.</p>
             
             <a href="http://localhost:1313/2025/03/25/semantic-postgresql/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2025/07/27/prometheus/">Prometheus e PromQL</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-07-27T23:10:18-03:00">
+                Sun, Jul 27, 2025
+            </time>
+            
+            
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/prometheus/" class="tag">Prometheus</a>
+                
+                <a href="/tags/grafana/" class="tag">Grafana</a>
+                
+                <a href="/tags/monitoring/" class="tag">Monitoring</a>
+                
+                <a href="/tags/tsdb/" class="tag">TSDB</a>
+                
+                <a href="/tags/devops/" class="tag">DevOps</a>
+                
+                <a href="/tags/observability/" class="tag">Observability</a>
+                
+                <a href="/tags/promql/" class="tag">PromQL</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Guia completo
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>O <strong><a href="https://prometheus.io/">Prometheus</a></strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong>.</p>
+<blockquote>
+<p>A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a></strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p>
+            
+            <a href="http://localhost:1313/2025/07/27/prometheus/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -556,190 +873,12 @@
         
         
         <div class="post-item-summary">
-            <h1 id="sumário">Sumário</h1>
-<ul>
-<li><strong><a href="/2025/03/28/rag02/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#da-teoria-%c3%a0-produ%c3%a7%c3%a3o-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#armadilhas-comuns-e-como-evit%c3%a1-las">Armadilhas Comuns e Como Evitá-las</a></strong>
-<ul>
-<li><a href="/2025/03/28/rag02/#armadilha-1-a-falsa-sensa%c3%a7%c3%a3o-de-relev%c3%a2ncia">Armadilha 1: A Falsa Sensação de Relevância</a></li>
-<li><a href="/2025/03/28/rag02/#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
-<li><a href="/2025/03/28/rag02/#armadilha-3-falta-de-monitoramento-cont%c3%adnuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
-<li><a href="/2025/03/28/rag02/#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/28/rag02/#t%c3%a9cnicas-avan%c3%a7adas-de-otimiza%c3%a7%c3%a3o">Técnicas Avançadas de Otimização</a></strong>
-<ul>
-<li><a href="/2025/03/28/rag02/#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
-<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-chunking-din%c3%a2mico">Estratégias de Chunking Dinâmico</a></li>
-<li><a href="/2025/03/28/rag02/#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
-<ul>
-<li><a href="/2025/03/28/rag02/#arquitetura-de-agentes-avan%c3%a7ada">Arquitetura de Agentes Avançada</a></li>
-<li><a href="/2025/03/28/rag02/#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
-</ul>
-</li>
-<li><a href="/2025/03/28/rag02/#pipelines-multimodais">Pipelines Multimodais</a>
-<ul>
-<li><a href="/2025/03/28/rag02/#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
-<li><a href="/2025/03/28/rag02/#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
-<li><a href="/2025/03/28/rag02/#desafios-de-implementa%c3%a7%c3%a3o-multimodal">Desafios de Implementação Multimodal</a></li>
-</ul>
-</li>
-<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-de-cache">Estratégias de Cache</a>
-<ul>
-<li><a href="/2025/03/28/rag02/#estrat%c3%a9gias-avan%c3%a7adas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/28/rag02/#monitoramento-e-m%c3%a9tricas-llmops-na-pr%c3%a1tica">Monitoramento e Métricas: LLMOps na Prática</a></strong>
-<ul>
-<li><a href="/2025/03/28/rag02/#m%c3%a9tricas-de-qualidade-espec%c3%adficas-para-rag">Métricas de Qualidade Específicas para RAG</a></li>
-<li><a href="/2025/03/28/rag02/#automa%c3%a7%c3%a3o-da-avalia%c3%a7%c3%a3o-com-llms-como-ju%c3%adzes">Automação da Avaliação com LLMs como Juízes</a></li>
-<li><a href="/2025/03/28/rag02/#configura%c3%a7%c3%a3o-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
-<li><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-sistemas-de-feedback-do-usu%c3%a1rio">Integração com Sistemas de Feedback do Usuário</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/28/rag02/#implementando-no-docai">Implementando no DocAI</a></strong>
-<ul>
-<li><a href="/2025/03/28/rag02/#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
-<li><a href="/2025/03/28/rag02/#diferenciais-do-docai">Diferenciais do DocAI</a></li>
-<li><a href="/2025/03/28/rag02/#pr%c3%b3ximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
-</ul>
-</li>
-<li><strong><a href="/2025/03/28/rag02/#integra%c3%a7%c3%a3o-com-o-ecossistema">Integração com o Ecossistema</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#conclus%c3%a3o">Conclusão</a></strong></li>
-<li><strong><a href="/2025/03/28/rag02/#refer%c3%aancias">Referências</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
+            <h2 id="introdução">Introdução</h2>
 <p>Olá pessoal! 👋</p>
+<p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
+<p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
             
             <a href="http://localhost:1313/2025/03/28/rag02/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2023/03/21/prometheus/">Prometheus</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2023-03-21T23:18:18-03:00">
-                Tue, Mar 21, 2023
-            </time>
-            
-            
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/prometheus/" class="tag">Prometheus</a>
-                
-                <a href="/tags/grafana/" class="tag">Grafana</a>
-                
-                <a href="/tags/monitoring/" class="tag">Monitoring</a>
-                
-                <a href="/tags/tsdb/" class="tag">TSDB</a>
-                
-                <a href="/tags/devops/" class="tag">DevOps</a>
-                
-                <a href="/tags/observability/" class="tag">Observability</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Under the hood
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <h2 id="índice">Índice</h2>
-<ul>
-<li><strong><a href="/2023/03/21/prometheus/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#instala%c3%a7%c3%a3o">Instalação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#promtool">Promtool</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#instrumenta%c3%a7%c3%a3o">Instrumentação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#alertmanager">Alertmanager</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#pushgateway">PushGateway</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#federa%c3%a7%c3%a3o">Federação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#under-the-hood">Under the Hood</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#melhores-pr%c3%a1ticas">Melhores Práticas</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#conclus%c3%a3o">Conclusão</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
-<h3 id="prometheus">Prometheus</h3>
-<p>O <strong>Prometheus</strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <em>labels</em>. A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong>PromQL</strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p>
-            
-            <a href="http://localhost:1313/2023/03/21/prometheus/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2023/03/19/promql/">PromQL</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2023-03-19T17:31:45-03:00">
-                Sun, Mar 19, 2023
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/observability/" class="tag">observability</a>
-                
-                <a href="/tags/prometheus/" class="tag">prometheus</a>
-                
-                <a href="/tags/promql/" class="tag">promql</a>
-                
-                <a href="/tags/monitoring/" class="tag">monitoring</a>
-                
-                <a href="/tags/tsdb/" class="tag">TSDB</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Entendendo o PromQL
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <ul>
-<li><strong><a href="/2023/03/19/promql/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#fun%c3%a7%c3%b5es">Funções</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#agregadores-e-operadores">Agregadores e Operadores</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#promql-na-pr%c3%a1tica">PromQL na prática</a></strong></li>
-<li><strong><a href="/2023/03/19/promql/#erros-comuns">Erros comuns</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
-<p>PromQL é uma linguagem de consulta poderosa usada para realizar consultas e configurar alertas sobre dados coletados pelo Prometheus. Seu principal objetivo é possibilitar a análise e monitoramento de métricas, como requisições HTTP por segundo ou a média de utilização de CPU por servidor, por meio de expressões que definem cálculos específicos. Importante para os usuários do Prometheus, a PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações. Além disso, conta com recursos avançados como subconsultas e funções de séries temporais. As consultas PromQL podem ser executadas através da interface web do Prometheus, APIs ou bibliotecas de clientes.</p>
-            
-            <a href="http://localhost:1313/2023/03/19/promql/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -898,8 +1037,18 @@
                 
             </div>
             
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Voltar ao topo</span>
+                </button>
+            </div>
+            
             <div class="copyright">
-                &copy; 2025 Vitor Lobo
+                &copy; 2025 scovl
             </div>
         </div>
     </div>
@@ -907,7 +1056,20 @@
     
     
     
-    <script src="/js/main-minimal.js"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030371"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030371"></script>
+    <script src="/js/lazy-loading.js?v=1757030371"></script>
+    <script src="/js/toc.js?v=1757030371"></script>
     
     
     

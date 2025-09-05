@@ -1,5 +1,5 @@
 +++
-title = "RAG Simples com Clojure e Ollama"
+title = "01 - RAG Simples com Clojure e Ollama"
 description = "Um protótipo funcional do zero"
 date = 2025-03-23T19:00:00-00:00
 tags = ["RAG", "LLM", "AI", "Langchain"]
@@ -8,33 +8,6 @@ weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
-# Sumário
-
-- **[Introdução](#introdução)**
-- **[Fundamentos do RAG](#fundamentos-do-rag)**
-    - [O que é RAG?](#o-que-é-rag)
-    - [Por que precisamos do RAG?](#por-que-precisamos-do-rag)
-    - [Os Três Pilares do RAG](#os-três-pilares-do-rag)
-    - [Por que o DeepSeek R1?](#por-que-o-deepseek-r1)
-- **[Implementação Prática](#implementação-prática)**
-    - [Preparando o Ambiente](#preparando-o-ambiente)
-    - [Estrutura do Projeto](#estrutura-do-projeto)
-    - [Processamento de Documentos](#processamento-de-documentos)
-    - [Sistema de Embeddings](#sistema-de-embeddings)
-    - [Interface com Ollama](#interface-com-ollama)
-    - [Módulo Principal](#módulo-principal)
-- **[Como Usar](#como-usar)**
-    - [Instalação do Ollama](#instalação-do-ollama)
-    - [TF-IDF](#tf-idf)
-    - [Configuração do Projeto](#configuração-do-projeto)
-    - [Executando a Aplicação](#executando-a-aplicação)
-- **[Considerações Técnicas](#considerações-técnicas)**
-    - [Performance e Otimizações](#performance-e-otimizações)
-    - [Prompt Engineering](#prompt-engineering)
-- **[Próximos Passos](#próximos-passos)**
-    - [Melhorias Propostas](#melhorias-propostas)
-    - [Usando Langchain4j](#usando-langchain4j)
-- **[Referências](#referências)**
 
 ## Introdução
 
@@ -46,7 +19,7 @@ Neste artigo, vamos explorar como construir uma aplicação [RAG (Retrieval-Augm
 
 ### O que é RAG?
 
-Os Modelos de Linguagem de Grande Escala (LLMs), como o GPT, ChatGPT e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é "congelado" no tempo.
+Os Modelos de Linguagem de Grande Escala ([LLMs](https://en.wikipedia.org/wiki/Large_language_model)), como o [GPT](https://openai.com/api/), [ChatGPT](https://openai.com/api/) e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é "congelado" no tempo.
 
 ```mermaid
 graph TD
@@ -60,11 +33,11 @@ graph TD
 
 ### Por que precisamos do RAG?
 
-Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala (LLMs) tradicionais: seu conhecimento estático.
+Ao desenvolver aplicações inteligentes, como assistentes financeiros que precisam de cotações de ações em tempo real, chatbots de suporte que devem conhecer os produtos mais recentes da empresa ou sistemas de recomendação que se baseiam nas últimas tendências, nos deparamos com uma limitação crucial dos Modelos de Linguagem de Grande Escala ([LLMs](https://en.wikipedia.org/wiki/Large_language_model)) tradicionais: seu conhecimento estático.
 
 O problema fundamental reside no fato de que esses modelos, por mais sofisticados que sejam, possuem uma base de conhecimento "congelada" no momento de seu treinamento. Eles carecem de acesso inerente a informações atualizadas, o que restringe drasticamente sua aplicabilidade em cenários que exigem dados em tempo real ou conhecimento sobre eventos recentes.
 
-> Confiar exclusivamente em um LLM "puro" nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.
+> Confiar exclusivamente em um [LLM "puro"](https://en.wikipedia.org/wiki/Large_language_model) nesses contextos resultará em respostas desatualizadas, potencialmente imprecisas e, consequentemente, em uma experiência do usuário comprometida. A eficácia da aplicação é diretamente afetada.
 
 ### Os Três Pilares do RAG
 
@@ -84,60 +57,21 @@ graph LR
     D --> J[Contextualização]
 ```
 
-1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o LLM ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
-2. **Pesquisa em tempo real:** O LLM não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O LLM, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
-3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o RAG de uma simples busca em uma base de dados. O LLM não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.
+1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o [LLM](https://en.wikipedia.org/wiki/Large_language_model) ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
+2. **Pesquisa em tempo real:** O [LLM](https://en.wikipedia.org/wiki/Large_language_model) não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O [LLM](https://en.wikipedia.org/wiki/Large_language_model), equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
+3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o [RAG](https://pt.wikipedia.org/wiki/Geração_aumentada_por_recuperação) de uma simples busca em uma base de dados. O [LLM](https://en.wikipedia.org/wiki/Large_language_model) não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.
 
-### Etapas Avançadas do RAG
+### RAG em Produção
 
-Sistemas RAG modernos frequentemente incluem etapas adicionais para melhorar a precisão:
+Sistemas RAG em produção frequentemente incluem etapas adicionais para melhorar a precisão: **re-ranking** (onde um modelo especializado re-avalia a relevância dos documentos recuperados) e **merge-rerank** (que combina resultados de múltiplas estratégias de busca como semântica, lexical e híbrida). Essas técnicas aumentam significativamente a qualidade das respostas, mas adicionam complexidade ao sistema.
 
-#### **4. Re-ranking (Re-ranqueamento)**
-Após a busca inicial, um modelo especializado re-avalia a relevância dos documentos recuperados:
+> **Nota**: Nossa implementação atual usa apenas busca semântica simples com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar essas técnicas avançadas.
 
-```mermaid
-graph TD
-    A[Busca Inicial] --> B[Top-K Resultados]
-    B --> C[Re-ranker Model]
-    C --> D[Resultados Re-ranqueados]
-    D --> E[Top-N Mais Relevantes]
-```
+Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/abs/2309.01066), existem várias técnicas para turbinar o desempenho dos [LLMs](https://en.wikipedia.org/wiki/Large_language_model), e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:
 
-**Exemplo prático:**
-- Busca inicial retorna 100 documentos
-- Re-ranker analisa cada um e atribui scores de relevância
-- Seleciona os 10 mais relevantes para o contexto
+O RAG resolve vários problemas de uma vez só: diminui aquelas "viagens" dos [LLMs](https://en.wikipedia.org/wiki/Large_language_model) quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!
 
-#### **5. Merge-Rerank (Fusão e Re-ranqueamento)**
-Combina resultados de múltiplas estratégias de busca:
-
-```mermaid
-graph TD
-    A[Query] --> B[Busca Semântica]
-    A --> C[Busca Lexical]
-    A --> D[Busca Híbrida]
-    B --> E[Resultados Semânticos]
-    C --> F[Resultados Lexicais]
-    D --> G[Resultados Híbridos]
-    E --> H[Fusão]
-    F --> H
-    G --> H
-    H --> I[Re-ranqueamento Final]
-    I --> J[Contexto Otimizado]
-```
-
-**Vantagens:**
-- **Diversidade**: Diferentes estratégias capturam diferentes aspectos
-- **Robustez**: Reduz dependência de uma única abordagem
-- **Precisão**: Combina forças de múltiplos métodos
-
-> **Nota**: Nossa implementação atual usa apenas busca semântica simples. Sistemas de produção frequentemente implementam re-ranking e merge-rerank para maximizar a qualidade das respostas.
-
-Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/abs/2309.01066), existem várias técnicas para turbinar o desempenho dos LLMs, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:
-
-O RAG resolve vários problemas de uma vez só: diminui aquelas "viagens" dos LLMs quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!
-
-> O RAG representa um avanço significativo na evolução dos LLMs, permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o LLM de um "sabe-tudo" desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.
+> O RAG representa um avanço significativo na evolução dos [LLMs](https://en.wikipedia.org/wiki/Large_language_model), permitindo que eles se tornem ferramentas mais confiáveis, precisas e úteis para uma ampla gama de aplicações. Ele transforma o [LLM](https://en.wikipedia.org/wiki/Large_language_model) de um "sabe-tudo" desatualizado em um pesquisador ágil e bem-informado, capaz de combinar conhecimento profundo com informações atualizadas em tempo real.
 
 ### Por que o DeepSeek R1?
 
@@ -171,7 +105,7 @@ Nossa aplicação terá três componentes principais:
 
 ### TF-IDF
 
-O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:
+O [TF-IDF](https://pt.wikipedia.org/wiki/TF-IDF) (Term Frequency-Inverse Document Frequency) é uma técnica estatística usada para avaliar a importância de uma palavra em um documento, em relação a uma coleção de documentos. Vamos entender como funciona:
 
 1. **Term Frequency (TF)**: Mede a frequência de uma palavra em um documento.
    ```
@@ -188,84 +122,21 @@ O TF-IDF (Term Frequency-Inverse Document Frequency) é uma técnica estatístic
    TF-IDF(termo) = TF(termo) × IDF(termo)
    ```
 
-**Exemplo prático:**
+Vamos imaginar um cenário prático com três documentos técnicos: 
 
-Imagine que temos três documentos técnicos:
-- Doc1: "Clojure é uma linguagem funcional baseada em Lisp."
-- Doc2: "Python é uma linguagem de programação versátil."
-- Doc3: "Clojure e Python são linguagens de programação populares."
+- Doc1: "Clojure é uma linguagem funcional baseada em [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language))"
+- Doc2: "Python é uma linguagem de programação versátil"
+- Doc3: "Clojure e Python são linguagens de programação populares"
 
-Para calcular o TF-IDF da palavra "Clojure" no Doc1:
+O TF-IDF é uma técnica que nos ajuda a identificar quais palavras são mais importantes em cada documento, comparando a frequência de um termo no documento (TF) com a raridade desse termo em toda a coleção (IDF). Por exemplo, se "Clojure" aparece uma vez em um documento de oito palavras, seu TF é 0,125; como está presente em dois de três documentos, seu IDF é log(3/2) ≈ 0,176, resultando em um TF-IDF de aproximadamente 0,022. Já termos muito comuns, como "linguagem", acabam com TF-IDF zero, pois não ajudam a diferenciar os documentos.
 
-1. TF("Clojure", Doc1) = 1/8 = 0.125 (aparece 1 vez em 8 palavras)
-2. IDF("Clojure") = log(3/2) ≈ 0.176 (aparece em 2 dos 3 documentos)
-3. TF-IDF("Clojure", Doc1) = 0.125 × 0.176 ≈ 0.022
+Esse método é fundamental em sistemas de busca, pois destaca os termos que realmente caracterizam cada texto. No contexto do RAG, o TF-IDF permite indexar e encontrar rapidamente os documentos mais relevantes para uma consulta, servindo como uma base simples e eficiente para recuperação de informações, que pode ser aprimorada com técnicas mais avançadas como embeddings densos.
 
-Comparando com a palavra "linguagem" no mesmo documento:
-1. TF("linguagem", Doc1) = 1/8 = 0.125
-2. IDF("linguagem") = log(3/3) = 0 (aparece em todos os documentos)
-3. TF-IDF("linguagem", Doc1) = 0.125 × 0 = 0
+### Requisitos Mínimos
 
-Isso mostra que "Clojure" tem maior valor discriminativo que "linguagem" para o Doc1, pois "linguagem" é comum em todos os documentos.
+Este experimento funciona com hardware básico: **4 cores de CPU e 8GB de RAM** são suficientes. Para máquinas mais lentas, use `ollama pull deepseek-r1:3b` (versão otimizada). 
 
-No nosso sistema RAG, usaremos o TF-IDF para:
-1. Indexar os documentos técnicos
-2. Encontrar os documentos mais relevantes para uma consulta
-3. Priorizar termos distintivos ao buscar informações
-
-
-### Requisitos de Hardware
-
-A performance do sistema RAG depende significativamente do hardware disponível. Aqui estão as configurações recomendadas:
-
-| Componente | Mínimo | Recomendado | Alto Desempenho |
-|------------|--------|-------------|-----------------|
-| **CPU** | 4 cores (Intel i5/AMD Ryzen 5) | 8 cores (Intel i7/AMD Ryzen 7) | 16+ cores (Intel i9/AMD Ryzen 9) |
-| **RAM** | 8 GB | 16 GB | 32+ GB |
-| **GPU** | Integrada | NVIDIA RTX 3060 (8GB VRAM) | NVIDIA RTX 4090 (24GB VRAM) |
-| **VRAM** | - | 8 GB | 16+ GB |
-| **Storage** | SSD 256 GB | SSD 512 GB | NVMe 1 TB+ |
-| **Rede** | 100 Mbps | 1 Gbps | 10 Gbps |
-
-#### **Configurações por Caso de Uso**
-
-**🟢 Desenvolvimento/Teste**
-- CPU: 4 cores, RAM: 8GB
-- Modelo: `deepseek-r1` (CPU only)
-- Documentos: < 1GB
-- Performance: ~2-5 segundos por consulta
-
-**🟡 Produção Pequena**
-- CPU: 8 cores, RAM: 16GB, GPU: RTX 3060
-- Modelo: `deepseek-r1` (GPU)
-- Documentos: 1-10GB
-- Performance: ~1-3 segundos por consulta
-
-**🔴 Produção Grande**
-- CPU: 16+ cores, RAM: 32GB+, GPU: RTX 4090
-- Modelo: `deepseek-r1` + embeddings densos
-- Documentos: 10GB+
-- Performance: < 1 segundo por consulta
-
-#### **Otimizações por Hardware**
-
-**CPU Only:**
-```bash
-# Usar modelo otimizado para CPU
-ollama pull deepseek-r1:3b  # Versão menor
-```
-
-**GPU Disponível:**
-```bash
-# Usar versão completa com aceleração GPU
-ollama pull deepseek-r1
-```
-
-**Múltiplas GPUs:**
-```bash
-# Distribuir carga entre GPUs
-CUDA_VISIBLE_DEVICES=0,1 ollama serve
-```
+> Para requisitos detalhados de produção e otimizações avançadas, consulte o [apêndice de hardware](#requisitos-de-hardware-detalhados) ao final do artigo.
 
 ### Configuração do Projeto
 
@@ -298,8 +169,9 @@ cd docai
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
 ```
 
-A estrutura do projeto acima define um aplicativo Clojure para RAG (Retrieval-Augmented Generation) com várias dependências essenciais: `markdown-to-hiccup` e `hickory` para processar documentos em Markdown e HTML, `data.json` e `http-kit` para comunicação com APIs (como a do Ollama), `tools.logging` para registro de eventos, `tools.namespace` para gerenciamento de namespaces, `core.async` para operações assíncronas (útil ao lidar com processamento de documentos grandes), e `core.memoize` e `core.cache` para implementar cache de resultados (como embeddings ou respostas do LLM), o que melhora significativamente a performance ao evitar recálculos desnecessários, especialmente em consultas repetidas ou similares.
+A estrutura do projeto acima define um aplicativo Clojure para RAG (Retrieval-Augmented Generation) com várias dependências essenciais. Entre elas, `markdown-to-hiccup` e `hickory` são usadas para processar documentos em Markdown e HTML, enquanto `data.json` e `http-kit` facilitam a comunicação com APIs externas, como a do Ollama. Além disso, `tools.logging` é responsável pelo registro de eventos e logs, e `tools.namespace` auxilia no gerenciamento de namespaces do projeto.
 
+Já `core.async` permite operações assíncronas, o que é especialmente útil ao lidar com o processamento de documentos grandes. Por fim, `core.memoize` e `core.cache` são utilizados para implementar cache de resultados, como embeddings ou respostas do LLM, melhorando significativamente a performance ao evitar recálculos desnecessários, principalmente em consultas repetidas ou similares.
 
 ### Implementação dos Componentes
 
@@ -431,15 +303,13 @@ graph TD
     G --> H[Chunks Prontos]
 ```
 
-O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) baseados em tokens reais (não caracteres), e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.
+O fluxo é bem direto: primeiro verificamos se estamos lidando com Markdown ou HTML, depois extraímos o texto usando a função apropriada, dividimos em pedaços menores (chunks) baseados em tokens reais (não caracteres), e finalmente limpamos esses chunks removendo espaços extras e formatando tudo direitinho. 
 
-> **Importante**: Usamos chunking baseado em tokens reais em vez de caracteres para evitar estourar o contexto do modelo ou desperdiçar largura. 
-> 
-> **⚠️ Limitação**: A heurística atual pode errar até 2x em textos muito curtos ou longos. Para produção, use:
-> - **[clojure-tiktoken](https://github.com/justone/clojure-tiktoken)**: Biblioteca nativa Clojure
-> - **API do Ollama**: `count-tokens-ollama` para contagem precisa
-> - **Interop com Python**: `tiktoken` via GraalVM
+O código também inclui bastante logging para ajudar a depurar o processo, mostrando informações como o tamanho do documento, quantidade de texto extraído e número de chunks gerados. 
 
+Essa abordagem de dividir o texto em pedaços menores é crucial para o RAG, já que permite processar documentos grandes sem sobrecarregar o modelo de linguagem.
+
+> **Importante**: Dividimos o texto em chunks usando tokens (não caracteres) para não ultrapassar o limite do modelo. A contagem de tokens é aproximada. Para produção, use uma biblioteca como [clojure-tiktoken](https://github.com/justone/clojure-tiktoken) para maior precisão.
 
 #### Sistema de Embeddings
 
@@ -541,7 +411,9 @@ Agora vamos implementar o sistema de embeddings. Ele é responsável por criar e
            (map second)))))
 ```
 
-O código acima implementa um sistema simples de embeddings usando TF-IDF (Term Frequency-Inverse Document Frequency) para transformar textos em vetores numéricos. Basicamente, ele pega documentos de texto, quebra em palavras (tokens), calcula a importância de cada palavra considerando tanto sua frequência no documento quanto sua raridade na coleção inteira, e cria vetores que representam cada documento. É como transformar textos em coordenadas matemáticas para que o computador possa entender a "semelhança" entre eles.
+O código acima implementa um sistema simples de embeddings usando TF-IDF (Term Frequency-Inverse Document Frequency) para transformar textos em vetores numéricos. 
+
+Basicamente, ele pega documentos de texto, quebra em palavras (tokens), calcula a importância de cada palavra considerando tanto sua frequência no documento quanto sua raridade na coleção inteira, e cria vetores que representam cada documento. É como transformar textos em coordenadas matemáticas para que o computador possa entender a "semelhança" entre eles.
 
 ```mermaid
 graph TD
@@ -550,109 +422,13 @@ graph TD
     C -->|Similaridade do Cosseno| D[Documentos Similares]
 ```
 
-A parte mais legal é a função `similarity_search`, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional - quanto menor o ângulo entre dois pontos, mais similares eles são. O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.
+A parte mais legal é a função `similarity_search`, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são.
 
+O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.
 
-#### Entendendo o TF-IDF
+O TF-IDF transforma textos em vetores numéricos ao combinar a frequência de cada palavra em um documento (TF) com o quanto essa palavra é rara em toda a coleção (IDF): palavras comuns como "linguagem" têm peso baixo, enquanto termos mais exclusivos como "Clojure" ganham peso alto, permitindo que o computador compare documentos de forma eficiente e encontre os mais relevantes para cada consulta.
 
-O TF-IDF é uma técnica fundamental para representar documentos como vetores numéricos. Vamos entender como ele funciona através de um exemplo prático:
-
-##### Exemplo Numérico
-
-Suponha que temos três documentos sobre programação:
-
-1. Doc1: "Clojure é uma linguagem funcional"
-2. Doc2: "Clojure é uma linguagem Lisp"
-3. Doc3: "Python é uma linguagem dinâmica"
-
-Vamos calcular o TF-IDF passo a passo:
-
-1. **Tokenização e TF (Term Frequency)**
-   - Primeiro, convertemos para minúsculas e dividimos em palavras
-   - Removemos palavras muito curtas (menos de 3 caracteres)
-   - Calculamos a frequência de cada termo em cada documento
-
-   ```
-   Doc1: {"clojure": 1, "linguagem": 1, "funcional": 1}
-   Doc2: {"clojure": 1, "linguagem": 1, "lisp": 1}
-   Doc3: {"python": 1, "linguagem": 1, "dinâmica": 1}
-   ```
-
-2. **IDF (Inverse Document Frequency)**
-   - Contamos em quantos documentos cada termo aparece
-   - Aplicamos a fórmula: IDF = log(N/DF), onde:
-     - N = número total de documentos (3)
-     - DF = número de documentos que contêm o termo
-
-   ```bash
-   "clojure": log(3/2) = 0.405
-   "linguagem": log(3/3) = 0
-   "funcional": log(3/1) = 1.099
-   "lisp": log(3/1) = 1.099
-   "python": log(3/1) = 1.099
-   "dinâmica": log(3/1) = 1.099
-   ```
-
-3. **TF-IDF Final**
-   - Multiplicamos TF pelo IDF para cada termo
-
-   ```bash
-   Doc1: {"clojure": 0.405, "linguagem": 0, "funcional": 1.099}
-   Doc2: {"clojure": 0.405, "linguagem": 0, "lisp": 1.099}
-   Doc3: {"python": 1.099, "linguagem": 0, "dinâmica": 1.099}
-   ```
-
-4. **Vetorização**
-   - Convertemos para vetores usando todos os termos únicos como dimensões
-   - Preenchemos com 0 para termos ausentes
-
-   ```bash
-   Doc1: [0.405, 0, 1.099, 0, 0, 0]
-   Doc2: [0.405, 0, 0, 1.099, 0, 0]
-   Doc3: [0, 0, 0, 0, 1.099, 1.099]
-   ```
-
-##### Por que usar logaritmo no IDF?
-
-O logaritmo no IDF serve para dois propósitos principais:
-
-1. **Suavização**: Reduz o impacto de termos muito raros ou muito comuns
-2. **Escala**: Mantém os valores em uma faixa mais gerenciável
-
-Por exemplo, sem o logaritmo:
-- Um termo que aparece em 1/1000 documentos teria IDF = 1000
-- Um termo que aparece em 1/2 documentos teria IDF = 2
-
-Com o logaritmo:
-- `log(1000) ≈ 6.9`
-- `log(2) ≈ 0.7`
-
-#### Similaridade do Cosseno
-
-A similaridade do cosseno mede o ângulo entre dois vetores TF-IDF. Quanto menor o ângulo, mais similares são os documentos. A fórmula é:
-
-```bash
-cos(θ) = (A·B) / (||A|| ||B||)
-```
-
-Onde:
-- `A·B` é o produto escalar dos vetores
-- `||A||` e `||B||` são as normas (comprimentos) dos vetores
-
-#### Limitações do TF-IDF
-
-1. **Semântica**: TF-IDF não captura o significado das palavras. Por exemplo:
-   - "carro" e "automóvel" são tratados como palavras diferentes
-   - "bom" e "ruim" são tratados como palavras diferentes
-2. **Ordem**: Não considera a ordem das palavras
-   - "gato come rato" e "rato come gato" teriam o mesmo vetor TF-IDF
-3. **Contexto**: Não captura o contexto das palavras
-   - "banco" (financeiro) e "banco" (assento) são tratados como a mesma palavra
-4. **Dimensão**: O vetor final pode ser muito grande (uma dimensão para cada termo único)
-5. **Sinonímia**: Não reconhece palavras com significados similares
-   - "rápido", "veloz", "ligeiro" são tratados como termos distintos
-6. **Polissemia**: Não diferencia múltiplos significados da mesma palavra
-   - "java" (linguagem) vs "java" (ilha) vs "java" (café)
+Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como "carro" e "automóvel" como diferentes e podendo gerar vetores grandes.
 
 > **Importante**: Esta implementação TF-IDF é uma **prova de conceito** para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como [SBERT](https://www.sbert.net/), [E5](https://huggingface.co/intfloat/e5-large), [BGE](https://huggingface.co/BAAI/bge-large-en) ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.
 
@@ -746,7 +522,9 @@ Agora vamos implementar a interface com o Ollama. Ele é responsável por gerar 
 ;; - NÃO invente informações que não estão no contexto
 ```
 
-A parte mais importante aqui é a função `call-ollama-api`, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função `format-prompt` super importante, que estrutura a mensagem enviada ao modelo. Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa "engenharia de prompt" é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.
+A parte mais importante aqui é a função `call-ollama-api`, que faz uma requisição HTTP para o servidor Ollama rodando na máquina local. Ela envia um prompt de texto e recebe de volta a resposta gerada pelo modelo DeepSeek R1. O código também inclui uma função `format-prompt` super importante, que estrutura a mensagem enviada ao modelo. 
+
+Ela combina o contexto (os trechos de documentação relevantes que encontramos) com a pergunta do usuário, e adiciona instruções específicas para o modelo se comportar como um assistente técnico. Essa "engenharia de prompt" é crucial para obter respostas de qualidade - estamos essencialmente ensinando o modelo a responder no formato que queremos.
 
 A função `generate-response` amarra tudo isso, pegando a pergunta e o contexto, formatando o prompt, enviando para o Ollama e tratando possíveis erros. Tem até uma mensagem amigável caso o Ollama não esteja rodando, sugerindo como iniciar o serviço. É um exemplo clássico de como interfaces com LLMs funcionam: você prepara um prompt bem estruturado, envia para o modelo, e recebe de volta texto gerado que (esperamos!) responda à pergunta original com base no contexto fornecido.
 
@@ -903,11 +681,17 @@ Agora vamos implementar o módulo principal que vai ser o ponto de entrada para 
     (println "Obrigado por usar o DocAI. Até a próxima!")))
 ```
 
-Basicamente, quando você faz uma pergunta, o sistema primeiro transforma sua pergunta em números (embeddings) e depois procura nos documentos quais partes são mais parecidas com o que você perguntou. É como se ele estivesse destacando os trechos mais relevantes de um livro para responder sua dúvida. Você pode ver isso acontecendo quando ele imprime os "índices similares" no console - são as posições dos pedaços de texto que ele achou mais úteis.
+Basicamente, quando você faz uma pergunta, o sistema primeiro transforma sua pergunta em números (embeddings) e depois procura nos documentos quais partes são mais parecidas com o que você perguntou. 
 
-Depois de encontrar os trechos relevantes, o sistema junta tudo em um "contexto" - que é basicamente um resumo das informações importantes. Se ele não achar nada parecido com sua pergunta, ele tenta usar o documento inteiro ou avisa que não tem informação suficiente. Dá para ver que ele é bem transparente, mostrando no console o tamanho do contexto e até uma amostra do que encontrou, para você entender o que está acontecendo nos bastidores.
+É como se ele estivesse destacando os trechos mais relevantes de um livro para responder sua dúvida. Você pode ver isso acontecendo quando ele imprime os "índices similares" no console - são as posições dos pedaços de texto que ele achou mais úteis.
 
-Por fim, ele passa sua pergunta original junto com o contexto encontrado para o modelo de linguagem (LLM) gerar uma resposta personalizada. É como dar a um especialista tanto a sua pergunta quanto as páginas relevantes de um manual técnico - assim ele pode dar uma resposta muito mais precisa e fundamentada. Todo esse processo acontece em segundos, permitindo que você tenha uma conversa fluida com seus documentos, como se estivesse conversando com alguém que leu tudo e está pronto para responder suas dúvidas específicas. 
+Depois de encontrar os trechos relevantes, o sistema junta tudo em um "contexto" - que é basicamente um resumo das informações importantes. Se ele não achar nada parecido com sua pergunta, ele tenta usar o documento inteiro ou avisa que não tem informação suficiente. 
+
+Dá para ver que ele é bem transparente, mostrando no console o tamanho do contexto e até uma amostra do que encontrou, para você entender o que está acontecendo nos bastidores.
+
+Por fim, ele passa sua pergunta original junto com o contexto encontrado para o modelo de linguagem (LLM) gerar uma resposta personalizada. É como dar a um especialista tanto a sua pergunta quanto as páginas relevantes de um manual técnico - assim ele pode dar uma resposta muito mais precisa e fundamentada. 
+
+Todo esse processo acontece em segundos, permitindo que você tenha uma conversa fluida com seus documentos, como se estivesse conversando com alguém que leu tudo e está pronto para responder suas dúvidas específicas. 
 
 ---
 
@@ -1014,7 +798,9 @@ Nossa implementação atual oferece uma base funcional, mas pode ser significati
 
 Para lidar com documentações extensas, recomendo estratégias específicas de gerenciamento de memória, como o processamento de chunks em lotes menores, implementação de indexação incremental que constrói a base de conhecimento gradualmente, e utilização de técnicas de streaming para processar arquivos grandes sem sobrecarregar a memória disponível.
 
-Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o [DeepSeek R1](https://ollama.com/models/deepseek-r1) destaca-se na compreensão geral e geração de texto, o [DeepSeek Coder](https://ollama.com/models/deepseek-coder) é especializado em código, o [Llama 3](https://ollama.com/models/llama3) serve como excelente alternativa geral, o [Mistral](https://ollama.com/models/mistral) demonstra eficácia em tarefas específicas, enquanto o [Gemma](https://ollama.com/models/gemma) oferece uma solução leve e eficiente para ambientes com recursos limitados. Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:
+Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta características distintas que podem ser exploradas conforme a necessidade: o [DeepSeek R1](https://ollama.com/models/deepseek-r1) destaca-se na compreensão geral e geração de texto, o [DeepSeek Coder](https://ollama.com/models/deepseek-coder) é especializado em código, o [Llama 3](https://ollama.com/models/llama3) serve como excelente alternativa geral, o [Mistral](https://ollama.com/models/mistral) demonstra eficácia em tarefas específicas, enquanto o [Gemma](https://ollama.com/models/gemma) oferece uma solução leve e eficiente para ambientes com recursos limitados.
+
+Outra questão importante é como estou tratando os erros. O sistema implementa várias camadas de tratamento de erros para lidar com diferentes cenários:
 
 1. **Ollama Offline**
    - **Sintoma**: O sistema não consegue se conectar ao servidor Ollama
@@ -1057,67 +843,26 @@ Quanto à escolha de modelos no ecossistema Ollama, cada um apresenta caracterí
 
 ---
 
-### Prompt Engineering
+### Melhorando os Prompts
 
-O Prompt Engineering é uma habilidade crucial para obter bons resultados com LLMs. Um prompt bem estruturado pode fazer a diferença entre uma resposta vaga e uma resposta precisa e útil.
-
-#### Estrutura do Prompt
-
-```clojure
-(defn format-prompt
-  "Formata o prompt para o LLM"
-  [context query]
-  (str "Você é um assistente especializado em documentação técnica. "
-       "Com base no seguinte contexto da documentação:\n\n"
-       context
-       "\n\nPergunta: " query
-       "\n\nForneça uma resposta técnica precisa e, se possível, "
-       "inclua exemplos de código. Se a documentação não contiver "
-       "informações relevantes para a pergunta, indique isso claramente "
-       "e forneça uma resposta geral com base em seu conhecimento."))
-```
-
-O código acima define uma função `format-prompt` que estrutura a comunicação com o modelo de linguagem. Esta função recebe dois parâmetros principais: o `context`, que contém os trechos relevantes da documentação recuperados pelo sistema RAG, e a `query`, que é a pergunta do usuário. A função combina esses elementos em um prompt estruturado que orienta o comportamento do LLM.
-
-A estrutura do prompt é cuidadosamente projetada com vários elementos estratégicos: primeiro, define o papel do modelo como "assistente especializado em documentação técnica", estabelecendo o tom e a expectativa; em seguida, fornece o contexto extraído da documentação para que o modelo tenha as informações necessárias; depois, apresenta claramente a pergunta do usuário; e finalmente, inclui instruções específicas sobre como o modelo deve responder, incentivando respostas técnicas precisas com exemplos de código quando apropriado, além de orientar como proceder quando a documentação não contém informações relevantes.
-
-O prompt engineering utiliza diversas técnicas para melhorar as respostas dos LLMs, incluindo: [**Role Prompting**](https://www.promptingguide.ai/techniques/role-prompting), que define um papel específico para o modelo (como "Você é um especialista em..."); [**Few-shot Learning**](https://www.promptingguide.ai/techniques/few-shot), que fornece exemplos de entradas e saídas desejadas; [**Chain of Thought**](https://www.promptingguide.ai/techniques/chain-of-thought), que solicita ao modelo explicar seu raciocínio passo a passo; [**Format Specification**](https://www.promptingguide.ai/techniques/format-specification), que especifica o formato exato desejado para a resposta; e [**Constraints**](https://www.promptingguide.ai/techniques/constraints), que estabelece limites e requisitos específicos que a resposta deve seguir.
-
-#### Exemplo de Prompt Avançado
-
-Este código implementa uma versão avançada de formatação de prompt para o LLM, criando uma estrutura mais detalhada e direcionada. Ele fornece um conjunto de diretrizes numeradas que orientam o comportamento do modelo, incluindo requisitos para precisão técnica, exemplos de código, citações da documentação, transparência sobre limitações de conhecimento, concisão e uso de formatação Markdown.
-
-A estrutura deste prompt segue princípios de engenharia de prompts mais sofisticados, incorporando técnicas como role prompting (definição clara do papel do modelo), constraint engineering (estabelecimento de diretrizes específicas) e format specification (solicitação de formatação Markdown). Esta abordagem mais estruturada ajuda a obter respostas mais consistentes, informativas e bem formatadas do modelo, especialmente para consultas técnicas complexas relacionadas à documentação de Clojure.
+Para obter melhores respostas do sistema RAG, você pode usar prompts mais estruturados:
 
 ```clojure
 (defn format-advanced-prompt
-  "Formata um prompt mais sofisticado para o LLM com delimitação segura"
+  "Prompt otimizado com diretrizes claras"
   [context query]
-  (str "Você é um especialista em documentação técnica de software, "
-       "com foco em Clojure e desenvolvimento web.\n\n"
-       "DOCUMENTO:\n"
-       "```\n"
-       context
-       "\n```\n\n"
-       "Pergunta: " query
-       "\n\n"
+  (str "Você é um especialista em documentação técnica de software.\n\n"
+       "DOCUMENTO:\n```\n" context "\n```\n\n"
+       "Pergunta: " query "\n\n"
        "Diretrizes:\n"
        "1. Use APENAS informações do contexto fornecido\n"
        "2. Seja preciso e técnico\n"
        "3. Inclua exemplos de código quando relevante\n"
-       "4. Cite as partes da documentação que você está usando\n"
-       "5. Se a informação não estiver no contexto, indique claramente\n"
-       "6. Mantenha a resposta concisa mas completa\n"
-       "7. Use formatação Markdown para melhor legibilidade\n"
-       "8. Se o contexto for limitado, mencione essa limitação\n"
-       "9. NÃO invente informações que não estão no contexto"))
+       "4. Se a informação não estiver no contexto, indique claramente\n"
+       "5. Use formatação Markdown para melhor legibilidade"))
 ```
 
-Para criar prompts efetivos, é essencial ser específico e claro nas instruções, utilizar formatação adequada para melhorar a legibilidade e incluir exemplos ilustrativos sempre que possível. Também é recomendável definir limites e restrições claras, solicitar ao modelo que explique seu raciocínio e utilizar um processo iterativo para refinar continuamente o prompt até obter os resultados desejados.
-
-A avaliação sistemática de prompts envolve testar diferentes variações da mesma instrução e comparar as respostas para identificar qual estrutura produz os melhores resultados. Este processo deve incluir a coleta de feedback dos usuários finais e a manutenção de um registro detalhado dos prompts que demonstraram bom desempenho, permitindo assim o desenvolvimento de um conjunto de melhores práticas específicas para cada caso de uso.
-
-> **Nota**: O [Prompt Engineering](https://www.promptingguide.ai/) é uma área em constante evolução. Novas técnicas e melhores práticas surgem regularmente à medida que os modelos evoluem.
+> Para técnicas avançadas de prompt engineering, consulte o [Guia Completo de Prompt Engineering](https://www.promptingguide.ai/).
 
 ## Próximos Passos
 
@@ -1419,9 +1164,6 @@ mindmap
       Few-shot
       Chain-of-thought
       Formato
-    Langchain4j
-      Abstração
-      Integração
 ```
 
 ### Dependências e Próximos Passos
@@ -1569,25 +1311,72 @@ Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções
 > 
 > **⚠️ Importante**: A contagem de tokens heurística pode errar até 2x. Para produção, use `count-tokens-ollama-precise` ou `clojure-tiktoken` para precisão.
 
-Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo [BPE](https://en.wikipedia.org/wiki/Byte_pair_encoding) ou [WordPiece](https://en.wikipedia.org/wiki/WordPiece) - idealmente o mesmo que o modelo usa. E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda! O TF-IDF que implementamos é ótimo para entender os conceitos, mas embeddings densos modernos capturam nuances semânticas que fazem toda a diferença em aplicações reais.
+Olha, dá pra turbinar esse nosso RAG de várias formas! Primeiro, a gente poderia melhorar a tokenização usando aqueles métodos mais avançados tipo [BPE](https://en.wikipedia.org/wiki/Byte_pair_encoding) ou [WordPiece](https://en.wikipedia.org/wiki/WordPiece) - idealmente o mesmo que o modelo usa. 
+
+E os embeddings? Seria muito mais eficiente pegar direto do Ollama em vez de fazer na mão. A diferença na busca semântica seria absurda! O TF-IDF que implementamos é ótimo para entender os conceitos, mas embeddings densos modernos capturam nuances semânticas que fazem toda a diferença em aplicações reais.
 
 Quando o projeto crescer, vai ser essencial ter um banco de dados vetorial decente. Imagina lidar com milhares de documentos usando nossa implementação atual? Seria um pesadelo! [Milvus](https://milvus.io/), [FAISS](https://github.com/facebookresearch/faiss) ou [Qdrant](https://qdrant.tech/) resolveriam isso numa boa. E não podemos esquecer do cache - tanto para embeddings quanto para respostas. Economiza um tempão e reduz a carga no sistema.
 
 A parte de tratamento de erros e logging também precisa de carinho. Já pensou o usuário esperando resposta e o Ollama tá offline? Ou um arquivo corrompido? Precisamos de mensagens amigáveis e um sistema de logging decente pra rastrear problemas. E claro, testes! Sem testes unitários e de integração, qualquer mudança vira uma roleta-russa.
 
-O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta. Ah, e uma alternativa interessante seria usar o langchain4j via interop com Java. Ele já tem um monte de abstrações prontas que economizariam muito código!
+O prompt engineering é outro ponto crucial - dá pra refinar bastante o formato atual. Poderíamos experimentar com exemplos no prompt (few-shot), instruções passo a passo (chain-of-thought), e ser mais específico sobre o formato da resposta.
 
-### Usando Langchain4j
+## Apêndice
 
-Langchain4j é uma biblioteca Java que oferece uma abstração de alto nível para construir aplicações de IA generativa, incluindo sistemas RAG. Ela se integra bem com Clojure através da interoperabilidade Java.
+### Requisitos de Hardware Detalhados
 
-Vantagens de usar Langchain4j:
-- **Abstração**: Fornece componentes pré-construídos para tarefas comuns
-- **Modularidade**: Permite trocar implementações facilmente
-- **Integração**: Oferece integrações com várias ferramentas e serviços
-- **Comunidade e Suporte**: Possui uma comunidade ativa e boa documentação
+A performance do sistema RAG depende significativamente do hardware disponível. Aqui estão as configurações recomendadas:
 
-> Em um próximo artigo, escreverei sobre como usar [Langchain4j](https://github.com/langchain4j/langchain4j) para criar um sistema RAG ainda neste mesmo projeto.
+| Componente | Mínimo | Recomendado | Alto Desempenho |
+|------------|--------|-------------|-----------------|
+| **CPU** | 4 cores (Intel i5/AMD Ryzen 5) | 8 cores (Intel i7/AMD Ryzen 7) | 16+ cores (Intel i9/AMD Ryzen 9) |
+| **RAM** | 8 GB | 16 GB | 32+ GB |
+| **GPU** | Integrada | NVIDIA RTX 3060 (8GB VRAM) | NVIDIA RTX 4090 (24GB VRAM) |
+| **VRAM** | - | 8 GB | 16+ GB |
+| **Storage** | SSD 256 GB | SSD 512 GB | NVMe 1 TB+ |
+| **Rede** | 100 Mbps | 1 Gbps | 10 Gbps |
+
+#### **Configurações por Caso de Uso**
+
+**🟢 Desenvolvimento/Teste**
+- CPU: 4 cores, RAM: 8GB
+- Modelo: `deepseek-r1` (CPU only)
+- Documentos: < 1GB
+- Performance: ~2-5 segundos por consulta
+
+**🟡 Produção Pequena**
+- CPU: 8 cores, RAM: 16GB, GPU: RTX 3060
+- Modelo: `deepseek-r1` (GPU)
+- Documentos: 1-10GB
+- Performance: ~1-3 segundos por consulta
+
+**🔴 Produção Grande**
+- CPU: 16+ cores, RAM: 32GB+, GPU: RTX 4090
+- Modelo: `deepseek-r1` + embeddings densos
+- Documentos: 10GB+
+- Performance: < 1 segundo por consulta
+
+#### **Otimizações por Hardware**
+
+**CPU Only:**
+```bash
+# Usar modelo otimizado para CPU
+ollama pull deepseek-r1:3b  # Versão menor
+```
+
+**GPU Disponível:**
+```bash
+# Usar versão completa com aceleração GPU
+ollama pull deepseek-r1
+```
+
+**Múltiplas GPUs:**
+```bash
+# Distribuir carga entre GPUs
+CUDA_VISIBLE_DEVICES=0,1 ollama serve
+```
+
+---
 
 ## Referências
 

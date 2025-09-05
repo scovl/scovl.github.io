@@ -52,7 +52,6 @@ error[E0277]: `Rc<i32>` cannot be sent between threads safely
 
 O Rust impede esse tipo de erro já na compilação! Mas vale lembrar: se você recorrer a trechos `unsafe`, a responsabilidade volta para você — e aí, se não tomar cuidado, ainda pode acabar com bugs difíceis, como já aconteceu [evmap](https://github.com/m-ou-se/evmap/issues/1), em que o programa travou por causa de um [data race](https://en.wikipedia.org/wiki/Data_race). Ou seja, mesmo com as ferramentas certas, atenção e boas práticas continuam essenciais. Mas, como o Rust impede esse tipo de erro? como ele sabe que o `Rc<i32>` não é seguro de ser enviado entre threads? Que bruxaria é essa?
 
-
 ## Por baixo do capô: a mágica dos traits `Send` e `Sync`
 
 A segurança de concorrência do Rust vem de regras inteligentes no sistema de tipos, usando **[traits especiais](https://doc.rust-lang.org/book/ch16-03-shared-state.html#using-traits-to-define-shared-state)**. A documentação oficial do Rust explica: *"Cada tipo de dado sabe se pode ser enviado ou compartilhado entre threads com segurança, e o Rust força essas regras. Não há corridas de dados!"*. 

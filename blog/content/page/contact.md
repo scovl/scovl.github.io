@@ -1,8 +1,10 @@
-+++
-author = "Vitor Lobo"
-+++
+---
+date: 2025-07-28
+---
 
-* **E-mail**: lobocode@gmail.com
-* **Linkedin**: [https://linkedin.com/in/vitor-lobo/](https://linkedin.com/in/vitor-lobo/)
-* **Mastodon**: [https://hachyderm.io/@lobocode](https://hachyderm.io/@lobocode)
-* **Goodreads**: [https://www.goodreads.com/user/show/77924606-vitor-ramos](https://www.goodreads.com/user/show/77924606-vitor-ramos)
+Entre em contato comigo através dos canais abaixo:
+
+- **Email:** [lobocode@gmail.com](mailto:lobocode@gmail.com)  
+- **LinkedIn:** [linkedin.com/in/vitor-lobo](https://linkedin.com/in/vitor-lobo)  
+- **GitHub:** [github.com/scovl](https://github.com/scovl)
+- **Mastodon:** [@lobocode](https://hachyderm.io/@lobocode)

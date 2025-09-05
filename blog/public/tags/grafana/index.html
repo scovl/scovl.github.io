@@ -7,25 +7,348 @@
 <meta name="description" content="">
 
 
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="preload" href="/vendor/fonts/inter/Inter-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/inter/Inter-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/vendor/fonts/jetbrains-mono/JetBrainsMono-400.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<link rel="dns-prefetch" href="//giscus.app">
+<link rel="preconnect" href="//giscus.app">
 
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no"> 
+
+
+<link rel="stylesheet" href="/css/main.css?v=1757030371">
+
+
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757030371">
+
+
+<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+
+
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757030371">
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1757030371"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
             startOnLoad: true,
             theme: 'light',
             align: 'center'
-        });
+        });SS
     });
 </script>
- 
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+const I18n = {
+    currentLang: 'pt',
+    isRTL:  false ,
+    
+    
+    formatDate(date, options = {}) {
+        const defaultOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.DateTimeFormat(locale, finalOptions).format(date);
+    },
+    
+    
+    formatNumber(number, options = {}) {
+        const defaultOptions = {
+            style: 'decimal',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        };
+        
+        const locale = this.getLocale();
+        const finalOptions = { ...defaultOptions, ...options };
+        
+        return new Intl.NumberFormat(locale, finalOptions).format(number);
+    },
+    
+    
+    formatCurrency(amount, currency = 'USD') {
+        const locale = this.getLocale();
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency
+        }).format(amount);
+    },
+    
+    
+    formatRelativeTime(date) {
+        const locale = this.getLocale();
+        const now = new Date();
+        const diff = now - date;
+        const diffInMinutes = Math.floor(diff / (1000 * 60));
+        const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+        const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (diffInMinutes < 1) {
+            return new Intl.RelativeTimeFormat(locale).format(0, 'minute');
+        } else if (diffInMinutes < 60) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInMinutes, 'minute');
+        } else if (diffInHours < 24) {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInHours, 'hour');
+        } else {
+            return new Intl.RelativeTimeFormat(locale).format(-diffInDays, 'day');
+        }
+    },
+    
+    
+    getLocale() {
+        const localeMap = {
+            'en': 'en-US',
+            'pt': 'pt-BR',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'de': 'de-DE',
+            'it': 'it-IT',
+            'ar': 'ar-SA',
+            'he': 'he-IL',
+            'fa': 'fa-IR',
+            'ur': 'ur-PK',
+            'zh': 'zh-CN',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR'
+        };
+        
+        return localeMap[this.currentLang] || 'en-US';
+    },
+    
+    
+    t(key, params = {}) {
+        const translations = {
+            'en': {
+                'read_more': 'Read more',
+                'back_to_top': 'Back to top',
+                'loading': 'Loading...',
+                'error': 'Error',
+                'success': 'Success',
+                'warning': 'Warning',
+                'info': 'Information',
+                'comments': 'Comments',
+                'related_posts': 'Related Posts',
+                'tags': 'Tags',
+                'categories': 'Categories',
+                'search': 'Search',
+                'menu': 'Menu',
+                'close': 'Close',
+                'language': 'Language',
+                'theme': 'Theme',
+                'dark_mode': 'Dark Mode',
+                'light_mode': 'Light Mode'
+            },
+            'pt': {
+                'read_more': 'Ler mais',
+                'back_to_top': 'Voltar ao topo',
+                'loading': 'Carregando...',
+                'error': 'Erro',
+                'success': 'Sucesso',
+                'warning': 'Aviso',
+                'info': 'Informação',
+                'comments': 'Comentários',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Tags',
+                'categories': 'Categorias',
+                'search': 'Pesquisar',
+                'menu': 'Menu',
+                'close': 'Fechar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Escuro',
+                'light_mode': 'Modo Claro'
+            },
+            'es': {
+                'read_more': 'Leer más',
+                'back_to_top': 'Volver arriba',
+                'loading': 'Cargando...',
+                'error': 'Error',
+                'success': 'Éxito',
+                'warning': 'Advertencia',
+                'info': 'Información',
+                'comments': 'Comentarios',
+                'related_posts': 'Posts Relacionados',
+                'tags': 'Etiquetas',
+                'categories': 'Categorías',
+                'search': 'Buscar',
+                'menu': 'Menú',
+                'close': 'Cerrar',
+                'language': 'Idioma',
+                'theme': 'Tema',
+                'dark_mode': 'Modo Oscuro',
+                'light_mode': 'Modo Claro'
+            },
+            'ar': {
+                'read_more': 'اقرأ المزيد',
+                'back_to_top': 'العودة إلى الأعلى',
+                'loading': 'جاري التحميل...',
+                'error': 'خطأ',
+                'success': 'نجح',
+                'warning': 'تحذير',
+                'info': 'معلومات',
+                'comments': 'التعليقات',
+                'related_posts': 'المقالات ذات الصلة',
+                'tags': 'العلامات',
+                'categories': 'الفئات',
+                'search': 'بحث',
+                'menu': 'القائمة',
+                'close': 'إغلاق',
+                'language': 'اللغة',
+                'theme': 'المظهر',
+                'dark_mode': 'الوضع المظلم',
+                'light_mode': 'الوضع الفاتح'
+            }
+        };
+        
+        const langTranslations = translations[this.currentLang] || translations['en'];
+        let text = langTranslations[key] || key;
+        
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    },
+    
+    
+    init() {
+        this.updatePageDirection();
+        this.updateDateFormats();
+        this.updateNumberFormats();
+        this.updateTranslations();
+    },
+    
+    
+    updatePageDirection() {
+        if (this.isRTL) {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', this.currentLang);
+        }
+    },
+    
+    
+    updateDateFormats() {
+        const dateElements = document.querySelectorAll('[data-date]');
+        dateElements.forEach(element => {
+            const date = new Date(element.getAttribute('data-date'));
+            const format = element.getAttribute('data-date-format') || 'default';
+            
+            let formattedDate;
+            switch (format) {
+                case 'relative':
+                    formattedDate = this.formatRelativeTime(date);
+                    break;
+                case 'short':
+                    formattedDate = this.formatDate(date, { month: 'short', day: 'numeric' });
+                    break;
+                case 'long':
+                    formattedDate = this.formatDate(date, { 
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    break;
+                default:
+                    formattedDate = this.formatDate(date);
+            }
+            
+            element.textContent = formattedDate;
+        });
+    },
+    
+    
+    updateNumberFormats() {
+        const numberElements = document.querySelectorAll('[data-number]');
+        numberElements.forEach(element => {
+            const number = parseFloat(element.getAttribute('data-number'));
+            const format = element.getAttribute('data-number-format') || 'decimal';
+            
+            let formattedNumber;
+            switch (format) {
+                case 'currency':
+                    const currency = element.getAttribute('data-currency') || 'USD';
+                    formattedNumber = this.formatCurrency(number, currency);
+                    break;
+                case 'percent':
+                    formattedNumber = this.formatNumber(number / 100, { style: 'percent' });
+                    break;
+                default:
+                    formattedNumber = this.formatNumber(number);
+            }
+            
+            element.textContent = formattedNumber;
+        });
+    },
+    
+    
+    updateTranslations() {
+        const translationElements = document.querySelectorAll('[data-i18n]');
+        translationElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const params = {};
+            
+            
+            const paramAttributes = element.getAttribute('data-i18n-params');
+            if (paramAttributes) {
+                try {
+                    Object.assign(params, JSON.parse(paramAttributes));
+                } catch (e) {
+                    console.warn('Invalid i18n params:', paramAttributes);
+                }
+            }
+            
+            element.textContent = this.t(key, params);
+        });
+    }
+};
+
+
+window.I18n = I18n;
+</script>
+
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('\/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Falha no registro do Service Worker:', error);
+                });
+        });
+    }
+</script> 
 </head>
 <body>
     
@@ -35,24 +358,65 @@
         <div class="header-content">
             <a href="http://localhost:1313/" class="site-title">scovl</a>
             
-            <nav>
-                <ul class="nav-menu">
-                    
-                    
-                    <li>
-                        <a href="/page/about/" class="nav-link ">
-                            About
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/page/contact/" class="nav-link ">
-                            Contact
-                        </a>
-                    </li>
-                    
-                </ul>
-            </nav>
+            <div class="header-actions">
+                
+                <nav class="nav-menu">
+                    <ul>
+                        
+                        <li><a href="/page/about/">About</a></li>
+                        
+                        <li><a href="/page/contact/">Contact</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                
+                
+
+
+
+<div class="language-switcher" id="language-switcher">
+    <button class="language-btn" onclick="toggleLanguageMenu()">
+        <span class="current-lang">Português</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    </button>
+    <div class="language-menu" id="language-menu">
+        
+            
+                <a href="http://localhost:1313/" class="language-option active">
+                    Português
+                </a>
+            
+        
+            
+                <a href="http://localhost:1313/en/" class="language-option ">
+                    English
+                </a>
+            
+        
+    </div>
+</div>
+                
+                
+                <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </header> 
@@ -79,13 +443,13 @@
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2023/03/21/prometheus/">Prometheus</a>
+            <a href="http://localhost:1313/2025/07/27/prometheus/">Prometheus e PromQL</a>
         </h2>
         
         <div class="post-item-meta">
             
-            <time datetime="2023-03-21T23:18:18-03:00">
-                Tue, Mar 21, 2023
+            <time datetime="2025-07-27T23:10:18-03:00">
+                Sun, Jul 27, 2025
             </time>
             
             
@@ -106,36 +470,25 @@
                 
                 <a href="/tags/observability/" class="tag">Observability</a>
                 
+                <a href="/tags/promql/" class="tag">PromQL</a>
+                
             </div>
             
             
             
             <div class="post-description">
-                Under the hood
+                Guia completo
             </div>
             
         </div>
         
         
         <div class="post-item-summary">
-            <h2 id="índice">Índice</h2>
-<ul>
-<li><strong><a href="/2023/03/21/prometheus/#introdu%c3%a7%c3%a3o">Introdução</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#instala%c3%a7%c3%a3o">Instalação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#promtool">Promtool</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#instrumenta%c3%a7%c3%a3o">Instrumentação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#alertmanager">Alertmanager</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#pushgateway">PushGateway</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#federa%c3%a7%c3%a3o">Federação</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#under-the-hood">Under the Hood</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#melhores-pr%c3%a1ticas">Melhores Práticas</a></strong></li>
-<li><strong><a href="/2023/03/21/prometheus/#conclus%c3%a3o">Conclusão</a></strong></li>
-</ul>
-<h2 id="introdução">Introdução</h2>
-<h3 id="prometheus">Prometheus</h3>
-<p>O <strong>Prometheus</strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <em>labels</em>. A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong>PromQL</strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p>
+            <p>O <strong><a href="https://prometheus.io/">Prometheus</a></strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong>.</p>
+<blockquote>
+<p>A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a></strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p>
             
-            <a href="http://localhost:1313/2023/03/21/prometheus/" class="read-more">Leia mais →</a>
+            <a href="http://localhost:1313/2025/07/27/prometheus/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -184,8 +537,18 @@
                 
             </div>
             
+            
+            <div class="back-to-top-container">
+                <button id="back-to-top" class="back-to-top-btn" aria-label="Voltar ao topo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m18 15-6-6-6 6"/>
+                    </svg>
+                    <span data-i18n="back_to_top">Voltar ao topo</span>
+                </button>
+            </div>
+            
             <div class="copyright">
-                &copy; 2025 Vitor Lobo
+                &copy; 2025 scovl
             </div>
         </div>
     </div>
@@ -193,7 +556,20 @@
     
     
     
-    <script src="/js/main-minimal.js"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757030371"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757030371"></script>
+    
+    
+    <script src="/js/main-minimal.js?v=1757030371"></script>
+    <script src="/js/lazy-loading.js?v=1757030371"></script>
+    <script src="/js/toc.js?v=1757030371"></script>
     
     
     

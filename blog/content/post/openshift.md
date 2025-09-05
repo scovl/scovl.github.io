@@ -40,43 +40,6 @@ Com relação à virtualização, a diferença está no fato do LXC não necessi
 
 Hoje um dos mais conhecidos LXC's do mercado é o **[Docker](https://pt.wikipedia.org/wiki/Docker_(programa))**, escrito em **[GO](https://golang.org/)**, que nasceu como um projeto open source da **[DotCloud](https://cloud.docker.com/)**, uma empresa de **[PaaS (Platform as a Service)](https://pt.wikipedia.org/wiki/Plataforma_como_servi%C3%A7o)** que apesar de estar mais interessada em utilizar LXC apenas em suas aplicações, acabou desenvolvendo um produto que foi muito bem aceito pelo mercado. Do ponto de vista de desenvolvimento, o Docker por sí atendeu muito bem em vários quesitos. No entanto, com a crescente demanda e necessidade de entregar mais resultados em menos tempo, surgiu também a necessidade de extender as funcionalidades do Docker. Surgiu então ferramentas de orquestração de contêineres como Kubernetes e posteriormente potencializadores do próprio Kubernetes como é o caso do OpenShift.
 
-### CAPÍTULO 1 - O CONCEITO
-
-* **[Plataforma em contêineres](#plataforma-em-conteineres)**
-* **[Casos de Uso](#casos-de-uso)**
-* **[Escalando Aplicações](#escalando-aplicacoes)**
-
-### CAPÍTULO 2 - PREPARANDO O AMBIENTE
-
-* **[Pré-requisitos Fundamentais](#pré-requisitos-fundamentais)**
-* **[Instalando as Ferramentas Necessárias](#instalando-as-ferramentas-necessárias)**
-* **[Criando o Arquivo de Configuração (install-config.yaml)](#criando-o-arquivo-de-configuração-install-configyaml)**
-* **[Obtendo o Pull Secret e a Chave SSH](#obtendo-o-pull-secret-e-a-chave-ssh)**
-
-### CAPÍTULO 3 - EXECUTANDO A INSTALAÇÃO DO CLUSTER
-
-* **[Gerando os Manifests de Instalação](#gerando-os-manifests-de-instalação)**
-* **[O Processo de Instalação Automatizado](#o-processo-de-instalação-automatizado)**
-* **[Verificando a Instalação e Acessando o Cluster](#verificando-a-instalação-e-acessando-o-cluster)**
-* **[Configuração Pós-Instalação](#configuração-pós-instalação)**
-
-### CAPÍTULO 4 - TEST DRIVE
-
-* **[Criando Projetos](#criando-projetos)**
-* **[Implementando nosso primeiro aplicativo](#implementando-nosso-primeiro-aplicativo)**
-* **[Trabalhando diretamente com CRI-O](#trabalhando-diretamente-com-cri-o)**
-
-### CAPÍTULO 5 - APROFUNDANDO
-
-* **[Compreendendo o processo](#compreendendo-o-processo)**
-* **[Um pouco sobre kubernetes](#um-pouco-sobre-kubernetes)**
-* **[Um pouco sobre CRI-O](#um-pouco-sobre-cri-o)**
-* **[Fluxo de trabalho automatizado](#fluxo-de-trabalho-automatizado)**
-* **[O namespace MOUNT](#o-namespace-mount)**
-* **[O namespace UTS](#o-namespace-uts)**
-* **[O namespace PID](#o-namespace-pid)**
-
-
 ---
 
 ### PLATAFORMA EM CONTEINERES

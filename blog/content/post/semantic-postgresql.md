@@ -8,22 +8,6 @@ weight = 2
 author = "Vitor Lobo Ramos"
 +++
 
-# Sumário
-
-- **[Introdução](#introdução)**
-- **[Entendendo a Arquitetura](#entendendo-a-arquitetura)**
-- **[Pré-requisitos](#pré-requisitos)**
-- **[Passos para Construir a Busca Semântica](#passos-para-construir-a-busca-semântica)**
-   - [1. Habilitando as Extensões](#1-habilitando-as-extensões)
-   - [2. Criando a Tabela de Documentos](#2-criando-a-tabela-de-documentos)
-   - [3. Inserindo Documentos](#3-inserindo-documentos)
-   - [4. Configurando o Vectorizer](#4-configurando-o-vectorizer)
-   - [5. Realizando Busca Semântica](#5-realizando-busca-semântica)
-- **[Integração com Clojure](#integração-com-clojure)**
-- **[Persistência de Modelos entre Reinicializações](#persistência-de-modelos-entre-reinicializações)**
-- **[Conclusão](#conclusão)**
-## Introdução
-
 Olá, pessoal! 👋
 
 No [artigo anterior](/post/rag/), exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando [Clojure](https://clojure.org/) e [Ollama](https://ollama.com/) com uma implementação simples de [TF-IDF](/post/tf-idf/). Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.

@@ -8,39 +8,6 @@ weight = 3
 author = "Vitor Lobo Ramos"
 +++
 
-# Sumário
-
-- **[Introdução](#introdução)**
-- **[Da Teoria à Produção: Os Desafios Reais](#da-teoria-à-produção-os-desafios-reais)**
-- **[Armadilhas Comuns e Como Evitá-las](#armadilhas-comuns-e-como-evitá-las)**
-  - [Armadilha 1: A Falsa Sensação de Relevância](#armadilha-1-a-falsa-sensação-de-relevância)
-  - [Armadilha 2: Tamanho Inadequado de Chunks](#armadilha-2-tamanho-inadequado-de-chunks)
-  - [Armadilha 3: Falta de Monitoramento Contínuo](#armadilha-3-falta-de-monitoramento-contínuo)
-  - [Armadilha 4: Consultas Complexas em Pipelines Simples](#armadilha-4-consultas-complexas-em-pipelines-simples)
-- **[Técnicas Avançadas de Otimização](#técnicas-avançadas-de-otimização)**
-  - [Re-ranqueamento de Chunks](#re-ranqueamento-de-chunks)
-  - [Estratégias de Chunking Dinâmico](#estratégias-de-chunking-dinâmico)
-  - [Workflows com Agentes para Consultas Complexas](#workflows-com-agentes-para-consultas-complexas)
-    - [Arquitetura de Agentes Avançada](#arquitetura-de-agentes-avançada)
-    - [Casos de Uso para Workflows de Agentes](#casos-de-uso-para-workflows-de-agentes)
-  - [Pipelines Multimodais](#pipelines-multimodais)
-    - [Arquitetura Multimodal Completa](#arquitetura-multimodal-completa)
-    - [Esquema PostgreSQL para Dados Multimodais](#esquema-postgresql-para-dados-multimodais)
-    - [Desafios de Implementação Multimodal](#desafios-de-implementação-multimodal)
-  - [Estratégias de Cache](#estratégias-de-cache)
-    - [Estratégias Avançadas de Cache para RAG](#estratégias-avançadas-de-cache-para-rag)
-- **[Monitoramento e Métricas: LLMOps na Prática](#monitoramento-e-métricas-llmops-na-prática)**
-  - [Métricas de Qualidade Específicas para RAG](#métricas-de-qualidade-específicas-para-rag)
-  - [Automação da Avaliação com LLMs como Juízes](#automação-da-avaliação-com-llms-como-juízes)
-  - [Configuração de um Dashboard de Qualidade RAG](#configuração-de-um-dashboard-de-qualidade-rag)
-  - [Integração com Sistemas de Feedback do Usuário](#integração-com-sistemas-de-feedback-do-usuário)
-- **[Implementando no DocAI](#implementando-no-docai)**
-  - [Arquitetura Atual do DocAI](#arquitetura-atual-do-docai)
-  - [Diferenciais do DocAI](#diferenciais-do-docai)
-  - [Próximos Passos para o DocAI](#próximos-passos-para-o-docai)
-- **[Integração com o Ecossistema](#integração-com-o-ecossistema)**
-- **[Conclusão](#conclusão)**
-- **[Referências](#referências)**
 
 ## Introdução
 

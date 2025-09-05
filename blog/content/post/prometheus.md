@@ -1,33 +1,20 @@
 +++
-title = "Prometheus"
-description = "Under the hood"
-date = 2023-03-21T23:18:18-03:00
-tags = ["Prometheus", "Grafana", "Monitoring", "TSDB", "DevOps", "Observability"]
-draft = true
+title = "Prometheus e PromQL"
+description = "Guia completo"
+date = 2025-07-27T23:10:18-03:00
+tags = ["Prometheus", "Grafana", "Monitoring", "TSDB", "DevOps", "Observability", "PromQL"]
+draft = false
 weight = 3
 +++
 
 
-O **[Prometheus](https://prometheus.io/)** é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)**. A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, **[PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/)**, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.
+O **[Prometheus](https://prometheus.io/)** é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)**. 
 
-Desenvolvido inicialmente na SoundCloud em 2012 por [Julius Volz](https://github.com/juliusv) e equipe, o Prometheus foi projetado para ser simples, eficiente e altamente dimensionável. Em 2016, o projeto foi adotado pela **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)** como o segundo projeto hospedado (logo após o [Kubernetes](https://kubernetes.io/)), reforçando sua maturidade e ampla adoção pela comunidade. Hoje, o Prometheus é um pilar no ecossistema de observabilidade cloud-native, frequentemente usado em conjunto com o Grafana para visualizações avançadas, formando uma poderosa stack de monitoramento.
+> A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, **[PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/)**, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.
 
-> **Nota:** Para um deep dive em PromQL, confira nosso artigo dedicado **[aqui](https://scovl.github.io/2023/03/19/promql/)**.
+Desenvolvido inicialmente na SoundCloud em 2012 por [Julius Volz](https://github.com/juliusv) e equipe, o Prometheus foi projetado para ser simples, eficiente e altamente dimensionável. Em 2016, o projeto foi adotado pela **[Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)** como o segundo projeto hospedado (logo após o [Kubernetes](https://kubernetes.io/)), reforçando sua maturidade e ampla adoção pela comunidade. 
 
-
-## Índice
-
-* **[Tipos de métricas](#tipos-de-métricas)**
-* **[Monitoramento pull vs push](#monitoramento-pull-vs-push)**
-* **[Arquitetura do Prometheus](#arquitetura-do-prometheus)**
-* **[Labels e Samples](#labels-e-samples)**
-* **[Instalação](#instalação)**
-  * **[Configuração](#configuração)**
-  * **[Discovery Dinâmico e Relabeling](#discovery-dinâmico-e-relabeling)**
-  * **[Service Discovery](#service-discovery)**
-
-
-
+> Hoje, o Prometheus é um pilar no ecossistema de observabilidade cloud-native, frequentemente usado em conjunto com o Grafana para visualizações avançadas, formando uma poderosa stack de monitoramento.
 
 ## Tipos de métricas
 
@@ -41,6 +28,8 @@ O Prometheus suporta quatro tipos principais de métricas:
 
 * **[Summary (Sumário)](https://prometheus.io/docs/concepts/metric_types/#summary)**: Métrica similar ao histograma, mas os cálculos de percentis e médias são feitos pelo próprio alvo instrumentado. O summary fornece diretamente percentis (por exemplo, latência p95) e contagens/agregados para um conjunto de observações. Entretanto, summaries têm a limitação de não poderem ser agregados facilmente entre múltiplas instâncias (diferente dos histogramas). Em geral, histogramas são preferidos para métricas de latência quando se quer combinar valores de várias fontes, enquanto summaries podem ser úteis para percentis muito específicos em instâncias isoladas.
 
+> Use Histogramas quando precisar agregar latências de múltiplas instâncias e calcular percentis globais. Use Sumários quando os percentis calculados no cliente são suficientes e a agregação não é necessária.
+
 Além desses tipos principais, o Prometheus expõe métricas especiais de estado – por exemplo, a métrica interna `up` indica se um determinado alvo foi coletado com sucesso (valor 1) ou não (0). Essa métrica é muito útil para monitorar disponibilidade de serviços: se um **endpoint** monitorado ficar indisponível, `up{instance="endpoint:porta"} == 0` sinaliza falha. Vale notar que não existe um "tipo" separado para essas métricas de saúde; elas normalmente são gauges (0 ou 1) usadas para esse propósito.
 
 ## Monitoramento pull vs push
@@ -49,17 +38,27 @@ Para entender **pull** vs **push**, imagine cuidar de plantas: no modelo **pull*
 
 ![](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/tsdb/prom-pullvspush.png)
 
-No Prometheus, prevalece o modelo pull. O servidor Prometheus periodicamente faz **scrape** (raspagem) dos dados de cada alvo exportador via HTTP, no endpoint padrão `/metrics`. Cada scrape coleta o valor atual de todas as séries expostas naquele alvo. Os alvos podem ser aplicações instrumentadas que expõem suas métricas diretamente, ou **exporters** (exportadores) que traduzem métricas de sistemas externos para o formato do Prometheus. Assim, o Prometheus obtém em intervalos regulares (por padrão a cada 15s) as métricas atuais de cada serviço, armazenando-as localmente.
+No Prometheus, prevalece o modelo pull. O servidor Prometheus periodicamente faz **scrape** (raspagem) dos dados de cada alvo exportador via HTTP, no endpoint padrão `/metrics`. Cada scrape coleta o valor atual de todas as séries expostas naquele alvo.
 
-Na imagem acima, a comparação dos modelos de coleta: à esquerda, no modo push os clientes enviam suas métricas proativamente a um gateway; à direita, no modo pull o Prometheus consulta cada cliente periodicamente. O modelo pull tem vantagens em simplicidade e confiabilidade – se um serviço cair, o Prometheus sabe (a métrica `up` fica 0) e não depende de buffers intermediários. Já o modelo push pode ser útil para casos específicos, como *jobs* de curta duração ou ambientes onde não é possível expor um endpoint (nesses casos usa-se o **Pushgateway**, discutido adiante). Em suma, o Prometheus, por padrão, **não** recebe métricas ativamente; ele mesmo vai coletá-las, evitando sobrecarga nos aplicativos monitorados e detectando automaticamente indisponibilidades.
+Os alvos podem ser aplicações instrumentadas que expõem suas métricas diretamente, ou **exporters** (exportadores) que traduzem métricas de sistemas externos para o formato do Prometheus.
+
+Assim, o Prometheus obtém em intervalos regulares (por padrão a cada 15s) as métricas atuais de cada serviço, armazenando-as localmente.
+
+Na imagem acima, a comparação dos modelos de coleta: à esquerda, no modo push os clientes enviam suas métricas proativamente a um gateway; à direita, no modo pull o Prometheus consulta cada cliente periodicamente. O modelo pull tem vantagens em simplicidade e confiabilidade – se um serviço cair, o Prometheus sabe (a métrica `up` fica 0) e não depende de buffers intermediários. 
+
+Já o modelo push pode ser útil para casos específicos, como *jobs* de curta duração ou ambientes onde não é possível expor um endpoint (nesses casos usa-se o **Pushgateway**, discutido adiante). Em suma, o Prometheus, por padrão, **não** recebe métricas ativamente; ele mesmo vai coletá-las, evitando sobrecarga nos aplicativos monitorados e detectando automaticamente indisponibilidades.
 
 ## Arquitetura do Prometheus
 
-A arquitetura do Prometheus foi concebida para facilitar a coleta de dados de múltiplas fontes de forma confiável e distribuída. O coração do sistema é o **[Prometheus Server](https://prometheus.io/docs/prometheus/latest/components/prometheus/)** principal, responsável por agendar e realizar as coletas (*scrapes*) de cada alvo monitorado e armazenar as séries temporais resultantes localmente. A configuração dessas coletas é definida em um arquivo YAML (geralmente `prometheus.yml`), especificando **[jobs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#job_name)** e **[targets](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_configs)** – por exemplo, "coletar métricas do serviço X na URL Y a cada 15 segundos". A figura abaixo (extraída da documentação oficial) ilustra a arquitetura e os componentes do ecossistema Prometheus:
+A arquitetura do Prometheus foi concebida para facilitar a coleta de dados de múltiplas fontes de forma confiável e distribuída. O coração do sistema é o **[Prometheus Server](https://prometheus.io/docs/prometheus/latest/components/prometheus/)** principal, responsável por agendar e realizar as coletas (*scrapes*) de cada alvo monitorado e armazenar as séries temporais resultantes localmente. 
+
+A configuração dessas coletas é definida em um arquivo YAML (geralmente `prometheus.yml`), especificando **[jobs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#job_name)** e **[targets](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_configs)** – por exemplo, "coletar métricas do serviço X na URL Y a cada 15 segundos". A figura abaixo (extraída da documentação oficial) ilustra a arquitetura e os componentes do ecossistema Prometheus:
 
 ![](https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/tsdb/arch.png)
 
-Em resumo, o fluxo é: o Prometheus **raspa (pull)** métricas dos jobs instrumentados, diretamente dos serviços ou via um componente intermediário de push para jobs efêmeros. Todos os samples coletados são armazenados localmente no banco de dados de séries temporais embutido ([TSDB](https://prometheus.io/docs/prometheus/latest/storage/tsdb/)). Regras definidas podem ser executadas continuamente sobre esses dados – seja para gravar novas séries agregadas ([recording rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/)) ou para acionar **[alertas](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)**. Os alertas gerados pelo Prometheus são então enviados para o **[Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)** processar. Por fim, ferramentas de visualização como o **[Grafana](https://grafana.com/)** podem consultar o Prometheus para exibir dashboards das métricas coletadas.
+Em resumo, o fluxo é: o Prometheus **coleta (pull)** métricas dos jobs instrumentados, diretamente dos serviços ou via um componente intermediário de push para jobs efêmeros. Todos os samples coletados são armazenados localmente no banco de dados de séries temporais embutido ([TSDB](https://prometheus.io/docs/prometheus/latest/storage/tsdb/)). 
+
+Regras definidas podem ser executadas continuamente sobre esses dados – seja para gravar novas séries agregadas ([recording rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/)) ou para acionar **[alertas](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)**. Os alertas gerados pelo Prometheus são então enviados para o **[Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)** processar. Por fim, ferramentas de visualização como o **[Grafana](https://grafana.com/)** podem consultar o Prometheus para exibir dashboards das métricas coletadas.
 
 O ecossistema Prometheus possui diversos componentes (muitos opcionais) que interagem nessa arquitetura:
 
@@ -76,13 +75,23 @@ Ele foi projetado para funcionar de forma autônoma em cada nó (cada servidor P
 
 ## Labels e Samples
 
-No Prometheus, **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)** (rótulos) e **[samples](https://prometheus.io/docs/concepts/data_model/#samples-and-series)** (amostras) são conceitos-chave para organizar os dados monitorados. Uma analogia simples: imagine um guarda-roupa onde cada roupa tem etiquetas indicando cor, tamanho e tipo. Essas etiquetas ajudam a encontrar rapidamente, por exemplo, "camisetas verdes tamanho M". Da mesma forma, no Prometheus cada métrica pode ter vários **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)** (chave=valor) que a qualificam. Por exemplo, uma métrica `app_memory_usage_bytes` poderia ter labels como `host="servidor1"` e `region="us-east"`. Assim podemos filtrar/consultar "uso de memória no servidor1" apenas buscando por `host="servidor1"`.
+No Prometheus, **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)** (rótulos) e **[samples](https://prometheus.io/docs/concepts/data_model/#samples-and-series)** (amostras) são conceitos-chave para organizar os dados monitorados.
+
+Uma analogia simples: imagine um guarda-roupa onde cada roupa tem etiquetas indicando cor, tamanho e tipo. Essas etiquetas ajudam a encontrar rapidamente, por exemplo, "camisetas verdes tamanho M".
+
+Da mesma forma, no Prometheus cada métrica pode ter vários **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)** (chave=valor) que a qualificam. 
+
+Por exemplo, uma métrica `app_memory_usage_bytes` poderia ter labels como `host="servidor1"` e `region="us-east"`. Assim podemos filtrar/consultar "uso de memória no servidor1" apenas buscando por `host="servidor1"`.
 
 Os **[labels](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels)** permitem um modelo de dados multidimensional – ou seja, uma mesma métrica (ex: `http_requests_total`) é armazenada separadamente para cada combinação de labels (rota="/login", método="GET", código="200", etc.). Isso enriquece as análises, pois podemos agregar ou dividir métricas por essas dimensões conforme necessário.
 
 ![](https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/samples01.png)
 
-Já os **[samples](https://prometheus.io/docs/concepts/data_model/#samples-and-series)** são as unidades de dado coletadas ao longo do tempo – cada medição individual de uma métrica em um determinado instante. Voltando à analogia, se pedíssemos a cada criança numa pesquisa que escolhesse 3 balas, as balas escolhidas por cada criança seriam uma **amostra** da preferência de balas. No contexto do Prometheus, a cada scrape o valor de cada métrica coletada é um sample (com timestamp e valor). Esses samples ficam armazenados como uma série temporal etiquetada, permitindo ver a evolução daquele valor no tempo.
+Já os **[samples](https://prometheus.io/docs/concepts/data_model/#samples-and-series)** são as unidades de dado coletadas ao longo do tempo – cada medição individual de uma métrica em um determinado instante.
+
+Voltando à analogia, se pedíssemos a cada criança numa pesquisa que escolhesse 3 balas, as balas escolhidas por cada criança seriam uma **amostra** da preferência de balas.
+
+No contexto do Prometheus, a cada scrape o valor de cada métrica coletada é um sample (com timestamp e valor). Esses samples ficam armazenados como uma série temporal etiquetada, permitindo ver a evolução daquele valor no tempo.
 
 Por exemplo, considere a métrica gauge `node_cpu_usage` com label `host`. Para cada host monitorado, teremos uma série separada, e a cada intervalo de coleta obtemos um sample novo do uso de CPU daquele host. Assim, podemos consultar a série para ver como a CPU variou ao longo de um dia inteiro para cada máquina.
 
@@ -202,7 +211,9 @@ scrape_configs:
 
 Isso instruirá o Prometheus a coletar periodicamente métricas em **[http://my-app:8080/metrics](http://my-app:8080/metrics)**. Podemos repetir o processo para cada serviço ou componente que queremos incluir, definindo um `job_name` descritivo e a lista de endpoints (targets).
 
-Para ambientes com muitos alvos ou infraestrutura dinâmica, é inviável gerenciar esses targets manualmente. Nesses casos, o Prometheus oferece integrações de **Service Discovery** ([Kubernetes](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config), [AWS EC2](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#ec2_sd_config), [Consul](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config), [DNS](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#dns_sd_config), etc.) e também o **file-based discovery** (descoberta via arquivos). Este último permite apontar para um ou mais arquivos JSON externos contendo a lista de targets. Assim, ferramentas externas ou scripts podem atualizar esses arquivos conforme os serviços mudam, e o Prometheus percebe as alterações automaticamente. Por exemplo, poderíamos alterar o job acima para usar arquivo:
+Para ambientes com muitos alvos ou infraestrutura dinâmica, é inviável gerenciar esses targets manualmente. Nesses casos, o Prometheus oferece integrações de **Service Discovery** ([Kubernetes](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config), [AWS EC2](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#ec2_sd_config), [Consul](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config), [DNS](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#dns_sd_config), etc.) e também o **file-based discovery** (descoberta via arquivos). 
+
+> Este último permite apontar para um ou mais arquivos JSON externos contendo a lista de targets. Assim, ferramentas externas ou scripts podem atualizar esses arquivos conforme os serviços mudam, e o Prometheus percebe as alterações automaticamente. Por exemplo, poderíamos alterar o job acima para usar arquivo:
 
 ```yaml
 scrape_configs:
@@ -231,9 +242,13 @@ E no arquivo `/etc/prometheus/targets/my-app.json` colocar algo como:
 
 Nesse JSON, especificamos dois targets (dois instâncias da aplicação `my-app`) e também atribuímos labels adicionais a essas instâncias (`env: production`, por exemplo). Assim, se futuramente adicionarmos `my-app3:8080`, basta atualizar o JSON – o Prometheus recarrega periodicamente ou quando o arquivo muda. Esse método facilita escalabilidade e automação da configuração de alvos.
 
-Outro ponto de configuração importante é a **retenção de dados**. Por padrão, o Prometheus guarda as séries temporais localmente por 15 dias. Em ambientes de produção, pode ser necessário ajustar esse período. Você pode definir a flag de inicialização `--storage.tsdb.retention.time` (ou configurar no serviço) para algo maior, por exemplo `30d` para reter \~1 mês de métricas. Tenha em mente que aumentar a retenção aumenta proporcionalmente o consumo de disco e memória. 
+Outro ponto de configuração importante é a **retenção de dados**. Por padrão, o Prometheus guarda as séries temporais localmente por 15 dias. Em ambientes de produção, pode ser necessário ajustar esse período.
 
-Também é possível limitar por tamanho de disco (`--storage.tsdb.retention.size`), se preferir. Caso precise de retenção muito longa (meses/anos), é recomendável integrar com soluções de armazenamento remoto em vez de manter tudo no Prometheus (falaremos disso em *Melhores Práticas*). Exemplo de definição de retenção no **[systemd](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#configuration-file)** (ExecStart):
+Você pode definir a flag de inicialização `--storage.tsdb.retention.time` (ou configurar no serviço) para algo maior, por exemplo `30d` para reter \~1 mês de métricas. Tenha em mente que aumentar a retenção aumenta proporcionalmente o consumo de disco e memória. 
+
+Também é possível limitar por tamanho de disco (`--storage.tsdb.retention.size`), se preferir. Caso precise de retenção muito longa (meses/anos), é recomendável integrar com soluções de armazenamento remoto em vez de manter tudo no Prometheus (falaremos disso em *Melhores Práticas*).
+
+Exemplo de definição de retenção no **[systemd](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#configuration-file)** (ExecStart):
 
 ```bash
 /opt/prometheus/prometheus \
@@ -260,6 +275,57 @@ A pasta `data/` merece destaque – ali ficam todos os dados das métricas colet
 > Em resumo, após instalar, você deve editar o `prometheus.yml` para incluir todos os targets que deseja monitorar (seja listando estaticamente ou via mecanismos dinâmicos) e ajustar parâmetros globais (intervalos, regras, retenção). 
 
 Depois reinicie o serviço/container do Prometheus para aplicar as alterações. Para validar se a sintaxe do arquivo está correta antes de reiniciar, podemos usar o **[promtool](https://prometheus.io/docs/prometheus/latest/tools/promtool/)** conforme abaixo.
+
+## 🔍 Instrumentação
+
+A **instrumentação** é o processo de inserir coleta de métricas em sistemas e aplicações. No contexto Prometheus, podemos dividir em dois tipos:
+
+### 📊 Instrumentação direta (na aplicação)
+
+Significa instrumentar o próprio código da aplicação ou serviço para expor métricas de negócio ou de desempenho relevantes. Você adiciona pontos de métrica no código ([counters](https://prometheus.io/docs/concepts/metric_types/#counter), [gauges](https://prometheus.io/docs/concepts/metric_types/#gauge), etc.) usando uma biblioteca cliente do Prometheus.
+
+Assim, a própria aplicação passa a expor um endpoint `/metrics` com dados em tempo real sobre si mesma (latência de requisições, uso de memória interno, tamanho de fila, etc.).
+
+Essa abordagem dá controle granular – os desenvolvedores escolhem o que medir – e tende a fornecer métricas altamente específicas e úteis para diagnosticar o comportamento da aplicação.
+
+### 🔄 Instrumentação indireta (via exporters)
+
+Refere-se a coletar métricas de sistemas externos ou legados através de componentes intermediários chamados **[exporters](https://prometheus.io/docs/instrumenting/exporters/)**. Em vez de modificar o sistema alvo, você roda um exporter que coleta informações daquele sistema (geralmente via APIs existentes, comandos ou leitura de arquivos) e as expõe no formato Prometheus. 
+
+O Prometheus então faz scrape nesse exporter. Essa abordagem é comum para: sistemas operacionais, bancos de dados, servidores web, ou qualquer software que não tenha suporte nativo ao Prometheus.
+
+Por exemplo, há exporters para **[MySQL](https://github.com/prometheus/mysqld_exporter)**, **[PostgreSQL](https://github.com/prometheus/postgres_exporter)**, **[Apache/Nginx](https://github.com/nginxinc/nginx-prometheus-exporter)**, **[Redis](https://github.com/oliver006/redis_exporter)**, entre muitos outros, que traduzem métricas desses sistemas para o formato esperado.
+
+Ambos os tipos são importantes. A instrumentação direta fornece métricas sob medida da aplicação (por exemplo, quantas transações processou, quantos usuários ativos, etc.), enquanto a indireta garante visibilidade de componentes de infraestrutura e softwares de terceiros sem precisar alterar eles.
+
+A seguir, veremos exemplos de instrumentação indireta (principais exporters) e de instrumentação direta em algumas linguagens.
+
+### Instrumentação indireta: Exporters
+
+**Ecossistema nativo:** O Prometheus já oferece diversos exporters oficiais ou mantidos pela comunidade para sistemas populares. Alguns exemplos:
+
+* **[Node Exporter](https://github.com/prometheus/node_exporter)** (Linux): Coleta métricas de sistema operacional Linux – CPU, memória, disco, rede, entropia, stats de kernel, etc. É imprescindível para monitorar VMs ou servidores bare metal. Basta executar o binário do node\_exporter no host; ele abre :9100/metrics com dezenas de métricas padronizadas (cpu\_seconds\_total, node\_filesystem\_usage\_bytes, etc.). Essas métricas dão uma visibilidade completa do estado do host, permitindo identificar gargalos de recurso.
+
+* **[Windows Exporter](https://github.com/prometheus/wmic_exporter)** (Windows): Equivalente para plataformas Windows (antigo WMI exporter). Coleta CPU, memória, disco, contadores do Windows, etc., expondo em :9182/metrics (porta padrão). Assim, ambiente heterogêneos também podem ser monitorados.
+
+* **[Blackbox Exporter](https://github.com/prometheus/blackbox_exporter)**: Útil para monitorar *externamente* a disponibilidade de serviços. Ele executa *probes* do tipo ICMP (ping), HTTP(S), DNS, TCP, etc., simulando a experiência do usuário externo. Você configura módulos de probe (ex: checar HTTP 200 em determinada URL dentro de 2s) e o Prometheus chama o Blackbox passando o alvo a testar. Se a resposta falha ou excede tempo, métricas como `probe_success`=0 ou `probe_duration_seconds` indicam problema. É excelente para monitorar uptime de sites e endpoints de fora para dentro.
+
+* **[Exporters de aplicações](https://prometheus.io/docs/instrumenting/exporters/)**: Há muitos: PostgreSQL exporter, Redis exporter, JMX exporter (Java), SNMP exporter (equipamentos de rede), etc. Em geral, se você usar alguma tecnologia popular, provavelmente já existe um exporter pronto (a documentação oficial lista dezenas: **[Exporters e integrações](https://prometheus.io/docs/instrumenting/exporters/)**).
+
+> **Como usar exporters?** Normalmente é executar o binário do exporter próximo do serviço alvo, e então adicionar um job no `prometheus.yml` apontando para o endpoint do exporter. Por exemplo, para Node Exporter em várias máquinas, você rodaria node\_exporter em cada host (porta 9100) e adicionaria algo como:
+
+```yaml
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets: ['host1:9100', 'host2:9100', ...]
+```
+
+Assim o Prometheus coletará as métricas de cada máquina. Cada métrica virá automaticamente com labels como `instance="host1:9100"` e outras específicas (o Node Exporter adiciona label `job="node"` e por vezes labels como `cpu="0"` para métricas por CPU, etc.).
+
+> Em resumo, a instrumentação indireta via exporters é fundamental para trazer para o Prometheus dados de componentes que não expõem nativamente as métricas. É um jeito de *bridge* (ponte) entre sistemas legados e o moderno mundo do Prometheus.
+
+## Configuração Avançada
 
 ### Discovery Dinâmico e Relabeling
 
@@ -347,56 +413,1141 @@ relabel_configs:
 
 > **Importante**: O relabeling é aplicado **antes** do scrape, então você pode usar `__meta_*` labels (metadados do discovery) para tomar decisões sobre quais targets monitorar e como rotulá-los.
 
-## Promtool
+## PromQL: Os Fundamentos
 
-O **promtool** é uma ferramenta de linha de comando que acompanha o Prometheus, fornecendo utilitários para verificar configurações e depurar dados. Algumas utilizações comuns do promtool:
+PromQL é a linguagem de consulta poderosa usada pelo Prometheus para extrair dados de métricas e configurar alertas. Seu principal objetivo é possibilitar a análise e monitoramento de métricas (como requisições HTTP por segundo ou a média de utilização de CPU por servidor) por meio de expressões que definem cálculos específicos. 
 
-* **Checar sintaxe de configuração:** Antes de subir uma alteração no `prometheus.yml`, rode `promtool check config prometheus.yml`. Ele apontará erros de sintaxe ou campos desconhecidos, ajudando a evitar falhas no start do servidor.
-* **Validar regras de alerta ou gravação:** Se você definiu arquivos externos de regras (YAML de alertas ou recording rules), use `promtool check rules minhas_regras.yml`. Ele analisará as expressões PromQL e a formatação.
-* **Testar expressão de alerta:** O promtool permite avaliar manualmente expressões em um dado instantâneo ou série de tempo para ver se disparariam alerta. Útil em CI ou para garantir que a lógica está correta.
-* **Checar integridade do TSDB:** Com o comando `promtool tsdb check /path/para/dados` é possível inspecionar o banco local de séries temporais em busca de inconsistências ou corrupção.
-* **Converter formatos de dados de métrica:** Há como transformar arquivos de métricas entre formatos (por exemplo, de texto para JSON e vice-versa) usando `promtool convert metrics --from=txt --to=json arquivo.txt`.
+O PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações. Ela também conta com recursos avançados, como subconsultas e funções de análise temporal.
 
-Essas são apenas algumas funções. Em suma, o promtool é seu amigo para garantir que o ambiente Prometheus está consistente e saudável – use-o sempre que fizer mudanças significativas na configuração.
+As consultas PromQL podem ser executadas através da interface web do Prometheus, de APIs ou de bibliotecas de clientes. Em resumo, a PromQL é essencial para monitorar e analisar o desempenho de sistemas com eficiência e precisão.
 
-## 🔍 Instrumentação
+A linguagem também possibilita a criação de gráficos e painéis de visualização para métricas, utilizando ferramentas como o Grafana. Desta forma, a PromQL se mostra fundamental para obter insights rápidos sobre o comportamento de aplicações e infraestruturas.
 
-A **instrumentação** é o processo de inserir coleta de métricas em sistemas e aplicações. No contexto Prometheus, podemos dividir em dois tipos:
+Nesta seção, vamos explorar os fundamentos da PromQL — incluindo seletores, tipos de vetores e operadores básicos — e demonstrar como criar consultas simples para analisar dados de métricas.
 
-### 📊 Instrumentação direta (na aplicação)
+### Time Series Database (TSDB)
 
-Significa instrumentar o próprio código da aplicação ou serviço para expor métricas de negócio ou de desempenho relevantes. Você adiciona pontos de métrica no código ([counters](https://prometheus.io/docs/concepts/metric_types/#counter), [gauges](https://prometheus.io/docs/concepts/metric_types/#gauge), etc.) usando uma biblioteca cliente do Prometheus. Assim, a própria aplicação passa a expor um endpoint `/metrics` com dados em tempo real sobre si mesma (latência de requisições, uso de memória interno, tamanho de fila, etc.). Essa abordagem dá controle granular – os desenvolvedores escolhem o que medir – e tende a fornecer métricas altamente específicas e úteis para diagnosticar o comportamento da aplicação.
+O Prometheus armazena os dados em um formato binário chamado TSDB (Time Series Database). O TSDB é um banco de dados de séries temporais otimizado para armazenar métricas de forma eficiente.
 
-### 🔄 Instrumentação indireta (via exporters)
+Para simplificar o entendimento, imagine que você tem um diário onde registra, todos os dias e nos mesmos horários, informações como a temperatura do ar, velocidade do vento e pressão atmosférica. 
 
-Refere-se a coletar métricas de sistemas externos ou legados através de componentes intermediários chamados **[exporters](https://prometheus.io/docs/instrumenting/exporters/)**. Em vez de modificar o sistema alvo, você roda um exporter que coleta informações daquele sistema (geralmente via APIs existentes, comandos ou leitura de arquivos) e as expõe no formato Prometheus. O Prometheus então faz scrape nesse exporter. Essa abordagem é comum para: sistemas operacionais, bancos de dados, servidores web, ou qualquer software que não tenha suporte nativo ao Prometheus. Por exemplo, há exporters para **[MySQL](https://github.com/prometheus/mysqld_exporter)**, **[PostgreSQL](https://github.com/prometheus/postgres_exporter)**, **[Apache/Nginx](https://github.com/nginxinc/nginx-prometheus-exporter)**, **[Redis](https://github.com/oliver006/redis_exporter)**, entre muitos outros, que traduzem métricas desses sistemas para o formato esperado.
+> Essas informações são armazenadas em ordem cronológica (por tempo) e podem ser consultadas para ver como variam ao longo do tempo. Essa é a essência de um banco de dados de série temporal: armazenar e consultar dados que possuem uma dimensão temporal.
 
-Ambos os tipos são importantes. A instrumentação direta fornece métricas sob medida da aplicação (por exemplo, quantas transações processou, quantos usuários ativos, etc.), enquanto a indireta garante visibilidade de componentes de infraestrutura e softwares de terceiros sem precisar alterar eles. A seguir, veremos exemplos de instrumentação indireta (principais exporters) e de instrumentação direta em algumas linguagens.
 
-### Instrumentação indireta: Exporters
+Monitorar métricas a partir de um banco de dados de séries temporais traz várias vantagens:
 
-**Ecossistema nativo:** O Prometheus já oferece diversos exporters oficiais ou mantidos pela comunidade para sistemas populares. Alguns exemplos:
+* **Análise histórica:** Por armazenar dados em ordem cronológica, é possível analisar tendências e padrões ao longo do tempo. Isso ajuda a entender como o desempenho do sistema evolui e identificar tendências que possam indicar problemas futuros.
+* **Identificação de problemas:** Com dados históricos, podemos investigar incidentes passados para identificar causas raiz de problemas de desempenho ou disponibilidade.
+* **Alertas baseados no tempo:** Dados históricos permitem criar alertas que consideram tendências temporais, como alertar quando um recurso tem desempenho abaixo do normal em horários específicos ou quando há tendências de crescimento preocupantes.
+* **Armazenamento escalável:** Bancos de dados de séries temporais são projetados para lidar com grandes volumes de dados e escalar horizontalmente, permitindo armazenar métricas sem perda de desempenho.
+* **Integração com outras ferramentas:** A maioria das ferramentas de monitoramento suporta a coleta de dados de TSDBs, facilitando a integração com diversos sistemas de análise e observabilidade.
 
-* **[Node Exporter](https://github.com/prometheus/node_exporter)** (Linux): Coleta métricas de sistema operacional Linux – CPU, memória, disco, rede, entropia, stats de kernel, etc. É imprescindível para monitorar VMs ou servidores bare metal. Basta executar o binário do node\_exporter no host; ele abre :9100/metrics com dezenas de métricas padronizadas (cpu\_seconds\_total, node\_filesystem\_usage\_bytes, etc.). Essas métricas dão uma visibilidade completa do estado do host, permitindo identificar gargalos de recurso.
+Em resumo, usar um banco de dados de série temporal permite coletar, armazenar e analisar dados de métricas de desempenho ao longo do tempo, possibilitando identificar problemas, tendências e padrões com facilidade.
 
-* **[Windows Exporter](https://github.com/prometheus/wmic_exporter)** (Windows): Equivalente para plataformas Windows (antigo WMI exporter). Coleta CPU, memória, disco, contadores do Windows, etc., expondo em :9182/metrics (porta padrão). Assim, ambiente heterogêneos também podem ser monitorados.
+O PromQL (Prometheus Query Language) é a linguagem usada para consultar essas métricas armazenadas no Prometheus. Com o PromQL, os usuários criam consultas complexas para extrair informações acionáveis das métricas. Algumas capacidades importantes do PromQL incluem:
 
-* **[Blackbox Exporter](https://github.com/prometheus/blackbox_exporter)**: Útil para monitorar *externamente* a disponibilidade de serviços. Ele executa *probes* do tipo ICMP (ping), HTTP(S), DNS, TCP, etc., simulando a experiência do usuário externo. Você configura módulos de probe (ex: checar HTTP 200 em determinada URL dentro de 2s) e o Prometheus chama o Blackbox passando o alvo a testar. Se a resposta falha ou excede tempo, métricas como `probe_success`=0 ou `probe_duration_seconds` indicam problema. É excelente para monitorar uptime de sites e endpoints de fora para dentro.
+* **Funções de agregação:** Permitem resumir dados ao longo do tempo ou por categorias, como média, soma, máximo e mínimo. Por exemplo, podemos usar `avg()` para calcular a média de uma métrica ao longo de um período.
+* **Funções de filtragem:** Permitem selecionar subconjuntos das métricas com base em critérios. Por exemplo, podemos usar seletores para filtrar por rótulos (labels) específicos, como pegar apenas métricas de um serviço ou data center específico.
+* **Funções de transformação:** Permitem transformar os dados brutos em valores mais úteis. Por exemplo, a função `rate()` calcula a taxa de mudança de um contador (como número de requisições por segundo) a partir da diferença entre dois pontos no tempo.
 
-* **[Exporters de aplicações](https://prometheus.io/docs/instrumenting/exporters/)**: Há muitos: PostgreSQL exporter, Redis exporter, JMX exporter (Java), SNMP exporter (equipamentos de rede), etc. Em geral, se você usar alguma tecnologia popular, provavelmente já existe um exporter pronto (a documentação oficial lista dezenas: **[Exporters e integrações](https://prometheus.io/docs/instrumenting/exporters/)**).
+PromQL também suporta operações matemáticas básicas (adição, subtração, multiplicação e divisão) para combinar métricas ou ajustar seus valores. Além disso, permite o uso de operadores lógicos (como `and` e `or`) para combinar expressões e criar consultas ainda mais complexas.
 
-> **Como usar exporters?** Normalmente é executar o binário do exporter próximo do serviço alvo, e então adicionar um job no `prometheus.yml` apontando para o endpoint do exporter. Por exemplo, para Node Exporter em várias máquinas, você rodaria node\_exporter em cada host (porta 9100) e adicionaria algo como:
+Recursos avançados, como uso de rótulos (labels) para selecionar séries específicas e subconsultas aninhadas, tornam a PromQL uma linguagem poderosa e flexível. A seguir, exploraremos em detalhes esses conceitos e como utilizá-los na prática.
 
-```yaml
-scrape_configs:
-  - job_name: 'node'
-    static_configs:
-      - targets: ['host1:9100', 'host2:9100', ...]
+### Seletores de métricas
+
+Os seletores em PromQL funcionam como filtros que permitem escolher uma ou mais séries de métricas específicas para consulta. Existem dois tipos principais de seletores:
+
+* **Seletor por nome de métrica:** Seleciona séries pelo nome da métrica. Por exemplo, `http_requests_total` retorna todas as séries temporais cuja métrica tenha esse nome.
+* **Seletor por label:** Seleciona séries com base em um ou mais labels (rótulos) e seus valores. Por exemplo, se uma métrica `http_requests_total` possui os labels `method` e `handler`, podemos filtrar pelas séries onde `method="GET"` e `handler="/api/v1/users"` escrevendo:
+
+```promql
+http_requests_total{method="GET", handler="/api/v1/users"}
 ```
 
-Assim o Prometheus coletará as métricas de cada máquina. Cada métrica virá automaticamente com labels como `instance="host1:9100"` e outras específicas (o Node Exporter adiciona label `job="node"` e por vezes labels como `cpu="0"` para métricas por CPU, etc.).
+Para combinar seletores de label, usamos operadores de correspondência (matchers) como `=`, `!=`, `=~` (regex correspondente) e `!~` (regex negativa). Esses operadores servem para comparar valores de labels (ou aplicar expressões regulares) ao selecionar as séries desejadas. Veja alguns exemplos:
 
-> Em resumo, a instrumentação indireta via exporters é fundamental para trazer para o Prometheus dados de componentes que não expõem nativamente as métricas. É um jeito de *bridge* (ponte) entre sistemas legados e o moderno mundo do Prometheus.
+* **Selecionar todas as métricas cujo nome começa com "http":**
+
+```promql
+{__name__=~"http.*"}
+```
+
+  Aqui, usamos o label especial `__name__` (que representa o nome da métrica) com uma expressão regular para corresponder qualquer métrica cujo nome comece com "http".
+
+* **Selecionar séries que possuem o label `status` com valor exatamente "error":**
+
+```promql
+{status="error"}
+```
+
+* **Selecionar séries que possuem o label `app` com valor "frontend" ou "backend":**
+
+```promql
+{app=~"frontend|backend"}
+```
+
+  Nesse caso, o operador regex `=~` com o padrão `frontend|backend` faz o seletor pegar séries cujo label `app` seja "frontend" **ou** "backend".
+
+Ao usar expressões regulares em seletores, é importante ter cuidado para não selecionar séries indesejadas. Por exemplo, um seletor como `{job=~"prom.*"}` traria **todas** as séries cujos labels `job` começam com "prom" — isso poderia incluir séries que não eram o alvo pretendido (como um job auxiliar relacionado).
+
+Portanto, sempre procure ser o mais específico possível nos seletores para evitar correspondências acidentais.
+
+### Tipos de expressões em PromQL
+
+PromQL oferece vários tipos de expressões para manipular as séries temporais coletadas pelo Prometheus. As principais incluem:
+
+* **Expressões aritméticas:** Realizam cálculos matemáticos entre séries de métricas ou entre séries e constantes. Por exemplo, podemos somar duas métricas (`metric_a + metric_b`), subtrair (`metric_a - metric_b`), multiplicar (`metric_a * 100` para converter em porcentagem), etc. Exemplo:
+
+```promql
+node_cpu_seconds_total{mode="system"} / node_cpu_seconds_total{mode="idle"} * 100
+```
+
+  Aqui calculamos a porcentagem de tempo que a CPU está no modo `"system"` em relação ao tempo no modo `"idle"`.
+
+* **Funções de agregação:** Agrupam e resumem séries temporais. As funções incluem `sum` (soma), `avg` (média), `max` (máximo), `min` (mínimo), `count` (contagem), entre outras. Por exemplo:
+
+```promql
+sum(rate(http_requests_total[5m])) by (job)
+```
+
+  Nesta consulta, calculamos a taxa de requisições HTTP nos últimos 5 minutos (`rate(http_requests_total[5m])`) e em seguida somamos por `job`, ou seja, obtemos a taxa total por job.
+
+* **Funções de filtro:** Filtram séries temporais com base em valores ou labels. Por exemplo, a função `topk(5, metric)` retorna as 5 séries com os maiores valores para a métrica especificada. Exemplo:
+
+```promql
+topk(5, http_requests_total)
+```
+
+  Isso retornará as 5 séries de `http_requests_total` com os maiores valores.
+
+* **Funções de transformação:** Transformam séries temporais de maneiras específicas. Exemplos incluem:
+
+  * `rate()`: calcula a taxa de aumento por segundo de um contador (derivada primeira) em uma janela de tempo.
+  * `irate()`: similar ao `rate()`, mas calcula a taxa instantânea entre os dois pontos de dados mais recentes.
+  * `increase()`: calcula o total acumulado que o contador aumentou durante o período.
+  * `delta()`: calcula a diferença absoluta entre o primeiro e o último valor em uma janela de tempo.
+  * `histogram_quantile()`: calcula um quantil (por exemplo, 0.95 para 95º percentil) a partir de um histograma.
+
+  Exemplo de transformação com `histogram_quantile`:
+
+  ```promql
+  histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+  ```
+
+  Acima, estamos calculando o 95º percentil da distribuição de duração de requisições HTTP nos últimos 5 minutos, usando as séries `_bucket` do histograma de duração.
+
+* **Expressões booleanas (comparações):** Avaliam condições verdadeiras ou falsas sobre os valores de séries temporais. Os operadores de comparação incluem `==` (igual), `!=` (diferente), `>` (maior que), `<` (menor que), `>=` (maior ou igual) e `<=` (menor ou igual). Por padrão, ao comparar duas séries, o resultado é uma série booleana (1 para true, 0 para false) **apenas para as combinações de séries que correspondem exatamente nos labels** (veremos mais sobre correspondência de vetores adiante). Também é possível usar o modificador `bool` para forçar o resultado booleano a ser retornado.
+
+  Um exemplo de expressão booleana combinada com cálculo:
+
+```promql
+rate(http_requests_total{status_code=~"5.."}[1m]) 
+  > rate(http_requests_total{status_code=~"2.."}[1m]) * 0.1
+```
+
+Esta consulta verifica se a taxa de requisições HTTP com códigos de status 5xx no último minuto é maior que 10% da taxa de requisições 2xx no mesmo período. O resultado será uma série temporal booleana indicando, para cada combinação de labels, se a condição é verdadeira (1) ou falsa (0). Essa abordagem é útil em alertas.
+
+### Vector vs. Range Vector
+
+Em PromQL, existem dois tipos principais de vetor que podem ser retornados em consultas: **Instant Vector** (vetor instantâneo) e **Range Vector** (vetor de intervalo).
+
+* **Instant Vector (Vetor Instantâneo):** Representa um conjunto de amostras (valor + timestamp) de múltiplas séries temporais, todas no mesmo instante no tempo. Cada série temporal no resultado possui os mesmos labels originais e um único valor correspondente ao momento da avaliação. Por exemplo, a expressão `cpu_usage{instance="webserver-1"}` retornaria, no momento atual, o valor mais recente da métrica `cpu_usage` para a instância `webserver-1`.
+
+* **Range Vector (Vetor de Intervalo):** Representa um conjunto de séries temporais, onde cada série contém um conjunto de amostras dentro de um intervalo de tempo especificado. Em vez de um único valor, cada série traz todos os pontos (timestamp, valor) coletados naquele intervalo. Range vectors são obtidos usando a sintaxe `[<duração>]` após um seletor de métrica. Por exemplo, `cpu_usage{instance="webserver-1"}[5m]` retorna os últimos 5 minutos de dados da métrica `cpu_usage` para a instância `webserver-1`. As funções como `rate()`, `increase()` e `avg_over_time()` tipicamente esperam um range vector como entrada.
+
+**Exemplos de uso de Instant e Range vectors:**
+
+* Selecionando o valor **atual** (instantâneo) da métrica `cpu_usage` para a instância `"webserver-1"`:
+
+```promql
+cpu_usage{instance="webserver-1"}
+```
+
+* Calculando a diferença instantânea entre duas métricas (Instant Vector resultante):
+
+```promql
+http_requests_total - http_requests_failed
+```
+
+  Acima, subtraímos, para cada combinação de labels correspondente, o valor atual de `http_requests_failed` do valor atual de `http_requests_total`.
+
+* Selecionando uma janela de **5 minutos** de dados da métrica `cpu_usage` para cada instância (Range Vector):
+
+```promql
+cpu_usage[5m]
+```
+
+* Calculando a taxa (por segundo) de `cpu_usage` nos últimos 5 minutos para cada instância (note que `rate()` retorna um Instant Vector, com a taxa calculada para cada série):
+
+```promql
+rate(cpu_usage[5m])
+```
+
+* Obtendo o valor **máximo** da métrica `network_traffic` em um intervalo de 30 minutos, separado por instância:
+
+```promql
+max_over_time(network_traffic[30m]) by (instance)
+```
+
+> Resumindo: um **Instant Vector** é adequado para consultas que requerem o valor atual (ou de um instante específico) de uma métrica, enquanto um **Range Vector** é necessário para consultas que envolvem cálculo ao longo do tempo (taxas, médias móveis, etc.). Muitas funções do PromQL, como `rate` e `avg_over_time`, só funcionam com range vectors porque precisam de vários pontos de dados para produzir um resultado.
+
+### Segurança do seletor (Seletores seguros vs inseguros)
+
+Ao escrever consultas PromQL, é importante construir seletores de métricas que capturem exatamente as séries desejadas, evitando resultados imprecisos ou indesejados. Alguns seletores podem ser considerados "inseguros" porque podem abranger séries não pretendidas.
+
+Por exemplo, usar uma correspondência de prefixo muito genérica em um label pode ser problemático. Considere o seletor de label `job=~"prom.*"`. Ele selecionará todas as séries de métricas cujo label `job` começa com "prom".
+
+Isso pode incluir não apenas o job principal "prometheus", mas também qualquer outro job cujo nome comece com essas letras (por exemplo, um serviço "promtail" ou "prometheus-exporter"). O resultado pode ser uma consulta retornando séries inesperadas.
+
+Para garantir seletores "seguros", siga algumas práticas:
+
+* **Seja explícito nos valores de label:** Prefira usar correspondência exata (`=` ou `!=`) ou regex precisas. Por exemplo, se você quer métricas do job Prometheus, use `job="prometheus"` em vez de um regex genérico.
+* **Evite padrões muito abrangentes:** Como regra, só use regex se realmente precisar capturar múltiplos valores similares. Mesmo assim, tente restringir o padrão. Regex tendem a ser menos eficientes, pois precisam testar o padrão contra todos os valores conhecidos de um label, e podem indicar que talvez a configuração dos labels deva ser melhorada.
+* **Conheça seus labels:** Entenda quais labels cada métrica possui e quais valores são possíveis. Isso ajuda a criar seletores que não tragam surpresas.
+
+Exemplos comparando seletores seguros vs inseguros:
+
+* **Seguro:** `http_requests_total{job="webserver", status="error"}` – seleciona exatamente as séries de requisições HTTP do serviço `webserver` que possuem o status "error".
+* **Inseguro:** `http_requests_total{status=~"err.*"}` – poderia acidentalmente pegar algo como "erroneous" ou "errata" se esses fossem valores de status, além de "error". Prefira `status="error"` se é esse o valor exato desejado.
+* **Seguro:** `{__name__=~"^http_.*_total$"}` – seleciona métricas cujo nome começa com "http\_" e termina com "\_total".
+* **Inseguro:** `{__name__=~"http"}` (sem âncoras ou wildcards definidos) – esse seletor está incompleto e potencialmente inválido. Sempre especifique padrões completos, por exemplo `http.*` se a intenção é "começa com http".
+
+Em suma, construa seletores de forma cuidadosa para evitar incluir séries indesejadas. Isso garante que suas consultas retornem dados precisos e também evita sobrecarregar o Prometheus com resultados excessivos.
+
+### Obsolescência do vetor instantâneo (Staleness)
+
+Um detalhe importante ao usar vetores instantâneos: o Prometheus possui um mecanismo de *staleness* (obsolescência) para lidar com séries temporais que não receberam novos dados em um intervalo de tempo.
+
+Por padrão, se uma métrica não tiver amostras recentes (normalmente nos últimos 5 minutos), o PromQL considerará essa série como **ausente** ou retornará um valor `NaN` (not a number) em vez de continuar mostrando um valor antigo. Isso evita apresentar dados "velhos" como se fossem atuais.
+
+Porém, em algumas consultas, especialmente ao criar alertas, queremos detectar explicitamente quando uma métrica parou de ser enviada. Existem maneiras de lidar com isso:
+
+* **Aumentar a janela de consulta**: Em vez de consultar apenas o valor instantâneo, podemos consultar em uma janela de tempo para ver se há dados recentes. Por exemplo, usar uma subconsulta com intervalo:
+
+```promql
+http_requests_total[5m]
+```
+
+  garante que estamos inspecionando 5 minutos de dados. Ou então, usar funções como `max_over_time(metric[5m])` para pegar o último valor nos últimos 5 minutos.
+
+* **Usar funções de ausência**: O PromQL oferece a função `absent()` que retorna 1 se a expressão dentro dela não retornar nenhum dado. Por exemplo:
+
+```promql
+absent(rate(http_requests_total[5m]))
+```
+
+  retornará 1 (com um label indicando a série buscada) se **nenhuma** série `http_requests_total` tiver dados nos últimos 5 minutos – ou seja, indicando que possivelmente a coleta parou. Caso exista qualquer dado, `absent()` retorna uma série vazia.
+
+Também há a variante `absent_over_time(metric[duração])`, que verifica se *no intervalo dado* a métrica esteve ausente o tempo todo.
+
+* **Combinar com condições booleanas**: Podemos filtrar séries pelo timestamp de sua última amostra. A função `timestamp(metric)` retorna o timestamp da última amostra daquela métrica. Assim, expressões como:
+
+```promql
+timestamp(cpu_usage) < time() - 30
+```
+
+  identificam séries cujo último timestamp é inferior a 30 segundos atrás, ou seja, possivelmente desatualizadas.
+
+Exemplos práticos:
+
+* **Verificar métricas ausentes**:
+
+```promql
+http_requests_total unless absent(rate(http_requests_total[5m]))
+```
+
+  Aqui, usamos `unless` (que retorna a série da esquerda exceto quando a da direita existe) para só manter `http_requests_total` se ela não estiver ausente nos últimos 5m. Isso efetivamente filtra fora séries que não receberam dados recentes.
+
+* **Filtrar instâncias inativas (não reportando)**:
+
+```promql
+cpu_usage unless absent_over_time(cpu_usage[2m])
+```
+
+  Essa consulta retornaria `cpu_usage` atual apenas para instâncias que tiveram dados nos últimos 2 minutos. Se alguma instância parou de reportar (logo, ausente nos últimos 2m), ela será excluída do resultado.
+
+* **Combinar timestamp e booleano**:
+
+```promql
+cpu_usage * on(instance) group_left() ((time() - timestamp(cpu_usage)) < 30)
+```
+
+Esta expressão resulta no valor de `cpu_usage` apenas para instâncias cujo último timestamp tem menos de 30 segundos de idade. Estamos multiplicando o valor atual de `cpu_usage` por uma condição booleana que vale 1 apenas para instâncias atualizadas recentemente (e 0 para instâncias atrasadas). 
+
+O uso de `* on(instance) group_left()` garante que combinamos corretamente cada instância com sua condição booleana.
+
+Em resumo, devido ao comportamento de *staleness*, um vetor instantâneo pode não mostrar valores de métricas atrasadas. Para contornar isso, podemos usar janelas de tempo maiores ou funções especiais como `absent()` para tratar casos de ausência de dados.
+
+### Funções Matemáticas e Clamping
+
+As funções em PromQL permitem manipular e processar métricas de diversas formas. Dentre as mais comuns estão as **funções matemáticas**, que realizam operações aritméticas sobre as séries de métricas. Temos desde as operações básicas até funções matemáticas de biblioteca. Alguns exemplos:
+
+* `sqrt(vector)`: retorna a raiz quadrada de cada valor no vetor.
+* `exp(vector)`: retorna o exponencial (e^x) de cada valor.
+* `ln(vector)`: logaritmo natural.
+* `log10(vector)`, `log2(vector)`: logaritmos base 10 e base 2, respectivamente.
+* `ceil(vector)`, `floor(vector)`: arredondamento para cima ou baixo.
+
+Além disso, PromQL fornece funções para limitar valores extremos (*clamping*). As funções `clamp_min(vector, scalar)` e `clamp_max(vector, scalar)` limitam os valores de um vetor a um mínimo ou máximo especificado. Por exemplo:
+
+* `clamp_min(metric, 0)`: garante que nenhum valor da série `metric` seja menor que 0 (valores negativos seriam substituídos por 0).
+* `clamp_max(usage_ratio, 1)`: garante que valores acima de 1 em `usage_ratio` (por exemplo, 100% de uso) sejam reduzidos para 1.
+
+Essas funções de clamping são úteis para evitar que ruídos ou anomalias atrapalhem visualizações. Por exemplo, se um cálculo produz temporariamente um valor negativo ou um valor absurdamente alto por conta de algum atraso ou jitter, podemos usar clamping para limitar a escala dos gráficos.
+
+**Exemplos de uso de funções matemáticas e clamping:**
+
+* Calcular a **média** dos valores de uma métrica nos últimos 5 minutos:
+
+```promql
+avg_over_time(metric_name[5m])
+```
+
+* Calcular a **soma** dos valores de uma métrica nos últimos 10 minutos:
+
+```promql
+sum_over_time(metric_name[10m])
+```
+
+* Calcular o **máximo** valor de uma métrica nos últimos 1 hora, filtrando por um label:
+
+```promql
+max_over_time(metric_name{label="value"}[1h])
+```
+
+* Limitar o valor de uma métrica entre 0 e 100:
+
+```promql
+clamp_min(clamp_max(metric_name, 100), 0)
+```
+
+  *(Aplica `clamp_max` para limitar a 100 e depois `clamp_min` para garantir mínimo 0.)*
+
+* Converter uma fração em porcentagem e garantir que não passe de 100%:
+
+```promql
+clamp_max(success_ratio * 100, 100)
+```
+
+Supondo que `success_ratio` seja uma métrica ou expressão que resulta em um valor entre 0 e 1 (por exemplo, proporção de sucesso), multiplicamos por 100 para obter porcentagem e usamos `clamp_max` para nunca exibir acima de 100%.
+
+Conhecer e utilizar essas funções permite realizar consultas mais avançadas e obter insights mais precisos a partir dos dados coletados.
+
+### Timestamps e Funções de Tempo e Data
+
+No PromQL, *timestamps* (carimbos de tempo) são representados internamente como números de ponto flutuante indicando segundos desde a época Unix (1º de janeiro de 1970, 00:00:00 UTC).
+
+Embora normalmente não precisemos lidar diretamente com o valor numérico do timestamp, há funções úteis relacionadas ao tempo:
+
+* `time()`: retorna o timestamp Unix do momento atual (momento da avaliação da consulta). Pode ser utilizado, por exemplo, para calcular diferenças de tempo.
+  *Exemplo:* `time() - 3600` produziria um valor de timestamp correspondente a uma hora atrás.
+
+* `timestamp(vetor)`: retorna, para cada série no vetor dado, o timestamp da última amostra daquela série. Útil para comparações e detecção de desatualização (como visto anteriormente).
+
+Além disso, existem funções para extrair componentes de data/hora do timestamp de cada amostra de uma série:
+
+* `day_of_week(vetor)`: retorna o dia da semana (0–6, onde 0 = domingo, 1 = segunda, etc.) de cada amostra no vetor dado.
+* `hour(vetor)`: retorna a hora (0–23) do timestamp de cada amostra.
+* `day(vetor)`, `month(vetor)`, `year(vetor)`: retornam respectivamente o dia do mês, o mês (1–12) e o ano do timestamp de cada amostra.
+
+Essas funções permitem criar consultas que dependem da hora ou dia. Por exemplo, você pode querer detectar padrões diurnos ou disparar alertas apenas em dias úteis.
+
+**Exemplos de uso de funções de tempo e data:**
+
+* Obter o timestamp atual (como escalar):
+
+```promql
+time()
+```
+
+* Extrair a hora atual do dia como um valor (0–23):
+
+```promql
+hour(vector( time() ))
+```
+
+  Aqui, `vector(time())` converte o escalar retornado por `time()` em um vetor (necessário porque `hour()` espera um vetor). O resultado é um vetor com um único valor: a hora do dia.
+
+* Calcular a média de uma métrica por hora do dia, nos últimos 24h (usando subconsulta para separar por hora):
+
+```promql
+avg_over_time(my_metric[1h])[24h:1h]
+```
+
+Essa expressão é uma subconsulta que calcula `avg_over_time(my_metric[1h])` (média de `my_metric` em cada janela de 1h) para cada hora nas últimas 24 horas. Isso produz uma série de 24 pontos, um para cada hora, que pode ser útil para observar a variação horária.
+
+* Selecionar o valor médio da métrica `my_metric` no último dia:
+
+```promql
+avg_over_time(my_metric[1d])
+```
+
+  (Assumindo que há dados suficientes para cobrir o último dia inteiro.)
+
+* **Nota:** Para consultar um período específico (entre timestamps específicos), não há uma sintaxe direta dentro do PromQL. Em vez disso, usa-se a API de consulta de intervalos do Prometheus (fornecendo `start` e `end` no request) ou ferramentas como Grafana para delimitar visualmente o período. Dentro do PromQL, operações de tempo são relativas (como "últimos 5 minutos", "últimas 24h", etc.) em relação ao momento de avaliação.
+
+### Counter Range Vectors, Agregação Temporal e Subconsultas
+
+**Counter Range Vectors**: Contadores são métricas que apenas aumentam (ou resetam para zero e voltam a aumentar). Exemplos: número total de requisições atendidas, bytes transferidos, etc. Quando consultamos diretamente um *counter* como range vector, obteremos uma série de pontos que só crescem (com eventuais resets). Para extrair informações úteis (como taxa de eventos por segundo ou aumentos em determinado período) usamos funções especiais:
+
+* `rate(counter[5m])`: Calcula a **taxa média por segundo** de incremento do contador nos últimos 5 minutos. Essa função já lida corretamente com resets do contador (ignorando as quedas abruptas devido a resets e calculando a taxa considerando isso).
+* `irate(counter[5m])`: Calcula a **taxa instantânea** (baseada apenas nos dois pontos mais recentes dentro dos 5 minutos). É mais ruidosa, mas pode reagir mais rapidamente a mudanças repentinas.
+* `increase(counter[1h])`: Calcula **quanto o contador aumentou** no último 1 hora. Essencialmente integra a taxa ao longo do período.
+
+**Agregação através do tempo (Aggregating Across Time)**: Às vezes, queremos primeiro agregar os dados e depois analisar a evolução temporal dessa agregação. As **subconsultas** nos permitem isso. Uma *subquery* (subconsulta) é quando temos uma expressão do PromQL seguida de um intervalo entre colchetes e possivelmente uma resolução, por exemplo: `expr[duração:passo]`. Isso faz o Prometheus avaliar `expr` repetidamente ao longo do intervalo dado, produzindo um range vector como resultado.
+
+Por exemplo, `avg_over_time(rate(http_requests_total[1m])[24h:1h])` funciona assim:
+
+* Internamente, `rate(http_requests_total[1m])` é avaliado para cada passo de 1h dentro das últimas 24h, gerando a taxa média por minuto calculada a cada hora.
+* Em seguida, `avg_over_time(...[24h:1h])` calcula a média desses 24 valores (um por hora) **no tempo atual**. Na prática, isso nos daria a média da taxa horária de requisições no dia.
+
+Subconsultas são muito poderosas e foram aprimoradas a partir do Prometheus 2.7. Com elas é possível, por exemplo, calcular tendências, baselines e sazonalidade de forma compacta.
+
+**Exemplos avançados de subconsultas e análise de tendências:**
+
+* **Tendência de taxa de erro (janela móvel):** Calcular a média da taxa de erros em janelas de 1 hora, ao longo das últimas 24 horas:
+
+```promql
+avg_over_time(
+  rate(http_requests_total{status=~"5.."}[1m])[24h:1h]
+)
+```
+
+Essa consulta gera 24 pontos (taxa de erro média de cada hora nas últimas 24h) e depois calcula a média disso tudo (ou seja, a média diária da taxa de erro). Poderíamos também omitir a função externa para simplesmente visualizar a série das últimas 24 horas e identificar padrões de aumento ou redução de erros ao longo do dia.
+
+* **Baseline de performance (comparação com média histórica):** Comparar a performance atual com a média da última semana:
+
+```promql
+rate(http_requests_total[5m]) 
+  / avg_over_time(rate(http_requests_total[5m])[7d])
+```
+
+  Essa consulta produz uma razão: valores acima de 1 indicam que a taxa atual de requisições está **acima** da média semanal; valores abaixo de 1, abaixo da média. Isso pode ser útil para identificar desvios significativos de tráfego.
+
+* **Detecção de anomalia sazonal (padrão horário):** Comparar o tráfego atual com o padrão do último dia:
+
+```promql
+rate(http_requests_total[5m]) 
+  / avg_over_time(rate(http_requests_total[5m])[24h:1h])
+```
+
+Aqui, o denominador `avg_over_time(...[24h:1h])` produz a média da taxa em cada hora do dia anterior. Dividindo a taxa atual por esse valor da mesma hora ontem, podemos identificar se o tráfego está anormalmente alto ou baixo para este horário do dia.
+
+* **Diferença diária (subconsulta com offset):** Para calcular a diferença em uma métrica entre hoje e ontem, podemos usar `offset`. Exemplo:
+
+```promql
+my_metric - my_metric offset 1d
+```
+
+  Isso resulta em quanto `my_metric` variou em comparação com exatamente 24 horas atrás.
+
+* **Soma acumulada (exemplo de subconsulta):**
+
+```promql
+sum(my_counter) - sum(my_counter) offset 1d
+```
+
+Este exemplo soma o contador `my_counter` (provavelmente de várias instâncias) e subtrai o valor de 1 dia atrás, mostrando o incremento total em um dia. Essa é outra forma de calcular algo similar a `increase(my_counter[1d])`.
+
+Em todos esses casos, as subconsultas `[ ... ]` estão permitindo observar ou reutilizar resultados ao longo do tempo dentro de uma única expressão.
+
+### Histogramas, Mudança de Tipo, Alteração de Labels e Ordenação
+
+**Histogramas:** Em Prometheus, histogramas são uma forma de metricar distribuições de valores (duração de requisições, tamanho de payloads, etc.). Um histograma clássico consiste em múltiplas séries: por convenção, se a métrica base é `request_duration_seconds`, as séries serão:
+
+* `request_duration_seconds_bucket{le="0.1", ...}` (um bucket contando quantas observações <= 0.1s)
+* vários outros buckets com diferentes limites `le` (le = limite inferior ou igual)
+* `request_duration_seconds_count` (contagem total de observações)
+* `request_duration_seconds_sum` (soma total dos valores observados)
+
+Para analisar histogramas, geralmente somamos as séries `_bucket` *por limite* para agregar todas as instâncias ou rótulos de interesse. **É crucial incluir o label `le` ao agregar buckets.** Por exemplo, a forma correta de agregar um histograma de duração por job seria:
+
+```promql
+sum by (job, le) (rate(http_request_duration_seconds_bucket[5m]))
+```
+
+Depois de agregado adequadamente, podemos aplicar `histogram_quantile()` para extrair quantis (p50, p90, p99, etc.).
+
+**Trabalhando corretamente com histogramas:**
+
+* *Exemplo canônico (p99 de latência HTTP)*:
+
+```promql
+histogram_quantile(
+  0.99, 
+  sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+)
+```
+
+  Esse retorna o 99º percentil da duração das requisições HTTP considerando todos os buckets. Note o uso de `by (le)` dentro do sum.
+
+* *Agregando por labels extras:* Se quisermos o percentil por `job` e `instance`, por exemplo, devemos manter esses labels na agregação, além do `le`:
+
+```promql
+histogram_quantile(
+  0.95, 
+  sum(rate(http_request_duration_seconds_bucket[5m])) by (job, instance, le)
+)
+```
+
+* *Evitando erro comum:* **Nunca** esqueça o `by (le)` ao somar buckets de um histograma clássico. Por exemplo, isto está **errado**:
+
+  ```promql
+  # Exemplo INCORRETO - ausência de by(le)
+  histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])))
+  ```
+
+Sem agrupar por `le`, os valores de buckets se somam indevidamente, tornando o resultado do quantil incorreto.
+
+No Prometheus 3.0, foram introduzidos os **histogramas nativos** (ainda experimentais). Eles visam simplificar e tornar mais eficiente o uso de histogramas (evitando lidar com dezenas de séries `_bucket`).
+
+Com histogramas nativos, existem inclusive novas funções como `histogram_count()`, `histogram_sum()` e `histogram_avg()` para extrair diretamente contagem, soma e média dos histogramas.
+
+Além disso, há a função `histogram_fraction()` para calcular frações entre limites. Embora seja um recurso promissor, a maioria dos usuários ainda trabalha com histogramas clássicos `_bucket` até que os nativos se estabilizem.
+
+**Mudança de tipo (conversão Escalar <-> Vetor):** Em algumas situações avançadas, você pode precisar converter escalares em vetores ou vice-versa:
+
+* `scalar(vetor)` – Converte um vetor de uma única série temporal (com um único valor) em um escalar simples. Isso é útil, por exemplo, quando você calculou um valor mínimo ou máximo e quer usá-lo em uma comparação global.
+  *Exemplo:* `scalar(min(up{job="webserver"}))` – isso resultará em um escalar 0 ou 1 indicando se **alguma** instância do job "webserver" está caída (0 se o mínimo for 0, ou seja, pelo menos uma instância está down; 1 se todas estão up).
+* `vector(escalar)` – O oposto, pega um escalar e o transforma em um vetor (sem labels). Útil se você precisa combinar um número puro com séries.
+  *Exemplo:* `vector(1)` – produziria um vetor contendo apenas o valor 1.
+
+**Alteração de Labels:** Às vezes é necessário renomear ou copiar labels nas séries. Funções úteis:
+
+* `label_replace(vetor, "label_destino", "valor_novo", "label_origem", "regex")` – Retorna um vetor a partir de outro, adicionando ou modificando um label. Ele pega o valor do `label_origem` que case com a regex fornecida e o coloca em `label_destino` usando `valor_novo` (onde `'$1'` pode referenciar grupos da regex).
+  *Exemplo:*
+
+```promql
+label_replace(my_metric, "new_label", "$1", "old_label", "(.*)")
+```
+
+  Isso criaria (ou sobrescreveria) `new_label` em cada série de `my_metric`, copiando exatamente o valor de `old_label` (já que `(.*)` captura todo o valor e `$1` insere ele).
+* `label_join(vetor, "label_destino", "sep", "label1", "label2", ...)` – Concatena múltiplos labels em um só. Ex: `label_join(my_metric, "instance_job", "-", "instance", "job")` criaria um novo label `instance_job` juntando os valores de `instance` e `job` separados por um `-`.
+
+Essas funções não são usadas com frequência em consultas ad-hoc, mas podem ser muito úteis ao preparar métricas para certas comparações ou ao lidar com diferenças de rotulagem entre métricas.
+
+**Ordenação (Sorting):** Para ordenar resultados, podemos usar as funções `sort(vector)` (ordem crescente) e `sort_desc(vector)` (ordem decrescente). Isso pode ser útil quando estamos interessados no topo ou no final de uma lista de resultados (embora muitas vezes `topk` e `bottomk` já cubram esses casos).
+
+Exemplos rápidos:
+
+* Ordenar todas as instâncias pelo uso de CPU decrescente:
+
+  ```promql
+  sort_desc(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance))
+  ```
+
+  *(Aqui somamos as CPUs por instância implicitamente ao usar o `by (instance)` na expressão, e depois ordenamos.)*
+
+* Ordenar alfabéticamente por valor de um label (pouco comum, mas possível):
+
+  ```promql
+  sort(my_metric)
+  ```
+
+  *(Se `my_metric` é um escalar ou tem apenas um valor por série, `sort()` essencialmente ordenará pelos labels já que os valores podem ser iguais.)*
+
+### Valores ausentes (Absent / Missing Values)
+
+Valores ausentes podem ocorrer quando uma métrica não é reportada (por exemplo, um serviço caiu ou foi desligado). Em consultas PromQL, um valor ausente simplesmente não aparece no resultado. Entretanto, podemos detectar explicitamente a ausência de séries usando a função `absent()` mencionada anteriormente.
+
+Recapitulando o uso de `absent()`:
+
+* `absent(metric)` – Retorna uma série sem labels (ou com labels especificados na consulta) com valor 1 se **nenhuma série** correspondente a `metric` está presente, ou retorna nada (vazio) caso contrário. Isso é muito útil em regras de alerta: um alerta de "TargetDown" pode ser escrito como `absent(up{job="myjob"} == 1)` para disparar quando nenhum alvo daquele job estiver up.
+
+Exemplo:
+
+```promql
+absent(up{job="node"} == 1)
+```
+
+Acima, a expressão `up{job="node"} == 1` resultaria em 1 para cada instância de `node` que esteja up, então `absent(...)` retornaria 1 (sem label) se nenhuma instância de `node` estiver up (ou seja, o resultado dentro foi vazio). Se pelo menos uma instância estiver up, `absent` não retorna nada.
+
+Da mesma forma, `absent_over_time(metric[5m])` verifica se *nenhum* ponto de `metric` apareceu nos últimos 5 minutos.
+
+**Importante:** Ao visualizar dados no gráfico do Prometheus ou Grafana, séries ausentes simplesmente não aparecem. Por isso, ao compor dashboards ou alertas, pode ser útil usar consultas que retornem 0 explicitamente quando algo está ausente para facilitar a visualização. Uma técnica é usar a operação `OR` com `absent()`. Exemplo:
+
+```promql
+rate(http_requests_total[5m]) or absent(http_requests_total)
+```
+
+Isso retornará a taxa de requisições normalmente; se nenhuma série existir, em vez de nada, retornará 1 (ou outro valor constante) indicando ausência.
+
+### Funções avançadas e menos conhecidas
+
+Algumas funções do PromQL são menos conhecidas, mas podem ser extremamente poderosas em cenários específicos:
+
+* **`resets(counter[interval])`:** Conta quantas vezes um contador "resetou" (voltou a zero) no período. Útil para detectar reinicializações de aplicativos ou problemas de coleta.
+  *Exemplos:*
+
+  ```promql
+  resets(http_requests_total[5m])
+  ```
+
+  Contaria quantos resets ocorreram no `http_requests_total` nos últimos 5 minutos. Se esse número for > 0 constantemente, pode indicar que o serviço está reiniciando frequentemente (se o contador for interno ao serviço) ou que há overflow de contadores.
+
+* **`changes(series[interval])`:** Conta quantas vezes o valor de uma série mudou durante o intervalo. Isso vale para qualquer métrica (não apenas counters). Pode indicar instabilidade ou flapping.
+  *Exemplo:*
+
+  ```promql
+  changes(process_start_time_seconds[5m]) > 0
+  ```
+
+  O exemplo acima retornaria 1 para instâncias cujo `process_start_time_seconds` (normalmente um timestamp de início do processo) tenha mudado nos últimos 5 minutos — ou seja, o processo reiniciou nesse período.
+
+* **`predict_linear(series[interval], passos_no_futuro)`:** Realiza uma extrapolação linear do valor da série com base na tendência nos últimos intervalos e prevê o valor daqui a X segundos (informado em `passos_no_futuro`). Útil para prever quando algo alcançará um certo limite.
+  *Exemplo:*
+
+  ```promql
+  predict_linear(node_filesystem_free_bytes[1h], 3600) < 0
+  ```
+
+  Poderia ser usado para alertar se a tendência de queda do espaço livre prevê que em 1 hora (`3600` segundos) o espaço chegaria a zero.
+
+* **`holt_winters(series[interval], sf, tf)`:** Embora mais comum no Graphite, o PromQL também tem uma função de previsão chamada `holt_winters` (Holt-Winters, série temporal com tendência e sazonalidade). Aceita uma série (geralmente resultado de subconsulta) e realiza suavização exponencial dupla. No entanto, essa função é raramente usada diretamente em alertas, servindo mais para visualização de tendências suavizadas.
+
+* **Funções para histogramas nativos (Prometheus 3.x):**
+
+  * `histogram_count()` e `histogram_sum()` – Retornam, respectivamente, a contagem total e a soma total das observações de histogramas (clássicos ou nativos). Para histogramas clássicos, esses usam as séries `_count` e `_sum` internas; para nativos, usam os valores codificados.
+  * `histogram_avg()` – Computa a média dos valores observados em cada histograma, equivalente a `histogram_sum/histogram_count`.
+  * `histogram_fraction(lower, upper, hist)` – Estima a fração de observações dentro do intervalo `[lower, upper]` para cada histograma. Útil, por exemplo, para calcular *Apdex* (fração de requisições abaixo de um certo limiar de latência).
+
+Lembrando que algumas dessas funções mais novas podem requerer flags experimentais, dependendo da versão do Prometheus.
+
+### Operadores Aritméticos e Correspondência de Vetores Simples
+
+PromQL permite usar operadores binários entre séries temporais para calcular novas séries. Os operadores aritméticos são: `+`, `-`, `*`, `/`, `%` (módulo) e `^` (exponenciação). Eles podem operar entre:
+
+* Escalar e escalar (ex.: `2 * 3`)
+* Vetor e escalar (o escalar aplica-se a todos os valores do vetor; ex.: `metric * 100`)
+* Vetor e vetor (aqui entra o conceito de correspondência de vetores)
+
+Quando aplicamos um operador entre dois vetores (Instant Vectors), o PromQL realiza a operação **par a par** entre séries que "correspondem" umas às outras. Essa correspondência por padrão requer que as séries tenham exatamente os mesmos labels (nome da métrica pode ser diferente, mas os rótulos-chave e seus valores devem coincidir).
+
+Exemplo simples: se temos as séries `metric_a{host="A", env="prod"}` com valor X e `metric_b{host="A", env="prod"}` com valor Y, então `metric_a + metric_b` retornará `{host="A", env="prod"}` com valor X+Y. Se não houver correspondência exata de labels entre alguma série de `metric_a` e alguma de `metric_b`, aquela combinação não aparece no resultado.
+
+**Correspondência simples**: Por padrão, todos os labels (exceto o nome da métrica) devem casar entre as duas séries para a operação acontecer. É possível ajustar isso com modificadores que veremos adiante (`on` e `ignoring`).
+
+Se quisermos forçar a operação em todas as combinações (o que raramente faz sentido), há o modificador `cross_join` (PromQL >2.9), mas geralmente ele não é utilizado porque o comportamento padrão já é suficiente.
+
+Os operadores também podem ser usados com o modificador `bool`, mas isso só se aplica a operadores de comparação, não aos aritméticos.
+
+Exemplos práticos de operadores aritméticos:
+
+* **Soma de métricas**:
+
+  ```promql
+  http_requests_total{status="200"} + http_requests_total{status="500"}
+  ```
+
+  Aqui, somamos as séries de requisições com status 200 e as com status 500, casando por quaisquer outros labels (por exemplo, instância). O resultado é o total combinado de requisições de sucesso e erro.
+
+* **Diferença de métricas**:
+
+  ```promql
+  node_memory_MemTotal_bytes - node_memory_MemFree_bytes
+  ```
+
+  Calcula a memória em uso (diferença entre total e livre) para cada instância, assumindo que ambas as métricas compartilham os labels de instância.
+
+* **Multiplicação por escalar**:
+
+  ```promql
+  cpu_usage * 100
+  ```
+
+  Converte a métrica `cpu_usage` (talvez como fração 0–1) em porcentagem.
+
+* **Combinação de dois vetores diferentes**:
+
+  ```promql
+  errors_total / requests_total
+  ```
+
+  Pode calcular a taxa de erro (assumindo que `errors_total` e `requests_total` compartilham labels como serviço/endpoint). Isso exige correspondência exata de labels.
+
+No caso acima, se `errors_total` existir para um determinado label e `requests_total` não, essa combinação não retorna resultado. Podemos usar *vector matching* avançado (próxima seção) para ajustar essas situações.
+
+### Correspondência de Séries Temporais: `on()`, `ignoring()`, `group_left`, `group_right`
+
+Quando combinamos métricas diferentes (vetor-vetor), muitas vezes precisamos controlar quais labels são usados para fazer o *join* (união) entre as séries de cada lado da operação. É aqui que entram os modificadores `on` e `ignoring`, e os operadores de junção externa `group_left` e `group_right`:
+
+* **`on(lista_de_labels)`**: Especifica explicitamente quais labels devem ser usados para casar as séries ao aplicar o operador. Todos os demais labels são ignorados no matching (exceto os do `on` listados).
+  *Exemplo:*
+
+  ```promql
+  errors_total / on(instance) requests_total
+  ```
+
+  Aqui dizemos: combine séries de `errors_total` e `requests_total` que tenham o mesmo valor de `instance`. Labels diferentes de `instance` serão ignorados na comparação. Isso é útil se, por exemplo, `errors_total` tem um label `status="5xx"` enquanto `requests_total` não tem o label `status`. Sem o `on(instance)`, essas séries não casariam por terem conjuntos de labels distintos.
+
+* **`ignoring(lista_de_labels)`**: O inverso do `on`. Use todos os labels *exceto* os listados para fazer o matching. Ou seja, finge que os labels mencionados não existem nos vetores ao procurar pares correspondentes.
+  *Exemplo:*
+
+  ```promql
+  cpu_usage{cpu="total"} / ignoring(cpu) cpu_quota
+  ```
+
+  Suponha que `cpu_usage` tenha um label `cpu` (núcleo) e valor `"total"` para indicar uso total da CPU, enquanto `cpu_quota` não tem esse label (aplica a todo CPU). O `ignoring(cpu)` permite desconsiderar essa diferença, casando as séries somente pelos outros labels (por exemplo, pod ou contêiner, se for o caso).
+
+* **Junções um-para-muitos (many-to-one)**: Por padrão, se houver múltiplas séries de um lado que poderiam casar com uma série do outro, a operação não ocorre e o resultado é vazio para evitar ambiguidades. No entanto, às vezes desejamos permitir isso — por exemplo, dividir uma métrica total por número de CPUs, onde a métrica total não tem o label `cpu` mas a de contagem de CPU tem (múltiplas séries, uma por core).
+  Para isso, usamos `group_left` ou `group_right` em conjunto com `on`/`ignoring`:
+
+  * **`group_left(label1, label2, ...)`**: Indica que as séries do lado esquerdo do operador devem permanecer separadas (muitas) enquanto as do lado direito serão "espalhadas" para casar. Em outras palavras, permite que uma única série do lado direito seja usada para múltiplas do lado esquerdo. Opcionalmente, podemos listar labels que serão **copiados** do lado direito para o resultado final.
+  * **`group_right(label1, label2, ...)`**: O contrário, mantém o lado direito com muitas séries e espalha o lado esquerdo.
+
+  *Exemplo (adicionando labels com group\_left):*
+
+  ```promql
+  rate(http_requests_total[5m]) 
+    * on(instance) 
+    group_left(job, environment) 
+    up
+  ```
+
+  Nesse exemplo, `rate(http_requests_total[5m])` produz séries talvez com labels `instance` e outros, mas digamos que não tenha `job` nem `environment` explicitamente (ou queremos copiar do `up`). A série `up` (métrica de saúde do alvo) tem `job`, `instance`, e `environment`. Estamos multiplicando as duas métricas apenas casando por `instance` (`on(instance)`). Como do lado direito (`up`) há possivelmente apenas uma série por instance (valor 0 ou 1), e do lado esquerdo pode haver múltiplas (por caminho de requisição, status, etc.), usamos `group_left(job, environment)` para dizer: permite que a mesma série de `up` case com múltiplas séries de requests do lado esquerdo, e traga os labels `job` e `environment` dessa série de `up` para o resultado final. Assim, o resultado terá a taxa de requests por `instance` mas agora enriquecido com os labels de job e environment.
+
+  *Exemplo (many-to-one sem copiar labels):*
+
+  ```promql
+  cpu_usage 
+    / on(instance) 
+    group_right 
+    cpu_count
+  ```
+
+  Suponha que `cpu_usage{instance="A"}` representa o uso total de CPU (consolidado) em determinada máquina, e `cpu_count{instance="A", cpu="0"}` e `cpu_count{instance="A", cpu="1"}` etc. representam 1 para cada CPU física (cada core). Se somarmos `cpu_count by (instance)` obteríamos o número de CPUs por instância, mas podemos diretamente dividir usando o truque do `group_right`. Aqui, cada série de `cpu_usage` (uma por instancia) será comparada com múltiplas séries de `cpu_count` (uma por CPU). Sem `group_right`, não casaria por haver múltiplas séries do lado direito para o mesmo instance. Com `group_right`, permitimos isso e, por não especificar labels a copiar, o resultado herda os labels do lado esquerdo (`cpu_usage`), e a operação divisão é feita para cada combinação (na prática repetindo o mesmo valor de `cpu_usage` para cada CPU e dividindo por o respectivo `cpu_count` – o que acaba resultando no mesmo valor para cada CPU). Talvez nesse caso específico fosse melhor já agrupar `cpu_count` antes de dividir, mas esse exemplo ilustra a sintaxe.
+
+* **Operador de conjunto `union`:** PromQL não possui um operador explícito "UNION" nomeado, mas podemos realizar união de resultados simplesmente listando expressões separadas por vírgula em uma consulta. Por exemplo:
+
+  ```promql
+  metric_a, metric_b
+  ```
+
+  Isso retorna todas as séries de `metric_a` e todas as de `metric_b`. Não é muito comum em consultas manuais, mas pode ser útil para junção visual.
+
+Resumindo, os modificadores `on` e `ignoring` controlam **quais** labels considerar ao casar séries de métricas diferentes, e `group_left`/`group_right` controlam **como lidar** quando há cardinalidades diferentes (um-para-muitos). Combiná-los corretamente é fundamental para escrever consultas que envolvam múltiplas métricas.
+
+### Operadores Lógicos: `and`, `or`, `unless`
+
+Além dos operadores aritméticos e de comparação, PromQL também suporta operadores lógicos para vetores. Esses operadores não criam valores numéricos novos, mas sim filtram ou combinam séries com base em condições booleanas.
+
+* **`and`:** Retém apenas as séries que aparecem em **ambos** os operandos. Em outras palavras, é uma interseção: uma série do lado esquerdo só passa se existe uma série exatamente igual do lado direito (considerando labels) e vice-versa. O valor resultante de cada série será o valor do lado esquerdo (padrão) ou, se usado como comparador, segue regras de comparador bool.
+  Uso típico: aplicar uma condição a um resultado. Por exemplo:
+
+  ```promql
+  (vector1 comparacao const) and vector1
+  ```
+
+  Isso retornaria apenas as séries de `vector1` que atendem à comparação (pois o comparador produzirá 1 para as séries que satisfazem, e então `and` manterá apenas essas).
+
+* **`or`:** União de séries. Retorna séries que estão em **pelo menos um** dos lados. Se a mesma série (mesmos labels) aparece em ambos, o valor resultante será o do lado esquerdo (padrão) ou pode ser modificado com bool se estivermos combinando booleanos. É útil para combinar resultados diferentes.
+  Por exemplo:
+
+  ```promql
+  vector_a or vector_b
+  ```
+
+  Isso dá todas as séries de `vector_a` e `vector_b`. Se alguma série estiver presente nos dois, aparece uma vez só (com valor de `vector_a`).
+
+* **`unless`:** Retém as séries do lado esquerdo **a menos que** elas também apareçam no lado direito. Equivale a diferença de conjuntos: resultado = esquerda \ direita. (Obs: O lado direito só importa pelos labels, seus valores são ignorados).
+  Por exemplo:
+
+  ```promql
+  up{job="api"} unless up{job="api", region="us-east"}
+  ```
+
+  Isso retornaria as séries `up` do job "api" **que não têm** region="us-east", ou seja, efetivamente filtra fora todas as instâncias da região us-east.
+
+Os operadores lógicos são avaliados após todos os cálculos numéricos serem feitos. Isso significa que podemos usá-los tanto em métricas brutas quanto em resultados de expressões.
+
+**Exemplos práticos combinando comparações e operadores lógicos:**
+
+* **Contar instâncias ativas em dois grupos diferentes:**
+
+  ```promql
+  sum(up{job="node"} == 1) or sum(up{job="db"} == 1)
+  ```
+
+  Esse exemplo usa `== 1` para converter as séries `up` em booleanas (1 para up, 0 para down) e soma para contar quantas estão up em cada job. O `or` aqui faz a união, retornando duas séries (uma para node e outra para db) com o valor de quantas instâncias estão up em cada.
+
+* **Filtrar top 5 de um conjunto e combinar com outro critério:**
+
+  ```promql
+  topk(5, rate(http_requests_total[5m])) and ignoring(instance) (rate(errors_total[5m]) > 0)
+  ```
+
+  Esse exemplo hipotético pegaria as 5 maiores taxas de requisição (independente de instância) e então, através do `and` com `ignoring(instance)` e a condição de erros, manteria somente aquelas cujo serviço (ignorando instâncias) está apresentando erros. Bastante específico, mas demonstra o uso combinado: `topk` produz séries; a outra parte produz 1/0 para serviços com erro; o `and ignoring(instance)` casa por serviço e filtra.
+
+Lembrando que, se quisermos comparar valores de uma série com um número e obter diretamente 1 ou 0, podemos usar o modificador `bool`. Exemplo: `vector1 > bool 10` retornaria um vetor com valor 1 para séries onde `vector1` > 10 e 0 caso contrário (mantendo os labels). Sem `bool`, ele retornaria as próprias séries (com seus valores originais) porém filtradas pelas que atendem à condição.
+
+### Resumo de operadores de conjunto (conjuntos de séries)
+
+Já falamos sobre `on`, `ignoring`, `group_left`, `group_right` e os operadores lógicos. Vale reforçar:
+
+* `on` / `ignoring`: controlam quais labels fazem parte da comparação entre séries ao aplicar um operador binário.
+* `group_left` / `group_right`: permitem matching many-to-one e definem de que lado as séries duplicadas ficam.
+* `and`, `or`, `unless`: operam em nível de conjunto de séries (interseção, união, diferença).
+
+Além disso, quando usamos agregadores (como `sum`, `avg` etc.), usamos `by` ou `without` para controlar quais labels serão preservados ou removidos. Isso às vezes é referido como agrupar por labels, mas é diferente de `on/ignoring` (que é para matching de operadores).
+
+**Recapitulando agregação com `by` e `without`:**
+
+* `sum by(label1, label2) (expr)` – Soma os valores de `expr` agrupando séries que compartilham os mesmos valores de `label1` e `label2`. Os labels `label1` e `label2` serão mantidos no resultado, e todos os outros serão descartados (exceto aqueles usados no by).
+* `avg without(labelX) (expr)` – Calcula a média removendo `labelX` da distinção. Isso significa agrupar por todas as outras labels, ou seja, fundir séries que diferem apenas em `labelX`.
+
+Exemplo: `sum by(job) (up == 0)` – contaria quantas instâncias estão down por job. Aqui `up == 0` produz 1 para instâncias down. Agrupando por job e somando, obtemos a contagem de instâncias não ativas de cada job.
+
+## Funções Essenciais do PromQL
+
+As funções essenciais do PromQL são aquelas mais utilizadas no dia a dia para monitoramento e análise de métricas. Elas permitem transformar dados brutos em informações acionáveis, calculando taxas, agregações e estatísticas importantes.
+
+### Funções de Taxa e Incremento
+
+As funções mais fundamentais para trabalhar com contadores são `rate()` e `increase()`:
+
+**`rate(counter[interval])`**: Calcula a taxa média por segundo de incremento do contador no intervalo especificado. Esta função lida automaticamente com resets do contador.
+
+```promql
+rate(http_requests_total[5m])
+```
+
+**`increase(counter[interval])`**: Calcula quanto o contador aumentou no intervalo especificado.
+
+```promql
+increase(http_requests_total[1h])
+```
+
+**`irate(counter[interval])`**: Calcula a taxa instantânea baseada apenas nos dois pontos mais recentes. É mais ruidosa, mas reage mais rapidamente a mudanças.
+
+```promql
+irate(http_requests_total[5m])
+```
+
+### Funções de Agregação
+
+As funções de agregação permitem resumir dados de múltiplas séries:
+
+**`sum(expr) by (label1, label2)`**: Soma os valores agrupando por labels específicos.
+
+```promql
+sum(rate(http_requests_total[5m])) by (job)
+```
+
+**`avg(expr) by (label1, label2)`**: Calcula a média agrupando por labels específicos.
+
+```promql
+avg(rate(node_cpu_seconds_total{mode="user"}[5m])) by (instance)
+```
+
+**`count(expr) by (label1, label2)`**: Conta o número de séries agrupando por labels.
+
+```promql
+count(up) by (job)
+```
+
+**`max(expr) by (label1, label2)`**: Retorna o valor máximo agrupando por labels.
+
+```promql
+max(rate(http_requests_total[5m])) by (endpoint)
+```
+
+**`min(expr) by (label1, label2)`**: Retorna o valor mínimo agrupando por labels.
+
+```promql
+min(rate(http_requests_total[5m])) by (endpoint)
+```
+
+### Funções de Percentil e Histograma
+
+**`histogram_quantile(quantile, histogram)`**: Calcula um quantil específico a partir de um histograma.
+
+```promql
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))
+```
+
+**`quantile(quantile, expr)`**: Calcula um quantil específico de uma expressão.
+
+```promql
+quantile(0.95, rate(http_requests_total[5m]))
+```
+
+### Funções de Filtro e Seleção
+
+**`topk(k, expr)`**: Retorna as k séries com os maiores valores.
+
+```promql
+topk(5, rate(http_requests_total[5m]))
+```
+
+**`bottomk(k, expr)`**: Retorna as k séries com os menores valores.
+
+```promql
+bottomk(5, rate(http_requests_total[5m]))
+```
+
+### Funções de Tempo
+
+**`avg_over_time(expr[interval])`**: Calcula a média dos valores no intervalo especificado.
+
+```promql
+avg_over_time(http_requests_total[5m])
+```
+
+**`sum_over_time(expr[interval])`**: Calcula a soma dos valores no intervalo especificado.
+
+```promql
+sum_over_time(http_requests_total[5m])
+```
+
+**`max_over_time(expr[interval])`**: Retorna o valor máximo no intervalo especificado.
+
+```promql
+max_over_time(cpu_usage[1h])
+```
+
+**`min_over_time(expr[interval])`**: Retorna o valor mínimo no intervalo especificado.
+
+```promql
+min_over_time(memory_usage[1h])
+```
+
+### Funções de Detecção de Ausência
+
+**`absent(expr)`**: Retorna 1 se a expressão não retornar nenhum dado, caso contrário retorna nada.
+
+```promql
+absent(up{job="webserver"})
+```
+
+**`absent_over_time(expr[interval])`**: Verifica se a métrica esteve ausente durante todo o intervalo.
+
+```promql
+absent_over_time(up{job="webserver"}[5m])
+```
+
+## PromQL Avançado
+
+O PromQL oferece recursos avançados para consultas complexas e análises sofisticadas. Esta seção aborda tópicos mais avançados como correspondência de vetores, subconsultas, operadores lógicos e funções especializadas.
+
+### Correspondência de Séries Temporais: `on()`, `ignoring()`, `group_left`, `group_right`
+
+Quando combinamos métricas diferentes (vetor-vetor), muitas vezes precisamos controlar quais labels são usados para fazer o *join* (união) entre as séries de cada lado da operação. É aqui que entram os modificadores `on` e `ignoring`, e os operadores de junção externa `group_left` e `group_right`:
+
+* **`on(lista_de_labels)`**: Especifica explicitamente quais labels devem ser usados para casar as séries ao aplicar o operador. Todos os demais labels são ignorados no matching (exceto os do `on` listados).
+  *Exemplo:*
+
+  ```promql
+  errors_total / on(instance) requests_total
+  ```
+
+  Aqui dizemos: combine séries de `errors_total` e `requests_total` que tenham o mesmo valor de `instance`. Labels diferentes de `instance` serão ignorados na comparação. Isso é útil se, por exemplo, `errors_total` tem um label `status="5xx"` enquanto `requests_total` não tem o label `status`. Sem o `on(instance)`, essas séries não casariam por terem conjuntos de labels distintos.
+
+* **`ignoring(lista_de_labels)`**: O inverso do `on`. Use todos os labels *exceto* os listados para fazer o matching. Ou seja, finge que os labels mencionados não existem nos vetores ao procurar pares correspondentes.
+  *Exemplo:*
+
+  ```promql
+  cpu_usage{cpu="total"} / ignoring(cpu) cpu_quota
+  ```
+
+  Suponha que `cpu_usage` tenha um label `cpu` (núcleo) e valor `"total"` para indicar uso total da CPU, enquanto `cpu_quota` não tem esse label (aplica a todo CPU). O `ignoring(cpu)` permite desconsiderar essa diferença, casando as séries somente pelos outros labels (por exemplo, pod ou contêiner, se for o caso).
+
+* **Junções um-para-muitos (many-to-one)**: Por padrão, se houver múltiplas séries de um lado que poderiam casar com uma série do outro, a operação não ocorre e o resultado é vazio para evitar ambiguidades. No entanto, às vezes desejamos permitir isso — por exemplo, dividir uma métrica total por número de CPUs, onde a métrica total não tem o label `cpu` mas a de contagem de CPU tem (múltiplas séries, uma por core).
+  Para isso, usamos `group_left` ou `group_right` em conjunto com `on`/`ignoring`:
+
+  * **`group_left(label1, label2, ...)`**: Indica que as séries do lado esquerdo do operador devem permanecer separadas (muitas) enquanto as do lado direito serão "espalhadas" para casar. Em outras palavras, permite que uma única série do lado direito seja usada para múltiplas do lado esquerdo. Opcionalmente, podemos listar labels que serão **copiados** do lado direito para o resultado final.
+  * **`group_right(label1, label2, ...)`**: O contrário, mantém o lado direito com muitas séries e espalha o lado esquerdo.
+
+  *Exemplo (adicionando labels com group\_left):*
+
+  ```promql
+  rate(http_requests_total[5m]) 
+    * on(instance) 
+    group_left(job, environment) 
+    up
+  ```
+
+  Nesse exemplo, `rate(http_requests_total[5m])` produz séries talvez com labels `instance` e outros, mas digamos que não tenha `job` nem `environment` explicitamente (ou queremos copiar do `up`). A série `up` (métrica de saúde do alvo) tem `job`, `instance`, e `environment`. Estamos multiplicando as duas métricas apenas casando por `instance` (`on(instance)`). Como do lado direito (`up`) há possivelmente apenas uma série por instance (valor 0 ou 1), e do lado esquerdo pode haver múltiplas (por caminho de requisição, status, etc.), usamos `group_left(job, environment)` para dizer: permite que a mesma série de `up` case com múltiplas séries de requests do lado esquerdo, e traga os labels `job` e `environment` dessa série de `up` para o resultado final. Assim, o resultado terá a taxa de requests por `instance` mas agora enriquecido com os labels de job e environment.
+
+  *Exemplo (many-to-one sem copiar labels):*
+
+  ```promql
+  cpu_usage 
+    / on(instance) 
+    group_right 
+    cpu_count
+  ```
+
+  Suponha que `cpu_usage{instance="A"}` representa o uso total de CPU (consolidado) em determinada máquina, e `cpu_count{instance="A", cpu="0"}` e `cpu_count{instance="A", cpu="1"}` etc. representam 1 para cada CPU física (cada core). Se somarmos `cpu_count by (instance)` obteríamos o número de CPUs por instância, mas podemos diretamente dividir usando o truque do `group_right`. Aqui, cada série de `cpu_usage` (uma por instancia) será comparada com múltiplas séries de `cpu_count` (uma por CPU). Sem `group_right`, não casaria por haver múltiplas séries do lado direito para o mesmo instance. Com `group_right`, permitimos isso e, por não especificar labels a copiar, o resultado herda os labels do lado esquerdo (`cpu_usage`), e a operação divisão é feita para cada combinação (na prática repetindo o mesmo valor de `cpu_usage` para cada CPU e dividindo por o respectivo `cpu_count` – o que acaba resultando no mesmo valor para cada CPU). Talvez nesse caso específico fosse melhor já agrupar `cpu_count` antes de dividir, mas esse exemplo ilustra a sintaxe.
+
+* **Operador de conjunto `union`:** PromQL não possui um operador explícito "UNION" nomeado, mas podemos realizar união de resultados simplesmente listando expressões separadas por vírgula em uma consulta. Por exemplo:
+
+  ```promql
+  metric_a, metric_b
+  ```
+
+  Isso retorna todas as séries de `metric_a` e todas as de `metric_b`. Não é muito comum em consultas manuais, mas pode ser útil para junção visual.
+
+Resumindo, os modificadores `on` e `ignoring` controlam **quais** labels considerar ao casar séries de métricas diferentes, e `group_left`/`group_right` controlam **como lidar** quando há cardinalidades diferentes (um-para-muitos). Combiná-los corretamente é fundamental para escrever consultas que envolvam múltiplas métricas.
+
+### Operadores Lógicos: `and`, `or`, `unless`
+
+Além dos operadores aritméticos e de comparação, PromQL também suporta operadores lógicos para vetores. Esses operadores não criam valores numéricos novos, mas sim filtram ou combinam séries com base em condições booleanas.
+
+* **`and`:** Retém apenas as séries que aparecem em **ambos** os operandos. Em outras palavras, é uma interseção: uma série do lado esquerdo só passa se existe uma série exatamente igual do lado direito (considerando labels) e vice-versa. O valor resultante de cada série será o valor do lado esquerdo (padrão) ou, se usado como comparador, segue regras de comparador bool.
+  Uso típico: aplicar uma condição a um resultado. Por exemplo:
+
+  ```promql
+  (vector1 comparacao const) and vector1
+  ```
+
+  Isso retornaria apenas as séries de `vector1` que atendem à comparação (pois o comparador produzirá 1 para as séries que satisfazem, e então `and` manterá apenas essas).
+
+* **`or`:** União de séries. Retorna séries que estão em **pelo menos um** dos lados. Se a mesma série (mesmos labels) aparece em ambos, o valor resultante será o do lado esquerdo (padrão) ou pode ser modificado com bool se estivermos combinando booleanos. É útil para combinar resultados diferentes.
+  Por exemplo:
+
+  ```promql
+  vector_a or vector_b
+  ```
+
+  Isso dá todas as séries de `vector_a` e `vector_b`. Se alguma série estiver presente nos dois, aparece uma vez só (com valor de `vector_a`).
+
+* **`unless`:** Retém as séries do lado esquerdo **a menos que** elas também apareçam no lado direito. Equivale a diferença de conjuntos: resultado = esquerda \ direita. (Obs: O lado direito só importa pelos labels, seus valores são ignorados).
+  Por exemplo:
+
+  ```promql
+  up{job="api"} unless up{job="api", region="us-east"}
+  ```
+
+  Isso retornaria as séries `up` do job "api" **que não têm** region="us-east", ou seja, efetivamente filtra fora todas as instâncias da região us-east.
+
+Os operadores lógicos são avaliados após todos os cálculos numéricos serem feitos. Isso significa que podemos usá-los tanto em métricas brutas quanto em resultados de expressões.
+
+**Exemplos práticos combinando comparações e operadores lógicos:**
+
+* **Contar instâncias ativas em dois grupos diferentes:**
+
+  ```promql
+  sum(up{job="node"} == 1) or sum(up{job="db"} == 1)
+  ```
+
+  Esse exemplo usa `== 1` para converter as séries `up` em booleanas (1 para up, 0 para down) e soma para contar quantas estão up em cada job. O `or` aqui faz a união, retornando duas séries (uma para node e outra para db) com o valor de quantas instâncias estão up em cada.
+
+* **Filtrar top 5 de um conjunto e combinar com outro critério:**
+
+  ```promql
+  topk(5, rate(http_requests_total[5m])) and ignoring(instance) (rate(errors_total[5m]) > 0)
+  ```
+
+  Esse exemplo hipotético pegaria as 5 maiores taxas de requisição (independente de instância) e então, através do `and` com `ignoring(instance)` e a condição de erros, manteria somente aquelas cujo serviço (ignorando instâncias) está apresentando erros. Bastante específico, mas demonstra o uso combinado: `topk` produz séries; a outra parte produz 1/0 para serviços com erro; o `and ignoring(instance)` casa por serviço e filtra.
+
+Lembrando que, se quisermos comparar valores de uma série com um número e obter diretamente 1 ou 0, podemos usar o modificador `bool`. Exemplo: `vector1 > bool 10` retornaria um vetor com valor 1 para séries onde `vector1` > 10 e 0 caso contrário (mantendo os labels). Sem `bool`, ele retornaria as próprias séries (com seus valores originais) porém filtradas pelas que atendem à condição.
+
+### Subconsultas e Análise Temporal Avançada
+
+**Counter Range Vectors**: Contadores são métricas que apenas aumentam (ou resetam para zero e voltam a aumentar). Exemplos: número total de requisições atendidas, bytes transferidos, etc. Quando consultamos diretamente um *counter* como range vector, obteremos uma série de pontos que só crescem (com eventuais resets). Para extrair informações úteis (como taxa de eventos por segundo ou aumentos em determinado período) usamos funções especiais:
+
+* `rate(counter[5m])`: Calcula a **taxa média por segundo** de incremento do contador nos últimos 5 minutos. Essa função já lida corretamente com resets do contador (ignorando as quedas abruptas devido a resets e calculando a taxa considerando isso).
+* `irate(counter[5m])`: Calcula a **taxa instantânea** (baseada apenas nos dois pontos mais recentes dentro dos 5 minutos). É mais ruidosa, mas pode reagir mais rapidamente a mudanças repentinas.
+* `increase(counter[1h])`: Calcula **quanto o contador aumentou** no último 1 hora. Essencialmente integra a taxa ao longo do período.
+
+**Agregação através do tempo (Aggregating Across Time)**: Às vezes, queremos primeiro agregar os dados e depois analisar a evolução temporal dessa agregação. As **subconsultas** nos permitem isso. Uma *subquery* (subconsulta) é quando temos uma expressão do PromQL seguida de um intervalo entre colchetes e possivelmente uma resolução, por exemplo: `expr[duração:passo]`. Isso faz o Prometheus avaliar `expr` repetidamente ao longo do intervalo dado, produzindo um range vector como resultado.
+
+Por exemplo, `avg_over_time(rate(http_requests_total[1m])[24h:1h])` funciona assim:
+
+* Internamente, `rate(http_requests_total[1m])` é avaliado para cada passo de 1h dentro das últimas 24h, gerando a taxa média por minuto calculada a cada hora.
+* Em seguida, `avg_over_time(...[24h:1h])` calcula a média desses 24 valores (um por hora) **no tempo atual**. Na prática, isso nos daria a média da taxa horária de requisições no dia.
+
+Subconsultas são muito poderosas e foram aprimoradas a partir do Prometheus 2.7. Com elas é possível, por exemplo, calcular tendências, baselines e sazonalidade de forma compacta.
+
+**Exemplos avançados de subconsultas e análise de tendências:**
+
+* **Tendência de taxa de erro (janela móvel):** Calcular a média da taxa de erros em janelas de 1 hora, ao longo das últimas 24 horas:
+
+  ```promql
+  avg_over_time(
+    rate(http_requests_total{status=~"5.."}[1m])[24h:1h]
+  )
+  ```
+
+  Essa consulta gera 24 pontos (taxa de erro média de cada hora nas últimas 24h) e depois calcula a média disso tudo (ou seja, a média diária da taxa de erro). Poderíamos também omitir a função externa para simplesmente visualizar a série das últimas 24 horas e identificar padrões de aumento ou redução de erros ao longo do dia.
+
+* **Baseline de performance (comparação com média histórica):** Comparar a performance atual com a média da última semana:
+
+  ```promql
+  rate(http_requests_total[5m]) 
+    / avg_over_time(rate(http_requests_total[5m])[7d])
+  ```
+
+  Essa consulta produz uma razão: valores acima de 1 indicam que a taxa atual de requisições está **acima** da média semanal; valores abaixo de 1, abaixo da média. Isso pode ser útil para identificar desvios significativos de tráfego.
+
+* **Detecção de anomalia sazonal (padrão horário):** Comparar o tráfego atual com o padrão do último dia:
+
+  ```promql
+  rate(http_requests_total[5m]) 
+    / avg_over_time(rate(http_requests_total[5m])[24h:1h])
+  ```
+
+  Aqui, o denominador `avg_over_time(...[24h:1h])` produz a média da taxa em cada hora do dia anterior. Dividindo a taxa atual por esse valor da mesma hora ontem, podemos identificar se o tráfego está anormalmente alto ou baixo para este horário do dia.
+
+* **Diferença diária (subconsulta com offset):** Para calcular a diferença em uma métrica entre hoje e ontem, podemos usar `offset`. Exemplo:
+
+  ```promql
+  my_metric - my_metric offset 1d
+  ```
+
+  Isso resulta em quanto `my_metric` variou em comparação com exatamente 24 horas atrás.
+
+* **Soma acumulada (exemplo de subconsulta):**
+
+  ```promql
+  sum(my_counter) - sum(my_counter) offset 1d
+  ```
+
+  Este exemplo soma o contador `my_counter` (provavelmente de várias instâncias) e subtrai o valor de 1 dia atrás, mostrando o incremento total em um dia. Essa é outra forma de calcular algo similar a `increase(my_counter[1d])`.
+
+Em todos esses casos, as subconsultas `[ ... ]` estão permitindo observar ou reutilizar resultados ao longo do tempo dentro de uma única expressão.
+
+### Funções Avançadas e Especializadas
+
+Algumas funções do PromQL são menos conhecidas, mas podem ser extremamente poderosas em cenários específicos:
+
+* **`resets(counter[interval])`:** Conta quantas vezes um contador "resetou" (voltou a zero) no período. Útil para detectar reinicializações de aplicativos ou problemas de coleta.
+  *Exemplos:*
+
+  ```promql
+  resets(http_requests_total[5m])
+  ```
+
+  Contaria quantos resets ocorreram no `http_requests_total` nos últimos 5 minutos. Se esse número for > 0 constantemente, pode indicar que o serviço está reiniciando frequentemente (se o contador for interno ao serviço) ou que há overflow de contadores.
+
+* **`changes(series[interval])`:** Conta quantas vezes o valor de uma série mudou durante o intervalo. Isso vale para qualquer métrica (não apenas counters). Pode indicar instabilidade ou flapping.
+  *Exemplo:*
+
+  ```promql
+  changes(process_start_time_seconds[5m]) > 0
+  ```
+
+  O exemplo acima retornaria 1 para instâncias cujo `process_start_time_seconds` (normalmente um timestamp de início do processo) tenha mudado nos últimos 5 minutos — ou seja, o processo reiniciou nesse período.
+
+* **`predict_linear(series[interval], passos_no_futuro)`:** Realiza uma extrapolação linear do valor da série com base na tendência nos últimos intervalos e prevê o valor daqui a X segundos (informado em `passos_no_futuro`). Útil para prever quando algo alcançará um certo limite.
+  *Exemplo:*
+
+  ```promql
+  predict_linear(node_filesystem_free_bytes[1h], 3600) < 0
+  ```
+
+  Poderia ser usado para alertar se a tendência de queda do espaço livre prevê que em 1 hora (`3600` segundos) o espaço chegaria a zero.
+
+* **`holt_winters(series[interval], sf, tf)`:** Embora mais comum no Graphite, o PromQL também tem uma função de previsão chamada `holt_winters` (Holt-Winters, série temporal com tendência e sazonalidade). Aceita uma série (geralmente resultado de subconsulta) e realiza suavização exponencial dupla. No entanto, essa função é raramente usada diretamente em alertas, servindo mais para visualização de tendências suavizadas.
+
+* **Funções para histogramas nativos (Prometheus 3.x):**
+
+  * `histogram_count()` e `histogram_sum()` – Retornam, respectivamente, a contagem total e a soma total das observações de histogramas (clássicos ou nativos). Para histogramas clássicos, esses usam as séries `_count` e `_sum` internas; para nativos, usam os valores codificados.
+  * `histogram_avg()` – Computa a média dos valores observados em cada histograma, equivalente a `histogram_sum/histogram_count`.
+  * `histogram_fraction(lower, upper, hist)` – Estima a fração de observações dentro do intervalo `[lower, upper]` para cada histograma. Útil, por exemplo, para calcular *Apdex* (fração de requisições abaixo de um certo limiar de latência).
+
+Lembrando que algumas dessas funções mais novas podem requerer flags experimentais, dependendo da versão do Prometheus.
 
 ## PromQL na Prática
 
@@ -750,7 +1901,9 @@ Em Python, há o pacote **prometheus\_client**. Exemplo integrando com Flask:
        app.run(host="0.0.0.0", port=5000)
    ```
 
-   O `start_http_server(8000)` fará com que em [http://localhost:8000/metrics](http://localhost:8000/metrics) tenhamos as métricas (note: ele por default expõe em /metrics automaticamente). Nesse caso, o Prometheus deve apontar para porta 8000 do app. Alternativamente, há integração para Flask (via middleware) que poderia expor /metrics no próprio Flask app.
+O `start_http_server(8000)` fará com que em [http://localhost:8000/metrics](http://localhost:8000/metrics) tenhamos as métricas (note: ele por default expõe em /metrics automaticamente). Nesse caso, o Prometheus deve apontar para porta 8000 do app.
+
+Alternativamente, há integração para Flask (via middleware) que poderia expor /metrics no próprio Flask app.
 
 4. **Prometheus config:** Similar aos anteriores, adicionar job apontando para o endpoint do metrics (host e porta usados).
 
@@ -772,7 +1925,13 @@ Uma dificuldade comum é monitorar sistemas legados ou softwares proprietários 
 
 O **[Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/)** complementa o Prometheus no tratamento de alertas. Enquanto o Prometheus detecta condições de alerta (com base nas métricas e regras definidas), ele delega ao Alertmanager a função de envio de notificações e gerenciamento desses alertas. Isso inclui agregar alertas similares, evitar duplicações, silenciar alertas durante manutenção, e encaminhá-los para canais apropriados (e-mail, sistemas de chat, PagerDuty, etc.).
 
-Como funciona: você define no Prometheus regras de alerta (no arquivo de configuração ou separado) com expressões PromQL que identificam situações problemáticas. Por exemplo: "se a métrica `up` de um servidor for 0 por 5 minutos, dispare alerta". Quando a condição é verdadeira, o Prometheus gera um evento de alerta e o envia para o Alertmanager (que está configurado na seção `alerting` do prometheus.yml). O Alertmanager então aplica suas próprias regras de roteamento: por exemplo, enviar alertas de severidade crítica para um webhook do Slack e para email da equipe X, alertas menos graves só para email, etc...
+**Alta Disponibilidade:** O Alertmanager suporta configuração em cluster para alta disponibilidade. Quando múltiplas instâncias do Alertmanager estão ativas, elas se comunicam entre si para deduplicar alertas vindos de dois Prometheus idênticos, garantindo que apenas uma notificação seja enviada mesmo quando múltiplas fontes detectam o mesmo problema.
+
+> Como funciona: você define no Prometheus regras de alerta (no arquivo de configuração ou separado) com expressões PromQL que identificam situações problemáticas. Por exemplo: "se a métrica `up` de um servidor for 0 por 5 minutos, dispare alerta".
+
+Quando a condição é verdadeira, o Prometheus gera um evento de alerta e o envia para o Alertmanager (que está configurado na seção `alerting` do prometheus.yml). 
+
+> O Alertmanager então aplica suas próprias regras de roteamento: por exemplo, enviar alertas de severidade crítica para um webhook do Slack e para email da equipe X, alertas menos graves só para email, etc...
 
 **Exemplo prático:** Vamos configurar um alerta de servidor fora do ar com notificação no Slack.
 
@@ -824,7 +1983,9 @@ receivers:
         text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
 ```
 
-Esse config muito básico diz: todos alertas (não importa o grupo\_by, etc.) irão para o receptor nomeado 'time-slack', que tem um slack\_config apontando para um webhook do Slack no canal **#alerts**. O `title` e `text` da mensagem aproveitam as anotações definidas na regra (summary e description). `send_resolved: true` indica para notificar também quando o alerta for resolvido.
+Esse config muito básico diz: todos alertas (não importa o grupo\_by, etc.) irão para o receptor nomeado 'time-slack', que tem um slack\_config apontando para um webhook do Slack no canal **#alerts**. O `title` e `text` da mensagem aproveitam as anotações definidas na regra (summary e description). 
+
+O valor `send_resolved: true` indica para notificar também quando o alerta for resolvido.
 
 Em produção, o Alertmanager pode ter rotas mais elaboradas – por exemplo, roteando com base em labels de alerta (team=A vai para equipe A, severidade critical pode mandar SMS, etc.), escalonamento, agrupamento por determinados campos (como agrupar todos alertas do mesmo datacenter numa só notificação), etc.
 
@@ -990,7 +2151,11 @@ Funciona assim: o job de curta duração (ou qualquer processo que não viva tem
 * Você perde a detecção automática de *down* (já que as métricas são push, o Prometheus não sabe se um job não está rodando ou só não teve métricas recentes).
 * O Pushgateway **não expira** automaticamente séries que foram enviadas. Uma vez que uma métrica é empurrada, ela ficará lá até ser sobrescrita ou manualmente apagada via API do Pushgateway. Isso significa que métricas de jobs antigos podem ficar persistindo como "fantasmas", exigindo que você gerencie remoção ou inclusão de algum label de *instance* para distingui-las.
 
-Devido a esses aspectos, o uso recomendado do Pushgateway é **capturar resultados de jobs batch de nível de serviço** – isto é, trabalhos que não pertencem a uma única máquina ou instância específica, mas sim algo como "um script de limpeza de banco que roda uma vez por dia". Nesse caso, o job emite (push) uma métrica do tipo "usuarios\_deletados\_total{job="cleanup"} 123" e termina. O Pushgateway guarda esse valor. O Prometheus, ao raspar, terá essa informação agregada do job. Como esse tipo de job não tem um "endpoint" próprio para scrap, o Pushgateway serve como cache.
+Devido a esses aspectos, o uso recomendado do Pushgateway é **capturar resultados de jobs batch de nível de serviço** – isto é, trabalhos que não pertencem a uma única máquina ou instância específica, mas sim algo como "um script de limpeza de banco que roda uma vez por dia".
+
+Nesse caso, o job emite (push) uma métrica do tipo "usuarios\_deletados\_total{job="cleanup"} 123" e termina. O Pushgateway guarda esse valor.
+
+O Prometheus, ao raspar, terá essa informação agregada do job. Como esse tipo de job não tem um "endpoint" próprio para scrap, o Pushgateway serve como cache.
 
 Para outros cenários, onde o push é considerado porque há firewall/NAT impedindo scrapes, a documentação sugere alternativas melhores – como rodar Prometheus perto dos alvos (dentro da rede) ou usar algo como o **[PushProx](https://github.com/prometheus/pushprox)** para atravessar firewalls mantendo o modelo pull. E para jobs cron por máquina, que têm contexto de host, recomenda-se usar o **[Node Exporter Textfile Collector](https://github.com/prometheus/node_exporter#textfile-collector)** (escrever métricas em um arquivo que o Node Exporter lê), ao invés do Pushgateway.
 
@@ -998,7 +2163,11 @@ Para outros cenários, onde o push é considerado porque há firewall/NAT impedi
 
 ## Federação
 
-A **federação** no Prometheus permite que uma instância do Prometheus (geralmente chamada de **federadora** ou **global**) faça scrape em endpoints de outras instâncias do Prometheus (**federadas**) para obter um subconjunto de suas métricas. Em outras palavras, é uma forma de **hierarquizar** o monitoramento: por exemplo, você pode ter um Prometheus por data center coletando tudo localmente, e um Prometheus global que apenas busca métricas já agregadas de cada data center para ter uma visão geral corporativa. Existem dois casos de uso principais para federação:
+A **federação** no Prometheus permite que uma instância do Prometheus (geralmente chamada de **federadora** ou **global**) faça scrape em endpoints de outras instâncias do Prometheus (**federadas**) para obter um subconjunto de suas métricas.
+
+Em outras palavras, é uma forma de **hierarquizar** o monitoramento: por exemplo, você pode ter um Prometheus por data center coletando tudo localmente, e um Prometheus global que apenas busca métricas já agregadas de cada data center para ter uma visão geral corporativa.
+
+Existem dois casos de uso principais para federação:
 
 1. **[Agregação hierárquica](https://prometheus.io/docs/prometheus/latest/federation/)**: como no exemplo acima, onde cada Prometheus local faz o trabalho pesado e calcula agregados (soma de CPU por datacenter, latência média de serviço X por datacenter, etc.), e o Prometheus global só extrai essas séries agregadas prontas. Isso dá uma visão do todo sem sobrecarregar a instância global com todas as séries detalhadas.
 
@@ -1117,7 +2286,9 @@ remote_write:
 
 Nesta seção, vamos dissecar o funcionamento interno do armazenamento de dados do Prometheus – o **[Time Series Database](https://prometheus.io/docs/introduction/architecture/#time-series-database)** (TSDB) local – e entender por que ele consome recursos como consome.
 
-Quando instalamos o Prometheus, uma pasta de dados (por padrão chamada `data/`) é usada para persistir as séries temporais coletadas. Dentro dela, os dados são organizados em blocos de tempo fixo. Por padrão, cada **bloco** cobre 2 horas de métricas. Após duas horas de coleta, o Prometheus fecha aquele bloco e inicia outro. Periodicamente, vários blocos menores podem ser compactados em blocos maiores (por exemplo, 5 blocos de 2h podem ser mesclados num bloco de 10h de dados, e assim por diante). A estrutura de arquivos típica em `data/` é assim (exemplo simplificado):
+Quando instalamos o Prometheus, uma pasta de dados (por padrão chamada `data/`) é usada para persistir as séries temporais coletadas. Dentro dela, os dados são organizados em blocos de tempo fixo. Por padrão, cada **bloco** cobre 2 horas de métricas. Após duas horas de coleta, o Prometheus fecha aquele bloco e inicia outro.
+
+Periodicamente, vários blocos menores podem ser compactados em blocos maiores (por exemplo, 5 blocos de 2h podem ser mesclados num bloco de 10h de dados, e assim por diante). A estrutura de arquivos típica em `data/` é assim (exemplo simplificado):
 
 ```
 data/
@@ -1142,7 +2313,9 @@ Cada bloco de 2h é identificado por um **[ULID](https://github.com/prometheus/p
 * **chunks/**: diretório contendo os arquivos binários de chunks de dados. Os *chunks* são os blocos comprimidos de amostras das séries. Cada arquivo (nomeado como 000001, 000002, ...) contém muitos chunks. O tamanho máximo de cada arquivo é \~512MB para facilitar gerenciamento.
 * **tombstones:** arquivo que registra intervalos de dados deletados manualmente (via API de delete), se houver.
 
-Além dos blocos fechados, existe o **[Head block](https://prometheus.io/docs/introduction/architecture/#head-block)** (bloco atual em memória) que armazena as métricas em curso. Os dados mais recentes (últimas \~2h) residem em memória para escrita rápida e consultas de curtíssimo prazo. A cada 2h, o Prometheus “dissolve” parte do Head em um bloco persistente e libera daquela memória. Vamos inspecionar um exemplo de **meta.json** para entender seus campos:
+Além dos blocos fechados, existe o **[Head block](https://prometheus.io/docs/introduction/architecture/#head-block)** (bloco atual em memória) que armazena as métricas em curso. Os dados mais recentes (últimas \~2h) residem em memória para escrita rápida e consultas de curtíssimo prazo.
+
+A cada 2h, o Prometheus “dissolve” parte do Head em um bloco persistente e libera daquela memória. Vamos inspecionar um exemplo de **meta.json** para entender seus campos:
 
 ```json
 {
@@ -1175,11 +2348,17 @@ Explicando os campos principais:
 
 Com isso, entendemos que cada bloco é imutável depois de escrito. Se novos dados chegam daquele intervalo, seria criado um bloco novo via compaction. Isso facilita a confiabilidade – dados históricos não mudam.
 
-O **arquivo de índice (index)** serve para mapear as séries e labels aos chunks dentro do bloco. Ele funciona como um índice invertido: dado um nome de métrica e um conjunto de labels, encontra os IDs das séries correspondentes e, então, aponta para os chunks onde estão os dados daquela série. Assim, ao fazer uma consulta, o Prometheus carrega o índice do bloco relevante e consegue buscar rapidamente somente os chunks necessários (por exemplo, pula chunks inteiros que estão fora do range de tempo consultado, usando informações de minTime/maxtime dos chunks). 
+O **arquivo de índice (index)** serve para mapear as séries e labels aos chunks dentro do bloco. Ele funciona como um índice invertido: dado um nome de métrica e um conjunto de labels, encontra os IDs das séries correspondentes e, então, aponta para os chunks onde estão os dados daquela série.
+
+Assim, ao fazer uma consulta, o Prometheus carrega o índice do bloco relevante e consegue buscar rapidamente somente os chunks necessários (por exemplo, pula chunks inteiros que estão fora do range de tempo consultado, usando informações de minTime/maxtime dos chunks). 
 
 O índice é altamente otimizado e comprimido – usa conceitos de [posting lists](https://prometheus.io/docs/introduction/architecture/#posting-lists) (listas de IDs de séries para cada label-valor) e [tabelas de símbolos](https://prometheus.io/docs/introduction/architecture/#symbol-table) para strings únicas. Esses detalhes avançados fogem do escopo aqui, mas o importante é: o índice permite que mesmo com milhões de séries por bloco, o Prometheus consiga localizar dados sem varrer tudo linearmente.
 
-Finalmente, o **[WAL (Write-Ahead Log)](https://prometheus.io/docs/introduction/architecture/#write-ahead-log)**: é um log de transações recente onde cada amostra coletada é gravada imediatamente no disco antes de ser inserida na memória do Head. Isso garante que se o Prometheus cair inesperadamente, ao voltar ele pode reprocessar o WAL e recuperar as amostras que ainda não tinham sido compactadas em blocos. O WAL consiste em arquivos sequenciais (`00000000`, `00000001`, etc.) que vão acumulando as escritas. Periodicamente, o Prometheus faz um checkpoint (snapshot do head) e limpa parte do WAL já aplicado. Em caso de crash, ele lê desde o último checkpoint para restaurar o estado do Head.
+Finalmente, o **[WAL (Write-Ahead Log)](https://prometheus.io/docs/introduction/architecture/#write-ahead-log)** é um log de transações recente onde cada amostra coletada é gravada imediatamente no disco antes de ser inserida na memória do Head. Isso garante que, se o Prometheus cair inesperadamente, ao voltar ele pode reprocessar o WAL e recuperar as amostras que ainda não tinham sido compactadas em blocos.
+
+O WAL consiste em arquivos sequenciais (`00000000`, `00000001`, etc.) que vão acumulando as escritas. Periodicamente, o Prometheus faz um checkpoint (snapshot do head) e limpa parte do WAL já aplicado.
+
+Em caso de crash, ele lê desde o último checkpoint para restaurar o estado do Head.
 
 ### Gerenciamento de memória pelo Prometheus
 
@@ -1189,19 +2368,31 @@ O Prometheus armazena as séries temporais em memória para rápido acesso às m
 
 Como mencionado, o Prometheus mantém em RAM todas as séries ativas do bloco atual (tipicamente últimas 2 horas de dados por série). Essa decisão arquitetural visa desempenho: consultas sobre dados recentes (que são as mais comuns, e.g. alertas e dashboards de curto prazo) não precisam esperar leitura de disco – os valores já estão na memória. 
 
-Além disso, novas amostras sendo inseridas a cada segundo/minuto são agregadas a estruturas em memória (evitando I/O de disco a cada operação, que seria inviável em alta escala). O resultado é que o **consumo de RAM** do Prometheus cresce com o número de séries ativas e com a frequência de coleta. Estima-se, por experiências reportadas, que cada série ativa consome em torno de **\~3 KB de RAM** (depende de labels, comprimento do nome, etc.). Portanto, 1 milhão de séries pode usar na ordem de 3–4 GB de RAM apenas para manter o head da TSDB.
+Além disso, novas amostras sendo inseridas a cada segundo/minuto são agregadas a estruturas em memória (evitando I/O de disco a cada operação, que seria inviável em alta escala). O resultado é que o **consumo de RAM** do Prometheus cresce com o número de séries ativas e com a frequência de coleta.
+
+Estima-se, por experiências reportadas, que cada série ativa consome em torno de **\~3 KB de RAM** (depende de labels, comprimento do nome, etc.). Portanto, 1 milhão de séries pode usar na ordem de 3–4 GB de RAM apenas para manter o head da TSDB.
 
 Em paralelo, o Prometheus escreve todas as amostras no WAL (em disco) para não perdê-las em caso de crash. A cada 2 horas, ele então compacta esses dados quentes em um bloco de 2h comprimido e libera a memória correspondente. Ou seja, há um ciclo onde a memória vai sendo ocupada pelas amostras recentes, e de hora em hora (na verdade 2h) há um flush para disco que esvazia um pouco a memória (mas novas séries podem surgir e ocupar de novo).
 
-O *design* de manter dados recentes em memória traz a consequência de que **o uso de RAM aumenta com a carga de métricas e não é liberado até que os blocos sejam fechados ou as séries cessem**. Em períodos de pico (muitas séries novas aparecendo rapidamente), o Prometheus pode chegar a consumir muita memória para acompanhar. Se faltar RAM, o processo corre risco de OOM (matar por falta de memória) ou, no melhor caso, o sistema operacional vai começar a usar swap – o que degrada muito a performance. Na imagem acima, vemos que tanto a RAM quanto o armazenamento em disco podem crescer substancialmente à medida que aumentamos o volume de dados monitorados.
+O *design* de manter dados recentes em memória traz a consequência de que **o uso de RAM aumenta com a carga de métricas e não é liberado até que os blocos sejam fechados ou as séries cessem**. Em períodos de pico (muitas séries novas aparecendo rapidamente), o Prometheus pode chegar a consumir muita memória para acompanhar.
+
+Se faltar RAM, o processo corre risco de OOM (matar por falta de memória) ou, no melhor caso, o sistema operacional vai começar a usar swap – o que degrada muito a performance. Na imagem acima, vemos que tanto a RAM quanto o armazenamento em disco podem crescer substancialmente à medida que aumentamos o volume de dados monitorados.
 
 > **Quanto mais dias de retenção mantidos no Prometheus, mais recursos são usados e maior o esforço para consultas longas. Manter dados históricos demais pode sobrecarregar a memória e o disco, além de dificultar encontrar informações recentes relevantes.**
 
-Embora possamos configurar retenções longas (30, 60 dias), isso não significa que o Prometheus foi otimizado para operar eficientemente com esse histórico todo localmente. Lembre-se: ele não indexa por data de forma distribuída – consultas que abrangem muitos dias terão que ler vários blocos do disco e processar um grande volume de amostras. Na prática, reter além de algumas semanas começa a tornar as consultas bem lentas e o uso de disco muito alto (sem falar nos backups dessa quantidade de data). A imagem acima ilustra que, à medida que guardamos mais dias, o custo de recursos cresce e pode inclusive ofuscar tendências atuais no meio de tanto dado antigo.
+Embora possamos configurar retenções longas (30, 60 dias), isso não significa que o Prometheus foi otimizado para operar eficientemente com esse histórico todo localmente. Lembre-se: ele não indexa por data de forma distribuída – consultas que abrangem muitos dias terão que ler vários blocos do disco e processar um grande volume de amostras.
+
+Na prática, reter além de algumas semanas começa a tornar as consultas bem lentas e o uso de disco muito alto (sem falar nos backups dessa quantidade de data). Consultas extensas acabam exigindo leitura de múltiplos blocos e processamento de grandes volumes de dados, o que impacta diretamente a performance do sistema.
+
+A imagem acima ilustra que, à medida que guardamos mais dias, o custo de recursos cresce e pode inclusive ofuscar tendências atuais no meio de tanto dado antigo.
 
 ![](https://raw.githubusercontent.com/scovl/scovl.github.io/main/post/images/tsdb/prom-mem03.png)
 
-A filosofia do Prometheus é ser a ferramenta de **monitoramento em tempo real** e de curto/médio prazo. Para análises históricas longas ou compliance (guardar métricas por 1 ano, por exemplo), a solução comum é integrar um back-end de longo prazo (Thanos, Cortex, databases remotas) que arquivem esses dados, enquanto o Prometheus local mantém só o necessário para operação/alertas recentes. Assim você tem o melhor dos dois mundos: rapidez no real-time e histórico completo disponível quando precisar, sem sobrecarregar o Prometheus diariamente.
+A filosofia do Prometheus é ser a ferramenta de **monitoramento em tempo real** e de curto/médio prazo.
+
+Para análises históricas longas ou compliance (guardar métricas por 1 ano, por exemplo), a solução comum é integrar um back-end de longo prazo (Thanos, Cortex, databases remotas) que arquivem esses dados, enquanto o Prometheus local mantém só o necessário para operação/alertas recentes.
+
+Assim você tem o melhor dos dois mundos: rapidez no real-time e histórico completo disponível quando precisar, sem sobrecarregar o Prometheus diariamente.
 
 > Todas as amostras recentes residem na memória principal (Head), com flush periódico para disco a cada 2 horas. O WAL no disco captura as escritas para garantir durabilidade. Em situação de carga extrema, o OS pode usar swap, mas isso deve ser evitado pois degrada o desempenho.
 
@@ -1217,9 +2408,13 @@ Vamos recapitular o ciclo de vida dos dados no Prometheus e seu impacto em memó
 
 * **Reinício e recuperação:** Se o Prometheus reiniciar ou cair, na inicialização ele precisa recarregar o estado. Ele vai abrir todos os blocos persistentes (apenas meta e índice, sem carregar todos os dados) e principalmente processar o WAL para recriar o Head com as amostras que ainda não estavam em bloco. Esse processo de recuperação do WAL pode demorar dependendo do tamanho (por isso há checkpoint para otimizar). Ao final, o sistema retorna ao estado como se nunca tivesse parado (exceto pelos minutos offline onde dados podem ter se perdido se os alvos não suportam retroativa).
 
-Tudo isso explica por que o Prometheus consome **bastante memória**: ele aposta em manter as séries recentes acessíveis e indexadas para respostas rápidas. Num Prometheus com muitos alvos ou alta cardinalidade (muitas combinações de labels), o consumo de RAM pode facilmente ser o principal limitador. Conforme mencionado anteriormente, 1 milhão de séries ativas pode exigir vários GB de RAM, portanto planeje a capacidade de acordo com o volume de métricas esperado.
+Tudo isso explica por que o Prometheus consome **bastante memória**: ele aposta em manter as séries recentes acessíveis e indexadas para respostas rápidas.
 
-Infelizmente, não há muito **tunings** manuais a fazer na memória além de reduzir a quantidade de dados: **menos séries ou menor frequência de coleta** = menos uso de RAM. O Prometheus não tem um mecanismo interno de shard automático ou flush mais frequente (o flush é fixo \~2h por design). Então, as soluções se resumem a **escalar verticalmente** (máquinas com mais memória, CPU, disco rápido) ou **escalar horizontalmente** (dividir a carga entre vários Prometheus, cada um monitorando uma parte das targets). Nas melhores práticas a seguir, daremos dicas para mitigar esses desafios de desempenho e dimensionamento.
+Num Prometheus com muitos alvos ou alta cardinalidade (muitas combinações de labels), o consumo de RAM pode facilmente ser o principal limitador. Conforme mencionado anteriormente, 1 milhão de séries ativas pode exigir vários GB de RAM, portanto planeje a capacidade de acordo com o volume de métricas esperado.
+
+Infelizmente, não há muito **tunings** manuais a fazer na memória além de reduzir a quantidade de dados: **menos séries ou menor frequência de coleta** = menos uso de RAM. O Prometheus não tem um mecanismo interno de shard automático ou flush mais frequente (o flush é fixo \~2h por design).
+
+Então, as soluções se resumem a **escalar verticalmente** (máquinas com mais memória, CPU, disco rápido) ou **escalar horizontalmente** (dividir a carga entre vários Prometheus, cada um monitorando uma parte das targets). Nas melhores práticas a seguir, daremos dicas para mitigar esses desafios de desempenho e dimensionamento.
 
 ### Native Histograms (Recurso Experimental)
 
@@ -1317,6 +2512,32 @@ Depois de entender a mecânica interna do Prometheus, é válido reunir algumas 
 
 * **Explosão de cardinalidade:** É um dos problemas mais comuns. Por exemplo, adicionar um label `product_id` a uma métrica de pedidos, onde product\_id pode assumir dezenas de milhares de valores, multiplicará as séries. Isso pode levar o Prometheus a consumir toda memória e travar. Portanto, só use labels cujo conjunto de valores possível seja **limitado e relativamente pequeno**. (Regra de bolso: algumas dezenas ou poucas centenas de valores diferentes por label no máximo. Mais que isso, pense duas vezes se é necessário.) Caso precise monitorar algo muito cardinal (ex: métricas por usuário único), talvez o Prometheus não seja a ferramenta adequada ou você precisa agregá-las antes de expor.
 
+#### O Inimigo nº 1: Explosão de Cardinalidade
+
+**A cardinalidade é o maior desafio do Prometheus.** Cada combinação única de labels cria uma série temporal separada no TSDB. Quando você adiciona labels com valores altamente variáveis (como IDs de usuário, timestamps, URLs completas, ou IPs dinâmicos), você está multiplicando exponencialmente o número de séries armazenadas.
+
+**Por que é tão perigoso:**
+- **Consumo de memória:** Cada série ativa consome ~3kB de RAM. Milhares de séries = gigabytes de memória
+- **Performance de consultas:** Mais séries = consultas mais lentas e maior uso de CPU
+- **Instabilidade:** Cardinalidade excessiva pode fazer o Prometheus travar ou reiniciar constantemente
+- **Custos de armazenamento:** Mais séries = mais dados para armazenar e processar
+
+**Exemplos de labels perigosos:**
+- `user_id` (pode ter milhões de valores únicos)
+- `request_id` (único por requisição)
+- `timestamp` (muda a cada scrape)
+- `ip_address` (muito variável)
+- `full_url` (em vez de usar `endpoint` ou `path`)
+
+**Soluções práticas:**
+- **Agregação prévia:** Agregue métricas antes de expô-las ao Prometheus
+- **Labels limitados:** Use apenas labels com valores limitados e previsíveis
+- **Métricas de resumo:** Em vez de métricas por item individual, use métricas de contagem/total
+- **Filtros inteligentes:** Use relabeling para remover labels problemáticos
+- **Monitoramento ativo:** Monitore `prometheus_tsdb_head_series` para detectar crescimento anormal
+
+**Regra de ouro:** Se você não consegue prever quantos valores diferentes um label pode ter, provavelmente não deveria usá-lo no Prometheus.
+
 * **Métricas altas vs baixas cardinalidades:** Prefira métricas mais agregadas. Por exemplo, em vez de registrar uma métrica separada para cada item em fila (que não faz sentido), registre o tamanho da fila como um gauge. Em vez de métricas por sessão de usuário, exponha total global ou por categoria de usuário. Enfim, modele os dados de forma a minimizar detalhes desnecessários.
 
 ### Consultas (PromQL) Eficientes
@@ -1337,7 +2558,9 @@ Depois de entender a mecânica interna do Prometheus, é válido reunir algumas 
 
 * **Alta disponibilidade:** O Prometheus em si não é HA – ele é stand-alone. Se cair, fica um buraco de coleta enquanto estiver fora. Uma prática comum em produção é rodar **dois Prometheus em paralelo coletando os mesmos alvos** (nas mesmas configurações) – assim, se um falhar, o outro continua e nenhuma métrica se perde. O Alertmanager pode receber alertas duplicados de ambos, mas ele deduplica automaticamente (precisa configurar ambos Prometheus com o mesmo external\_label cluster). Essa abordagem gasta mais recursos (coleta em dobro), mas é simples e efetiva para HA de alertas.
 
-* **Longo prazo e agregação global:** Conforme citado, se precisar *escalar horizontalmente* de verdade ou guardar métricas por longos períodos, vale integrar soluções como **Thanos, Cortex ou Grafana Mimir**. Essas ferramentas armazenam dados em base de dados distribuída (por exemplo, S3 ou BigTable no caso do Thanos/Cortex) e permitem rodar consultas PromQL que abrangem múltiplos Prometheus "como se fosse um só". O Thanos, por exemplo, atua como um *sidecar* pegando os dados de cada Prometheus e enviando para o objeto storage, depois uma camada de *querier* unifica as consultas. O Grafana Mimir segue arquitetura semelhante, nascida da experiência do Cortex, permitindo **escala praticamente ilimitada (bilhões de séries) e alta disponibilidade**, com compatibilidade total com PromQL e remote write. Claro, adicionam complexidade – mas são soluções maduras mantidas pela CNCF/Grafana Labs.
+* **Longo prazo e agregação global:** Conforme citado, se precisar *escalar horizontalmente* de verdade ou guardar métricas por longos períodos, vale integrar soluções como **Thanos, Cortex ou Grafana Mimir**. Essas ferramentas armazenam dados em base de dados distribuída (por exemplo, S3 ou BigTable no caso do Thanos/Cortex) e permitem rodar consultas PromQL que abrangem múltiplos Prometheus "como se fosse um só". 
+
+> O Thanos, por exemplo, atua como um *sidecar* pegando os dados de cada Prometheus e enviando para o objeto storage, depois uma camada de *querier* unifica as consultas. O Grafana Mimir segue arquitetura semelhante, nascida da experiência do Cortex, permitindo **escala praticamente ilimitada (bilhões de séries) e alta disponibilidade**, com compatibilidade total com PromQL e remote write. Claro, adicionam complexidade – mas são soluções maduras mantidas pela CNCF/Grafana Labs.
 
 * **Federação bem aplicada:** Caso use federação, siga a orientação de federar apenas métricas já agregadas e necessárias globalmente. Por exemplo, federar só métricas começando com `job:` (indicando que são resultados de recording rules já agregadas). Não federar todas as métricas crus. E realize alertas localmente, deixando o global só para visualização.
 
@@ -1500,13 +2723,37 @@ groups:
 
 Seguindo essas práticas, você deverá manter seu ambiente Prometheus funcionando de forma mais suave, evitando as armadilhas comuns de desempenho e garantindo que as métricas coletadas realmente agreguem valor (e alertas disparem quando devem, sem falso positivos ou negativos).
 
+## Operação e Manutenção
+
+### Promtool
+
+O **promtool** é uma ferramenta de linha de comando que acompanha o Prometheus, fornecendo utilitários para verificar configurações e depurar dados. Algumas utilizações comuns do promtool:
+
+* **Checar sintaxe de configuração:** Antes de subir uma alteração no `prometheus.yml`, rode `promtool check config prometheus.yml`. Ele apontará erros de sintaxe ou campos desconhecidos, ajudando a evitar falhas no start do servidor.
+* **Validar regras de alerta ou gravação:** Se você definiu arquivos externos de regras (YAML de alertas ou recording rules), use `promtool check rules minhas_regras.yml`. Ele analisará as expressões PromQL e a formatação.
+* **Testar expressão de alerta:** O promtool permite avaliar manualmente expressões em um dado instantâneo ou série de tempo para ver se disparariam alerta. Útil em CI ou para garantir que a lógica está correta.
+* **Checar integridade do TSDB:** Com o comando `promtool tsdb check /path/para/dados` é possível inspecionar o banco local de séries temporais em busca de inconsistências ou corrupção.
+* **Converter formatos de dados de métrica:** Há como transformar arquivos de métricas entre formatos (por exemplo, de texto para JSON e vice-versa) usando `promtool convert metrics --from=txt --to=json arquivo.txt`.
+
+Essas são apenas algumas funções. Em suma, o promtool é seu amigo para garantir que o ambiente Prometheus está consistente e saudável – use-o sempre que fizer mudanças significativas na configuração.
+
 ## Conclusão
 
-Neste artigo, exploramos em detalhes o Prometheus – desde conceitos fundamentais até seu funcionamento interno e implicações práticas de operação. Vimos como ele implementa um banco de dados de séries temporais altamente eficiente, mantendo dados recentes em memória para rapidez e usando compressão e segmentação em blocos para histórico em disco. Também analisamos aspectos como modelo de coleta pull, linguagem de consulta poderosa, uso intensivo de recursos proporcionais ao volume de métricas, e formas de contornar limitações (sejam arquiteturais ou de escala) com boas práticas e ferramentas auxiliares.
+Neste artigo, exploramos em detalhes o Prometheus – desde conceitos fundamentais até seu funcionamento interno e implicações práticas de operação. Vimos como ele implementa um banco de dados de séries temporais altamente eficiente, mantendo dados recentes em memória para rapidez e usando compressão e segmentação em blocos para histórico em disco.
 
-O Prometheus se destaca no ecossistema de monitoramento por sua simplicidade de implantação e por ter sido projetado desde o início para ambientes de microsserviços e infraestrutura dinâmica. Seu modelo multidimensional de métricas com labels e o PromQL possibilitam análises ricas e alertas robustos com relativamente pouco esforço de configuração. É notável como em poucos anos ele se tornou um dos pilares da observabilidade moderna, ao lado de ferramentas complementares para logs (ELK stack) e *tracing* (Jaeger, etc.).
+Também analisamos aspectos como modelo de coleta pull, linguagem de consulta poderosa, uso intensivo de recursos proporcionais ao volume de métricas, e formas de contornar limitações (sejam arquiteturais ou de escala) com boas práticas e ferramentas auxiliares.
 
-Por outro lado, entendemos que o Prometheus não resolve tudo sozinho: retenção de longo prazo, alta disponibilidade nativa e escalabilidade horizontal são pontos fora do escopo do core do Prometheus. Em vez de tentar ser distribuído, o projeto optou por interfaces (remote write/read) e pela filosofia de componibilidade – cabendo a outras peças (como Thanos ou Mimir) suprir essas demandas quando necessárias. Essa decisão de design mantém o Prometheus "enxuto" e confiável, mas significa que para crescer além de certo limite, precisamos arquitetar bem a solução de monitoramento abrangendo outros componentes.
+Esses pontos mostram como o Prometheus alia eficiência técnica a flexibilidade operacional, permitindo que equipes monitorem ambientes complexos e em constante evolução, ao mesmo tempo em que enfrentam desafios de escala e desempenho com soluções práticas e acessíveis.
+
+O Prometheus se destaca no ecossistema de monitoramento por sua simplicidade de implantação e por ter sido projetado desde o início para ambientes de microsserviços e infraestrutura dinâmica. Seu modelo multidimensional de métricas com labels e o PromQL possibilitam análises ricas e alertas robustos com relativamente pouco esforço de configuração.
+
+É notável como em poucos anos ele se tornou um dos pilares da observabilidade moderna, ao lado de ferramentas complementares para logs (ELK stack) e *tracing* (Jaeger, etc.).
+
+Por outro lado, entendemos que o Prometheus não resolve tudo sozinho: retenção de longo prazo, alta disponibilidade nativa e escalabilidade horizontal são pontos fora do escopo do core do Prometheus.
+
+Em vez de tentar ser distribuído, o projeto optou por interfaces (remote write/read) e pela filosofia de componibilidade – cabendo a outras peças (como Thanos ou Mimir) suprir essas demandas quando necessárias.
+
+Essa decisão de design mantém o Prometheus "enxuto" e confiável, mas significa que para crescer além de certo limite, precisamos arquitetar bem a solução de monitoramento abrangendo outros componentes.
 
 Recapitulando alguns aprendizados chave:
 
@@ -1518,7 +2765,9 @@ Recapitulando alguns aprendizados chave:
 
 Esperamos que este guia tenha fornecido insights valiosos, tanto para iniciantes entenderem os conceitos do Prometheus quanto para usuários experientes refinarem sua utilização. Compreender o "under the hood" do Prometheus ajuda a antecipar comportamentos, otimizar configurações e evitar armadilhas comuns na operação diária.
 
-O Prometheus continua em rápida evolução (com melhorias na TSDB, novos recursos como Exemplos Exemplares e Native Histograms em teste, etc.), e o ecossistema ao seu redor também. Fique atento a atualizações e boas práticas emergentes – a comunidade CNCF e blogs como o *Robust Perception* regularmente publicam conteúdos de alto nível a respeito. No mais, boas métricas e bons alertas!
+O Prometheus continua em rápida evolução (com melhorias na TSDB, novos recursos como Exemplos Exemplares e Native Histograms em teste, etc.), e o ecossistema ao seu redor também. Fique atento a atualizações e boas práticas emergentes – a comunidade CNCF e blogs como o *Robust Perception* regularmente publicam conteúdos de alto nível a respeito.
+
+No mais, boas métricas e bons alertas!
 
 ---
 
