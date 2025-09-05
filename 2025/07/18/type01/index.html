@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1757082592">
+<link rel="stylesheet" href="/css/main.css?v=1757087164">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757082592">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757087164">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757082592">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757087164">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1757082592"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1757087164"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -575,7 +575,7 @@ std::vector&lt;decltype(x &#43; y)&gt; v; // v terá o tipo std::vector&lt;tipo_
   <pre><code class="language-cpp">auto x = {};   // tentativa de deduzir a partir de um inicializador vazio (ambiguo!)
 foo(x);       // usar x em uma chamada posterior</code></pre>
  <p>No exemplo hipotético acima, <code>auto x = {}</code> é inválido porque <code>{}</code> (um <strong>initializer list</strong> vazio) não fornece pistas suficientes para deduzir um tipo concreto para <code>x</code>. O compilador <strong>não</strong> tentará olhar para a chamada <code>foo(x)</code> para inferir que tipo <code>x</code> deveria ter; ele simplesmente emite um erro, dizendo que não foi possível deduzir o tipo de <code>x</code>.</p>
-<p>Essa filosofia de projeto está alinhada com a natureza do C++: o compilador funciona quase como um <strong>interpretador de única passada</strong> (one-pass interpreter) no que tange à inferência de tipos, determinando os tipos à medida que lê o código, sempre &ldquo;para frente&rdquo;, jamais &ldquo;para trás&rdquo; ou além do escopo local. Isso torna o comportamento mais previsível e evita que mudanças em linhas futuras alterem retrospectivamente o significado de linhas anteriores.</p>
+<p>Essa filosofia de projeto está alinhada com a natureza do C++: o compilador atua de forma local e imediata na dedução de tipos, sem considerar usos posteriores. Os tipos são determinados à medida que lê o código, sempre &ldquo;para frente&rdquo;, jamais &ldquo;para trás&rdquo; ou além do escopo local. Isso torna o comportamento mais previsível e evita que mudanças em linhas futuras alterem retrospectivamente o significado de linhas anteriores.</p>
 <p>Outro impacto dessa abordagem é visto na resolução de <strong>sobrecarga de funções</strong> e instâncias de <strong>templates</strong>. Em C++, para selecionar qual versão de uma função sobrecarregada chamar, ou para deduzir parâmetros de um template, o compilador precisa conhecer os tipos dos argumentos <em>antes</em> de fazer a resolução.</p>
 <p>Como o tipo de cada variável é inferido imediatamente em sua declaração, quando o compilador encontra uma chamada como <code>foo(x)</code> ele já sabe o tipo de <code>x</code> e pode resolver de forma determinística qual função <code>foo</code> (entre as possivelmente sobrecarregadas) deve ser invocada. Essa ordem de resolução (deduzir tipos primeiro, depois escolher sobrecargas) é parte integrante do modelo de compilação do C++.</p>
 <p>Vale mencionar que versões modernas do C++ têm expandido modestamente as capacidades de inferência, mas sempre dentro do paradigma existente.</p>
@@ -592,7 +592,7 @@ foo(x);       // usar x em uma chamada posterior</code></pre>
 <p>Como consequência, o programador C++ às vezes precisará fornecer dicas extras ao compilador (por exemplo, especificar sufixos em literais, ou anotar tipos de template complexos) quando a dedução automática não for suficiente. Essa abordagem privilegia a <strong>previsibilidade</strong>: uma vez escrita uma linha de código, seu efeito sobre os tipos é fixo e não será alterado por código em outras partes da função.</p>
 <h2 id="inferência-de-tipos-no-rust">Inferência de Tipos no Rust</h2>
 <p>A linguagem Rust adota uma estratégia de inferência de tipos <strong>mais robusta e contextual</strong>, baseada no clássico algoritmo <strong><a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley–Milner</a></strong> da teoria de tipos. Diferentemente do C++, em Rust não existe uma palavra-chave específica como <code>auto</code>; em vez disso, <em>todas</em> as declarações podem omitir o tipo do valor, e o compilador inferirá o tipo com base em todas as pistas disponíveis.</p>
-<p>Podemos dizer que o compilador Rust age como um <strong>solucionador de restrições</strong>: ele analisa simultaneamente um bloco de código inteiro (por exemplo, o corpo de uma função), recolhendo informações sobre que tipos seriam consistentes com cada operação, e então encontra um conjunto de tipos que satisfaz todas as restrições impostas pelo código.</p>
+<p>Podemos dizer que o compilador Rust resolve restrições de tipo em escopo de função (ou bloco), propagando informações para frente e para trás dentro desse limite, mas não entre funções diferentes. Ele recolhe informações sobre que tipos seriam consistentes com cada operação dentro do escopo e então encontra um conjunto de tipos que satisfaz todas as restrições impostas pelo código.</p>
 <p>Um exemplo simples ilustra essa abordagem. Considere duas funções em Rust, uma que espera um vetor de inteiros e outra que espera um vetor de strings:</p>
 
 
@@ -606,7 +606,7 @@ fn main() {
     bar(y);             // após esta linha, y: Vec&lt;String&gt;
 }</code></pre>
  <p>No trecho acima, tanto <code>x</code> quanto <code>y</code> são inicializados com <code>Vec::new()</code> (um vetor vazio) sem anotação de tipo. Isoladamente, <code>Vec::new()</code> é ambíguo, pois poderia ser um <code>Vec&lt;T&gt;</code> de qualquer tipo <code>T</code>. No entanto, ao usar <code>x</code> como argumento em <code>foo(x)</code>, o compilador deduz que <code>x</code> <em>deve</em> ser <code>Vec&lt;i32&gt;</code> para satisfazer o tipo de <code>foo</code>.</p>
-<p>Analogamente, <code>y</code> é deduzido como <code>Vec&lt;String&gt;</code> porque é passado para <code>bar</code>. Assim, <strong>o mesmo código de inicialização resultou em dois tipos diferentes</strong> para as variáveis, dependendo do uso posterior de cada uma. Esse comportamento seria impossível em C++ ou Go, mas em <a href="https://www.rust-lang.org/">Rust</a> ele é natural dentro do modelo de inferência global.</p>
+<p>Analogamente, <code>y</code> é deduzido como <code>Vec&lt;String&gt;</code> porque é passado para <code>bar</code>. Assim, <strong>o mesmo código de inicialização resultou em dois tipos diferentes</strong> para as variáveis, dependendo do uso posterior de cada uma. Esse comportamento seria impossível em C++ ou Go, mas em <a href="https://www.rust-lang.org/">Rust</a> ele é natural dentro do modelo de inferência contextual.</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/retropc02.png" alt=""></p>
 <p>Podemos perceber que o compilador Rust efetua um <strong>raciocínio bidirecional</strong>: ele propaga informações de tipo tanto <strong>para frente</strong> (do ponto onde algo é declarado para onde é usado) quanto <strong>para trás</strong> (do contexto de uso de volta para a declaração original). Em termos práticos, o Rust consegue frequentemente inferir o tipo exato de quase todas as variáveis locais apenas olhando o contexto, sem nenhuma anotação explícita por parte do programador.</p>
 <p>Tipicamente, só é necessário declarar tipos nas <strong>fronteiras</strong> – isto é, nos parâmetros e retornos de funções públicas – para que o código seja legível e para estabelecer interfaces claras entre partes do programa. Dentro de uma função, porém, é comum não ver nomes de tipos na maioria das declarações, já que o compilador pode <strong>unir os pontos</strong> de forma consistente.</p>
@@ -621,33 +621,39 @@ fn main() {
     bar(x); // ERRO: &#34;types mismatch&#34;, esperava-se Vec&lt;String&gt; mas foi fornecido Vec&lt;i32&gt;
 }</code></pre>
  <p>Aqui, annotamos <code>x</code> explicitamente como <code>Vec&lt;i32&gt;</code> e, em seguida, tentamos passá-lo a <code>bar</code> que espera <code>Vec&lt;String&gt;</code>. O Rust imediatamente reporta erro de tipos incompatíveis, evitando qualquer comportamento ambíguo ou inferência incorreta.</p>
-<p>Em outro caso, podemos pedir ao compilador para inferir parte de um tipo usando o curinga <code>_</code> (placeholder) em uma anotação, mas ainda assim precisamos dar informação suficiente para não ficar mais de uma possibilidade. Se nem mesmo com todas as pistas o compilador puder determinar unicamente um tipo, a inferência <strong>falhará</strong>, emitindo uma mensagem de erro solicitando uma anotação manual.</p>
+<p>Em outro caso, podemos pedir ao compilador para inferir parte de um tipo usando o curinga <code>_</code> (placeholder) em uma anotação. O <code>_</code> pode ser usado em parâmetros de tipo, tipos de retorno com <code>impl Trait</code>, e outras posições onde queremos inferência parcial. Por exemplo:</p>
+
+
+  <pre><code class="language-rust">let v: Vec&lt;_&gt; = (0..10).collect(); // `_` deduzido como i32
+let map: HashMap&lt;String, _&gt; = get_data(); // segundo parâmetro inferido pelo uso
+fn process_data() -&gt; impl Iterator&lt;Item = _&gt; { /*...*/ } // tipo do Item inferido</code></pre>
+ <p>Ainda assim precisamos dar informação suficiente para não ficar mais de uma possibilidade. Se nem mesmo com todas as pistas o compilador puder determinar unicamente um tipo, a inferência <strong>falhará</strong>, emitindo uma mensagem de erro solicitando uma anotação manual.</p>
 <p>Em termos de filosofia, o sistema de tipos do Rust adquire uma característica mais <strong>declarativa</strong> devido à inferência robusta. O programador escreve o que deseja fazer (por exemplo, aplicar métodos, combinar valores, retornar um resultado), e o compilador trabalha nos bastidores para descobrir quais tipos tornam todas essas operações válidas simultaneamente.</p>
-<p>Alguns desenvolvedores comparam essa experiência a interagir com um assistente lógico ou um provador de teoremas, já que você estabelece &ldquo;verdades&rdquo; parciais sobre os dados e o compilador verifica a consistência global dessas afirmações.</p>
+<p>Alguns desenvolvedores comparam essa experiência a interagir com um assistente lógico ou um provador de teoremas, já que você estabelece &ldquo;verdades&rdquo; parciais sobre os dados e o compilador verifica a consistência local dessas afirmações dentro do escopo da função.</p>
 <p>Uma vantagem prática disso é que cada tipo geralmente precisa ser escrito <strong>apenas uma vez</strong> em todo o programa (quando é necessário). Se uma função retorna um tipo complexo, você não precisa repetir esse tipo ao usar o valor – o compilador já sabe, e propagará a informação adiante conforme necessário. Isso reduz a redundância e o risco de discrepâncias entre declarações e usos.</p>
-<p>Rust consegue oferecer essa inferência global potente em parte porque abre mão de certos recursos presentes em C++ que dificultariam o processo. Em especial, destacam-se as ausências, por design, de alguns mecanismos na linguagem Rust:</p>
+<p>Rust consegue oferecer essa inferência contextual potente em parte porque abre mão de certos recursos presentes em C++ que dificultariam o processo. Em especial, destacam-se as ausências, por design, de alguns mecanismos na linguagem Rust:</p>
 <ul>
 <li><strong>Sobrecarga de funções por tipo</strong>: Em Rust não é permitido definir duas funções com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único ou, se comportamentos diferentes forem necessários, usam-se <strong>traits</strong> para diferenciá-los. Isso elimina ambiguidade, pois uma chamada de função em Rust corresponde sempre a uma única definição possível (após considerado o trait/import necessário).</li>
 <li><strong>Conversões implícitas de tipo</strong>: Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um <code>int</code> em <code>double</code> em certas expressões). Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.</li>
 <li><strong>Herança de classes</strong>: Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza <em>traits</em> (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos. A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.</li>
-<li><strong>Especialização de templates</strong>: Rust tem generics e implementações de traits para tipos genéricos, mas atualmente não permite <em>especialização</em> (isto é, fornecer implementações alternativas de um traço/genérico para um caso específico mais restrito). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. No Rust, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</li>
+<li><strong>Especialização de templates</strong>: Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</li>
 </ul>
 <p>Essas escolhas de design do Rust limitam o espaço de busca do algoritmo de inferência. Em essência, o compilador Rust tem menos &ldquo;adivinhações&rdquo; a fazer, porque a linguagem evita construções que poderiam levar a múltiplas interpretações para uma mesma expressão.</p>
 <p>A sobrecarga de funções tradicional, por exemplo, foi deliberadamente excluída porque múltiplas definições sobrecarregadas poderiam interagir mal com o sistema de inferência, complicando a resolução de tipos. Em vez disso, o Rust utiliza traits e genéricos para alcançar polimorfismo ad-hoc, mantendo a inferência mais previsível.</p>
 <p>Da mesma forma, a ausência de conversões implícitas entre tipos (por exemplo, de <code>i32</code> para <code>f64</code>) evita que o compilador fique tentando adivinhar caminhos de conversão durante a inferência – qualquer conversão deve ser explícita via <code>as</code> ou métodos, eliminando ambiguidade. Essa restrição consciente de poder expressivo em algumas áreas é o que torna viável aplicar Hindley-Milner em um contexto de linguagem de sistemas com alta performance de compilação.</p>
-<p>Vale notar que, embora o Rust use um sistema de inferência forte, <strong>ele não chega a inferir a assinatura completa de funções</strong>. Ou seja, diferentemente de Haskell (onde é possível escrever funções sem nenhuma anotação de tipo que o compilador deduz seu tipo genérico mais geral automaticamente), o Rust exige que os parâmetros e tipos de retorno de <strong>todas</strong> as funções sejam especificados – sejam elas públicas, privadas ou locais.</p>
-<p>Essa escolha de design foi deliberada: ao não permitir inferência &ldquo;global&rdquo; entre funções, evita-se que um erro em uma função cause mensagens confusas em outro ponto distante do código.</p>
+<p>Vale notar que, embora o Rust use um sistema de inferência forte, <strong>ele não chega a inferir a assinatura completa de funções</strong>. Ou seja, diferentemente de Haskell (onde é possível escrever funções sem nenhuma anotação de tipo que o compilador deduz seu tipo genérico mais geral automaticamente), o Rust exige anotação explícita em parâmetros e retornos de funções nomeadas (<code>fn</code>), mas em closures e funções locais ele pode inferir o tipo de retorno.</p>
+<p>Essa escolha de design foi deliberada: ao não permitir inferência interprocedural entre funções, evita-se que um erro em uma função cause mensagens confusas em outro ponto distante do código.</p>
 <p>Em outras palavras, a inferência do Rust ocorre apenas dentro do escopo de cada função ou bloco, e nunca ao nível de APIs entre módulos. Isso mantém as interfaces explícitas e ajuda na legibilidade e na verificação de compatibilidade entre crates (módulos compilados separadamente).</p>
 <p>A inferência atua dentro dos limites dessas funções e nos tipos genéricos, mas não infere, por exemplo, que uma função <code>fn add(x, y) { x + y }</code> deve ser genérica ou qual seu tipo de retorno – tais informações devem ser anotadas (no caso, usando traits e <code>-&gt; T</code>). Essa diferença demonstra mais uma vez o equilíbrio que Rust busca: o benefício da inferência local máxima, sem sacrificar a clareza e a robustez na definição de fronteiras do código.</p>
 <h2 id="comparação-com-o-swift-e-desafios-adicionais">Comparação com o Swift e Desafios Adicionais</h2>
 <p>A linguagem <strong>Swift</strong>, desenvolvida pela Apple, oferece um caso interessante para compararmos com Rust e C++. Swift implementa um sistema de inferência de tipos também baseado em resolução de restrições (um tipo de <strong>unificação</strong> bidirecional semelhante ao Hindley-Milner), permitindo ao programador omitir muitos tipos.</p>
 <p>Entretanto, Swift <strong>mantém recursos de linguagem que Rust evitou</strong>, como sobrecarga extensiva de funções e operadores, conversões implícitas via <strong>protocolos literais</strong>, e múltiplas conveniências sintáticas. A interação dessas características com a inferência de tipos acabou expondo desafios significativos no compilador Swift.</p>
-<p>Um sintoma notório desses desafios é o famoso erro do Swift: <em>“the compiler is unable to type-check this expression in reasonable time”</em> (o compilador não consegue verificar o tipo desta expressão em tempo hábil). Esse erro ocorre quando a expressão de código é tão complexa para o mecanismo de inferência que o compilador não consegue resolver dentro de limites práticos de tempo. Por exemplo, observe a expressão abaixo:</p>
+<p>Um sintoma notório desses desafios é o famoso erro do Swift: <em>&ldquo;the compiler is unable to type-check this expression in reasonable time&rdquo;</em> (o compilador não consegue verificar o tipo desta expressão em tempo hábil). Esse erro ocorre quando a expressão de código é tão complexa para o mecanismo de inferência que o compilador não consegue resolver dentro de limites práticos de tempo. Como exemplo ilustrativo do tipo de operação que pode ser problemática:</p>
 
 
   <pre><code class="language-swift">let a: Double = -(1 &#43; 2) &#43; -(3 &#43; 4) &#43; -(5)</code></pre>
- <p>Poderia acionar esse erro no Swift (dependendo da versão do compilador), apesar de ser conceitualmente trivial. O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.).</p>
-<p>Assim, ao analisar a expressão acima, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada <code>+</code> podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado (<code>Double</code> neste caso).</p>
+ <p>Embora esse exemplo específico seja simples demais para causar problemas nas versões atuais do Swift, ele demonstra o tipo de construção que pode ser problemática: expressões com múltiplas operações aninhadas e literais ambíguos. Os casos realmente problemáticos envolvem expressões muito mais longas e complexas com cadeias extensas de operadores sobrecarregados.</p>
+<p>O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.). Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado.</p>
 <p>Com muitas possibilidades, o problema rapidamente explode em complexidade. De fato, um caso real relatado envolveu concatenar cadeias de strings e valores numéricos numa única expressão para formar uma URL, levando o compilador Swift 42 segundos para tentar resolver os tipos antes de finalmente falhar com a mensagem de erro mencionada.</p>
 <p>Nesse caso específico, nenhuma combinação de sobrecargas resolvia a expressão, pois havia uma soma entre tipos incompatíveis (Int e String), levando o solver a explorar um espaço enorme até desistir.</p>
 <blockquote>
@@ -656,7 +662,7 @@ fn main() {
 <p>Chris Lattner, o criador do Swift, refletiu que a decisão de projetar um <strong>type checker</strong> muito poderoso (um “fancy bi-directional Hindley-Milner type checker”) acabou resultando em tempos de compilação ruins em expressões complexas e mensagens de erro insatisfatórias, pois um erro em uma parte distante da expressão pode invalidar o conjunto inteiro de deduções.</p>
 <p>Em suas palavras, “soa ótimo [na teoria], mas na prática não funciona tão bem” dado esse comportamento.</p>
 <blockquote>
-<p>Em resumo, o Swift tentou combinar o “melhor dos dois mundos” – inferência ampla como a do Rust/Haskell <strong>e</strong> recursos como sobrecarga e conversões convenientes do C++ – e com isso atingiu os limites do que o algoritmo de inferência consegue suportar eficientemente.</p></blockquote>
+<p>Em resumo, o Swift tentou combinar o &ldquo;melhor dos dois mundos&rdquo; – inferência ampla como a do Rust/Haskell <strong>e</strong> recursos como sobrecarga e conversões convenientes do C++ – e com isso atingiu os limites do que o algoritmo de inferência consegue suportar eficientemente. Vale notar que a Apple tem feito progressos significativos para melhorar essa situação, incluindo a introdução de type checking incremental no Swift 5+ e outras otimizações que reduziram muitos dos casos problemáticos.</p></blockquote>
 <p>Essa comparação destaca um ponto crucial: <strong>a inferência de tipos não atua isoladamente – ela está intimamente ligada às demais features da linguagem e às escolhas de projeto do compilador</strong>.</p>
 <p>No Swift, para evitar tempos de compilação excessivos, às vezes é necessário guiar o compilador inserindo anotações de tipo intermediárias ou quebrando uma expressão complexa em subexpressões menores (ajudando-o a podar o espaço de busca). Alguns desenvolvedores Swift adotam como boa prática limitar o tamanho das expressões encadeadas exatamente por causa disso.</p>
 <p>Já em Rust, graças à ausência de sobrecarga arbitrária e conversões implícitas, o compilador consegue inferir tipos de forma previsível e em tempo linear na maioria dos casos, raramente exigindo intervenções manuais por desempenho. O C++ resolve o dilema evitando o problema desde o início: a inferência é tão restrita que a complexidade permanece sob controle, ao custo de requerer do programador mais especificações de tipo em cenários avançados.</p>
@@ -1017,20 +1023,20 @@ fn main() {
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1757082592"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1757082592"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757087164"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757087164"></script>
     
     
-    <script src="/js/main-minimal.js?v=1757082592"></script>
-    <script src="/js/lazy-loading.js?v=1757082592"></script>
-    <script src="/js/toc.js?v=1757082592"></script>
+    <script src="/js/main-minimal.js?v=1757087164"></script>
+    <script src="/js/lazy-loading.js?v=1757087164"></script>
+    <script src="/js/toc.js?v=1757087164"></script>
     
     
     
