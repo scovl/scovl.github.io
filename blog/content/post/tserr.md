@@ -13,12 +13,12 @@ Neste artigo, vamos explorar uma abordagem mais estruturada para o tratamento de
 
 - [**Purify-ts**](https://github.com/purify-ts/purify-ts): Uma alternativa mais leve ao fp-ts, focada em tipos como Maybe e Either
 - [**Neverthrow**](https://github.com/microsoft/neverthrow): Biblioteca especializada em tratamento de erros com Result/Either
-- [**Effect**](https://github.com/Effect-TS/effect): Uma biblioteca mais recente que expande os conceitos do fp-ts com foco em STM (Software Transactional Memory), concorrência e gerenciamento de recursos
-- [**Zio-ts**](https://github.com/zio/zio-ts): Inspirada na biblioteca ZIO de Scala, oferecendo abstrações para IO, concorrência e recursos
+- [**Effect**](https://effect.website/): O sucessor oficial e linha evolutiva do ecossistema fp-ts, oferecendo uma abordagem mais moderna para programação funcional com foco em concorrência, streaming e gerenciamento de recursos
+- [**Zio-ts**](https://github.com/zio/zio-ts): Inspirada na biblioteca ZIO de Scala (atualmente com desenvolvimento menos ativo)
 
-Cada uma dessas bibliotecas tem seus pontos fortes, mas o [fp-ts](https://gcanti.github.io/fp-ts/) se destaca pela sua maturidade, documentação abrangente e ecossistema rico de bibliotecas complementares. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.
+Cada uma dessas bibliotecas tem seus pontos fortes. O [fp-ts](https://gcanti.github.io/fp-ts/) continua sendo uma escolha sólida pela sua maturidade e estabilidade, enquanto o [Effect](https://effect.website/) representa a evolução natural desses conceitos. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.
 
-> **Nota sobre versões:** Este artigo utiliza a sintaxe do fp-ts 3.x (lançada em abril de 2025), que introduziu mudanças significativas na API, incluindo `fold` → `match`, `mapLeft` → `mapError`, e outros renomeamentos para maior clareza. Se você estiver usando fp-ts 2.x, consulte a [documentação de migração](https://gcanti.github.io/fp-ts/guides/migration-v3.html) para detalhes sobre as mudanças.
+> **Nota sobre versões:** Este artigo utiliza a sintaxe atual do fp-ts 2.x (versão estável), que permanece a versão recomendada para produção. A versão 3.x ainda está em fase pré-release/alpha. Para acompanhar a evolução da biblioteca, consulte a documentação oficial em [https://github.com/gcanti/fp-ts](https://github.com/gcanti/fp-ts).
 
 ---
 
@@ -46,7 +46,9 @@ try {
 > **Nota:** O uso de `any` para o tipo do erro é uma prática comum, mas não é a melhor opção. Em um sistema mais complexo, isso pode levar a erros de tipo que são difíceis de detectar.
 
 
-O uso de exceções apresenta sérios problemas de design: a assinatura da função `dividirLegado` não revela ao compilador a possibilidade de exceções, criando um contrato implícito onde o chamador precisa adivinhar a necessidade de um `try/catch`. Além disso, o `throw` interrompe abruptamente o fluxo de execução, dificultando o rastreamento e comprometendo a pureza funcional, enquanto a facilidade de esquecer blocos `try/catch` pode resultar em erros não capturados que derrubam aplicações inteiras. Uma alternativa comum é retornar valores especiais como `null`, `undefined` ou objetos de erro para sinalizar falhas, embora essa abordagem também apresente suas próprias limitações. Por exemplo:
+O uso de exceções apresenta sérios problemas de design: a assinatura da função `dividirLegado` não revela ao compilador a possibilidade de exceções, criando um contrato implícito onde o chamador precisa adivinhar a necessidade de um `try/catch`. 
+
+Além disso, o `throw` interrompe abruptamente o fluxo de execução, dificultando o rastreamento e comprometendo a pureza funcional, enquanto a facilidade de esquecer blocos `try/catch` pode resultar em erros não capturados que derrubam aplicações inteiras. Uma alternativa comum é retornar valores especiais como `null`, `undefined` ou objetos de erro para sinalizar falhas, embora essa abordagem também apresente suas próprias limitações. Por exemplo:
 
 ```typescript
 interface ResultadoDivisao {
@@ -78,7 +80,9 @@ if (resultadoNull === null) console.error("Divisão por zero!");
 ```
 
 
-Essa abordagem infelizmente também apresenta problemas significativos de usabilidade e segurança. O código se torna verboso e menos legível devido às constantes verificações manuais como `if (resultado.erro)` ou `if (resultado === null)`, enquanto a perda de contexto é inevitável, especialmente com valores `null` que não informam o motivo da falha - mesmo objetos de erro exigem disciplina manual consistente. Além disso, há um risco constante de erros silenciosos no sistema, pois esquecer de verificar o `null` ou a propriedade `erro` pode facilmente resultar em erros do tipo `TypeError: Cannot read property '...' of null` em partes subsequentes do código, comprometendo a robustez da aplicação como um todo.
+Essa abordagem infelizmente também apresenta problemas significativos de usabilidade e segurança. O código se torna verboso e menos legível devido às constantes verificações manuais como `if (resultado.erro)` ou `if (resultado === null)`, enquanto a perda de contexto é inevitável, especialmente com valores `null` que não informam o motivo da falha - mesmo objetos de erro exigem disciplina manual consistente. 
+
+Além disso, há um risco constante de erros silenciosos no sistema, pois esquecer de verificar o `null` ou a propriedade `erro` pode facilmente resultar em erros do tipo `TypeError: Cannot read property '...' of null` em partes subsequentes do código, comprometendo a robustez da aplicação como um todo.
 
 ---
 
@@ -167,7 +171,9 @@ Neste exemplo, `buscarNoticia` retorna um `Option<Noticia>`, que pode ser `Some`
 
 ## Sucesso Explícito ou Falha Detalhada
 
-Já o `Either` é o tipo protagonista no paradigma funcional quando precisamos modelar operações que podem falhar, oferecendo uma estrutura elegante que não apenas sinaliza o erro, mas também fornece detalhes específicos sobre a falha. Diferente de exceções tradicionais que interrompem o fluxo de execução, `Either` encapsula tanto o sucesso quanto o erro como valores de primeira classe, permitindo composição e transformação de operações falíveis de forma segura e previsível. Basicamente, `Either` é uma união de dois tipos: `Right` e `Left`:
+Já o `Either` é o tipo protagonista no paradigma funcional quando precisamos modelar operações que podem falhar, oferecendo uma estrutura elegante que não apenas sinaliza o erro, mas também fornece detalhes específicos sobre a falha. 
+
+Diferente de exceções tradicionais que interrompem o fluxo de execução, `Either` encapsula tanto o sucesso quanto o erro como valores de primeira classe, permitindo composição e transformação de operações falíveis de forma segura e previsível. Basicamente, `Either` é uma união de dois tipos: `Right` e `Left`:
 
 *   **`Right<A>`**: Representa um resultado de sucesso, contendo um valor do tipo `A`. (Pense "Right" como "correto").
 *   **`Left<E>`**: Representa uma falha, contendo um erro do tipo `E`. (Pense "Left" como o que sobrou, o erro).
@@ -284,7 +290,9 @@ Estas propriedades tornam o `Either` extremamente poderoso para composição de 
 
 Agora que entendemos o conceito de `pipe`, vamos explorar a função `match`, que é fundamental para extrair valores de um `Either`. Esta função permite definir duas funções: uma para o caso `Left` (erro) e outra para o caso `Right` (sucesso), funcionando essencialmente como um `if/else` especializado para o tipo `Either`. Com `match`, podemos transformar nosso `Either` em qualquer outro tipo, garantindo que ambos os casos sejam tratados explicitamente.
 
-O `match` é uma forma de "pattern matching" funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes "casos" ou "formas" que um valor pode ter. No caso do `Either`, temos dois padrões possíveis: `Left` e `Right`. O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garanta que não podemos acessar o valor interno de um `Either` sem primeiro "desempacotá-lo" usando `match` ou funções similares. Agora que você já entendeu o conceito de `pipe`, vamos ver como usar `match` para extrair valores de um `Either` acompanhando o gráfico abaixo:
+O `match` é uma forma de "pattern matching" funcional - um conceito poderoso de linguagens funcionais que permite lidar com diferentes "casos" ou "formas" que um valor pode ter. No caso do `Either`, temos dois padrões possíveis: `Left` e `Right`. 
+
+O pattern matching nos força a tratar todos os casos possíveis de forma explícita, eliminando a possibilidade de esquecermos algum caminho. Isso é especialmente valioso em TypeScript, onde o sistema de tipos garante que não podemos acessar o valor interno de um `Either` sem primeiro "desempacotá-lo" usando `match` ou funções similares. Agora que você já entendeu o conceito de `pipe`, vamos ver como usar `match` para extrair valores de um `Either` acompanhando o gráfico abaixo:
 
 ```mermaid
 graph LR
@@ -312,7 +320,9 @@ graph LR
     style G fill:#d6eaf8,stroke:#3498db,stroke-width:2px
 ```
 
-O processo começa com uma entrada `E.Either<E, A>`, que representa um valor que pode ser um sucesso (`Right<A>`) ou um erro (`Left<E>`). Quando aplicamos a função `match`, ela toma uma decisão baseada no tipo do `Either`: se for um `Right`, aplica a função de sucesso (`fnSucesso`) ao valor interno, transformando `A` em `B`; se for um `Left`, aplica a função de erro (`fnErro`) ao erro interno, transformando `E` também em `B`. O resultado final deste processo é sempre um valor do tipo `B`, independentemente do caminho seguido. Esta é a beleza do `match`: ele unifica os dois caminhos possíveis (sucesso e erro) em um único tipo de saída, permitindo que o código subsequente trabalhe com um valor concreto sem precisar verificar constantemente se estamos lidando com um sucesso ou um erro. Vamos ver um exemplo prático em código:
+O processo começa com uma entrada `E.Either<E, A>`, que representa um valor que pode ser um sucesso (`Right<A>`) ou um erro (`Left<E>`). Quando aplicamos a função `match`, ela toma uma decisão baseada no tipo do `Either`: se for um `Right`, aplica a função de sucesso (`fnSucesso`) ao valor interno, transformando `A` em `B`; se for um `Left`, aplica a função de erro (`fnErro`) ao erro interno, transformando `E` também em `B`. O resultado final deste processo é sempre um valor do tipo `B`, independentemente do caminho seguido.
+
+Esta é a beleza do `match`: ele unifica os dois caminhos possíveis (sucesso e erro) em um único tipo de saída, permitindo que o código subsequente trabalhe com um valor concreto sem precisar verificar constantemente se estamos lidando com um sucesso ou um erro. Vamos ver um exemplo prático em código:
 
 ```typescript
 import * as E from "fp-ts/Either";
@@ -334,7 +344,9 @@ const result = pipe(
 console.log(result); // "Erro: Divisão por zero!"
 ```
 
-O método `match` é particularmente útil quando você precisa **transformar** o resultado final de uma operação em um formato específico, como preparar dados para exibição na interface do usuário ou formatar mensagens para logging. Esta função é essencial para unificar os caminhos de sucesso e erro em um único tipo de retorno. Além disso, `match` serve como uma excelente maneira de **encerrar** uma cadeia de operações com um valor concreto, permitindo que você conclua o processamento de um `Either` e obtenha um resultado final que não é mais um tipo monádico. 
+O método `match` é particularmente útil quando você precisa **transformar** o resultado final de uma operação em um formato específico, como preparar dados para exibição na interface do usuário ou formatar mensagens para logging. Esta função é essencial para unificar os caminhos de sucesso e erro em um único tipo de retorno.
+
+Além disso, `match` serve como uma excelente maneira de **encerrar** uma cadeia de operações com um valor concreto, permitindo que você conclua o processamento de um `Either` e obtenha um resultado final que não é mais um tipo monádico. 
 
 ## Usando `map` para Transformar o Valor de Sucesso
 
@@ -345,12 +357,12 @@ graph LR
     A["parseNumber('42')"] --> B[Right<42>]
     B --> C[map: n → n * 2]
     C --> D[Right<84>]
-    D --> E[fold: exibe resultado]
+    D --> E[match: exibe resultado]
     
     A2["parseNumber('abc')"] --> B2[Left<'Erro'>]
     B2 --> C2[map: ignorado]
     C2 --> D2[Left<'Erro'>]
-    D2 --> E2[fold: exibe erro]
+    D2 --> E2[match: exibe erro]
 
     subgraph "Exemplo Completo"
     A --> E
@@ -361,7 +373,9 @@ graph LR
     style D2 fill:#ffdddd,stroke:#e74c3c
 ```
 
-Vamos entender o diagrama acima: ele ilustra como o operador `map` funciona com o tipo `Either`. No caminho superior, quando `parseNumber('42')` retorna um `Right<42>` (sucesso), o `map` aplica a função de transformação (multiplicação por 2), resultando em `Right<84>`. No caminho inferior, quando `parseNumber('abc')` retorna um `Left<'Erro'>` (falha), o `map` ignora completamente a função de transformação, propagando o erro original sem modificação. Este comportamento é fundamental para a programação funcional, pois permite transformar valores de sucesso enquanto preserva automaticamente os erros, criando um fluxo de dados seguro e previsível. Vejamos um exemplo prático de como usar `map` com `Either`:
+Vamos entender o diagrama acima: ele ilustra como o operador `map` funciona com o tipo `Either`. No caminho superior, quando `parseNumber('42')` retorna um `Right<42>` (sucesso), o `map` aplica a função de transformação (multiplicação por 2), resultando em `Right<84>`. No caminho inferior, quando `parseNumber('abc')` retorna um `Left<'Erro'>` (falha), o `map` ignora completamente a função de transformação, propagando o erro original sem modificação.
+
+Este comportamento é fundamental para a programação funcional, pois permite transformar valores de sucesso enquanto preserva automaticamente os erros, criando um fluxo de dados seguro e previsível. Vejamos um exemplo prático de como usar `map` com `Either`:
 
 
 ```typescript
@@ -480,7 +494,9 @@ E quando nossas operações são assíncronas, como chamadas de API ou interaç�
 
 3. O `TaskEither<E, A>` combina o conceito de `Task` com `Either`. Formalmente, é um `Task<Either<E, A>>`, ou seja, uma função que retorna uma promessa que resolverá para um `Either<E, A>`.
 
-Isso nos dá o melhor dos dois mundos: a capacidade de lidar com operações assíncronas (como o `Promise`) e um tratamento de erros explícito e tipado (como o `Either`). Na prática, o `TaskEither` é perfeito para operações que demoram para completar e podem falhar, como buscar dados de um servidor ou ler um arquivo. Em vez de usar `try/catch` espalhados pelo código ou verificar erros manualmente, você encadeia operações de forma elegante e o TypeScript garanta que você não esqueça de tratar os erros.
+Isso nos dá o melhor dos dois mundos: a capacidade de lidar com operações assíncronas (como o `Promise`) e um tratamento de erros explícito e tipado (como o `Either`). 
+
+Na prática, o `TaskEither` é perfeito para operações que demoram para completar e podem falhar, como buscar dados de um servidor ou ler um arquivo. Em vez de usar `try/catch` espalhados pelo código ou verificar erros manualmente, você encadeia operações de forma elegante e o sistema de tipos garante que você não esqueça de tratar os erros.
 
 A grande vantagem é que, diferente de uma `Promise` comum que mistura o fluxo de sucesso e erro em callbacks separados (`.then()` e `.catch()`), o `TaskEither` mantém ambos os caminhos dentro do mesmo tipo, permitindo composição mais segura e previsível de operações assíncronas que podem falhar. Vamos ver um exemplo prático de como usar `TaskEither` no código abaixo:
 
@@ -540,6 +556,7 @@ async function exibirNomeUsuario(id: number): Promise<void> {
 }
 
 // Pattern alternativo: TE.mapError para logging de erros no pipeline
+// Nota: Em TaskEither, mapError é a forma preferida; mapLeft permanece como alias legado
 const programaComLog = pipe(
   fetchUser(id),
   TE.mapError((erro) => {
@@ -583,7 +600,9 @@ Formalmente, um `TaskEither<E, A>` é definido como `() => Promise<E.Either<E, A
 
 Esta separação oferece benefícios significativos. Primeiro, permite compor operações complexas de forma declarativa, construindo um pipeline de transformações antes de qualquer execução. Segundo, facilita o teste unitário, já que você pode inspecionar e manipular a descrição da computação sem disparar efeitos colaterais. Terceiro, proporciona otimizações como [lazy evaluation (avaliação preguiçosa)](https://en.wikipedia.org/wiki/Lazy_evaluation), onde computações são executadas apenas quando realmente necessárias.
 
-A execução real só ocorre no que chamamos de "fim do mundo" - o momento em que você efetivamente precisa do resultado ou do efeito colateral. Isso acontece em duas etapas: primeiro, quando usamos `matchE` (ou outros combinadores finais como `getOrElseEW`) para "consumir" o `TaskEither` e transformá-lo em uma `Task` (que é essencialmente uma função `() => Promise<A>`); e depois, quando chamamos `await programa()` para executar essa `Task` e obter o resultado final. Este modelo de execução adiada dá ao desenvolvedor controle preciso sobre quando e como os efeitos ocorrem, tornando o código mais previsível e facilitando o raciocínio sobre o fluxo de dados, especialmente em aplicações complexas com múltiplas operações assíncronas interdependentes.
+A execução real só ocorre no que chamamos de "fim do mundo" - o momento em que você efetivamente precisa do resultado ou do efeito colateral. Isso acontece em duas etapas: primeiro, quando usamos `matchE` (ou outros combinadores finais como `getOrElseEW`) para "consumir" o `TaskEither` e transformá-lo em uma `Task` (que é essencialmente uma função `() => Promise<A>`) que deve ser invocada; e depois, quando chamamos `await programa()` para executar essa `Task` e obter o resultado final.
+
+Este modelo de execução adiada dá ao desenvolvedor controle preciso sobre quando e como os efeitos ocorrem, tornando o código mais previsível e facilitando o raciocínio sobre o fluxo de dados, especialmente em aplicações complexas com múltiplas operações assíncronas interdependentes.
 
 ## TaskOption: Quando a Ausência é Esperada
 
@@ -595,15 +614,11 @@ import * as TO from 'fp-ts/TaskOption';
 // Buscar usuário que pode não existir
 const buscarUsuarioOpcional = (id: number): TO.TaskOption<UserData> =>
   TO.tryCatch(async () => {
-    const response = await fetch(`/api/users/${id}`);
-    if (response.status === 404) {
-      return TO.none; // Usuário não encontrado - estado válido
-    }
-    if (!response.ok) {
-      throw new Error(`Erro de rede: ${response.status}`);
-    }
-    return TO.some(await response.json());
-  }, (e: unknown) => new Error(String(e)));
+    const res = await fetch(`/api/users/${id}`);
+    if (res.status === 404) throw new Error('NOT_FOUND'); // vira none
+    if (!res.ok) throw new Error(String(res.status));
+    return res.json() as Promise<UserData>;
+  });
 
 // Uso: a ausência é tratada como um caso normal
 const programa = pipe(
@@ -637,13 +652,6 @@ const fetchUserK = (id: number): TE.TaskEither<Error, UserData> =>
     fetchUserPromise, // Passa a função diretamente
     (e: unknown) => new Error(String(e))
   )(id);
-
-// ✅ Ou use fromPromise para conversão direta
-const fetchUserFromPromise = (id: number): TE.TaskEither<Error, UserData> =>
-  TE.fromPromise(
-    fetchUserPromise(id),
-    (e: unknown) => new Error(String(e))
-  );
 ```
 
 Estas funções são mais idiomáticas e type-safe, especialmente quando você está integrando bibliotecas existentes que já trabalham com Promises.
@@ -658,13 +666,14 @@ Tradicionalmente, esses efeitos são "invisíveis" na assinatura das funções e
 
 O `fp-ts` brilha na composição. Se precisarmos de dados de múltiplas fontes, podemos encadear operações de forma elegante e segura, como demonstrado nos exemplos acima. Por fim, a biblioteca fp-ts oferece uma abordagem robusta para lidar com erros em TypeScript, transformando o tratamento de exceções tradicional em um fluxo de dados previsível e tipado. 
 
-Ao adotar esses padrões funcionais, conseguimos criar código mais confiável, testável e manutenível, onde os erros são tratados como cidadãos de primeira classe em vez de casos excepcionais. Essa mudança de paradigma não apenas melhora a qualidade do código, mas também proporciona uma experiência de desenvolvimento mais agradável, onde a composição de operações complexas se torna natural e o sistema de tipos trabalha a nosso favor para garantir que todos os casos de erro sejam devidamente considerados.
+Ao adotar esses padrões funcionais, conseguimos criar código mais confiável, testável e manutenível, onde os erros são tratados como cidadãos de primeira classe em vez de casos excepcionais.
+
+Essa mudança de paradigma não apenas melhora a qualidade do código, mas também proporciona uma experiência de desenvolvimento mais agradável, onde a composição de operações complexas se torna natural e o sistema de tipos trabalha a nosso favor para garantir que todos os casos de erro sejam devidamente considerados.
 
 Vamos ver um exemplo prático de como usar `TaskEither` para buscar um post e depois seus comentários:
 
 ```typescript
 import * as TE from 'fp-ts/TaskEither';
-import * as A from 'fp-ts/Array';
 // pipe já importado de 'fp-ts/function'
 
 // Suponha que fetchPost retorne TaskEither<NetworkError, PostData>
@@ -717,7 +726,7 @@ const fetchAllUsersPrograms: Array<TE.TaskEither<NetworkError, UserData>> = getU
 // Ele executa todas as Tasks em paralelo. Se qualquer uma falhar, o resultado é o primeiro Left.
 // ⚠️ Importante: sequenceArray só funciona com tipos homogêneos (todos retornam o mesmo tipo A).
 // Se os tipos de retorno diferem, use sequenceT ou mapeie para uma união A | B.
-// Nota: Em fp-ts 3.x, sequenceArray pode requerer import específico
+// Para padrões mais gerais, considere também TE.traverseReadonlyArrayWithIndex
 const allUsersProgram: TE.TaskEither<NetworkError, UserData[]> = pipe(
   fetchAllUsersPrograms,
   TE.sequenceArray
@@ -751,11 +760,11 @@ Embora as abstrações funcionais como `Either` e `TaskEither` ofereçam benefí
 
 - **Overhead de Alocação:** cada `Either`, `TaskEither` ou `Option` cria estruturas de dados adicionais na memória. Em [hot paths](https://en.wikipedia.org/wiki/Hot_path) de aplicações que processam grandes volumes de dados, esse overhead de alocação pode se tornar perceptível. Comparado com abordagens mais diretas como verificações de `null` ou `try/catch`, há um custo adicional de memória.
 
-- **Micro-overhead em Operações Assíncronas:** Benchmarks mostram que `TaskEither` adiciona aproximadamente **3-5 µs por operação** em comparação com Promises nativas. Este overhead é geralmente insignificante para a maioria das aplicações (uma operação de rede típica leva 50-200ms), mas pode ser relevante em sistemas com milhares de operações por segundo ou requisitos extremos de baixa latência.
+- **Micro-overhead em Operações Assíncronas:** `TaskEither` introduz um micro-overhead por alocação e composição em comparação com Promises nativas. Este overhead é geralmente insignificante para a maioria das aplicações (uma operação de rede típica leva 50-200ms), mas pode ser relevante em sistemas com milhares de operações por segundo ou requisitos extremos de baixa latência.
 
 - **Curva de Aprendizado:** a programação funcional e seus tipos algebráicos têm uma curva de aprendizado significativa para equipes acostumadas com paradigmas imperativos. Isso pode reduzir temporariamente a produtividade até que a equipe esteja confortável com conceitos como functors, monads e composição de funções.
 
-- **Pilha de Chamadas e Debugging:** em cadeias longas de operações com `pipe` e `chain`, os stacktraces podem se tornar mais difíceis de interpretar quando ocorrem erros. Isso pode complicar o debugging em comparação com código imperativo mais direto. Para mitigar esse problema, é recomendável usar `mapError` ou `bimap` para enriquecer erros com contexto adicional em pontos estratégicos da cadeia.
+- **Pilha de Chamadas e Debugging:** em cadeias longas de operações com `pipe` e `chain`, os stacktraces podem se tornar mais difíceis de interpretar quando ocorrem erros. Isso pode complicar o debugging em comparação com código imperativo mais direto. Para mitigar esse problema, é recomendável usar `E.mapLeft` (para Either) ou `TE.mapError` (para TaskEither) para enriquecer erros com contexto adicional em pontos estratégicos da cadeia.
 
 - **Tamanho do Bundle:** a inclusão da biblioteca `fp-ts` adiciona peso ao bundle final da aplicação. Embora técnicas de [tree-shaking](https://en.wikipedia.org/wiki/Tree_shaking) possam mitigar isso, aplicações que priorizam tamanho mínimo de bundle (como PWAs ou aplicações móveis) precisam considerar esse impacto.
 
