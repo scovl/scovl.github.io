@@ -11,8 +11,9 @@
 <!-- Fontes locais -->
 <link rel="stylesheet" href="{{ "vendor/fonts/fonts.css" | relURL }}?v={{ now.Unix }}">
 
-<!-- Preload de fontes externas -->
-<link rel="preload" href="https://mcyoung.xyz/public/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin="">
+<!-- Preload de fontes locais -->
+<link rel="preload" href="{{ "fonts/abril-fatface.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/rokkitt.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 
 <!-- Prism.js local para syntax highlighting -->
 <link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}?v={{ now.Unix }}">
