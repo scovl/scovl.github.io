@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=52493&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <title>Clojure | scovl</title>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1757091083">
+<link rel="stylesheet" href="/css/main.css?v=1757192345">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757091083">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757192345">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757091083">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757192345">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1757091083"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1757192345"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -357,7 +357,7 @@ window.I18n = I18n;
     <header class="header">
     <div class="container">
         <div class="header-content">
-            <a href="http://localhost:52493/" class="site-title">scovl</a>
+            <a href="http://localhost:1313/" class="site-title">scovl</a>
             
             <div class="header-actions">
                 
@@ -386,13 +386,13 @@ window.I18n = I18n;
     <div class="language-menu" id="language-menu">
         
             
-                <a href="http://localhost:52493/" class="language-option active">
+                <a href="http://localhost:1313/" class="language-option active">
                     Português
                 </a>
             
         
             
-                <a href="http://localhost:52493/en/" class="language-option ">
+                <a href="http://localhost:1313/en/" class="language-option ">
                     English
                 </a>
             
@@ -444,7 +444,7 @@ window.I18n = I18n;
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:52493/2025/05/23/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
+            <a href="http://localhost:1313/2025/05/23/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
         </h2>
         
         <div class="post-item-meta">
@@ -493,58 +493,7 @@ window.I18n = I18n;
 <p>O modelo <code>try/catch</code> foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
 <p>O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar <code>try/catch</code> como controle de fluxo é um erro e qual é o seu propósito real.</p>
             
-            <a href="http://localhost:52493/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:52493/2025/03/23/dd01/">Análise de código estático</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-03-23T19:00:00Z">
-                Sun, Mar 23, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/oop/" class="tag">OOP</a>
-                
-                <a href="/tags/software/" class="tag">software</a>
-                
-                <a href="/tags/engineering/" class="tag">engineering</a>
-                
-                <a href="/tags/clojure/" class="tag">Clojure</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Deep Dive
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <h1 id="análise-estática-de-código-entendendo-seu-programa-sem-executá-lo">Análise Estática de Código: Entendendo seu Programa sem Executá-lo</h1>
-<p>Muitos mecanismos que ocorrem naturalmente em nosso dia-a-dia no desenvolvimento de software, muitas vezes, não são devidamente apreciados e nem mesmo conhecidos. Ações das quais parecem mágicas, mas que na verdade são resultado de um grande esforço de muitas pessoas ao longo de décadas.</p>
-<p>Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem mágicas como <a href="https://en.wikipedia.org/wiki/Intelligent_code_completion">intelisense</a>, <a href="https://en.wikipedia.org/wiki/Autocompletion">autocompletion</a>, <a href="https://en.wikipedia.org/wiki/Variable_dumping">dumping de variáveis</a> e <a href="https://en.wikipedia.org/wiki/Reserved_word">palavras reservadas</a> de cada linguagem de programação, entre outras. Neste artigo, vou compartilhar um pouco do que eu aprendi e ainda estou aprendendo sobre análise estática de código com o intuito de ajudar você a entender um pouco mais sobre como esses mecanismos funcionam.</p>
-            
-            <a href="http://localhost:52493/2025/03/23/dd01/" class="read-more">Leia mais →</a>
+            <a href="http://localhost:1313/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -612,22 +561,22 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1757091083"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1757091083"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1757192345"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1757192345"></script>
     
     
-    <script src="/js/main-minimal.js?v=1757091083"></script>
-    <script src="/js/lazy-loading.js?v=1757091083"></script>
-    <script src="/js/toc.js?v=1757091083"></script>
+    <script src="/js/main-minimal.js?v=1757192345"></script>
+    <script src="/js/lazy-loading.js?v=1757192345"></script>
+    <script src="/js/toc.js?v=1757192345"></script>
     
     
     
