@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,178 +430,98 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-05-23T19:41:45-03:00">
-                📅 23/05/2025
-            </time>
-            
-            <span>👤 Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/tratamento-de-erros" class="tag">tratamento de erros</a>
-                
-                <a href="/tags/exce%C3%A7%C3%B5es" class="tag">exceções</a>
-                
-                <a href="/tags/javascript" class="tag">javascript</a>
-                
-                <a href="/tags/typescript" class="tag">typescript</a>
-                
-                <a href="/tags/rust" class="tag">rust</a>
-                
-                <a href="/tags/clojure" class="tag">clojure</a>
-                
-                <a href="/tags/boas-pr%C3%A1ticas" class="tag">boas práticas</a>
-                
-                <a href="/tags/c&#43;&#43;" class="tag">c&#43;&#43;</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#propósito-do-trycatch">Propósito do Try/Catch</a></li>
-        <li><a href="#principais-usos-do"><strong>Principais Usos do <code>try/catch</code> — Exemplos Práticos em Diferentes Contextos</strong></a>
-          <ul>
-            <li><a href="#falhas-de-io-arquivos-rede-dispositivos">Falhas de I/O (Arquivos, Rede, Dispositivos)</a></li>
-            <li><a href="#papel-do-raii-limpeza-automática">Papel do RAII: limpeza automática</a></li>
-          </ul>
-        </li>
-        <li><a href="#tratamento-de-exceções-em-diferentes-contextos">Tratamento de Exceções em Diferentes Contextos</a>
-          <ul>
-            <li><a href="#gerenciamento-de-recursos">Gerenciamento de recursos</a></li>
-            <li><a href="#validação-de-dados">Validação de dados</a></li>
-            <li><a href="#transações-atômicas">Transações atômicas</a></li>
-            <li><a href="#enriquecendo-contexto-em-camadas">Enriquecendo contexto em camadas</a></li>
-            <li><a href="#má-prática-de-design--quando-o-trycatch-vira-gambiarra">Má prática de design — quando o <code>try/catch</code> vira gambiarra</a>
-              <ul>
-                <li><a href="#alternativa-correta-retorno-explícito-de-erro">Alternativa correta: retorno explícito de erro</a></li>
-              </ul>
-            </li>
-            <li><a href="#designbycontract-e-asserções">Design by Contract e asserções</a>
-              <ul>
-                <li><a href="#programação-com-asserções">Programação com <strong>asserções</strong></a></li>
-              </ul>
-            </li>
-            <li><a href="#testabilidade-e-caminhos-de-erro">Testabilidade e caminhos de erro</a></li>
-          </ul>
-        </li>
-        <li><a href="#checklist-quando-usar-exceções-vs-alternativas">Checklist: Quando Usar Exceções vs. Alternativas</a>
-          <ul>
-            <li><a href="#-use-exceções-throw-quando">✅ <strong>Use Exceções (throw) quando:</strong></a></li>
-            <li><a href="#-não-use-exceções-use-alternativas">❌ <strong>NÃO use exceções (use alternativas):</strong></a></li>
-            <li><a href="#-regra-de-ouro">🎯 <strong>Regra de Ouro:</strong></a></li>
-          </ul>
-        </li>
-        <li><a href="#referências">Referências</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-05-23T19:41:45-03:00">📅 23/05/2025</time>
+      <span>👤 Vitor Lobo Ramos</span>
+      
+      
+      <div class="post-tags">
+        <a href="/tags/tratamento-de-erros" class="tag">tratamento de erros</a><a href="/tags/exce%C3%A7%C3%B5es" class="tag">exceções</a><a href="/tags/javascript" class="tag">javascript</a><a href="/tags/typescript" class="tag">typescript</a><a href="/tags/rust" class="tag">rust</a><a href="/tags/clojure" class="tag">clojure</a><a href="/tags/boas-pr%C3%A1ticas" class="tag">boas práticas</a><a href="/tags/c&#43;&#43;" class="tag">c&#43;&#43;</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#propósito-do-trycatch">Propósito do Try/Catch</a></li>
+    <li><a href="#principais-usos-do"><strong>Principais Usos do <code>try/catch</code> — Exemplos Práticos em Diferentes Contextos</strong></a>
+      <ul>
+        <li><a href="#falhas-de-io-arquivos-rede-dispositivos">Falhas de I/O (Arquivos, Rede, Dispositivos)</a></li>
+        <li><a href="#papel-do-raii-limpeza-automática">Papel do RAII: limpeza automática</a></li>
+      </ul>
+    </li>
+    <li><a href="#tratamento-de-exceções-em-diferentes-contextos">Tratamento de Exceções em Diferentes Contextos</a>
+      <ul>
+        <li><a href="#gerenciamento-de-recursos">Gerenciamento de recursos</a></li>
+        <li><a href="#validação-de-dados">Validação de dados</a></li>
+        <li><a href="#transações-atômicas">Transações atômicas</a></li>
+        <li><a href="#enriquecendo-contexto-em-camadas">Enriquecendo contexto em camadas</a></li>
+        <li><a href="#má-prática-de-design--quando-o-trycatch-vira-gambiarra">Má prática de design — quando o <code>try/catch</code> vira gambiarra</a>
+          <ul>
+            <li><a href="#alternativa-correta-retorno-explícito-de-erro">Alternativa correta: retorno explícito de erro</a></li>
+          </ul>
+        </li>
+        <li><a href="#designbycontract-e-asserções">Design by Contract e asserções</a>
+          <ul>
+            <li><a href="#programação-com-asserções">Programação com <strong>asserções</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#testabilidade-e-caminhos-de-erro">Testabilidade e caminhos de erro</a></li>
+      </ul>
+    </li>
+    <li><a href="#checklist-quando-usar-exceções-vs-alternativas">Checklist: Quando Usar Exceções vs. Alternativas</a>
+      <ul>
+        <li><a href="#-use-exceções-throw-quando">✅ <strong>Use Exceções (throw) quando:</strong></a></li>
+        <li><a href="#-não-use-exceções-use-alternativas">❌ <strong>NÃO use exceções (use alternativas):</strong></a></li>
+        <li><a href="#-regra-de-ouro">🎯 <strong>Regra de Ouro:</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#referências">Referências</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <p>O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter.</p>
+  <div class="post-content">
+    <p>O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter.</p>
 <p>O modelo <code>try/catch</code> foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
 <p>O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar <code>try/catch</code> como controle de fluxo é um erro e qual é o seu propósito real.</p>
 <h2 id="propósito-do-trycatch">Propósito do Try/Catch</h2>
@@ -1231,10 +1151,9 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
 </li>
 </ol>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -1476,9 +1395,8 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
         </div>
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -1501,7 +1419,7 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -1563,24 +1481,24 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,117 +430,69 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Como o compilador do Rust funciona?</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-07-21T12:00:00Z">
-                📅 21/07/2025
-            </time>
-            
-            <span>👤 Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/rust" class="tag">Rust</a>
-                
-                <a href="/tags/compiladores" class="tag">Compiladores</a>
-                
-                <a href="/tags/llvm" class="tag">LLVM</a>
-                
-                <a href="/tags/mem%C3%B3ria" class="tag">Memória</a>
-                
-                <a href="/tags/seguran%C3%A7a" class="tag">Segurança</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">Como o compilador do Rust funciona?</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introdução">Introdução</a>
-      <ul>
-        <li><a href="#a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</a></li>
-        <li><a href="#o-compilador-do-rust">O compilador do Rust</a></li>
-        <li><a href="#o-mago-da-memória-entendendo-o-borrow-checker">O Mago da Memória: Entendendo o Borrow Checker</a></li>
-        <li><a href="#por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</a></li>
-        <li><a href="#referências">REFERÊNCIAS</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-07-21T12:00:00Z">📅 21/07/2025</time>
+      <span>👤 Vitor Lobo Ramos</span>
+      
+      
+      <div class="post-tags">
+        <a href="/tags/rust" class="tag">Rust</a><a href="/tags/compiladores" class="tag">Compiladores</a><a href="/tags/llvm" class="tag">LLVM</a><a href="/tags/mem%C3%B3ria" class="tag">Memória</a><a href="/tags/seguran%C3%A7a" class="tag">Segurança</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</a></li>
+    <li><a href="#o-compilador-do-rust">O compilador do Rust</a></li>
+    <li><a href="#o-mago-da-memória-entendendo-o-borrow-checker">O Mago da Memória: Entendendo o Borrow Checker</a></li>
+    <li><a href="#por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</a></li>
+    <li><a href="#referências">REFERÊNCIAS</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h1 id="introdução">Introdução</h1>
+  <div class="post-content">
+    <h1 id="introdução">Introdução</h1>
 <p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
 <p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
 <p>Mostrarei como o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> (aquele que reclama dos seus empréstimos de variáveis), as representações intermediárias (com nomes esquisitos como <a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a>, <a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a> e <a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a>) e as otimizações finais trabalham juntos para impedir problemas como dois lugares mexendo na mesma memória ao mesmo tempo <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data race</a></strong> ou acessar algo que já foi apagado <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a></strong>.</p>
@@ -614,10 +566,9 @@ window.I18n = I18n;
 <li><a href="https://www.infoq.com/presentations/rust-borrow-checker/#:~:text=lowers%20it%20into%20the%20mid,also%20known%20as%20the%20MIR">Rust Borrow Checker</a> - Uma apresentação sobre o borrow checker do Rust.</li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -854,9 +805,8 @@ window.I18n = I18n;
         </div>
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -879,7 +829,7 @@ window.I18n = I18n;
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -941,24 +891,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

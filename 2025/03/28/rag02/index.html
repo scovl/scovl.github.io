@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,233 +430,125 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Técnicas Avançadas para RAG em Produção</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-03-28T12:00:00Z">
-                📅 28/03/2025
-            </time>
-            
-            <span>👤 Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/rag" class="tag">RAG</a>
-                
-                <a href="/tags/llm" class="tag">LLM</a>
-                
-                <a href="/tags/ai" class="tag">AI</a>
-                
-                <a href="/tags/optimiza%C3%A7%C3%A3o" class="tag">Optimização</a>
-                
-                <a href="/tags/produ%C3%A7%C3%A3o" class="tag">Produção</a>
-                
-                <a href="/tags/postgresql" class="tag">PostgreSQL</a>
-                
-                <a href="/tags/ollama" class="tag">Ollama</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">Técnicas Avançadas para RAG em Produção</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#introdução">Introdução</a></li>
-        <li><a href="#da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></li>
-        <li><a href="#armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</a>
-          <ul>
-            <li><a href="#armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</a></li>
-            <li><a href="#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
-            <li><a href="#armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
-            <li><a href="#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
-          </ul>
-        </li>
-        <li><a href="#técnicas-avançadas-de-otimização">Técnicas Avançadas de Otimização</a>
-          <ul>
-            <li><a href="#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
-            <li><a href="#estratégias-de-chunking-dinâmico">Estratégias de Chunking Dinâmico</a></li>
-            <li><a href="#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
-              <ul>
-                <li><a href="#arquitetura-de-agentes-avançada">Arquitetura de Agentes Avançada</a></li>
-                <li><a href="#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
-              </ul>
-            </li>
-            <li><a href="#pipelines-multimodais">Pipelines Multimodais</a>
-              <ul>
-                <li><a href="#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
-                <li><a href="#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
-                <li><a href="#desafios-de-implementação-multimodal">Desafios de Implementação Multimodal</a></li>
-              </ul>
-            </li>
-            <li><a href="#estratégias-de-cache">Estratégias de Cache</a>
-              <ul>
-                <li><a href="#estratégias-avançadas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#monitoramento-e-métricas-llmops-na-prática">Monitoramento e Métricas: LLMOps na Prática</a>
-          <ul>
-            <li><a href="#métricas-de-qualidade-específicas-para-rag">Métricas de Qualidade Específicas para RAG</a>
-              <ul>
-                <li><a href="#1-métricas-de-relevância-do-contexto">1. Métricas de Relevância do Contexto</a></li>
-                <li><a href="#2-métricas-de-qualidade-da-resposta">2. Métricas de Qualidade da Resposta</a></li>
-                <li><a href="#3-métricas-de-consenso-entre-modelos">3. Métricas de Consenso entre Modelos</a></li>
-              </ul>
-            </li>
-            <li><a href="#automação-da-avaliação-com-llms-como-juízes">Automação da Avaliação com LLMs como Juízes</a>
-              <ul>
-                <li><a href="#configuração-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
-              </ul>
-            </li>
-            <li><a href="#integração-com-sistemas-de-feedback-do-usuário">Integração com Sistemas de Feedback do Usuário</a></li>
-          </ul>
-        </li>
-        <li><a href="#implementando-no-docai">Implementando no DocAI</a>
-          <ul>
-            <li><a href="#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
-            <li><a href="#diferenciais-do-docai">Diferenciais do DocAI</a></li>
-            <li><a href="#próximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
-          </ul>
-        </li>
-        <li><a href="#integração-com-o-ecossistema">Integração com o Ecossistema</a></li>
-        <li><a href="#conclusão">Conclusão</a></li>
-        <li><a href="#referências">Referências</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-03-28T12:00:00Z">📅 28/03/2025</time>
+      <span>👤 Vitor Lobo Ramos</span>
+      
+      
+      <div class="post-tags">
+        <a href="/tags/rag" class="tag">RAG</a><a href="/tags/llm" class="tag">LLM</a><a href="/tags/ai" class="tag">AI</a><a href="/tags/optimiza%C3%A7%C3%A3o" class="tag">Optimização</a><a href="/tags/produ%C3%A7%C3%A3o" class="tag">Produção</a><a href="/tags/postgresql" class="tag">PostgreSQL</a><a href="/tags/ollama" class="tag">Ollama</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introdução">Introdução</a></li>
+    <li><a href="#da-teoria-à-produção-os-desafios-reais">Da Teoria à Produção: Os Desafios Reais</a></li>
+    <li><a href="#armadilhas-comuns-e-como-evitá-las">Armadilhas Comuns e Como Evitá-las</a>
+      <ul>
+        <li><a href="#armadilha-1-a-falsa-sensação-de-relevância">Armadilha 1: A Falsa Sensação de Relevância</a></li>
+        <li><a href="#armadilha-2-tamanho-inadequado-de-chunks">Armadilha 2: Tamanho Inadequado de Chunks</a></li>
+        <li><a href="#armadilha-3-falta-de-monitoramento-contínuo">Armadilha 3: Falta de Monitoramento Contínuo</a></li>
+        <li><a href="#armadilha-4-consultas-complexas-em-pipelines-simples">Armadilha 4: Consultas Complexas em Pipelines Simples</a></li>
+      </ul>
+    </li>
+    <li><a href="#técnicas-avançadas-de-otimização">Técnicas Avançadas de Otimização</a>
+      <ul>
+        <li><a href="#re-ranqueamento-de-chunks">Re-ranqueamento de Chunks</a></li>
+        <li><a href="#estratégias-de-chunking-dinâmico">Estratégias de Chunking Dinâmico</a></li>
+        <li><a href="#workflows-com-agentes-para-consultas-complexas">Workflows com Agentes para Consultas Complexas</a>
+          <ul>
+            <li><a href="#arquitetura-de-agentes-avançada">Arquitetura de Agentes Avançada</a></li>
+            <li><a href="#casos-de-uso-para-workflows-de-agentes">Casos de Uso para Workflows de Agentes</a></li>
+          </ul>
+        </li>
+        <li><a href="#pipelines-multimodais">Pipelines Multimodais</a>
+          <ul>
+            <li><a href="#arquitetura-multimodal-completa">Arquitetura Multimodal Completa</a></li>
+            <li><a href="#esquema-postgresql-para-dados-multimodais">Esquema PostgreSQL para Dados Multimodais</a></li>
+            <li><a href="#desafios-de-implementação-multimodal">Desafios de Implementação Multimodal</a></li>
+          </ul>
+        </li>
+        <li><a href="#estratégias-de-cache">Estratégias de Cache</a>
+          <ul>
+            <li><a href="#estratégias-avançadas-de-cache-para-rag">Estratégias Avançadas de Cache para RAG</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#monitoramento-e-métricas-llmops-na-prática">Monitoramento e Métricas: LLMOps na Prática</a>
+      <ul>
+        <li><a href="#métricas-de-qualidade-específicas-para-rag">Métricas de Qualidade Específicas para RAG</a>
+          <ul>
+            <li><a href="#1-métricas-de-relevância-do-contexto">1. Métricas de Relevância do Contexto</a></li>
+            <li><a href="#2-métricas-de-qualidade-da-resposta">2. Métricas de Qualidade da Resposta</a></li>
+            <li><a href="#3-métricas-de-consenso-entre-modelos">3. Métricas de Consenso entre Modelos</a></li>
+          </ul>
+        </li>
+        <li><a href="#automação-da-avaliação-com-llms-como-juízes">Automação da Avaliação com LLMs como Juízes</a>
+          <ul>
+            <li><a href="#configuração-de-um-dashboard-de-qualidade-rag">Configuração de um Dashboard de Qualidade RAG</a></li>
+          </ul>
+        </li>
+        <li><a href="#integração-com-sistemas-de-feedback-do-usuário">Integração com Sistemas de Feedback do Usuário</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementando-no-docai">Implementando no DocAI</a>
+      <ul>
+        <li><a href="#arquitetura-atual-do-docai">Arquitetura Atual do DocAI</a></li>
+        <li><a href="#diferenciais-do-docai">Diferenciais do DocAI</a></li>
+        <li><a href="#próximos-passos-para-o-docai">Próximos Passos para o DocAI</a></li>
+      </ul>
+    </li>
+    <li><a href="#integração-com-o-ecossistema">Integração com o Ecossistema</a></li>
+    <li><a href="#conclusão">Conclusão</a></li>
+    <li><a href="#referências">Referências</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h2 id="introdução">Introdução</h2>
+  <div class="post-content">
+    <h2 id="introdução">Introdução</h2>
 <p>Olá pessoal! 👋</p>
 <p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
 <p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
@@ -2099,10 +1991,9 @@ $$ LANGUAGE plpgsql;</code></pre>
 <li><a href="https://github.com/scovl/docai">Projeto DocAI</a> - Repositório do projeto DocAI.</li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -2384,9 +2275,8 @@ $$ LANGUAGE plpgsql;</code></pre>
         </div>
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -2409,7 +2299,7 @@ $$ LANGUAGE plpgsql;</code></pre>
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -2471,24 +2361,24 @@ $$ LANGUAGE plpgsql;</code></pre>
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

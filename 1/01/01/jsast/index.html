@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,142 +430,86 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title"></h1>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title"></h1>
     
-    
-    
+  </header>
 
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</a>
       <ul>
-        <li><a href="#desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</a>
+        <li>
           <ul>
-            <li>
-              <ul>
-                <li><a href="#nosso-projetinho-simples">Nosso Projetinho Simples</a></li>
-                <li><a href="#parseando-transformando-código-em-ast">&ldquo;Parseando&rdquo;: Transformando Código em AST</a></li>
-                <li><a href="#traversando-dando-um-rolê-na-ast">&ldquo;Traversando&rdquo;: Dando um Rolê na AST</a></li>
-                <li><a href="#analisando-catando-informações-úteis">Analisando: Catando Informações Úteis</a></li>
-              </ul>
-            </li>
-            <li><a href="#como-rodar-isso-aí">Como Rodar Isso Aí</a>
-              <ul>
-                <li><a href="#instalando-o-esprima-moleza">Instalando o Esprima (Moleza!)</a></li>
-                <li><a href="#exemplo-básico-pra-sentir-o-gostinho">Exemplo Básico pra Sentir o Gostinho</a></li>
-                <li><a href="#botando-pra-funcionar">Botando pra Funcionar</a></li>
-              </ul>
-            </li>
-            <li><a href="#detalhes-importantes-pra-ficar-ligado">Detalhes Importantes (Pra Ficar Ligado!)</a>
-              <ul>
-                <li><a href="#performance-roda-liso">Performance: Roda Liso?</a></li>
-                <li><a href="#entendendo-as-peças-do-quebra-cabeça-estree">Entendendo as Peças do Quebra-Cabeça (ESTree)</a></li>
-                <li><a href="#e-se-o-código-tiver-erro">E se o Código Tiver Erro?</a></li>
-              </ul>
-            </li>
-            <li><a href="#próximos-níveis-o-que-mais-dá-pra-fazer">Próximos Níveis (O que mais dá pra fazer?)</a>
-              <ul>
-                <li><a href="#turbinando-a-brincadeira">Turbinando a Brincadeira</a></li>
-                <li><a href="#outras-ferramentas-na-caixa">Outras Ferramentas na Caixa</a></li>
-              </ul>
-            </li>
-            <li><a href="#onde-achar-mais-info-links-úteis">Onde Achar Mais Info (Links Úteis)</a></li>
+            <li><a href="#nosso-projetinho-simples">Nosso Projetinho Simples</a></li>
+            <li><a href="#parseando-transformando-código-em-ast">&ldquo;Parseando&rdquo;: Transformando Código em AST</a></li>
+            <li><a href="#traversando-dando-um-rolê-na-ast">&ldquo;Traversando&rdquo;: Dando um Rolê na AST</a></li>
+            <li><a href="#analisando-catando-informações-úteis">Analisando: Catando Informações Úteis</a></li>
           </ul>
         </li>
+        <li><a href="#como-rodar-isso-aí">Como Rodar Isso Aí</a>
+          <ul>
+            <li><a href="#instalando-o-esprima-moleza">Instalando o Esprima (Moleza!)</a></li>
+            <li><a href="#exemplo-básico-pra-sentir-o-gostinho">Exemplo Básico pra Sentir o Gostinho</a></li>
+            <li><a href="#botando-pra-funcionar">Botando pra Funcionar</a></li>
+          </ul>
+        </li>
+        <li><a href="#detalhes-importantes-pra-ficar-ligado">Detalhes Importantes (Pra Ficar Ligado!)</a>
+          <ul>
+            <li><a href="#performance-roda-liso">Performance: Roda Liso?</a></li>
+            <li><a href="#entendendo-as-peças-do-quebra-cabeça-estree">Entendendo as Peças do Quebra-Cabeça (ESTree)</a></li>
+            <li><a href="#e-se-o-código-tiver-erro">E se o Código Tiver Erro?</a></li>
+          </ul>
+        </li>
+        <li><a href="#próximos-níveis-o-que-mais-dá-pra-fazer">Próximos Níveis (O que mais dá pra fazer?)</a>
+          <ul>
+            <li><a href="#turbinando-a-brincadeira">Turbinando a Brincadeira</a></li>
+            <li><a href="#outras-ferramentas-na-caixa">Outras Ferramentas na Caixa</a></li>
+          </ul>
+        </li>
+        <li><a href="#onde-achar-mais-info-links-úteis">Onde Achar Mais Info (Links Úteis)</a></li>
       </ul>
     </li>
   </ul>
-</nav>
-            </nav>
-        </div>
+</nav></nav>
     </div>
-    
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
-        </svg>
-    </button>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h2 id="desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</h2>
+  <div class="post-content">
+    <h2 id="desvendando-asts-com-javascript-typescript-e-esprima-um-guia-amigável-">Desvendando ASTs com JavaScript, TypeScript e Esprima: Um Guia Amigável 🤖</h2>
 <p><em>Tempo de Leitura: uns 15-25 minutinhos (ou um café ☕)</em></p>
 <p><strong>O que você vai encontrar aqui:</strong></p>
 <ul>
@@ -1060,16 +1004,14 @@ ts-node index.ts
 <li><strong>Babel Parser (Outra Alternativa):</strong> <a href="https://babeljs.io/docs/en/babel-parser">babeljs.io/docs/en/babel-parser</a></li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -1092,7 +1034,7 @@ ts-node index.ts
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -1154,24 +1096,24 @@ ts-node index.ts
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

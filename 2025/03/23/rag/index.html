@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,263 +430,141 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">01 - RAG Simples com Clojure e Ollama</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-03-23T19:00:00Z">
-                📅 23/03/2025
-            </time>
-            
-            <span>👤 Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/rag" class="tag">RAG</a>
-                
-                <a href="/tags/llm" class="tag">LLM</a>
-                
-                <a href="/tags/ai" class="tag">AI</a>
-                
-                <a href="/tags/clojure" class="tag">Clojure</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">01 - RAG Simples com Clojure e Ollama</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#introdução">Introdução</a></li>
-        <li><a href="#fundamentos-do-rag">Fundamentos do RAG</a>
-          <ul>
-            <li><a href="#o-que-é-rag">O que é RAG?</a></li>
-            <li><a href="#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
-            <li><a href="#os-três-pilares-do-rag">Os Três Pilares do RAG</a></li>
-            <li><a href="#rag-em-produção">RAG em Produção</a></li>
-            <li><a href="#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
-          </ul>
-        </li>
-        <li><a href="#implementação-prática">Implementação Prática</a>
-          <ul>
-            <li><a href="#preparando-o-ambiente">Preparando o Ambiente</a></li>
-            <li><a href="#estrutura-do-projeto">Estrutura do Projeto</a></li>
-            <li><a href="#tf-idf">TF-IDF</a></li>
-            <li><a href="#requisitos-mínimos">Requisitos Mínimos</a></li>
-            <li><a href="#configuração-do-projeto">Configuração do Projeto</a></li>
-            <li><a href="#implementação-dos-componentes">Implementação dos Componentes</a>
-              <ul>
-                <li><a href="#processamento-de-documentos">Processamento de Documentos</a></li>
-                <li><a href="#sistema-de-embeddings">Sistema de Embeddings</a></li>
-                <li><a href="#interface-com-ollama">Interface com Ollama</a></li>
-                <li><a href="#módulo-principal">Módulo Principal</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#como-usar">Como Usar</a>
-          <ul>
-            <li><a href="#instalação-do-ollama">Instalação do Ollama</a></li>
-            <li><a href="#executando-a-aplicação">Executando a Aplicação</a></li>
-          </ul>
-        </li>
-        <li><a href="#considerações-técnicas">Considerações Técnicas</a>
-          <ul>
-            <li><a href="#performance-e-otimizações">Performance e Otimizações</a></li>
-            <li><a href="#melhorando-os-prompts">Melhorando os Prompts</a></li>
-          </ul>
-        </li>
-        <li><a href="#próximos-passos">Próximos Passos</a>
-          <ul>
-            <li><a href="#melhorias-rápidas-implementação-imediata">Melhorias Rápidas (Implementação Imediata)</a>
-              <ul>
-                <li><a href="#1-persistência-da-base-de-conhecimento"><strong>1. Persistência da Base de Conhecimento</strong></a></li>
-                <li><a href="#2-testes-unitários"><strong>2. Testes Unitários</strong></a></li>
-                <li><a href="#3-streaming-de-respostas"><strong>3. Streaming de Respostas</strong></a></li>
-                <li><a href="#4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></a></li>
-                <li><a href="#5-banco-vetorial-simples-bm25-manual"><strong>5. Banco Vetorial Simples (BM25 Manual)</strong></a></li>
-              </ul>
-            </li>
-            <li><a href="#melhorias-avançadas">Melhorias Avançadas</a></li>
-            <li><a href="#dependências-e-próximos-passos">Dependências e Próximos Passos</a>
-              <ul>
-                <li><a href="#dependências-recomendadas"><strong>Dependências Recomendadas</strong></a></li>
-                <li><a href="#implementação-com-lucene"><strong>Implementação com Lucene</strong></a></li>
-              </ul>
-            </li>
-            <li><a href="#upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</a>
-              <ul>
-                <li><a href="#1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></a></li>
-                <li><a href="#2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></a></li>
-                <li><a href="#3-comparação-de-performance">3. <strong>Comparação de Performance</strong></a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#apêndice">Apêndice</a>
-          <ul>
-            <li><a href="#requisitos-de-hardware-detalhados">Requisitos de Hardware Detalhados</a>
-              <ul>
-                <li><a href="#configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></a></li>
-                <li><a href="#otimizações-por-hardware"><strong>Otimizações por Hardware</strong></a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#referências">Referências</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-03-23T19:00:00Z">📅 23/03/2025</time>
+      <span>👤 Vitor Lobo Ramos</span>
+      
+      
+      <div class="post-tags">
+        <a href="/tags/rag" class="tag">RAG</a><a href="/tags/llm" class="tag">LLM</a><a href="/tags/ai" class="tag">AI</a><a href="/tags/clojure" class="tag">Clojure</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introdução">Introdução</a></li>
+    <li><a href="#fundamentos-do-rag">Fundamentos do RAG</a>
+      <ul>
+        <li><a href="#o-que-é-rag">O que é RAG?</a></li>
+        <li><a href="#por-que-precisamos-do-rag">Por que precisamos do RAG?</a></li>
+        <li><a href="#os-três-pilares-do-rag">Os Três Pilares do RAG</a></li>
+        <li><a href="#rag-em-produção">RAG em Produção</a></li>
+        <li><a href="#por-que-o-deepseek-r1">Por que o DeepSeek R1?</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementação-prática">Implementação Prática</a>
+      <ul>
+        <li><a href="#preparando-o-ambiente">Preparando o Ambiente</a></li>
+        <li><a href="#estrutura-do-projeto">Estrutura do Projeto</a></li>
+        <li><a href="#tf-idf">TF-IDF</a></li>
+        <li><a href="#requisitos-mínimos">Requisitos Mínimos</a></li>
+        <li><a href="#configuração-do-projeto">Configuração do Projeto</a></li>
+        <li><a href="#implementação-dos-componentes">Implementação dos Componentes</a>
+          <ul>
+            <li><a href="#processamento-de-documentos">Processamento de Documentos</a></li>
+            <li><a href="#sistema-de-embeddings">Sistema de Embeddings</a></li>
+            <li><a href="#interface-com-ollama">Interface com Ollama</a></li>
+            <li><a href="#módulo-principal">Módulo Principal</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#como-usar">Como Usar</a>
+      <ul>
+        <li><a href="#instalação-do-ollama">Instalação do Ollama</a></li>
+        <li><a href="#executando-a-aplicação">Executando a Aplicação</a></li>
+      </ul>
+    </li>
+    <li><a href="#considerações-técnicas">Considerações Técnicas</a>
+      <ul>
+        <li><a href="#performance-e-otimizações">Performance e Otimizações</a></li>
+        <li><a href="#melhorando-os-prompts">Melhorando os Prompts</a></li>
+      </ul>
+    </li>
+    <li><a href="#próximos-passos">Próximos Passos</a>
+      <ul>
+        <li><a href="#melhorias-rápidas-implementação-imediata">Melhorias Rápidas (Implementação Imediata)</a>
+          <ul>
+            <li><a href="#1-persistência-da-base-de-conhecimento"><strong>1. Persistência da Base de Conhecimento</strong></a></li>
+            <li><a href="#2-testes-unitários"><strong>2. Testes Unitários</strong></a></li>
+            <li><a href="#3-streaming-de-respostas"><strong>3. Streaming de Respostas</strong></a></li>
+            <li><a href="#4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></a></li>
+            <li><a href="#5-banco-vetorial-simples-bm25-manual"><strong>5. Banco Vetorial Simples (BM25 Manual)</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#melhorias-avançadas">Melhorias Avançadas</a></li>
+        <li><a href="#dependências-e-próximos-passos">Dependências e Próximos Passos</a>
+          <ul>
+            <li><a href="#dependências-recomendadas"><strong>Dependências Recomendadas</strong></a></li>
+            <li><a href="#implementação-com-lucene"><strong>Implementação com Lucene</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</a>
+          <ul>
+            <li><a href="#1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></a></li>
+            <li><a href="#2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></a></li>
+            <li><a href="#3-comparação-de-performance">3. <strong>Comparação de Performance</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#apêndice">Apêndice</a>
+      <ul>
+        <li><a href="#requisitos-de-hardware-detalhados">Requisitos de Hardware Detalhados</a>
+          <ul>
+            <li><a href="#configurações-por-caso-de-uso"><strong>Configurações por Caso de Uso</strong></a></li>
+            <li><a href="#otimizações-por-hardware"><strong>Otimizações por Hardware</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#referências">Referências</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h2 id="introdução">Introdução</h2>
+  <div class="post-content">
+    <h2 id="introdução">Introdução</h2>
 <p>Olá, pessoal! 👋</p>
 <p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
 <h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
@@ -2168,10 +2046,9 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
 <li><a href="https://github.com/clj-kondo/clj-kondo">clj-kondo</a> - Linter para Clojure</li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -2451,9 +2328,8 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
         </div>
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -2476,7 +2352,7 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -2538,24 +2414,24 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

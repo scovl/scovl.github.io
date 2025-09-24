@@ -1,55 +1,49 @@
-{{ $tocEnabled := .Site.Params.toc.enabled | default true }}
-{{ $minHeadings := .Site.Params.toc.minHeadings | default 2 }}
-{{ $maxDepth := .Site.Params.toc.maxDepth | default 4 }}
+{{/* ========= TOC partial (funciona com Markdown e Org) ========= */}}
+{{- $tocEnabled := or (.Param "toc") (site.Params.toc.enabled) | default true -}}
+{{- $start := site.Params.toc.startLevel | default 2 -}}
+{{- $end := site.Params.toc.maxDepth   | default 4 -}}
+{{- $min := site.Params.toc.minHeadings| default 2 -}}
+{{- $contentSelector := site.Params.toc.contentSelector | default ".post-content, article, main" -}}
 
-<!-- Debug TOC -->
-<!-- TOC Enabled: {{ $tocEnabled }} -->
-<!-- Min Headings: {{ $minHeadings }} -->
-<!-- Max Depth: {{ $maxDepth }} -->
-<!-- Table of Contents exists: {{ if .TableOfContents }}YES{{ else }}NO{{ end }} -->
-
-{{ if $tocEnabled }}
-{{ if .TableOfContents }}
-
-<!-- Check if there are enough headings -->
-{{ $headingCount := 0 }}
-{{ range findRE `<h[1-6][^>]*>.*?</h[1-6]>` .Content }}
-  {{ $headingCount = add $headingCount 1 }}
-{{ end }}
-
-{{ if ge $headingCount $minHeadings }}
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                {{ i18n "table_of_contents" | default "Sumário" }}
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="{{ i18n "toggle_table_of_contents" | default "Mostrar/Ocultar Sumário" }}">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                {{ .TableOfContents }}
-            </nav>
-        </div>
-    </div>
-    
-    <!-- Mobile floating button -->
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="{{ i18n "show_table_of_contents" | default "Mostrar Sumário" }}">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+{{- if $tocEnabled -}}
+<aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="{{ $start }}" data-end="{{ $end }}" data-min="{{ $min }}"
+       data-content-selector="{{ $contentSelector }}">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        {{ i18n "table_of_contents" | default "Sumário" }}
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="{{ i18n "toggle_table_of_contents" | default "Mostrar/Ocultar Sumário" }}">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        {{/* Preferir TOC do Hugo quando existir (Markdown) */}}
+        {{- with .TableOfContents -}}
+          {{ . | safeHTML }}
+        {{- end -}}
+      </nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="{{ i18n "show_table_of_contents" | default "Mostrar Sumário" }}">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
-{{ end }}
-{{ end }}
-{{ end }}
+{{- end -}}

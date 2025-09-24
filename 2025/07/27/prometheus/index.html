@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,435 +430,211 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Prometheus e PromQL</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-07-27T23:10:18-03:00">
-                📅 27/07/2025
-            </time>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/prometheus" class="tag">Prometheus</a>
-                
-                <a href="/tags/grafana" class="tag">Grafana</a>
-                
-                <a href="/tags/monitoring" class="tag">Monitoring</a>
-                
-                <a href="/tags/tsdb" class="tag">TSDB</a>
-                
-                <a href="/tags/devops" class="tag">DevOps</a>
-                
-                <a href="/tags/observability" class="tag">Observability</a>
-                
-                <a href="/tags/promql" class="tag">PromQL</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">Prometheus e PromQL</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#tipos-de-métricas">Tipos de métricas</a></li>
-        <li><a href="#monitoramento-pull-vs-push">Monitoramento pull vs push</a></li>
-        <li><a href="#arquitetura-do-prometheus">Arquitetura do Prometheus</a></li>
-        <li><a href="#labels-e-samples">Labels e Samples</a></li>
-        <li><a href="#instalação">Instalação</a>
-          <ul>
-            <li><a href="#configuração">Configuração</a></li>
-          </ul>
-        </li>
-        <li><a href="#-instrumentação">🔍 Instrumentação</a>
-          <ul>
-            <li><a href="#-instrumentação-direta-na-aplicação">📊 Instrumentação direta (na aplicação)</a></li>
-            <li><a href="#-instrumentação-indireta-via-exporters">🔄 Instrumentação indireta (via exporters)</a></li>
-            <li><a href="#instrumentação-indireta-exporters">Instrumentação indireta: Exporters</a></li>
-          </ul>
-        </li>
-        <li><a href="#configuração-avançada">Configuração Avançada</a>
-          <ul>
-            <li><a href="#discovery-dinâmico-e-relabeling">Discovery Dinâmico e Relabeling</a>
-              <ul>
-                <li><a href="#service-discovery">Service Discovery</a></li>
-                <li><a href="#relabeling">Relabeling</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#promql-os-fundamentos">PromQL: Os Fundamentos</a>
-          <ul>
-            <li><a href="#time-series-database-tsdb">Time Series Database (TSDB)</a></li>
-            <li><a href="#seletores-de-métricas">Seletores de métricas</a></li>
-            <li><a href="#tipos-de-expressões-em-promql">Tipos de expressões em PromQL</a></li>
-            <li><a href="#vector-vs-range-vector">Vector vs. Range Vector</a></li>
-            <li><a href="#segurança-do-seletor-seletores-seguros-vs-inseguros">Segurança do seletor (Seletores seguros vs inseguros)</a></li>
-            <li><a href="#obsolescência-do-vetor-instantâneo-staleness">Obsolescência do vetor instantâneo (Staleness)</a></li>
-            <li><a href="#funções-matemáticas-e-clamping">Funções Matemáticas e Clamping</a></li>
-            <li><a href="#timestamps-e-funções-de-tempo-e-data">Timestamps e Funções de Tempo e Data</a></li>
-            <li><a href="#counter-range-vectors-agregação-temporal-e-subconsultas">Counter Range Vectors, Agregação Temporal e Subconsultas</a></li>
-            <li><a href="#histogramas-mudança-de-tipo-alteração-de-labels-e-ordenação">Histogramas, Mudança de Tipo, Alteração de Labels e Ordenação</a></li>
-            <li><a href="#valores-ausentes-absent--missing-values">Valores ausentes (Absent / Missing Values)</a></li>
-            <li><a href="#funções-avançadas-e-menos-conhecidas">Funções avançadas e menos conhecidas</a></li>
-            <li><a href="#operadores-aritméticos-e-correspondência-de-vetores-simples">Operadores Aritméticos e Correspondência de Vetores Simples</a></li>
-            <li><a href="#correspondência-de-séries-temporais-on-ignoring-group_left-group_right">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></a></li>
-            <li><a href="#operadores-lógicos-and-or-unless">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></a></li>
-            <li><a href="#resumo-de-operadores-de-conjunto-conjuntos-de-séries">Resumo de operadores de conjunto (conjuntos de séries)</a></li>
-          </ul>
-        </li>
-        <li><a href="#funções-essenciais-do-promql">Funções Essenciais do PromQL</a>
-          <ul>
-            <li><a href="#funções-de-taxa-e-incremento">Funções de Taxa e Incremento</a></li>
-            <li><a href="#funções-de-agregação">Funções de Agregação</a></li>
-            <li><a href="#funções-de-percentil-e-histograma">Funções de Percentil e Histograma</a></li>
-            <li><a href="#funções-de-filtro-e-seleção">Funções de Filtro e Seleção</a></li>
-            <li><a href="#funções-de-tempo">Funções de Tempo</a></li>
-            <li><a href="#funções-de-detecção-de-ausência">Funções de Detecção de Ausência</a></li>
-          </ul>
-        </li>
-        <li><a href="#promql-avançado">PromQL Avançado</a>
-          <ul>
-            <li><a href="#correspondência-de-séries-temporais-on-ignoring-group_left-group_right-1">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></a></li>
-            <li><a href="#operadores-lógicos-and-or-unless-1">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></a></li>
-            <li><a href="#subconsultas-e-análise-temporal-avançada">Subconsultas e Análise Temporal Avançada</a></li>
-            <li><a href="#funções-avançadas-e-especializadas">Funções Avançadas e Especializadas</a></li>
-          </ul>
-        </li>
-        <li><a href="#promql-na-prática">PromQL na Prática</a>
-          <ul>
-            <li><a href="#consultas-básicas-de-disponibilidade">Consultas Básicas de Disponibilidade</a></li>
-            <li><a href="#métricas-de-sistema-node-exporter">Métricas de Sistema (Node Exporter)</a></li>
-            <li><a href="#métricas-de-aplicação-web">Métricas de Aplicação Web</a></li>
-            <li><a href="#métricas-de-banco-de-dados">Métricas de Banco de Dados</a></li>
-            <li><a href="#métricas-de-containerkubernetes">Métricas de Container/Kubernetes</a></li>
-            <li><a href="#alertas-comuns">Alertas Comuns</a></li>
-            <li><a href="#consultas-avançadas">Consultas Avançadas</a></li>
-            <li><a href="#dicas-de-performance">Dicas de Performance</a></li>
-            <li><a href="#exemplos-de-recording-rules">Exemplos de Recording Rules</a></li>
-            <li><a href="#instrumentação-direta-exemplos-por-linguagem">Instrumentação direta: exemplos por linguagem</a>
-              <ul>
-                <li><a href="#java-micrometer--cliente-java-do-prometheus">Java (Micrometer / Cliente Java do Prometheus)</a></li>
-                <li><a href="#javascriptnodejs">JavaScript/Node.js</a></li>
-                <li><a href="#python-flask-etc">Python (Flask, etc.)</a></li>
-              </ul>
-            </li>
-            <li><a href="#ferramentas-legadas-e-fechadas">Ferramentas legadas e fechadas</a></li>
-          </ul>
-        </li>
-        <li><a href="#alertmanager">Alertmanager</a>
-          <ul>
-            <li><a href="#alertmanager-avançado-silencing-e-inhibition">Alertmanager Avançado: Silencing e Inhibition</a>
-              <ul>
-                <li><a href="#silencing">Silencing</a></li>
-                <li><a href="#inhibition">Inhibition</a></li>
-                <li><a href="#routing-avançado">Routing Avançado</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#pushgateway">PushGateway</a></li>
-        <li><a href="#federação">Federação</a></li>
-        <li><a href="#remote-write-e-remote-read">Remote Write e Remote Read</a>
-          <ul>
-            <li><a href="#remote-write">Remote Write</a></li>
-            <li><a href="#remote-read">Remote Read</a></li>
-            <li><a href="#casos-de-uso-típicos">Casos de Uso Típicos</a></li>
-          </ul>
-        </li>
-        <li><a href="#under-the-hood">Under the Hood</a>
-          <ul>
-            <li><a href="#gerenciamento-de-memória-pelo-prometheus">Gerenciamento de memória pelo Prometheus</a></li>
-            <li><a href="#native-histograms-recurso-experimental">Native Histograms (Recurso Experimental)</a>
-              <ul>
-                <li><a href="#diferenças-dos-histogramas-tradicionais">Diferenças dos Histogramas Tradicionais</a></li>
-                <li><a href="#configuração-1">Configuração</a></li>
-                <li><a href="#exemplo-de-uso">Exemplo de Uso</a></li>
-                <li><a href="#vantagens">Vantagens</a></li>
-                <li><a href="#considerações">Considerações</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#melhores-práticas">Melhores Práticas</a>
-          <ul>
-            <li><a href="#planejamento-de-capacidade">Planejamento de Capacidade</a></li>
-            <li><a href="#organização-de-métricas-e-labels">Organização de Métricas e Labels</a>
-              <ul>
-                <li><a href="#o-inimigo-nº-1-explosão-de-cardinalidade">O Inimigo nº 1: Explosão de Cardinalidade</a></li>
-              </ul>
-            </li>
-            <li><a href="#consultas-promql-eficientes">Consultas (PromQL) Eficientes</a></li>
-            <li><a href="#arquitetura-e-escalabilidade">Arquitetura e Escalabilidade</a></li>
-            <li><a href="#segurança">Segurança</a></li>
-            <li><a href="#backup-recovery-e-upgrade">Backup, Recovery e Upgrade</a>
-              <ul>
-                <li><a href="#backup-de-dados">Backup de Dados</a></li>
-                <li><a href="#recuperação-de-falhas">Recuperação de Falhas</a></li>
-                <li><a href="#estratégias-de-upgrade">Estratégias de Upgrade</a></li>
-                <li><a href="#considerações-importantes">Considerações Importantes</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><a href="#operação-e-manutenção">Operação e Manutenção</a>
-          <ul>
-            <li><a href="#promtool">Promtool</a></li>
-          </ul>
-        </li>
-        <li><a href="#conclusão">Conclusão</a></li>
-        <li><a href="#referências">Referências</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-07-27T23:10:18-03:00">📅 27/07/2025</time>
+      
+      
+      
+      <div class="post-tags">
+        <a href="/tags/prometheus" class="tag">Prometheus</a><a href="/tags/grafana" class="tag">Grafana</a><a href="/tags/monitoring" class="tag">Monitoring</a><a href="/tags/tsdb" class="tag">TSDB</a><a href="/tags/devops" class="tag">DevOps</a><a href="/tags/observability" class="tag">Observability</a><a href="/tags/promql" class="tag">PromQL</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#tipos-de-métricas">Tipos de métricas</a></li>
+    <li><a href="#monitoramento-pull-vs-push">Monitoramento pull vs push</a></li>
+    <li><a href="#arquitetura-do-prometheus">Arquitetura do Prometheus</a></li>
+    <li><a href="#labels-e-samples">Labels e Samples</a></li>
+    <li><a href="#instalação">Instalação</a>
+      <ul>
+        <li><a href="#configuração">Configuração</a></li>
+      </ul>
+    </li>
+    <li><a href="#-instrumentação">🔍 Instrumentação</a>
+      <ul>
+        <li><a href="#-instrumentação-direta-na-aplicação">📊 Instrumentação direta (na aplicação)</a></li>
+        <li><a href="#-instrumentação-indireta-via-exporters">🔄 Instrumentação indireta (via exporters)</a></li>
+        <li><a href="#instrumentação-indireta-exporters">Instrumentação indireta: Exporters</a></li>
+      </ul>
+    </li>
+    <li><a href="#configuração-avançada">Configuração Avançada</a>
+      <ul>
+        <li><a href="#discovery-dinâmico-e-relabeling">Discovery Dinâmico e Relabeling</a>
+          <ul>
+            <li><a href="#service-discovery">Service Discovery</a></li>
+            <li><a href="#relabeling">Relabeling</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#promql-os-fundamentos">PromQL: Os Fundamentos</a>
+      <ul>
+        <li><a href="#time-series-database-tsdb">Time Series Database (TSDB)</a></li>
+        <li><a href="#seletores-de-métricas">Seletores de métricas</a></li>
+        <li><a href="#tipos-de-expressões-em-promql">Tipos de expressões em PromQL</a></li>
+        <li><a href="#vector-vs-range-vector">Vector vs. Range Vector</a></li>
+        <li><a href="#segurança-do-seletor-seletores-seguros-vs-inseguros">Segurança do seletor (Seletores seguros vs inseguros)</a></li>
+        <li><a href="#obsolescência-do-vetor-instantâneo-staleness">Obsolescência do vetor instantâneo (Staleness)</a></li>
+        <li><a href="#funções-matemáticas-e-clamping">Funções Matemáticas e Clamping</a></li>
+        <li><a href="#timestamps-e-funções-de-tempo-e-data">Timestamps e Funções de Tempo e Data</a></li>
+        <li><a href="#counter-range-vectors-agregação-temporal-e-subconsultas">Counter Range Vectors, Agregação Temporal e Subconsultas</a></li>
+        <li><a href="#histogramas-mudança-de-tipo-alteração-de-labels-e-ordenação">Histogramas, Mudança de Tipo, Alteração de Labels e Ordenação</a></li>
+        <li><a href="#valores-ausentes-absent--missing-values">Valores ausentes (Absent / Missing Values)</a></li>
+        <li><a href="#funções-avançadas-e-menos-conhecidas">Funções avançadas e menos conhecidas</a></li>
+        <li><a href="#operadores-aritméticos-e-correspondência-de-vetores-simples">Operadores Aritméticos e Correspondência de Vetores Simples</a></li>
+        <li><a href="#correspondência-de-séries-temporais-on-ignoring-group_left-group_right">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></a></li>
+        <li><a href="#operadores-lógicos-and-or-unless">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></a></li>
+        <li><a href="#resumo-de-operadores-de-conjunto-conjuntos-de-séries">Resumo de operadores de conjunto (conjuntos de séries)</a></li>
+      </ul>
+    </li>
+    <li><a href="#funções-essenciais-do-promql">Funções Essenciais do PromQL</a>
+      <ul>
+        <li><a href="#funções-de-taxa-e-incremento">Funções de Taxa e Incremento</a></li>
+        <li><a href="#funções-de-agregação">Funções de Agregação</a></li>
+        <li><a href="#funções-de-percentil-e-histograma">Funções de Percentil e Histograma</a></li>
+        <li><a href="#funções-de-filtro-e-seleção">Funções de Filtro e Seleção</a></li>
+        <li><a href="#funções-de-tempo">Funções de Tempo</a></li>
+        <li><a href="#funções-de-detecção-de-ausência">Funções de Detecção de Ausência</a></li>
+      </ul>
+    </li>
+    <li><a href="#promql-avançado">PromQL Avançado</a>
+      <ul>
+        <li><a href="#correspondência-de-séries-temporais-on-ignoring-group_left-group_right-1">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></a></li>
+        <li><a href="#operadores-lógicos-and-or-unless-1">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></a></li>
+        <li><a href="#subconsultas-e-análise-temporal-avançada">Subconsultas e Análise Temporal Avançada</a></li>
+        <li><a href="#funções-avançadas-e-especializadas">Funções Avançadas e Especializadas</a></li>
+      </ul>
+    </li>
+    <li><a href="#promql-na-prática">PromQL na Prática</a>
+      <ul>
+        <li><a href="#consultas-básicas-de-disponibilidade">Consultas Básicas de Disponibilidade</a></li>
+        <li><a href="#métricas-de-sistema-node-exporter">Métricas de Sistema (Node Exporter)</a></li>
+        <li><a href="#métricas-de-aplicação-web">Métricas de Aplicação Web</a></li>
+        <li><a href="#métricas-de-banco-de-dados">Métricas de Banco de Dados</a></li>
+        <li><a href="#métricas-de-containerkubernetes">Métricas de Container/Kubernetes</a></li>
+        <li><a href="#alertas-comuns">Alertas Comuns</a></li>
+        <li><a href="#consultas-avançadas">Consultas Avançadas</a></li>
+        <li><a href="#dicas-de-performance">Dicas de Performance</a></li>
+        <li><a href="#exemplos-de-recording-rules">Exemplos de Recording Rules</a></li>
+        <li><a href="#instrumentação-direta-exemplos-por-linguagem">Instrumentação direta: exemplos por linguagem</a>
+          <ul>
+            <li><a href="#java-micrometer--cliente-java-do-prometheus">Java (Micrometer / Cliente Java do Prometheus)</a></li>
+            <li><a href="#javascriptnodejs">JavaScript/Node.js</a></li>
+            <li><a href="#python-flask-etc">Python (Flask, etc.)</a></li>
+          </ul>
+        </li>
+        <li><a href="#ferramentas-legadas-e-fechadas">Ferramentas legadas e fechadas</a></li>
+      </ul>
+    </li>
+    <li><a href="#alertmanager">Alertmanager</a>
+      <ul>
+        <li><a href="#alertmanager-avançado-silencing-e-inhibition">Alertmanager Avançado: Silencing e Inhibition</a>
+          <ul>
+            <li><a href="#silencing">Silencing</a></li>
+            <li><a href="#inhibition">Inhibition</a></li>
+            <li><a href="#routing-avançado">Routing Avançado</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#pushgateway">PushGateway</a></li>
+    <li><a href="#federação">Federação</a></li>
+    <li><a href="#remote-write-e-remote-read">Remote Write e Remote Read</a>
+      <ul>
+        <li><a href="#remote-write">Remote Write</a></li>
+        <li><a href="#remote-read">Remote Read</a></li>
+        <li><a href="#casos-de-uso-típicos">Casos de Uso Típicos</a></li>
+      </ul>
+    </li>
+    <li><a href="#under-the-hood">Under the Hood</a>
+      <ul>
+        <li><a href="#gerenciamento-de-memória-pelo-prometheus">Gerenciamento de memória pelo Prometheus</a></li>
+        <li><a href="#native-histograms-recurso-experimental">Native Histograms (Recurso Experimental)</a>
+          <ul>
+            <li><a href="#diferenças-dos-histogramas-tradicionais">Diferenças dos Histogramas Tradicionais</a></li>
+            <li><a href="#configuração-1">Configuração</a></li>
+            <li><a href="#exemplo-de-uso">Exemplo de Uso</a></li>
+            <li><a href="#vantagens">Vantagens</a></li>
+            <li><a href="#considerações">Considerações</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#melhores-práticas">Melhores Práticas</a>
+      <ul>
+        <li><a href="#planejamento-de-capacidade">Planejamento de Capacidade</a></li>
+        <li><a href="#organização-de-métricas-e-labels">Organização de Métricas e Labels</a>
+          <ul>
+            <li><a href="#o-inimigo-nº-1-explosão-de-cardinalidade">O Inimigo nº 1: Explosão de Cardinalidade</a></li>
+          </ul>
+        </li>
+        <li><a href="#consultas-promql-eficientes">Consultas (PromQL) Eficientes</a></li>
+        <li><a href="#arquitetura-e-escalabilidade">Arquitetura e Escalabilidade</a></li>
+        <li><a href="#segurança">Segurança</a></li>
+        <li><a href="#backup-recovery-e-upgrade">Backup, Recovery e Upgrade</a>
+          <ul>
+            <li><a href="#backup-de-dados">Backup de Dados</a></li>
+            <li><a href="#recuperação-de-falhas">Recuperação de Falhas</a></li>
+            <li><a href="#estratégias-de-upgrade">Estratégias de Upgrade</a></li>
+            <li><a href="#considerações-importantes">Considerações Importantes</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#operação-e-manutenção">Operação e Manutenção</a>
+      <ul>
+        <li><a href="#promtool">Promtool</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusão">Conclusão</a></li>
+    <li><a href="#referências">Referências</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <p>O <strong><a href="https://prometheus.io/">Prometheus</a></strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong>.</p>
+  <div class="post-content">
+    <p>O <strong><a href="https://prometheus.io/">Prometheus</a></strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong>.</p>
 <blockquote>
 <p>A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a></strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p></blockquote>
 <p>Desenvolvido inicialmente na SoundCloud em 2012 por <a href="https://github.com/juliusv">Julius Volz</a> e equipe, o Prometheus foi projetado para ser simples, eficiente e altamente dimensionável. Em 2016, o projeto foi adotado pela <strong><a href="https://www.cncf.io/">Cloud Native Computing Foundation (CNCF)</a></strong> como o segundo projeto hospedado (logo após o <a href="https://kubernetes.io/">Kubernetes</a>), reforçando sua maturidade e ampla adoção pela comunidade.</p>
@@ -3243,10 +3019,9 @@ groups:
 <li><strong>CNCF Observability Landscape</strong> – projetos e ferramentas relacionadas, para quem quiser explorar além (OpenTelemetry, Fluentd, etc.).</li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -3435,9 +3210,8 @@ groups:
     
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -3460,7 +3234,7 @@ groups:
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -3522,24 +3296,24 @@ groups:
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,110 +430,68 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title"></h1>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title"></h1>
     
-    
-    
+  </header>
 
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
   <ul>
-    <li><a href="#next-level-backends-with-rama-storing-and-traversing-graphs-in-60-loc">Next-level Backends with Rama: Storing and Traversing Graphs in 60 LOC</a>
+    <li><a href="#introdução-ao-rama">Introdução ao Rama</a></li>
+    <li><a href="#exemplo-armazenamento-e-travessia-de-grafos">Exemplo: Armazenamento e Travessia de Grafos</a>
       <ul>
-        <li><a href="#introdução-ao-rama">Introdução ao Rama</a></li>
-        <li><a href="#exemplo-armazenamento-e-travessia-de-grafos">Exemplo: Armazenamento e Travessia de Grafos</a>
+        <li><a href="#definindo-o-modelo-de-dados">Definindo o Modelo de Dados</a></li>
+        <li><a href="#conceitos-do-rama">Conceitos do Rama</a></li>
+        <li><a href="#materializando-o-pstate">Materializando o PState</a></li>
+        <li><a href="#implementando-consultas-de-travessia-de-grafo">Implementando Consultas de Travessia de Grafo</a>
           <ul>
-            <li><a href="#definindo-o-modelo-de-dados">Definindo o Modelo de Dados</a></li>
-            <li><a href="#conceitos-do-rama">Conceitos do Rama</a></li>
-            <li><a href="#materializando-o-pstate">Materializando o PState</a></li>
-            <li><a href="#implementando-consultas-de-travessia-de-grafo">Implementando Consultas de Travessia de Grafo</a>
-              <ul>
-                <li><a href="#consulta-de-ancestrais">Consulta de Ancestrais</a></li>
-                <li><a href="#consulta-de-contagem-de-descendentes">Consulta de Contagem de Descendentes</a></li>
-              </ul>
-            </li>
+            <li><a href="#consulta-de-ancestrais">Consulta de Ancestrais</a></li>
+            <li><a href="#consulta-de-contagem-de-descendentes">Consulta de Contagem de Descendentes</a></li>
           </ul>
         </li>
-        <li><a href="#conclusão">Conclusão</a></li>
       </ul>
     </li>
+    <li><a href="#conclusão">Conclusão</a></li>
   </ul>
-</nav>
-            </nav>
-        </div>
+</nav></nav>
     </div>
-    
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
-        </svg>
-    </button>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h1 id="next-level-backends-with-rama-storing-and-traversing-graphs-in-60-loc">Next-level Backends with Rama: Storing and Traversing Graphs in 60 LOC</h1>
+  <div class="post-content">
+    <h1 id="next-level-backends-with-rama-storing-and-traversing-graphs-in-60-loc">Next-level Backends with Rama: Storing and Traversing Graphs in 60 LOC</h1>
 <h2 id="introdução-ao-rama">Introdução ao Rama</h2>
 <p>Rama é uma plataforma que permite a criação de backends escaláveis com uma quantidade mínima de código. Sistemas que normalmente exigiriam milhares de linhas de código podem ser implementados em algumas dezenas de linhas, oferecendo:</p>
 <ul>
@@ -662,16 +620,14 @@ window.I18n = I18n;
 </ul>
 <p>O Rama é gratuito para clusters de produção com até dois nós e pode ser baixado no site da Red Planet Labs.</p>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -694,7 +650,7 @@ window.I18n = I18n;
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -756,24 +712,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     

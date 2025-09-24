@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758736084">
+<link rel="stylesheet" href="/css/main.css?v=1758745301">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758745301">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758745301">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758745301"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -430,152 +430,88 @@ window.I18n = I18n;
         <div class="container">
             
 <article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Inferência de Tipos em Rust e C&#43;&#43;</h1>
-        
-        <div class="post-meta">
-            <time datetime="2025-07-18T23:18:18-03:00">
-                📅 18/07/2025
-            </time>
-            
-            
-            
-            <div class="post-tags">
-                
-                <a href="/tags/infer%C3%AAncia-de-tipos" class="tag">Inferência de Tipos</a>
-                
-                <a href="/tags/programa%C3%A7%C3%A3o" class="tag">Programação</a>
-                
-                <a href="/tags/rust" class="tag">Rust</a>
-                
-                <a href="/tags/c&#43;&#43;" class="tag">C&#43;&#43;</a>
-                
-                <a href="/tags/swift" class="tag">Swift</a>
-                
-            </div>
-            
-        </div>
-        
-    </header>
+  <header class="post-header">
+    <h1 class="post-title">Inferência de Tipos em Rust e C&#43;&#43;</h1>
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-
-
-<aside class="toc" id="toc" aria-labelledby="toc-title">
-    <div class="toc-container">
-        <div class="toc-header">
-            <h3 id="toc-title" class="toc-title">
-                <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18M3 12h18M3 18h18"/>
-                </svg>
-                Sumário
-            </h3>
-            <button class="toc-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
-                <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6"/>
-                </svg>
-            </button>
-        </div>
-        <div class="toc-content" id="toc-content">
-            <div class="toc-progress">
-                <div class="toc-progress-bar" id="toc-progress-bar"></div>
-            </div>
-            <nav class="toc-nav">
-                <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#introdução">Introdução</a></li>
-        <li><a href="#inferência-de-tipos-no-c">Inferência de Tipos no C++</a>
-          <ul>
-            <li><a href="#características-da-inferência-em-c">Características da Inferência em C++</a></li>
-          </ul>
-        </li>
-        <li><a href="#inferência-de-tipos-no-rust">Inferência de Tipos no Rust</a>
-          <ul>
-            <li><a href="#fronteiras-de-tipo-e-clareza-de-interface">Fronteiras de Tipo e Clareza de Interface</a></li>
-            <li><a href="#regras-de-unicidade-e-coerência">Regras de Unicidade e Coerência</a></li>
-            <li><a href="#limitações-por-design-que-potencializam-a-inferência">Limitações por Design que Potencializam a Inferência</a>
-              <ul>
-                <li><a href="#sobrecarga-de-funções-nomeadas">Sobrecarga de Funções Nomeadas</a></li>
-                <li><a href="#conversões-implícitas-de-tipo">Conversões Implícitas de Tipo</a></li>
-                <li><a href="#herança-de-classes">Herança de Classes</a></li>
-                <li><a href="#especialização-de-templates">Especialização de Templates</a></li>
-              </ul>
-            </li>
-            <li><a href="#o-resultado-um-espaço-de-busca-simplificado">O Resultado: Um Espaço de Busca Simplificado</a></li>
-            <li><a href="#limitações-conscientes-da-inferência">Limitações Conscientes da Inferência</a></li>
-          </ul>
-        </li>
-        <li><a href="#comparação-com-o-swift-e-desafios-adicionais">Comparação com o Swift e Desafios Adicionais</a></li>
-        <li><a href="#impacto-prático-e-conclusão">Impacto Prático e Conclusão</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-            </nav>
-        </div>
+    <div class="post-meta">
+      <time datetime="2025-07-18T23:18:18-03:00">📅 18/07/2025</time>
+      
+      
+      
+      <div class="post-tags">
+        <a href="/tags/infer%C3%AAncia-de-tipos" class="tag">Inferência de Tipos</a><a href="/tags/programa%C3%A7%C3%A3o" class="tag">Programação</a><a href="/tags/rust" class="tag">Rust</a><a href="/tags/c&#43;&#43;" class="tag">C&#43;&#43;</a><a href="/tags/swift" class="tag">Swift</a>
+      </div>
+      
     </div>
     
-    
-    <button class="toc-mobile-toggle" id="toc-mobile-toggle" aria-label="Mostrar Sumário">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M3 12h18M3 18h18"/>
+  </header>
+
+  <aside class="toc" id="toc" aria-labelledby="toc-title"
+       data-start="2" data-end="4" data-min="2"
+       data-content-selector=".post-content, article, main">
+  <div class="toc-container">
+    <div class="toc-header">
+      <h3 id="toc-title" class="toc-title">
+        <svg class="toc-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
-    </button>
+        Sumário
+      </h3>
+      <button class="toc-toggle" id="toc-toggle" aria-expanded="true"
+              aria-controls="toc-content" aria-label="Mostrar/Ocultar Sumário">
+        <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="toc-content" id="toc-content">
+      <div class="toc-progress"><div class="toc-progress-bar" id="toc-progress-bar"></div></div>
+      <nav class="toc-nav" id="toc-nav">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introdução">Introdução</a></li>
+    <li><a href="#inferência-de-tipos-no-c">Inferência de Tipos no C++</a>
+      <ul>
+        <li><a href="#características-da-inferência-em-c">Características da Inferência em C++</a></li>
+      </ul>
+    </li>
+    <li><a href="#inferência-de-tipos-no-rust">Inferência de Tipos no Rust</a>
+      <ul>
+        <li><a href="#fronteiras-de-tipo-e-clareza-de-interface">Fronteiras de Tipo e Clareza de Interface</a></li>
+        <li><a href="#regras-de-unicidade-e-coerência">Regras de Unicidade e Coerência</a></li>
+        <li><a href="#limitações-por-design-que-potencializam-a-inferência">Limitações por Design que Potencializam a Inferência</a>
+          <ul>
+            <li><a href="#sobrecarga-de-funções-nomeadas">Sobrecarga de Funções Nomeadas</a></li>
+            <li><a href="#conversões-implícitas-de-tipo">Conversões Implícitas de Tipo</a></li>
+            <li><a href="#herança-de-classes">Herança de Classes</a></li>
+            <li><a href="#especialização-de-templates">Especialização de Templates</a></li>
+          </ul>
+        </li>
+        <li><a href="#o-resultado-um-espaço-de-busca-simplificado">O Resultado: Um Espaço de Busca Simplificado</a></li>
+        <li><a href="#limitações-conscientes-da-inferência">Limitações Conscientes da Inferência</a></li>
+      </ul>
+    </li>
+    <li><a href="#comparação-com-o-swift-e-desafios-adicionais">Comparação com o Swift e Desafios Adicionais</a></li>
+    <li><a href="#impacto-prático-e-conclusão">Impacto Prático e Conclusão</a></li>
+  </ul>
+</nav></nav>
+    </div>
+  </div>
+
+  <button class="toc-mobile-toggle" id="toc-mobile-toggle"
+          aria-label="Mostrar Sumário">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18M3 12h18M3 18h18"/>
+    </svg>
+  </button>
 </aside>
 
-
-
-    
-    <div class="post-content">
-        <h2 id="introdução">Introdução</h2>
+  <div class="post-content">
+    <h2 id="introdução">Introdução</h2>
 <p>Inferência de tipos é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa.</p>
 <p>Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem.</p>
 <p>Exploramos também brevemente o caso do <strong><a href="https://en.wikipedia.org/wiki/Swift_%28programming_language%29">Swift</a></strong>, comparando sua estratégia híbrida e os desafios de desempenho que ela acarreta. Ao final, refletimos sobre o impacto dessas escolhas de design na experiência de programação.</p>
@@ -767,10 +703,9 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
 <li><a href="https://danielchasehooper.com/posts/why-swift-is-slow/#:~:text=Swift%206%20spends%2042%20seconds,No%20matter%20how">Why Swift’s Type Checker Is So Slow</a></li>
 </ul>
 
-    </div>
-    
-    
-    
+  </div>
+
+  
 
 
 
@@ -1007,9 +942,8 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
         </div>
     
 
-    
-    
-    
+
+  
     
 <div class="comments-section">
     <h3 class="comments-title">💬 Comentários</h3>
@@ -1032,7 +966,7 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
     </div>
 </div>
 
-    
+  
 </article>
 
         </div>
@@ -1094,24 +1028,24 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758745301"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758745301"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758736084"></script>
-    <script src="/js/lazy-loading.js?v=1758736084"></script>
-    <script src="/js/toc.js?v=1758736084"></script>
+    <script src="/js/main-minimal.js?v=1758745301"></script>
+    <script src="/js/lazy-loading.js?v=1758745301"></script>
+    <script src="/js/toc.js?v=1758745301"></script>
     
     
     
