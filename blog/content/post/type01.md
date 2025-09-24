@@ -185,16 +185,24 @@ Uma vantagem prática disso é que cada tipo geralmente precisa ser escrito **ap
 Rust consegue oferecer essa inferência contextual potente em parte porque abre mão de certos recursos presentes em C++ que dificultariam o processo. Em especial, destacam-se as ausências, por design, de alguns mecanismos na linguagem Rust:
 
 #### Sobrecarga de Funções Nomeadas
-Em Rust não é permitido definir duas funções *nomeadas* com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via **traits** (como `Add`, `FromStr`, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única. Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.
+Em Rust não é permitido definir duas funções *nomeadas* com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via **traits** (como `Add`, `FromStr`, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única. 
+
+Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.
 
 #### Conversões Implícitas de Tipo
-Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um `int` em `double` em certas expressões). Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.
+Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um `int` em `double` em certas expressões). 
+
+Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.
 
 #### Herança de Classes
-Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza *traits* (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos. A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.
+Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza *traits* (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos. 
+
+A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.
 
 #### Especialização de Templates
-Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando `T` é um `int`. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.
+Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando `T` é um `int`. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. 
+
+No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.
 
 ### O Resultado: Um Espaço de Busca Simplificado
 
@@ -218,7 +226,9 @@ A inferência atua dentro dos limites dessas funções e nos tipos genéricos, m
 
 A linguagem **Swift**, desenvolvida pela Apple, oferece um caso interessante para compararmos com Rust e C++. Swift implementa um sistema de inferência de tipos também baseado em resolução de restrições (um tipo de **unificação** bidirecional semelhante ao Hindley-Milner), permitindo ao programador omitir muitos tipos.
 
-Entretanto, Swift **mantém recursos de linguagem que Rust evitou**, como sobrecarga extensiva de funções e operadores, conversões implícitas via **protocolos literais**, e múltiplas conveniências sintáticas. Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos "polimórficos". A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.
+Entretanto, Swift **mantém recursos de linguagem que Rust evitou**, como sobrecarga extensiva de funções e operadores, conversões implícitas via **protocolos literais**, e múltiplas conveniências sintáticas. 
+
+Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos "polimórficos". A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.
 
 Um sintoma notório desses desafios é o famoso erro do Swift: *"the compiler is unable to type-check this expression in reasonable time"* (o compilador não consegue verificar o tipo desta expressão em tempo hábil). Esse erro ocorre quando a expressão de código é tão complexa para o mecanismo de inferência que o compilador não consegue resolver dentro de limites práticos de tempo. Como exemplo ilustrativo do tipo de operação que pode ser problemática:
 
@@ -228,7 +238,9 @@ let a: Double = -(1 + 2) + -(3 + 4) + -(5)
 
 Embora esse exemplo específico seja simples demais para causar problemas nas versões atuais do Swift, ele demonstra o tipo de construção que pode ser problemática: expressões com múltiplas operações aninhadas e literais ambíguos. Os casos realmente problemáticos envolvem expressões muito mais longas e complexas com cadeias extensas de operadores sobrecarregados.
 
-O problema de fundo é que o Swift permite que literais numéricos como `1` sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como `+` e `-` sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.). Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado. 
+O problema de fundo é que o Swift permite que literais numéricos como `1` sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como `+` e `-` sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.). 
+
+Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado. 
 
 Com muitas possibilidades, o problema rapidamente explode em complexidade. De fato, um caso real relatado envolveu concatenar cadeias de strings e valores numéricos numa única expressão para formar uma URL, levando o compilador Swift 42 segundos para tentar resolver os tipos antes de finalmente falhar com a mensagem de erro mencionada.
 

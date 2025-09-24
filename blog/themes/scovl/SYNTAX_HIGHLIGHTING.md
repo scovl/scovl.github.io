@@ -104,6 +104,18 @@ body {
 ```
 ````
 
+**Zig**
+````markdown
+```zig
+const std = @import("std");
+
+pub fn main() !void {
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("Hello, World!\n", .{});
+}
+```
+````
+
 ## 🔧 **Linguagens Suportadas**
 
 O Prism.js com autoloader suporta mais de 200 linguagens, incluindo:
@@ -124,6 +136,7 @@ O Prism.js com autoloader suporta mais de 200 linguagens, incluindo:
 - **Ruby** (`ruby`)
 - **Kotlin** (`kotlin`)
 - **TypeScript** (`typescript`, `ts`)
+- **Zig** (`zig`)
 - **SQL** (`sql`)
 - **JSON** (`json`)
 - **YAML** (`yaml`, `yml`)

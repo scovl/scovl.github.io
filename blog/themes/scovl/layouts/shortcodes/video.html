@@ -1,0 +1,16 @@
+{{ $src := .Get "src" }}
+{{ $title := .Get "title" | default "" }}
+{{ $width := .Get "width" | default "560" }}
+{{ $height := .Get "height" | default "315" }}
+
+<div class="video-container-gradient">
+    <div class="video-responsive">
+        <iframe 
+            src="{{ $src }}" 
+            title="{{ $title }}"
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
+

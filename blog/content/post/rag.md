@@ -2,7 +2,7 @@
 title = "01 - RAG Simples com Clojure e Ollama"
 description = "Um protótipo funcional do zero"
 date = 2025-03-23T19:00:00-00:00
-tags = ["RAG", "LLM", "AI", "Langchain"]
+tags = ["RAG", "LLM", "AI", "Clojure"]
 draft = false
 weight = 1
 author = "Vitor Lobo Ramos"
@@ -44,7 +44,7 @@ O problema fundamental reside no fato de que esses modelos, por mais sofisticado
 ```mermaid
 graph LR
     A[RAG] --> B[Base de Dados Atual]
-    A --> C[Pesquisa em Tempo Real]
+    A --> C[Recuperação em Fontes Externas]
     A --> D[Combinação de Conhecimento]
     
     B --> E[Documentos Atualizados]
@@ -58,14 +58,14 @@ graph LR
 ```
 
 1. **Conexão com uma base de dados atual:** Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o [LLM](https://en.wikipedia.org/wiki/Large_language_model) ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.
-2. **Pesquisa em tempo real:** O [LLM](https://en.wikipedia.org/wiki/Large_language_model) não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O [LLM](https://en.wikipedia.org/wiki/Large_language_model), equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
+2. **Recuperação em fontes externas:** O [LLM](https://en.wikipedia.org/wiki/Large_language_model) não está mais limitado a "lembrar" de informações. Ele adquire a capacidade de "procurar" ativamente por dados relevantes para responder a uma pergunta ou gerar um texto em fontes externas ao modelo, que podem ser estáticas (documentos corporativos) ou atualizadas em tempo real (APIs, bancos de dados dinâmicos). Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O [LLM](https://en.wikipedia.org/wiki/Large_language_model), equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.
 3. **Combinação de conhecimento base com dados novos:** Este é o ponto crucial que diferencia o [RAG](https://pt.wikipedia.org/wiki/Geração_aumentada_por_recuperação) de uma simples busca em uma base de dados. O [LLM](https://en.wikipedia.org/wiki/Large_language_model) não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.
 
 ### RAG em Produção
 
 Sistemas RAG em produção frequentemente incluem etapas adicionais para melhorar a precisão: **re-ranking** (onde um modelo especializado re-avalia a relevância dos documentos recuperados) e **merge-rerank** (que combina resultados de múltiplas estratégias de busca como semântica, lexical e híbrida). Essas técnicas aumentam significativamente a qualidade das respostas, mas adicionam complexidade ao sistema.
 
-> **Nota**: Nossa implementação atual usa apenas busca semântica simples com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar essas técnicas avançadas.
+> **Nota**: Nossa implementação atual usa apenas busca lexical com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar técnicas semânticas avançadas com embeddings densos.
 
 Segundo um [whitepaper recente dos pesquisadores do Google](https://arxiv.org/abs/2309.01066), existem várias técnicas para turbinar o desempenho dos [LLMs](https://en.wikipedia.org/wiki/Large_language_model), e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:
 
@@ -83,7 +83,7 @@ O modelo também se dá super bem com várias linguagens de programação, inclu
 
 ### Preparando o Ambiente
 
-Pre-requisitos:
+Pré-requisitos:
 - [Clojure](https://clojure.org/guides/getting_started): Linguagem de programação funcional que vamos usar para construir a aplicação
 - [Leiningen](https://leiningen.org/): Ferramenta de build para Clojure
 - [Ollama](https://ollama.com/): Modelo de linguagem local
@@ -96,7 +96,7 @@ Nossa aplicação terá três componentes principais:
    - Pré-processamento de texto
 2. **Sistema de embeddings**
    - Criação de embeddings para o texto usando [TF-IDF](https://pt.wikipedia.org/wiki/TF-IDF)
-   - Busca por similaridade semântica
+   - Busca por similaridade lexical (bag-of-words)
 3. **Interface com o LLM**
    - Geração de resposta usando o LLM
 
@@ -252,8 +252,64 @@ Agora vamos implementar os três componentes principais do nosso sistema RAG e v
       ;; Fallback conservador: 1 token por caractere
       (count text))))
 
+(defn split-large-node
+  "Divide nó muito grande em partes menores"
+  [node max-tokens]
+  (let [node-tokens (count-tokens node)]
+    (if (<= node-tokens max-tokens)
+      [node]
+      ;; Tenta dividir por frases primeiro
+      (let [sentences (str/split node #"[.!?]+\s+")
+            sentence-chunks (loop [sents sentences
+                                   current-chunk []
+                                   current-tokens 0
+                                   result []]
+                              (if (empty? sents)
+                                (if (seq current-chunk)
+                                  (conj result (str/join ". " current-chunk))
+                                  result)
+                                (let [sent (first sents)
+                                      sent-tokens (count-tokens sent)
+                                      new-total (+ current-tokens sent-tokens)]
+                                  (if (and (> new-total max-tokens) (seq current-chunk))
+                                    (recur (rest sents)
+                                           [sent]
+                                           sent-tokens
+                                           (conj result (str/join ". " current-chunk)))
+                                    (recur (rest sents)
+                                           (conj current-chunk sent)
+                                           new-total
+                                           result)))))]
+        ;; Se ainda há chunks muito grandes, divide por palavras
+        (mapcat (fn [chunk]
+                  (if (<= (count-tokens chunk) max-tokens)
+                    [chunk]
+                    (let [words (str/split chunk #"\s+")
+                          word-chunks (loop [w words
+                                             current []
+                                             current-tokens 0
+                                             result []]
+                                        (if (empty? w)
+                                          (if (seq current)
+                                            (conj result (str/join " " current))
+                                            result)
+                                          (let [word (first w)
+                                                word-tokens (count-tokens word)
+                                                new-total (+ current-tokens word-tokens)]
+                                            (if (and (> new-total max-tokens) (seq current))
+                                              (recur (rest w)
+                                                     [word]
+                                                     word-tokens
+                                                     (conj result (str/join " " current)))
+                                              (recur (rest w)
+                                                     (conj current word)
+                                                     new-total
+                                                     result)))))]
+                      word-chunks)))
+                sentence-chunks)))))
+
 (defn create-token-aware-chunks
-  "Cria chunks baseados em tokens reais, não caracteres"
+  "Cria chunks baseados em estimativa de tokens, dividindo nós grandes quando necessário"
   [text-nodes max-tokens]
   (loop [nodes text-nodes
          current-chunk []
@@ -264,19 +320,27 @@ Agora vamos implementar os três componentes principais do nosso sistema RAG e v
         (conj all-chunks (str/join " " current-chunk))
         all-chunks)
       (let [node (first nodes)
-            node-tokens (count-tokens node)
-            new-total (+ current-tokens node-tokens)]
-        (if (and (> new-total max-tokens) (seq current-chunk))
-          ;; Chunk cheio, salva e inicia novo
-          (recur (rest nodes)
-                 [node]
-                 node-tokens
-                 (conj all-chunks (str/join " " current-chunk)))
-          ;; Adiciona ao chunk atual
-          (recur (rest nodes)
-                 (conj current-chunk node)
-                 new-total
-                 all-chunks))))))
+            node-tokens (count-tokens node)]
+        ;; Se o nó é muito grande, divide ele primeiro
+        (if (> node-tokens max-tokens)
+          (let [split-nodes (split-large-node node max-tokens)]
+            (recur (concat split-nodes (rest nodes))
+                   current-chunk
+                   current-tokens
+                   all-chunks))
+          ;; Nó de tamanho normal, processa normalmente
+          (let [new-total (+ current-tokens node-tokens)]
+            (if (and (> new-total max-tokens) (seq current-chunk))
+              ;; Chunk cheio, salva e inicia novo
+              (recur (rest nodes)
+                     [node]
+                     node-tokens
+                     (conj all-chunks (str/join " " current-chunk)))
+              ;; Adiciona ao chunk atual
+              (recur (rest nodes)
+                     (conj current-chunk node)
+                     new-total
+                     all-chunks))))))))
 
 (defn preprocess-chunks
   "Limpa e prepara os chunks de texto"
@@ -321,7 +385,7 @@ Agora vamos implementar o sistema de embeddings. Ele é responsável por criar e
   (:require [clojure.string :as str]
             [clojure.core.memoize :as memo]))
 
-;; Implementação de embeddings usando TF-IDF simples
+;; Implementação de embeddings usando TF-IDF simples (busca lexical)
 ;; Não depende de modelos externos, ao contrário do Ollama que usa o deepseek-r1 para o LLM
 
 (defn tokenize
@@ -356,23 +420,25 @@ Agora vamos implementar o sistema de embeddings. Ele é responsável por criar e
                    all-tokens)))))
 
 (defn tf-idf
-  "Calcula TF-IDF para um documento"
+  "Calcula TF-IDF para um documento com estabilidade numérica"
   [doc doc-freq doc-count]
   (if (empty? doc-freq)
     {}
     (let [tokens (tokenize doc)
           tf (term-freq tokens)]
       (zipmap (keys tf)
-              (map #(* (get tf %) (Math/log (/ doc-count (get doc-freq % 1))))
+              (map #(* (get tf %) 
+                      ;; IDF suavizado: log((N+1)/(df+1)) + 1 para estabilidade
+                      (+ 1 (Math/log (/ (+ doc-count 1) (+ (get doc-freq % 1) 1)))))
                    (keys tf))))))
 
 (defn vectorize
-  "Converte um documento em um vetor TF-IDF"
+  "Converte um documento em um vetor TF-IDF (retorna vector para serialização)"
   [doc doc-freq doc-count vocab]
   (let [tf-idf-scores (tf-idf doc doc-freq doc-count)]
     (if (empty? vocab)
       []
-      (map #(get tf-idf-scores % 0.0) vocab))))
+      (vec (map #(get tf-idf-scores % 0.0) vocab)))))
 
 (defn create-embeddings
   "Gera embeddings para uma lista de textos usando TF-IDF"
@@ -382,7 +448,7 @@ Agora vamos implementar o sistema de embeddings. Ele é responsável por criar e
           doc-count (count (filter string? texts))
           ;; Vocabulário ordenado para garantir ordem estável
           vocab (sort (keys doc-freq))]
-      (map #(vectorize % doc-freq doc-count vocab) texts))
+      (vec (map #(vectorize % doc-freq doc-count vocab) texts)))
     (catch Exception e
       (println "Erro ao criar embeddings: " (.getMessage e))
       (vec (repeat (count texts) [])))))
@@ -422,13 +488,13 @@ graph TD
     C -->|Similaridade do Cosseno| D[Documentos Similares]
 ```
 
-A parte mais legal é a função `similarity_search`, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são.
+A parte mais legal é a função `similarity_search`, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são lexicalmente.
 
 O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.
 
 O TF-IDF transforma textos em vetores numéricos ao combinar a frequência de cada palavra em um documento (TF) com o quanto essa palavra é rara em toda a coleção (IDF): palavras comuns como "linguagem" têm peso baixo, enquanto termos mais exclusivos como "Clojure" ganham peso alto, permitindo que o computador compare documentos de forma eficiente e encontre os mais relevantes para cada consulta.
 
-Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como "carro" e "automóvel" como diferentes e podendo gerar vetores grandes.
+Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos lexicalmente, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como "carro" e "automóvel" como diferentes e podendo gerar vetores grandes.
 
 > **Importante**: Esta implementação TF-IDF é uma **prova de conceito** para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como [SBERT](https://www.sbert.net/), [E5](https://huggingface.co/intfloat/e5-large), [BGE](https://huggingface.co/BAAI/bge-large-en) ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.
 
@@ -458,8 +524,9 @@ Agora vamos implementar a interface com o Ollama. Ele é responsável por gerar 
       (-> response
           :body
           (json/read-str :key-fn keyword)
-          ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-          (#(or (:response %) (:message %))))
+          ;; Campo :response para /api/generate (usado aqui)
+          ;; Campo :message seria usado em /api/chat
+          :response)
       (str "Erro ao chamar a API do Ollama: " (:status response) " - " (:body response)))))
 
 ;; Funções de utilidade para uso futuro:
@@ -705,7 +772,7 @@ Abaixo um guia para você instalar e usar o DocAI (e ver o processo em ação).
    - **Windows**: Baixe o instalador do [site oficial do Ollama](https://ollama.com/download) e execute-o
    - **Linux**: Execute o comando:
      ```bash
-     curl https://ollama.ai/install.sh | sh
+     curl -fsSL https://ollama.com/install.sh | sh
      ```
    - **macOS**: Use o Homebrew:
      ```bash
@@ -821,7 +888,8 @@ Outra questão importante é como estou tratando os erros. O sistema implementa 
      - Logs de progresso para monitoramento
    ```clojure
    (let [content (slurp doc-path)
-         chunks (partition-all 512 text)]
+         text-nodes (extract-text-from-markdown content)
+         chunks (doc/create-token-aware-chunks text-nodes 512)]
      (println "Quantidade de chunks gerados:" (count chunks)))
    ```
 
@@ -834,7 +902,7 @@ Outra questão importante é como estou tratando os erros. O sistema implementa 
    ```clojure
    (if (str/blank? context-chunks)
      (if (seq (:original-files knowledge-base))
-       (get-file-content (first (:original-files knowledge-base)))
+       (get-limited-fallback-content (first (:original-files knowledge-base)))
        "Não foi possível encontrar informações relevantes.")
      context-chunks)
    ```
@@ -975,14 +1043,17 @@ Abaixo uma lista de melhorias que podem ser feitas no projeto atual.
   (let [url "http://localhost:11434/api/generate"
         request-body {:model "deepseek-r1"
                      :prompt prompt
-                     :stream true}]
-    (with-open [conn @(http/post url {:body (json/write-str request-body)
-                                      :as :stream})]
-      (doseq [line (line-seq (:body conn))]
+                     :stream true}
+        resp @(http/post url {:body (json/write-str request-body)
+                              :as :stream
+                              :headers {"Content-Type" "application/json"}})]
+    (with-open [rdr (clojure.java.io/reader (:body resp))]
+      (doseq [line (line-seq rdr)]
         (when-not (str/blank? line)
           (let [data (json/read-str line :key-fn keyword)]
-            ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-            (when-let [content (or (:response data) (:message data))]
+            ;; Campo :response para /api/generate (usado aqui)
+            ;; Campo :message seria usado em /api/chat
+            (when-let [content (:response data)]
               (print content)
               (flush))))))))
 ```
@@ -1047,32 +1118,35 @@ Abaixo uma lista de melhorias que podem ser feitas no projeto atual.
 ```clojure
 ;; src/docai/vector_store.clj
 (ns docai.vector-store
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [docai.embedding :as emb]))
 
 (defn create-simple-vector-store
   "Store vetorial simples com BM25 (implementação manual)"
   [documents]
   (let [index (atom {})
         doc-freq (emb/doc-freq documents)
-        vocab (sort (keys doc-freq))]  ; Vocabulário ordenado
+        vocab (sort (keys doc-freq))  ; Vocabulário ordenado
+        doc-count (count documents)
+        ;; Calcula o comprimento médio real dos documentos
+        avg-doc-len (/ (reduce + (map #(count (emb/tokenize %)) documents)) doc-count)]
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [tokens (emb/tokenize doc)
             tf (emb/term-freq tokens)]
         (swap! index assoc idx {:doc doc :tf tf})))
-    {:index index :doc-freq doc-freq :vocab vocab}))
+    {:index index :doc-freq doc-freq :vocab vocab :doc-count doc-count :avg-doc-len avg-doc-len}))
 
 (defn calculate-bm25
   "Calcula score BM25 para um documento"
-  [query-tokens doc-tf doc-freq]
+  [query-tokens doc-tf doc-freq doc-count avg-doc-len]
   (let [k1 1.2  ; Parâmetro de saturação de termo
         b 0.75   ; Parâmetro de normalização de comprimento
-        avg-doc-len 100  ; Comprimento médio do documento (aproximação)
         doc-len (reduce + (vals doc-tf))
         
         ;; IDF para cada termo da query
         idf-scores (map (fn [term]
                           (let [df (get doc-freq term 0)
-                                n (count doc-freq)]
+                                n doc-count]  ; Use número de documentos, não count doc-freq
                             (if (zero? df)
                               0
                               (Math/log (/ (- n df 0.5) (+ df 0.5)))))
@@ -1093,22 +1167,20 @@ Abaixo uma lista de melhorias que podem ser feitas no projeto atual.
   [query vector-store top-k]
   (let [query-tokens (emb/tokenize query)
         query-embedding (emb/vectorize query (:doc-freq vector-store) (:doc-count vector-store) (:vocab vector-store))
+        index-data @(:index vector-store)
         
-        ;; BM25 scores
-        bm25-scores (map-indexed 
-                      (fn [idx {:keys [tf]}]
-                        [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store))])
-                      (vals @(:index vector-store)))
+        ;; BM25 scores - itera corretamente preservando índices
+        bm25-scores (for [[idx {:keys [tf]}] index-data]
+                      [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store) 
+                                          (:doc-count vector-store) (:avg-doc-len vector-store))])
         
-        ;; Semantic scores
-        semantic-scores (map-indexed
-                          (fn [idx _]
-                            [idx (emb/cosine-similarity query-embedding 
-                                                       (emb/vectorize (get-in @(:index vector-store) [idx :doc])
-                                                                      (:doc-freq vector-store)
-                                                                      (:doc-count vector-store)
-                                                                      (:vocab vector-store)))])
-                          (vals @(:index vector-store)))
+        ;; Semantic scores - itera corretamente preservando índices
+        semantic-scores (for [[idx {:keys [doc]}] index-data]
+                          [idx (emb/cosine-similarity query-embedding 
+                                                     (emb/vectorize doc
+                                                                    (:doc-freq vector-store)
+                                                                    (:doc-count vector-store)
+                                                                    (:vocab vector-store)))])
         
         ;; Combine scores (weighted average)
         combined-scores (map (fn [[idx bm25] [idx2 semantic]]
@@ -1124,8 +1196,9 @@ Abaixo uma lista de melhorias que podem ser feitas no projeto atual.
 **Sobre o Algoritmo BM25:**
 - **k1 = 1.2**: Controla saturação de frequência de termos
 - **b = 0.75**: Normaliza pelo comprimento do documento
-- **IDF**: Mede raridade dos termos na coleção
+- **IDF**: Mede raridade dos termos na coleção (N = número de documentos)
 - **TF**: Frequência dos termos no documento
+- **avg-doc-len**: Comprimento médio real calculado dos documentos
 - **Combinação**: 30% BM25 + 70% similaridade semântica
 
 **Nota**: Esta é uma implementação manual do BM25. Para produção, considere usar Apache Lucene (veja dependências acima) que oferece BM25 nativo e otimizado.
@@ -1187,9 +1260,10 @@ Para implementar as funcionalidades avançadas mencionadas no artigo, adicione e
 ;; src/docai/lucene_store.clj
 (ns docai.lucene-store
   (:import [org.apache.lucene.analysis.standard StandardAnalyzer]
-           [org.apache.lucene.document Document Field Field$Store]
+           [org.apache.lucene.document Document TextField StringField Field$Store]
            [org.apache.lucene.index IndexWriter IndexWriterConfig DirectoryReader]
-           [org.apache.lucene.search IndexSearcher QueryParser]
+           [org.apache.lucene.search IndexSearcher]
+           [org.apache.lucene.queryparser.classic QueryParser]
            [org.apache.lucene.store RAMDirectory]))
 
 (defn create-lucene-index
@@ -1203,8 +1277,8 @@ Para implementar as funcionalidades avançadas mencionadas no artigo, adicione e
     ;; Adiciona documentos ao índice
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [document (Document.)]
-        (.add document (Field. "content" doc Field$Store/YES))
-        (.add document (Field. "id" (str idx) Field$Store/YES))
+        (.add document (TextField. "content" doc Field$Store/YES))
+        (.add document (StringField. "id" (str idx) Field$Store/YES))
         (.addDocument writer document)))
     
     (.close writer)
@@ -1220,7 +1294,9 @@ Para implementar as funcionalidades avançadas mencionadas no artigo, adicione e
   (let [parser (QueryParser. "content" (:analyzer index))
         query-obj (.parse parser query)
         hits (.search (:searcher index) query-obj top-k)]
-    (map #(.doc (:searcher index) %) (.scoreDocs hits))))
+    (map (fn [score-doc] 
+           (.doc (:searcher index) (.doc score-doc))) 
+         (.scoreDocs hits))))
 ```
 
 ### Upgrade para Embeddings Densos
@@ -1229,13 +1305,14 @@ Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções
 
 #### 1. **Via Ollama Embeddings API**
 ```clojure
-;; Exemplo de upgrade usando Ollama embeddings
+;; Exemplo de upgrade usando modelos de embedding específicos
 (defn create-dense-embeddings [texts]
   (let [embeddings-url "http://localhost:11434/api/embeddings"]
     (map #(call-ollama-embeddings embeddings-url %) texts)))
 
 (defn call-ollama-embeddings [url text]
-  (let [request-body {:model "deepseek-r1" :prompt text}
+  ;; Use modelos de embedding apropriados, não modelos geradores
+  (let [request-body {:model "nomic-embed-text" :prompt text}  ; ou "all-minilm", "bge-m3", "snowflake-arctic-embed"
         response @(http/post url {:body (json/write-str request-body)})]
     (if (= (:status response) 200)
       (-> response :body (json/read-str :key-fn keyword) :embedding)
@@ -1280,6 +1357,13 @@ Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções
           (count-tokens text))) ; Fallback para heurística
       (catch Exception _
         (count-tokens text))))) ; Fallback para heurística
+
+;; Exemplo de uso com diferentes modelos de embedding
+;; Primeiro baixe um modelo de embedding apropriado:
+;; ollama pull nomic-embed-text
+;; ollama pull all-minilm
+;; ollama pull bge-m3
+;; ollama pull snowflake-arctic-embed
 ```
 
 #### 2. **Via HuggingFace Transformers**
