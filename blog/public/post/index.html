@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758225188">
+<link rel="stylesheet" href="/css/main.css?v=1758724686">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758225188">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758724686">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758225188">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758724686">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758225188"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758724686"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -368,6 +368,8 @@ window.I18n = I18n;
                         
                         <li><a href="/page/contact/">Contact</a></li>
                         
+                        <li><a href="/page/books/">Books</a></li>
+                        
                     </ul>
                 </nav>
                 
@@ -444,58 +446,6 @@ window.I18n = I18n;
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/08/08/emacs/">GNU Emacs</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-08-08T19:00:00Z">
-                Fri, Aug 8, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/oop/" class="tag">OOP</a>
-                
-                <a href="/tags/software/" class="tag">software</a>
-                
-                <a href="/tags/engineering/" class="tag">engineering</a>
-                
-                <a href="/tags/clojure/" class="tag">Clojure</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                O poder do Emacs puro
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <p>Após anos experimentando diversos editores de texto para escrita e programação, comecei a me frustrar com a dependência excessiva de plugins que tornavam a experiência cada vez mais pesada, instável e lenta.</p>
-<blockquote>
-<p>O que deveria ser uma ferramenta simples de escrita se transformava em um ambiente sobrecarregado e pouco confiável.</p></blockquote>
-<p>A migração dessas configurações complexas entre diferentes ambientes — especialmente ao alternar entre sistemas operacionais — tornou-se um obstáculo significativo que me levou a questionar fundamentalmente minha abordagem na escolha de editores. Se você enfrenta desafios similares, este artigo oferece uma perspectiva alternativa.</p>
-            
-            <a href="http://localhost:1313/2025/08/08/emacs/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
             <a href="http://localhost:1313/2025/07/21/rustcomp/">Como o compilador do Rust funciona?</a>
         </h2>
         
@@ -540,64 +490,6 @@ window.I18n = I18n;
 <p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
             
             <a href="http://localhost:1313/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
-            <a href="http://localhost:1313/2025/07/21/zigcomp/">Como o compilador do Zig funciona?</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-07-21T12:00:00Z">
-                Mon, Jul 21, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/zig/" class="tag">Zig</a>
-                
-                <a href="/tags/compiladores/" class="tag">Compiladores</a>
-                
-                <a href="/tags/llvm/" class="tag">LLVM</a>
-                
-                <a href="/tags/c/" class="tag">C</a>
-                
-                <a href="/tags/desempenho/" class="tag">Desempenho</a>
-                
-                <a href="/tags/sistemas/" class="tag">Sistemas</a>
-                
-                <a href="/tags/metaprograma%C3%A7%C3%A3o/" class="tag">Metaprogramação</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Uma análise técnica do compilador Zig: arquitetura, representações intermediárias e toolchain universal
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <h1 id="introdução">Introdução</h1>
-<p>A evolução das linguagens de programação de sistemas reflete uma tensão constante entre controle de baixo nível e segurança de alto nível.</p>
-<p>Desde os anos 1970, <strong>C estabeleceu o paradigma fundamental</strong> para programação de sistemas: acesso direto à memória, controle explícito de recursos e overhead mínimo. Esta filosofia moldou sistemas operacionais, compiladores e infraestrutura crítica por décadas.</p>
-<p>Nas últimas duas décadas, emergiu uma consciência crescente sobre os <strong>custos de segurança</strong> dessa abordagem. Vulnerabilidades de memória (<a href="https://en.wikipedia.org/wiki/Buffer_overflow">buffer overflows</a>, <a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a>, <a href="https://en.wikipedia.org/wiki/Race_condition">data races</a>) tornaram-se vetores principais de ataques de segurança, levando a questionar se o controle absoluto justifica os riscos associados.</p>
-            
-            <a href="http://localhost:1313/2025/07/21/zigcomp/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -1167,24 +1059,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758225188"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758724686"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758724686"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758225188"></script>
-    <script src="/js/lazy-loading.js?v=1758225188"></script>
-    <script src="/js/toc.js?v=1758225188"></script>
+    <script src="/js/main-minimal.js?v=1758724686"></script>
+    <script src="/js/lazy-loading.js?v=1758724686"></script>
+    <script src="/js/toc.js?v=1758724686"></script>
     
     
     

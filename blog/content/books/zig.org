@@ -73,9 +73,9 @@ info: created src/root.zig
 info: see `zig build --help` for a menu of options
 #+END_EXAMPLE
 
-#+CAPTION: A imagem acima representa o que ocorre quando digita ~zig init~
 #+NAME: fig:zig-init
-[[./01.png]]
+#+CAPTION: A imagem acima representa o que ocorre quando digita ~zig init~
+[[../01.png]]
 
 Isso cria alguns arquivos automaticamente. São eles:
 
@@ -259,9 +259,9 @@ Hello, world!
 
 Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de *tempo de execução* (ex: acessar ~stdout~), a compilação falhará com o erro  *“unable to evaluate comptime expression”*. Exemplo problemático no Windows:
 
-#+CAPTION: A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
 #+NAME: fig:zig-var
-[[./02.png]]
+#+CAPTION: A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
+[[../02.png]]
 
 #+BEGIN_SRC zig
 const std = @import("std");
@@ -328,9 +328,9 @@ Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”.
 - ~const~: depois de atribuir um valor, você *não pode mudar*.
 - ~var~: você *pode mudar* o valor futuramente.
 
-#+CAPTION: A imagem acima representa um diagrama do tipo árvore de decisão.
 #+NAME: fig:zig-const
-[[./03.png]]
+#+CAPTION: A imagem acima representa um diagrama do tipo árvore de decisão.
+[[../03.png]]
 
 Exemplo com ~const~ que NÃO compila (tentar mudar um ~const~ é erro):
 
@@ -436,9 +436,9 @@ const tail = ns[1..]; // do índice 1 até o fim
 _ = tail;
 #+END_SRC
 
-#+CAPTION: Diagrama ilustrando a diferença entre um array fixo ~([N]u8{…})~ e um slice ~([]u8)~. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.
 #+NAME: fig:zig-slices
-[[./04.png]]
+#+CAPTION: Diagrama ilustrando a diferença entre um array fixo ~([N]u8{…})~ e um slice ~([]u8)~. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.
+[[../04.png]]
 
 Uma slice é, essencialmente, “ponteiro + comprimento” (~[]T~).
 - Você acessa o tamanho com ~minha_slice.len~.
@@ -548,7 +548,7 @@ pub fn main() !void {
 }
 #+END_SRC
 
-> Zig assume que literais são **UTF-8**. Se não forem, você pode precisar converter (ex.: ~iconv~).
+Zig assume que literais são **UTF-8**. Se não forem, você pode precisar converter (ex.: ~iconv~).
 
 1) **Array com sentinela** (NULL-terminado), tipo parecido com C.  
 2) **Slice** (~[]const u8~), que carrega comprimento e **não** exige sentinela.
@@ -663,9 +663,9 @@ Linguagens de baixo nível modernas focam em *reduzir riscos*, principalmente os
 de *memória*. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
 parte dos casos, mas oferece ferramentas que *ajudam muito*:
 
-#+CAPTION: Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e ~errdefer~ cuida da liberação de recursos.
 #+NAME: fig:zig-memory
-[[./05.png]]
+#+CAPTION: Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e ~errdefer~ cuida da liberação de recursos.
+[[../05.png]]
 
 - ~defer~: garante que liberações (~free~, ~deinit~) fiquem próximas das alocações,
   reduzindo ~leaks~, “use-after-free” e “double free”.

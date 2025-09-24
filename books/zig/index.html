@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758715433">
+<link rel="stylesheet" href="/css/main.css?v=1758736084">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758715433">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758736084">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758715433">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758736084">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758715433"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758736084"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -368,6 +368,8 @@ window.I18n = I18n;
                         
                         <li><a href="/page/contact/">Contact</a></li>
                         
+                        <li><a href="/page/books/">Books</a></li>
+                        
                     </ul>
                 </nav>
                 
@@ -467,33 +469,16 @@ O que é o Zig?
 <p>
 A ideia central é de que &#34;menos é mais&#34;, no sentido de que &#34;menos coisas escondidas = mais clareza para quem programa&#34; pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <strong>macro</strong>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:</p>
 <div class="src src-c">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define SQR(x) (x * x)
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define SQR(x) (x * x)
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">SRQ</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// vira (1+2 * 1+2) =&gt; 5, não 9
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span></code></pre></div>
 </div>
 <p>
 Acima, o código <code>SQR(1+2)</code> foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em Zig, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:std.io.gestStdOut</p>
 <div class="src src-zigse">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">fn sqr(x: i32) i32 {
-</span></span><span class="line"><span class="cl">   return x * x;
-</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<pre tabindex="0"><code class="language-zigse" data-lang="zigse">fn sqr(x: i32) i32 {
+   return x * x;
+}</code></pre>
 </div>
 <blockquote>
 <p>Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.</p>
@@ -503,39 +488,19 @@ O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas tamb
 <p>
 Já no Zig não existe isso. Se você quiser funções diferentes, precisa dar nomes diferentes. Mais simples de ler e entender. Por exemplo, em C++ usar <code>std::string</code> parece simples, mas às vezes o programa gasta memória sem você perceber:</p>
 <div class="src src-cpp">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;foo&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;foo&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&#34;bar&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// prode gerar alocação dinâmica
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span></code></pre></div>
 </div>
 <p>
 Ou seja, por trás dessa linha, o programa pediu mais memória ao sistema. Já em Zig nada disso acontece sem você pedir. Se quiser usar memória dinâmica, você precisa dizer qual &#34;allocator&#34; vai usar:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="n">page_allocator</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="nf">ArrayList</span><span class="p">(</span><span class="kt">u8</span><span class="p">).</span><span class="nf">init</span><span class="p">(</span><span class="n">allocator</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">defer</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="nf">deinit</span><span class="p">();</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">defer</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="nf">deinit</span><span class="p">();</span></span></span></code></pre></div>
 </div>
 <p>
 Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros genéricos (<code>void*</code>) escondem o tipo real e só falham em tempo de execução. No Zig, porteinro carregam informações de tipo, o que evita esses erros. Assim o Zig respeita sua filosofia que diz:</p>
@@ -552,18 +517,9 @@ Primeiros passos em Zig
 <p>
 Antes de programar em Zig, precisamor criar um projeto. Isso é parecido com outras linguagens que criam pastas e arquivos iniciais para você. No terminal digite o seguinte:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">  mkdir hello
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">  mkdir hello
 </span></span><span class="line"><span class="cl">  <span class="nb">cd</span> hello
-</span></span><span class="line"><span class="cl">  zig init</span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span><span class="line"><span class="cl">  zig init</span></span></code></pre></div>
 </div>
 <p>
 A saída no terminal deverá ser algo assim:</p>
@@ -574,7 +530,11 @@ info: created src/main.zig
 info: created src/root.zig
 info: see `zig build --help` for a menu of options
 </pre>
-<p><img src="./01.png" alt="./01.png" title="./01.png" /></p>
+<figure>
+<img src="../01.png" alt="../01.png" title="../01.png" /><figcaption>
+A imagem acima representa o que ocorre quando digita <code>zig init</code>
+</figcaption>
+</figure>
 <p>
 Isso cria alguns arquivos automaticamente. São eles:</p>
 <ul>
@@ -585,24 +545,12 @@ Isso cria alguns arquivos automaticamente. São eles:</p>
 </ul>
 <p>Agora abra o o <code>src/main.zig</code> e dentro dele escreva o seguinte:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="w">  </span><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="w">  </span><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nf">getStdOut</span><span class="p">().</span><span class="nf">writer</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, World!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 O que esse código faz:</p>
@@ -615,14 +563,7 @@ O que esse código faz:</p>
 </ul>
 <p>Para compilar e executar:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build run</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build run</span></span></code></pre></div>
 </div>
 <p>
 O terminal mostrará:</p>
@@ -653,34 +594,16 @@ Pronto! Você acabou de rodar seu primeiro programa em Zig.</p>
 </ul>
 <p>Por convenção, se você está criando um programa que <strong><strong>roda no terminal</strong></strong> (executável), o ponto de partida é o <code>main.zig</code>. Nele, você deve declarar uma função chamada <code>main()</code>. É como no C:</p>
 <div class="src src-c">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Mas em Zig, fica assim:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// código do programa começa aqui
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Se você quer criar uma biblioteca em vez de um programa, é comum remover o arquivo <code>src/main.zig</code> e criar seu código no <code>src/root.zig</code>. Esse <code>root.zig</code> será o módulo raiz da sua biblioteca, contendo as funções e tipos que você pretende expor.</p>
@@ -697,24 +620,12 @@ Esse arquivo tem uma sintaxe parecida com JSON. Ele descreve o projeto e suas de
 </ul>
 <p>Ou seja, no Zig usamos o <code>build.zig.zon</code> para listar bibliotecas externas. Se uma biblioteca Zig está no GitHub e possui o próprio <code>build.zig.zon</code>, você pode adicioná-la ao seu projeto apenas declarando no seu arquivo. Abra o arquivo <code>src/root.zig</code>. Logo no começo você verá algo assim:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">testing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">testing</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">export</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">)</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Explicando linha por linha:</p>
@@ -732,20 +643,7 @@ Explicando linha por linha:</p>
 </ul>
 <p>Agora veja o <code>src/main.zig</code>. Ele contém a função principal do programa:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
@@ -753,9 +651,7 @@ Explicando linha por linha:</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, {s}!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="s">&#34;world&#34;</span><span class="p">});</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Explicação:</p>
@@ -779,14 +675,7 @@ Compilando seu código-fonte
 <p>
 Para compilar um módulo Zig em um executável, usamos o comando <code>~build-exe~</code>:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build-exe src/main.zig</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build-exe src/main.zig</span></span></code></pre></div>
 </div>
 <p>
 Esse comando procura uma função <code>main()</code> dentro dos arquivos listados. Se não encontrar, o compilador gera um erro de compilação avisando que o ponto de entrada não existe. Além de <code>build-exe</code>, temos outros comandos:</p>
@@ -802,14 +691,7 @@ build.zig  build.zig.zon  main  src
 <p>
 Executando o binário:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./main</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./main</span></span></code></pre></div>
 </div>
 <p>
 Saída:</p>
@@ -826,14 +708,7 @@ Compilar e executar ao mesmo tempo
 <p>
 Usar <code>build-exe</code> + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos <code>zig run</code>:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig run src/main.zig</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig run src/main.zig</span></span></code></pre></div>
 </div>
 <p>
 Saída:</p>
@@ -842,24 +717,13 @@ Hello, world!
 </pre>
 <p>
 Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de <strong>tempo de execução</strong> (ex: acessar <code>stdout</code>), a compilação falhará com o erro  <strong>“unable to evaluate comptime expression”</strong>. Exemplo problemático no Windows:</p>
-<p><img src="./02.png" alt="./02.png" title="./02.png" /></p>
+<figure>
+<img src="../02.png" alt="../02.png" title="../02.png" /><figcaption>
+A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
+</figcaption>
+</figure>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ERRO: inicialização global depende de recurso runtime
@@ -869,9 +733,7 @@ Esse ponto só vale para Windows. Se você tentar criar variáveis globais que d
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Erro no terminal:</p>
@@ -885,20 +747,7 @@ acontecer em tempo de execução.</p>
 <p>
 <strong>Como resolver:</strong> mover a inicialização para dentro de uma função:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
@@ -906,35 +755,19 @@ acontecer em tempo de execução.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Agora funciona porque a inicialização acontece em runtime. Conforme o projeto cresce, escrever manualmente <code>zig build-exe src/a.zig src/b.zig</code> vira um incômodo. Em C/C++, resolvemos isso com ferramentas como CMake, Make ou Ninja.</p>
 <p>
 No Zig, o compilador já traz um <strong>sistema de build integrado</strong>. Você escreve um script em <code>build.zig</code> e compila o projeto inteiro só com:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build</span></span></code></pre></div>
 </div>
 <p>
 Depois disso, o Zig cria uma pasta <code>zig-out/</code> no diretório raiz, contendo os binários e bibliotecas. Exemplo de execução:</p>
 <div class="src src-bash">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./zig-out/bin/hello_world</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./zig-out/bin/hello_world</span></span></code></pre></div>
 </div>
 <p>
 Saída:</p>
@@ -954,38 +787,24 @@ Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”.
 <li><code>const</code>: depois de atribuir um valor, você <strong>não pode mudar</strong>.</li>
 <li><code>var</code>: você <strong>pode mudar</strong> o valor futuramente.</li>
 </ul>
-<p><img src="./03.png" alt="./03.png" title="./03.png" /></p>
+<figure>
+<img src="../03.png" alt="../03.png" title="../03.png" /><figcaption>
+A imagem acima representa um diagrama do tipo árvore de decisão.
+</figcaption>
+</figure>
 <p>
 Exemplo com <code>const</code> que NÃO compila (tentar mudar um <code>const</code> é erro):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Linha inválida: tentar reatribuir um const
 </span></span></span><span class="line"><span class="cl"><span class="c1">// error: cannot assign to constant
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span></span></span></code></pre></div>
 </div>
 <p>
 Se você precisa mudar o valor, use <code>var</code>:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">ok</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">ok</span></span></span></code></pre></div>
 </div>
 <p>
 &gt; Nota importante e pé-no-chão:
@@ -995,16 +814,8 @@ Se você precisa mudar o valor, use <code>var</code>:</p>
 <p>
 Por padrão, Zig quer que você <strong>declare e inicialize</strong> no mesmo passo. Se realmente precisar declarar sem inicializar, use <code>undefined</code> <strong>e informe o tipo</strong>:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"> </span><span class="c1">// ainda sem valor válido
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w">                </span><span class="o">//</span><span class="w"> </span><span class="n">agora</span><span class="w"> </span><span class="n">inicializado</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"> </span><span class="c1">// ainda sem valor válido
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w">                </span><span class="o">//</span><span class="w"> </span><span class="n">agora</span><span class="w"> </span><span class="n">inicializado</span></span></span></code></pre></div>
 </div>
 <p>
 &gt; Dica prática: evite <code>undefined</code> sempre que possível. Ele deixa o objeto
@@ -1012,60 +823,27 @@ Por padrão, Zig quer que você <strong>declare e inicialize</strong> no mesmo p
 <p>
 Se você declarar e <strong>não usar</strong> um objeto, o compilador erra (bom para higiene do código):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">unused</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="n">constant</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">unused</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="n">constant</span></span></span></code></pre></div>
 </div>
 <p>
 Se quer declarar e <strong>descartar explicitamente</strong>, use o sublinhado (<code>_</code>):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="c1">// compila
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">descarte</span><span class="w"> </span><span class="n">explícito</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="c1">// compila
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">descarte</span><span class="w"> </span><span class="n">explícito</span></span></span></code></pre></div>
 </div>
 <p>
 Após descartar, <strong>não tente usar</strong> de novo:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">pointless</span><span class="w"> </span><span class="n">discard</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">pointless</span><span class="w"> </span><span class="n">discard</span></span></span></code></pre></div>
 </div>
 <p>
 Se você declara <code>var</code> e <strong>nunca muda</strong> o valor, Zig sugere <code>const</code>:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">where_i_live</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Belo Horizonte&#34;</span><span class="p">;</span><span class="w"> </span><span class="c1">// error: local variable is never mutated
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">where_i_live</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Belo Horizonte&#34;</span><span class="p">;</span><span class="w"> </span><span class="c1">// error: local variable is never mutated
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">where_i_live</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">dica</span><span class="w"> </span><span class="n">do</span><span class="w"> </span><span class="n">compilador</span><span class="o">:</span><span class="w"> </span><span class="n">considere</span><span class="w"> </span><span class="n">usar</span><span class="w"> </span><span class="err">&#39;</span><span class="kr">const</span><span class="err">&#39;</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">dica</span><span class="w"> </span><span class="n">do</span><span class="w"> </span><span class="n">compilador</span><span class="o">:</span><span class="w"> </span><span class="n">considere</span><span class="w"> </span><span class="n">usar</span><span class="w"> </span><span class="err">&#39;</span><span class="kr">const</span><span class="err">&#39;</span></span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1092,55 +870,23 @@ Arrays
 <p>
 Criação básica (tamanho entre colchetes, tipo do elemento, e valores entre chaves):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">f64</span><span class="p">{</span><span class="mf">432.1</span><span class="p">,</span><span class="w"> </span><span class="mf">87.2</span><span class="p">,</span><span class="w"> </span><span class="mf">900.05</span><span class="p">};</span><span class="w"> </span><span class="c1">// [_] deixa o compilador contar
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ls</span><span class="p">;</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ls</span><span class="p">;</span></span></span></code></pre></div>
 </div>
 <p>
 &gt; Esses arrays são <strong>estáticos</strong>: o tamanho <strong>não muda</strong> depois de criado (como em C).</p>
 <p>
 Zig é indexado em zero:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ns[0] = 48, ns[1] = 24, ns[2] = 12, ns[3] = 6
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">12</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">12</span></span></span></code></pre></div>
 </div>
 <p>
 <strong>Slices</strong> usam seletor de intervalo <code>start..end</code> (fim <strong>não</strong> incluso):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w"> </span><span class="c1">// elementos nos índices 1 e 2
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
@@ -1149,11 +895,13 @@ Zig é indexado em zero:</p>
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..];</span><span class="w"> </span><span class="c1">// do índice 1 até o fim
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail</span><span class="p">;</span></span></span></code></pre></div>
 </div>
-</div>
-</div>
-<p><img src="./04.png" alt="./04.png" title="./04.png" /></p>
+<figure>
+<img src="../04.png" alt="../04.png" title="../04.png" /><figcaption>
+Diagrama ilustrando a diferença entre um array fixo <code>([N]u8{…})</code> e um slice <code>([]u8)</code>. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.
+</figcaption>
+</figure>
 <p>
 Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).</p>
 <ul>
@@ -1161,18 +909,9 @@ Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).</
 <li>Isso ajuda o compilador a detectar “acesso fora dos limites” (coisa difícil de garantir no C).</li>
 </ul>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">sl</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">2</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">sl</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">2</span></span></span></code></pre></div>
 </div>
 <ul>
 <li>Em C, um array “decai” para ponteiro e você <strong><strong>perde o tamanho</strong></strong>.</li>
@@ -1180,72 +919,28 @@ Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).</
 </ul>
 <p>Só funcionam quando os comprimentos são conhecidos em tempo de compilação.</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,4,5}
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,1,2,3}
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span></span></span></code></pre></div>
 </div>
 <p>
 &gt; Dica: como “strings em Zig = arrays de bytes”, <code>++</code> é útil para concatenar strings estáticas.</p>
 <p>
 Se o intervalo é <strong>todo</strong> conhecido em compilação (ex.: <code>1..4</code>), o resultado do slice é tratado como “ponteiro para array fixo” (dá para fazer operações de ponteiro, como <code>.*</code>).</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">arr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="kt">u64</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">arr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="kt">u64</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr1</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">4</span><span class="p">];</span><span class="w"> </span><span class="c1">// intervalo 100% conhecido em compile-time
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slice</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">tipo</span><span class="w"> </span><span class="n">efetivo</span><span class="w"> </span><span class="err">é</span><span class="w"> </span><span class="n">similar</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">u64</span><span class="w"> </span><span class="p">(</span><span class="n">ponteiro</span><span class="w"> </span><span class="n">para</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">tipo</span><span class="w"> </span><span class="n">efetivo</span><span class="w"> </span><span class="err">é</span><span class="w"> </span><span class="n">similar</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">u64</span><span class="w"> </span><span class="p">(</span><span class="n">ponteiro</span><span class="w"> </span><span class="n">para</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span></span></span></code></pre></div>
 </div>
 <p>
 Se o fim do intervalo só é conhecido <strong>em runtime</strong> (ex.: tamanho de arquivo lido), o resultado é uma <strong>slice</strong> “normal” (<code>[]T</code>), e você <strong>não</strong> tem operações de ponteiro:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">fn</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="n">Allocator</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">!</span><span class="p">[]</span><span class="kt">u8</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="nf">alloc</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">);</span><span class="w">
@@ -1261,9 +956,7 @@ Se o fim do intervalo só é conhecido <strong>em runtime</strong> (ex.: tamanho
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">file_contents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;shop-list.txt&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file_contents</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">file_contents</span><span class="p">.</span><span class="n">len</span><span class="p">];</span><span class="w"> </span><span class="c1">// runtime-known
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1279,24 +972,12 @@ Funções, <code>if</code>, <code>for</code>, <code>while</code>: todos criam bl
 <p>
 Você pode <strong><strong>rotular</strong></strong> um bloco e usar <code>break :label valor</code> para “retornar” dele:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">y</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">y</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_one</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">break</span><span class="w"> </span><span class="o">:</span><span class="n">add_one</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"> </span><span class="c1">// &#34;retorna&#34; 124 do bloco
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1315,49 +996,25 @@ o que ajuda a evitar “buffer overflow”.</p>
 </ul>
 <p>Exemplo Zig (obtendo <code>len</code>):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example of string literal in Zig&#34;</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="c1">// 43
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Exibir bytes “Hello”:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mh">0x48</span><span class="p">,</span><span class="mh">0x65</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6F</span><span class="p">};</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">bytes</span><span class="p">});</span><span class="w"> </span><span class="c1">// Hello
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
-&gt; Zig assume que literais são <strong><strong>UTF-8</strong></strong>. Se não forem, você pode precisar converter (ex.: <code>iconv</code>).</p>
+Zig assume que literais são <strong><strong>UTF-8</strong></strong>. Se não forem, você pode precisar converter (ex.: <code>iconv</code>).</p>
 <ol>
 <li><strong><strong>Array com sentinela</strong></strong> (NULL-terminado), tipo parecido com C.  </li>
 <li><strong><strong>Slice</strong></strong> (<code>[]const u8</code>), que carrega comprimento e <strong><strong>não</strong></strong> exige sentinela.</li>
@@ -1368,50 +1025,20 @@ Exibir bytes “Hello”:</p>
 <li><code>:0</code> indica o <strong><strong>sentinela</strong></strong> NULL no final.</li>
 </ul>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="c1">// &#34;A literal value&#34;
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="c1">// &#34;A literal value&#34;
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A literal value&#34;</span><span class="p">)});</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="kt">u8</span><span class="w">  </span><span class="p">(</span><span class="n">exemplo</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="n">formato</span><span class="p">)</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="kt">u8</span><span class="w">  </span><span class="p">(</span><span class="n">exemplo</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="n">formato</span><span class="p">)</span></span></span></code></pre></div>
 </div>
 <p>
 Muito comum em funções da stdlib:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">str</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string value&#34;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">str</span><span class="p">)});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">str</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string value&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">str</span><span class="p">)});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span></span></span></code></pre></div>
 </div>
 <p>
 O <code>for</code> percorre <strong><strong>bytes</strong></strong> (não “caracteres” Unicode):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example&#34;</span><span class="p">;</span><span class="w">
@@ -1419,27 +1046,10 @@ O <code>for</code> percorre <strong><strong>bytes</strong></strong> (não “car
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">byte</span><span class="p">});</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">simple_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">i32</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">};</span><span class="w">
@@ -1449,53 +1059,25 @@ O <code>for</code> percorre <strong><strong>bytes</strong></strong> (não “car
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 2: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A string literal&#34;</span><span class="p">)});</span><span class="c1">// *const [16:0]u8
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 3: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">simple_array</span><span class="p">)});</span><span class="w">     </span><span class="c1">// *const [4]i32
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 4: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">string_obj</span><span class="p">)});</span><span class="w">        </span><span class="c1">// []const u8
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Nem sempre <strong><strong>1 byte = 1 caractere</strong></strong> em UTF-8.</p>
 <p>
 Ex.: o caractere “Ⱥ” (U+023A) usa <strong><strong>2 bytes</strong></strong> em UTF-8 (C8 BA):</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Ⱥ&#34;</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="n">b</span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">b</span><span class="p">});</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <p>
 Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepoints), use <code>std.unicode.Utf8View</code>:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">utf8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">unicode</span><span class="p">.</span><span class="n">Utf8View</span><span class="p">.</span><span class="nf">init</span><span class="p">(</span><span class="s">&#34;アメリカ&#34;</span><span class="p">);</span><span class="w">
@@ -1503,9 +1085,7 @@ Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepo
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="nf">nextCodepointSlice</span><span class="p">())</span><span class="w"> </span><span class="o">|</span><span class="n">cp</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;got codepoint {x}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">cp</span><span class="p">});</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 <ul>
 <li><code>std.mem.eql(u8, a, b)</code>: compara igualdade.</li>
@@ -1517,30 +1097,7 @@ Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepo
 </ul>
 <p>Exemplos rápidos:</p>
 <div class="src src-zig">
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">name</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Pedro&#34;</span><span class="p">;</span><span class="w">
@@ -1558,9 +1115,7 @@ Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepo
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">nrep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Hello&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;el&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;34&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">..]);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;New string: {s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">buffer</span><span class="p">});</span><span class="w">      </span><span class="c1">// H34lo
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Replacements: {d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">nrep</span><span class="p">});</span><span class="w">      </span><span class="c1">// 1
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -1573,7 +1128,11 @@ Segurança em Zig
 Linguagens de baixo nível modernas focam em <strong>reduzir riscos</strong>, principalmente os
 de <strong>memória</strong>. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
 parte dos casos, mas oferece ferramentas que <strong>ajudam muito</strong>:</p>
-<p><img src="./05.png" alt="./05.png" title="./05.png" /></p>
+<figure>
+<img src="../05.png" alt="../05.png" title="../05.png" /><figcaption>
+Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e <code>errdefer</code> cuida da liberação de recursos.
+</figcaption>
+</figure>
 <ul>
 <li><code>defer</code>: garante que liberações (<code>free</code>, <code>deinit</code>) fiquem próximas das alocações,
 reduzindo <code>leaks</code>, “use-after-free” e “double free”.</li>
@@ -1687,24 +1246,24 @@ Switch statements
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758715433"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758736084"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758736084"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758715433"></script>
-    <script src="/js/lazy-loading.js?v=1758715433"></script>
-    <script src="/js/toc.js?v=1758715433"></script>
+    <script src="/js/main-minimal.js?v=1758736084"></script>
+    <script src="/js/lazy-loading.js?v=1758736084"></script>
+    <script src="/js/toc.js?v=1758736084"></script>
     
     
     

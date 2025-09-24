@@ -27,27 +27,33 @@ menu:
       name: Contact
       url: /page/contact/
       weight: 2
+    - identifier: books
+      name: Books
+      url: /page/books/
+      weight: 3
 
-# Configurações Gerais
+# Configurações Gerais/
 pygmentsUseClasses: true
 pygmentsCodeFences: true
 pygmentsStyle: "dracula"
 DefaultContentLanguage: pt
 
+disableSyntaxHighlighting: true  # desliga o Chroma do Hugo
+
 markup:
-  highlight:
-    codeFences: true
-    guessSyntax: true
-    hl_Lines: ""
-    lineNoStart: 1
-    lineNos: true
-    lineNumbersInTable: true
-    noClasses: false
-    style: "dracula"
-    tabWidth: 2
   goldmark:
     renderer:
       unsafe: true
+
+  highlight:
+    codeFences: true
+    guessSyntax: false
+    lineNos: false
+    lineNumbersInTable: false
+    noClasses: true
+    style: "monokai"
+    tabWidth: 2
+
   tableOfContents:
     startLevel: 1
     endLevel: 4

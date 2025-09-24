@@ -5,7 +5,7 @@
     <link>http://localhost:1313/</link>
     <description>scovl - Blog sobre tecnologia, programação e desenvolvimento</description>
     <language>pt</language>
-    <lastBuildDate>Fri, 08 Aug 2025 19:00:00 &#43;0000</lastBuildDate>
+    <lastBuildDate>Sun, 27 Jul 2025 23:10:18 -0300</lastBuildDate>
     <sy:updatePeriod>daily</sy:updatePeriod>
     <sy:updateFrequency>1</sy:updateFrequency>
     <atom:link href="http://localhost:1313/" rel="self" type="application/rss+xml" />
@@ -14,554 +14,6 @@
     
     
     
-    
-    <item>
-      <title>GNU Emacs</title>
-      <link>http://localhost:1313/2025/08/08/emacs/</link>
-      <guid>http://localhost:1313/2025/08/08/emacs/</guid>
-      <pubDate>Fri, 08 Aug 2025 19:00:00 &#43;0000</pubDate>
-      <description>&lt;![CDATA[<p>Após anos experimentando diversos editores de texto para escrita e programação, comecei a me frustrar com a dependência excessiva de plugins que tornavam a experiência cada vez mais pesada, instável e lenta.</p>
-<blockquote>
-<p>O que deveria ser uma ferramenta simples de escrita se transformava em um ambiente sobrecarregado e pouco confiável.</p></blockquote>
-<p>A migração dessas configurações complexas entre diferentes ambientes — especialmente ao alternar entre sistemas operacionais — tornou-se um obstáculo significativo que me levou a questionar fundamentalmente minha abordagem na escolha de editores. Se você enfrenta desafios similares, este artigo oferece uma perspectiva alternativa.</p>]]></description>
-      <content:encoded>&lt;![CDATA[<p>Após anos experimentando diversos editores de texto para escrita e programação, comecei a me frustrar com a dependência excessiva de plugins que tornavam a experiência cada vez mais pesada, instável e lenta.</p>
-<blockquote>
-<p>O que deveria ser uma ferramenta simples de escrita se transformava em um ambiente sobrecarregado e pouco confiável.</p></blockquote>
-<p>A migração dessas configurações complexas entre diferentes ambientes — especialmente ao alternar entre sistemas operacionais — tornou-se um obstáculo significativo que me levou a questionar fundamentalmente minha abordagem na escolha de editores. Se você enfrenta desafios similares, este artigo oferece uma perspectiva alternativa.</p>
-<h1 id="por-que-considerar-o-emacs">Por que considerar o Emacs</h1>
-<p>O GNU Emacs é um editor <strong>extensível, customizável e auto-documentado</strong>, com décadas de estabilidade e uma comunidade enorme. Ele é “programável” em Emacs Lisp, o que permite que você molde o editor ao seu fluxo de trabalho em vez de se adaptar ao editor. ([gnu.org][1])</p>
-<p>Nos últimos lançamentos, o Emacs evoluiu muito para desenvolvimento moderno: <strong><a href="https://en.wikipedia.org/wiki/Tree_sitter">suporte a tree-sitter</a></strong> (análise sintática incremental) e um <strong><a href="https://www.gnu.org/software/emacs/manual/html_node/eglot/index.html">cliente LSP nativo (Eglot)</a></strong> simplificam autocompletar, navegação e refatoração em várias linguagens, sem depender de plugins externos pesados.</p>
-<p>Ao instalar e abrir o Emacs pela primeira vez, você será surpreendido por uma interface estranha (feia, bem feia), com uma barra de menus e uma barra de ferramentas e um bocado de texto. Observe a imagem abaixo:</p>
-<p><img src="/post/images/emacs/emacs01.png" alt="Emacs"></p>
-<blockquote>
-<p><strong>NOTA</strong>: Não se preocupe com a estética do Emacs no início. Você poderá customiza-lo para se adequar à estética de sua preferência.</p></blockquote>
-<p>Aqui temos muitas informações importantes que valem a pena serem observadas:</p>
-<ul>
-<li><strong>A barra de menus</strong> - [File, Edit, Options, Buffers, Tools e Help] - Aqui você encontra os botões e menus principais do Emacs. O mais importante aqui, na minha opinião, é você estabelecer quais as opções que mais utiliza em seu dia-a-dia e observar que o Emacs mostra logo de início as hotkeys (teclas de atalho) para cada opção.</li>
-</ul>
-<blockquote>
-<p>Essas hotkeys vão lhe auxiliar em sua experiência com o Emacs. Uma dica interessante, é a criação do seu próprio cheatsheet com as hotkeys que mais fazem sentido para você.</p></blockquote>
-<ul>
-<li><strong>A barra de ferramentas</strong> - Aqui você encontra os botões e menus principais do Emacs (não muito importante para o dia-a-dia), pois, como disse acima, mais importante do que botões, são as hotkeys.</li>
-<li><strong>Texto de startup</strong> - Aqui você encontra o texto de startup do Emacs que é exibido quando o Emacs é iniciado. Aqui tem vários guias para você começar a usar o Emacs.</li>
-<li><strong>Barra de status</strong> - Aqui estão as informações do status do Emacs. Este é um campo muito importante para você, pois ele mostra informações importantes como o modo de edição, o buffer atual, o cursor, etc.</li>
-</ul>
-<p>A recomendação da qual considero a mais importante, é que você use o Emacs puro, sem plugins, com as funções nativas dele. Experimente escrever textos, artigos, etc. Esta é, na minha opinião, a melhor forma de começar a usar o Emacs. Desta forma você irá se familiarizar com o Emacs e poderá começar a usar plugins depois. Vamos pelo simples.</p>
-<hr>
-<h2 id="teclas-que-você-precisa-saber">Teclas que você precisa saber</h2>
-<p>O Emacs assim como o <a href="https://www.vim.org/">Vim</a>, tem uma sintaxe de atalhos muito parecida, mas com algumas diferenças. Aqui estão as teclas que você precisa saber:</p>
-<p><img src="/post/images/emacs/emacs02.png" alt="Emacs"></p>
-<blockquote>
-<p><strong>Curiosidade</strong>: RET é a notação histórica do Emacs para a tecla Return (carriage return). Emacs adotou esses nomes de controle (RET, LFD, etc.) muito antes de “Enter” virar o rótulo comum nos teclados modernos. Como a maioria dos teclados atuais manda o mesmo sinal para “Enter/Return”, o Emacs continua usando a abreviação clássica RET.</p></blockquote>
-<p>Bastante coisa, né? Mas não se preocupe, você não precisa saber todas elas. Nem mesmo nos editores mais famosos, como o <a href="https://code.visualstudio.com/">VSCode</a>, você precisa saber todas as teclas. Você pode aprender as que mais fazem sentido para você (ou que você achar que é mais útil).</p>
-<p>Não tenha pressa, leia e entenda o que cada tecla faz. Dê um tempo pra isso. Não fique tentando aprender tudo de uma vez.</p>
-<p>Crie um cheatsheet como este que fiz acima com as hotkeys que mais fazem sentido para você. Utilize o Emacs puro por um tempo considerável antes de seguir para o próximo passo.
-Algo em torno de uma a duas semanas (será que compensa? vai vendo&hellip;). A propósito, criei este cheatsheet acima usando o <a href="https://excalidraw.com/">Excalidraw</a>.</p>
-<hr>
-<h1 id="buffer">Buffer</h1>
-<p>No Emacs, o que você vê e edita na tela é um <strong>buffer</strong>. Ele pode estar ligado a um arquivo do disco — mas <strong>nem todo buffer é um arquivo</strong>. Você pode criar um buffer vazio só para rascunhar, colar trechos de log, testar ideias… sem precisar dar um nome ou salvar. <strong>Só vira arquivo quando você quiser salvar</strong>; até lá, ele existe apenas dentro do Emacs.</p>
-<p>Buffers não servem só para texto “comum”: o Emacs também usa buffers para conversar com outros programas (como um shell Bash ou Python) e para muitas das suas próprias telas.</p>
-<p>Quase todos os comandos do Emacs agem <strong>sobre o buffer ativo</strong>: buscar/substituir, mover, apagar, tudo acontece nesse “documento” aberto. Pensar assim simplifica: aprenda a usar os comandos no dia a dia e estará, sem perceber, usando o mesmo modelo que o Emacs usa por dentro.</p>
-<p><strong>Dicas rápidas</strong></p>
-<ul>
-<li><strong>Abrir arquivo (cria um buffer ligado a ele):</strong> <code>C-x C-f</code></li>
-<li><strong>Criar/ir para um buffer pelo nome:</strong> <code>C-x b</code> (digite um nome novo para um buffer vazio)</li>
-<li><strong>Salvar o buffer:</strong> <code>C-x C-s</code> (ou <code>C-x C-w</code> para “Salvar como…”)</li>
-<li><strong>Fechar o buffer atual:</strong> <code>C-x k</code></li>
-</ul>
-<blockquote>
-<p><strong>Nota</strong>: pense no buffer como uma <strong>folha de trabalho viva</strong>. Às vezes ela tem um arquivo por trás; às vezes é só um espaço temporário para você trabalhar com liberdade. Quando fizer sentido, você salva.</p></blockquote>
-<hr>
-<h1 id="org-mode">Org Mode</h1>
-<p>Vamos supor que você queira escrever um artigo. Geralmente as pessoas escolhem escreve-lo em <a href="https://www.markdownguide.org/">Markdown</a>. O Emacs tem um modo especial para isso, chamado <a href="https://orgmode.org/">Org Mode</a>.</p>
-<p>Este modo transforma arquivos <code>.org</code> (isto é, em formato de texto simples) em um ambiente de escrita e organização poderoso: você captura ideias, estrutura tópicos, acompanha tarefas e exporta para <a href="https://orgmode.org/manual/Export-Formats.html">HTML, PDF, DOCX e mais</a> — tudo em texto simples.</p>
-<p>É ideal para quem quer escrever sem distrações e com versionamento. É o tipo de experiência que você só perceberá após o uso. Essa função é tão poderosa que prefiro que vocês vejam um vídeo de demonstração:</p>
-
-
-
-
-
-<div class="video-container-gradient">
-    <div class="video-responsive">
-        <iframe 
-            src="https://www.youtube.com/embed/6yRhWG28-84" 
-            title="Org Mode Demonstration"
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
-</div>
-
-
-<p>Além de ser ideal para escrever artigos e anotações sem distrações, o Org Mode oferece recursos práticos que vão muito além da escrita básica. Seguem alguns destaques do que você pode fazer:</p>
-<h2 id="estruturação-do-documento">Estruturação do documento</h2>
-<p>Uma das características mais poderosas do Org Mode é sua capacidade de estruturar documentos de forma hierárquica e intuitiva. A organização do conteúdo é feita através de asteriscos <code>*</code>, onde cada nível de profundidade representa uma seção diferente do documento.</p>
-<p>Vamos seguir um pequeno roadmap para você entender como funciona a estruturação do documento no Org Mode. Comecemos pelo básico:</p>
-<ol>
-<li><strong>Crie um arquivo <code>.org</code></strong> - <code>C-x C-f</code> e digite o nome do arquivo. Exemplo: <code>artigo.org</code>.</li>
-<li><strong>Edite o arquivo</strong> - <code>C-x C-e</code> e digite o conteúdo do arquivo. Exemplo:</li>
-</ol>
-
-
-  <pre><code class="language-bash">* Seção
-** Subseção
-*** Subsubseção</code></pre>
- <ol start="3">
-<li><strong>Visualize o arquivo</strong> - <code>C-c C-v</code> e pressione <code>l</code> para visualizar o arquivo.</li>
-<li><strong>Salve o arquivo</strong> - <code>C-x C-s</code> e pressione <code>s</code> para salvar o arquivo.</li>
-<li><strong>Exporte o arquivo</strong> - <code>C-c C-e</code> e pressione <code>l</code> para exportar o arquivo no formato HTML.</li>
-</ol>
-<p>A estrutura funciona de maneira simples: um asterisco <code>*</code> cria uma seção principal, dois asteriscos <code>**</code> criam uma subseção, três asteriscos <code>***</code> criam uma subsubseção, e assim por diante.</p>
-<p>Essa abordagem permite criar documentos com múltiplos níveis de organização sem a necessidade de formatação complexa. Com isso, você organiza tópicos de forma clara e expansível.</p>
-<h2 id="estilo-e-marcação">Estilo e marcação</h2>
-<p>Continuando com o nosso exemplo, vamos ver como podemos formatar o texto e enriquecer o documento. Ainda no mesmo arquivo, vamos adicionar o seguinte:</p>
-
-
-  <pre><code class="language-bash">
-* Seção
-
-Lorem ipsum dolor sit amet, /consectetur adipiscing elit/. Sed do eiusmod *tempor incididunt* ut _labore et dolore magna_ aliqua. &#43;Ut enim ad minim&#43; veniam, quis nostrud exercitation =ullamco= laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum:
-
-** Subseção
-
-~código~
-#&#43;BEGIN_QUOTE
-A arte deve ser como um espelho
-Que nos mostra o nosso próprio rosto.
-#&#43;END_QUOTE
-#&#43;BEGIN_SRC python :results output
-print(6 * 7)
-#&#43;END_SRC
-
-*** Subsubseção</code></pre>
- <p>Perceba que não precisamos usar tags HTML para formatar o texto. O Org Mode já faz isso para você. Abaixo estão alguns exemplos de formatação de estilo e marcação que usamos no exemplo acima:</p>
-<ul>
-<li><code>/itálico/</code> → <em>itálico</em></li>
-<li><code>*negrito*</code> → <strong>negrito</strong></li>
-<li><code>_sublinhado_</code> → <u>sublinhado</u></li>
-<li><code>+riscado+</code> → <del>riscado</del></li>
-<li><code>=verbatim=</code> → <code>verbatim</code></li>
-<li><code>~código~</code> → <code>código</code></li>
-</ul>
-<p>Note que no Org Mode, você pode usar markdown, html, latex, etc. Acima usamos markdown e latex ao mesmo tempo. Todos os formatos são suportados. Veja a lista completa de formatos suportados <a href="https://orgmode.org/worg/org-syntax.html">aqui</a>.</p>
-<h3 id="listas-e-tabelas">Listas e tabelas</h3>
-<p>Continuando com o nosso exemplo, vamos ver como podemos criar listas e tabelas. Ainda no mesmo arquivo, vamos adicionar o seguinte:</p>
-
-
-  <pre><code class="language-bash">1. item 1
-2. [X] item 2
-   - some tag :: item 2.1
-3. [ ] item 3
-   - some tag :: item 3.1
-   - some tag :: item 3.2
-4. [ ] item 4
-   - some tag :: item 4.1
-   - some tag :: item 4.2
-
-| Nome     | Idade |
-|----------&#43;-------|
-| Alice    |  25   |
-| Roberto  |  30   |</code></pre>
- <ul>
-<li>Listas ordenadas, não ordenadas e descritivas são suportadas de forma intuitiva.</li>
-<li>Tabelas são fáceis de criar: basta usar <code>|</code> para separar colunas e pressionar <code>TAB</code> para alinhar.</li>
-</ul>
-<h2 id="imagens-links-e-notas-de-rodapé">Imagens, links e notas de rodapé</h2>
-<p>Olha como é fácil adicionar imagens, links e notas de rodapé. Ainda no mesmo arquivo, vamos adicionar o seguinte:</p>
-
-
-  <pre><code class="language-bash">[[./imagem.png]]
-[[https://orgmode.org][Site oficial]]
-[fn:1] Este é um exemplo de nota de rodapé.</code></pre>
- <ul>
-<li><strong>Imagens</strong>: Use <code>[[./caminho/para/imagem.png]]</code> ou com descrição <code>[[./imagem.png][Descrição da imagem]]</code></li>
-<li><strong>Links externos</strong>: <code>[[https://exemplo.com][Texto do link]]</code></li>
-<li><strong>Links internos</strong>: <code>[[*Título da seção][Link para seção]]</code></li>
-<li><strong>Notas de rodapé</strong>: Use <code>[fn:1]</code> no texto e defina com <code>[fn:1] Conteúdo da nota</code> em qualquer lugar do documento</li>
-</ul>
-<p>O Org Mode automaticamente numera e organiza suas referências, criando um sistema de navegação limpo e profissional. Além disso, você pode criar blocos especiais para diferentes tipos de conteúdo, como veremos a seguir.</p>
-<h2 id="blocos-especiais">Blocos especiais</h2>
-<p>Podemos também adicionar blocos especiais como citações, versículos, código, etc. Veja um exemplo:</p>
-
-
-  <pre><code class="language-bash">#&#43;BEGIN_QUOTE
-A arte deve ser como um espelho
-Que nos mostra o nosso próprio rosto.
-#&#43;END_QUOTE</code></pre>
- <p>E executar código dentro do arquivo de forma dinâmica? Veja um exemplo:</p>
-
-
-  <pre><code class="language-bash">#&#43;BEGIN_SRC python :results output
-print(6 * 7)
-#&#43;END_SRC</code></pre>
- <p>Como resultado, você verá o seguinte:</p>
-
-
-  <pre><code class="language-">42</code></pre>
- <p>Estes blocos especiais tornam o Org Mode extremamente versátil para documentação técnica, permitindo combinar texto explicativo com código executável e resultados em um único documento. Com toda essa flexibilidade para criar conteúdo rico, o próximo passo é compartilhar seu trabalho através das poderosas opções de exportação do Org Mode.</p>
-<h2 id="exportação">Exportação</h2>
-<p>Com um simples atalho <code>C-c C-e</code>, você pode exportar o documento para vários fo{}rmatos:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Atalho</th>
-          <th>Formato</th>
-          <th>Descrição</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>C-c C-e l p</code></td>
-          <td>PDF</td>
-          <td>Exporta via LaTeX</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e h o</code></td>
-          <td>HTML</td>
-          <td>Abre no navegador</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t u</code></td>
-          <td>UTF-8</td>
-          <td>Texto simples</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t o</code></td>
-          <td>Org Mode</td>
-          <td>Formato nativo</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t m</code></td>
-          <td>Markdown</td>
-          <td>Para blogs/docs</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t r</code></td>
-          <td>RST</td>
-          <td>reStructuredText</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t d</code></td>
-          <td>DocBook</td>
-          <td>XML estruturado</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t x</code></td>
-          <td>XML</td>
-          <td>Formato genérico</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t j</code></td>
-          <td>JSON</td>
-          <td>Dados estruturados</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t y</code></td>
-          <td>YAML</td>
-          <td>Configuração</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t h</code></td>
-          <td>HTML</td>
-          <td>Página web</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t b</code></td>
-          <td>BibTeX</td>
-          <td>Bibliografia</td>
-      </tr>
-      <tr>
-          <td><code>C-c C-e t c</code></td>
-          <td>CSV</td>
-          <td>Planilha</td>
-      </tr>
-  </tbody>
-</table>
-<p>O Org Mode não é só um editor de artigos, mas uma verdadeira plataforma de <strong>escrita, organização e automação</strong>. Você pode começar simples, como escrever seu artigo, e evoluir para usar tabelas, gráficos, blocos de código executáveis e até mesmo geração de sites inteiros.</p>
-<p>Vale muito a pena investir tempo nisso. A propósito, aqui está a <a href="https://orgmode.org/org.pdf">documentação oficial do Org Mode</a> em PDF.</p>
-<hr>
-<h1 id="navegador-nativo">Navegador nativo</h1>
-<p>Se a graça do Org Mode é <strong>escrever e ler com foco</strong>, o <a href="https://www.gnu.org/software/emacs/manual/html_node/eww/index.html">EWW</a> é o passo seguinte: <strong>pesquisar e consumir conteúdo</strong> sem sair do Emacs. Pense nele como um “reader mode” embutido — simples, rápido e bom o suficiente para docs, blogs e referências técnicas enquanto você codifica/escreve.</p>
-<p><img src="/post/images/emacs/eww.png" alt="EWW"></p>
-<h2 id="comandos-essenciais">Comandos essenciais</h2>
-<table>
-  <thead>
-      <tr>
-          <th>Ação</th>
-          <th>Atalho</th>
-          <th>Descrição</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><strong>Abrir URL/buscar</strong></td>
-          <td><code>M-x eww</code></td>
-          <td>Se não for URL, busca no DuckDuckGo</td>
-      </tr>
-      <tr>
-          <td><strong>Recarregar</strong></td>
-          <td><code>g</code></td>
-          <td>Atualiza a página atual</td>
-      </tr>
-      <tr>
-          <td><strong>Voltar</strong></td>
-          <td><code>l</code></td>
-          <td>Página anterior</td>
-      </tr>
-      <tr>
-          <td><strong>Avançar</strong></td>
-          <td><code>r</code></td>
-          <td>Próxima página</td>
-      </tr>
-      <tr>
-          <td><strong>Sair</strong></td>
-          <td><code>q</code></td>
-          <td>Fecha o EWW</td>
-      </tr>
-      <tr>
-          <td><strong>Novo buffer</strong></td>
-          <td><code>M-RET</code></td>
-          <td>Abre link em novo buffer</td>
-      </tr>
-      <tr>
-          <td><strong>Copiar URL</strong></td>
-          <td><code>w</code></td>
-          <td>Copia URL do cursor ou página</td>
-      </tr>
-      <tr>
-          <td><strong>Favoritar</strong></td>
-          <td><code>b</code></td>
-          <td>Adiciona aos bookmarks</td>
-      </tr>
-      <tr>
-          <td><strong>Ver favoritos</strong></td>
-          <td><code>B</code></td>
-          <td>Lista todos os bookmarks</td>
-      </tr>
-      <tr>
-          <td><strong>Histórico</strong></td>
-          <td><code>H</code></td>
-          <td>Mostra páginas visitadas</td>
-      </tr>
-  </tbody>
-</table>
-<h3 id="aprendizado-gradual">Aprendizado gradual</h3>
-<p>Não precisa memorizar todos os atalhos de uma vez. Comece pelos essenciais (<code>M-x eww</code>, <code>q</code>, <code>g</code>) e vá incorporando outros conforme a necessidade.</p>
-<p>A personalização de atalhos pode ficar para depois — primeiro, entenda o fluxo básico do EWW. Construir uma base sólida é mais importante que customizações prematuras.</p>
-<h3 id="deixe-a-leitura-confortável-toggles-essenciais">Deixe a leitura confortável (toggles essenciais)</h3>
-<ul>
-<li><strong>Fonte variável (prosa mais legível)</strong>: <code>F</code> (altera <code>shr-use-fonts</code>)</li>
-<li><strong>Respeitar/ignorar cores da página</strong>: <code>M-C</code> (altera <code>shr-use-colors</code>)</li>
-<li><strong>Mostrar/Ocultar imagens</strong>: <code>M-I</code> (altera <code>shr-inhibit-images</code>)</li>
-<li><strong>Modo leitura</strong> (remove menus/ruído): <code>R</code> (toggle de “readable”)</li>
-</ul>
-<p>O EWW se integra naturalmente ao fluxo de trabalho do Emacs — você pode estar editando código, precisar consultar uma documentação, abrir rapidamente com <code>M-x eww</code>, ler o que precisa, e voltar ao seu buffer anterior com <code>C-x b</code> ou <code>C-x 4 b</code> para abrir em outra janela.</p>
-<p>A beleza está na <strong>simplicidade funcional</strong>: sem abas confusas, sem distrações visuais, apenas o conteúdo que importa.</p>
-<p>E quando você encontra algo relevante, pode facilmente copiar trechos para seus arquivos Org ou código, mantendo tudo dentro do mesmo ambiente. Claro, nem tudo é perfeito — sites modernos dependem muito de JavaScript, e é aí que você precisa saber quando usar cada ferramenta.</p>
-<h3 id="quando-a-página-não-rola">Quando a página “não rola”</h3>
-<p>O EWW é um navegador <strong>minimalista por design</strong> — ele não executa JavaScript e tem suporte limitado ao CSS moderno. Isso é uma <strong>vantagem</strong> para leitura focada, mas significa que alguns sites não vão funcionar como esperado.</p>
-<p>Quando uma página &ldquo;quebrar&rdquo; no EWW, simplesmente digite <code>&amp;</code> e ela abrirá no seu navegador padrão. Exemplo prático:</p>
-<ol>
-<li>Você está no EWW lendo sobre uma biblioteca Python</li>
-<li>Clica num link para uma demo interativa que não carrega</li>
-<li>Aperta <code>&amp;</code> → a página abre no Firefox/Chrome</li>
-<li>Volta pro EWW com <code>C-x b</code> quando terminar</li>
-</ol>
-<h3 id="downloads-e-pdfs">Downloads e PDFs</h3>
-<ul>
-<li><strong>Baixar</strong> o link sob o cursor (ou a página atual): <code>d</code> → vai para <code>eww-download-directory</code> (padrão: <code>~/Downloads/</code>).</li>
-<li><strong>PDFs</strong> abrem inline (doc-view). Se preferir outro viewer, ajuste via <em>mailcap</em>.</li>
-</ul>
-<hr>
-<h1 id="lisp">Lisp?</h1>
-<p>O Emacs é construído quase todo em <strong>Emacs Lisp (elisp)</strong>, uma variação de LISP. Isso significa que o editor pode <strong>inspecionar, executar e mudar a si mesmo</strong> enquanto você o usa.</p>
-<p>Na prática, você pode começar sem saber elisp, mas com o tempo vai querer ajustar algo (por exemplo, <strong>trocar um atalho</strong> ou <strong>ligar um recurso</strong>) e acabará esbarrando em pequenas linhas de elisp. A boa notícia: é simples, direto e há muitos exemplos prontos — você geralmente só <strong>copia, adapta e testa</strong>.</p>
-<p>Por que LISP aqui? Porque em LISP <strong>código e dados têm a mesma forma</strong>. Isso torna o Emacs <strong>extensível</strong>: você consegue adicionar funções, alterar comportamentos existentes e “colar” melhorias sem reescrever tudo. O resultado é um editor que você <strong>molda ao seu jeito</strong> — dos atalhos à aparência, do fluxo de trabalho do projeto a automações do dia a dia.</p>
-<p><strong>Dicas rápidas</strong></p>
-<ul>
-<li><strong>Avaliar um trecho</strong> agora: <code>M-:</code> (digite uma expressão) ou <code>C-x C-e</code> no fim da linha.</li>
-<li><strong>Entender o que é uma função/variável:</strong> <code>C-h f</code> (describe-function), <code>C-h v</code> (describe-variable).</li>
-<li><strong>Ver o que uma tecla faz:</strong> <code>C-h k</code> e pressione a tecla/atalho.</li>
-<li><strong>Aprender o básico de elisp:</strong> <code>M-x info RET</code> → <em>Emacs Lisp Intro</em> (guia oficial).</li>
-<li><strong>Testar ideias sem bagunçar arquivos:</strong> use o buffer <code>*scratch*</code> (modo Lisp Interaction).</li>
-</ul>
-<hr>
-<h1 id="customização">Customização</h1>
-<p>É aqui que vamos desbloquear todo o potencial do Emacs e sem usar nenhum plugin! Faço questão de mostrar tudo o que podemos fazer usando este maravilhoso Editor nativamente.</p>
-<p>Abra seu Emacs, pressione <code>C-x C-f</code> e em seguida digite <code>~/.emacs.d/init.el</code> e pressione ENTER. Feito isso, vamos agora customizar de verdade. Primeiro, vamos limpar o Emacs e deixa-lo clean:</p>
-
-
-  <pre><code class="language-lisp">;; Inibir items da interface
-;; Inibir startup screen e message
-(setq inhibit-startup-screen t
-			inhibit-startup-message t)
-
-;; Desativar scrollbar e toolbar
-(when (display-graphic-p)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)</code></pre>
- <p>Agora pressione <code>C-x C-s</code> para salvar, e em seguida <code>C-c C-e</code> para dar reload no Emacs para que você consiga ver o que ocorreu. Outra maneira de aplicar reload, é pressionando <code>M-x</code> e digitando em seguida <code>eval-buffer</code>. Seu Emacs a partir de agora ficará assim:</p>
-<p><img src="" alt=""></p>
-<p>Perceba que agora temos um Emacs mais clean, sem aquelas opções que o tornam semelhante a um editor dos anos 80. Agora vamos continuar nossa configuração:</p>
-
-
-  <pre><code class="language-lisp">;; Números de linha em todos os buffers
-(global-display-line-numbers-mode t)
-
-;; Fonte padrão (deve estar instalada). 130 = 13pt
-(set-face-attribute &#39;default nil :family &#34;Fira Code&#34; :height 130)
-
-;; Legibilidade: espaçamento extra; tab=2; usa espaços; coluna alvo 80
-(setq-default line-spacing 1
-              tab-width 2
-              indent-tabs-mode nil
-              fill-column 80)
-
-;; Linha-guia na coluna 80 (prog-mode)
-(setq-default display-fill-column-indicator-column 80)
-(add-hook &#39;prog-mode-hook #&#39;display-fill-column-indicator-mode)
-
-;; Syntax highlight global
-(global-font-lock-mode t)
-
-;; Edição: fecha pares; destaca par; digitar substitui seleção
-(electric-pair-mode 1)
-(show-paren-mode 1)
-(delete-selection-mode 1)
-
-;; Recarrega buffer se o arquivo mudar no disco
-(global-auto-revert-mode 1)
-
-;; Histórico: volta onde parou; lista “recentes”
-(save-place-mode 1)
-(recentf-mode 1)
-
-;; Undo/redo de layouts de janelas (C-c ← / C-c →)
-(winner-mode 1)</code></pre>
- <p>Novamente, pressione <code>C-x C-s</code> para salvar, e <code>C-c C-e</code> para dar reload nas configurações do Emacs. Observe que agora temos contador de linhas e outras opções que estão descritas acima. Terminamos por aqui? Agora vamos inserir Plugins? A resposta é…não! Ainda tem bastante coisa…vai vendo:</p>
-
-
-  <pre><code class="language-lisp">;;; Tema (não pergunta ao carregar)
-(load-theme &#39;wombat t)
-
-;; &#34;yes-or-no?&#34; vira &#34;y/n?&#34;
-(fset &#39;yes-or-no-p &#39;y-or-n-p)
-
-;; Cursor sem piscar; destaca a linha atual
-(blink-cursor-mode -1)
-(global-hl-line-mode 1)
-
-;; Scrolling suave/preciso (Emacs 29&#43;)
-(pixel-scroll-precision-mode 1)
-
-;; Relógio no mode-line (ative bateria se quiser)
-(display-time-mode 1)
-;; (display-battery-mode 1)
-
-;; UTF-8 como padrão para idioma/arquivos
-(set-language-environment &#34;UTF-8&#34;)
-(prefer-coding-system &#39;utf-8)
-
-;; Melhor desempenho com arquivos/líneas enormes
-(global-so-long-mode 1)
-
-;; Completação nativa Fido em lista vertical (M-x, C-x C-f, etc.)
-(fido-vertical-mode 1)
-(setq completion-styles &#39;(basic partial-completion flex) ; estilos de match
-      completions-format &#39;one-column                    ; layout da lista
-      completions-max-height 20)                        ; altura máxima</code></pre>
- <p>O <strong>Fido vertical</strong> é a completação nativa do Emacs que mostra as sugestões em <strong>lista vertical</strong> no minibuffer. Ele acelera comandos como <code>M-x</code>, abrir arquivos (<code>C-x C-f</code>) e trocar buffers (<code>C-x b</code>) porque você vê, em tempo real, os candidatos que batem com o que digitou — tudo leve e sem plugins.</p>
-<p>Para usar, basta começar a digitar: navegue na lista com <strong>↑/↓</strong> (ou <strong>C-p/C-n</strong>), pressione <strong>RET</strong> para escolher e <strong>TAB</strong> para completar o trecho comum. Ele funciona “em todo lugar” que usa a API padrão de completação do Emacs. Se quiser buscas mais flexíveis, adicione o estilo <code>flex</code> aos <code>completion-styles</code>, mas o comportamento padrão já é direto e eficiente. Vamos continuar nossa customização:</p>
-
-
-  <pre><code class="language-lisp">;; Dired: recursivo p/ copiar/apagar; sugere outro painel; usa lixeira; esconde detalhes
-(with-eval-after-load &#39;dired
-  (setq dired-recursive-deletes &#39;always
-        dired-recursive-copies  &#39;always
-        dired-dwim-target t            ; destino = outro Dired ao lado
-        delete-by-moving-to-trash t)    ; mover p/ lixeira do SO
-  (add-hook &#39;dired-mode-hook #&#39;dired-hide-details-mode))
-
-;; Dired: reusar o MESMO buffer ao entrar em diretórios/arquivos
-(put &#39;dired-find-alternate-file &#39;disabled nil)
-
-;; Abas nativas (tab-bar): ativa e atalhos simples
-(tab-bar-mode 1)
-(setq tab-bar-new-tab-choice &#34;*scratch*&#34; ; buffer inicial da nova aba
-      tab-bar-show 1)                    ; mostra barra se ≥1 aba
-(global-set-key (kbd &#34;C-c t n&#34;) #&#39;tab-new)
-(global-set-key (kbd &#34;C-c t k&#34;) #&#39;tab-close)
-(global-set-key (kbd &#34;C-c t o&#34;) #&#39;tab-next)
-
-;; Project.el: menu rápido ao trocar de projeto
-(setq project-switch-commands
-      &#39;((project-find-file &#34;Find file&#34;)
-        (project-find-regexp &#34;Ripgrep&#34;)
-        (project-dired &#34;Dired&#34;)
-        (project-eshell &#34;Eshell&#34;)
-        (project-compile &#34;Compile&#34;)))
-
-;; Imenu: índice de símbolos no menu (prog-mode)
-(add-hook &#39;prog-mode-hook #&#39;imenu-add-menubar-index)
-
-;; Mostra a função/método atual no mode-line
-(which-function-mode 1)
-
-;; Busca: ignore maiúsc./minúsc. (ativa sensível se usar caps no padrão)
-(setq case-fold-search t)
-
-;; Isearch: mostra contagem de ocorrências ao buscar
-(setq isearch-lazy-count t)
-
-;; C-k: no início da linha, remove a linha inteira (inclui newline)
-(setq kill-whole-line t)
-
-;; Paginação mantém o cursor na mesma posição da tela
-(setq scroll-preserve-screen-position t)
-
-;; Seleção integra com o clipboard do sistema (Ctrl&#43;C/Ctrl&#43;V do SO)
-(setq select-enable-clipboard t)</code></pre>
- <p>O primeiro bloco ajusta o <strong>gerenciador de arquivos do Emacs</strong> (chamado <em>Dired</em>). Em termos simples: ele permite <strong>copiar e apagar pastas inteiras de uma vez</strong>, <strong>sugerir automaticamente a janela ao lado como destino</strong> quando você está com duas janelas abertas, <strong>mandar itens para a lixeira do sistema</strong> (em vez de apagar para sempre) e <strong>mostrar a lista de arquivos de forma mais limpa</strong>, escondendo detalhes que distraem.</p>
-<p>Também faz a navegação <strong>reaproveitar a mesma janela</strong>, evitando abrir várias telas enquanto você entra e sai de pastas. O segundo bloco ativa <strong>abas</strong> (como no navegador). Assim você separa tarefas: por exemplo, uma aba para rascunhos, outra para código, outra para anotações.</p>
-<p>A configuração abre <strong>uma nova aba pronta para escrever</strong> e mostra a barra de abas apenas quando houver mais de uma, mantendo a interface simples. Há atalhos fáceis para <strong>criar</strong>, <strong>fechar</strong> e <strong>pular</strong> entre abas, deixando o fluxo parecido com o que você já faz na web.</p>
-<p>O terceiro bloco organiza um <strong>menu rápido por projeto</strong>. Quando você alterna de projeto, aparece um conjunto de ações úteis: <strong>abrir arquivos do projeto</strong>, <strong>procurar texto dentro dele</strong>, <strong>ver a pasta do projeto</strong>, <strong>abrir um terminal integrado na pasta do projeto</strong> e <strong>rodar a compilação</strong>. Em resumo, tudo o que você mais usa fica a um passo, o que acelera bastante o seu dia a dia.</p>
-<p>Lembra que no início do artigo citei que o Emacs tem LSP server nativo através do EGLOT? Vamos explorar isso? Bom, atualmente faço experimentos em LISP usando Clojure, trabalho com Java, Python e colaboro para projetos Rust, C, C++. Além disso, gostaria conhecer um pouco de Zig.</p>
-<p>É possível usar o Emacs para todas essas linguagens nativamente sem instalar plugins? A resposta é sim!! Vejamos:</p>
-
-
-  <pre><code class="language-lisp">;;; ---------------- LSP nativo (Eglot) ----------------
-(add-hook &#39;clojure-mode-hook #&#39;eglot-ensure)
-(add-hook &#39;java-mode-hook    #&#39;eglot-ensure)
-(add-hook &#39;python-mode-hook  #&#39;eglot-ensure)
-(add-hook &#39;c-mode-hook       #&#39;eglot-ensure)
-(add-hook &#39;c&#43;&#43;-mode-hook     #&#39;eglot-ensure)
-(add-hook &#39;rust-mode-hook    #&#39;eglot-ensure)
-(add-hook &#39;zig-mode-hook     #&#39;eglot-ensure)
-
-(defun my/eglot-format-buffer-before-save ()
-  (when (bound-and-true-p eglot-managed-mode)
-    (eglot-format-buffer)))
-(add-hook &#39;before-save-hook #&#39;my/eglot-format-buffer-before-save)</code></pre>
- <p>Essa configuração liga o <strong>Eglot</strong>, o suporte nativo do Emacs para “inteligência de linguagem”, sempre que você abrir arquivos de Clojure, Java, Python, C, C++, Rust ou Zig e muitas outras.</p>
-<p>Na prática, isso dá recursos de IDE: <strong>autocompletar</strong>, <strong>ir para definição</strong>, <strong>mostrar erros/avisos</strong> enquanto digita e <strong>informações rápidas</strong> sobre símbolos — tudo automaticamente, sem você precisar ligar nada manualmente.</p>
-<p>O segundo trecho faz o Emacs <strong>formatar o código ao salvar</strong>: sempre que o Eglot estiver ativo naquele arquivo, ele pede ao “servidor da linguagem” a formatação padrão do projeto (quando disponível). O resultado é um código salvo já <strong>padronizado e limpo</strong>, seguindo as regras do ecossistema de cada linguagem.</p>
-<hr>
-]]></content:encoded>
-      
-      
-      <category>OOP,software,engineering,Clojure</category>
-      
-      
-      
-      <dc:creator>Vitor Lobo Ramos</dc:creator>
-      
-      
-      
-      
-      
-      <description>&lt;![CDATA[O poder do Emacs puro]]></description>
-      
-    </item>
     
     <item>
       <title>Como o compilador do Rust funciona?</title>
@@ -658,470 +110,6 @@ print(6 * 7)
       
       
       <description>&lt;![CDATA[Uma visão geral do compilador do Rust]]></description>
-      
-    </item>
-    
-    <item>
-      <title>Como o compilador do Zig funciona?</title>
-      <link>http://localhost:1313/2025/07/21/zigcomp/</link>
-      <guid>http://localhost:1313/2025/07/21/zigcomp/</guid>
-      <pubDate>Mon, 21 Jul 2025 12:00:00 &#43;0000</pubDate>
-      <description>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
-<p>A evolução das linguagens de programação de sistemas reflete uma tensão constante entre controle de baixo nível e segurança de alto nível.</p>
-<p>Desde os anos 1970, <strong>C estabeleceu o paradigma fundamental</strong> para programação de sistemas: acesso direto à memória, controle explícito de recursos e overhead mínimo. Esta filosofia moldou sistemas operacionais, compiladores e infraestrutura crítica por décadas.</p>
-<p>Nas últimas duas décadas, emergiu uma consciência crescente sobre os <strong>custos de segurança</strong> dessa abordagem. Vulnerabilidades de memória (<a href="https://en.wikipedia.org/wiki/Buffer_overflow">buffer overflows</a>, <a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a>, <a href="https://en.wikipedia.org/wiki/Race_condition">data races</a>) tornaram-se vetores principais de ataques de segurança, levando a questionar se o controle absoluto justifica os riscos associados.</p>]]></description>
-      <content:encoded>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
-<p>A evolução das linguagens de programação de sistemas reflete uma tensão constante entre controle de baixo nível e segurança de alto nível.</p>
-<p>Desde os anos 1970, <strong>C estabeleceu o paradigma fundamental</strong> para programação de sistemas: acesso direto à memória, controle explícito de recursos e overhead mínimo. Esta filosofia moldou sistemas operacionais, compiladores e infraestrutura crítica por décadas.</p>
-<p>Nas últimas duas décadas, emergiu uma consciência crescente sobre os <strong>custos de segurança</strong> dessa abordagem. Vulnerabilidades de memória (<a href="https://en.wikipedia.org/wiki/Buffer_overflow">buffer overflows</a>, <a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a>, <a href="https://en.wikipedia.org/wiki/Race_condition">data races</a>) tornaram-se vetores principais de ataques de segurança, levando a questionar se o controle absoluto justifica os riscos associados.</p>
-<p><strong>Rust</strong> (2010) representou uma resposta radical: garantir segurança de memória em tempo de compilação através de <a href="https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html">ownership</a> e <a href="https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html">borrow checking</a>, mesmo ao custo de maior complexidade conceitual. Esta abordagem demonstrou viabilidade técnica, mas exigiu mudança paradigmática significativa.</p>
-<h2 id="o-zig-como-terceira-via">O Zig como Terceira Via</h2>
-<p><img src="/post/images/zig/zigbridge.png" alt="Figura 0: O Zig como Terceira Via"></p>
-<p>O Zig emerge como uma linguagem de programação que propõe uma <strong>terceira via</strong> entre C e Rust. Caracteriza-se por oferecer simplicidade sintática, segurança opcional e performance previsível, posicionando-se simultaneamente como linguagem de sistemas e potencial substituto do C.</p>
-<blockquote>
-<p>Sua proposta fundamental diverge tanto do &ldquo;controle total&rdquo; do C quanto da &ldquo;segurança compulsória&rdquo; do Rust, oferecendo <strong>segurança configurável</strong>: o desenvolvedor escolhe quando e onde aplicar verificações, permitindo transição gradual de código legado e otimização específica por contexto.</p></blockquote>
-<p>Como o compilador do Zig transforma código fonte em binários eficientes e portáteis? Este artigo apresenta uma análise técnica do funcionamento do compilador Zig, sua integração com o <strong><a href="https://llvm.org/">LLVM</a></strong> e o desenvolvimento do <strong>Zig Backend</strong> próprio. Exploramos como o Zig processa parsing, aplica otimizações, realiza geração de código e mantém interoperabilidade direta com C.</p>
-<p>Demonstraremos como o compilador do Zig constitui uma peça central da linguagem, funcionando não apenas como gerador de código eficiente, mas também como &ldquo;toolchain universal&rdquo; para projetos C/C++.</p>
-<h2 id="a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</h2>
-<p>Zig se posiciona de forma parecida com C e Rust: ele está no meio do caminho entre o controle direto do hardware e facilidades de linguagens de alto nível. O diferencial é que o Zig oferece:</p>
-<ul>
-<li><strong>Controle manual da memória</strong> como o C (não há borrow checker em tempo de compilação).</li>
-<li><strong>Ferramentas modernas</strong> que detectam erros em tempo de compilação e podem inserir <em>safety checks</em> em tempo de execução (quando você quiser).</li>
-<li><strong>Interoperação nativa com C</strong>, permitindo incluir cabeçalhos com <code>@cImport</code> e compilar bibliotecas C diretamente com o compilador do Zig.</li>
-<li><strong>Compatibilidade ABI</strong> com C, incluindo tipos especiais (<code>c_int</code>, <code>c_long</code>, <code>c_char</code>) e o tipo <code>anyopaque</code>, equivalente a <code>void *</code> em C.</li>
-</ul>
-<p><img src="/post/images/zig/zig01.png" alt="Figura 1: Posicionamento do Zig entre linguagens de alto e baixo nível">
-<small>Figura 1: O Zig se posiciona entre o controle direto do hardware (como C) e facilidades de linguagens de alto nível, oferecendo segurança opcional e interoperabilidade nativa.</small></p>
-<p>Essa filosofia de &ldquo;segurança opcional&rdquo; é uma das principais diferenças entre <a href="https://ziglang.org/">Zig</a> e <a href="https://www.rust-lang.org/">Rust</a>. No Zig, você não precisa enfrentar a complexidade de um <a href="https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html">borrow checker</a> ou dominar conceitos complexos de <a href="https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html">ownership</a> - o compilador confia que você sabe o que está fazendo, mas oferece ferramentas para auxiliá-lo quando necessário.</p>
-<p>Enquanto o Rust garante segurança com regras rígidas de posse e empréstimo, o Zig aposta em dar ao desenvolvedor a escolha: você pode escrever código 100% manual ou habilitar <a href="https://ziglang.org/documentation/master/#safety-checks"><strong>safety checks</strong></a> para capturar erros como <a href="https://ziglang.org/documentation/master/#buffer-overflow"><strong>buffer overflow</strong></a> ou <a href="https://ziglang.org/documentation/master/#integer-overflow"><strong>integer overflow</strong></a> ainda durante a execução em modo debug.</p>
-<p><img src="/post/images/zig/zig07.png" alt="Figura 2: Safety Checks">
-<small>Figura 2: Safety Checks.</small></p>
-<p>Os <a href="https://ziglang.org/documentation/master/#safety-checks">safety checks</a> podem ser ativados ou desativados através dos modos de compilação (<code>Debug</code>, <code>ReleaseSafe</code>, <code>ReleaseFast</code>, <code>ReleaseSmall</code>), permitindo encontrar bugs durante o desenvolvimento sem sacrificar performance no binário final.</p>
-<p>A interoperabilidade com C é outro ponto forte que coloca o Zig numa posição única. Diferente de outras linguagens modernas que tratam C como &ldquo;cidadão de segunda classe&rdquo;, o Zig foi projetado desde o início para ser um <strong>&ldquo;C melhorado&rdquo;</strong>.</p>
-<p>Isso significa que você pode incluir headers C diretamente com <code>@cImport</code>, linkar bibliotecas C sem wrappers especiais, e até mesmo usar o compilador do Zig para compilar código C/C++ existente - muitas vezes com melhor diagnóstico de erros e builds mais rápidos que GCC ou Clang tradicionais.</p>
-<h2 id="o-compilador-do-zig">O compilador do Zig</h2>
-<p>O compilador do Zig também segue o modelo clássico de três etapas: <strong>frontend</strong>, <strong>middle-end</strong> e <strong>backend</strong>. A diferença é que, além do backend tradicional usando LLVM, o Zig está desenvolvendo seu próprio backend para não depender totalmente de bibliotecas externas.</p>
-<p><img src="/post/images/zig/zig02.png" alt="Figura 2: Arquitetura do compilador Zig">
-<small><em>Figura 2: Arquitetura do compilador Zig mostrando as três etapas principais (frontend, middle-end, backend) e as representações intermediárias (ZIR, AIR, MIR).</em></small></p>
-<p>As representações intermediárias (IRs) do Zig constituem uma hierarquia bem definida que reflete a filosofia da linguagem de simplicidade progressiva e controle granular:</p>
-<p>O <strong>ZIR (Zig Intermediate Representation)</strong> é a representação mais próxima da sintaxe original, mantendo a estrutura semântica do código fonte. Nesta fase, o compilador realiza verificações semânticas iniciais, mantém informações de localização para diagnósticos precisos, preserva a estrutura de controle de fluxo original, mas ainda não possui informações completas de tipo.</p>
-<p>O <strong>AIR (Analyzed Intermediate Representation)</strong> representa código já analisado e tipado, onde o compilador completa a resolução de tipos e símbolos, aplica transformações semânticas e verificações de segurança, executa código marcado com <code>comptime</code>, prepara otimizações independentes da arquitetura e implementa verificações de null safety e bounds checking.</p>
-<p>O <strong>MIR (Machine Intermediate Representation)</strong> é a representação mais próxima da máquina alvo, onde operações são decompostas em instruções primitivas (<em>lowering</em>), convenções de chamada específicas são implementadas, alocação de registradores é decidida, safety checks são inseridos ou removidos conforme o modo de compilação, e o código é preparado para geração LLVM IR ou assembly nativo.</p>
-<p>Essa progressão através das três representações intermediárias permite que o compilador mantenha simplicidade conceitual enquanto oferece controle granular sobre otimizações e geração de código específico para cada arquitetura alvo.</p>
-<p>Essa arquitetura em camadas permite que o Zig implemente recursos únicos como <a href="https://ziglang.org/documentation/master/#comptime"><strong>comptime</strong></a> — a capacidade de executar código Zig durante a compilação.</p>
-<blockquote>
-<p>Quando você marca uma função ou expressão com <code>comptime</code>, o compilador literalmente executa esse código nas IRs intermediárias, gerando valores constantes que são &ldquo;colados&rdquo; no binário final.</p></blockquote>
-<p>Isso elimina overhead de runtime para computações que podem ser feitas em tempo de compilação, algo especialmente poderoso para metaprogramação e geração de código.</p>
-<h3 id="frontend-entendendo-seu-código">Frontend: entendendo seu código</h3>
-<p>Quando você compila um arquivo <code>.zig</code>, a primeira etapa é o <strong>analisador léxico</strong> (<em>lexing</em>), que transforma o código em tokens. Em seguida, o <strong>parser</strong> organiza esses tokens numa <strong>AST (árvore sintática abstrata)</strong>. O compilador então converte essa AST em representações intermediárias próprias:</p>
-<ul>
-<li><strong>ZIR</strong> (<strong>Zig IR</strong> não tipado) - é a primeira representação após o parsing, ainda sem informações de tipo — ele captura a estrutura do código de forma genérica.</li>
-<li><strong>AIR</strong> (<strong>Typed IR</strong>) - adiciona todas as informações de tipo e resolve símbolos, permitindo que o compilador detecte erros de tipo e aplique otimizações mais sofisticadas.</li>
-<li><strong>MIR</strong> (<strong>Machine IR</strong>, específico da arquitetura) - prepara o código para a geração final.</li>
-</ul>
-<p><img src="/post/images/zig/zig03.png" alt="Figura 3: Fluxo das representações intermediárias">
-<small>Figura 3: Transformação do código Zig através das representações intermediárias: ZIR (não tipado) → AIR (tipado) → MIR (específico da arquitetura).</small></p>
-<p>Essas IRs não existem para aplicar verificações como o <a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker do Rust</a>, mas para viabilizar otimizações, suportar múltiplos backends e permitir <strong>execução em tempo de compilação</strong> (<a href="https://ziglang.org/documentation/master/#comptime"><em>comptime</em></a>). Isso significa que o compilador pode executar funções e gerar valores constantes já durante a compilação.</p>
-<p><img src="/post/images/zig/zig04.png" alt="Figura 4: Comptime">
-<small>Figura 4: Comptime é uma feature do Zig que permite executar código durante a compilação.</small></p>
-<p>O <strong>comptime</strong> é uma das características mais distintivas do Zig, permitindo que código seja executado durante a compilação. Diferente de sistemas de macros tradicionais, o comptime utiliza a própria sintaxe do Zig para metaprogramação.</p>
-<blockquote>
-<p>Quando uma expressão é marcada com <code>comptime</code>, o compilador a executa literalmente durante o processo de compilação, substituindo-a pelo resultado no código final. Isso elimina <a href="https://en.wikipedia.org/wiki/Overhead">overhead de runtime</a> para computações que podem ser determinadas antecipadamente.</p></blockquote>
-<p>Parâmetros marcados com <code>comptime</code> implementam generics através de &ldquo;duck typing em tempo de compilação&rdquo;. Uma função como <code>fn max(comptime T: type, a: T, b: T) T</code> aceita qualquer tipo que suporte a operação de comparação.</p>
-<p>O compilador verifica se o tipo é compatível apenas quando a função é instanciada, gerando versões especializadas para cada tipo usado. Dentro da função, o valor do parâmetro <code>comptime</code> é conhecido durante a compilação, permitindo decisões condicionais baseadas no tipo, como <code>if (T == bool)</code> para implementar comportamentos específicos.</p>
-<p>Variáveis <code>comptime</code> garantem que todas as operações de leitura e escrita aconteçam em tempo de compilação. Isso, combinado com loops inline (<code>inline while</code>), permite funções que são parcialmente avaliadas durante a compilação.</p>
-<blockquote>
-<p>Por exemplo, um loop que itera sobre uma estrutura de dados constante pode ser completamente &ldquo;desenrolado&rdquo; pelo compilador, gerando código especializado para cada caso de uso específico, mantendo apenas as operações de runtime necessárias no binário final.</p></blockquote>
-<p>A transição do <a href="https://ziglang.org/documentation/master/#zig-ir"><strong>ZIR</strong></a> para <a href="https://ziglang.org/documentation/master/#air"><strong>AIR</strong></a> é onde o compilador do Zig realmente &ldquo;entende&rdquo; seu código. Durante essa fase, acontecem várias análises cruciais: resolução de tipos, onde o compilador determina o tipo de cada expressão, resolve tipos genéricos e aplica inferência de tipos onde necessário — por exemplo, uma variável declarada como <code>var x = 42</code> tem seu tipo inferido como <code>comptime_int</code>, que depois pode ser coagido para <code>i32</code>, <code>u64</code> ou outros tipos conforme o contexto.</p>
-<p>A análise semântica também acontece nesta etapa, verificando que todas as variáveis foram declaradas antes do uso, que funções são chamadas com o número correto de argumentos, e que operações são válidas para os tipos envolvidos.</p>
-<p>Simultaneamente, o compilador faz a resolução de símbolos, conectando cada uso de variável, função ou tipo à sua declaração correspondente, construindo uma tabela de símbolos completa.</p>
-<p>Um aspecto único do Zig é que durante a geração do <a href="https://ziglang.org/documentation/master/#air"><strong>AIR</strong></a>, expressões marcadas com <code>comptime</code> são avaliadas: o compilador literalmente executa esse código, substituindo-o pelos valores resultantes no AIR final. Isso permite metaprogramação poderosa sem overhead de runtime.</p>
-<p>A transformação do <a href="https://ziglang.org/documentation/master/#air"><strong>AIR</strong></a> para <a href="https://ziglang.org/documentation/master/#mir"><strong>MIR</strong></a> é onde o código abstrato se torna específico da arquitetura alvo. Nesta fase, operações de alto nível são decompostas em instruções mais primitivas através de um processo chamado <em>lowering</em> — por exemplo, uma operação de divisão pode virar uma sequência de shifts e subtrações em certas arquiteturas que não possuem instrução de divisão dedicada.</p>
-<p>O compilador também decide a alocação de registradores, determinando quais valores ficam em registradores da CPU e quais vão para a stack, otimizando o uso dos recursos limitados do processador.</p>
-<blockquote>
-<p>As convenções de chamada específicas da arquitetura são implementadas no <a href="https://ziglang.org/documentation/master/#mir"><strong>MIR</strong></a>, definindo como funções passam parâmetros e retornam valores (via registradores, stack, etc.) para cada plataforma alvo.</p></blockquote>
-<p>Dependendo do modo de compilação escolhido, o <a href="https://ziglang.org/documentation/master/#mir"><strong>MIR</strong></a> pode incluir ou omitir verificações de segurança como overflow checks, bounds checking e outras validações de runtime. O resultado final é uma representação que está a apenas um passo da geração do assembly específico da máquina alvo, seja através do backend <a href="https://llvm.org/">LLVM</a> ou do backend nativo do Zig.</p>
-<h3 id="middle-end-otimizações-independentes-da-máquina">Middle-End: otimizações independentes da máquina</h3>
-<p>O <strong>middle-end</strong> do Zig aplica <strong>otimizações genéricas</strong>, como:</p>
-<ul>
-<li><strong>Inlining de funções</strong> - substituição de chamadas de função por seu corpo, otimizando a performance.</li>
-<li><strong>Eliminação de código morto</strong> - remoção de código que não é executado.</li>
-<li><strong>Simplificação de expressões</strong> - simplificação de expressões complexas para melhorar a performance.</li>
-<li><strong>Checagens opcionais de segurança</strong> (ativas em <strong>Debug</strong> e <strong>ReleaseSafe</strong>) - checagens de segurança opcionais que podem ser ativadas ou desativadas conforme o modo de compilação.</li>
-</ul>
-<p>Além disso, o Zig trata comportamentos ilegais como <a href="https://ziglang.org/documentation/master/#integer-overflow"><strong>overflow de inteiros, divisão por zero e acesso fora de limites</strong></a> de forma diferente conforme o modo de compilação: em <a href="https://ziglang.org/documentation/master/#debug"><strong>Debug</strong></a> e <a href="https://ziglang.org/documentation/master/#release-safe"><strong>ReleaseSafe</strong></a> esses erros são detectados em runtime; em <a href="https://ziglang.org/documentation/master/#release-fast"><strong>ReleaseFast</strong></a> e <a href="https://ziglang.org/documentation/master/#release-small"><strong>ReleaseSmall</strong></a> eles são removidos para máxima performance.</p>
-<p>Outro detalhe: variáveis inicializadas com <code>undefined</code> recebem padrões especiais em <strong>Debug</strong> para ajudar a detectar bugs em tempo de execução.</p>
-<h3 id="backend-llvm-e-zig-backend">Backend: LLVM e Zig Backend</h3>
-<p>O <strong>backend</strong> é responsável pela transformação final em código de máquina. O Zig mantém uma estratégia dual que reflete sua filosofia de independência gradual:</p>
-<h3 id="llvm-backend-principal">LLVM Backend (Principal)</h3>
-<p>O <strong>LLVM continua sendo o backend principal</strong> para a maioria dos casos de uso, aproveitando:</p>
-<ul>
-<li>Décadas de otimizações maduras para múltiplas arquiteturas (x86, ARM, RISC-V, etc.)</li>
-<li>Suporte robusto a debugging e profiling</li>
-<li>Otimizações de alto nível comprovadas em produção</li>
-<li>Compatibilidade com toolchains existentes</li>
-</ul>
-<h3 id="zig-backend-self-hosted">Zig Backend (Self-Hosted)</h3>
-<p>O <strong>backend self-hosted está em desenvolvimento ativo</strong>, visando independência gradual do LLVM:</p>
-<ul>
-<li>Atualmente limitado principalmente a builds Debug em x86_64</li>
-<li>Foco em tempos de compilação mais rápidos para desenvolvimento iterativo</li>
-<li>Controle total sobre geração de código e otimizações específicas do Zig</li>
-<li>Redução de dependências externas para simplicidade de distribuição</li>
-</ul>
-<p><strong>Status atual</strong>: O LLVM permanece essencial para builds de produção e suporte completo a arquiteturas, enquanto o self-hosted backend serve como base para experimentação e desenvolvimento futuro.</p>
-<h3 id="zig-como-toolchain-universal">Zig como Toolchain Universal</h3>
-<p>Independente do backend usado, o Zig funciona como <strong>substituto moderno para GCC e Clang</strong>, permitindo compilar projetos C/C++ com <code>zig cc</code> e <code>zig c++</code>. Suas vantagens incluem:</p>
-<ul>
-<li><strong>Headers e bibliotecas incluídas</strong>: Já contém bibliotecas padrão de várias plataformas</li>
-<li><strong>Cross-compilation nativa</strong>: Pode compilar para outros sistemas operacionais com facilidade</li>
-<li><strong>Configuração simplificada</strong>: Elimina complexidade de toolchains diferentes para cada alvo</li>
-<li><strong>Linker universal</strong>: O linker self-hosted suporta formatos como Mach-O, ELF, WASM e PE/COFF</li>
-<li><strong>Diagnóstico aprimorado</strong>: Oferece melhor detecção de erros e builds mais consistentes entre plataformas</li>
-</ul>
-<h2 id="sistema-de-build-e-gerenciamento-de-dependências">Sistema de Build e Gerenciamento de Dependências</h2>
-<p>O Zig inclui um sistema de build nativo que elimina a necessidade de ferramentas externas como CMake, Autotools ou Makefile. O arquivo <code>build.zig</code> define todo o processo de compilação usando código Zig:</p>
-<p><img src="/post/images/zig/zig05.png" alt="Figura 5: Sistema de Build Integrado">
-<small>Figura 5: Sistema de Build Integrado.</small></p>
-<blockquote>
-<p>Este sistema de build integrado elimina a complexidade de configuração e dependências externas que tradicionalmente afligem projetos em C/C++. Todo o processo de compilação é definido programaticamente usando a própria linguagem Zig, permitindo lógica condicional, loops e abstrações sofisticadas para configurar builds complexos.</p></blockquote>
-<p>Abaixo um exemplo de como configurar um build para um projeto Zig:</p>
-
-
-  <pre><code class="language-zig">const std = @import(&#34;std&#34;);
-
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-    
-    const exe = b.addExecutable(.{
-        .name = &#34;app&#34;,
-        .root_source_file = .{ .path = &#34;src/main.zig&#34; },
-        .target = target,
-        .optimize = optimize,
-    });
-    
-    b.installArtifact(exe);
-}</code></pre>
- <p>O sistema suporta nativamente múltiplos targets, diferentes níveis de otimização (<a href="https://ziglang.org/documentation/master/#debug">Debug</a>, <a href="https://ziglang.org/documentation/master/#release-safe">ReleaseSafe</a>, <a href="https://ziglang.org/documentation/master/#release-fast">ReleaseFast</a>, <a href="https://ziglang.org/documentation/master/#release-small">ReleaseSmall</a>) e pode integrar tanto código Zig quanto bibliotecas C/C++ existentes sem ferramentas adicionais.</p>
-<p>A vantagem fundamental dessa abordagem é a eliminação da &ldquo;toolchain hell&rdquo; - o problema comum onde diferentes sistemas operacionais, versões de compiladores e ferramentas de build criam incompatibilidades entre ambientes de desenvolvimento.</p>
-<blockquote>
-<p>Com o sistema de build do Zig, a mesma configuração funciona consistentemente em Windows, macOS e Linux, e pode gerar executáveis para qualquer target suportado sem instalação adicional de cross-compilers ou SDKs específicos.</p></blockquote>
-<p>Isso reduz significativamente o tempo de configuração de projetos e elimina problemas de reprodutibilidade entre diferentes máquinas de desenvolvimento.</p>
-<h3 id="gerenciador-de-pacotes-integrado">Gerenciador de Pacotes Integrado</h3>
-<p>Desde a versão 0.11, o Zig possui um gerenciador de pacotes integrado que simplifica o gerenciamento de dependências. No arquivo <code>build.zig.zon</code>, você pode declarar dependências:</p>
-
-
-  <pre><code class="language-zig">.{
-    .name = &#34;meu-projeto&#34;,
-    .version = &#34;0.1.0&#34;,
-    .dependencies = .{
-        .json = .{
-            .url = &#34;https://github.com/json-zig/json/archive/refs/tags/v1.0.tar.gz&#34;,
-            .hash = &#34;1220...&#34;,
-        },
-    },
-}</code></pre>
- <p>O sistema integra diretamente ao compilador o download, verificação de integridade via hash e linkagem das dependências, dispensando ferramentas externas separadas.</p>
-<p>O gerenciador de pacotes utiliza hashes criptográficos para verificação de integridade e segue <a href="https://ziglang.org/documentation/master/#semantic-versioning">versionamento semântico</a> para controle de versões. Essa abordagem busca reduzir conflitos de dependência e melhorar a reprodutibilidade de builds entre diferentes ambientes de desenvolvimento.</p>
-<h3 id="compilação-incremental-e-análise-lazy">Compilação Incremental e Análise Lazy</h3>
-<p>O compilador Zig implementa <strong>análise preguiçosa</strong> (<em>lazy analysis</em>), onde apenas código efetivamente usado é analisado e compilado. Isso significa que:</p>
-<ul>
-<li>Funções não chamadas não são analisadas para erros</li>
-<li>Templates/generics só são instanciados quando usados</li>
-<li>Reduz significativamente os tempos de compilação em projetos grandes</li>
-</ul>
-<p>A <strong>compilação incremental</strong> permite recompilar apenas as partes do código que mudaram, mantendo um cache inteligente das análises anteriores.</p>
-<h2 id="integração-nativa-com-c-e-gerenciamento-de-memória">Integração Nativa com C e Gerenciamento de Memória</h2>
-<p>O Zig oferece integração sem precedentes com bibliotecas C, incluindo suporte avançado a <strong>allocators</strong> e <strong>async/await</strong> em chamadas C:</p>
-
-
-  <pre><code class="language-zig">const std = @import(&#34;std&#34;);
-const c = @cImport({
-    @cInclude(&#34;sqlite3.h&#34;);
-});
-
-// Allocator explícito para controle de memória
-fn databaseExample(allocator: std.mem.Allocator) !void {
-    var db: ?*c.sqlite3 = null;
-    
-    // Chamada C com tratamento de erro Zig
-    const result = c.sqlite3_open(&#34;:memory:&#34;, &amp;db);
-    if (result != c.SQLITE_OK) {
-        return error.DatabaseError;
-    }
-    defer _ = c.sqlite3_close(db);
-    
-    // Uso de allocator para gerenciamento de strings
-    const query = try allocator.dupeZ(u8, &#34;CREATE TABLE test (id INTEGER)&#34;);
-    defer allocator.free(query);
-    
-    // Execução com verificação de erro
-    const exec_result = c.sqlite3_exec(db, query.ptr, null, null, null);
-    if (exec_result != c.SQLITE_OK) {
-        return error.QueryError;
-    }
-}
-
-// Integração com async (quando disponível)
-fn asyncCExample() !void {
-    // Exemplo conceitual de integração async com C
-    const file_data = try std.fs.cwd().readFileAlloc(
-        std.heap.page_allocator, 
-        &#34;data.txt&#34;, 
-        1024 * 1024
-    );
-    defer std.heap.page_allocator.free(file_data);
-    
-    // Processamento que pode ser async
-    std.debug.print(&#34;Loaded {} bytes\n&#34;, .{file_data.len});
-}</code></pre>
- <p>Esse exemplo demonstra como o Zig facilita a <a href="https://ziglang.org/documentation/master/#c-interoperability">interoperabilidade com bibliotecas C existentes</a>. O sistema <code>@cImport</code> permite importar headers C diretamente, enquanto os allocators explícitos oferecem controle granular sobre o gerenciamento de memória.</p>
-<p>A integração é transparente: funções C podem ser chamadas diretamente, mas o sistema de tipos do Zig adiciona verificações de segurança onde apropriado. O tratamento de erros permanece explícito através do sistema <code>!</code> e <code>try</code>, evitando comportamentos indefinidos comuns em C.</p>
-<blockquote>
-<p>O tratamento de erros permanece explícito através do sistema <code>!</code> e <code>try</code>, evitando comportamentos indefinidos comuns em C.</p></blockquote>
-<p>O suporte a <a href="https://ziglang.org/documentation/master/#allocators">allocators</a> é particularmente relevante para integração com código C legado, onde diferentes estratégias de alocação podem ser necessárias dependendo do contexto da biblioteca. Isso permite que desenvolvedores migrem gradualmente de malloc/free para sistemas de gerenciamento mais sofisticados sem quebrar a compatibilidade.</p>
-<h3 id="gerenciamento-manual-de-memória-com-allocators">Gerenciamento Manual de Memória com Allocators</h3>
-<p>Essa abordagem de allocators explícitos contrasta com o garbage collection automático de linguagens como Java ou Go, onde o programador tem menos controle sobre quando e como a memória é gerenciada.</p>
-<p>Também difere do sistema de ownership do Rust, que resolve o problema em tempo de compilação através de análise estática. O código abaixo é uma pequena demonstração de como isso pode ser feito:</p>
-
-
-  <pre><code class="language-zig">const std = @import(&#34;std&#34;);
-
-fn allocatorExample() !void {
-    // Arena allocator para liberação em bloco
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    const allocator = arena.allocator();
-    
-    // Alocação manual controlada
-    const numbers = try allocator.alloc(i32, 1000);
-    // Arena é liberada automaticamente no defer
-    
-    // Allocator geral para controle granular
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const gp_allocator = gpa.allocator();
-    
-    const dynamic_array = try gp_allocator.alloc(u8, 256);
-    defer gp_allocator.free(dynamic_array);
-}</code></pre>
- <blockquote>
-<p>O Zig opta por um meio-termo: oferece ferramentas poderosas para gerenciamento manual, mas com verificações de segurança que podem ser habilitadas ou desabilitadas conforme necessário.</p></blockquote>
-<p>Na prática, isso torna o Zig não apenas uma linguagem, mas também um &ldquo;gerenciador de toolchains&rdquo; que simplifica o processo de compilação de projetos C/C++ em ambientes variados, mantendo controle total sobre recursos computacionais.</p>
-<h2 id="segurança-opcional-e-tratamento-de-erros">Segurança Opcional e Tratamento de Erros</h2>
-<p>O Zig implementa uma filosofia única de <strong>segurança opcional</strong> que evita exceções e exige tratamento explícito de erros, diferenciando-se tanto do C quanto do Rust.</p>
-<h3 id="modos-de-compilação-e-safety-checks">Modos de Compilação e Safety Checks</h3>
-<ul>
-<li><strong>Debug</strong>: insere checagens de segurança em tempo de execução (detecta estouro de inteiros, acesso fora dos limites de arrays, ponteiros inválidos).</li>
-<li><strong>ReleaseSafe</strong>: compila com otimizações, mas mantém as checagens de segurança ligadas.</li>
-<li><strong>ReleaseFast / ReleaseSmall</strong>: remove todas as checagens e otimiza para velocidade ou tamanho, entregando performance comparável (ou até superior) ao C.</li>
-</ul>
-<p><img src="/post/images/zig/zig06.png" alt="Figura 6: Modos de Compilação e Safety Checks">
-<small>Figura 6: Modos de Compilação e Safety Checks.</small></p>
-<p>O sistema de modos de compilação do Zig oferece controle granular sobre o equilíbrio entre segurança e performance. No modo <a href="https://ziglang.org/documentation/master/#debug"><strong>Debug</strong></a>, todas as verificações de segurança permanecem ativas (<a href="https://en.wikipedia.org/wiki/Integer_overflow">overflow de inteiros</a>, <a href="https://en.wikipedia.org/wiki/Array_bounds_checking">acesso fora dos limites de arrays</a>, <a href="https://en.wikipedia.org/wiki/Null_pointer">ponteiros inválidos</a>) com otimizações mínimas, facilitando o desenvolvimento e depuração.</p>
-<p>O <a href="https://ziglang.org/documentation/master/#release-safe"><strong>ReleaseSafe</strong></a> mantém essas mesmas verificações mas adiciona otimizações completas, resultando em código seguro com performance próxima ao modo release. O <a href="https://ziglang.org/documentation/master/#release-fast"><strong>ReleaseFast</strong></a> remove todas as verificações de segurança e aplica otimizações máximas para velocidade, enquanto o <a href="https://ziglang.org/documentation/master/#release-small"><strong>ReleaseSmall</strong></a> prioriza a redução do tamanho do binário sobre a velocidade bruta.</p>
-<p>No gráfico, as marcações <strong>&ldquo;On&rdquo;</strong> e <strong>&ldquo;Off&rdquo;</strong> referem-se ao estado das <strong>verificações de segurança</strong> (safety checks) em cada modo de compilação. Quando marcado como <strong>&ldquo;On&rdquo;</strong>, significa que as verificações de segurança estão ativas e sendo executadas em tempo de execução. Quando marcado como <strong>&ldquo;Off&rdquo;</strong>, essas verificações foram removidas para maximizar a performance.</p>
-<p>Os modos <strong>Debug</strong> e <strong>ReleaseSafe</strong> aparecem como <strong>&ldquo;On&rdquo;</strong> porque mantêm todas as verificações de segurança ativas:</p>
-<ul>
-<li>Detecção de overflow/underflow de inteiros</li>
-<li>Verificação de limites de arrays</li>
-<li>Validação de ponteiros nulos ou inválidos</li>
-<li>Checagem de undefined behavior</li>
-</ul>
-<p>Os modos <strong>ReleaseFast</strong> e <strong>ReleaseSmall</strong> aparecem como <strong>&ldquo;Off&rdquo;</strong> porque removem todas as verificações para maximizar performance ou minimizar o tamanho do binário, assumindo que o código já foi validado durante o desenvolvimento.</p>
-<p>Você como desenvolvedor tem <strong>controle total</strong> sobre quando ativar ou desativar essas verificações. Diferentemente de linguagens que impõem um modelo fixo de segurança, o Zig permite escolher o modo de compilação através de flags:</p>
-
-
-  <pre><code class="language-bash">zig build -Ddebug=true
-zig build -Drelease_safe=true
-zig build -Drelease_fast=true
-zig build -Drelease_small=true</code></pre>
- <p>Essa flexibilidade permite que desenvolvedores escolham o nível apropriado de segurança versus performance para cada contexto de deployment, desde prototipagem até produção crítica.</p>
-<h3 id="tratamento-explícito-de-erros-com-try">Tratamento Explícito de Erros com <code>try</code></h3>
-<p>O Zig utiliza <strong>union types</strong> para representar erros sem overhead de exceções:</p>
-
-
-  <pre><code class="language-zig">const std = @import(&#34;std&#34;);
-
-fn divide(a: f32, b: f32) !f32 {
-    if (b == 0) return error.DivisionByZero;
-    return a / b;
-}
-
-fn example() !void {
-    // Uso do try para propagação automática de erros
-    const result = try divide(10, 0); // Propaga erro automaticamente
-    std.debug.print(&#34;Result: {}\n&#34;, .{result});
-}
-
-// Tratamento explícito com catch
-fn safeExample() void {
-    const result = divide(10, 0) catch |err| switch (err) {
-        error.DivisionByZero =&gt; {
-            std.debug.print(&#34;Cannot divide by zero!\n&#34;, .{});
-            return;
-        },
-    };
-    std.debug.print(&#34;Result: {}\n&#34;, .{result});
-}</code></pre>
- <p>Este modelo de tratamento de erros apresenta algumas características distintas das exceções tradicionais. Os erros são representados como valores de retorno, o que reduz o overhead de performance comparado a mecanismos de exceção que precisam desempilhar a stack.</p>
-<p>O tratamento de erros torna-se explícito no código, exigindo que o desenvolvedor lide com possíveis falhas de forma consciente.</p>
-<p>O operador <code>try</code> simplifica a propagação de erros: quando uma função retorna um erro, ele é automaticamente repassado para a função chamadora. O <code>catch</code> permite tratamento localizado, onde diferentes tipos de erro podem ser tratados de forma específica através de <a href="https://ziglang.org/documentation/master/#pattern-matching">pattern matching</a>.</p>
-<p>Esta abordagem requer que o programador considere cenários de falha durante o desenvolvimento, o que pode resultar em código mais robusto. No entanto, também pode tornar o código mais verboso em comparação com linguagens que utilizam exceções, especialmente em casos onde múltiplas operações que podem falhar são encadeadas.</p>
-<h3 id="null-safety-e-optional-types">Null Safety e Optional Types</h3>
-<p>O Zig trata valores nulos de forma explícita com optional types:</p>
-
-
-  <pre><code class="language-zig">fn findValue(array: []i32, target: i32) ?usize {
-    for (array, 0..) |value, index| {
-        if (value == target) return index;
-    }
-    return null; // Retorno explícito de ausência de valor
-}
-
-fn useOptional() void {
-    const numbers = [_]i32{1, 2, 3, 4, 5};
-    
-    // Unwrapping seguro com if
-    if (findValue(&amp;numbers, 3)) |index| {
-        std.debug.print(&#34;Found at index: {}\n&#34;, .{index});
-    } else {
-        std.debug.print(&#34;Not found\n&#34;, .{});
-    }
-}</code></pre>
- <p>Os optional types do <a href="https://ziglang.org/documentation/master/#optional-types">Zig</a> eliminam uma classe inteira de erros comuns em programação: o acesso a valores nulos não inicializados. Diferente de linguagens como C ou Java, onde null pointers podem causar crashes inesperados, o Zig força o desenvolvedor a considerar explicitamente a possibilidade de ausência de valor.</p>
-<p>O tipo <code>?T</code> indica que uma variável pode conter um valor do tipo <code>T</code> ou <code>null</code>, e o compilador exige que essa possibilidade seja tratada antes do uso do valor.</p>
-<p>O <a href="https://ziglang.org/documentation/master/#unwrapping-optionals">unwrapping seguro através de construções como <code>if (optional_value) |unwrapped|</code></a> garante que o código só execute quando um valor válido estiver presente. Esta abordagem previne null pointer dereferences em tempo de compilação, eliminando uma fonte significativa de bugs em tempo de execução.</p>
-<blockquote>
-<p>O operador <a href="https://ziglang.org/documentation/master/#orelse"><code>orelse</code></a> oferece uma alternativa concisa para fornecer valores padrão, enquanto o <code>try</code> pode ser usado com optionals que implementam error unions, permitindo propagação de &ldquo;ausência&rdquo; como um tipo específico de erro.</p></blockquote>
-<h3 id="bounds-checking-e-memory-safety">Bounds Checking e Memory Safety</h3>
-<p>O Zig adota uma abordagem pragmática para <a href="https://ziglang.org/documentation/master/#memory-safety">memory safety</a> que difere tanto de linguagens com garbage collection quanto de linguagens completamente unsafe. Por exemplo, o código abaixo, mostra como o Zig detecta acessos fora dos limites de um array:</p>
-
-
-  <pre><code class="language-zig">fn boundsExample() !void {
-    var array = [_]i32{1, 2, 3, 4, 5};
-    
-    // Em Debug: detecta acesso fora dos limites
-    // Em Release: pode resultar em comportamento indefinido
-    const index: usize = 10;
-    const value = array[index]; // Panic em Debug se index &gt;= array.len
-    
-    // Acesso seguro com verificação
-    if (index &lt; array.len) {
-        const safe_value = array[index];
-        std.debug.print(&#34;Value: {}\n&#34;, .{safe_value});
-    }
-}</code></pre>
- <p>O <a href="https://ziglang.org/documentation/master/#bounds-checking">bounds checking</a> é ativo por padrão em builds de debug, detectando acessos inválidos a arrays e slices em tempo de execução. No entanto, em builds otimizados, essa verificação pode ser desabilitada para maximizar performance, transferindo a responsabilidade para o desenvolvedor.</p>
-<blockquote>
-<p><strong>Esta estratégia oferece um meio-termo interessante</strong>: durante o desenvolvimento, erros de bounds são capturados automaticamente, facilitando a depuração. Em produção, o overhead das verificações pode ser removido quando necessário.</p></blockquote>
-<p>Contudo, isso significa que bugs não detectados durante o desenvolvimento podem resultar em comportamento indefinido em builds release.</p>
-<p>O sistema de gerenciamento de memória manual do <a href="https://ziglang.org/documentation/master/#memory-safety">Zig</a> exige disciplina do programador. Diferente de Rust, que garante memory safety através do sistema de ownership em tempo de compilação, o Zig oferece ferramentas (como allocators explícitos e detecção de vazamentos em testes) mas não impõe restrições sintáticas rígidas.</p>
-<p>Isso resulta em maior flexibilidade e controle direto sobre alocações, mas também maior responsabilidade na prevenção de use-after-free e memory leaks.</p>
-<h2 id="infraestrutura-de-testes">Infraestrutura de Testes</h2>
-<p>O compilador Zig não serve apenas para gerar binários: ele também inclui um sistema de testes integrado:</p>
-<ul>
-<li><strong>Declarações <code>test</code> embutidas no código</strong> - permite que o compilador verifique se o código está correto.</li>
-<li><strong>Execução via <code>zig test</code></strong> - permite que o compilador execute os testes.</li>
-<li><strong>Suporte a <em>doctests</em></strong> - permite que o compilador verifique se o código está correto.</li>
-<li><strong>Filtros e skip de testes</strong> - permite que o compilador ignore alguns testes.</li>
-<li><strong>Detecção automática de vazamentos de memória</strong> - permite que o compilador detecte vazamentos de memória.</li>
-</ul>
-<p>Por exemplo, vamos ver como isso funciona na prática:</p>
-
-
-  <pre><code class="language-zig">
-test &#34;test_add&#34; {
-    const result = add(1, 2);
-    try expect(result == 3);
-}</code></pre>
- <p>Agora vamos compilar o código e executar os testes:</p>
-
-
-  <pre><code class="language-bash">zig test test_add.zig</code></pre>
- <p>O resultado será:</p>
-
-
-  <pre><code class="language-bash">Running ./zig-cache/bin/test_add...
-test &#34;test_add&#34; ... ok
-
-Test [1/1] test_add... 1 passed, 0 failed.
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s</code></pre>
- <p>Isso mostra que o Zig oferece uma infraestrutura moderna de testes como parte da própria linguagem.</p>
-<h2 id="limitações-e-desafios-atuais">Limitações e Desafios Atuais</h2>
-<p>Embora o Zig apresente características promissoras, é importante reconhecer suas limitações atuais:</p>
-<h3 id="performance-de-compilação">Performance de Compilação</h3>
-<p>Em codebases extensas, os tempos de compilação podem se tornar um gargalo significativo. Projetos como o <a href="https://bun.sh/">runtime Bun</a>, que é escrito em Zig, reportaram tempos de compilação de até 90 segundos para builds completos.</p>
-<p>Esse desafio é agravado pelo fato de o <a href="https://github.com/ziglang/zig/tree/master/lib/self-hosted">backend self-hosted</a> ainda estar em desenvolvimento ativo, apresentando performance variável dependendo do contexto específico do projeto.</p>
-<p>Embora a <a href="https://ziglang.org/documentation/master/#lazy-analysis">análise semântica lazy do Zig</a> ajude a reduzir tempos de compilação para mudanças incrementais, projetos com alta complexidade estrutural ainda podem enfrentar gargalos durante as fases de análise e otimização. Isso contrasta com a promessa inicial de compilação rápida que é uma das metas de design da linguagem.</p>
-<h3 id="ecossistema-e-maturidade">Ecossistema e Maturidade</h3>
-<p>O ecossistema Zig ainda está em fase de crescimento e desenvolvimento. A comunidade, embora ativa e engajada, permanece consideravelmente menor que aquelas de linguagens estabelecidas como C, C++ ou Rust.</p>
-<p>Isso se reflete diretamente na disponibilidade de bibliotecas de terceiros, que ainda está em desenvolvimento e pode não cobrir todos os casos de uso necessários em projetos comerciais.</p>
-<p>Como linguagem pré-1.0, o Zig ainda passa por mudanças breaking em sua API, o que pode impactar a estabilidade de projetos de longo prazo. Desenvolvedores devem estar preparados para adaptar seus códigos conforme a linguagem evolui em direção à sua primeira versão estável.</p>
-<h3 id="recursos-em-desenvolvimento">Recursos em Desenvolvimento</h3>
-<p>Algumas funcionalidades importantes ainda estão sendo implementadas ou redesenhadas. O suporte à programação assíncrona através de <code>async/await</code> foi temporariamente removido e está sendo completamente redesenhado para melhor integração com o modelo de execução do Zig.</p>
-<p>O tooling de desenvolvimento, incluindo IDEs e ferramentas de análise estática, ainda está amadurecendo. Embora existam plugins para editores populares, a experiência de desenvolvimento pode não ser tão polida quanto em linguagens mais estabelecidas.</p>
-<p>Similarmente, o suporte a debuggers ainda está sendo aprimorado, o que pode impactar a produtividade durante o desenvolvimento e resolução de problemas.</p>
-<hr>
-<h1 id="rust-ou-zig-como-substituto-do-c">Rust ou Zig como substituto do C?</h1>
-<p>O C é uma linguagem de sistemas com mais de 60 anos de história, tendo influenciado o desenvolvimento de sistemas operacionais, compiladores e bancos de dados. Esse histórico estabeleceu o C como padrão de interoperabilidade e referência comum entre programadores.</p>
-<blockquote>
-<p>Linguagens que propõem substituí-lo precisam considerar tanto aspectos técnicos quanto a compatibilidade com o extenso ecossistema de código legado e ferramentas existentes.</p></blockquote>
-<p>O <strong>Rust</strong> aborda essa substituição através de segurança de memória garantida em tempo de compilação. Seu <a href="https://doc.rust-lang.org/reference/borrow-checker.html"><strong>borrow checker</strong></a> previne erros comuns de memória em C, como <a href="https://en.wikipedia.org/wiki/Use-after-free"><strong>use-after-free</strong></a> ou <a href="https://en.wikipedia.org/wiki/Race_condition"><strong>data races</strong></a>. Isso o torna adequado para aplicações críticas de segurança, como drivers e sistemas embarcados.</p>
-<p>O trade-off é uma maior complexidade sintática e conceitual. Rust introduz um paradigma diferente de desenvolvimento em baixo nível, exigindo investimento em treinamento e reescrita de código existente.</p>
-<p>O <strong>Zig</strong> por sua vez, mantém o modelo mental do C, oferecendo controle manual da memória, interoperabilidade direta com código C e toolchain moderna para cross-compilation. Sua abordagem é evoluir o C incrementalmente: segurança opcional, sintaxe mais consistente, <a href="https://ziglang.org/documentation/master/#comptime"><strong>comptime</strong></a> para metaprogramação e eliminação de algumas armadilhas históricas da linguagem.</p>
-<p>Dito isso, na minha opinião, para desenvolvedores com experiência em <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://ziglang.org/">Zig</a> oferece uma migração mais gradual que <a href="https://www.rust-lang.org/">Rust</a>, preservando a filosofia de controle direto enquanto adiciona ferramentas modernas de produtividade.</p>
-<p><strong>Minha análise</strong>: A substituição completa do C é improvável no curto prazo devido ao seu legado extenso. Acredito que Rust se consolidará em domínios onde segurança é crítica, enquanto Zig pode emergir como sucessor natural do C em contextos que priorizam simplicidade e compatibilidade.</p>
-<p>Ambas as linguagens não substituem o C universalmente, mas oferecem caminhos para diferentes necessidades de desenvolvimento de sistemas.</p>
-<hr>
-<h2 id="comunidade">Comunidade</h2>
-<p>A <a href="https://ziglang.org/community/">comunidade do Zig</a> ainda é pequena quando comparada a linguagens consolidadas como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> ou <a href="https://www.rust-lang.org/">Rust</a>. Isso se reflete na quantidade de bibliotecas e ferramentas disponíveis: há projetos relevantes em andamento, mas a cobertura não é tão ampla, o que obriga o desenvolvedor a recorrer com frequência à interoperabilidade com C para suprir lacunas.</p>
-<p>Por outro lado, a <a href="https://ziglang.org/community/">comunidade do Zig</a> é bastante técnica e engajada, com foco em sistemas de baixo nível, compiladores e desenvolvimento de ferramentas.</p>
-<p>O <a href="https://ziglang.org/community/">ecossistema do Zig</a> ainda está amadurecendo. O gerenciador de pacotes é recente e a linguagem passa por mudanças que quebram compatibilidade em versões pré-1.0. Isso exige atenção a changelogs e certa disciplina em fixar versões para manter estabilidade em projetos de médio e longo prazo.</p>
-<p>A experiência em editores e IDEs também está em evolução: já existem suporte LSP e formatação automática, mas a integração não é tão polida quanto em linguagens mais maduras.</p>
-<p>Em termos de governança, o desenvolvimento é orientado por decisões técnicas conservadoras, priorizando simplicidade e previsibilidade. A revisão de contribuições tende a ser exigente, o que garante consistência, mas pode tornar o processo de contribuição mais lento.</p>
-<p>Ainda assim, a <a href="https://ziglang.org/community/">comunidade do Zig</a> costuma ser aberta a novos participantes, especialmente quando trazem exemplos claros, testes e preocupação com portabilidade.</p>
-<p>De forma prática, o <a href="https://ziglang.org/">Zig</a> já tem uma base comunitária suficiente para projetos sérios, principalmente em áreas como compilação cruzada, bindings para C e metaprogramação com <code>comptime</code>.</p>
-<p>Porém, para usos em larga escala ou em domínios que dependem de bibliotecas especializadas, é preciso considerar a dependência em código legado <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a> e a instabilidade típica de uma linguagem em estágio pré-1.0.</p>
-<hr>
-<h2 id="conclusão">Conclusão</h2>
-<p>Após explorar o <a href="https://ziglang.org/">Zig</a> em detalhes, minha impressão é de uma linguagem que encontrou um ponto interessante entre pragmatismo e modernidade. A decisão de manter compatibilidade conceitual com <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, ao invés de revolucionar completamente o modelo mental, me parece acertada para a adoção em sistemas existentes.</p>
-<p>O que mais me chamou atenção foi a filosofia de &ldquo;falha explícita&rdquo; - não ter garbage collector ou features ocultas torna o comportamento previsível, algo crucial quando você está debuggando um driver ou otimizando um loop crítico. O <code>comptime</code> oferece metaprogramação sem a complexidade de macros tradicionais, permitindo abstrações que não sacrificam performance.</p>
-<p>Na prática, testei o <a href="https://ziglang.org/">Zig</a> em alguns cenários reais e a interoperabilidade com <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a> funcionou sem surpresas. Consegui integrar bibliotecas existentes sem <a href="https://en.wikipedia.org/wiki/Foreign_function_interface">overhead de FFI</a>, e o <a href="https://ziglang.org/documentation/master/#cross-compilation">cross-compilation</a> realmente simplifica builds para diferentes arquiteturas - algo que sempre foi doloroso em <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a> puro.</p>
-<blockquote>
-<p>Devo admitir que me sinto muito mais confortável programando em <a href="https://ziglang.org/">Zig</a> do que em <a href="https://www.rust-lang.org/">Rust</a> quando preciso de uma abordagem próxima ao <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>.</p></blockquote>
-<p>Onde <a href="https://www.rust-lang.org/">Rust</a> me força a repensar completamente minha forma de gerenciar memória e ownership, <a href="https://ziglang.org/">Zig</a> preserva o modelo mental familiar, apenas adicionando garantias e ferramentas modernas. Isso se traduz em uma curva de aprendizado muito mais suave para quem vem do <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>.</p>
-<p>Para experimentação prática, desenvolvi este projeto: <a href="https://github.com/scovl/zInputs">https://github.com/scovl/zInputs</a> - uma API de interceptação para dispositivos de entrada.</p>
-<hr>
-<h2 id="referências">Referências</h2>
-<ul>
-<li><a href="https://ziglang.org/">Site oficial do Zig</a> - A linguagem de programação Zig</li>
-<li><a href="https://ziglang.org/documentation/master/">Documentação do Zig (master)</a> - Documentação do Zig</li>
-<li><a href="https://github.com/ziglang/zig">Zig no GitHub</a> - Zig no GitHub</li>
-<li><a href="https://ziglang.org/learn/why_zig_rust_d_cpp/">Por que Zig se o mundo já tem C++, D e Rust?</a> - Por que Zig se o mundo já tem C++, D e Rust?</li>
-<li><a href="https://ziglang.org/learn/overview/#zig-as-a-cc-compiler">Zig como compilador C/C++</a> - Zig como compilador C/C++</li>
-<li><a href="https://llvm.org/docs/LangRef.html">Manual de referência do LLVM</a> - Manual de referência do LLVM</li>
-<li>Artigo: <em><a href="https://llvm.org/pubs/2004-CGO-LLVM.pdf">LLVM – A Compilation Framework for Lifelong Program Analysis &amp; Transformation</a></em> (CGO 2004)</li>
-<li><em><a href="https://doc.rust-lang.org/book/">The Rust Programming Language</a></em> (2018) - Livro sobre o Rust</li>
-<li><em><a href="https://www.amazon.com.br/Programming-Language-Brian-W-Kernighan/dp/0131103709">The C Programming Language</a></em> (Kernighan &amp; Ritchie, 1988)</li>
-<li><em><a href="https://www.amazon.com.br/Computer-Organization-Design-MIPS-Architecture/dp/0123838720">Computer Organization and Design</a></em> (Patterson &amp; Hennessy, 2013)</li>
-<li><em><a href="https://www.amazon.com.br/Compilers-Principles-Techniques-Alfred-Aho/dp/0201101947">Compilers – Principles, Techniques, and Tools</a></em> (Aho, Sethi &amp; Ullman, 2006)</li>
-</ul>
-]]></content:encoded>
-      
-      
-      <category>Zig,Compiladores,LLVM,C,Desempenho,Sistemas,Metaprogramação</category>
-      
-      
-      
-      <dc:creator>Vitor Lobo Ramos</dc:creator>
-      
-      
-      
-      
-      
-      <description>&lt;![CDATA[Uma análise técnica do compilador Zig: arquitetura, representações intermediárias e toolchain universal]]></description>
       
     </item>
     
@@ -9498,6 +8486,751 @@ ts-node index.ts
       
       
       
+      
+    </item>
+    
+    <item>
+      <title>A linguagem de programação Zig</title>
+      <link>http://localhost:1313/books/zig/</link>
+      <guid>http://localhost:1313/books/zig/</guid>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <description>&lt;![CDATA[<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+O que é o Zig?
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+<a href="https://ziglang.org/">Zig</a> é uma linguagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao <a href="https://en.wikipedia.org/wiki/C_(programming_language)">C</a> mas com ajustes que eliminam comportamentos confusos ou inconsistentes.</p>
+<p>
+A ideia central é de que &#34;menos é mais&#34;, no sentido de que &#34;menos coisas escondidas = mais clareza para quem programa&#34; pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <strong>macro</strong>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:</p>]]></description>
+      <content:encoded>&lt;![CDATA[
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+O que é o Zig?
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+<a href="https://ziglang.org/">Zig</a> é uma linguagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao <a href="https://en.wikipedia.org/wiki/C_(programming_language)">C</a> mas com ajustes que eliminam comportamentos confusos ou inconsistentes.</p>
+<p>
+A ideia central é de que &#34;menos é mais&#34;, no sentido de que &#34;menos coisas escondidas = mais clareza para quem programa&#34; pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <strong>macro</strong>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:</p>
+<div class="src src-c">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define SQR(x) (x * x)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">SRQ</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// vira (1+2 * 1+2) =&gt; 5, não 9
+</span></span></span></code></pre></div>
+</div>
+<p>
+Acima, o código <code>SQR(1+2)</code> foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em Zig, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:std.io.gestStdOut</p>
+<div class="src src-zigse">
+<pre tabindex="0"><code class="language-zigse" data-lang="zigse">fn sqr(x: i32) i32 {
+   return x * x;
+}</code></pre>
+</div>
+<blockquote>
+<p>Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.</p>
+</blockquote>
+<p>
+O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas também confuso. Exemplo, você pode ter várias funções com o nome (sobrecarga). Dependendo dos tipos, o compiador escolher uma versão diferente. Para iniciantes, isso é difícil de acompanhar.</p>
+<p>
+Já no Zig não existe isso. Se você quiser funções diferentes, precisa dar nomes diferentes. Mais simples de ler e entender. Por exemplo, em C++ usar <code>std::string</code> parece simples, mas às vezes o programa gasta memória sem você perceber:</p>
+<div class="src src-cpp">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;foo&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&#34;bar&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// prode gerar alocação dinâmica
+</span></span></span></code></pre></div>
+</div>
+<p>
+Ou seja, por trás dessa linha, o programa pediu mais memória ao sistema. Já em Zig nada disso acontece sem você pedir. Se quiser usar memória dinâmica, você precisa dizer qual &#34;allocator&#34; vai usar:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="n">page_allocator</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="nf">ArrayList</span><span class="p">(</span><span class="kt">u8</span><span class="p">).</span><span class="nf">init</span><span class="p">(</span><span class="n">allocator</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">defer</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="nf">deinit</span><span class="p">();</span></span></span></code></pre></div>
+</div>
+<p>
+Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros genéricos (<code>void*</code>) escondem o tipo real e só falham em tempo de execução. No Zig, porteinro carregam informações de tipo, o que evita esses erros. Assim o Zig respeita sua filosofia que diz:</p>
+<blockquote>
+<p>&#34;Focus on debugging your application rather than debugging your programming language knowledge.&#34;</p>
+</blockquote>
+<p>
+A proposta é simples: você deve gastar tempo entendendo seu programa, não a linguagem. Em outras palavras, C pode confundir com macros, C++ pode confundir com excesso de recursos e o Zig tenta ser direto e previsível. Ou seja, como disse no início, menos é mais, você deve gastar tempo entendendo o que seu programa faz, não tentando adivinhar <strong>como a linguagem funciona</strong>.</p>
+<div id="outline-container-headline-2" class="outline-3">
+<h3 id="headline-2">
+Primeiros passos em Zig
+</h3>
+<div id="outline-text-headline-2" class="outline-text-3">
+<p>
+Antes de programar em Zig, precisamor criar um projeto. Isso é parecido com outras linguagens que criam pastas e arquivos iniciais para você. No terminal digite o seguinte:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">  mkdir hello
+</span></span><span class="line"><span class="cl">  <span class="nb">cd</span> hello
+</span></span><span class="line"><span class="cl">  zig init</span></span></code></pre></div>
+</div>
+<p>
+A saída no terminal deverá ser algo assim:</p>
+<pre class="example">
+info: created build.zig
+info: created build.zig.zon
+info: created src/main.zig
+info: created src/root.zig
+info: see `zig build --help` for a menu of options
+</pre>
+<figure>
+<img src="../01.png" alt="../01.png" title="../01.png" /><figcaption>
+A imagem acima representa o que ocorre quando digita <code>zig init</code>
+</figcaption>
+</figure>
+<p>
+Isso cria alguns arquivos automaticamente. São eles:</p>
+<ul>
+<li><code>build.zig</code> - script que explica como compilar o projeto.</li>
+<li><code>build.zig.zon</code> - arquivo de condfiguração do projeto (similar a um <code>package.json</code> no Node ou <code>Cargo.toml</code> em Rust).</li>
+<li><code>src/main.zig</code> - aqui fica o programa principal.</li>
+<li><code>src/root.zig</code> - ponto de entrada para bibliotecas Zig.</li>
+</ul>
+<p>Agora abra o o <code>src/main.zig</code> e dentro dele escreva o seguinte:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="w">  </span><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nf">getStdOut</span><span class="p">().</span><span class="nf">writer</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, World!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+O que esse código faz:</p>
+<ul>
+<li><code>const std = @import(&#34;std&#34;);</code> - importa a biblioteca padrão do Zig.  </li>
+<li><code>pub fn main() !void { ... }</code> - função principal, onde o programa começa.  </li>
+<li><code>std.io.getStdOut().writer()</code> - pega a saída padrão (tela).  </li>
+<li><code>stdout.print(&#34;Hello, World!\n&#34;, .{});</code> - imprime o texto na tela.  </li>
+<li>O <code>try</code> é necessário porque escrever na tela pode falhar (ex: falta de permissão), mas nesse caso só repassa o erro.</li>
+</ul>
+<p>Para compilar e executar:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build run</span></span></code></pre></div>
+</div>
+<p>
+O terminal mostrará:</p>
+<pre class="example">
+Hello, World!
+</pre>
+<p>
+Pronto! Você acabou de rodar seu primeiro programa em Zig.</p>
+<p>
+<strong>Observação</strong></p>
+<ul>
+<li>Diferente de C, não é preciso configurar <strong>Makefile</strong> manualmente.  </li>
+<li>Diferente de C++, não existe um “padrão gigante” de projeto.  </li>
+</ul>
+<p>O Zig já entrega a estrutura mínima para você começar, sem complicação. Quando usamos o <code>zig init</code>, alguns arquivos e pastas são criados automaticamente:</p>
+<pre class="example">
+.
+├── build.zig
+├── build.zig.zon
+└── src
+    ├── main.zig
+    └── root.zig
+</pre>
+<ul>
+<li>A pasta <code>src/</code> guarda o código-fonte do projeto.  </li>
+<li>Dentro dela, temos dois arquivos: <code>main.zig</code> e <code>root.zig</code>.  </li>
+<li>Cada arquivo <code>.zig</code> é chamado de <strong>módulo</strong>. Pense em módulo como uma &#34;caixinha&#34; de código Zig.  </li>
+</ul>
+<p>Por convenção, se você está criando um programa que <strong><strong>roda no terminal</strong></strong> (executável), o ponto de partida é o <code>main.zig</code>. Nele, você deve declarar uma função chamada <code>main()</code>. É como no C:</p>
+<div class="src src-c">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Mas em Zig, fica assim:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// código do programa começa aqui
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Se você quer criar uma biblioteca em vez de um programa, é comum remover o arquivo <code>src/main.zig</code> e criar seu código no <code>src/root.zig</code>. Esse <code>root.zig</code> será o módulo raiz da sua biblioteca, contendo as funções e tipos que você pretende expor.</p>
+<p>
+O script de build continua sendo o <code>build.zig</code>, que é interpretado pelo comando <code>zig build</code> para compilar e organizar o projeto. Ou seja, <code>root.zig</code> não é executado diretamente como um script de build; ele apenas fornece o código da biblioteca que o <code>build.zig</code> irá compilar e instalar.</p>
+<p>
+Em linguagens como C e C++, normalmente precisamos instalar ferramentas externas como <strong>Make</strong> ou <strong>CMake</strong> para compilar projetos grandes. No Zig, isso está embutido: o <code>zig</code> já traz o compilador <strong>e</strong> o sistema de build. Você não precisa de nada além do próprio Zig.</p>
+<p>
+Esse arquivo tem uma sintaxe parecida com JSON. Ele descreve o projeto e suas dependências (bibliotecas externas). Exemplo em outros ecossistemas:</p>
+<ul>
+<li><code>package.json</code> no JavaScript.  </li>
+<li><code>Pipfile</code> no Python.  </li>
+<li><code>Cargo.toml</code> no Rust.  </li>
+</ul>
+<p>Ou seja, no Zig usamos o <code>build.zig.zon</code> para listar bibliotecas externas. Se uma biblioteca Zig está no GitHub e possui o próprio <code>build.zig.zon</code>, você pode adicioná-la ao seu projeto apenas declarando no seu arquivo. Abra o arquivo <code>src/root.zig</code>. Logo no começo você verá algo assim:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">testing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">testing</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">export</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">)</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Explicando linha por linha:</p>
+<ul>
+<li><code>const std = @import(&#34;std&#34;);</code> - importa a biblioteca padrão do Zig.  </li>
+<li><code>const testing = std.testing;</code> - importa o módulo de testes.  </li>
+<li><code>export fn add(...)</code> - cria uma função chamada `add` que soma dois números.  </li>
+</ul>
+<p>E aqui vai uma observação:</p>
+<ul>
+<li>Todo comando termina com <code>;</code> (como em C).  </li>
+<li>O operador <code>:</code> é usado para declarar tipos. Exemplo: <code>a: i32</code> significa que <code>a</code> é um número inteiro de 32 bits com sinal.  </li>
+<li>O retorno da função vem depois dos argumentos: <code>) i32 { ... }</code>.  </li>
+<li><code>export</code> funciona como o <code>extern</code> do C: deixa a função disponível para outros módulos ou programas.  </li>
+</ul>
+<p>Agora veja o <code>src/main.zig</code>. Ele contém a função principal do programa:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, {s}!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="s">&#34;world&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Explicação:</p>
+<ul>
+<li><code>pub fn main() !void</code> - função pública chamada <code>main</code>, que pode retornar nada (<code>void</code>) ou um erro (<code>!</code>).  </li>
+<li><code>stdout_buffer</code> - um pedaço de memória para guardar texto antes de imprimir.  </li>
+<li><code>writer</code> - cria um &#34;escritor&#34; que sabe lidar com esse buffer.  </li>
+<li><code>stdout.print(&#34;Hello, {s}!\n&#34;, .{&#34;world&#34;});</code> - imprime na tela (substitui <code>{s}</code> por <code>&#34;world&#34;</code>).  </li>
+<li><code>try</code> - se der erro ao imprimir, o programa retorna o erro em vez de travar sem explicação.  </li>
+<li>Por padrão, funções em Zig são privadas ao módulo.  </li>
+<li><code>pub</code> (public) deixa a função acessível de fora.  </li>
+<li>Isso é o oposto de <code>static</code> em C/C++, que limita o acesso.  </li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
+<h3 id="headline-3">
+Compilando seu código-fonte
+</h3>
+<div id="outline-text-headline-3" class="outline-text-3">
+<p>
+Para compilar um módulo Zig em um executável, usamos o comando <code>~build-exe~</code>:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build-exe src/main.zig</span></span></code></pre></div>
+</div>
+<p>
+Esse comando procura uma função <code>main()</code> dentro dos arquivos listados. Se não encontrar, o compilador gera um erro de compilação avisando que o ponto de entrada não existe. Além de <code>build-exe</code>, temos outros comandos:</p>
+<ul>
+<li><code>build-lib</code> - compila em uma biblioteca (C ABI).  </li>
+<li><code>build-obj</code> - compila em arquivos objeto.  </li>
+</ul>
+<p>Depois de rodar o <code>build-exe</code>, vemos o binário criado no diretório atual:</p>
+<pre class="example">
+ls
+build.zig  build.zig.zon  main  src
+</pre>
+<p>
+Executando o binário:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./main</span></span></code></pre></div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
+<h3 id="headline-4">
+Compilar e executar ao mesmo tempo
+</h3>
+<div id="outline-text-headline-4" class="outline-text-3">
+<p>
+Usar <code>build-exe</code> + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos <code>zig run</code>:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig run src/main.zig</span></span></code></pre></div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+<p>
+Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de <strong>tempo de execução</strong> (ex: acessar <code>stdout</code>), a compilação falhará com o erro  <strong>“unable to evaluate comptime expression”</strong>. Exemplo problemático no Windows:</p>
+<figure>
+<img src="../02.png" alt="../02.png" title="../02.png" /><figcaption>
+A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
+</figcaption>
+</figure>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ERRO: inicialização global depende de recurso runtime
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Erro no terminal:</p>
+<pre class="example">
+t.zig:2107:28: error: unable to evaluate comptime expression
+</pre>
+<p>
+Isso acontece porque <strong>todas as variáveis globais em Zig são inicializadas em
+tempo de compilação</strong>. Mas no Windows, operações como abrir arquivos ou acessar <code>stdout</code> só podem
+acontecer em tempo de execução.</p>
+<p>
+<strong>Como resolver:</strong> mover a inicialização para dentro de uma função:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Agora funciona porque a inicialização acontece em runtime. Conforme o projeto cresce, escrever manualmente <code>zig build-exe src/a.zig src/b.zig</code> vira um incômodo. Em C/C++, resolvemos isso com ferramentas como CMake, Make ou Ninja.</p>
+<p>
+No Zig, o compilador já traz um <strong>sistema de build integrado</strong>. Você escreve um script em <code>build.zig</code> e compila o projeto inteiro só com:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build</span></span></code></pre></div>
+</div>
+<p>
+Depois disso, o Zig cria uma pasta <code>zig-out/</code> no diretório raiz, contendo os binários e bibliotecas. Exemplo de execução:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./zig-out/bin/hello_world</span></span></code></pre></div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
+<h3 id="headline-5">
+Criando novos objetos
+</h3>
+<div id="outline-text-headline-5" class="outline-text-3">
+<p>
+Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”. Aqui vou usar o termo <strong>objeto</strong>. No Zig criamos objetos com <code>const</code> (imutável) ou <code>var</code> (mutável):</p>
+<ul>
+<li><code>const</code>: depois de atribuir um valor, você <strong>não pode mudar</strong>.</li>
+<li><code>var</code>: você <strong>pode mudar</strong> o valor futuramente.</li>
+</ul>
+<figure>
+<img src="../03.png" alt="../03.png" title="../03.png" /><figcaption>
+A imagem acima representa um diagrama do tipo árvore de decisão.
+</figcaption>
+</figure>
+<p>
+Exemplo com <code>const</code> que NÃO compila (tentar mudar um <code>const</code> é erro):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Linha inválida: tentar reatribuir um const
+</span></span></span><span class="line"><span class="cl"><span class="c1">// error: cannot assign to constant
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span></span></span></code></pre></div>
+</div>
+<p>
+Se você precisa mudar o valor, use <code>var</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">ok</span></span></span></code></pre></div>
+</div>
+<p>
+&gt; Nota importante e pé-no-chão:
+&gt; - O Zig <strong>consegue inferir o tipo</strong> na maioria dos casos (para <code>const</code> e <code>var</code>).
+&gt; - <strong>Você é obrigado</strong> a anotar o tipo quando <strong>não</strong> fornece um valor inicial
+&gt;   (ver seção 1.4.2) ou quando o compilador não consegue inferir com segurança.</p>
+<p>
+Por padrão, Zig quer que você <strong>declare e inicialize</strong> no mesmo passo. Se realmente precisar declarar sem inicializar, use <code>undefined</code> <strong>e informe o tipo</strong>:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"> </span><span class="c1">// ainda sem valor válido
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w">                </span><span class="o">//</span><span class="w"> </span><span class="n">agora</span><span class="w"> </span><span class="n">inicializado</span></span></span></code></pre></div>
+</div>
+<p>
+&gt; Dica prática: evite <code>undefined</code> sempre que possível. Ele deixa o objeto
+&gt; sem valor definido; se você usar antes de inicializar, terá comportamento indefinido.</p>
+<p>
+Se você declarar e <strong>não usar</strong> um objeto, o compilador erra (bom para higiene do código):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">unused</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="n">constant</span></span></span></code></pre></div>
+</div>
+<p>
+Se quer declarar e <strong>descartar explicitamente</strong>, use o sublinhado (<code>_</code>):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="c1">// compila
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">descarte</span><span class="w"> </span><span class="n">explícito</span></span></span></code></pre></div>
+</div>
+<p>
+Após descartar, <strong>não tente usar</strong> de novo:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">pointless</span><span class="w"> </span><span class="n">discard</span></span></span></code></pre></div>
+</div>
+<p>
+Se você declara <code>var</code> e <strong>nunca muda</strong> o valor, Zig sugere <code>const</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">where_i_live</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Belo Horizonte&#34;</span><span class="p">;</span><span class="w"> </span><span class="c1">// error: local variable is never mutated
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">where_i_live</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">dica</span><span class="w"> </span><span class="n">do</span><span class="w"> </span><span class="n">compilador</span><span class="o">:</span><span class="w"> </span><span class="n">considere</span><span class="w"> </span><span class="n">usar</span><span class="w"> </span><span class="err">&#39;</span><span class="kr">const</span><span class="err">&#39;</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
+<h3 id="headline-6">
+Tipos primitivos
+</h3>
+<div id="outline-text-headline-6" class="outline-text-3">
+<ul>
+<li><strong>Inteiros sem sinal</strong>: <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code></li>
+<li><strong>Inteiros com sinal</strong>: <code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code></li>
+<li><strong>Ponto flutuante</strong>: <code>f16</code>, <code>f32</code>, <code>f64</code>, <code>f128</code></li>
+<li><strong>Booleano</strong>: <code>bool</code> (valores <code>true</code> / <code>false</code>)</li>
+<li><strong>Compatíveis com C (ABI)</strong>: <code>c_char</code>, <code>c_int</code>, <code>c_uint</code>, <code>c_long</code>, etc.</li>
+<li><strong>Do tamanho do ponteiro</strong>: <code>usize</code>, <code>isize</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
+<h3 id="headline-7">
+Arrays
+</h3>
+<div id="outline-text-headline-7" class="outline-text-3">
+<p>
+Criação básica (tamanho entre colchetes, tipo do elemento, e valores entre chaves):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">f64</span><span class="p">{</span><span class="mf">432.1</span><span class="p">,</span><span class="w"> </span><span class="mf">87.2</span><span class="p">,</span><span class="w"> </span><span class="mf">900.05</span><span class="p">};</span><span class="w"> </span><span class="c1">// [_] deixa o compilador contar
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ls</span><span class="p">;</span></span></span></code></pre></div>
+</div>
+<p>
+&gt; Esses arrays são <strong>estáticos</strong>: o tamanho <strong>não muda</strong> depois de criado (como em C).</p>
+<p>
+Zig é indexado em zero:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ns[0] = 48, ns[1] = 24, ns[2] = 12, ns[3] = 6
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">12</span></span></span></code></pre></div>
+</div>
+<p>
+<strong>Slices</strong> usam seletor de intervalo <code>start..end</code> (fim <strong>não</strong> incluso):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w"> </span><span class="c1">// elementos nos índices 1 e 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">ar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">ar</span><span class="p">.</span><span class="n">len</span><span class="p">];</span><span class="w"> </span><span class="c1">// fatia com todos os elementos
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..];</span><span class="w"> </span><span class="c1">// do índice 1 até o fim
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail</span><span class="p">;</span></span></span></code></pre></div>
+</div>
+<figure>
+<img src="../04.png" alt="../04.png" title="../04.png" /><figcaption>
+Diagrama ilustrando a diferença entre um array fixo <code>([N]u8{…})</code> e um slice <code>([]u8)</code>. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.
+</figcaption>
+</figure>
+<p>
+Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).</p>
+<ul>
+<li>Você acessa o tamanho com <code>minha_slice.len</code>.</li>
+<li>Isso ajuda o compilador a detectar “acesso fora dos limites” (coisa difícil de garantir no C).</li>
+</ul>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">sl</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">2</span></span></span></code></pre></div>
+</div>
+<ul>
+<li>Em C, um array “decai” para ponteiro e você <strong><strong>perde o tamanho</strong></strong>.</li>
+<li>Em Zig, a fatia <strong><strong>carrega o tamanho</strong></strong>, permitindo checagens de segurança.</li>
+</ul>
+<p>Só funcionam quando os comprimentos são conhecidos em tempo de compilação.</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,4,5}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,1,2,3}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span></span></span></code></pre></div>
+</div>
+<p>
+&gt; Dica: como “strings em Zig = arrays de bytes”, <code>++</code> é útil para concatenar strings estáticas.</p>
+<p>
+Se o intervalo é <strong>todo</strong> conhecido em compilação (ex.: <code>1..4</code>), o resultado do slice é tratado como “ponteiro para array fixo” (dá para fazer operações de ponteiro, como <code>.*</code>).</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">arr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="kt">u64</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr1</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">4</span><span class="p">];</span><span class="w"> </span><span class="c1">// intervalo 100% conhecido em compile-time
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slice</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">tipo</span><span class="w"> </span><span class="n">efetivo</span><span class="w"> </span><span class="err">é</span><span class="w"> </span><span class="n">similar</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">u64</span><span class="w"> </span><span class="p">(</span><span class="n">ponteiro</span><span class="w"> </span><span class="n">para</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span></span></span></code></pre></div>
+</div>
+<p>
+Se o fim do intervalo só é conhecido <strong>em runtime</strong> (ex.: tamanho de arquivo lido), o resultado é uma <strong>slice</strong> “normal” (<code>[]T</code>), e você <strong>não</strong> tem operações de ponteiro:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">fn</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="n">Allocator</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">!</span><span class="p">[]</span><span class="kt">u8</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="nf">alloc</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="nf">cwd</span><span class="p">().</span><span class="nf">openFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="nf">close</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="nf">readAll</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">n</span><span class="p">];</span><span class="w"> </span><span class="c1">// fim só é conhecido em runtime
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">gpa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="nf">GeneralPurposeAllocator</span><span class="p">(.{}){};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gpa</span><span class="p">.</span><span class="nf">allocator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">file_contents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;shop-list.txt&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file_contents</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">file_contents</span><span class="p">.</span><span class="n">len</span><span class="p">];</span><span class="w"> </span><span class="c1">// runtime-known
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+Blocos e escopos
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<p>
+Blocos são definidos por chaves <code>{ ... }</code> e criam <strong><strong>escopos</strong></strong>.  
+Objetos definidos num bloco só existem <strong><strong>dentro</strong></strong> dele (como em C/C++).
+Funções, <code>if</code>, <code>for</code>, <code>while</code>: todos criam blocos/escopos.</p>
+<p>
+Você pode <strong><strong>rotular</strong></strong> um bloco e usar <code>break :label valor</code> para “retornar” dele:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">y</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_one</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">break</span><span class="w"> </span><span class="o">:</span><span class="n">add_one</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"> </span><span class="c1">// &#34;retorna&#34; 124 do bloco
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
+<h3 id="headline-9">
+Como strings funcionam no Zig
+</h3>
+<div id="outline-text-headline-9" class="outline-text-3">
+<p>
+Strings em Zig são <strong><strong>arrays de bytes</strong></strong> (<code>u8</code>).  
+Isso é parecido com C, mas no Zig você tem <strong><strong>comprimento acessível</strong></strong> na maioria dos usos,
+o que ajuda a evitar “buffer overflow”.</p>
+<ul>
+<li>Em C, você depende de <code>&#39;\0&#39;</code> (NULL-terminado) e precisa varrer até achar o fim.</li>
+<li>Em Zig, você consulta <code>minha_string.len</code>.</li>
+</ul>
+<p>Exemplo Zig (obtendo <code>len</code>):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example of string literal in Zig&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="c1">// 43
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Exibir bytes “Hello”:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mh">0x48</span><span class="p">,</span><span class="mh">0x65</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6F</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">bytes</span><span class="p">});</span><span class="w"> </span><span class="c1">// Hello
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Zig assume que literais são <strong><strong>UTF-8</strong></strong>. Se não forem, você pode precisar converter (ex.: <code>iconv</code>).</p>
+<ol>
+<li><strong><strong>Array com sentinela</strong></strong> (NULL-terminado), tipo parecido com C.  </li>
+<li><strong><strong>Slice</strong></strong> (<code>[]const u8</code>), que carrega comprimento e <strong><strong>não</strong></strong> exige sentinela.</li>
+</ol>
+<p>Um literal de string tem tipo semelhante a <code>*const [n:0]u8</code>:</p>
+<ul>
+<li><code>n</code> é o comprimento (conta os bytes “úteis”).</li>
+<li><code>:0</code> indica o <strong><strong>sentinela</strong></strong> NULL no final.</li>
+</ul>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="c1">// &#34;A literal value&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A literal value&#34;</span><span class="p">)});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="kt">u8</span><span class="w">  </span><span class="p">(</span><span class="n">exemplo</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="n">formato</span><span class="p">)</span></span></span></code></pre></div>
+</div>
+<p>
+Muito comum em funções da stdlib:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">str</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string value&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">str</span><span class="p">)});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span></span></span></code></pre></div>
+</div>
+<p>
+O <code>for</code> percorre <strong><strong>bytes</strong></strong> (não “caracteres” Unicode):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="n">byte</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">byte</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">simple_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">i32</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">string_obj</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string object&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 1: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">simple_array</span><span class="p">)});</span><span class="w">     </span><span class="c1">// [4]i32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 2: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A string literal&#34;</span><span class="p">)});</span><span class="c1">// *const [16:0]u8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 3: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">simple_array</span><span class="p">)});</span><span class="w">     </span><span class="c1">// *const [4]i32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 4: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">string_obj</span><span class="p">)});</span><span class="w">        </span><span class="c1">// []const u8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Nem sempre <strong><strong>1 byte = 1 caractere</strong></strong> em UTF-8.</p>
+<p>
+Ex.: o caractere “Ⱥ” (U+023A) usa <strong><strong>2 bytes</strong></strong> em UTF-8 (C8 BA):</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Ⱥ&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="n">b</span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">b</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepoints), use <code>std.unicode.Utf8View</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">utf8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">unicode</span><span class="p">.</span><span class="n">Utf8View</span><span class="p">.</span><span class="nf">init</span><span class="p">(</span><span class="s">&#34;アメリカ&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">utf8</span><span class="p">.</span><span class="nf">iterator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="nf">nextCodepointSlice</span><span class="p">())</span><span class="w"> </span><span class="o">|</span><span class="n">cp</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;got codepoint {x}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">cp</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+<ul>
+<li><code>std.mem.eql(u8, a, b)</code>: compara igualdade.</li>
+<li><code>std.mem.startsWith(u8, s, &#34;pre&#34;)</code>, <code>endsWith(u8, s, &#34;suf&#34;)</code>.</li>
+<li><code>std.mem.splitScalar(u8, s, &#39;;&#39;)</code> e <code>splitSequence(u8, s, &#34;::&#34;)</code>.</li>
+<li><code>std.mem.trim(u8, s, &#34; \n\t&#34;)</code>: remove do início/fim.</li>
+<li><code>std.mem.count(u8, s, &#34;alvo&#34;)</code>, <code>replace(u8, s, &#34;a&#34;, &#34;b&#34;, out)</code>.</li>
+<li><code>std.mem.concat(alloc, u8, &amp;[...] )</code>: concatena strings (usa alocação).</li>
+</ul>
+<p>Exemplos rápidos:</p>
+<div class="src src-zig">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">name</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Pedro&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">eql</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Pedro&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Pe&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">gpa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="nf">GeneralPurposeAllocator</span><span class="p">(.{}){};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gpa</span><span class="p">.</span><span class="nf">allocator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">str3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">concat</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">_</span><span class="p">][]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">{</span><span class="s">&#34;Hello&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34; you!&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="nf">free</span><span class="p">(</span><span class="n">str3</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">str3</span><span class="p">});</span><span class="w"> </span><span class="c1">// Hello you!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">nrep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Hello&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;el&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;34&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">..]);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;New string: {s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">buffer</span><span class="p">});</span><span class="w">      </span><span class="c1">// H34lo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Replacements: {d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">nrep</span><span class="p">});</span><span class="w">      </span><span class="c1">// 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+Segurança em Zig
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>
+Linguagens de baixo nível modernas focam em <strong>reduzir riscos</strong>, principalmente os
+de <strong>memória</strong>. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
+parte dos casos, mas oferece ferramentas que <strong>ajudam muito</strong>:</p>
+<figure>
+<img src="../05.png" alt="../05.png" title="../05.png" /><figcaption>
+Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e <code>errdefer</code> cuida da liberação de recursos.
+</figcaption>
+</figure>
+<ul>
+<li><code>defer</code>: garante que liberações (<code>free</code>, <code>deinit</code>) fiquem próximas das alocações,
+reduzindo <code>leaks</code>, “use-after-free” e “double free”.</li>
+<li><code>errdefer</code>: garante liberação <strong>mesmo se</strong> ocorrer erro no meio do caminho.</li>
+<li>Ponteiros/objetos <strong>não são nulos</strong> por padrão (evita <code>null deref</code> acidental).</li>
+<li>Alocadores de teste (ex.: <code>std.testing.allocator</code>) detectam vazamentos/double-free
+em testes.</li>
+<li>Arrays/slices carregam <code>len</code>, permitindo checagem de “índice fora do intervalo”.</li>
+</ul>
+<p>Regras que também ajudam a segurança lógica:</p>
+<ul>
+<li><code>switch</code> deve cobrir <strong>todas</strong> as opções (exaustividade).</li>
+<li>O compilador força você a <strong>tratar erros</strong> (tipos <code>!T</code>, uso de <code>try</code>, <code>catch</code>).</li>
+<li>Objetos não usados e <code>var</code> não mutados viram <strong>erro/aviso</strong>: higiene do código.</li>
+</ul>
+<p>Comparação direta:</p>
+<ul>
+<li>Em C/C++, você precisa disciplinar tudo isso manualmente (e muitas vezes sem ajuda do compilador).</li>
+<li>Em Zig, o compilador te <strong>empurra</strong> para práticas mais seguras, mas sem “mágica” ou sobrecarga de recursos ocultos.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
+<h2 id="headline-11">
+Controles de fluxo, structs, modules e types
+</h2>
+<div id="outline-text-headline-11" class="outline-text-2">
+<div id="outline-container-headline-12" class="outline-3">
+<h3 id="headline-12">
+if/else statements
+</h3>
+</div>
+<div id="outline-container-headline-13" class="outline-3">
+<h3 id="headline-13">
+Switch statements
+</h3>
+</div>
+</div>
+</div>
+]]></content:encoded>
+      
+      
+      
+      
+      <dc:creator>Vitor Lobo</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Uma abordagem diferente]]></description>
       
     </item>
     
