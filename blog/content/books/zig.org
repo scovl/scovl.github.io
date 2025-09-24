@@ -1,0 +1,691 @@
+#+TITLE: A linguagem de programação Zig
+#+DESCRIPTION: Uma abordagem diferente
+#+AUTHOR: Vitor Lobo
+
+* O que é o Zig?
+
+[[https://ziglang.org/][Zig]] é uma lignuagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao [[https://en.wikipedia.org/wiki/C_(programming_language)][C]] mas com ajustes que eliminam comportamentos confusos ou inconsistentes.
+
+A ideia central é de que "menos é mais", no sentido de que "menos coisas escondidas = mais clareza para quem programa" pois Zig não acumula recursos como o [[https://en.wikipedia.org/wiki/C%2B%2B][C++]]; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado *macro*. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:
+
+#+BEGIN_SRC c
+#define SQR(x) (x * x)
+int y = SRQ(1+2); // vira (1+2 * 1+2) => 5, não 9
+#+END_SRC
+
+Acima, o código ~SQR(1+2)~ foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em Zig, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:std.io.gestStdOut
+
+#+BEGIN_SRC zigSe você quer criar uma 
+fn sqr(x: i32) i32 {
+   return x * x;
+}
+#+END_SRC
+
+#+BEGIN_QUOTE
+Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.
+#+END_QUOTE
+
+O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas também confuso. Exemplo, você pode ter várias funções com o nome (sobrecarga). Dependendo dos tipos, o compiador escolher uma versão diferente. Para iniciantes, isso é difícil de acompanhar.
+
+Já no Zig não existe isso. Se você quiser funções diferentes, precisa dar nomes diferentes. Mais simples de ler e entender. Por exemplo, em C++ usar ~std::string~ parece simples, mas às vezes o programa gasta memória sem você perceber:
+
+#+BEGIN_SRC cpp
+std::string a = "foo"
+std::string b = "bar"
+auto c = a + b; // prode gerar alocação dinâmica
+#+END_SRC
+
+Ou seja, por trás dessa linha, o programa pediu mais memória ao sistema. Já em Zig nada disso acontece sem você pedir. Se quiser usar memória dinâmica, você precisa dizer qual "allocator" vai usar:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+const allocator = std.heap.page_allocator;
+
+var list = std.ArrayList(u8).init(allocator);
+defer list.deinit();
+#+END_SRC
+
+Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros genéricos (~void*~) escondem o tipo real e só falham em tempo de execução. No Zig, porteinro carregam informações de tipo, o que evita esses erros. Assim o Zig respeita sua filosofia que diz:
+
+#+BEGIN_QUOTE
+"Focus on debugging your application rather than debugging your programming language knowledge."
+#+END_QUOTE
+
+A proposta é simples: você deve gastar tempo entendendo seu programa, não a linguagem. Em outras palavras, C pode confundir com macros, C++ pode confundir com excesso de recursos e o Zig tenta ser direto e previsível. Ou seja, como disse no início, menos é mais, você deve gastar tempo entendendo o que seu programa faz, não tentando adivinhar *como a linguagem funciona*.
+
+** Primeiros passos em Zig
+
+Antes de programar em Zig, precisamor criar um projeto. Isso é parecido com outras linguagens que criam pastas e arquivos iniciais para você. No terminal digite o seguinte:
+
+#+BEGIN_SRC bash
+  mkdir hello
+  cd hello
+  zig init
+#+END_SRC
+
+A saída no terminal deverá ser algo assim:
+
+#+BEGIN_EXAMPLE
+info: created build.zig
+info: created build.zig.zon
+info: created src/main.zig
+info: created src/root.zig
+info: see `zig build --help` for a menu of options
+#+END_EXAMPLE
+
+#+CAPTION: A imagem acima representa o que ocorre quando digita ~zig init~
+#+NAME: fig:zig-init
+[[./01.png]]
+
+Isso cria alguns arquivos automaticamente. São eles:
+
+- ~build.zig~ - script que explica como compilar o projeto.
+- ~build.zig.zon~ - arquivo de condfiguração do projeto (similar a um ~package.json~ no Node ou ~Cargo.toml~ em Rust).
+- ~src/main.zig~ - aqui fica o programa principal.
+- ~src/root.zig~ - ponto de entrada para bibliotecas Zig.
+  
+Agora abra o o ~src/main.zig~ e dentro dele escreva o seguinte:
+
+#+BEGIN_SRC zig
+  const std = @import("std");
+
+  pub fn main() !void {
+      const stdout = std.io.getStdOut().writer();
+      try stdout.print("Hello, World!\n", .{});
+  }
+#+END_SRC
+
+O que esse código faz:
+- ~const std = @import("std");~ - importa a biblioteca padrão do Zig.  
+- ~pub fn main() !void { ... }~ - função principal, onde o programa começa.  
+- ~std.io.getStdOut().writer()~ - pega a saída padrão (tela).  
+- ~stdout.print("Hello, World!\n", .{});~ - imprime o texto na tela.  
+- O ~try~ é necessário porque escrever na tela pode falhar (ex: falta de permissão), mas nesse caso só repassa o erro.
+
+Para compilar e executar:
+
+#+BEGIN_SRC bash
+zig build run
+#+END_SRC
+
+O terminal mostrará:
+
+#+BEGIN_EXAMPLE
+Hello, World!
+#+END_EXAMPLE
+
+Pronto! Você acabou de rodar seu primeiro programa em Zig.
+
+*Observação*
+- Diferente de C, não é preciso configurar *Makefile* manualmente.  
+- Diferente de C++, não existe um “padrão gigante” de projeto.  
+
+O Zig já entrega a estrutura mínima para você começar, sem complicação. Quando usamos o ~zig init~, alguns arquivos e pastas são criados automaticamente:
+
+#+BEGIN_EXAMPLE
+.
+├── build.zig
+├── build.zig.zon
+└── src
+    ├── main.zig
+    └── root.zig
+#+END_EXAMPLE
+
+- A pasta ~src/~ guarda o código-fonte do projeto.  
+- Dentro dela, temos dois arquivos: ~main.zig~ e ~root.zig~.  
+- Cada arquivo ~.zig~ é chamado de *módulo*. Pense em módulo como uma "caixinha" de código Zig.  
+
+Por convenção, se você está criando um programa que **roda no terminal** (executável), o ponto de partida é o ~main.zig~. Nele, você deve declarar uma função chamada ~main()~. É como no C:
+
+#+BEGIN_SRC c
+int main() {
+    return 0;
+}
+#+END_SRC
+
+Mas em Zig, fica assim:
+
+#+BEGIN_SRC zig
+pub fn main() void {
+    // código do programa começa aqui
+}
+#+END_SRC
+
+Se você quer criar uma biblioteca em vez de um programa, é comum remover o arquivo ~src/main.zig~ e criar seu código no ~src/root.zig~. Esse ~root.zig~ será o módulo raiz da sua biblioteca, contendo as funções e tipos que você pretende expor.
+
+O script de build continua sendo o ~build.zig~, que é interpretado pelo comando ~zig build~ para compilar e organizar o projeto. Ou seja, ~root.zig~ não é executado diretamente como um script de build; ele apenas fornece o código da biblioteca que o ~build.zig~ irá compilar e instalar.
+
+Em linguagens como C e C++, normalmente precisamos instalar ferramentas externas como *Make* ou *CMake* para compilar projetos grandes. No Zig, isso está embutido: o ~zig~ já traz o compilador *e* o sistema de build. Você não precisa de nada além do próprio Zig.
+
+Esse arquivo tem uma sintaxe parecida com JSON. Ele descreve o projeto e suas dependências (bibliotecas externas). Exemplo em outros ecossistemas:
+- ~package.json~ no JavaScript.  
+- ~Pipfile~ no Python.  
+- ~Cargo.toml~ no Rust.  
+
+Ou seja, no Zig usamos o ~build.zig.zon~ para listar bibliotecas externas. Se uma biblioteca Zig está no GitHub e possui o próprio ~build.zig.zon~, você pode adicioná-la ao seu projeto apenas declarando no seu arquivo. Abra o arquivo ~src/root.zig~. Logo no começo você verá algo assim:
+
+#+NAME: src/root.zig
+#+BEGIN_SRC zig
+const std = @import("std");
+const testing = std.testing;
+
+export fn add(a: i32, b: i32) i32 {
+    return a + b;
+}
+#+END_SRC
+
+Explicando linha por linha:
+
+- ~const std = @import("std");~ - importa a biblioteca padrão do Zig.  
+- ~const testing = std.testing;~ - importa o módulo de testes.  
+- ~export fn add(...)~ - cria uma função chamada `add` que soma dois números.  
+
+E aqui vai uma observação:
+- Todo comando termina com ~;~ (como em C).  
+- O operador ~:~ é usado para declarar tipos. Exemplo: ~a: i32~ significa que ~a~ é um número inteiro de 32 bits com sinal.  
+- O retorno da função vem depois dos argumentos: ~) i32 { ... }~.  
+- ~export~ funciona como o ~extern~ do C: deixa a função disponível para outros módulos ou programas.  
+
+Agora veja o ~src/main.zig~. Ele contém a função principal do programa:
+
+#+NAME: src/main.zig
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
+    const stdout = &stdout_writer.interface;
+    try stdout.print("Hello, {s}!\n", .{"world"});
+    try stdout.flush();
+}
+#+END_SRC
+
+Explicação:
+- ~pub fn main() !void~ - função pública chamada ~main~, que pode retornar nada (~void~) ou um erro (~!~).  
+- ~stdout_buffer~ - um pedaço de memória para guardar texto antes de imprimir.  
+- ~writer~ - cria um "escritor" que sabe lidar com esse buffer.  
+- ~stdout.print("Hello, {s}!\n", .{"world"});~ - imprime na tela (substitui ~{s}~ por ~"world"~).  
+- ~try~ - se der erro ao imprimir, o programa retorna o erro em vez de travar sem explicação.  
+
+- Por padrão, funções em Zig são privadas ao módulo.  
+- ~pub~ (public) deixa a função acessível de fora.  
+- Isso é o oposto de ~static~ em C/C++, que limita o acesso.  
+
+** Compilando seu código-fonte
+
+Para compilar um módulo Zig em um executável, usamos o comando ~~build-exe~~:
+
+#+BEGIN_SRC bash
+zig build-exe src/main.zig
+#+END_SRC
+
+Esse comando procura uma função ~main()~ dentro dos arquivos listados. Se não encontrar, o compilador gera um erro de compilação avisando que o ponto de entrada não existe. Além de ~build-exe~, temos outros comandos:
+- ~build-lib~ - compila em uma biblioteca (C ABI).  
+- ~build-obj~ - compila em arquivos objeto.  
+
+Depois de rodar o ~build-exe~, vemos o binário criado no diretório atual:
+
+#+BEGIN_EXAMPLE
+ls
+build.zig  build.zig.zon  main  src
+#+END_EXAMPLE
+
+Executando o binário:
+
+#+BEGIN_SRC bash
+./main
+#+END_SRC
+
+Saída:
+
+#+BEGIN_EXAMPLE
+Hello, world!
+#+END_EXAMPLE
+
+** Compilar e executar ao mesmo tempo
+
+Usar ~build-exe~ + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos ~zig run~:
+
+#+BEGIN_SRC bash
+zig run src/main.zig
+#+END_SRC
+
+Saída:
+
+#+BEGIN_EXAMPLE
+Hello, world!
+#+END_EXAMPLE
+
+Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de *tempo de execução* (ex: acessar ~stdout~), a compilação falhará com o erro  *“unable to evaluate comptime expression”*. Exemplo problemático no Windows:
+
+#+CAPTION: A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
+#+NAME: fig:zig-var
+[[./02.png]]
+
+#+BEGIN_SRC zig
+const std = @import("std");
+var stdout_buffer: [1024]u8 = undefined;
+
+// ERRO: inicialização global depende de recurso runtime
+var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
+const stdout = &stdout_writer.interface;
+
+pub fn main() !void {
+    _ = try stdout.write("Hello\n");
+    try stdout.flush();
+}
+#+END_SRC
+
+Erro no terminal:
+
+#+BEGIN_EXAMPLE
+t.zig:2107:28: error: unable to evaluate comptime expression
+#+END_EXAMPLE
+
+Isso acontece porque *todas as variáveis globais em Zig são inicializadas em
+tempo de compilação*. Mas no Windows, operações como abrir arquivos ou acessar ~stdout~ só podem
+acontecer em tempo de execução.
+
+*Como resolver:* mover a inicialização para dentro de uma função:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    var stdout_buffer: [1024]u8 = undefined;
+    var stdout_writer = std.fs.File.stdout().writer(&stdout_buffer);
+    const stdout = &stdout_writer.interface;
+    _ = try stdout.write("Hello\n");
+    try stdout.flush();
+}
+#+END_SRC
+
+Agora funciona porque a inicialização acontece em runtime. Conforme o projeto cresce, escrever manualmente ~zig build-exe src/a.zig src/b.zig~ vira um incômodo. Em C/C++, resolvemos isso com ferramentas como CMake, Make ou Ninja.
+
+No Zig, o compilador já traz um *sistema de build integrado*. Você escreve um script em ~build.zig~ e compila o projeto inteiro só com:
+
+#+BEGIN_SRC bash
+zig build
+#+END_SRC
+
+Depois disso, o Zig cria uma pasta ~zig-out/~ no diretório raiz, contendo os binários e bibliotecas. Exemplo de execução:
+
+#+BEGIN_SRC bash
+./zig-out/bin/hello_world
+#+END_SRC
+
+Saída:
+
+#+BEGIN_EXAMPLE
+Hello, world!
+#+END_EXAMPLE
+
+** Criando novos objetos
+
+Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”. Aqui vou usar o termo *objeto*. No Zig criamos objetos com ~const~ (imutável) ou ~var~ (mutável):
+
+- ~const~: depois de atribuir um valor, você *não pode mudar*.
+- ~var~: você *pode mudar* o valor futuramente.
+
+#+CAPTION: A imagem acima representa um diagrama do tipo árvore de decisão.
+#+NAME: fig:zig-const
+[[./03.png]]
+
+Exemplo com ~const~ que NÃO compila (tentar mudar um ~const~ é erro):
+
+#+BEGIN_SRC zig
+const age = 24;
+// Linha inválida: tentar reatribuir um const
+// error: cannot assign to constant
+// age = 25;
+#+END_SRC
+
+Se você precisa mudar o valor, use ~var~:
+
+#+BEGIN_SRC zig
+var age: u8 = 24;
+age = 25; // ok
+#+END_SRC
+
+> Nota importante e pé-no-chão:
+> - O Zig *consegue inferir o tipo* na maioria dos casos (para ~const~ e ~var~).
+> - *Você é obrigado* a anotar o tipo quando *não* fornece um valor inicial
+>   (ver seção 1.4.2) ou quando o compilador não consegue inferir com segurança.
+
+Por padrão, Zig quer que você *declare e inicialize* no mesmo passo. Se realmente precisar declarar sem inicializar, use ~undefined~ *e informe o tipo*:
+
+#+BEGIN_SRC zig
+var age: u8 = undefined; // ainda sem valor válido
+age = 25;                // agora inicializado
+#+END_SRC
+
+> Dica prática: evite ~undefined~ sempre que possível. Ele deixa o objeto
+> sem valor definido; se você usar antes de inicializar, terá comportamento indefinido.
+
+Se você declarar e *não usar* um objeto, o compilador erra (bom para higiene do código):
+
+#+BEGIN_SRC zig
+const age = 15; // error: unused local constant
+#+END_SRC
+
+Se quer declarar e *descartar explicitamente*, use o sublinhado (~_~):
+
+#+BEGIN_SRC zig
+const age = 15; // compila
+_ = age;        // descarte explícito
+#+END_SRC
+
+Após descartar, *não tente usar* de novo:
+
+#+BEGIN_SRC zig
+const age = 15;
+_ = age;
+// std.debug.print("{d}\n", .{age + 2}); // error: pointless discard
+#+END_SRC
+
+Se você declara ~var~ e *nunca muda* o valor, Zig sugere ~const~:
+
+#+BEGIN_SRC zig
+var where_i_live = "Belo Horizonte"; // error: local variable is never mutated
+_ = where_i_live;
+// dica do compilador: considere usar 'const'
+#+END_SRC
+
+** Tipos primitivos
+
+- *Inteiros sem sinal*: ~u8~, ~u16~, ~u32~, ~u64~, ~u128~
+- *Inteiros com sinal*: ~i8~, ~i16~, ~i32~, ~i64~, ~i128~
+- *Ponto flutuante*: ~f16~, ~f32~, ~f64~, ~f128~
+- *Booleano*: ~bool~ (valores ~true~ / ~false~)
+- *Compatíveis com C (ABI)*: ~c_char~, ~c_int~, ~c_uint~, ~c_long~, etc.
+- *Do tamanho do ponteiro*: ~usize~, ~isize~
+
+** Arrays
+
+Criação básica (tamanho entre colchetes, tipo do elemento, e valores entre chaves):
+
+#+BEGIN_SRC zig
+const ns = [4]u8{48, 24, 12, 6};
+const ls = [_]f64{432.1, 87.2, 900.05}; // [_] deixa o compilador contar
+_ = ns; _ = ls;
+#+END_SRC
+
+> Esses arrays são *estáticos*: o tamanho *não muda* depois de criado (como em C).
+
+Zig é indexado em zero:
+
+#+BEGIN_SRC zig
+const ns = [4]u8{48, 24, 12, 6};
+// ns[0] = 48, ns[1] = 24, ns[2] = 12, ns[3] = 6
+// try stdout.print("{d}\n", .{ ns[2] }); // 12
+#+END_SRC
+
+*Slices* usam seletor de intervalo ~start..end~ (fim *não* incluso):
+
+#+BEGIN_SRC zig
+const ns = [4]u8{48, 24, 12, 6};
+const sl = ns[1..3]; // elementos nos índices 1 e 2
+_ = sl;
+
+const ar = [4]u8{48, 24, 12, 6};
+const all = ar[0..ar.len]; // fatia com todos os elementos
+_ = all;
+
+const tail = ns[1..]; // do índice 1 até o fim
+_ = tail;
+#+END_SRC
+
+#+CAPTION: Diagrama ilustrando a diferença entre um array fixo ~([N]u8{…})~ e um slice ~([]u8)~. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.
+#+NAME: fig:zig-slices
+[[./04.png]]
+
+Uma slice é, essencialmente, “ponteiro + comprimento” (~[]T~).
+- Você acessa o tamanho com ~minha_slice.len~.
+- Isso ajuda o compilador a detectar “acesso fora dos limites” (coisa difícil de garantir no C).
+
+#+BEGIN_SRC zig
+const ns = [4]u8{48, 24, 12, 6};
+const sl = ns[1..3];
+// try stdout.print("{d}\n", .{sl.len}); // 2
+#+END_SRC
+
+- Em C, um array “decai” para ponteiro e você **perde o tamanho**.
+- Em Zig, a fatia **carrega o tamanho**, permitindo checagens de segurança.
+
+Só funcionam quando os comprimentos são conhecidos em tempo de compilação.
+
+#+BEGIN_SRC zig
+const a = [_]u8{1,2,3};
+const b = [_]u8{4,5};
+const c = a ++ b; // {1,2,3,4,5}
+_ = c;
+
+const d = a ** 2; // {1,2,3,1,2,3}
+_ = d;
+#+END_SRC
+
+> Dica: como “strings em Zig = arrays de bytes”, ~++~ é útil para concatenar strings estáticas.
+
+Se o intervalo é *todo* conhecido em compilação (ex.: ~1..4~), o resultado do slice é tratado como “ponteiro para array fixo” (dá para fazer operações de ponteiro, como ~.*~).
+
+#+BEGIN_SRC zig
+const arr1 = [10]u64{1,2,3,4,5,6,7,8,9,10};
+const slice = arr1[1..4]; // intervalo 100% conhecido em compile-time
+_ = slice;
+// tipo efetivo é similar a *const [3]u64 (ponteiro para array de 3)
+#+END_SRC
+
+Se o fim do intervalo só é conhecido *em runtime* (ex.: tamanho de arquivo lido), o resultado é uma *slice* “normal” (~[]T~), e você *não* tem operações de ponteiro:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+fn read_file(allocator: std.mem.Allocator, path: []const u8) ![]u8 {
+    var buf = try allocator.alloc(u8, 1024);
+    const file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+    const n = try file.readAll(buf);
+    return buf[0..n]; // fim só é conhecido em runtime
+}
+
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    const file_contents = try read_file(allocator, "shop-list.txt");
+    const sl = file_contents[0..file_contents.len]; // runtime-known
+    _ = sl;
+}
+#+END_SRC
+
+
+** Blocos e escopos
+
+Blocos são definidos por chaves ~{ ... }~ e criam **escopos**.  
+Objetos definidos num bloco só existem **dentro** dele (como em C/C++).
+Funções, ~if~, ~for~, ~while~: todos criam blocos/escopos.
+
+Você pode **rotular** um bloco e usar ~break :label valor~ para “retornar” dele:
+
+#+BEGIN_SRC zig
+var y: i32 = 123;
+const x = add_one: {
+    y += 1;
+    break :add_one y; // "retorna" 124 do bloco
+};
+// if (x == 124 and y == 124) { ... }
+#+END_SRC
+
+
+** Como strings funcionam no Zig
+
+Strings em Zig são **arrays de bytes** (~u8~).  
+Isso é parecido com C, mas no Zig você tem **comprimento acessível** na maioria dos usos,
+o que ajuda a evitar “buffer overflow”.
+
+- Em C, você depende de ~'\0'~ (NULL-terminado) e precisa varrer até achar o fim.
+- Em Zig, você consulta ~minha_string.len~.
+
+Exemplo Zig (obtendo ~len~):
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const s = "This is an example of string literal in Zig";
+    std.debug.print("{d}\n", .{s.len}); // 43
+}
+#+END_SRC
+
+Exibir bytes “Hello”:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const bytes = [_]u8{0x48,0x65,0x6C,0x6C,0x6F};
+    std.debug.print("{s}\n", .{bytes}); // Hello
+}
+#+END_SRC
+
+> Zig assume que literais são **UTF-8**. Se não forem, você pode precisar converter (ex.: ~iconv~).
+
+1) **Array com sentinela** (NULL-terminado), tipo parecido com C.  
+2) **Slice** (~[]const u8~), que carrega comprimento e **não** exige sentinela.
+
+Um literal de string tem tipo semelhante a ~*const [n:0]u8~:
+- ~n~ é o comprimento (conta os bytes “úteis”).
+- ~:0~ indica o **sentinela** NULL no final.
+
+#+BEGIN_SRC zig
+// "A literal value"
+std.debug.print("{any}\n", .{@TypeOf("A literal value")});
+// -> *const [15:0]u8  (exemplo de formato)
+#+END_SRC
+
+Muito comum em funções da stdlib:
+
+#+BEGIN_SRC zig
+const str: []const u8 = "A string value";
+std.debug.print("{any}\n", .{@TypeOf(str)}); // []const u8
+#+END_SRC
+
+O ~for~ percorre **bytes** (não “caracteres” Unicode):
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const s = "This is an example";
+    for (s) |byte| {
+        std.debug.print("{X} ", .{byte});
+    }
+    std.debug.print("\n", .{});
+}
+#+END_SRC
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const simple_array = [_]i32{1,2,3,4};
+    const string_obj: []const u8 = "A string object";
+
+    std.debug.print("Type 1: {}\n", .{@TypeOf(simple_array)});     // [4]i32
+    std.debug.print("Type 2: {}\n", .{@TypeOf("A string literal")});// *const [16:0]u8
+    std.debug.print("Type 3: {}\n", .{@TypeOf(&simple_array)});     // *const [4]i32
+    std.debug.print("Type 4: {}\n", .{@TypeOf(string_obj)});        // []const u8
+}
+#+END_SRC
+
+Nem sempre **1 byte = 1 caractere** em UTF-8.
+
+Ex.: o caractere “Ⱥ” (U+023A) usa **2 bytes** em UTF-8 (C8 BA):
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const s = "Ⱥ";
+    for (s) |b| std.debug.print("{X} ", .{b});
+    std.debug.print("\n", .{});
+}
+#+END_SRC
+
+Se você precisa iterar por **caracteres** (codepoints), use ~std.unicode.Utf8View~:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    var utf8 = try std.unicode.Utf8View.init("アメリカ");
+    var it = utf8.iterator();
+    while (it.nextCodepointSlice()) |cp| {
+        std.debug.print("got codepoint {x}\n", .{cp});
+    }
+}
+#+END_SRC
+
+- ~std.mem.eql(u8, a, b)~: compara igualdade.
+- ~std.mem.startsWith(u8, s, "pre")~, ~endsWith(u8, s, "suf")~.
+- ~std.mem.splitScalar(u8, s, ';')~ e ~splitSequence(u8, s, "::")~.
+- ~std.mem.trim(u8, s, " \n\t")~: remove do início/fim.
+- ~std.mem.count(u8, s, "alvo")~, ~replace(u8, s, "a", "b", out)~.
+- ~std.mem.concat(alloc, u8, &[...] )~: concatena strings (usa alocação).
+
+Exemplos rápidos:
+
+#+BEGIN_SRC zig
+const std = @import("std");
+
+pub fn main() !void {
+    const name: []const u8 = "Pedro";
+    std.debug.print("{}\n", .{ std.mem.eql(u8, name, "Pedro") }); // true
+
+    std.debug.print("{}\n", .{ std.mem.startsWith(u8, name, "Pe") }); // true
+
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    const str3 = try std.mem.concat(allocator, u8, &[_][]const u8{"Hello", " you!"});
+    defer allocator.free(str3);
+    std.debug.print("{s}\n", .{str3}); // Hello you!
+
+    var buffer: [5]u8 = undefined;
+    const nrep = std.mem.replace(u8, "Hello", "el", "34", buffer[0..]);
+    std.debug.print("New string: {s}\n", .{buffer});      // H34lo
+    std.debug.print("Replacements: {d}\n", .{nrep});      // 1
+}
+#+END_SRC
+
+** Segurança em Zig
+
+Linguagens de baixo nível modernas focam em *reduzir riscos*, principalmente os
+de *memória*. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
+parte dos casos, mas oferece ferramentas que *ajudam muito*:
+
+#+CAPTION: Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e ~errdefer~ cuida da liberação de recursos.
+#+NAME: fig:zig-memory
+[[./05.png]]
+
+- ~defer~: garante que liberações (~free~, ~deinit~) fiquem próximas das alocações,
+  reduzindo ~leaks~, “use-after-free” e “double free”.
+- ~errdefer~: garante liberação *mesmo se* ocorrer erro no meio do caminho.
+- Ponteiros/objetos *não são nulos* por padrão (evita ~null deref~ acidental).
+- Alocadores de teste (ex.: ~std.testing.allocator~) detectam vazamentos/double-free
+  em testes.
+- Arrays/slices carregam ~len~, permitindo checagem de “índice fora do intervalo”.
+
+Regras que também ajudam a segurança lógica:
+- ~switch~ deve cobrir *todas* as opções (exaustividade).
+- O compilador força você a *tratar erros* (tipos ~!T~, uso de ~try~, ~catch~).
+- Objetos não usados e ~var~ não mutados viram *erro/aviso*: higiene do código.
+
+Comparação direta:
+
+- Em C/C++, você precisa disciplinar tudo isso manualmente (e muitas vezes sem ajuda do compilador).
+- Em Zig, o compilador te *empurra* para práticas mais seguras, mas sem “mágica” ou sobrecarga de recursos ocultos.
+
+* Controles de fluxo, structs, modules e types
+
+** if/else statements
+** Switch statements
