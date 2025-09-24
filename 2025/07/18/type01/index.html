@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1757193683">
+<link rel="stylesheet" href="/css/main.css?v=1758715433">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757193683">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758715433">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757193683">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758715433">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1757193683"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758715433"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -691,13 +691,17 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
 <h3 id="limitações-por-design-que-potencializam-a-inferência">Limitações por Design que Potencializam a Inferência</h3>
 <p>Rust consegue oferecer essa inferência contextual potente em parte porque abre mão de certos recursos presentes em C++ que dificultariam o processo. Em especial, destacam-se as ausências, por design, de alguns mecanismos na linguagem Rust:</p>
 <h4 id="sobrecarga-de-funções-nomeadas">Sobrecarga de Funções Nomeadas</h4>
-<p>Em Rust não é permitido definir duas funções <em>nomeadas</em> com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via <strong>traits</strong> (como <code>Add</code>, <code>FromStr</code>, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única. Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.</p>
+<p>Em Rust não é permitido definir duas funções <em>nomeadas</em> com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via <strong>traits</strong> (como <code>Add</code>, <code>FromStr</code>, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única.</p>
+<p>Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.</p>
 <h4 id="conversões-implícitas-de-tipo">Conversões Implícitas de Tipo</h4>
-<p>Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um <code>int</code> em <code>double</code> em certas expressões). Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.</p>
+<p>Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um <code>int</code> em <code>double</code> em certas expressões).</p>
+<p>Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.</p>
 <h4 id="herança-de-classes">Herança de Classes</h4>
-<p>Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza <em>traits</em> (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos. A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.</p>
+<p>Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza <em>traits</em> (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos.</p>
+<p>A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.</p>
 <h4 id="especialização-de-templates">Especialização de Templates</h4>
-<p>Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</p>
+<p>Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência.</p>
+<p>No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</p>
 <h3 id="o-resultado-um-espaço-de-busca-simplificado">O Resultado: Um Espaço de Busca Simplificado</h3>
 <p>Essas escolhas de design do Rust limitam o espaço de busca do algoritmo de inferência. Em essência, o compilador Rust tem menos &ldquo;adivinhações&rdquo; a fazer, porque a linguagem evita construções que poderiam levar a múltiplas interpretações para uma mesma expressão.</p>
 <p>A sobrecarga de funções tradicional, por exemplo, foi deliberadamente excluída porque múltiplas definições sobrecarregadas poderiam interagir mal com o sistema de inferência, complicando a resolução de tipos. Em vez disso, o Rust utiliza traits e genéricos para alcançar polimorfismo ad-hoc, mantendo a inferência mais previsível.</p>
@@ -709,13 +713,15 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
 <p>A inferência atua dentro dos limites dessas funções e nos tipos genéricos, mas não infere, por exemplo, que uma função <code>fn add(x, y) { x + y }</code> deve ser genérica ou qual seu tipo de retorno – tais informações devem ser anotadas (no caso, usando traits e <code>-&gt; T</code>). Essa diferença demonstra mais uma vez o equilíbrio que Rust busca: o benefício da inferência local máxima, sem sacrificar a clareza e a robustez na definição de fronteiras do código.</p>
 <h2 id="comparação-com-o-swift-e-desafios-adicionais">Comparação com o Swift e Desafios Adicionais</h2>
 <p>A linguagem <strong>Swift</strong>, desenvolvida pela Apple, oferece um caso interessante para compararmos com Rust e C++. Swift implementa um sistema de inferência de tipos também baseado em resolução de restrições (um tipo de <strong>unificação</strong> bidirecional semelhante ao Hindley-Milner), permitindo ao programador omitir muitos tipos.</p>
-<p>Entretanto, Swift <strong>mantém recursos de linguagem que Rust evitou</strong>, como sobrecarga extensiva de funções e operadores, conversões implícitas via <strong>protocolos literais</strong>, e múltiplas conveniências sintáticas. Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos &ldquo;polimórficos&rdquo;. A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.</p>
+<p>Entretanto, Swift <strong>mantém recursos de linguagem que Rust evitou</strong>, como sobrecarga extensiva de funções e operadores, conversões implícitas via <strong>protocolos literais</strong>, e múltiplas conveniências sintáticas.</p>
+<p>Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos &ldquo;polimórficos&rdquo;. A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.</p>
 <p>Um sintoma notório desses desafios é o famoso erro do Swift: <em>&ldquo;the compiler is unable to type-check this expression in reasonable time&rdquo;</em> (o compilador não consegue verificar o tipo desta expressão em tempo hábil). Esse erro ocorre quando a expressão de código é tão complexa para o mecanismo de inferência que o compilador não consegue resolver dentro de limites práticos de tempo. Como exemplo ilustrativo do tipo de operação que pode ser problemática:</p>
 
 
   <pre><code class="language-swift">let a: Double = -(1 &#43; 2) &#43; -(3 &#43; 4) &#43; -(5)</code></pre>
  <p>Embora esse exemplo específico seja simples demais para causar problemas nas versões atuais do Swift, ele demonstra o tipo de construção que pode ser problemática: expressões com múltiplas operações aninhadas e literais ambíguos. Os casos realmente problemáticos envolvem expressões muito mais longas e complexas com cadeias extensas de operadores sobrecarregados.</p>
-<p>O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.). Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado.</p>
+<p>O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.).</p>
+<p>Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado.</p>
 <p>Com muitas possibilidades, o problema rapidamente explode em complexidade. De fato, um caso real relatado envolveu concatenar cadeias de strings e valores numéricos numa única expressão para formar uma URL, levando o compilador Swift 42 segundos para tentar resolver os tipos antes de finalmente falhar com a mensagem de erro mencionada.</p>
 <p>Nesse caso específico, nenhuma combinação de sobrecargas resolvia a expressão, pois havia uma soma entre tipos incompatíveis (Int e String), levando o solver a explorar um espaço enorme até desistir.</p>
 <blockquote>
@@ -1086,22 +1092,24 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1757193683"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758715433"></script>
     
     
-    <script src="/js/main-minimal.js?v=1757193683"></script>
-    <script src="/js/lazy-loading.js?v=1757193683"></script>
-    <script src="/js/toc.js?v=1757193683"></script>
+    <script src="/js/main-minimal.js?v=1758715433"></script>
+    <script src="/js/lazy-loading.js?v=1758715433"></script>
+    <script src="/js/toc.js?v=1758715433"></script>
     
     
     

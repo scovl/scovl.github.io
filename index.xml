@@ -5,7 +5,7 @@
     <link>https://scovl.github.io/</link>
     <description>scovl - Blog sobre tecnologia, programação e desenvolvimento</description>
     <language>pt</language>
-    <lastBuildDate>Sun, 27 Jul 2025 23:10:18 -0300</lastBuildDate>
+    <lastBuildDate>Fri, 08 Aug 2025 19:00:00 &#43;0000</lastBuildDate>
     <sy:updatePeriod>daily</sy:updatePeriod>
     <sy:updateFrequency>1</sy:updateFrequency>
     <atom:link href="https://scovl.github.io/" rel="self" type="application/rss+xml" />
@@ -239,13 +239,17 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
 <h3 id="limitações-por-design-que-potencializam-a-inferência">Limitações por Design que Potencializam a Inferência</h3>
 <p>Rust consegue oferecer essa inferência contextual potente em parte porque abre mão de certos recursos presentes em C++ que dificultariam o processo. Em especial, destacam-se as ausências, por design, de alguns mecanismos na linguagem Rust:</p>
 <h4 id="sobrecarga-de-funções-nomeadas">Sobrecarga de Funções Nomeadas</h4>
-<p>Em Rust não é permitido definir duas funções <em>nomeadas</em> com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via <strong>traits</strong> (como <code>Add</code>, <code>FromStr</code>, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única. Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.</p>
+<p>Em Rust não é permitido definir duas funções <em>nomeadas</em> com o mesmo nome que aceitem tipos diferentes (como se faz em C++). Cada função tem um nome único. Embora exista sobrecarga de operadores e métodos via <strong>traits</strong> (como <code>Add</code>, <code>FromStr</code>, etc.), após considerar o(s) trait(s) em escopo e coerência, a resolução determina uma implementação única.</p>
+<p>Em casos de colisão de nomes de métodos de diferentes traits, pode ser necessário UFCS (Uniform Function Call Syntax) ou desambiguação explícita. O espaço de busca permanece bem controlado devido às regras de coerência, ausência de conversões implícitas e sobrecarga restrita ao sistema de traits.</p>
 <h4 id="conversões-implícitas-de-tipo">Conversões Implícitas de Tipo</h4>
-<p>Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um <code>int</code> em <code>double</code> em certas expressões). Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.</p>
+<p>Rust não realiza conversões automáticas entre tipos numéricos ou de qualquer outro tipo (ao contrário do C++, que pode converter implicitamente, por exemplo, um <code>int</code> em <code>double</code> em certas expressões).</p>
+<p>Em Rust, ou o tipo já coincide exatamente, ou você deve convertê-lo explicitamente via métodos ou casting. Isso previne que o sistema de tipos fique tentando múltiplas vias de conversão durante a inferência – as possibilidades são restritas e claras.</p>
 <h4 id="herança-de-classes">Herança de Classes</h4>
-<p>Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza <em>traits</em> (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos. A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.</p>
+<p>Ao invés de herança tradicional (subtipos baseados em hierarquias de classes como em C++/Java), Rust utiliza <em>traits</em> (interfaces) e composição. Não havendo herança de implementação, não ocorre a situação de um objeto poder ser de múltiplos tipos numa hierarquia, o que simplifica a dedução e o despacho de métodos.</p>
+<p>A escolha de implementação de um trait para um tipo é estática e não afeta a inferência além de garantir que certos métodos estão disponíveis.</p>
 <h4 id="especialização-de-templates">Especialização de Templates</h4>
-<p>Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência. No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</p>
+<p>Rust não possui especialização estável de traits (há um recurso experimental em nightly, ainda não padronizado). Em C++ templates, por exemplo, pode-se ter uma função genérica mas também uma versão especial quando <code>T</code> é um <code>int</code>. Isso pode introduzir comportamento diferente dependendo do tipo exato inferido, complicando a inferência.</p>
+<p>No Rust estável, cada impl de trait é única e válida para um conjunto possivelmente amplo de tipos, mas não há duas versões conflitantes do mesmo trait que o compilador precise escolher entre si durante a inferência.</p>
 <h3 id="o-resultado-um-espaço-de-busca-simplificado">O Resultado: Um Espaço de Busca Simplificado</h3>
 <p>Essas escolhas de design do Rust limitam o espaço de busca do algoritmo de inferência. Em essência, o compilador Rust tem menos &ldquo;adivinhações&rdquo; a fazer, porque a linguagem evita construções que poderiam levar a múltiplas interpretações para uma mesma expressão.</p>
 <p>A sobrecarga de funções tradicional, por exemplo, foi deliberadamente excluída porque múltiplas definições sobrecarregadas poderiam interagir mal com o sistema de inferência, complicando a resolução de tipos. Em vez disso, o Rust utiliza traits e genéricos para alcançar polimorfismo ad-hoc, mantendo a inferência mais previsível.</p>
@@ -257,13 +261,15 @@ fn process_data() -&gt; impl Iterator&lt;Item = i32&gt; { /*...*/ } // tipo do I
 <p>A inferência atua dentro dos limites dessas funções e nos tipos genéricos, mas não infere, por exemplo, que uma função <code>fn add(x, y) { x + y }</code> deve ser genérica ou qual seu tipo de retorno – tais informações devem ser anotadas (no caso, usando traits e <code>-&gt; T</code>). Essa diferença demonstra mais uma vez o equilíbrio que Rust busca: o benefício da inferência local máxima, sem sacrificar a clareza e a robustez na definição de fronteiras do código.</p>
 <h2 id="comparação-com-o-swift-e-desafios-adicionais">Comparação com o Swift e Desafios Adicionais</h2>
 <p>A linguagem <strong>Swift</strong>, desenvolvida pela Apple, oferece um caso interessante para compararmos com Rust e C++. Swift implementa um sistema de inferência de tipos também baseado em resolução de restrições (um tipo de <strong>unificação</strong> bidirecional semelhante ao Hindley-Milner), permitindo ao programador omitir muitos tipos.</p>
-<p>Entretanto, Swift <strong>mantém recursos de linguagem que Rust evitou</strong>, como sobrecarga extensiva de funções e operadores, conversões implícitas via <strong>protocolos literais</strong>, e múltiplas conveniências sintáticas. Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos &ldquo;polimórficos&rdquo;. A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.</p>
+<p>Entretanto, Swift <strong>mantém recursos de linguagem que Rust evitou</strong>, como sobrecarga extensiva de funções e operadores, conversões implícitas via <strong>protocolos literais</strong>, e múltiplas conveniências sintáticas.</p>
+<p>Embora Rust também tenha operadores sobrecarregados via traits, o número de sobrecargas viáveis por expressão é bem menor devido à coerência, ausência de conversões implícitas e literais menos &ldquo;polimórficos&rdquo;. A interação das características do Swift com a inferência de tipos acabou expondo desafios significativos no compilador.</p>
 <p>Um sintoma notório desses desafios é o famoso erro do Swift: <em>&ldquo;the compiler is unable to type-check this expression in reasonable time&rdquo;</em> (o compilador não consegue verificar o tipo desta expressão em tempo hábil). Esse erro ocorre quando a expressão de código é tão complexa para o mecanismo de inferência que o compilador não consegue resolver dentro de limites práticos de tempo. Como exemplo ilustrativo do tipo de operação que pode ser problemática:</p>
 
 
   <pre><code class="language-swift">let a: Double = -(1 &#43; 2) &#43; -(3 &#43; 4) &#43; -(5)</code></pre>
  <p>Embora esse exemplo específico seja simples demais para causar problemas nas versões atuais do Swift, ele demonstra o tipo de construção que pode ser problemática: expressões com múltiplas operações aninhadas e literais ambíguos. Os casos realmente problemáticos envolvem expressões muito mais longas e complexas com cadeias extensas de operadores sobrecarregados.</p>
-<p>O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.). Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado.</p>
+<p>O problema de fundo é que o Swift permite que literais numéricos como <code>1</code> sejam interpretados como vários tipos diferentes (Int, Double, Float, etc., conforme contexto) e possui operadores como <code>+</code> e <code>-</code> sobrecarregados para muitas combinações de operandos (inteiros, pontos flutuantes, opcionais, strings concatenáveis, etc.).</p>
+<p>Assim, ao analisar expressões complexas, o compilador Swift constrói um espaço de possibilidades combinatórias enorme: precisa considerar cada literal podendo assumir distintos tipos numéricos e cada operador podendo invocar sobrecargas diferentes, até encontrar uma combinação consistente com o tipo declarado.</p>
 <p>Com muitas possibilidades, o problema rapidamente explode em complexidade. De fato, um caso real relatado envolveu concatenar cadeias de strings e valores numéricos numa única expressão para formar uma URL, levando o compilador Swift 42 segundos para tentar resolver os tipos antes de finalmente falhar com a mensagem de erro mencionada.</p>
 <p>Nesse caso específico, nenhuma combinação de sobrecargas resolvia a expressão, pois havia uma soma entre tipos incompatíveis (Int e String), levando o solver a explorar um espaço enorme até desistir.</p>
 <blockquote>
@@ -1744,7 +1750,7 @@ async function processarUsuarios() {
   
   <div class="mermaid">graph LR
     A[RAG] --&gt; B[Base de Dados Atual]
-    A --&gt; C[Pesquisa em Tempo Real]
+    A --&gt; C[Recuperação em Fontes Externas]
     A --&gt; D[Combinação de Conhecimento]
     
     B --&gt; E[Documentos Atualizados]
@@ -1757,13 +1763,13 @@ async function processarUsuarios() {
     D --&gt; J[Contextualização]</div>
  <ol>
 <li><strong>Conexão com uma base de dados atual:</strong> Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.</li>
-<li><strong>Pesquisa em tempo real:</strong> O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
+<li><strong>Recuperação em fontes externas:</strong> O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto em fontes externas ao modelo, que podem ser estáticas (documentos corporativos) ou atualizadas em tempo real (APIs, bancos de dados dinâmicos). Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
 <li><strong>Combinação de conhecimento base com dados novos:</strong> Este é o ponto crucial que diferencia o <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG</a> de uma simples busca em uma base de dados. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.</li>
 </ol>
 <h3 id="rag-em-produção">RAG em Produção</h3>
 <p>Sistemas RAG em produção frequentemente incluem etapas adicionais para melhorar a precisão: <strong>re-ranking</strong> (onde um modelo especializado re-avalia a relevância dos documentos recuperados) e <strong>merge-rerank</strong> (que combina resultados de múltiplas estratégias de busca como semântica, lexical e híbrida). Essas técnicas aumentam significativamente a qualidade das respostas, mas adicionam complexidade ao sistema.</p>
 <blockquote>
-<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca semântica simples com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar essas técnicas avançadas.</p></blockquote>
+<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca lexical com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar técnicas semânticas avançadas com embeddings densos.</p></blockquote>
 <p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
 <p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a> quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
 <blockquote>
@@ -1773,7 +1779,7 @@ async function processarUsuarios() {
 <p>O modelo também se dá super bem com várias linguagens de programação, incluindo <a href="https://clojure.org/">Clojure</a>, então ele responde numa boa sobre implementações técnicas e documentação de código. E o melhor: mesmo quando você joga informações pela metade ou todas bagunçadas, ele ainda consegue manter o contexto e dar respostas que fazem sentido. Por isso ele é perfeito para o que estamos construindo!</p>
 <h2 id="implementação-prática">Implementação Prática</h2>
 <h3 id="preparando-o-ambiente">Preparando o Ambiente</h3>
-<p>Pre-requisitos:</p>
+<p>Pré-requisitos:</p>
 <ul>
 <li><a href="https://clojure.org/guides/getting_started">Clojure</a>: Linguagem de programação funcional que vamos usar para construir a aplicação</li>
 <li><a href="https://leiningen.org/">Leiningen</a>: Ferramenta de build para Clojure</li>
@@ -1791,7 +1797,7 @@ async function processarUsuarios() {
 <li><strong>Sistema de embeddings</strong>
 <ul>
 <li>Criação de embeddings para o texto usando <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF</a></li>
-<li>Busca por similaridade semântica</li>
+<li>Busca por similaridade lexical (bag-of-words)</li>
 </ul>
 </li>
 <li><strong>Interface com o LLM</strong>
@@ -1947,8 +1953,64 @@ cd docai</code></pre>
       ;; Fallback conservador: 1 token por caractere
       (count text))))
 
+(defn split-large-node
+  &#34;Divide nó muito grande em partes menores&#34;
+  [node max-tokens]
+  (let [node-tokens (count-tokens node)]
+    (if (&lt;= node-tokens max-tokens)
+      [node]
+      ;; Tenta dividir por frases primeiro
+      (let [sentences (str/split node #&#34;[.!?]&#43;\s&#43;&#34;)
+            sentence-chunks (loop [sents sentences
+                                   current-chunk []
+                                   current-tokens 0
+                                   result []]
+                              (if (empty? sents)
+                                (if (seq current-chunk)
+                                  (conj result (str/join &#34;. &#34; current-chunk))
+                                  result)
+                                (let [sent (first sents)
+                                      sent-tokens (count-tokens sent)
+                                      new-total (&#43; current-tokens sent-tokens)]
+                                  (if (and (&gt; new-total max-tokens) (seq current-chunk))
+                                    (recur (rest sents)
+                                           [sent]
+                                           sent-tokens
+                                           (conj result (str/join &#34;. &#34; current-chunk)))
+                                    (recur (rest sents)
+                                           (conj current-chunk sent)
+                                           new-total
+                                           result)))))]
+        ;; Se ainda há chunks muito grandes, divide por palavras
+        (mapcat (fn [chunk]
+                  (if (&lt;= (count-tokens chunk) max-tokens)
+                    [chunk]
+                    (let [words (str/split chunk #&#34;\s&#43;&#34;)
+                          word-chunks (loop [w words
+                                             current []
+                                             current-tokens 0
+                                             result []]
+                                        (if (empty? w)
+                                          (if (seq current)
+                                            (conj result (str/join &#34; &#34; current))
+                                            result)
+                                          (let [word (first w)
+                                                word-tokens (count-tokens word)
+                                                new-total (&#43; current-tokens word-tokens)]
+                                            (if (and (&gt; new-total max-tokens) (seq current))
+                                              (recur (rest w)
+                                                     [word]
+                                                     word-tokens
+                                                     (conj result (str/join &#34; &#34; current)))
+                                              (recur (rest w)
+                                                     (conj current word)
+                                                     new-total
+                                                     result)))))]
+                      word-chunks)))
+                sentence-chunks)))))
+
 (defn create-token-aware-chunks
-  &#34;Cria chunks baseados em tokens reais, não caracteres&#34;
+  &#34;Cria chunks baseados em estimativa de tokens, dividindo nós grandes quando necessário&#34;
   [text-nodes max-tokens]
   (loop [nodes text-nodes
          current-chunk []
@@ -1959,19 +2021,27 @@ cd docai</code></pre>
         (conj all-chunks (str/join &#34; &#34; current-chunk))
         all-chunks)
       (let [node (first nodes)
-            node-tokens (count-tokens node)
-            new-total (&#43; current-tokens node-tokens)]
-        (if (and (&gt; new-total max-tokens) (seq current-chunk))
-          ;; Chunk cheio, salva e inicia novo
-          (recur (rest nodes)
-                 [node]
-                 node-tokens
-                 (conj all-chunks (str/join &#34; &#34; current-chunk)))
-          ;; Adiciona ao chunk atual
-          (recur (rest nodes)
-                 (conj current-chunk node)
-                 new-total
-                 all-chunks))))))
+            node-tokens (count-tokens node)]
+        ;; Se o nó é muito grande, divide ele primeiro
+        (if (&gt; node-tokens max-tokens)
+          (let [split-nodes (split-large-node node max-tokens)]
+            (recur (concat split-nodes (rest nodes))
+                   current-chunk
+                   current-tokens
+                   all-chunks))
+          ;; Nó de tamanho normal, processa normalmente
+          (let [new-total (&#43; current-tokens node-tokens)]
+            (if (and (&gt; new-total max-tokens) (seq current-chunk))
+              ;; Chunk cheio, salva e inicia novo
+              (recur (rest nodes)
+                     [node]
+                     node-tokens
+                     (conj all-chunks (str/join &#34; &#34; current-chunk)))
+              ;; Adiciona ao chunk atual
+              (recur (rest nodes)
+                     (conj current-chunk node)
+                     new-total
+                     all-chunks))))))))
 
 (defn preprocess-chunks
   &#34;Limpa e prepara os chunks de texto&#34;
@@ -2009,7 +2079,7 @@ cd docai</code></pre>
   (:require [clojure.string :as str]
             [clojure.core.memoize :as memo]))
 
-;; Implementação de embeddings usando TF-IDF simples
+;; Implementação de embeddings usando TF-IDF simples (busca lexical)
 ;; Não depende de modelos externos, ao contrário do Ollama que usa o deepseek-r1 para o LLM
 
 (defn tokenize
@@ -2044,23 +2114,25 @@ cd docai</code></pre>
                    all-tokens)))))
 
 (defn tf-idf
-  &#34;Calcula TF-IDF para um documento&#34;
+  &#34;Calcula TF-IDF para um documento com estabilidade numérica&#34;
   [doc doc-freq doc-count]
   (if (empty? doc-freq)
     {}
     (let [tokens (tokenize doc)
           tf (term-freq tokens)]
       (zipmap (keys tf)
-              (map #(* (get tf %) (Math/log (/ doc-count (get doc-freq % 1))))
+              (map #(* (get tf %) 
+                      ;; IDF suavizado: log((N&#43;1)/(df&#43;1)) &#43; 1 para estabilidade
+                      (&#43; 1 (Math/log (/ (&#43; doc-count 1) (&#43; (get doc-freq % 1) 1)))))
                    (keys tf))))))
 
 (defn vectorize
-  &#34;Converte um documento em um vetor TF-IDF&#34;
+  &#34;Converte um documento em um vetor TF-IDF (retorna vector para serialização)&#34;
   [doc doc-freq doc-count vocab]
   (let [tf-idf-scores (tf-idf doc doc-freq doc-count)]
     (if (empty? vocab)
       []
-      (map #(get tf-idf-scores % 0.0) vocab))))
+      (vec (map #(get tf-idf-scores % 0.0) vocab)))))
 
 (defn create-embeddings
   &#34;Gera embeddings para uma lista de textos usando TF-IDF&#34;
@@ -2070,7 +2142,7 @@ cd docai</code></pre>
           doc-count (count (filter string? texts))
           ;; Vocabulário ordenado para garantir ordem estável
           vocab (sort (keys doc-freq))]
-      (map #(vectorize % doc-freq doc-count vocab) texts))
+      (vec (map #(vectorize % doc-freq doc-count vocab) texts)))
     (catch Exception e
       (println &#34;Erro ao criar embeddings: &#34; (.getMessage e))
       (vec (repeat (count texts) [])))))
@@ -2106,10 +2178,10 @@ cd docai</code></pre>
     A[Documentos] --&gt;|Tokenização| B[Tokens]
     B --&gt;|TF-IDF| C[Vetores Numéricos]
     C --&gt;|Similaridade do Cosseno| D[Documentos Similares]</div>
- <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são.</p>
+ <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são lexicalmente.</p>
 <p>O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.</p>
 <p>O TF-IDF transforma textos em vetores numéricos ao combinar a frequência de cada palavra em um documento (TF) com o quanto essa palavra é rara em toda a coleção (IDF): palavras comuns como &ldquo;linguagem&rdquo; têm peso baixo, enquanto termos mais exclusivos como &ldquo;Clojure&rdquo; ganham peso alto, permitindo que o computador compare documentos de forma eficiente e encontre os mais relevantes para cada consulta.</p>
-<p>Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como &ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; como diferentes e podendo gerar vetores grandes.</p>
+<p>Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos lexicalmente, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como &ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; como diferentes e podendo gerar vetores grandes.</p>
 <blockquote>
 <p><strong>Importante</strong>: Esta implementação TF-IDF é uma <strong>prova de conceito</strong> para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como <a href="https://www.sbert.net/">SBERT</a>, <a href="https://huggingface.co/intfloat/e5-large">E5</a>, <a href="https://huggingface.co/BAAI/bge-large-en">BGE</a> ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.</p></blockquote>
 <h4 id="interface-com-ollama">Interface com Ollama</h4>
@@ -2137,8 +2209,9 @@ cd docai</code></pre>
       (-&gt; response
           :body
           (json/read-str :key-fn keyword)
-          ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-          (#(or (:response %) (:message %))))
+          ;; Campo :response para /api/generate (usado aqui)
+          ;; Campo :message seria usado em /api/chat
+          :response)
       (str &#34;Erro ao chamar a API do Ollama: &#34; (:status response) &#34; - &#34; (:body response)))))
 
 ;; Funções de utilidade para uso futuro:
@@ -2369,7 +2442,7 @@ cd docai</code></pre>
 <li><strong>Linux</strong>: Execute o comando:
 
 
-  <pre><code class="language-bash">curl https://ollama.ai/install.sh | sh</code></pre>
+  <pre><code class="language-bash">curl -fsSL https://ollama.com/install.sh | sh</code></pre>
  </li>
 <li><strong>macOS</strong>: Use o Homebrew:
 
@@ -2495,7 +2568,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
 
   <pre><code class="language-clojure">(let [content (slurp doc-path)
-      chunks (partition-all 512 text)]
+      text-nodes (extract-text-from-markdown content)
+      chunks (doc/create-token-aware-chunks text-nodes 512)]
   (println &#34;Quantidade de chunks gerados:&#34; (count chunks)))</code></pre>
  </li>
 <li>
@@ -2514,7 +2588,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
   <pre><code class="language-clojure">(if (str/blank? context-chunks)
   (if (seq (:original-files knowledge-base))
-    (get-file-content (first (:original-files knowledge-base)))
+    (get-limited-fallback-content (first (:original-files knowledge-base)))
     &#34;Não foi possível encontrar informações relevantes.&#34;)
   context-chunks)</code></pre>
  </li>
@@ -2648,14 +2722,17 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   (let [url &#34;http://localhost:11434/api/generate&#34;
         request-body {:model &#34;deepseek-r1&#34;
                      :prompt prompt
-                     :stream true}]
-    (with-open [conn @(http/post url {:body (json/write-str request-body)
-                                      :as :stream})]
-      (doseq [line (line-seq (:body conn))]
+                     :stream true}
+        resp @(http/post url {:body (json/write-str request-body)
+                              :as :stream
+                              :headers {&#34;Content-Type&#34; &#34;application/json&#34;}})]
+    (with-open [rdr (clojure.java.io/reader (:body resp))]
+      (doseq [line (line-seq rdr)]
         (when-not (str/blank? line)
           (let [data (json/read-str line :key-fn keyword)]
-            ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-            (when-let [content (or (:response data) (:message data))]
+            ;; Campo :response para /api/generate (usado aqui)
+            ;; Campo :message seria usado em /api/chat
+            (when-let [content (:response data)]
               (print content)
               (flush))))))))</code></pre>
  <h4 id="4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></h4>
@@ -2720,32 +2797,35 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
   <pre><code class="language-clojure">;; src/docai/vector_store.clj
 (ns docai.vector-store
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [docai.embedding :as emb]))
 
 (defn create-simple-vector-store
   &#34;Store vetorial simples com BM25 (implementação manual)&#34;
   [documents]
   (let [index (atom {})
         doc-freq (emb/doc-freq documents)
-        vocab (sort (keys doc-freq))]  ; Vocabulário ordenado
+        vocab (sort (keys doc-freq))  ; Vocabulário ordenado
+        doc-count (count documents)
+        ;; Calcula o comprimento médio real dos documentos
+        avg-doc-len (/ (reduce &#43; (map #(count (emb/tokenize %)) documents)) doc-count)]
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [tokens (emb/tokenize doc)
             tf (emb/term-freq tokens)]
         (swap! index assoc idx {:doc doc :tf tf})))
-    {:index index :doc-freq doc-freq :vocab vocab}))
+    {:index index :doc-freq doc-freq :vocab vocab :doc-count doc-count :avg-doc-len avg-doc-len}))
 
 (defn calculate-bm25
   &#34;Calcula score BM25 para um documento&#34;
-  [query-tokens doc-tf doc-freq]
+  [query-tokens doc-tf doc-freq doc-count avg-doc-len]
   (let [k1 1.2  ; Parâmetro de saturação de termo
         b 0.75   ; Parâmetro de normalização de comprimento
-        avg-doc-len 100  ; Comprimento médio do documento (aproximação)
         doc-len (reduce &#43; (vals doc-tf))
         
         ;; IDF para cada termo da query
         idf-scores (map (fn [term]
                           (let [df (get doc-freq term 0)
-                                n (count doc-freq)]
+                                n doc-count]  ; Use número de documentos, não count doc-freq
                             (if (zero? df)
                               0
                               (Math/log (/ (- n df 0.5) (&#43; df 0.5)))))
@@ -2766,22 +2846,20 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   [query vector-store top-k]
   (let [query-tokens (emb/tokenize query)
         query-embedding (emb/vectorize query (:doc-freq vector-store) (:doc-count vector-store) (:vocab vector-store))
+        index-data @(:index vector-store)
         
-        ;; BM25 scores
-        bm25-scores (map-indexed 
-                      (fn [idx {:keys [tf]}]
-                        [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store))])
-                      (vals @(:index vector-store)))
+        ;; BM25 scores - itera corretamente preservando índices
+        bm25-scores (for [[idx {:keys [tf]}] index-data]
+                      [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store) 
+                                          (:doc-count vector-store) (:avg-doc-len vector-store))])
         
-        ;; Semantic scores
-        semantic-scores (map-indexed
-                          (fn [idx _]
-                            [idx (emb/cosine-similarity query-embedding 
-                                                       (emb/vectorize (get-in @(:index vector-store) [idx :doc])
-                                                                      (:doc-freq vector-store)
-                                                                      (:doc-count vector-store)
-                                                                      (:vocab vector-store)))])
-                          (vals @(:index vector-store)))
+        ;; Semantic scores - itera corretamente preservando índices
+        semantic-scores (for [[idx {:keys [doc]}] index-data]
+                          [idx (emb/cosine-similarity query-embedding 
+                                                     (emb/vectorize doc
+                                                                    (:doc-freq vector-store)
+                                                                    (:doc-count vector-store)
+                                                                    (:vocab vector-store)))])
         
         ;; Combine scores (weighted average)
         combined-scores (map (fn [[idx bm25] [idx2 semantic]]
@@ -2796,8 +2874,9 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <ul>
 <li><strong>k1 = 1.2</strong>: Controla saturação de frequência de termos</li>
 <li><strong>b = 0.75</strong>: Normaliza pelo comprimento do documento</li>
-<li><strong>IDF</strong>: Mede raridade dos termos na coleção</li>
+<li><strong>IDF</strong>: Mede raridade dos termos na coleção (N = número de documentos)</li>
 <li><strong>TF</strong>: Frequência dos termos no documento</li>
+<li><strong>avg-doc-len</strong>: Comprimento médio real calculado dos documentos</li>
 <li><strong>Combinação</strong>: 30% BM25 + 70% similaridade semântica</li>
 </ul>
 <p><strong>Nota</strong>: Esta é uma implementação manual do BM25. Para produção, considere usar Apache Lucene (veja dependências acima) que oferece BM25 nativo e otimizado.</p>
@@ -2853,9 +2932,10 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   <pre><code class="language-clojure">;; src/docai/lucene_store.clj
 (ns docai.lucene-store
   (:import [org.apache.lucene.analysis.standard StandardAnalyzer]
-           [org.apache.lucene.document Document Field Field$Store]
+           [org.apache.lucene.document Document TextField StringField Field$Store]
            [org.apache.lucene.index IndexWriter IndexWriterConfig DirectoryReader]
-           [org.apache.lucene.search IndexSearcher QueryParser]
+           [org.apache.lucene.search IndexSearcher]
+           [org.apache.lucene.queryparser.classic QueryParser]
            [org.apache.lucene.store RAMDirectory]))
 
 (defn create-lucene-index
@@ -2869,8 +2949,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     ;; Adiciona documentos ao índice
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [document (Document.)]
-        (.add document (Field. &#34;content&#34; doc Field$Store/YES))
-        (.add document (Field. &#34;id&#34; (str idx) Field$Store/YES))
+        (.add document (TextField. &#34;content&#34; doc Field$Store/YES))
+        (.add document (StringField. &#34;id&#34; (str idx) Field$Store/YES))
         (.addDocument writer document)))
     
     (.close writer)
@@ -2886,19 +2966,22 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   (let [parser (QueryParser. &#34;content&#34; (:analyzer index))
         query-obj (.parse parser query)
         hits (.search (:searcher index) query-obj top-k)]
-    (map #(.doc (:searcher index) %) (.scoreDocs hits))))</code></pre>
+    (map (fn [score-doc] 
+           (.doc (:searcher index) (.doc score-doc))) 
+         (.scoreDocs hits))))</code></pre>
  <h3 id="upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</h3>
 <p>Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções:</p>
 <h4 id="1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></h4>
 
 
-  <pre><code class="language-clojure">;; Exemplo de upgrade usando Ollama embeddings
+  <pre><code class="language-clojure">;; Exemplo de upgrade usando modelos de embedding específicos
 (defn create-dense-embeddings [texts]
   (let [embeddings-url &#34;http://localhost:11434/api/embeddings&#34;]
     (map #(call-ollama-embeddings embeddings-url %) texts)))
 
 (defn call-ollama-embeddings [url text]
-  (let [request-body {:model &#34;deepseek-r1&#34; :prompt text}
+  ;; Use modelos de embedding apropriados, não modelos geradores
+  (let [request-body {:model &#34;nomic-embed-text&#34; :prompt text}  ; ou &#34;all-minilm&#34;, &#34;bge-m3&#34;, &#34;snowflake-arctic-embed&#34;
         response @(http/post url {:body (json/write-str request-body)})]
     (if (= (:status response) 200)
       (-&gt; response :body (json/read-str :key-fn keyword) :embedding)
@@ -2942,7 +3025,14 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
           (-&gt; response :body (json/read-str :key-fn keyword) :eval_count)
           (count-tokens text))) ; Fallback para heurística
       (catch Exception _
-        (count-tokens text))))) ; Fallback para heurística</code></pre>
+        (count-tokens text))))) ; Fallback para heurística
+
+;; Exemplo de uso com diferentes modelos de embedding
+;; Primeiro baixe um modelo de embedding apropriado:
+;; ollama pull nomic-embed-text
+;; ollama pull all-minilm
+;; ollama pull bge-m3
+;; ollama pull snowflake-arctic-embed</code></pre>
  <h4 id="2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></h4>
 
 
@@ -3115,7 +3205,7 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
 ]]></content:encoded>
       
       
-      <category>RAG,LLM,AI,Langchain</category>
+      <category>RAG,LLM,AI,Clojure</category>
       
       
       
@@ -8396,6 +8486,1194 @@ ts-node index.ts
       
       
       
+      
+    </item>
+    
+    <item>
+      <title>A linguagem de programação Zig</title>
+      <link>https://scovl.github.io/books/zig/</link>
+      <guid>https://scovl.github.io/books/zig/</guid>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <description>&lt;![CDATA[<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+O que é o Zig?
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+<a href="https://ziglang.org/">Zig</a> é uma linguagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao <a href="https://en.wikipedia.org/wiki/C_(programming_language)">C</a> mas com ajustes que eliminam comportamentos confusos ou inconsistentes.</p>
+<p>
+A ideia central é de que &#34;menos é mais&#34;, no sentido de que &#34;menos coisas escondidas = mais clareza para quem programa&#34; pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <strong>macro</strong>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:</p>]]></description>
+      <content:encoded>&lt;![CDATA[
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+O que é o Zig?
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+<a href="https://ziglang.org/">Zig</a> é uma linguagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao <a href="https://en.wikipedia.org/wiki/C_(programming_language)">C</a> mas com ajustes que eliminam comportamentos confusos ou inconsistentes.</p>
+<p>
+A ideia central é de que &#34;menos é mais&#34;, no sentido de que &#34;menos coisas escondidas = mais clareza para quem programa&#34; pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <strong>macro</strong>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:</p>
+<div class="src src-c">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define SQR(x) (x * x)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">SRQ</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// vira (1+2 * 1+2) =&gt; 5, não 9
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Acima, o código <code>SQR(1+2)</code> foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em Zig, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:std.io.gestStdOut</p>
+<div class="src src-zigse">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">fn sqr(x: i32) i32 {
+</span></span><span class="line"><span class="cl">   return x * x;
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<blockquote>
+<p>Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.</p>
+</blockquote>
+<p>
+O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas também confuso. Exemplo, você pode ter várias funções com o nome (sobrecarga). Dependendo dos tipos, o compiador escolher uma versão diferente. Para iniciantes, isso é difícil de acompanhar.</p>
+<p>
+Já no Zig não existe isso. Se você quiser funções diferentes, precisa dar nomes diferentes. Mais simples de ler e entender. Por exemplo, em C++ usar <code>std::string</code> parece simples, mas às vezes o programa gasta memória sem você perceber:</p>
+<div class="src src-cpp">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;foo&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">b</span> <span class="o">=</span> <span class="s">&#34;bar&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// prode gerar alocação dinâmica
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Ou seja, por trás dessa linha, o programa pediu mais memória ao sistema. Já em Zig nada disso acontece sem você pedir. Se quiser usar memória dinâmica, você precisa dizer qual &#34;allocator&#34; vai usar:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="n">page_allocator</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="nf">ArrayList</span><span class="p">(</span><span class="kt">u8</span><span class="p">).</span><span class="nf">init</span><span class="p">(</span><span class="n">allocator</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">defer</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="nf">deinit</span><span class="p">();</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros genéricos (<code>void*</code>) escondem o tipo real e só falham em tempo de execução. No Zig, porteinro carregam informações de tipo, o que evita esses erros. Assim o Zig respeita sua filosofia que diz:</p>
+<blockquote>
+<p>&#34;Focus on debugging your application rather than debugging your programming language knowledge.&#34;</p>
+</blockquote>
+<p>
+A proposta é simples: você deve gastar tempo entendendo seu programa, não a linguagem. Em outras palavras, C pode confundir com macros, C++ pode confundir com excesso de recursos e o Zig tenta ser direto e previsível. Ou seja, como disse no início, menos é mais, você deve gastar tempo entendendo o que seu programa faz, não tentando adivinhar <strong>como a linguagem funciona</strong>.</p>
+<div id="outline-container-headline-2" class="outline-3">
+<h3 id="headline-2">
+Primeiros passos em Zig
+</h3>
+<div id="outline-text-headline-2" class="outline-text-3">
+<p>
+Antes de programar em Zig, precisamor criar um projeto. Isso é parecido com outras linguagens que criam pastas e arquivos iniciais para você. No terminal digite o seguinte:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">  mkdir hello
+</span></span><span class="line"><span class="cl">  <span class="nb">cd</span> hello
+</span></span><span class="line"><span class="cl">  zig init</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+A saída no terminal deverá ser algo assim:</p>
+<pre class="example">
+info: created build.zig
+info: created build.zig.zon
+info: created src/main.zig
+info: created src/root.zig
+info: see `zig build --help` for a menu of options
+</pre>
+<p><img src="./01.png" alt="./01.png" title="./01.png" /></p>
+<p>
+Isso cria alguns arquivos automaticamente. São eles:</p>
+<ul>
+<li><code>build.zig</code> - script que explica como compilar o projeto.</li>
+<li><code>build.zig.zon</code> - arquivo de condfiguração do projeto (similar a um <code>package.json</code> no Node ou <code>Cargo.toml</code> em Rust).</li>
+<li><code>src/main.zig</code> - aqui fica o programa principal.</li>
+<li><code>src/root.zig</code> - ponto de entrada para bibliotecas Zig.</li>
+</ul>
+<p>Agora abra o o <code>src/main.zig</code> e dentro dele escreva o seguinte:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="w">  </span><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nf">getStdOut</span><span class="p">().</span><span class="nf">writer</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, World!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+O que esse código faz:</p>
+<ul>
+<li><code>const std = @import(&#34;std&#34;);</code> - importa a biblioteca padrão do Zig.  </li>
+<li><code>pub fn main() !void { ... }</code> - função principal, onde o programa começa.  </li>
+<li><code>std.io.getStdOut().writer()</code> - pega a saída padrão (tela).  </li>
+<li><code>stdout.print(&#34;Hello, World!\n&#34;, .{});</code> - imprime o texto na tela.  </li>
+<li>O <code>try</code> é necessário porque escrever na tela pode falhar (ex: falta de permissão), mas nesse caso só repassa o erro.</li>
+</ul>
+<p>Para compilar e executar:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build run</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+O terminal mostrará:</p>
+<pre class="example">
+Hello, World!
+</pre>
+<p>
+Pronto! Você acabou de rodar seu primeiro programa em Zig.</p>
+<p>
+<strong>Observação</strong></p>
+<ul>
+<li>Diferente de C, não é preciso configurar <strong>Makefile</strong> manualmente.  </li>
+<li>Diferente de C++, não existe um “padrão gigante” de projeto.  </li>
+</ul>
+<p>O Zig já entrega a estrutura mínima para você começar, sem complicação. Quando usamos o <code>zig init</code>, alguns arquivos e pastas são criados automaticamente:</p>
+<pre class="example">
+.
+├── build.zig
+├── build.zig.zon
+└── src
+    ├── main.zig
+    └── root.zig
+</pre>
+<ul>
+<li>A pasta <code>src/</code> guarda o código-fonte do projeto.  </li>
+<li>Dentro dela, temos dois arquivos: <code>main.zig</code> e <code>root.zig</code>.  </li>
+<li>Cada arquivo <code>.zig</code> é chamado de <strong>módulo</strong>. Pense em módulo como uma &#34;caixinha&#34; de código Zig.  </li>
+</ul>
+<p>Por convenção, se você está criando um programa que <strong><strong>roda no terminal</strong></strong> (executável), o ponto de partida é o <code>main.zig</code>. Nele, você deve declarar uma função chamada <code>main()</code>. É como no C:</p>
+<div class="src src-c">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Mas em Zig, fica assim:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// código do programa começa aqui
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se você quer criar uma biblioteca em vez de um programa, é comum remover o arquivo <code>src/main.zig</code> e criar seu código no <code>src/root.zig</code>. Esse <code>root.zig</code> será o módulo raiz da sua biblioteca, contendo as funções e tipos que você pretende expor.</p>
+<p>
+O script de build continua sendo o <code>build.zig</code>, que é interpretado pelo comando <code>zig build</code> para compilar e organizar o projeto. Ou seja, <code>root.zig</code> não é executado diretamente como um script de build; ele apenas fornece o código da biblioteca que o <code>build.zig</code> irá compilar e instalar.</p>
+<p>
+Em linguagens como C e C++, normalmente precisamos instalar ferramentas externas como <strong>Make</strong> ou <strong>CMake</strong> para compilar projetos grandes. No Zig, isso está embutido: o <code>zig</code> já traz o compilador <strong>e</strong> o sistema de build. Você não precisa de nada além do próprio Zig.</p>
+<p>
+Esse arquivo tem uma sintaxe parecida com JSON. Ele descreve o projeto e suas dependências (bibliotecas externas). Exemplo em outros ecossistemas:</p>
+<ul>
+<li><code>package.json</code> no JavaScript.  </li>
+<li><code>Pipfile</code> no Python.  </li>
+<li><code>Cargo.toml</code> no Rust.  </li>
+</ul>
+<p>Ou seja, no Zig usamos o <code>build.zig.zon</code> para listar bibliotecas externas. Se uma biblioteca Zig está no GitHub e possui o próprio <code>build.zig.zon</code>, você pode adicioná-la ao seu projeto apenas declarando no seu arquivo. Abra o arquivo <code>src/root.zig</code>. Logo no começo você verá algo assim:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">testing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">testing</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">export</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">)</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Explicando linha por linha:</p>
+<ul>
+<li><code>const std = @import(&#34;std&#34;);</code> - importa a biblioteca padrão do Zig.  </li>
+<li><code>const testing = std.testing;</code> - importa o módulo de testes.  </li>
+<li><code>export fn add(...)</code> - cria uma função chamada `add` que soma dois números.  </li>
+</ul>
+<p>E aqui vai uma observação:</p>
+<ul>
+<li>Todo comando termina com <code>;</code> (como em C).  </li>
+<li>O operador <code>:</code> é usado para declarar tipos. Exemplo: <code>a: i32</code> significa que <code>a</code> é um número inteiro de 32 bits com sinal.  </li>
+<li>O retorno da função vem depois dos argumentos: <code>) i32 { ... }</code>.  </li>
+<li><code>export</code> funciona como o <code>extern</code> do C: deixa a função disponível para outros módulos ou programas.  </li>
+</ul>
+<p>Agora veja o <code>src/main.zig</code>. Ele contém a função principal do programa:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Hello, {s}!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="s">&#34;world&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Explicação:</p>
+<ul>
+<li><code>pub fn main() !void</code> - função pública chamada <code>main</code>, que pode retornar nada (<code>void</code>) ou um erro (<code>!</code>).  </li>
+<li><code>stdout_buffer</code> - um pedaço de memória para guardar texto antes de imprimir.  </li>
+<li><code>writer</code> - cria um &#34;escritor&#34; que sabe lidar com esse buffer.  </li>
+<li><code>stdout.print(&#34;Hello, {s}!\n&#34;, .{&#34;world&#34;});</code> - imprime na tela (substitui <code>{s}</code> por <code>&#34;world&#34;</code>).  </li>
+<li><code>try</code> - se der erro ao imprimir, o programa retorna o erro em vez de travar sem explicação.  </li>
+<li>Por padrão, funções em Zig são privadas ao módulo.  </li>
+<li><code>pub</code> (public) deixa a função acessível de fora.  </li>
+<li>Isso é o oposto de <code>static</code> em C/C++, que limita o acesso.  </li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
+<h3 id="headline-3">
+Compilando seu código-fonte
+</h3>
+<div id="outline-text-headline-3" class="outline-text-3">
+<p>
+Para compilar um módulo Zig em um executável, usamos o comando <code>~build-exe~</code>:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build-exe src/main.zig</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Esse comando procura uma função <code>main()</code> dentro dos arquivos listados. Se não encontrar, o compilador gera um erro de compilação avisando que o ponto de entrada não existe. Além de <code>build-exe</code>, temos outros comandos:</p>
+<ul>
+<li><code>build-lib</code> - compila em uma biblioteca (C ABI).  </li>
+<li><code>build-obj</code> - compila em arquivos objeto.  </li>
+</ul>
+<p>Depois de rodar o <code>build-exe</code>, vemos o binário criado no diretório atual:</p>
+<pre class="example">
+ls
+build.zig  build.zig.zon  main  src
+</pre>
+<p>
+Executando o binário:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./main</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
+<h3 id="headline-4">
+Compilar e executar ao mesmo tempo
+</h3>
+<div id="outline-text-headline-4" class="outline-text-3">
+<p>
+Usar <code>build-exe</code> + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos <code>zig run</code>:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig run src/main.zig</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+<p>
+Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de <strong>tempo de execução</strong> (ex: acessar <code>stdout</code>), a compilação falhará com o erro  <strong>“unable to evaluate comptime expression”</strong>. Exemplo problemático no Windows:</p>
+<p><img src="./02.png" alt="./02.png" title="./02.png" /></p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ERRO: inicialização global depende de recurso runtime
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Erro no terminal:</p>
+<pre class="example">
+t.zig:2107:28: error: unable to evaluate comptime expression
+</pre>
+<p>
+Isso acontece porque <strong>todas as variáveis globais em Zig são inicializadas em
+tempo de compilação</strong>. Mas no Windows, operações como abrir arquivos ou acessar <code>stdout</code> só podem
+acontecer em tempo de execução.</p>
+<p>
+<strong>Como resolver:</strong> mover a inicialização para dentro de uma função:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">stdout_writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="n">File</span><span class="p">.</span><span class="nf">stdout</span><span class="p">().</span><span class="nf">writer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stdout_buffer</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stdout_writer</span><span class="p">.</span><span class="n">interface</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s">&#34;Hello</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">flush</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Agora funciona porque a inicialização acontece em runtime. Conforme o projeto cresce, escrever manualmente <code>zig build-exe src/a.zig src/b.zig</code> vira um incômodo. Em C/C++, resolvemos isso com ferramentas como CMake, Make ou Ninja.</p>
+<p>
+No Zig, o compilador já traz um <strong>sistema de build integrado</strong>. Você escreve um script em <code>build.zig</code> e compila o projeto inteiro só com:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zig build</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Depois disso, o Zig cria uma pasta <code>zig-out/</code> no diretório raiz, contendo os binários e bibliotecas. Exemplo de execução:</p>
+<div class="src src-bash">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./zig-out/bin/hello_world</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Saída:</p>
+<pre class="example">
+Hello, world!
+</pre>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
+<h3 id="headline-5">
+Criando novos objetos
+</h3>
+<div id="outline-text-headline-5" class="outline-text-3">
+<p>
+Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”. Aqui vou usar o termo <strong>objeto</strong>. No Zig criamos objetos com <code>const</code> (imutável) ou <code>var</code> (mutável):</p>
+<ul>
+<li><code>const</code>: depois de atribuir um valor, você <strong>não pode mudar</strong>.</li>
+<li><code>var</code>: você <strong>pode mudar</strong> o valor futuramente.</li>
+</ul>
+<p><img src="./03.png" alt="./03.png" title="./03.png" /></p>
+<p>
+Exemplo com <code>const</code> que NÃO compila (tentar mudar um <code>const</code> é erro):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Linha inválida: tentar reatribuir um const
+</span></span></span><span class="line"><span class="cl"><span class="c1">// error: cannot assign to constant
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se você precisa mudar o valor, use <code>var</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">ok</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+&gt; Nota importante e pé-no-chão:
+&gt; - O Zig <strong>consegue inferir o tipo</strong> na maioria dos casos (para <code>const</code> e <code>var</code>).
+&gt; - <strong>Você é obrigado</strong> a anotar o tipo quando <strong>não</strong> fornece um valor inicial
+&gt;   (ver seção 1.4.2) ou quando o compilador não consegue inferir com segurança.</p>
+<p>
+Por padrão, Zig quer que você <strong>declare e inicialize</strong> no mesmo passo. Se realmente precisar declarar sem inicializar, use <code>undefined</code> <strong>e informe o tipo</strong>:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">age</span><span class="o">:</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"> </span><span class="c1">// ainda sem valor válido
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">25</span><span class="p">;</span><span class="w">                </span><span class="o">//</span><span class="w"> </span><span class="n">agora</span><span class="w"> </span><span class="n">inicializado</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+&gt; Dica prática: evite <code>undefined</code> sempre que possível. Ele deixa o objeto
+&gt; sem valor definido; se você usar antes de inicializar, terá comportamento indefinido.</p>
+<p>
+Se você declarar e <strong>não usar</strong> um objeto, o compilador erra (bom para higiene do código):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">unused</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="n">constant</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se quer declarar e <strong>descartar explicitamente</strong>, use o sublinhado (<code>_</code>):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="c1">// compila
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">descarte</span><span class="w"> </span><span class="n">explícito</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Após descartar, <strong>não tente usar</strong> de novo:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="k">error</span><span class="o">:</span><span class="w"> </span><span class="n">pointless</span><span class="w"> </span><span class="n">discard</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se você declara <code>var</code> e <strong>nunca muda</strong> o valor, Zig sugere <code>const</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">where_i_live</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Belo Horizonte&#34;</span><span class="p">;</span><span class="w"> </span><span class="c1">// error: local variable is never mutated
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">where_i_live</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">dica</span><span class="w"> </span><span class="n">do</span><span class="w"> </span><span class="n">compilador</span><span class="o">:</span><span class="w"> </span><span class="n">considere</span><span class="w"> </span><span class="n">usar</span><span class="w"> </span><span class="err">&#39;</span><span class="kr">const</span><span class="err">&#39;</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
+<h3 id="headline-6">
+Tipos primitivos
+</h3>
+<div id="outline-text-headline-6" class="outline-text-3">
+<ul>
+<li><strong>Inteiros sem sinal</strong>: <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code></li>
+<li><strong>Inteiros com sinal</strong>: <code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code></li>
+<li><strong>Ponto flutuante</strong>: <code>f16</code>, <code>f32</code>, <code>f64</code>, <code>f128</code></li>
+<li><strong>Booleano</strong>: <code>bool</code> (valores <code>true</code> / <code>false</code>)</li>
+<li><strong>Compatíveis com C (ABI)</strong>: <code>c_char</code>, <code>c_int</code>, <code>c_uint</code>, <code>c_long</code>, etc.</li>
+<li><strong>Do tamanho do ponteiro</strong>: <code>usize</code>, <code>isize</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
+<h3 id="headline-7">
+Arrays
+</h3>
+<div id="outline-text-headline-7" class="outline-text-3">
+<p>
+Criação básica (tamanho entre colchetes, tipo do elemento, e valores entre chaves):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">ls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">f64</span><span class="p">{</span><span class="mf">432.1</span><span class="p">,</span><span class="w"> </span><span class="mf">87.2</span><span class="p">,</span><span class="w"> </span><span class="mf">900.05</span><span class="p">};</span><span class="w"> </span><span class="c1">// [_] deixa o compilador contar
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">;</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ls</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+&gt; Esses arrays são <strong>estáticos</strong>: o tamanho <strong>não muda</strong> depois de criado (como em C).</p>
+<p>
+Zig é indexado em zero:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ns[0] = 48, ns[1] = 24, ns[2] = 12, ns[3] = 6
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">12</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+<strong>Slices</strong> usam seletor de intervalo <code>start..end</code> (fim <strong>não</strong> incluso):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w"> </span><span class="c1">// elementos nos índices 1 e 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">ar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">ar</span><span class="p">.</span><span class="n">len</span><span class="p">];</span><span class="w"> </span><span class="c1">// fatia com todos os elementos
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">all</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..];</span><span class="w"> </span><span class="c1">// do índice 1 até o fim
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p><img src="./04.png" alt="./04.png" title="./04.png" /></p>
+<p>
+Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).</p>
+<ul>
+<li>Você acessa o tamanho com <code>minha_slice.len</code>.</li>
+<li>Isso ajuda o compilador a detectar “acesso fora dos limites” (coisa difícil de garantir no C).</li>
+</ul>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">48</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ns</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">3</span><span class="p">];</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">stdout</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">sl</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">2</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<ul>
+<li>Em C, um array “decai” para ponteiro e você <strong><strong>perde o tamanho</strong></strong>.</li>
+<li>Em Zig, a fatia <strong><strong>carrega o tamanho</strong></strong>, permitindo checagens de segurança.</li>
+</ul>
+<p>Só funcionam quando os comprimentos são conhecidos em tempo de compilação.</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,4,5}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// {1,2,3,1,2,3}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+&gt; Dica: como “strings em Zig = arrays de bytes”, <code>++</code> é útil para concatenar strings estáticas.</p>
+<p>
+Se o intervalo é <strong>todo</strong> conhecido em compilação (ex.: <code>1..4</code>), o resultado do slice é tratado como “ponteiro para array fixo” (dá para fazer operações de ponteiro, como <code>.*</code>).</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">arr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="kt">u64</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr1</span><span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="mi">4</span><span class="p">];</span><span class="w"> </span><span class="c1">// intervalo 100% conhecido em compile-time
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slice</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="n">tipo</span><span class="w"> </span><span class="n">efetivo</span><span class="w"> </span><span class="err">é</span><span class="w"> </span><span class="n">similar</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">u64</span><span class="w"> </span><span class="p">(</span><span class="n">ponteiro</span><span class="w"> </span><span class="n">para</span><span class="w"> </span><span class="n">array</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se o fim do intervalo só é conhecido <strong>em runtime</strong> (ex.: tamanho de arquivo lido), o resultado é uma <strong>slice</strong> “normal” (<code>[]T</code>), e você <strong>não</strong> tem operações de ponteiro:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">fn</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="o">:</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="n">Allocator</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">!</span><span class="p">[]</span><span class="kt">u8</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="nf">alloc</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">fs</span><span class="p">.</span><span class="nf">cwd</span><span class="p">().</span><span class="nf">openFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="nf">close</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="nf">readAll</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">n</span><span class="p">];</span><span class="w"> </span><span class="c1">// fim só é conhecido em runtime
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">gpa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="nf">GeneralPurposeAllocator</span><span class="p">(.{}){};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gpa</span><span class="p">.</span><span class="nf">allocator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">file_contents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;shop-list.txt&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">sl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file_contents</span><span class="p">[</span><span class="mi">0</span><span class="p">..</span><span class="n">file_contents</span><span class="p">.</span><span class="n">len</span><span class="p">];</span><span class="w"> </span><span class="c1">// runtime-known
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+Blocos e escopos
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<p>
+Blocos são definidos por chaves <code>{ ... }</code> e criam <strong><strong>escopos</strong></strong>.  
+Objetos definidos num bloco só existem <strong><strong>dentro</strong></strong> dele (como em C/C++).
+Funções, <code>if</code>, <code>for</code>, <code>while</code>: todos criam blocos/escopos.</p>
+<p>
+Você pode <strong><strong>rotular</strong></strong> um bloco e usar <code>break :label valor</code> para “retornar” dele:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">var</span><span class="w"> </span><span class="n">y</span><span class="o">:</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">const</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_one</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">break</span><span class="w"> </span><span class="o">:</span><span class="n">add_one</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"> </span><span class="c1">// &#34;retorna&#34; 124 do bloco
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">124</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
+<h3 id="headline-9">
+Como strings funcionam no Zig
+</h3>
+<div id="outline-text-headline-9" class="outline-text-3">
+<p>
+Strings em Zig são <strong><strong>arrays de bytes</strong></strong> (<code>u8</code>).  
+Isso é parecido com C, mas no Zig você tem <strong><strong>comprimento acessível</strong></strong> na maioria dos usos,
+o que ajuda a evitar “buffer overflow”.</p>
+<ul>
+<li>Em C, você depende de <code>&#39;\0&#39;</code> (NULL-terminado) e precisa varrer até achar o fim.</li>
+<li>Em Zig, você consulta <code>minha_string.len</code>.</li>
+</ul>
+<p>Exemplo Zig (obtendo <code>len</code>):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example of string literal in Zig&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">});</span><span class="w"> </span><span class="c1">// 43
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Exibir bytes “Hello”:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">u8</span><span class="p">{</span><span class="mh">0x48</span><span class="p">,</span><span class="mh">0x65</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6C</span><span class="p">,</span><span class="mh">0x6F</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">bytes</span><span class="p">});</span><span class="w"> </span><span class="c1">// Hello
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+&gt; Zig assume que literais são <strong><strong>UTF-8</strong></strong>. Se não forem, você pode precisar converter (ex.: <code>iconv</code>).</p>
+<ol>
+<li><strong><strong>Array com sentinela</strong></strong> (NULL-terminado), tipo parecido com C.  </li>
+<li><strong><strong>Slice</strong></strong> (<code>[]const u8</code>), que carrega comprimento e <strong><strong>não</strong></strong> exige sentinela.</li>
+</ol>
+<p>Um literal de string tem tipo semelhante a <code>*const [n:0]u8</code>:</p>
+<ul>
+<li><code>n</code> é o comprimento (conta os bytes “úteis”).</li>
+<li><code>:0</code> indica o <strong><strong>sentinela</strong></strong> NULL no final.</li>
+</ul>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="c1">// &#34;A literal value&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A literal value&#34;</span><span class="p">)});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">*</span><span class="kr">const</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="kt">u8</span><span class="w">  </span><span class="p">(</span><span class="n">exemplo</span><span class="w"> </span><span class="n">de</span><span class="w"> </span><span class="n">formato</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Muito comum em funções da stdlib:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">str</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string value&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{any}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">str</span><span class="p">)});</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+O <code>for</code> percorre <strong><strong>bytes</strong></strong> (não “caracteres” Unicode):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;This is an example&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="n">byte</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">byte</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">simple_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="kt">i32</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">string_obj</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;A string object&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 1: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">simple_array</span><span class="p">)});</span><span class="w">     </span><span class="c1">// [4]i32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 2: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="s">&#34;A string literal&#34;</span><span class="p">)});</span><span class="c1">// *const [16:0]u8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 3: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">simple_array</span><span class="p">)});</span><span class="w">     </span><span class="c1">// *const [4]i32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Type 4: {}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="nb">@TypeOf</span><span class="p">(</span><span class="n">string_obj</span><span class="p">)});</span><span class="w">        </span><span class="c1">// []const u8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Nem sempre <strong><strong>1 byte = 1 caractere</strong></strong> em UTF-8.</p>
+<p>
+Ex.: o caractere “Ⱥ” (U+023A) usa <strong><strong>2 bytes</strong></strong> em UTF-8 (C8 BA):</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Ⱥ&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="n">b</span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{X} &#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">b</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<p>
+Se você precisa iterar por <strong><strong>caracteres</strong></strong> (codepoints), use <code>std.unicode.Utf8View</code>:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">utf8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">unicode</span><span class="p">.</span><span class="n">Utf8View</span><span class="p">.</span><span class="nf">init</span><span class="p">(</span><span class="s">&#34;アメリカ&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">utf8</span><span class="p">.</span><span class="nf">iterator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="nf">nextCodepointSlice</span><span class="p">())</span><span class="w"> </span><span class="o">|</span><span class="n">cp</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;got codepoint {x}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">cp</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<ul>
+<li><code>std.mem.eql(u8, a, b)</code>: compara igualdade.</li>
+<li><code>std.mem.startsWith(u8, s, &#34;pre&#34;)</code>, <code>endsWith(u8, s, &#34;suf&#34;)</code>.</li>
+<li><code>std.mem.splitScalar(u8, s, &#39;;&#39;)</code> e <code>splitSequence(u8, s, &#34;::&#34;)</code>.</li>
+<li><code>std.mem.trim(u8, s, &#34; \n\t&#34;)</code>: remove do início/fim.</li>
+<li><code>std.mem.count(u8, s, &#34;alvo&#34;)</code>, <code>replace(u8, s, &#34;a&#34;, &#34;b&#34;, out)</code>.</li>
+<li><code>std.mem.concat(alloc, u8, &amp;[...] )</code>: concatena strings (usa alocação).</li>
+</ul>
+<p>Exemplos rápidos:</p>
+<div class="src src-zig">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zig" data-lang="zig"><span class="line"><span class="cl"><span class="kr">const</span><span class="w"> </span><span class="n">std</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">@import</span><span class="p">(</span><span class="s">&#34;std&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kr">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="o">!</span><span class="kt">void</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">name</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;Pedro&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">eql</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Pedro&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Pe&#34;</span><span class="p">)</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">gpa</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">heap</span><span class="p">.</span><span class="nf">GeneralPurposeAllocator</span><span class="p">(.{}){};</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gpa</span><span class="p">.</span><span class="nf">allocator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">str3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">concat</span><span class="p">(</span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">_</span><span class="p">][]</span><span class="kr">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">{</span><span class="s">&#34;Hello&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34; you!&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">defer</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="nf">free</span><span class="p">(</span><span class="n">str3</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;{s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">str3</span><span class="p">});</span><span class="w"> </span><span class="c1">// Hello you!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">var</span><span class="w"> </span><span class="n">buffer</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="kt">u8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kr">const</span><span class="w"> </span><span class="n">nrep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">mem</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Hello&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;el&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;34&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">..]);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;New string: {s}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">buffer</span><span class="p">});</span><span class="w">      </span><span class="c1">// H34lo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">std</span><span class="p">.</span><span class="n">debug</span><span class="p">.</span><span class="nf">print</span><span class="p">(</span><span class="s">&#34;Replacements: {d}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span><span class="w"> </span><span class="p">.{</span><span class="n">nrep</span><span class="p">});</span><span class="w">      </span><span class="c1">// 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+Segurança em Zig
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>
+Linguagens de baixo nível modernas focam em <strong>reduzir riscos</strong>, principalmente os
+de <strong>memória</strong>. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
+parte dos casos, mas oferece ferramentas que <strong>ajudam muito</strong>:</p>
+<p><img src="./05.png" alt="./05.png" title="./05.png" /></p>
+<ul>
+<li><code>defer</code>: garante que liberações (<code>free</code>, <code>deinit</code>) fiquem próximas das alocações,
+reduzindo <code>leaks</code>, “use-after-free” e “double free”.</li>
+<li><code>errdefer</code>: garante liberação <strong>mesmo se</strong> ocorrer erro no meio do caminho.</li>
+<li>Ponteiros/objetos <strong>não são nulos</strong> por padrão (evita <code>null deref</code> acidental).</li>
+<li>Alocadores de teste (ex.: <code>std.testing.allocator</code>) detectam vazamentos/double-free
+em testes.</li>
+<li>Arrays/slices carregam <code>len</code>, permitindo checagem de “índice fora do intervalo”.</li>
+</ul>
+<p>Regras que também ajudam a segurança lógica:</p>
+<ul>
+<li><code>switch</code> deve cobrir <strong>todas</strong> as opções (exaustividade).</li>
+<li>O compilador força você a <strong>tratar erros</strong> (tipos <code>!T</code>, uso de <code>try</code>, <code>catch</code>).</li>
+<li>Objetos não usados e <code>var</code> não mutados viram <strong>erro/aviso</strong>: higiene do código.</li>
+</ul>
+<p>Comparação direta:</p>
+<ul>
+<li>Em C/C++, você precisa disciplinar tudo isso manualmente (e muitas vezes sem ajuda do compilador).</li>
+<li>Em Zig, o compilador te <strong>empurra</strong> para práticas mais seguras, mas sem “mágica” ou sobrecarga de recursos ocultos.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
+<h2 id="headline-11">
+Controles de fluxo, structs, modules e types
+</h2>
+<div id="outline-text-headline-11" class="outline-text-2">
+<div id="outline-container-headline-12" class="outline-3">
+<h3 id="headline-12">
+if/else statements
+</h3>
+</div>
+<div id="outline-container-headline-13" class="outline-3">
+<h3 id="headline-13">
+Switch statements
+</h3>
+</div>
+</div>
+</div>
+]]></content:encoded>
+      
+      
+      
+      
+      <dc:creator>Vitor Lobo</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Uma abordagem diferente]]></description>
       
     </item>
     

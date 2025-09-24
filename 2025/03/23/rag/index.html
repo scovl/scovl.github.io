@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1757193683">
+<link rel="stylesheet" href="/css/main.css?v=1758715433">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1757193683">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758715433">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1757193683">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758715433">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1757193683"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1758715433"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -448,7 +448,7 @@ window.I18n = I18n;
                 
                 <a href="/tags/ai" class="tag">AI</a>
                 
-                <a href="/tags/langchain" class="tag">Langchain</a>
+                <a href="/tags/clojure" class="tag">Clojure</a>
                 
             </div>
             
@@ -713,7 +713,7 @@ window.I18n = I18n;
   
   <div class="mermaid">graph LR
     A[RAG] --&gt; B[Base de Dados Atual]
-    A --&gt; C[Pesquisa em Tempo Real]
+    A --&gt; C[Recuperação em Fontes Externas]
     A --&gt; D[Combinação de Conhecimento]
     
     B --&gt; E[Documentos Atualizados]
@@ -726,13 +726,13 @@ window.I18n = I18n;
     D --&gt; J[Contextualização]</div>
  <ol>
 <li><strong>Conexão com uma base de dados atual:</strong> Em vez de depender apenas do conhecimento estático adquirido durante seu treinamento (que pode se tornar obsoleto rapidamente), o <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> ganha acesso a uma fonte de informações dinâmica e constantemente atualizada. Isso pode ser uma base de dados de notícias, um repositório de documentos corporativos, uma coleção de artigos científicos, ou qualquer outra fonte relevante para a tarefa em questão.</li>
-<li><strong>Pesquisa em tempo real:</strong> O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto. Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
+<li><strong>Recuperação em fontes externas:</strong> O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não está mais limitado a &ldquo;lembrar&rdquo; de informações. Ele adquire a capacidade de &ldquo;procurar&rdquo; ativamente por dados relevantes para responder a uma pergunta ou gerar um texto em fontes externas ao modelo, que podem ser estáticas (documentos corporativos) ou atualizadas em tempo real (APIs, bancos de dados dinâmicos). Isso é semelhante a como nós, humanos, usamos mecanismos de busca para encontrar informações que não temos memorizadas. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a>, equipado com RAG, pode formular consultas, analisar os resultados e selecionar as informações mais pertinentes.</li>
 <li><strong>Combinação de conhecimento base com dados novos:</strong> Este é o ponto crucial que diferencia o <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG</a> de uma simples busca em uma base de dados. O <a href="https://en.wikipedia.org/wiki/Large_language_model">LLM</a> não apenas recupera informações, mas também as integra ao seu conhecimento pré-existente. Ele usa sua capacidade de raciocínio e compreensão para contextualizar os novos dados, identificar contradições, e formular respostas coerentes e informadas.</li>
 </ol>
 <h3 id="rag-em-produção">RAG em Produção</h3>
 <p>Sistemas RAG em produção frequentemente incluem etapas adicionais para melhorar a precisão: <strong>re-ranking</strong> (onde um modelo especializado re-avalia a relevância dos documentos recuperados) e <strong>merge-rerank</strong> (que combina resultados de múltiplas estratégias de busca como semântica, lexical e híbrida). Essas técnicas aumentam significativamente a qualidade das respostas, mas adicionam complexidade ao sistema.</p>
 <blockquote>
-<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca semântica simples com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar essas técnicas avançadas.</p></blockquote>
+<p><strong>Nota</strong>: Nossa implementação atual usa apenas busca lexical com TF-IDF, focando na compreensão dos fundamentos do RAG. Para aplicações em produção, considere implementar técnicas semânticas avançadas com embeddings densos.</p></blockquote>
 <p>Segundo um <a href="https://arxiv.org/abs/2309.01066">whitepaper recente dos pesquisadores do Google</a>, existem várias técnicas para turbinar o desempenho dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>, e o RAG é uma das mais promissoras. Isso ocorre porque o RAG aborda algumas das limitações fundamentais desses modelos:</p>
 <p>O RAG resolve vários problemas de uma vez só: diminui aquelas &ldquo;viagens&rdquo; dos <a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a> quando inventam respostas (as famosas alucinações), mantém tudo atualizado em vez de ficar preso no passado, deixa as respostas mais transparentes porque você sabe de onde veio a informação, e ainda melhora o desempenho do modelo quando ele precisa lidar com documentos ou dados específicos da sua empresa. É como dar ao modelo um Google particular que ele pode consultar antes de responder!</p>
 <blockquote>
@@ -742,7 +742,7 @@ window.I18n = I18n;
 <p>O modelo também se dá super bem com várias linguagens de programação, incluindo <a href="https://clojure.org/">Clojure</a>, então ele responde numa boa sobre implementações técnicas e documentação de código. E o melhor: mesmo quando você joga informações pela metade ou todas bagunçadas, ele ainda consegue manter o contexto e dar respostas que fazem sentido. Por isso ele é perfeito para o que estamos construindo!</p>
 <h2 id="implementação-prática">Implementação Prática</h2>
 <h3 id="preparando-o-ambiente">Preparando o Ambiente</h3>
-<p>Pre-requisitos:</p>
+<p>Pré-requisitos:</p>
 <ul>
 <li><a href="https://clojure.org/guides/getting_started">Clojure</a>: Linguagem de programação funcional que vamos usar para construir a aplicação</li>
 <li><a href="https://leiningen.org/">Leiningen</a>: Ferramenta de build para Clojure</li>
@@ -760,7 +760,7 @@ window.I18n = I18n;
 <li><strong>Sistema de embeddings</strong>
 <ul>
 <li>Criação de embeddings para o texto usando <a href="https://pt.wikipedia.org/wiki/TF-IDF">TF-IDF</a></li>
-<li>Busca por similaridade semântica</li>
+<li>Busca por similaridade lexical (bag-of-words)</li>
 </ul>
 </li>
 <li><strong>Interface com o LLM</strong>
@@ -916,8 +916,64 @@ cd docai</code></pre>
       ;; Fallback conservador: 1 token por caractere
       (count text))))
 
+(defn split-large-node
+  &#34;Divide nó muito grande em partes menores&#34;
+  [node max-tokens]
+  (let [node-tokens (count-tokens node)]
+    (if (&lt;= node-tokens max-tokens)
+      [node]
+      ;; Tenta dividir por frases primeiro
+      (let [sentences (str/split node #&#34;[.!?]&#43;\s&#43;&#34;)
+            sentence-chunks (loop [sents sentences
+                                   current-chunk []
+                                   current-tokens 0
+                                   result []]
+                              (if (empty? sents)
+                                (if (seq current-chunk)
+                                  (conj result (str/join &#34;. &#34; current-chunk))
+                                  result)
+                                (let [sent (first sents)
+                                      sent-tokens (count-tokens sent)
+                                      new-total (&#43; current-tokens sent-tokens)]
+                                  (if (and (&gt; new-total max-tokens) (seq current-chunk))
+                                    (recur (rest sents)
+                                           [sent]
+                                           sent-tokens
+                                           (conj result (str/join &#34;. &#34; current-chunk)))
+                                    (recur (rest sents)
+                                           (conj current-chunk sent)
+                                           new-total
+                                           result)))))]
+        ;; Se ainda há chunks muito grandes, divide por palavras
+        (mapcat (fn [chunk]
+                  (if (&lt;= (count-tokens chunk) max-tokens)
+                    [chunk]
+                    (let [words (str/split chunk #&#34;\s&#43;&#34;)
+                          word-chunks (loop [w words
+                                             current []
+                                             current-tokens 0
+                                             result []]
+                                        (if (empty? w)
+                                          (if (seq current)
+                                            (conj result (str/join &#34; &#34; current))
+                                            result)
+                                          (let [word (first w)
+                                                word-tokens (count-tokens word)
+                                                new-total (&#43; current-tokens word-tokens)]
+                                            (if (and (&gt; new-total max-tokens) (seq current))
+                                              (recur (rest w)
+                                                     [word]
+                                                     word-tokens
+                                                     (conj result (str/join &#34; &#34; current)))
+                                              (recur (rest w)
+                                                     (conj current word)
+                                                     new-total
+                                                     result)))))]
+                      word-chunks)))
+                sentence-chunks)))))
+
 (defn create-token-aware-chunks
-  &#34;Cria chunks baseados em tokens reais, não caracteres&#34;
+  &#34;Cria chunks baseados em estimativa de tokens, dividindo nós grandes quando necessário&#34;
   [text-nodes max-tokens]
   (loop [nodes text-nodes
          current-chunk []
@@ -928,19 +984,27 @@ cd docai</code></pre>
         (conj all-chunks (str/join &#34; &#34; current-chunk))
         all-chunks)
       (let [node (first nodes)
-            node-tokens (count-tokens node)
-            new-total (&#43; current-tokens node-tokens)]
-        (if (and (&gt; new-total max-tokens) (seq current-chunk))
-          ;; Chunk cheio, salva e inicia novo
-          (recur (rest nodes)
-                 [node]
-                 node-tokens
-                 (conj all-chunks (str/join &#34; &#34; current-chunk)))
-          ;; Adiciona ao chunk atual
-          (recur (rest nodes)
-                 (conj current-chunk node)
-                 new-total
-                 all-chunks))))))
+            node-tokens (count-tokens node)]
+        ;; Se o nó é muito grande, divide ele primeiro
+        (if (&gt; node-tokens max-tokens)
+          (let [split-nodes (split-large-node node max-tokens)]
+            (recur (concat split-nodes (rest nodes))
+                   current-chunk
+                   current-tokens
+                   all-chunks))
+          ;; Nó de tamanho normal, processa normalmente
+          (let [new-total (&#43; current-tokens node-tokens)]
+            (if (and (&gt; new-total max-tokens) (seq current-chunk))
+              ;; Chunk cheio, salva e inicia novo
+              (recur (rest nodes)
+                     [node]
+                     node-tokens
+                     (conj all-chunks (str/join &#34; &#34; current-chunk)))
+              ;; Adiciona ao chunk atual
+              (recur (rest nodes)
+                     (conj current-chunk node)
+                     new-total
+                     all-chunks))))))))
 
 (defn preprocess-chunks
   &#34;Limpa e prepara os chunks de texto&#34;
@@ -978,7 +1042,7 @@ cd docai</code></pre>
   (:require [clojure.string :as str]
             [clojure.core.memoize :as memo]))
 
-;; Implementação de embeddings usando TF-IDF simples
+;; Implementação de embeddings usando TF-IDF simples (busca lexical)
 ;; Não depende de modelos externos, ao contrário do Ollama que usa o deepseek-r1 para o LLM
 
 (defn tokenize
@@ -1013,23 +1077,25 @@ cd docai</code></pre>
                    all-tokens)))))
 
 (defn tf-idf
-  &#34;Calcula TF-IDF para um documento&#34;
+  &#34;Calcula TF-IDF para um documento com estabilidade numérica&#34;
   [doc doc-freq doc-count]
   (if (empty? doc-freq)
     {}
     (let [tokens (tokenize doc)
           tf (term-freq tokens)]
       (zipmap (keys tf)
-              (map #(* (get tf %) (Math/log (/ doc-count (get doc-freq % 1))))
+              (map #(* (get tf %) 
+                      ;; IDF suavizado: log((N&#43;1)/(df&#43;1)) &#43; 1 para estabilidade
+                      (&#43; 1 (Math/log (/ (&#43; doc-count 1) (&#43; (get doc-freq % 1) 1)))))
                    (keys tf))))))
 
 (defn vectorize
-  &#34;Converte um documento em um vetor TF-IDF&#34;
+  &#34;Converte um documento em um vetor TF-IDF (retorna vector para serialização)&#34;
   [doc doc-freq doc-count vocab]
   (let [tf-idf-scores (tf-idf doc doc-freq doc-count)]
     (if (empty? vocab)
       []
-      (map #(get tf-idf-scores % 0.0) vocab))))
+      (vec (map #(get tf-idf-scores % 0.0) vocab)))))
 
 (defn create-embeddings
   &#34;Gera embeddings para uma lista de textos usando TF-IDF&#34;
@@ -1039,7 +1105,7 @@ cd docai</code></pre>
           doc-count (count (filter string? texts))
           ;; Vocabulário ordenado para garantir ordem estável
           vocab (sort (keys doc-freq))]
-      (map #(vectorize % doc-freq doc-count vocab) texts))
+      (vec (map #(vectorize % doc-freq doc-count vocab) texts)))
     (catch Exception e
       (println &#34;Erro ao criar embeddings: &#34; (.getMessage e))
       (vec (repeat (count texts) [])))))
@@ -1075,10 +1141,10 @@ cd docai</code></pre>
     A[Documentos] --&gt;|Tokenização| B[Tokens]
     B --&gt;|TF-IDF| C[Vetores Numéricos]
     C --&gt;|Similaridade do Cosseno| D[Documentos Similares]</div>
- <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são.</p>
+ <p>A parte mais legal é a função <code>similarity_search</code>, que usa a similaridade do cosseno para encontrar documentos parecidos com uma consulta. Imagine que cada documento é um ponto num espaço multidimensional – quanto menor o ângulo entre dois pontos, mais similares eles são lexicalmente.</p>
 <p>O código não usa nenhum modelo de IA sofisticado para isso, apenas matemática básica, o que o torna leve e rápido, embora menos poderoso que embeddings modernos baseados em redes neurais. É como um GPS simples que te leva ao destino sem todos os recursos de um Google Maps.</p>
 <p>O TF-IDF transforma textos em vetores numéricos ao combinar a frequência de cada palavra em um documento (TF) com o quanto essa palavra é rara em toda a coleção (IDF): palavras comuns como &ldquo;linguagem&rdquo; têm peso baixo, enquanto termos mais exclusivos como &ldquo;Clojure&rdquo; ganham peso alto, permitindo que o computador compare documentos de forma eficiente e encontre os mais relevantes para cada consulta.</p>
-<p>Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como &ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; como diferentes e podendo gerar vetores grandes.</p>
+<p>Outra abordagem, é por meio da similaridade do cosseno, que compara dois vetores TF-IDF calculando o ângulo entre eles: quanto menor o ângulo, mais parecidos são os textos lexicalmente, usando a fórmula cos(θ) = (A·B) / (||A|| ||B||), onde A·B é o produto escalar e ||A|| e ||B|| são os tamanhos dos vetores; porém, o TF-IDF tem limitações, pois não entende sinônimos, contexto ou ordem das palavras, tratando termos como &ldquo;carro&rdquo; e &ldquo;automóvel&rdquo; como diferentes e podendo gerar vetores grandes.</p>
 <blockquote>
 <p><strong>Importante</strong>: Esta implementação TF-IDF é uma <strong>prova de conceito</strong> para demonstrar os fundamentos do RAG. Em aplicações reais, embeddings densos modernos como <a href="https://www.sbert.net/">SBERT</a>, <a href="https://huggingface.co/intfloat/e5-large">E5</a>, <a href="https://huggingface.co/BAAI/bge-large-en">BGE</a> ou modelos via Ollama superam significativamente o TF-IDF em tarefas de busca semântica e question-answering.</p></blockquote>
 <h4 id="interface-com-ollama">Interface com Ollama</h4>
@@ -1106,8 +1172,9 @@ cd docai</code></pre>
       (-&gt; response
           :body
           (json/read-str :key-fn keyword)
-          ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-          (#(or (:response %) (:message %))))
+          ;; Campo :response para /api/generate (usado aqui)
+          ;; Campo :message seria usado em /api/chat
+          :response)
       (str &#34;Erro ao chamar a API do Ollama: &#34; (:status response) &#34; - &#34; (:body response)))))
 
 ;; Funções de utilidade para uso futuro:
@@ -1338,7 +1405,7 @@ cd docai</code></pre>
 <li><strong>Linux</strong>: Execute o comando:
 
 
-  <pre><code class="language-bash">curl https://ollama.ai/install.sh | sh</code></pre>
+  <pre><code class="language-bash">curl -fsSL https://ollama.com/install.sh | sh</code></pre>
  </li>
 <li><strong>macOS</strong>: Use o Homebrew:
 
@@ -1464,7 +1531,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
 
   <pre><code class="language-clojure">(let [content (slurp doc-path)
-      chunks (partition-all 512 text)]
+      text-nodes (extract-text-from-markdown content)
+      chunks (doc/create-token-aware-chunks text-nodes 512)]
   (println &#34;Quantidade de chunks gerados:&#34; (count chunks)))</code></pre>
  </li>
 <li>
@@ -1483,7 +1551,7 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
   <pre><code class="language-clojure">(if (str/blank? context-chunks)
   (if (seq (:original-files knowledge-base))
-    (get-file-content (first (:original-files knowledge-base)))
+    (get-limited-fallback-content (first (:original-files knowledge-base)))
     &#34;Não foi possível encontrar informações relevantes.&#34;)
   context-chunks)</code></pre>
  </li>
@@ -1617,14 +1685,17 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   (let [url &#34;http://localhost:11434/api/generate&#34;
         request-body {:model &#34;deepseek-r1&#34;
                      :prompt prompt
-                     :stream true}]
-    (with-open [conn @(http/post url {:body (json/write-str request-body)
-                                      :as :stream})]
-      (doseq [line (line-seq (:body conn))]
+                     :stream true}
+        resp @(http/post url {:body (json/write-str request-body)
+                              :as :stream
+                              :headers {&#34;Content-Type&#34; &#34;application/json&#34;}})]
+    (with-open [rdr (clojure.java.io/reader (:body resp))]
+      (doseq [line (line-seq rdr)]
         (when-not (str/blank? line)
           (let [data (json/read-str line :key-fn keyword)]
-            ;; Compatível com versões antigas (:response) e novas (:message) do Ollama
-            (when-let [content (or (:response data) (:message data))]
+            ;; Campo :response para /api/generate (usado aqui)
+            ;; Campo :message seria usado em /api/chat
+            (when-let [content (:response data)]
               (print content)
               (flush))))))))</code></pre>
  <h4 id="4-cache-de-embeddings"><strong>4. Cache de Embeddings</strong></h4>
@@ -1689,32 +1760,35 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 
   <pre><code class="language-clojure">;; src/docai/vector_store.clj
 (ns docai.vector-store
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [docai.embedding :as emb]))
 
 (defn create-simple-vector-store
   &#34;Store vetorial simples com BM25 (implementação manual)&#34;
   [documents]
   (let [index (atom {})
         doc-freq (emb/doc-freq documents)
-        vocab (sort (keys doc-freq))]  ; Vocabulário ordenado
+        vocab (sort (keys doc-freq))  ; Vocabulário ordenado
+        doc-count (count documents)
+        ;; Calcula o comprimento médio real dos documentos
+        avg-doc-len (/ (reduce &#43; (map #(count (emb/tokenize %)) documents)) doc-count)]
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [tokens (emb/tokenize doc)
             tf (emb/term-freq tokens)]
         (swap! index assoc idx {:doc doc :tf tf})))
-    {:index index :doc-freq doc-freq :vocab vocab}))
+    {:index index :doc-freq doc-freq :vocab vocab :doc-count doc-count :avg-doc-len avg-doc-len}))
 
 (defn calculate-bm25
   &#34;Calcula score BM25 para um documento&#34;
-  [query-tokens doc-tf doc-freq]
+  [query-tokens doc-tf doc-freq doc-count avg-doc-len]
   (let [k1 1.2  ; Parâmetro de saturação de termo
         b 0.75   ; Parâmetro de normalização de comprimento
-        avg-doc-len 100  ; Comprimento médio do documento (aproximação)
         doc-len (reduce &#43; (vals doc-tf))
         
         ;; IDF para cada termo da query
         idf-scores (map (fn [term]
                           (let [df (get doc-freq term 0)
-                                n (count doc-freq)]
+                                n doc-count]  ; Use número de documentos, não count doc-freq
                             (if (zero? df)
                               0
                               (Math/log (/ (- n df 0.5) (&#43; df 0.5)))))
@@ -1735,22 +1809,20 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   [query vector-store top-k]
   (let [query-tokens (emb/tokenize query)
         query-embedding (emb/vectorize query (:doc-freq vector-store) (:doc-count vector-store) (:vocab vector-store))
+        index-data @(:index vector-store)
         
-        ;; BM25 scores
-        bm25-scores (map-indexed 
-                      (fn [idx {:keys [tf]}]
-                        [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store))])
-                      (vals @(:index vector-store)))
+        ;; BM25 scores - itera corretamente preservando índices
+        bm25-scores (for [[idx {:keys [tf]}] index-data]
+                      [idx (calculate-bm25 query-tokens tf (:doc-freq vector-store) 
+                                          (:doc-count vector-store) (:avg-doc-len vector-store))])
         
-        ;; Semantic scores
-        semantic-scores (map-indexed
-                          (fn [idx _]
-                            [idx (emb/cosine-similarity query-embedding 
-                                                       (emb/vectorize (get-in @(:index vector-store) [idx :doc])
-                                                                      (:doc-freq vector-store)
-                                                                      (:doc-count vector-store)
-                                                                      (:vocab vector-store)))])
-                          (vals @(:index vector-store)))
+        ;; Semantic scores - itera corretamente preservando índices
+        semantic-scores (for [[idx {:keys [doc]}] index-data]
+                          [idx (emb/cosine-similarity query-embedding 
+                                                     (emb/vectorize doc
+                                                                    (:doc-freq vector-store)
+                                                                    (:doc-count vector-store)
+                                                                    (:vocab vector-store)))])
         
         ;; Combine scores (weighted average)
         combined-scores (map (fn [[idx bm25] [idx2 semantic]]
@@ -1765,8 +1837,9 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
 <ul>
 <li><strong>k1 = 1.2</strong>: Controla saturação de frequência de termos</li>
 <li><strong>b = 0.75</strong>: Normaliza pelo comprimento do documento</li>
-<li><strong>IDF</strong>: Mede raridade dos termos na coleção</li>
+<li><strong>IDF</strong>: Mede raridade dos termos na coleção (N = número de documentos)</li>
 <li><strong>TF</strong>: Frequência dos termos no documento</li>
+<li><strong>avg-doc-len</strong>: Comprimento médio real calculado dos documentos</li>
 <li><strong>Combinação</strong>: 30% BM25 + 70% similaridade semântica</li>
 </ul>
 <p><strong>Nota</strong>: Esta é uma implementação manual do BM25. Para produção, considere usar Apache Lucene (veja dependências acima) que oferece BM25 nativo e otimizado.</p>
@@ -1822,9 +1895,10 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   <pre><code class="language-clojure">;; src/docai/lucene_store.clj
 (ns docai.lucene-store
   (:import [org.apache.lucene.analysis.standard StandardAnalyzer]
-           [org.apache.lucene.document Document Field Field$Store]
+           [org.apache.lucene.document Document TextField StringField Field$Store]
            [org.apache.lucene.index IndexWriter IndexWriterConfig DirectoryReader]
-           [org.apache.lucene.search IndexSearcher QueryParser]
+           [org.apache.lucene.search IndexSearcher]
+           [org.apache.lucene.queryparser.classic QueryParser]
            [org.apache.lucene.store RAMDirectory]))
 
 (defn create-lucene-index
@@ -1838,8 +1912,8 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
     ;; Adiciona documentos ao índice
     (doseq [[idx doc] (map-indexed vector documents)]
       (let [document (Document.)]
-        (.add document (Field. &#34;content&#34; doc Field$Store/YES))
-        (.add document (Field. &#34;id&#34; (str idx) Field$Store/YES))
+        (.add document (TextField. &#34;content&#34; doc Field$Store/YES))
+        (.add document (StringField. &#34;id&#34; (str idx) Field$Store/YES))
         (.addDocument writer document)))
     
     (.close writer)
@@ -1855,19 +1929,22 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
   (let [parser (QueryParser. &#34;content&#34; (:analyzer index))
         query-obj (.parse parser query)
         hits (.search (:searcher index) query-obj top-k)]
-    (map #(.doc (:searcher index) %) (.scoreDocs hits))))</code></pre>
+    (map (fn [score-doc] 
+           (.doc (:searcher index) (.doc score-doc))) 
+         (.scoreDocs hits))))</code></pre>
  <h3 id="upgrade-para-embeddings-densos">Upgrade para Embeddings Densos</h3>
 <p>Para evoluir de TF-IDF para embeddings densos modernos, considere estas opções:</p>
 <h4 id="1-via-ollama-embeddings-api">1. <strong>Via Ollama Embeddings API</strong></h4>
 
 
-  <pre><code class="language-clojure">;; Exemplo de upgrade usando Ollama embeddings
+  <pre><code class="language-clojure">;; Exemplo de upgrade usando modelos de embedding específicos
 (defn create-dense-embeddings [texts]
   (let [embeddings-url &#34;http://localhost:11434/api/embeddings&#34;]
     (map #(call-ollama-embeddings embeddings-url %) texts)))
 
 (defn call-ollama-embeddings [url text]
-  (let [request-body {:model &#34;deepseek-r1&#34; :prompt text}
+  ;; Use modelos de embedding apropriados, não modelos geradores
+  (let [request-body {:model &#34;nomic-embed-text&#34; :prompt text}  ; ou &#34;all-minilm&#34;, &#34;bge-m3&#34;, &#34;snowflake-arctic-embed&#34;
         response @(http/post url {:body (json/write-str request-body)})]
     (if (= (:status response) 200)
       (-&gt; response :body (json/read-str :key-fn keyword) :embedding)
@@ -1911,7 +1988,14 @@ DEBUG - Amostra do contexto: &#34;Para implementar autenticação JWT em Clojure
           (-&gt; response :body (json/read-str :key-fn keyword) :eval_count)
           (count-tokens text))) ; Fallback para heurística
       (catch Exception _
-        (count-tokens text))))) ; Fallback para heurística</code></pre>
+        (count-tokens text))))) ; Fallback para heurística
+
+;; Exemplo de uso com diferentes modelos de embedding
+;; Primeiro baixe um modelo de embedding apropriado:
+;; ollama pull nomic-embed-text
+;; ollama pull all-minilm
+;; ollama pull bge-m3
+;; ollama pull snowflake-arctic-embed</code></pre>
  <h4 id="2-via-huggingface-transformers">2. <strong>Via HuggingFace Transformers</strong></h4>
 
 
@@ -2452,22 +2536,24 @@ CUDA_VISIBLE_DEVICES=0,1 ollama serve</code></pre>
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1757193683"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1757193683"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1758715433"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1758715433"></script>
     
     
-    <script src="/js/main-minimal.js?v=1757193683"></script>
-    <script src="/js/lazy-loading.js?v=1757193683"></script>
-    <script src="/js/toc.js?v=1757193683"></script>
+    <script src="/js/main-minimal.js?v=1758715433"></script>
+    <script src="/js/lazy-loading.js?v=1758715433"></script>
+    <script src="/js/toc.js?v=1758715433"></script>
     
     
     
