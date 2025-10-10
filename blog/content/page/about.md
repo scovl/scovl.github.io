@@ -10,9 +10,7 @@ Sou **programador em plataformas e infraestrutura**, com mais de 15 anos de expe
 
 Minha jornada começou em **2009**, dentro de comunidades open source no [IRC](https://freenode.net/) da Freenode. Foi ali que aprendi a escrever código colaborativamente, contribuir com projetos reais e, acima de tudo, entender o impacto de boas práticas de engenharia — da automação ao design de sistemas resilientes.
 
-Sou entusiasta de **infraestrutura como código, engenharia de plataforma e cultura DevX**. Acredito que **empoderar desenvolvedores através de ferramentas e abstrações simples** é uma das formas mais poderosas de escalar tecnologia com qualidade. Além disso, defendo o aprendizado profundo: gosto de montar meus próprios **labs on-premise** no FreeBSD (projeto que apoio), para entender de perto tudo o que há por baixo da abstração da nuvem — redes, boot, storage, orquestração, automação e resiliência.
-
-Nos meus projetos pessoais, procuro sempre unir **software e experimentação prática**. Alguns deles:
+Sou entusiasta de **infraestrutura como código, engenharia de plataforma e cultura DevX**. Acredito que **empoderar desenvolvedores através de ferramentas e abstrações simples** é uma das formas mais poderosas de escalar tecnologia com qualidade. Além disso, defendo o aprendizado profundo e livre. Nos meus projetos pessoais, procuro sempre unir **software e experimentação prática**. Alguns deles:
 
 - [**Marmite**](https://github.com/rochacbruno/marmite) – gerador de sites estáticos em **Rust**.  
 - [**checkrc**](https://github.com/scovl/checkrc) – validador de configurações para **FreeBSD**.  
