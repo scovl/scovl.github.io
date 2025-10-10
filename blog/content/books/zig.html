@@ -1,0 +1,1290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2025-09-25 qui 10:31 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A linguagem de programação Zig</title>
+<meta name="author" content="Vitor Lobo" />
+<meta name="description" content="Uma abordagem diferente" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">A linguagem de programação Zig</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orge8fadd3">1. O que é o Zig?</a>
+<ul>
+<li><a href="#orgf3a4ae8">1.1. Primeiros passos em Zig</a></li>
+<li><a href="#org8e3cea0">1.2. Compilando seu código-fonte</a></li>
+<li><a href="#orgefff785">1.3. Compilar e executar ao mesmo tempo</a></li>
+<li><a href="#orgc76122c">1.4. Criando novos objetos</a></li>
+<li><a href="#org4a72def">1.5. Tipos primitivos</a></li>
+<li><a href="#org2895baa">1.6. Arrays</a></li>
+<li><a href="#org6c8acf3">1.7. Blocos e escopos</a></li>
+<li><a href="#org476a47a">1.8. Como strings funcionam no Zig</a></li>
+<li><a href="#orgeaa7f6f">1.9. Segurança em Zig</a></li>
+<li><a href="#orgb9a74f3">1.10. Exercício</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orge8fadd3" class="outline-2">
+<h2 id="orge8fadd3"><span class="section-number-2">1.</span> O que é o Zig?</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<a href="https://ziglang.org/">Zig</a> é uma linguagem de programação moderna, de baixo nível e de propósito geral. Ela é frequentemente comparada ao <a href="https://en.wikipedia.org/wiki/C_(programming_language)">C</a> mas com ajustes que eliminam comportamentos confusos ou inconsistentes.
+</p>
+
+<p>
+A ideia central é de que "menos é mais", no sentido de que "menos coisas escondidas = mais clareza para quem programa" pois Zig não acumula recursos como o <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>; em vez disso, remove armadilhas que existem em C e C++. No C, existe algo chamado <b>macro</b>. Macros substituem o código antes mesmo do compilador ver. Isso pode gerar resultados estranhos. Exemplo:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #e5786d;">#define</span> <span style="color: #cae682;">SQR</span>(<span style="color: #cae682;">x</span>) (x * x)
+<span style="color: #92a65e; font-weight: bold;">int</span> <span style="color: #cae682;">y</span> = SRQ(1+2); <span style="color: #99968b;">// </span><span style="color: #99968b;">vira (1+2 * 1+2) =&gt; 5, n&#227;o 9</span>
+</pre>
+</div>
+
+<p>
+Acima, o código <code>SQR(1+2)</code> foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em <a href="https://ziglang.org/">Zig</a>, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">sqr</span>(<span style="color: #cae682;">x</span>: <span style="color: #92a65e; font-weight: bold;">i32</span>) <span style="color: #92a65e; font-weight: bold;">i32</span> {
+   <span style="color: #8ac6f2; font-weight: bold;">return</span> x * x;
+}
+</pre>
+</div>
+
+<blockquote>
+<p>
+Em C moderno a melhor forma de resolver isto seria com <code>static inline int sqr(int x) {return x * x; }</code>. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.
+</p>
+</blockquote>
+
+<p>
+O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas também confuso. Exemplo, você pode ter várias funções com o nome (sobrecarga). Dependendo dos tipos, o compiador escolher uma versão diferente. Para iniciantes, isso é difícil de acompanhar.
+</p>
+
+<p>
+Já no Zig não existe isso. Se você quiser funções diferentes, precisa dar nomes diferentes. Mais simples de ler e entender. Por exemplo, em C++ usar <code>std::string</code> parece simples, mas às vezes o programa gasta memória sem você perceber:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #e5786d;">std</span>::<span style="color: #92a65e; font-weight: bold;">string</span> <span style="color: #cae682;">a</span> = <span style="color: #95e454;">"foo"</span>
+<span style="color: #e5786d;">std</span>::string b = <span style="color: #95e454;">"bar"</span>
+<span style="color: #8ac6f2; font-weight: bold;">auto</span> c = a + b; <span style="color: #99968b;">// </span><span style="color: #99968b;">prode gerar aloca&#231;&#227;o din&#226;mica</span>
+</pre>
+</div>
+
+<p>
+Ou seja, por trás dessa linha, o programa pediu mais memória ao sistema. Já em Zig nada disso acontece sem você pedir. Se quiser usar memória dinâmica, você precisa dizer qual "allocator" vai usar:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">allocator</span> = std.heap.page_allocator;
+
+<span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">list</span> = std.ArrayList(<span style="color: #92a65e; font-weight: bold;">u8</span>).init(allocator);
+<span style="color: #8ac6f2; font-weight: bold;">defer</span> list.deinit();
+</pre>
+</div>
+
+<p>
+Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros genéricos (<code>void*</code>) escondem o tipo real e só falham em tempo de execução. No Zig, porteinro carregam informações de tipo, o que evita esses erros. Assim o Zig respeita sua filosofia que diz:
+</p>
+
+<blockquote>
+<p>
+"Focus on debugging your application rather than debugging your programming language knowledge."
+</p>
+</blockquote>
+
+<p>
+A proposta é simples: você deve gastar tempo entendendo seu programa, não a linguagem. Em outras palavras, C pode confundir com macros, C++ pode confundir com excesso de recursos e o Zig tenta ser direto e previsível. Ou seja, como disse no início, menos é mais, você deve gastar tempo entendendo o que seu programa faz, não tentando adivinhar <b>como a linguagem funciona</b>.
+</p>
+
+<hr />
+</div>
+<div id="outline-container-orgf3a4ae8" class="outline-3">
+<h3 id="orgf3a4ae8"><span class="section-number-3">1.1.</span> Primeiros passos em Zig</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Antes de programar em Zig, precisamor criar um projeto. Isso é parecido com outras linguagens que criam pastas e arquivos iniciais para você. No terminal digite o seguinte:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkdir hello
+<span style="color: #e5786d;">cd</span> hello
+zig init
+</pre>
+</div>
+
+<p>
+A saída no terminal deverá ser algo assim:
+</p>
+
+<pre class="example" id="org299ee1a">
+info: created build.zig
+info: created build.zig.zon
+info: created src/main.zig
+info: created src/root.zig
+info: see `zig build --help` for a menu of options
+</pre>
+
+
+<div id="org35c4754" class="figure">
+<p><img src="../01.png" alt="01.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>A imagem acima representa o que ocorre quando digita <code>zig init</code></p>
+</div>
+
+<p>
+Isso cria alguns arquivos automaticamente. São eles:
+</p>
+
+<ul class="org-ul">
+<li><code>build.zig</code> - script que explica como compilar o projeto.</li>
+<li><code>build.zig.zon</code> - arquivo de condfiguração do projeto (similar a um <code>package.json</code> no Node ou <code>Cargo.toml</code> em Rust).</li>
+<li><code>src/main.zig</code> - aqui fica o programa principal.</li>
+<li><code>src/root.zig</code> - ponto de entrada para bibliotecas Zig.</li>
+</ul>
+
+<p>
+Agora abra o o <code>src/main.zig</code> e dentro dele escreva o seguinte:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">stdout</span> = std.io.getStdOut().writer();
+    <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.print(<span style="color: #95e454;">"Hello, World!\n"</span>, .{});
+}
+</pre>
+</div>
+
+<p>
+O que esse código faz:
+</p>
+<ul class="org-ul">
+<li><code>const std = @import("std");</code> - importa a biblioteca padrão do Zig.</li>
+<li><code>pub fn main() !void { ... }</code> - função principal, onde o programa começa.</li>
+<li><code>std.io.getStdOut().writer()</code> - pega a saída padrão (tela).</li>
+<li><code>stdout.print("Hello, World!\n", .{});</code> - imprime o texto na tela.</li>
+<li>O <code>try</code> é necessário porque escrever na tela pode falhar (ex: falta de permissão), mas nesse caso só repassa o erro.</li>
+</ul>
+
+<p>
+Para compilar e executar:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">zig build run
+</pre>
+</div>
+
+<p>
+O terminal mostrará:
+</p>
+
+<pre class="example" id="org76efe34">
+Hello, World!
+</pre>
+
+<p>
+Pronto! Você acabou de rodar seu primeiro programa em Zig.
+</p>
+
+<p>
+<b>Observação</b>
+</p>
+<ul class="org-ul">
+<li>Diferente de C, não é preciso configurar <b>Makefile</b> manualmente.</li>
+<li>Diferente de C++, não existe um “padrão gigante” de projeto.</li>
+</ul>
+
+<p>
+O Zig já entrega a estrutura mínima para você começar, sem complicação. Quando usamos o <code>zig init</code>, alguns arquivos e pastas são criados automaticamente:
+</p>
+
+<pre class="example" id="org834c6a7">
+.
+├── build.zig
+├── build.zig.zon
+└── src
+    ├── main.zig
+    └── root.zig
+</pre>
+
+<ul class="org-ul">
+<li>A pasta <code>src/</code> guarda o código-fonte do projeto.</li>
+<li>Dentro dela, temos dois arquivos: <code>main.zig</code> e <code>root.zig</code>.</li>
+<li>Cada arquivo <code>.zig</code> é chamado de <b>módulo</b>. Pense em módulo como uma "caixinha" de código Zig.</li>
+</ul>
+
+<p>
+Por convenção, se você está criando um programa que <b><b>roda no terminal</b></b> (executável), o ponto de partida é o <code>main.zig</code>. Nele, você deve declarar uma função chamada <code>main()</code>. É como no C:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #92a65e; font-weight: bold;">int</span> <span style="color: #cae682;">main</span>() {
+    <span style="color: #8ac6f2; font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+Mas em Zig, fica assim:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() <span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #99968b;">// </span><span style="color: #99968b;">c&#243;digo do programa come&#231;a aqui
+</span>}
+</pre>
+</div>
+
+<p>
+Se você quer criar uma biblioteca em vez de um programa, é comum remover o arquivo <code>src/main.zig</code> e criar seu código no <code>src/root.zig</code>. Esse <code>root.zig</code> será o módulo raiz da sua biblioteca, contendo as funções e tipos que você pretende expor.
+</p>
+
+<p>
+O script de build continua sendo o <code>build.zig</code>, que é interpretado pelo comando <code>zig build</code> para compilar e organizar o projeto. Ou seja, <code>root.zig</code> não é executado diretamente como um script de build; ele apenas fornece o código da biblioteca que o <code>build.zig</code> irá compilar e instalar.
+</p>
+
+<p>
+Em linguagens como C e C++, normalmente precisamos instalar ferramentas externas como <b>Make</b> ou <b>CMake</b> para compilar projetos grandes. No Zig, isso está embutido: o <code>zig</code> já traz o compilador <b>e</b> o sistema de build. Você não precisa de nada além do próprio Zig.
+</p>
+
+<p>
+Esse arquivo tem uma sintaxe parecida com JSON. Ele descreve o projeto e suas dependências (bibliotecas externas). Exemplo em outros ecossistemas:
+</p>
+<ul class="org-ul">
+<li><code>package.json</code> no JavaScript.</li>
+<li><code>Pipfile</code> no Python.</li>
+<li><code>Cargo.toml</code> no Rust.</li>
+</ul>
+
+<p>
+Ou seja, no Zig usamos o <code>build.zig.zon</code> para listar bibliotecas externas. Se uma biblioteca Zig está no GitHub e possui o próprio <code>build.zig.zon</code>, você pode adicioná-la ao seu projeto apenas declarando no seu arquivo. Abra o arquivo <code>src/root.zig</code>. Logo no começo você verá algo assim:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig" id="org91c23a6"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">testing</span> = std.testing;
+
+<span style="color: #8ac6f2; font-weight: bold;">export</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">add</span>(<span style="color: #cae682;">a</span>: <span style="color: #92a65e; font-weight: bold;">i32</span>, <span style="color: #cae682;">b</span>: <span style="color: #92a65e; font-weight: bold;">i32</span>) <span style="color: #92a65e; font-weight: bold;">i32</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">return</span> a + b;
+}
+</pre>
+</div>
+
+<p>
+Explicando linha por linha:
+</p>
+
+<ul class="org-ul">
+<li><code>const std = @import("std");</code> - importa a biblioteca padrão do Zig.</li>
+<li><code>const testing = std.testing;</code> - importa o módulo de testes.</li>
+<li><code>export fn add(...)</code> - cria uma função chamada `add` que soma dois números.</li>
+</ul>
+
+<p>
+E aqui vai uma observação:
+</p>
+<ul class="org-ul">
+<li>Todo comando termina com <code>;</code> (como em C).</li>
+<li>O operador <code>:</code> é usado para declarar tipos. Exemplo: <code>a: i32</code> significa que <code>a</code> é um número inteiro de 32 bits com sinal.</li>
+<li>O retorno da função vem depois dos argumentos: <code>) i32 { ... }</code>.</li>
+<li><code>export</code> funciona como o <code>extern</code> do C: deixa a função disponível para outros módulos ou programas.</li>
+</ul>
+
+<p>
+Agora veja o <code>src/main.zig</code>. Ele contém a função principal do programa:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig" id="org9684d2b"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_buffer</span>: [1024]<span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #e5786d;">undefined</span>;
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_writer</span> = std.fs.File.stdout().writer(&amp;stdout_buffer);
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">stdout</span> = &amp;stdout_writer.interface;
+    <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.print(<span style="color: #95e454;">"Hello, {s}!\n"</span>, .{<span style="color: #95e454;">"world"</span>});
+    <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.flush();
+}
+</pre>
+</div>
+
+<p>
+Explicação:
+</p>
+<ul class="org-ul">
+<li><code>pub fn main() !void</code> - função pública chamada <code>main</code>, que pode retornar nada (<code>void</code>) ou um erro (<code>!</code>).</li>
+<li><code>stdout_buffer</code> - um pedaço de memória para guardar texto antes de imprimir.</li>
+<li><code>writer</code> - cria um "escritor" que sabe lidar com esse buffer.</li>
+<li><code>stdout.print("Hello, {s}!\n", .{"world"});</code> - imprime na tela (substitui <code>{s}</code> por <code>"world"</code>).</li>
+<li><code>try</code> - se der erro ao imprimir, o programa retorna o erro em vez de travar sem explicação.</li>
+
+<li>Por padrão, funções em Zig são privadas ao módulo.</li>
+<li><code>pub</code> (public) deixa a função acessível de fora.</li>
+<li>Isso é o oposto de <code>static</code> em C/C++, que limita o acesso.</li>
+</ul>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-org8e3cea0" class="outline-3">
+<h3 id="org8e3cea0"><span class="section-number-3">1.2.</span> Compilando seu código-fonte</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Para compilar um módulo Zig em um executável, usamos o comando <code>~build-exe~</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">zig build-exe src/main.zig
+</pre>
+</div>
+
+<p>
+Esse comando procura uma função <code>main()</code> dentro dos arquivos listados. Se não encontrar, o compilador gera um erro de compilação avisando que o ponto de entrada não existe. Além de <code>build-exe</code>, temos outros comandos:
+</p>
+<ul class="org-ul">
+<li><code>build-lib</code> - compila em uma biblioteca (C ABI).</li>
+<li><code>build-obj</code> - compila em arquivos objeto.</li>
+</ul>
+
+<p>
+Depois de rodar o <code>build-exe</code>, vemos o binário criado no diretório atual:
+</p>
+
+<pre class="example" id="orgb689213">
+ls
+build.zig  build.zig.zon  main  src
+</pre>
+
+<p>
+Executando o binário:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">./main
+</pre>
+</div>
+
+<p>
+Saída:
+</p>
+
+<pre class="example" id="org680fcf8">
+Hello, world!
+</pre>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-orgefff785" class="outline-3">
+<h3 id="orgefff785"><span class="section-number-3">1.3.</span> Compilar e executar ao mesmo tempo</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Usar <code>build-exe</code> + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos <code>zig run</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">zig run src/main.zig
+</pre>
+</div>
+
+<p>
+Saída:
+</p>
+
+<pre class="example" id="org372ad3d">
+Hello, world!
+</pre>
+
+<p>
+Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de <b>tempo de execução</b> (ex: acessar <code>stdout</code>), a compilação falhará com o erro  <b>“unable to evaluate comptime expression”</b>. Exemplo problemático no Windows:
+</p>
+
+
+<div id="org6f8e43d" class="figure">
+<p><img src="../02.png" alt="02.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+<span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_buffer</span>: [1024]<span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #e5786d;">undefined</span>;
+
+<span style="color: #99968b;">// </span><span style="color: #99968b;">ERRO: inicializa&#231;&#227;o global depende de recurso runtime
+</span><span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_writer</span> = std.fs.File.stdout().writer(&amp;stdout_buffer);
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">stdout</span> = &amp;stdout_writer.interface;
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    _ = <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.write(<span style="color: #95e454;">"Hello\n"</span>);
+    <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.flush();
+}
+</pre>
+</div>
+
+<p>
+Erro no terminal:
+</p>
+
+<pre class="example" id="orgbd130ec">
+t.zig:2107:28: error: unable to evaluate comptime expression
+</pre>
+
+<p>
+Isso acontece porque <b>todas as variáveis globais em Zig são inicializadas em
+tempo de compilação</b>. Mas no Windows, operações como abrir arquivos ou acessar <code>stdout</code> só podem
+acontecer em tempo de execução.
+</p>
+
+<p>
+<b>Como resolver:</b> mover a inicialização para dentro de uma função:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_buffer</span>: [1024]<span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #e5786d;">undefined</span>;
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">stdout_writer</span> = std.fs.File.stdout().writer(&amp;stdout_buffer);
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">stdout</span> = &amp;stdout_writer.interface;
+    _ = <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.write(<span style="color: #95e454;">"Hello\n"</span>);
+    <span style="color: #8ac6f2; font-weight: bold;">try</span> stdout.flush();
+}
+</pre>
+</div>
+
+<p>
+Agora funciona porque a inicialização acontece em runtime. Conforme o projeto cresce, escrever manualmente <code>zig build-exe src/a.zig src/b.zig</code> vira um incômodo. Em C/C++, resolvemos isso com ferramentas como CMake, Make ou Ninja.
+</p>
+
+<p>
+No Zig, o compilador já traz um <b>sistema de build integrado</b>. Você escreve um script em <code>build.zig</code> e compila o projeto inteiro só com:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">zig build
+</pre>
+</div>
+
+<p>
+Depois disso, o Zig cria uma pasta <code>zig-out/</code> no diretório raiz, contendo os binários e bibliotecas. Exemplo de execução:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">./zig-out/bin/hello_world
+</pre>
+</div>
+
+<p>
+Saída:
+</p>
+
+<pre class="example" id="org1aa85ff">
+Hello, world!
+</pre>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-orgc76122c" class="outline-3">
+<h3 id="orgc76122c"><span class="section-number-3">1.4.</span> Criando novos objetos</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”. Aqui vou usar o termo <b>objeto</b>. No Zig criamos objetos com <code>const</code> (imutável) ou <code>var</code> (mutável):
+</p>
+
+<ul class="org-ul">
+<li><code>const</code>: depois de atribuir um valor, você <b>não pode mudar</b>.</li>
+<li><code>var</code>: você <b>pode mudar</b> o valor futuramente.</li>
+</ul>
+
+
+<div id="orgc9a1ab1" class="figure">
+<p><img src="../03.png" alt="03.png" />
+</p>
+<p><span class="figure-number">Figure 3: </span>A imagem acima representa um diagrama do tipo árvore de decisão.</p>
+</div>
+
+<p>
+Exemplo com <code>const</code> que NÃO compila (tentar mudar um <code>const</code> é erro):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">age</span> = 24;
+<span style="color: #99968b;">// </span><span style="color: #99968b;">Linha inv&#225;lida: tentar reatribuir um const
+</span><span style="color: #99968b;">// </span><span style="color: #99968b;">error: cannot assign to constant
+</span><span style="color: #99968b;">// </span><span style="color: #99968b;">age = 25;</span>
+</pre>
+</div>
+
+<p>
+Se você precisa mudar o valor, use <code>var</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">age</span>: <span style="color: #92a65e; font-weight: bold;">u8</span> = 24;
+age = 25; <span style="color: #99968b;">// </span><span style="color: #99968b;">ok</span>
+</pre>
+</div>
+
+<p>
+&gt; Nota importante e pé-no-chão:
+&gt; - O Zig <b>consegue inferir o tipo</b> na maioria dos casos (para <code>const</code> e <code>var</code>).
+&gt; - <b>Você é obrigado</b> a anotar o tipo quando <b>não</b> fornece um valor inicial
+&gt;   (ver seção 1.4.2) ou quando o compilador não consegue inferir com segurança.
+</p>
+
+<p>
+Por padrão, Zig quer que você <b>declare e inicialize</b> no mesmo passo. Se realmente precisar declarar sem inicializar, use <code>undefined</code> <b>e informe o tipo</b>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">age</span>: <span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #e5786d;">undefined</span>; <span style="color: #99968b;">// </span><span style="color: #99968b;">ainda sem valor v&#225;lido
+</span>age = 25;                <span style="color: #99968b;">// </span><span style="color: #99968b;">agora inicializado</span>
+</pre>
+</div>
+
+<p>
+&gt; Dica prática: evite <code>undefined</code> sempre que possível. Ele deixa o objeto
+&gt; sem valor definido; se você usar antes de inicializar, terá comportamento indefinido.
+</p>
+
+<p>
+Se você declarar e <b>não usar</b> um objeto, o compilador erra (bom para higiene do código):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">age</span> = 15; <span style="color: #99968b;">// </span><span style="color: #99968b;">error: unused local constant</span>
+</pre>
+</div>
+
+<p>
+Se quer declarar e <b>descartar explicitamente</b>, use o sublinhado (<code>_</code>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">age</span> = 15; <span style="color: #99968b;">// </span><span style="color: #99968b;">compila
+</span>_ = age;        <span style="color: #99968b;">// </span><span style="color: #99968b;">descarte expl&#237;cito</span>
+</pre>
+</div>
+
+<p>
+Após descartar, <b>não tente usar</b> de novo:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">age</span> = 15;
+_ = age;
+<span style="color: #99968b;">// </span><span style="color: #99968b;">std.debug.print("{d}\n", .{age + 2}); // error: pointless discard</span>
+</pre>
+</div>
+
+<p>
+Se você declara <code>var</code> e <b>nunca muda</b> o valor, Zig sugere <code>const</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">where_i_live</span> = <span style="color: #95e454;">"Belo Horizonte"</span>; <span style="color: #99968b;">// </span><span style="color: #99968b;">error: local variable is never mutated
+</span>_ = where_i_live;
+<span style="color: #99968b;">// </span><span style="color: #99968b;">dica do compilador: considere usar 'const'</span>
+</pre>
+</div>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-org4a72def" class="outline-3">
+<h3 id="org4a72def"><span class="section-number-3">1.5.</span> Tipos primitivos</h3>
+<div class="outline-text-3" id="text-1-5">
+<ul class="org-ul">
+<li><b>Inteiros sem sinal</b>: <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code></li>
+<li><b>Inteiros com sinal</b>: <code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code></li>
+<li><b>Ponto flutuante</b>: <code>f16</code>, <code>f32</code>, <code>f64</code>, <code>f128</code></li>
+<li><b>Booleano</b>: <code>bool</code> (valores <code>true</code> / <code>false</code>)</li>
+<li><b>Compatíveis com C (ABI)</b>: <code>c_char</code>, <code>c_int</code>, <code>c_uint</code>, <code>c_long</code>, etc.</li>
+<li><b>Do tamanho do ponteiro</b>: <code>usize</code>, <code>isize</code></li>
+</ul>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-org2895baa" class="outline-3">
+<h3 id="org2895baa"><span class="section-number-3">1.6.</span> Arrays</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+Criação básica (tamanho entre colchetes, tipo do elemento, e valores entre chaves):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ns</span> = [4]<span style="color: #92a65e; font-weight: bold;">u8</span>{48, 24, 12, 6};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ls</span> = [_]<span style="color: #92a65e; font-weight: bold;">f64</span>{432.1, 87.2, 900.05}; <span style="color: #99968b;">// </span><span style="color: #99968b;">[_] deixa o compilador contar
+</span>_ = ns; _ = ls;
+</pre>
+</div>
+
+<p>
+&gt; Esses arrays são <b>estáticos</b>: o tamanho <b>não muda</b> depois de criado (como em C).
+</p>
+
+<p>
+Zig é indexado em zero:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ns</span> = [4]<span style="color: #92a65e; font-weight: bold;">u8</span>{48, 24, 12, 6};
+<span style="color: #99968b;">// </span><span style="color: #99968b;">ns[0] = 48, ns[1] = 24, ns[2] = 12, ns[3] = 6
+</span><span style="color: #99968b;">// </span><span style="color: #99968b;">try stdout.print("{d}\n", .{ ns[2] }); // 12</span>
+</pre>
+</div>
+
+<p>
+<b>Slices</b> usam seletor de intervalo <code>start..end</code> (fim <b>não</b> incluso):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ns</span> = [4]<span style="color: #92a65e; font-weight: bold;">u8</span>{48, 24, 12, 6};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">sl</span> = ns[1..3]; <span style="color: #99968b;">// </span><span style="color: #99968b;">elementos nos &#237;ndices 1 e 2
+</span>_ = sl;
+
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ar</span> = [4]<span style="color: #92a65e; font-weight: bold;">u8</span>{48, 24, 12, 6};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">all</span> = ar[0..ar.len]; <span style="color: #99968b;">// </span><span style="color: #99968b;">fatia com todos os elementos
+</span>_ = all;
+
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">tail</span> = ns[1..]; <span style="color: #99968b;">// </span><span style="color: #99968b;">do &#237;ndice 1 at&#233; o fim
+</span>_ = tail;
+</pre>
+</div>
+
+
+<div id="orgf0bb4b6" class="figure">
+<p><img src="../04.png" alt="04.png" />
+</p>
+<p><span class="figure-number">Figure 4: </span>Diagrama ilustrando a diferença entre um array fixo <code>([N]u8{…})</code> e um slice <code>([]u8)</code>. O array possui um tamanho conhecido em tempo de compilação, enquanto a fatia armazena um par (ponteiro,len) e, por isso, consegue informar seu comprimento e permitir verificações de limites ao acessar os elementos.</p>
+</div>
+
+<p>
+Uma slice é, essencialmente, “ponteiro + comprimento” (<code>[]T</code>).
+</p>
+<ul class="org-ul">
+<li>Você acessa o tamanho com <code>minha_slice.len</code>.</li>
+<li>Isso ajuda o compilador a detectar “acesso fora dos limites” (coisa difícil de garantir no C).</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">ns</span> = [4]<span style="color: #92a65e; font-weight: bold;">u8</span>{48, 24, 12, 6};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">sl</span> = ns[1..3];
+<span style="color: #99968b;">// </span><span style="color: #99968b;">try stdout.print("{d}\n", .{sl.len}); // 2</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Em C, um array “decai” para ponteiro e você <b><b>perde o tamanho</b></b>.</li>
+<li>Em Zig, a fatia <b><b>carrega o tamanho</b></b>, permitindo checagens de segurança.</li>
+</ul>
+
+<p>
+Só funcionam quando os comprimentos são conhecidos em tempo de compilação.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">a</span> = [_]<span style="color: #92a65e; font-weight: bold;">u8</span>{1,2,3};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">b</span> = [_]<span style="color: #92a65e; font-weight: bold;">u8</span>{4,5};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">c</span> = a ++ b; <span style="color: #99968b;">// </span><span style="color: #99968b;">{1,2,3,4,5}
+</span>_ = c;
+
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">d</span> = a ** 2; <span style="color: #99968b;">// </span><span style="color: #99968b;">{1,2,3,1,2,3}
+</span>_ = d;
+</pre>
+</div>
+
+<p>
+&gt; Dica: como “strings em Zig = arrays de bytes”, <code>++</code> é útil para concatenar strings estáticas.
+</p>
+
+<p>
+Se o intervalo é <b>todo</b> conhecido em compilação (ex.: <code>1..4</code>), o resultado do slice é tratado como “ponteiro para array fixo” (dá para fazer operações de ponteiro, como <code>.*</code>).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">arr1</span> = [10]<span style="color: #92a65e; font-weight: bold;">u64</span>{1,2,3,4,5,6,7,8,9,10};
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">slice</span> = arr1[1..4]; <span style="color: #99968b;">// </span><span style="color: #99968b;">intervalo 100% conhecido em compile-time
+</span>_ = slice;
+<span style="color: #99968b;">// </span><span style="color: #99968b;">tipo efetivo &#233; similar a *const [3]u64 (ponteiro para array de 3)</span>
+</pre>
+</div>
+
+<p>
+Se o fim do intervalo só é conhecido <b>em runtime</b> (ex.: tamanho de arquivo lido), o resultado é uma <b>slice</b> “normal” (<code>[]T</code>), e você <b>não</b> tem operações de ponteiro:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">read_file</span>(<span style="color: #cae682;">allocator</span>: <span style="color: #92a65e; font-weight: bold;">std</span>.mem.Allocator, <span style="color: #cae682;">path</span>: []<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #92a65e; font-weight: bold;">u8</span>) ![]<span style="color: #92a65e; font-weight: bold;">u8</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">buf</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> allocator.alloc(<span style="color: #92a65e; font-weight: bold;">u8</span>, 1024);
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">file</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> std.fs.cwd().openFile(path, .{});
+    <span style="color: #8ac6f2; font-weight: bold;">defer</span> file.close();
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">n</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> file.readAll(buf);
+    <span style="color: #8ac6f2; font-weight: bold;">return</span> buf[0..n]; <span style="color: #99968b;">// </span><span style="color: #99968b;">fim s&#243; &#233; conhecido em runtime
+</span>}
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">gpa</span> = std.heap.GeneralPurposeAllocator(.{}){};
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">allocator</span> = gpa.allocator();
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">file_contents</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> read_file(allocator, <span style="color: #95e454;">"shop-list.txt"</span>);
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">sl</span> = file_contents[0..file_contents.len]; <span style="color: #99968b;">// </span><span style="color: #99968b;">runtime-known
+</span>    _ = sl;
+}
+</pre>
+</div>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-org6c8acf3" class="outline-3">
+<h3 id="org6c8acf3"><span class="section-number-3">1.7.</span> Blocos e escopos</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+Blocos são definidos por chaves <code>{ ... }</code> e criam <b><b>escopos</b></b>.  
+Objetos definidos num bloco só existem <b><b>dentro</b></b> dele (como em C/C++).
+Funções, <code>if</code>, <code>for</code>, <code>while</code>: todos criam blocos/escopos.
+</p>
+
+<p>
+Você pode <b><b>rotular</b></b> um bloco e usar <code>break :label valor</code> para “retornar” dele:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">y</span>: <span style="color: #92a65e; font-weight: bold;">i32</span> = 123;
+<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">x</span> = add_one: {
+    y += 1;
+    <span style="color: #8ac6f2; font-weight: bold;">break</span> :<span style="color: #92a65e; font-weight: bold;">add_one</span> y; <span style="color: #99968b;">// </span><span style="color: #99968b;">"retorna" 124 do bloco
+</span>};
+<span style="color: #99968b;">// </span><span style="color: #99968b;">if (x == 124 and y == 124) { ... }</span>
+</pre>
+</div>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-org476a47a" class="outline-3">
+<h3 id="org476a47a"><span class="section-number-3">1.8.</span> Como strings funcionam no Zig</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+Strings em Zig são <b><b>arrays de bytes</b></b> (<code>u8</code>).  
+Isso é parecido com C, mas no Zig você tem <b><b>comprimento acessível</b></b> na maioria dos usos,
+o que ajuda a evitar “buffer overflow”.
+</p>
+
+<ul class="org-ul">
+<li>Em C, você depende de <code>'\0'</code> (NULL-terminado) e precisa varrer até achar o fim.</li>
+<li>Em Zig, você consulta <code>minha_string.len</code>.</li>
+</ul>
+
+<p>
+Exemplo Zig (obtendo <code>len</code>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">s</span> = <span style="color: #95e454;">"This is an example of string literal in Zig"</span>;
+    std.debug.print(<span style="color: #95e454;">"{d}\n"</span>, .{s.len}); <span style="color: #99968b;">// </span><span style="color: #99968b;">43
+</span>}
+</pre>
+</div>
+
+<p>
+Exibir bytes “Hello”:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">bytes</span> = [_]<span style="color: #92a65e; font-weight: bold;">u8</span>{0x48,0x65,0x6C,0x6C,0x6F};
+    std.debug.print(<span style="color: #95e454;">"{s}\n"</span>, .{bytes}); <span style="color: #99968b;">// </span><span style="color: #99968b;">Hello
+</span>}
+</pre>
+</div>
+
+<p>
+Zig assume que literais são <b><b>UTF-8</b></b>. Se não forem, você pode precisar converter (ex.: <code>iconv</code>).
+</p>
+
+<ol class="org-ol">
+<li><b><b>Array com sentinela</b></b> (NULL-terminado), tipo parecido com C.</li>
+<li><b><b>Slice</b></b> (<code>[]const u8</code>), que carrega comprimento e <b><b>não</b></b> exige sentinela.</li>
+</ol>
+
+<p>
+Um literal de string tem tipo semelhante a <code>*const [n:0]u8</code>:
+</p>
+<ul class="org-ul">
+<li><code>n</code> é o comprimento (conta os bytes “úteis”).</li>
+<li><code>:0</code> indica o <b><b>sentinela</b></b> NULL no final.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #99968b;">// </span><span style="color: #99968b;">"A literal value"
+</span>std.debug.print(<span style="color: #95e454;">"{any}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(<span style="color: #95e454;">"A literal value"</span>)});
+<span style="color: #99968b;">// </span><span style="color: #99968b;">-&gt; *const [15:0]u8  (exemplo de formato)</span>
+</pre>
+</div>
+
+<p>
+Muito comum em funções da stdlib:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">str</span>: []<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #95e454;">"A string value"</span>;
+std.debug.print(<span style="color: #95e454;">"{any}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(str)}); <span style="color: #99968b;">// </span><span style="color: #99968b;">[]const u8</span>
+</pre>
+</div>
+
+<p>
+O <code>for</code> percorre <b><b>bytes</b></b> (não “caracteres” Unicode):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">s</span> = <span style="color: #95e454;">"This is an example"</span>;
+    <span style="color: #8ac6f2; font-weight: bold;">for</span> (s) |byte| {
+        std.debug.print(<span style="color: #95e454;">"{X} "</span>, .{byte});
+    }
+    std.debug.print(<span style="color: #95e454;">"\n"</span>, .{});
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">simple_array</span> = [_]<span style="color: #92a65e; font-weight: bold;">i32</span>{1,2,3,4};
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">string_obj</span>: []<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #95e454;">"A string object"</span>;
+
+    std.debug.print(<span style="color: #95e454;">"Type 1: {}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(simple_array)});     <span style="color: #99968b;">// </span><span style="color: #99968b;">[4]i32
+</span>    std.debug.print(<span style="color: #95e454;">"Type 2: {}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(<span style="color: #95e454;">"A string literal"</span>)});<span style="color: #99968b;">// </span><span style="color: #99968b;">*const [16:0]u8
+</span>    std.debug.print(<span style="color: #95e454;">"Type 3: {}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(&amp;simple_array)});     <span style="color: #99968b;">// </span><span style="color: #99968b;">*const [4]i32
+</span>    std.debug.print(<span style="color: #95e454;">"Type 4: {}\n"</span>, .{<span style="color: #e5786d;">@TypeOf</span>(string_obj)});        <span style="color: #99968b;">// </span><span style="color: #99968b;">[]const u8
+</span>}
+</pre>
+</div>
+
+<p>
+Nem sempre <b><b>1 byte = 1 caractere</b></b> em UTF-8.
+</p>
+
+<p>
+Ex.: o caractere “Ⱥ” (U+023A) usa <b><b>2 bytes</b></b> em UTF-8 (C8 BA):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">s</span> = <span style="color: #95e454;">"&#570;"</span>;
+    <span style="color: #8ac6f2; font-weight: bold;">for</span> (s) |b| std.debug.print(<span style="color: #95e454;">"{X} "</span>, .{b});
+    std.debug.print(<span style="color: #95e454;">"\n"</span>, .{});
+}
+</pre>
+</div>
+
+<p>
+Se você precisa iterar por <b><b>caracteres</b></b> (codepoints), use <code>std.unicode.Utf8View</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">utf8</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> std.unicode.Utf8View.init(<span style="color: #95e454;">"&#12450;&#12513;&#12522;&#12459;"</span>);
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">it</span> = utf8.iterator();
+    <span style="color: #8ac6f2; font-weight: bold;">while</span> (it.nextCodepointSlice()) |cp| {
+        std.debug.print(<span style="color: #95e454;">"got codepoint {x}\n"</span>, .{cp});
+    }
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>std.mem.eql(u8, a, b)</code>: compara igualdade.</li>
+<li><code>std.mem.startsWith(u8, s, "pre")</code>, <code>endsWith(u8, s, "suf")</code>.</li>
+<li><code>std.mem.splitScalar(u8, s, ';')</code> e <code>splitSequence(u8, s, "::")</code>.</li>
+<li><code>std.mem.trim(u8, s, " \n\t")</code>: remove do início/fim.</li>
+<li><code>std.mem.count(u8, s, "alvo")</code>, <code>replace(u8, s, "a", "b", out)</code>.</li>
+<li><code>std.mem.concat(alloc, u8, &amp;[...] )</code>: concatena strings (usa alocação).</li>
+</ul>
+
+<p>
+Exemplos rápidos:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">std</span> = <span style="color: #e5786d;">@import</span>(<span style="color: #95e454;">"std"</span>);
+
+<span style="color: #8ac6f2; font-weight: bold;">pub</span> <span style="color: #8ac6f2; font-weight: bold;">fn</span> <span style="color: #cae682;">main</span>() !<span style="color: #92a65e; font-weight: bold;">void</span> {
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">name</span>: []<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #95e454;">"Pedro"</span>;
+    std.debug.print(<span style="color: #95e454;">"{}\n"</span>, .{ std.mem.eql(<span style="color: #92a65e; font-weight: bold;">u8</span>, name, <span style="color: #95e454;">"Pedro"</span>) }); <span style="color: #99968b;">// </span><span style="color: #99968b;">true
+</span>
+    std.debug.print(<span style="color: #95e454;">"{}\n"</span>, .{ std.mem.startsWith(<span style="color: #92a65e; font-weight: bold;">u8</span>, name, <span style="color: #95e454;">"Pe"</span>) }); <span style="color: #99968b;">// </span><span style="color: #99968b;">true
+</span>
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">gpa</span> = std.heap.GeneralPurposeAllocator(.{}){};
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">allocator</span> = gpa.allocator();
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">str3</span> = <span style="color: #8ac6f2; font-weight: bold;">try</span> std.mem.concat(allocator, <span style="color: #92a65e; font-weight: bold;">u8</span>, &amp;[_][]<span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #92a65e; font-weight: bold;">u8</span>{<span style="color: #95e454;">"Hello"</span>, <span style="color: #95e454;">" you!"</span>});
+    <span style="color: #8ac6f2; font-weight: bold;">defer</span> allocator.free(str3);
+    std.debug.print(<span style="color: #95e454;">"{s}\n"</span>, .{str3}); <span style="color: #99968b;">// </span><span style="color: #99968b;">Hello you!
+</span>
+    <span style="color: #8ac6f2; font-weight: bold;">var</span> <span style="color: #cae682;">buffer</span>: [5]<span style="color: #92a65e; font-weight: bold;">u8</span> = <span style="color: #e5786d;">undefined</span>;
+    <span style="color: #8ac6f2; font-weight: bold;">const</span> <span style="color: #cae682;">nrep</span> = std.mem.replace(<span style="color: #92a65e; font-weight: bold;">u8</span>, <span style="color: #95e454;">"Hello"</span>, <span style="color: #95e454;">"el"</span>, <span style="color: #95e454;">"34"</span>, buffer[0..]);
+    std.debug.print(<span style="color: #95e454;">"New string: {s}\n"</span>, .{buffer});      <span style="color: #99968b;">// </span><span style="color: #99968b;">H34lo
+</span>    std.debug.print(<span style="color: #95e454;">"Replacements: {d}\n"</span>, .{nrep});      <span style="color: #99968b;">// </span><span style="color: #99968b;">1
+</span>}
+</pre>
+</div>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-orgeaa7f6f" class="outline-3">
+<h3 id="orgeaa7f6f"><span class="section-number-3">1.9.</span> Segurança em Zig</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+Linguagens de baixo nível modernas focam em <b>reduzir riscos</b>, principalmente os
+de <b>memória</b>. Zig não é “100% seguro por padrão” como o Rust tenta ser na maior
+parte dos casos, mas oferece ferramentas que <b>ajudam muito</b>:
+</p>
+
+
+<div id="org102568c" class="figure">
+<p><img src="../05.png" alt="05.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>Fluxo de tratamento de valores e erros em Zig. Ao receber um valor, o código normal e a cláusula defer são executados; em caso de erro, ele é propagado e <code>errdefer</code> cuida da liberação de recursos.</p>
+</div>
+
+<ul class="org-ul">
+<li><code>defer</code>: garante que liberações (<code>free</code>, <code>deinit</code>) fiquem próximas das alocações,
+reduzindo <code>leaks</code>, “use-after-free” e “double free”.</li>
+<li><code>errdefer</code>: garante liberação <b>mesmo se</b> ocorrer erro no meio do caminho.</li>
+<li>Ponteiros/objetos <b>não são nulos</b> por padrão (evita <code>null deref</code> acidental).</li>
+<li>Alocadores de teste (ex.: <code>std.testing.allocator</code>) detectam vazamentos/double-free
+em testes.</li>
+<li>Arrays/slices carregam <code>len</code>, permitindo checagem de “índice fora do intervalo”.</li>
+</ul>
+
+<p>
+Regras que também ajudam a segurança lógica:
+</p>
+<ul class="org-ul">
+<li><code>switch</code> deve cobrir <b>todas</b> as opções (exaustividade).</li>
+<li>O compilador força você a <b>tratar erros</b> (tipos <code>!T</code>, uso de <code>try</code>, <code>catch</code>).</li>
+<li>Objetos não usados e <code>var</code> não mutados viram <b>erro/aviso</b>: higiene do código.</li>
+</ul>
+
+<p>
+Comparação direta:
+</p>
+
+<ul class="org-ul">
+<li>Em C/C++, você precisa disciplinar tudo isso manualmente (e muitas vezes sem ajuda do compilador).</li>
+<li>Em Zig, o compilador te <b>empurra</b> para práticas mais seguras, mas sem “mágica” ou sobrecarga de recursos ocultos.</li>
+</ul>
+
+<hr />
+</div>
+</div>
+<div id="outline-container-orgb9a74f3" class="outline-3">
+<h3 id="orgb9a74f3"><span class="section-number-3">1.10.</span> Exercício</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+Desenvolver um utilitário de terminal em Zig que leia um conjunto de palavras de um arquivo, selecione uma aleatoriamente, embaralhe seus caracteres (considerando UTF‑8) e peça ao usuário para adivinhar a palavra original.
+</p>
+
+<p>
+<b>Estrutura inicial</b>
+</p>
+
+<ol class="org-ol">
+<li><p>
+Crie um diretório para o projeto e execute:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">mkdir jogo-palavra
+<span style="color: #e5786d;">cd</span> jogo-palavra
+zig init
+</pre>
+</div></li>
+
+<li>Coloque a lógica do jogo em <code>src/root.zig</code> e chame-a a partir de <code>src/main.zig</code>. Utilize o comando <code>zig build run</code> para compilar e executar.</li>
+</ol>
+
+<p>
+<b>Requisitos técnicos</b>
+</p>
+
+<ul class="org-ul">
+<li><b>Leitura de arquivo</b>: abrir <code>palavras.txt</code> com <code>std.fs.cwd().openFile</code> e ler todo o conteúdo via <code>readAll</code>, depois separar cada linha com <code>std.mem.splitScalar(u8, dados, '\n')</code>.</li>
+<li><b>Alocação dinâmica</b>: usar um <code>std.ArrayList</code> ou <code>std.AutoHashMap</code> para armazenar a lista de palavras e o placar. Inicialize com um alocador (ex.: <code>std.heap.GeneralPurposeAllocator</code>) e libere com <code>defer</code> ou <code>errdefer</code>:contentReference[oaicite:1]{index=1}.</li>
+<li><b>Randomização</b>: inicializar um gerador pseudo‑aleatório (<code>std.rand.DefaultPrng</code>) com <code>@intCast(u64, std.time.nanoTimestamp())</code> e escolher um índice aleatório para a palavra.</li>
+<li><b><b>Embaralhamento</b></b>: implementar o algoritmo de Fisher‑Yates para embaralhar uma slice mutável. Para preservar acentos, você pode utilizar <code>std.unicode.Utf8View</code> para tratar cada code point como unidade.</li>
+<li><b>Interação</b>: ler a tentativa do usuário através de <code>std.io.getStdIn().reader()</code>, comparar usando <code>std.mem.eql</code> e informar se acertou. Utilizar <code>try</code> para propagar erros de I/O; declarar <code>main()</code> como <code>pub fn main() !void</code>.</li>
+<li><b>Loop de jogo</b>: após cada rodada, perguntar ao usuário se deseja jogar novamente. No final, imprimir um resumo das palavras acertadas e número de tentativas para cada uma.</li>
+</ul>
+
+<p>
+<b>Comportamento esperado</b>
+</p>
+
+<p>
+Uma execução típica deve se parecer com:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">Bem-vindo ao jogo da palavra embaralhada!
+Digite "sair" para terminar a qualquer momento.
+
+Palavra embaralhada: atbale
+Sua tentativa: tabela
+Acertou! Precisou de 1 tentativa.
+
+Deseja jogar novamente? (s/n): s
+
+Palavra embaralhada: &#233;garban
+Sua tentativa: abrang&#234;
+Tente novamente!
+Sua tentativa: engraba
+Tente novamente!
+Sua tentativa: abrang&#234;
+Acertou! Precisou de 3 tentativas.
+
+Deseja jogar novamente? (s/n): n
+
+Resumo:
+1&#170; palavra: tabela &#8212; 1 tentativa
+2&#170; palavra: abrang&#234; &#8212; 3 tentativas
+Obrigado por jogar!
+</pre>
+</div>
+
+<p>
+<b>Observações</b>
+</p>
+
+<ul class="org-ul">
+<li>Manipular strings em Zig requer lembrar que elas são <b>arrays de bytes</b>; ao usar slices (<code>[]u8</code>), o campo <code>len</code> contém seu comprimento:contentReference[oaicite:2]{index=2}.</li>
+<li>Este exercício explora leitura de arquivo, manipulação de arrays e slices, unicode/UTF‑8, alocação e liberação de memória, geração aleatória, módulos e tratamento de erros.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Vitor Lobo</p>
+<p class="date">Created: 2025-09-25 qui 10:31</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

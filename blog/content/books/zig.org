@@ -13,16 +13,16 @@ A ideia central é de que "menos é mais", no sentido de que "menos coisas escon
 int y = SRQ(1+2); // vira (1+2 * 1+2) => 5, não 9
 #+END_SRC
 
-Acima, o código ~SQR(1+2)~ foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em Zig, não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:std.io.gestStdOut
+Acima, o código ~SQR(1+2)~ foi escrito esperando como resultado o valor 9, mas o C o transformou em outra coisa. Já em [[https://ziglang.org/][Zig]], não existem macros desse tipo. O equivalente seria uma função inline, que mantém o comportamento previsível:
 
-#+BEGIN_SRC zigSe você quer criar uma 
+#+BEGIN_SRC zig
 fn sqr(x: i32) i32 {
    return x * x;
 }
 #+END_SRC
 
 #+BEGIN_QUOTE
-Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.
+Em C moderno a melhor forma de resolver isto seria com ~static inline int sqr(int x) {return x * x; }~. Desta forma será respeitada a procedência correta e o argumento será validado uma única vez. Este seria a forma moderna e aproximada da solução que o Zig já faz nativamente.
 #+END_QUOTE
 
 O C++ tem muitas formas de fazer a mesma coisa. Isso pode ser poderoso, mas também confuso. Exemplo, você pode ter várias funções com o nome (sobrecarga). Dependendo dos tipos, o compiador escolher uma versão diferente. Para iniciantes, isso é difícil de acompanhar.
@@ -52,6 +52,8 @@ Mesmo o C, que parece simples, poder gerar confusão. Por exemplo, ponteiros gen
 #+END_QUOTE
 
 A proposta é simples: você deve gastar tempo entendendo seu programa, não a linguagem. Em outras palavras, C pode confundir com macros, C++ pode confundir com excesso de recursos e o Zig tenta ser direto e previsível. Ou seja, como disse no início, menos é mais, você deve gastar tempo entendendo o que seu programa faz, não tentando adivinhar *como a linguagem funciona*.
+
+-----
 
 ** Primeiros passos em Zig
 
@@ -212,6 +214,8 @@ Explicação:
 - ~pub~ (public) deixa a função acessível de fora.  
 - Isso é o oposto de ~static~ em C/C++, que limita o acesso.  
 
+-----
+  
 ** Compilando seu código-fonte
 
 Para compilar um módulo Zig em um executável, usamos o comando ~~build-exe~~:
@@ -243,6 +247,8 @@ Saída:
 Hello, world!
 #+END_EXAMPLE
 
+-----
+
 ** Compilar e executar ao mesmo tempo
 
 Usar ~build-exe~ + executar pode ser trabalhoso. Para juntar os dois passos em um só, usamos ~zig run~:
@@ -258,10 +264,6 @@ Hello, world!
 #+END_EXAMPLE
 
 Esse ponto só vale para Windows. Se você tentar criar variáveis globais que dependem de recursos de *tempo de execução* (ex: acessar ~stdout~), a compilação falhará com o erro  *“unable to evaluate comptime expression”*. Exemplo problemático no Windows:
-
-#+NAME: fig:zig-var
-#+CAPTION: A imagem acima representa a difença entre a inicialização de variáveis no nível do contêiner e função.
-[[../02.png]]
 
 #+BEGIN_SRC zig
 const std = @import("std");
@@ -321,6 +323,8 @@ Saída:
 Hello, world!
 #+END_EXAMPLE
 
+-----
+
 ** Criando novos objetos
 
 Em muitas linguagens chamamos isso de “variáveis” ou “identificadores”. Aqui vou usar o termo *objeto*. No Zig criamos objetos com ~const~ (imutável) ou ~var~ (mutável):
@@ -348,10 +352,10 @@ var age: u8 = 24;
 age = 25; // ok
 #+END_SRC
 
-> Nota importante e pé-no-chão:
-> - O Zig *consegue inferir o tipo* na maioria dos casos (para ~const~ e ~var~).
-> - *Você é obrigado* a anotar o tipo quando *não* fornece um valor inicial
->   (ver seção 1.4.2) ou quando o compilador não consegue inferir com segurança.
+*Nota importante e pé-no-chão:*
+#+BEGIN_QUOTE
+O Zig *consegue inferir o tipo* na maioria dos casos (para ~const~ e ~var~). *Você é obrigado* a anotar o tipo quando *não* fornece um valor inicial ou quando o compilador não consegue inferir com segurança.
+#+END_QUOTE
 
 Por padrão, Zig quer que você *declare e inicialize* no mesmo passo. Se realmente precisar declarar sem inicializar, use ~undefined~ *e informe o tipo*:
 
@@ -360,8 +364,9 @@ var age: u8 = undefined; // ainda sem valor válido
 age = 25;                // agora inicializado
 #+END_SRC
 
-> Dica prática: evite ~undefined~ sempre que possível. Ele deixa o objeto
-> sem valor definido; se você usar antes de inicializar, terá comportamento indefinido.
+#+BEGIN_QUOTE
+Dica prática: evite ~undefined~ sempre que possível. Ele deixa o objetos em valor definido; se você usar antes de inicializar, terá comportamento indefinido.
+#+END_QUOTE
 
 Se você declarar e *não usar* um objeto, o compilador erra (bom para higiene do código):
 
@@ -392,6 +397,8 @@ _ = where_i_live;
 // dica do compilador: considere usar 'const'
 #+END_SRC
 
+-----
+
 ** Tipos primitivos
 
 - *Inteiros sem sinal*: ~u8~, ~u16~, ~u32~, ~u64~, ~u128~
@@ -400,6 +407,8 @@ _ = where_i_live;
 - *Booleano*: ~bool~ (valores ~true~ / ~false~)
 - *Compatíveis com C (ABI)*: ~c_char~, ~c_int~, ~c_uint~, ~c_long~, etc.
 - *Do tamanho do ponteiro*: ~usize~, ~isize~
+
+-----
 
 ** Arrays
 
@@ -411,7 +420,9 @@ const ls = [_]f64{432.1, 87.2, 900.05}; // [_] deixa o compilador contar
 _ = ns; _ = ls;
 #+END_SRC
 
-> Esses arrays são *estáticos*: o tamanho *não muda* depois de criado (como em C).
+#+BEGIN_QUOTE
+Esses arrays são *estáticos*: o tamanho *não muda* depois de criado (como em C).
+#+END_QUOTE
 
 Zig é indexado em zero:
 
@@ -498,6 +509,7 @@ pub fn main() !void {
 }
 #+END_SRC
 
+-----
 
 ** Blocos e escopos
 
@@ -516,6 +528,7 @@ const x = add_one: {
 // if (x == 124 and y == 124) { ... }
 #+END_SRC
 
+-----
 
 ** Como strings funcionam no Zig
 
@@ -657,6 +670,8 @@ pub fn main() !void {
 }
 #+END_SRC
 
+-----
+
 ** Segurança em Zig
 
 Linguagens de baixo nível modernas focam em *reduzir riscos*, principalmente os
@@ -685,7 +700,62 @@ Comparação direta:
 - Em C/C++, você precisa disciplinar tudo isso manualmente (e muitas vezes sem ajuda do compilador).
 - Em Zig, o compilador te *empurra* para práticas mais seguras, mas sem “mágica” ou sobrecarga de recursos ocultos.
 
-* Controles de fluxo, structs, modules e types
+-----
 
-** if/else statements
-** Switch statements
+** Exercício
+
+Desenvolver um utilitário de terminal em Zig que leia um conjunto de palavras de um arquivo, selecione uma aleatoriamente, embaralhe seus caracteres (considerando UTF‑8) e peça ao usuário para adivinhar a palavra original.
+
+*Estrutura inicial*
+
+1. Crie um diretório para o projeto e execute:
+   #+BEGIN_SRC bash
+   mkdir jogo-palavra
+   cd jogo-palavra
+   zig init
+   #+END_SRC
+
+2. Coloque a lógica do jogo em ~src/root.zig~ e chame-a a partir de ~src/main.zig~. Utilize o comando ~zig build run~ para compilar e executar.
+
+*Requisitos técnicos*
+
+- *Leitura de arquivo*: abrir ~palavras.txt~ com ~std.fs.cwd().openFile~ e ler todo o conteúdo via ~readAll~, depois separar cada linha com ~std.mem.splitScalar(u8, dados, '\n')~.
+- *Alocação dinâmica*: usar um ~std.ArrayList~ ou ~std.AutoHashMap~ para armazenar a lista de palavras e o placar. Inicialize com um alocador (ex.: ~std.heap.GeneralPurposeAllocator~) e libere com ~defer~ ou ~errdefer~:contentReference[oaicite:1]{index=1}.
+- *Randomização*: inicializar um gerador pseudo‑aleatório (~std.rand.DefaultPrng~) com ~@intCast(u64, std.time.nanoTimestamp())~ e escolher um índice aleatório para a palavra.
+- **Embaralhamento**: implementar o algoritmo de Fisher‑Yates para embaralhar uma slice mutável. Para preservar acentos, você pode utilizar ~std.unicode.Utf8View~ para tratar cada code point como unidade.
+- *Interação*: ler a tentativa do usuário através de ~std.io.getStdIn().reader()~, comparar usando ~std.mem.eql~ e informar se acertou. Utilizar ~try~ para propagar erros de I/O; declarar ~main()~ como ~pub fn main() !void~.
+- *Loop de jogo*: após cada rodada, perguntar ao usuário se deseja jogar novamente. No final, imprimir um resumo das palavras acertadas e número de tentativas para cada uma.
+
+*Comportamento esperado*
+
+Uma execução típica deve se parecer com:
+
+#+BEGIN_SRC text
+Bem-vindo ao jogo da palavra embaralhada!
+Digite "sair" para terminar a qualquer momento.
+
+Palavra embaralhada: atbale
+Sua tentativa: tabela
+Acertou! Precisou de 1 tentativa.
+
+Deseja jogar novamente? (s/n): s
+
+Palavra embaralhada: égarban
+Sua tentativa: abrangê
+Tente novamente!
+Sua tentativa: engraba
+Tente novamente!
+Sua tentativa: abrangê
+Acertou! Precisou de 3 tentativas.
+
+Deseja jogar novamente? (s/n): n
+
+1ª palavra: tabela — 1 tentativa
+2ª palavra: abrangê — 3 tentativas
+Obrigado por jogar!
+#+END_SRC
+
+*Observações*
+
+- Manipular strings em Zig requer lembrar que elas são *arrays de bytes*; ao usar slices (~[]u8~), o campo ~len~ contém seu comprimento:contentReference[oaicite:2]{index=2}.
+- Este exercício explora leitura de arquivo, manipulação de arrays e slices, unicode/UTF‑8, alocação e liberação de memória, geração aleatória, módulos e tratamento de erros.
