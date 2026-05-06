@@ -8,7 +8,7 @@ weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
-## Como reduzimos 62 consultas ao banco para 4 e ganhamos 8× de throughput
+## Como reduzi 62 consultas ao banco para 4 e ganhamos 8× de throughput
 
 Quando você atinge dezenas de milhares de transações por segundo, a pergunta mais perigosa que você pode fazer é _"qual formato de serialização devo usar?"_. Não porque a resposta seja irrelevante, mas porque ela quase nunca é o gargalo real.
 
