@@ -23,17 +23,17 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778086082">
+<link rel="stylesheet" href="/css/main.css?v=1778086309">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778086082">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778086309">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778086082">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778086309">
 
 
 
@@ -55,7 +55,7 @@
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778086082"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778086309"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -490,7 +490,7 @@ window.I18n = I18n;
       <nav class="toc-nav" id="toc-nav">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#como-reduzi-62-consultas-ao-banco-para-4-e-ganhamos-8-de-throughput">Como reduzi 62 consultas ao banco para 4 e ganhamos 8× de throughput</a></li>
+    <li><a href="#como-reduzi-62-consultas-ao-banco-para-4-e-ganhei-8-de-throughput">Como reduzi 62 consultas ao banco para 4 e ganhei 8× de throughput</a></li>
     <li><a href="#a-armadilha-otimizar-o-problema-visível">A armadilha: otimizar o problema visível</a></li>
     <li><a href="#a-solução-copy-protocol-e-batch-upsert">A solução: COPY protocol e batch UPSERT</a></li>
     <li><a href="#a-cereja-do-bolo-goroutine-pool">A cereja do bolo: goroutine pool</a></li>
@@ -521,12 +521,10 @@ window.I18n = I18n;
 </aside>
 
   <div class="post-content">
-    <h2 id="como-reduzi-62-consultas-ao-banco-para-4-e-ganhamos-8-de-throughput">Como reduzi 62 consultas ao banco para 4 e ganhamos 8× de throughput</h2>
-<p>Quando você atinge dezenas de milhares de transações por segundo, a pergunta mais perigosa que você pode fazer é <em>&ldquo;qual formato de serialização devo usar?&rdquo;</em>. Não porque a resposta seja irrelevante, mas porque ela quase nunca é o gargalo real.</p>
-<p>Esta é a história de como, durante o desenvolvimento do <strong><a href="https://github.com/scovl/Ollanta">Ollanta</a></strong>, uma plataforma de análise estática multilinguagem escrita em Go, eu quase caí na armadilha de otimizar o problema errado.</p>
+    <h2 id="como-reduzi-62-consultas-ao-banco-para-4-e-ganhei-8-de-throughput">Como reduzi 62 consultas ao banco para 4 e ganhei 8× de throughput</h2>
+<p>Quando você atinge dezenas de milhares de transações por segundo, a pergunta mais perigosa que você pode fazer é <em>&ldquo;qual formato de serialização devo usar?&rdquo;</em>. Não porque a resposta seja irrelevante, mas porque ela quase nunca é o gargalo real. Esta é a história de como, durante o desenvolvimento do <strong><a href="https://github.com/scovl/Ollanta">Ollanta</a></strong>, uma plataforma de análise estática multilinguagem escrita em Go, eu quase caí na armadilha de otimizar o problema errado.</p>
 <img src="https://github.com/scovl/Ollanta/raw/main/docs/imgs/logo-dark.png" alt="ollanta" width="250" style="display: block; margin: 1em auto;" />
-<p>O cenário: milhares de scanners enviando relatórios de análise para um servidor central. Cada relatório contém métricas, issues e snapshots de código. O servidor precisa ingerir, avaliar quality gates, persistir e indexar — tudo em segundos, com centenas de milhares de projetos acumulados ao longo do tempo.</p>
-<p>A primeira reação de qualquer engenheiro diante de &ldquo;payloads JSON de 8 MB chegando via HTTP&rdquo; é: <strong>&ldquo;preciso comprimir isso&rdquo;</strong>. E está certo. Mas essa é a porta de entrada para a armadilha.</p>
+<p>O cenário: milhares de scanners enviando relatórios de análise para um servidor central. Cada relatório contém métricas, issues e snapshots de código. O servidor precisa ingerir, avaliar quality gates, persistir e indexar — tudo em segundos, com centenas de milhares de projetos acumulados ao longo do tempo. A primeira reação de qualquer engenheiro diante de &ldquo;payloads JSON de 8 MB chegando via HTTP&rdquo; é: <strong>&ldquo;preciso comprimir isso&rdquo;</strong>. E está certo. Mas essa é a porta de entrada para a armadilha.</p>
 <h2 id="a-armadilha-otimizar-o-problema-visível">A armadilha: otimizar o problema visível</h2>
 <p>O fluxo de ingestão de um scan no Ollanta tinha este pipeline:</p>
 
@@ -699,8 +697,7 @@ for i := 0; i &lt; wp; i&#43;&#43; {
         }
     }(i)
 }</code></pre>
- <p>Cada goroutine faz <code>SELECT ... FOR UPDATE SKIP LOCKED</code> — o PostgreSQL garante que duas goroutines nunca peguem o mesmo job. O pool é configurável: de 1 (desenvolvimento) a 32 (produção com 200k+ projetos).</p>
-<p>Com 8 goroutines, o throughput multiplicou por <strong>8×</strong>. Combinado com a redução de 8× na latência por scan, o sistema passou a processar <strong>~64× mais scans por minuto</strong> do que a versão original.</p>
+ <p>Cada goroutine faz <code>SELECT ... FOR UPDATE SKIP LOCKED</code> — o PostgreSQL garante que duas goroutines nunca peguem o mesmo job. O pool é configurável: de 1 (desenvolvimento) a 32 (produção com 200k+ projetos). Com 8 goroutines, o throughput multiplicou por <strong>8×</strong>. Combinado com a redução de 8× na latência por scan, o sistema passou a processar <strong>~64× mais scans por minuto</strong> do que a versão original.</p>
 <h2 id="o-que-eu-não-fiz--e-por-quê">O que eu NÃO fiz — e por quê</h2>
 <h3 id="não-usei-protobuf">Não usei Protobuf</h3>
 <p>Protobuf reduziria o tempo de serialização de ~15ms para ~3ms. Mas:</p>
@@ -719,8 +716,7 @@ for i := 0; i &lt; wp; i&#43;&#43; {
 <li>5ms de ganho não justificam o risco operacional</li>
 </ul>
 <h3 id="não-usei-elasticsearch-embutido">Não usei Elasticsearch embutido</h3>
-<p>O SonarQube embute Elasticsearch como sub-processo JVM. Isso impede escalonamento horizontal (single-writer), compete por RAM/CPU com a aplicação, e faz o boot demorar <strong>6 horas ou mais</strong> com 200k projetos (rebuild completo do índice).</p>
-<p>No Ollanta, o search (ZincSearch ou PostgreSQL FTS) é um serviço externo. O boot é instantâneo (~2 segundos). Se o search cair, a aplicação continua funcionando com fallback para PostgreSQL FTS.</p>
+<p>O SonarQube embute Elasticsearch como sub-processo JVM. Isso impede escalonamento horizontal (single-writer), compete por RAM/CPU com a aplicação, e faz o boot demorar <strong>6 horas ou mais</strong> com 200k projetos (rebuild completo do índice). No Ollanta, o search (ZincSearch ou PostgreSQL FTS) é um serviço externo. O boot é instantâneo (~2 segundos). Se o search cair, a aplicação continua funcionando com fallback para PostgreSQL FTS.</p>
 <h2 id="a-lição">A lição</h2>
 <p>A tabela que resume tudo:</p>
 <table>
@@ -771,8 +767,7 @@ for i := 0; i &lt; wp; i&#43;&#43; {
       </tr>
   </tbody>
 </table>
-<p><strong>80% do ganho com 20% da complexidade.</strong> Essa é a regra. Perfile antes de otimizar. Ache o gargalo real antes de escolher a ferramenta. No meu caso, o gargalo era o banco de dados, não o formato de serialização. Se eu tivesse implementado Protobuf primeiro, teria gasto dias para ganhar 12ms — enquanto 530ms estavam esperando para serem economizados com algumas queries SQL bem escritas.</p>
-<p>Da próxima vez que alguém te disser &ldquo;você deveria usar Protobuf para performance&rdquo;, pergunte: <strong>&ldquo;você já mediu onde está o gargalo?&rdquo;</strong></p>
+<p><strong>80% do ganho com 20% da complexidade.</strong> Essa é a regra. Perfile antes de otimizar. Ache o gargalo real antes de escolher a ferramenta. No meu caso, o gargalo era o banco de dados, não o formato de serialização. Se eu tivesse implementado Protobuf primeiro, teria gasto dias para ganhar 12ms — enquanto 530ms estavam esperando para serem economizados com algumas queries SQL bem escritas. Da próxima vez que alguém te disser &ldquo;você deveria usar Protobuf para performance&rdquo;, pergunte: <strong>&ldquo;você já mediu onde está o gargalo?&rdquo;</strong></p>
 <hr>
 <h3 id="referências">Referências</h3>
 <ul>
@@ -1020,24 +1015,24 @@ for i := 0; i &lt; wp; i&#43;&#43; {
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778086082"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778086082"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778086309"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778086309"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778086082"></script>
-    <script src="/js/lazy-loading.js?v=1778086082"></script>
-    <script src="/js/toc.js?v=1778086082"></script>
+    <script src="/js/main-minimal.js?v=1778086309"></script>
+    <script src="/js/lazy-loading.js?v=1778086309"></script>
+    <script src="/js/toc.js?v=1778086309"></script>
     
     
     
