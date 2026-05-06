@@ -30,7 +30,7 @@
 <p>O fluxo de ingestão de um scan no Ollanta tinha este pipeline:</p>
 
 
-  <pre><code class="language-">Scanner → POST JSON (8 MB) → Servidor → 9 passos de ingestão → PostgreSQL</code></pre>
+  <pre><code class="language-bash">Scanner → POST JSON (8 MB) → Servidor → 9 passos de ingestão → PostgreSQL</code></pre>
  <p>Medi o tempo de cada etapa. O upload do JSON levava ~640ms em uma rede 100 Mbps. Habilitei Gzip condicional (payloads &gt; 1KB) e o upload caiu para ~64ms. Ganho de <strong>576ms</strong>. Satisfatório. Mas a latência total do pipeline ainda estava em ~800ms. Onde estavam os outros 736ms?</p>
 <table>
   <thead>

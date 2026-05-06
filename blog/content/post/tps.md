@@ -20,7 +20,7 @@ O cenário: milhares de scanners enviando relatórios de análise para um servid
 
 O fluxo de ingestão de um scan no Ollanta tinha este pipeline:
 
-```
+```bash
 Scanner → POST JSON (8 MB) → Servidor → 9 passos de ingestão → PostgreSQL
 ```
 
