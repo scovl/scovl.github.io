@@ -1,10 +1,10 @@
 +++
 title = "A Batalha dos Milissegundos"
 description = "Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam."
-date = 2026-05-06T19:41:45-03:00
+date = 2026-05-05T19:41:45-03:00
 tags = ["performance", "latência", "compressão", "protobuf", "zstd", "arquitetura de software"]
 draft = false
-weight = 1
+weight = 3
 author = "Vitor Lobo Ramos"
 +++
 
