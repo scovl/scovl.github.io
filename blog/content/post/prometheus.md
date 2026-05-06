@@ -5,6 +5,7 @@ date = 2025-07-27T23:10:18-03:00
 tags = ["Prometheus", "Grafana", "Monitoring", "TSDB", "DevOps", "Observability", "PromQL"]
 draft = false
 weight = 3
+author = "Vitor Lobo Ramos"
 +++
 
 
@@ -112,7 +113,6 @@ Existem diversas maneiras de instalar e executar o Prometheus. Aqui vou demonstr
 Comece criando um arquivo `docker-compose.yml` com o seguinte conteúdo:
 
 ```yaml
-version: "3"
 services:
   prometheus:
     image: prom/prometheus:latest
@@ -156,7 +156,7 @@ Esse arquivo define que o Prometheus fará scrape a cada 15s (`scrape_interval`)
 docker-compose up -d
 ```
 
-Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em **[http://localhost:3000](http://localhost:3000)** (usuário **admin**, senha **admin** padrão). No Grafana, adicione o Prometheus como fonte de dados: vá em *Configuration (engrenagem) > Data Sources*, adicione nova fonte do tipo Prometheus com URL **[http://prometheus:9090](http://prometheus:9090)** (que, devido ao Docker Compose, resolve para o container do Prometheus).
+Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em **[http://localhost:3000](http://localhost:3000)** (usuário **admin**; na primeira execução o Grafana solicitará a criação de uma nova senha). No Grafana, adicione o Prometheus como fonte de dados: vá em *Configuration (engrenagem) > Data Sources*, adicione nova fonte do tipo Prometheus com URL **[http://prometheus:9090](http://prometheus:9090)** (que, devido ao Docker Compose, resolve para o container do Prometheus).
 
 Feito isso, você já pode importar ou criar painéis Grafana usando as métricas do Prometheus (inclusive as geradas pelo PromSim). O PromSim estará expondo várias métricas aleatórias – por exemplo, simulando CPU, memória, requisições – permitindo testar consultas e alertas sem precisar de uma aplicação real por trás. Para mais detalhes do PromSim, veja **[a documentação oficial](https://github.com/dmitsh/promsim)**.
 
@@ -1266,10 +1266,10 @@ min(rate(http_requests_total[5m])) by (endpoint)
 histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))
 ```
 
-**`quantile(quantile, expr)`**: Calcula um quantil específico de uma expressão.
+**`quantile(φ, expr) by (label)`** (operador de agregação): Calcula o φ-quantil (0 ≤ φ ≤ 1) entre as séries agrupadas. Diferente de `histogram_quantile`, **não** se aplica a histogramas — use para calcular percentis entre instâncias.
 
 ```promql
-quantile(0.95, rate(http_requests_total[5m]))
+quantile(0.95, rate(http_requests_total[5m])) by (job)
 ```
 
 ### Funções de Filtro e Seleção
@@ -1288,16 +1288,16 @@ bottomk(5, rate(http_requests_total[5m]))
 
 ### Funções de Tempo
 
-**`avg_over_time(expr[interval])`**: Calcula a média dos valores no intervalo especificado.
+**`avg_over_time(expr[interval])`**: Calcula a média dos valores de uma métrica **gauge** no intervalo especificado.
 
 ```promql
-avg_over_time(http_requests_total[5m])
+avg_over_time(cpu_usage[5m])
 ```
 
-**`sum_over_time(expr[interval])`**: Calcula a soma dos valores no intervalo especificado.
+**`sum_over_time(expr[interval])`**: Calcula a soma dos valores de uma métrica **gauge** no intervalo especificado.
 
 ```promql
-sum_over_time(http_requests_total[5m])
+sum_over_time(memory_usage[5m])
 ```
 
 **`max_over_time(expr[interval])`**: Retorna o valor máximo no intervalo especificado.
@@ -1325,229 +1325,6 @@ absent(up{job="webserver"})
 ```promql
 absent_over_time(up{job="webserver"}[5m])
 ```
-
-## PromQL Avançado
-
-O PromQL oferece recursos avançados para consultas complexas e análises sofisticadas. Esta seção aborda tópicos mais avançados como correspondência de vetores, subconsultas, operadores lógicos e funções especializadas.
-
-### Correspondência de Séries Temporais: `on()`, `ignoring()`, `group_left`, `group_right`
-
-Quando combinamos métricas diferentes (vetor-vetor), muitas vezes precisamos controlar quais labels são usados para fazer o *join* (união) entre as séries de cada lado da operação. É aqui que entram os modificadores `on` e `ignoring`, e os operadores de junção externa `group_left` e `group_right`:
-
-* **`on(lista_de_labels)`**: Especifica explicitamente quais labels devem ser usados para casar as séries ao aplicar o operador. Todos os demais labels são ignorados no matching (exceto os do `on` listados).
-  *Exemplo:*
-
-  ```promql
-  errors_total / on(instance) requests_total
-  ```
-
-  Aqui dizemos: combine séries de `errors_total` e `requests_total` que tenham o mesmo valor de `instance`. Labels diferentes de `instance` serão ignorados na comparação. Isso é útil se, por exemplo, `errors_total` tem um label `status="5xx"` enquanto `requests_total` não tem o label `status`. Sem o `on(instance)`, essas séries não casariam por terem conjuntos de labels distintos.
-
-* **`ignoring(lista_de_labels)`**: O inverso do `on`. Use todos os labels *exceto* os listados para fazer o matching. Ou seja, finge que os labels mencionados não existem nos vetores ao procurar pares correspondentes.
-  *Exemplo:*
-
-  ```promql
-  cpu_usage{cpu="total"} / ignoring(cpu) cpu_quota
-  ```
-
-  Suponha que `cpu_usage` tenha um label `cpu` (núcleo) e valor `"total"` para indicar uso total da CPU, enquanto `cpu_quota` não tem esse label (aplica a todo CPU). O `ignoring(cpu)` permite desconsiderar essa diferença, casando as séries somente pelos outros labels (por exemplo, pod ou contêiner, se for o caso).
-
-* **Junções um-para-muitos (many-to-one)**: Por padrão, se houver múltiplas séries de um lado que poderiam casar com uma série do outro, a operação não ocorre e o resultado é vazio para evitar ambiguidades. No entanto, às vezes desejamos permitir isso — por exemplo, dividir uma métrica total por número de CPUs, onde a métrica total não tem o label `cpu` mas a de contagem de CPU tem (múltiplas séries, uma por core).
-  Para isso, usamos `group_left` ou `group_right` em conjunto com `on`/`ignoring`:
-
-  * **`group_left(label1, label2, ...)`**: Indica que as séries do lado esquerdo do operador devem permanecer separadas (muitas) enquanto as do lado direito serão "espalhadas" para casar. Em outras palavras, permite que uma única série do lado direito seja usada para múltiplas do lado esquerdo. Opcionalmente, podemos listar labels que serão **copiados** do lado direito para o resultado final.
-  * **`group_right(label1, label2, ...)`**: O contrário, mantém o lado direito com muitas séries e espalha o lado esquerdo.
-
-  *Exemplo (adicionando labels com group\_left):*
-
-  ```promql
-  rate(http_requests_total[5m]) 
-    * on(instance) 
-    group_left(job, environment) 
-    up
-  ```
-
-  Nesse exemplo, `rate(http_requests_total[5m])` produz séries talvez com labels `instance` e outros, mas digamos que não tenha `job` nem `environment` explicitamente (ou queremos copiar do `up`). A série `up` (métrica de saúde do alvo) tem `job`, `instance`, e `environment`. Estamos multiplicando as duas métricas apenas casando por `instance` (`on(instance)`). Como do lado direito (`up`) há possivelmente apenas uma série por instance (valor 0 ou 1), e do lado esquerdo pode haver múltiplas (por caminho de requisição, status, etc.), usamos `group_left(job, environment)` para dizer: permite que a mesma série de `up` case com múltiplas séries de requests do lado esquerdo, e traga os labels `job` e `environment` dessa série de `up` para o resultado final. Assim, o resultado terá a taxa de requests por `instance` mas agora enriquecido com os labels de job e environment.
-
-  *Exemplo (many-to-one sem copiar labels):*
-
-  ```promql
-  cpu_usage 
-    / on(instance) 
-    group_right 
-    cpu_count
-  ```
-
-  Suponha que `cpu_usage{instance="A"}` representa o uso total de CPU (consolidado) em determinada máquina, e `cpu_count{instance="A", cpu="0"}` e `cpu_count{instance="A", cpu="1"}` etc. representam 1 para cada CPU física (cada core). Se somarmos `cpu_count by (instance)` obteríamos o número de CPUs por instância, mas podemos diretamente dividir usando o truque do `group_right`. Aqui, cada série de `cpu_usage` (uma por instancia) será comparada com múltiplas séries de `cpu_count` (uma por CPU). Sem `group_right`, não casaria por haver múltiplas séries do lado direito para o mesmo instance. Com `group_right`, permitimos isso e, por não especificar labels a copiar, o resultado herda os labels do lado esquerdo (`cpu_usage`), e a operação divisão é feita para cada combinação (na prática repetindo o mesmo valor de `cpu_usage` para cada CPU e dividindo por o respectivo `cpu_count` – o que acaba resultando no mesmo valor para cada CPU). Talvez nesse caso específico fosse melhor já agrupar `cpu_count` antes de dividir, mas esse exemplo ilustra a sintaxe.
-
-* **Operador de conjunto `union`:** PromQL não possui um operador explícito "UNION" nomeado, mas podemos realizar união de resultados simplesmente listando expressões separadas por vírgula em uma consulta. Por exemplo:
-
-  ```promql
-  metric_a, metric_b
-  ```
-
-  Isso retorna todas as séries de `metric_a` e todas as de `metric_b`. Não é muito comum em consultas manuais, mas pode ser útil para junção visual.
-
-Resumindo, os modificadores `on` e `ignoring` controlam **quais** labels considerar ao casar séries de métricas diferentes, e `group_left`/`group_right` controlam **como lidar** quando há cardinalidades diferentes (um-para-muitos). Combiná-los corretamente é fundamental para escrever consultas que envolvam múltiplas métricas.
-
-### Operadores Lógicos: `and`, `or`, `unless`
-
-Além dos operadores aritméticos e de comparação, PromQL também suporta operadores lógicos para vetores. Esses operadores não criam valores numéricos novos, mas sim filtram ou combinam séries com base em condições booleanas.
-
-* **`and`:** Retém apenas as séries que aparecem em **ambos** os operandos. Em outras palavras, é uma interseção: uma série do lado esquerdo só passa se existe uma série exatamente igual do lado direito (considerando labels) e vice-versa. O valor resultante de cada série será o valor do lado esquerdo (padrão) ou, se usado como comparador, segue regras de comparador bool.
-  Uso típico: aplicar uma condição a um resultado. Por exemplo:
-
-  ```promql
-  (vector1 comparacao const) and vector1
-  ```
-
-  Isso retornaria apenas as séries de `vector1` que atendem à comparação (pois o comparador produzirá 1 para as séries que satisfazem, e então `and` manterá apenas essas).
-
-* **`or`:** União de séries. Retorna séries que estão em **pelo menos um** dos lados. Se a mesma série (mesmos labels) aparece em ambos, o valor resultante será o do lado esquerdo (padrão) ou pode ser modificado com bool se estivermos combinando booleanos. É útil para combinar resultados diferentes.
-  Por exemplo:
-
-  ```promql
-  vector_a or vector_b
-  ```
-
-  Isso dá todas as séries de `vector_a` e `vector_b`. Se alguma série estiver presente nos dois, aparece uma vez só (com valor de `vector_a`).
-
-* **`unless`:** Retém as séries do lado esquerdo **a menos que** elas também apareçam no lado direito. Equivale a diferença de conjuntos: resultado = esquerda \ direita. (Obs: O lado direito só importa pelos labels, seus valores são ignorados).
-  Por exemplo:
-
-  ```promql
-  up{job="api"} unless up{job="api", region="us-east"}
-  ```
-
-  Isso retornaria as séries `up` do job "api" **que não têm** region="us-east", ou seja, efetivamente filtra fora todas as instâncias da região us-east.
-
-Os operadores lógicos são avaliados após todos os cálculos numéricos serem feitos. Isso significa que podemos usá-los tanto em métricas brutas quanto em resultados de expressões.
-
-**Exemplos práticos combinando comparações e operadores lógicos:**
-
-* **Contar instâncias ativas em dois grupos diferentes:**
-
-  ```promql
-  sum(up{job="node"} == 1) or sum(up{job="db"} == 1)
-  ```
-
-  Esse exemplo usa `== 1` para converter as séries `up` em booleanas (1 para up, 0 para down) e soma para contar quantas estão up em cada job. O `or` aqui faz a união, retornando duas séries (uma para node e outra para db) com o valor de quantas instâncias estão up em cada.
-
-* **Filtrar top 5 de um conjunto e combinar com outro critério:**
-
-  ```promql
-  topk(5, rate(http_requests_total[5m])) and ignoring(instance) (rate(errors_total[5m]) > 0)
-  ```
-
-  Esse exemplo hipotético pegaria as 5 maiores taxas de requisição (independente de instância) e então, através do `and` com `ignoring(instance)` e a condição de erros, manteria somente aquelas cujo serviço (ignorando instâncias) está apresentando erros. Bastante específico, mas demonstra o uso combinado: `topk` produz séries; a outra parte produz 1/0 para serviços com erro; o `and ignoring(instance)` casa por serviço e filtra.
-
-Lembrando que, se quisermos comparar valores de uma série com um número e obter diretamente 1 ou 0, podemos usar o modificador `bool`. Exemplo: `vector1 > bool 10` retornaria um vetor com valor 1 para séries onde `vector1` > 10 e 0 caso contrário (mantendo os labels). Sem `bool`, ele retornaria as próprias séries (com seus valores originais) porém filtradas pelas que atendem à condição.
-
-### Subconsultas e Análise Temporal Avançada
-
-**Counter Range Vectors**: Contadores são métricas que apenas aumentam (ou resetam para zero e voltam a aumentar). Exemplos: número total de requisições atendidas, bytes transferidos, etc. Quando consultamos diretamente um *counter* como range vector, obteremos uma série de pontos que só crescem (com eventuais resets). Para extrair informações úteis (como taxa de eventos por segundo ou aumentos em determinado período) usamos funções especiais:
-
-* `rate(counter[5m])`: Calcula a **taxa média por segundo** de incremento do contador nos últimos 5 minutos. Essa função já lida corretamente com resets do contador (ignorando as quedas abruptas devido a resets e calculando a taxa considerando isso).
-* `irate(counter[5m])`: Calcula a **taxa instantânea** (baseada apenas nos dois pontos mais recentes dentro dos 5 minutos). É mais ruidosa, mas pode reagir mais rapidamente a mudanças repentinas.
-* `increase(counter[1h])`: Calcula **quanto o contador aumentou** no último 1 hora. Essencialmente integra a taxa ao longo do período.
-
-**Agregação através do tempo (Aggregating Across Time)**: Às vezes, queremos primeiro agregar os dados e depois analisar a evolução temporal dessa agregação. As **subconsultas** nos permitem isso. Uma *subquery* (subconsulta) é quando temos uma expressão do PromQL seguida de um intervalo entre colchetes e possivelmente uma resolução, por exemplo: `expr[duração:passo]`. Isso faz o Prometheus avaliar `expr` repetidamente ao longo do intervalo dado, produzindo um range vector como resultado.
-
-Por exemplo, `avg_over_time(rate(http_requests_total[1m])[24h:1h])` funciona assim:
-
-* Internamente, `rate(http_requests_total[1m])` é avaliado para cada passo de 1h dentro das últimas 24h, gerando a taxa média por minuto calculada a cada hora.
-* Em seguida, `avg_over_time(...[24h:1h])` calcula a média desses 24 valores (um por hora) **no tempo atual**. Na prática, isso nos daria a média da taxa horária de requisições no dia.
-
-Subconsultas são muito poderosas e foram aprimoradas a partir do Prometheus 2.7. Com elas é possível, por exemplo, calcular tendências, baselines e sazonalidade de forma compacta.
-
-**Exemplos avançados de subconsultas e análise de tendências:**
-
-* **Tendência de taxa de erro (janela móvel):** Calcular a média da taxa de erros em janelas de 1 hora, ao longo das últimas 24 horas:
-
-  ```promql
-  avg_over_time(
-    rate(http_requests_total{status=~"5.."}[1m])[24h:1h]
-  )
-  ```
-
-  Essa consulta gera 24 pontos (taxa de erro média de cada hora nas últimas 24h) e depois calcula a média disso tudo (ou seja, a média diária da taxa de erro). Poderíamos também omitir a função externa para simplesmente visualizar a série das últimas 24 horas e identificar padrões de aumento ou redução de erros ao longo do dia.
-
-* **Baseline de performance (comparação com média histórica):** Comparar a performance atual com a média da última semana:
-
-  ```promql
-  rate(http_requests_total[5m]) 
-    / avg_over_time(rate(http_requests_total[5m])[7d])
-  ```
-
-  Essa consulta produz uma razão: valores acima de 1 indicam que a taxa atual de requisições está **acima** da média semanal; valores abaixo de 1, abaixo da média. Isso pode ser útil para identificar desvios significativos de tráfego.
-
-* **Detecção de anomalia sazonal (padrão horário):** Comparar o tráfego atual com o padrão do último dia:
-
-  ```promql
-  rate(http_requests_total[5m]) 
-    / avg_over_time(rate(http_requests_total[5m])[24h:1h])
-  ```
-
-  Aqui, o denominador `avg_over_time(...[24h:1h])` produz a média da taxa em cada hora do dia anterior. Dividindo a taxa atual por esse valor da mesma hora ontem, podemos identificar se o tráfego está anormalmente alto ou baixo para este horário do dia.
-
-* **Diferença diária (subconsulta com offset):** Para calcular a diferença em uma métrica entre hoje e ontem, podemos usar `offset`. Exemplo:
-
-  ```promql
-  my_metric - my_metric offset 1d
-  ```
-
-  Isso resulta em quanto `my_metric` variou em comparação com exatamente 24 horas atrás.
-
-* **Soma acumulada (exemplo de subconsulta):**
-
-  ```promql
-  sum(my_counter) - sum(my_counter) offset 1d
-  ```
-
-  Este exemplo soma o contador `my_counter` (provavelmente de várias instâncias) e subtrai o valor de 1 dia atrás, mostrando o incremento total em um dia. Essa é outra forma de calcular algo similar a `increase(my_counter[1d])`.
-
-Em todos esses casos, as subconsultas `[ ... ]` estão permitindo observar ou reutilizar resultados ao longo do tempo dentro de uma única expressão.
-
-### Funções Avançadas e Especializadas
-
-Algumas funções do PromQL são menos conhecidas, mas podem ser extremamente poderosas em cenários específicos:
-
-* **`resets(counter[interval])`:** Conta quantas vezes um contador "resetou" (voltou a zero) no período. Útil para detectar reinicializações de aplicativos ou problemas de coleta.
-  *Exemplos:*
-
-  ```promql
-  resets(http_requests_total[5m])
-  ```
-
-  Contaria quantos resets ocorreram no `http_requests_total` nos últimos 5 minutos. Se esse número for > 0 constantemente, pode indicar que o serviço está reiniciando frequentemente (se o contador for interno ao serviço) ou que há overflow de contadores.
-
-* **`changes(series[interval])`:** Conta quantas vezes o valor de uma série mudou durante o intervalo. Isso vale para qualquer métrica (não apenas counters). Pode indicar instabilidade ou flapping.
-  *Exemplo:*
-
-  ```promql
-  changes(process_start_time_seconds[5m]) > 0
-  ```
-
-  O exemplo acima retornaria 1 para instâncias cujo `process_start_time_seconds` (normalmente um timestamp de início do processo) tenha mudado nos últimos 5 minutos — ou seja, o processo reiniciou nesse período.
-
-* **`predict_linear(series[interval], passos_no_futuro)`:** Realiza uma extrapolação linear do valor da série com base na tendência nos últimos intervalos e prevê o valor daqui a X segundos (informado em `passos_no_futuro`). Útil para prever quando algo alcançará um certo limite.
-  *Exemplo:*
-
-  ```promql
-  predict_linear(node_filesystem_free_bytes[1h], 3600) < 0
-  ```
-
-  Poderia ser usado para alertar se a tendência de queda do espaço livre prevê que em 1 hora (`3600` segundos) o espaço chegaria a zero.
-
-* **`holt_winters(series[interval], sf, tf)`:** Embora mais comum no Graphite, o PromQL também tem uma função de previsão chamada `holt_winters` (Holt-Winters, série temporal com tendência e sazonalidade). Aceita uma série (geralmente resultado de subconsulta) e realiza suavização exponencial dupla. No entanto, essa função é raramente usada diretamente em alertas, servindo mais para visualização de tendências suavizadas.
-
-* **Funções para histogramas nativos (Prometheus 3.x):**
-
-  * `histogram_count()` e `histogram_sum()` – Retornam, respectivamente, a contagem total e a soma total das observações de histogramas (clássicos ou nativos). Para histogramas clássicos, esses usam as séries `_count` e `_sum` internas; para nativos, usam os valores codificados.
-  * `histogram_avg()` – Computa a média dos valores observados em cada histograma, equivalente a `histogram_sum/histogram_count`.
-  * `histogram_fraction(lower, upper, hist)` – Estima a fração de observações dentro do intervalo `[lower, upper]` para cada histograma. Útil, por exemplo, para calcular *Apdex* (fração de requisições abaixo de um certo limiar de latência).
-
-Lembrando que algumas dessas funções mais novas podem requerer flags experimentais, dependendo da versão do Prometheus.
 
 ## PromQL na Prática
 

@@ -4,7 +4,7 @@ description = "Uma visão geral do compilador do Rust"
 date = 2025-07-21T12:00:00-00:00
 tags = ["Rust", "Compiladores", "LLVM", "Memória", "Segurança"]
 draft = false
-weight = 1
+weight = 2
 author = "Vitor Lobo Ramos"
 +++
 

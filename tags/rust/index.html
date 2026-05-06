@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778069197">
+<link rel="stylesheet" href="/css/main.css?v=1778071284">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778071284">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778071284">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778069197"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778071284"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -446,59 +446,6 @@ window.I18n = I18n;
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="https://scovl.github.io/2025/07/21/rustcomp/">Como o compilador do Rust funciona?</a>
-        </h2>
-        
-        <div class="post-item-meta">
-            
-            <time datetime="2025-07-21T12:00:00Z">
-                Mon, Jul 21, 2025
-            </time>
-            
-            
-            
-            <span class="post-author">por Vitor Lobo Ramos</span>
-            
-            
-            
-            <div class="post-item-tags">
-                
-                <a href="/tags/rust/" class="tag">Rust</a>
-                
-                <a href="/tags/compiladores/" class="tag">Compiladores</a>
-                
-                <a href="/tags/llvm/" class="tag">LLVM</a>
-                
-                <a href="/tags/mem%C3%B3ria/" class="tag">Memória</a>
-                
-                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
-                
-            </div>
-            
-            
-            
-            <div class="post-description">
-                Uma visão geral do compilador do Rust
-            </div>
-            
-        </div>
-        
-        
-        <div class="post-item-summary">
-            <h1 id="introdução">Introdução</h1>
-<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
-<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
-            
-            <a href="https://scovl.github.io/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
-            
-        </div>
-        
-    </article>
-    
-    
-    
-    <article class="post-item">
-        <h2 class="post-item-title">
             <a href="https://scovl.github.io/2025/05/23/trycatch/">Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico</a>
         </h2>
         
@@ -548,6 +495,59 @@ window.I18n = I18n;
 <p>O modelo de tratamento estruturado de exceções evoluiu desde os anos 60, ganhando formas mais concretas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
             
             <a href="https://scovl.github.io/2025/05/23/trycatch/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/2025/07/21/rustcomp/">Como o compilador do Rust funciona?</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-07-21T12:00:00Z">
+                Mon, Jul 21, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/rust/" class="tag">Rust</a>
+                
+                <a href="/tags/compiladores/" class="tag">Compiladores</a>
+                
+                <a href="/tags/llvm/" class="tag">LLVM</a>
+                
+                <a href="/tags/mem%C3%B3ria/" class="tag">Memória</a>
+                
+                <a href="/tags/seguran%C3%A7a/" class="tag">Segurança</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Uma visão geral do compilador do Rust
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="introdução">Introdução</h1>
+<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
+<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
+            
+            <a href="https://scovl.github.io/2025/07/21/rustcomp/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -615,24 +615,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069197"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778071284"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778069197"></script>
-    <script src="/js/lazy-loading.js?v=1778069197"></script>
-    <script src="/js/toc.js?v=1778069197"></script>
+    <script src="/js/main-minimal.js?v=1778071284"></script>
+    <script src="/js/lazy-loading.js?v=1778071284"></script>
+    <script src="/js/toc.js?v=1778071284"></script>
     
     
     

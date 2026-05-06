@@ -16,94 +16,187 @@
     
     
     <item>
-      <title>Como o compilador do Rust funciona?</title>
-      <link>https://scovl.github.io/2025/07/21/rustcomp/</link>
-      <guid>https://scovl.github.io/2025/07/21/rustcomp/</guid>
-      <pubDate>Mon, 21 Jul 2025 12:00:00 &#43;0000</pubDate>
-      <description>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
-<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
-<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>]]></description>
-      <content:encoded>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
-<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
-<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
-<p>Mostrarei como o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> (aquele que reclama dos seus empréstimos de variáveis), as representações intermediárias (com nomes esquisitos como <a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a>, <a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a> e <a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a>) e as otimizações finais trabalham juntos para impedir problemas como dois lugares mexendo na mesma memória ao mesmo tempo <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data race</a></strong> ou acessar algo que já foi apagado <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a></strong>.</p>
-<p>No fim das contas, a arquitetura em camadas do compilador do Rust permite que ele seja rápido como C, mas com muito mais garantias de que seu programa não vai dar pau por causa de bugs difíceis de achar. Tudo isso graças a essas etapas intermediárias e checagens automáticas que acontecem antes mesmo do programa rodar.</p>
-<h2 id="a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</h2>
-<p>Linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> ficam em um ponto intermediário: elas oferecem mais controle sobre o funcionamento do computador do que linguagens como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29">C#</a>, mas não são tão próximas do hardware quanto <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>.</p>
-<p>O que as diferencia é a forma como lidam com a memória: em C, o programador tem liberdade total para manipular ponteiros, mas também assume todos os riscos de erros; em Go, existe um coletor de lixo que gerencia a memória automaticamente; já o Rust criou um sistema próprio de &ldquo;posse e empréstimo&rdquo; (ownership e borrowing), que previne muitos problemas de memória já na fase de compilação, antes mesmo do programa rodar.</p>
-<blockquote>
-<p>Quando falamos que linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>) e &ldquo;alto nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>) e que elas ficam sempre no meio.</p>
-</blockquote>
-<p>Na verdade, é só uma forma de dizer que elas misturam características dos dois lados: dão bastante controle sobre o computador (como <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>), mas também oferecem recursos que facilitam a vida do programador (como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>).</p>
-<blockquote>
-<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho.</p>
-</blockquote>
-<p>Ou seja, &ldquo;intermediária&rdquo; é só um jeito de dizer que essas linguagens conseguem equilibrar controle e facilidade, ficando entre o mundo das linguagens super próximas do hardware e o das linguagens super abstratas.</p>
-<h2 id="o-compilador-do-rust">O compilador do Rust</h2>
-<p>Quando a gente fala de compilador, normalmente ele é dividido em três partes: <strong>frontend</strong> (a parte que entende o seu código e transforma em uma estrutura de árvore chamada AST), <strong>middle-end</strong> (que faz otimizações que valem pra qualquer computador) e <strong>backend</strong> (que transforma tudo em código de máquina pra rodar no seu PC). O Rust segue esse modelo, mas adiciona umas etapas extras só pra garantir que ninguém vai fazer besteira com a memória.</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp01.png" alt="Rust Compiler"></p>
-<p>A imagem acima mostra que o compilador do Rust funciona como uma linha de montagem em três etapas: primeiro ele lê e entende seu código (frontend), depois faz uma checagem rigorosa das regras de segurança de memória (middle, onde entra o <a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a>), e por fim transforma tudo em código de máquina que o computador entende (backend); assim, cada parte cuida de um tipo de problema e, no final, seu programa sai rápido e seguro, sem aquelas dores de cabeça típicas de bugs de memória.</p>
-<p>Quando você manda o Rust compilar seu arquivo <code>.rs</code>, a primeira coisa que acontece é que o compilador lê o texto e separa tudo em &ldquo;palavrinhas&rdquo; chamadas <em>tokens</em> (nomes de variáveis, números, símbolos, etc). Isso é o trabalho do <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">analisador léxico</a></strong>.</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp02.png" alt="Lexing"></p>
-<p>A imagem acima mostra, de forma bem simples, como o compilador do Rust começa a entender seu código: primeiro ele lê o texto do programa e separa tudo em &ldquo;palavrinhas&rdquo; chamadas tokens (tipo nomes de variáveis, números, símbolos), e depois organiza esses tokens em uma espécie de árvore que mostra como as partes do seu código se encaixam — como se fosse um esqueleto do programa (a <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a></strong>).</p>
-<p>Ou seja, a figura mostra que o compilador transforma o texto que você escreveu em uma estrutura organizada, facilitando para as próximas etapas encontrarem erros e entenderem o que o programa realmente faz.</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp03.png" alt="AST"></p>
-<p>Nessa etapa, o compilador também já expande as <strong>macros</strong>. Ou seja, se você usou algum &ldquo;atalho&rdquo; ou macro, ele já troca pelo código real, pra facilitar as próximas fases. Agora vem uma etapa crucial: o compilador pega a AST (que ainda tem comandos de alto nível, tipo o <code>for</code>) e faz um &ldquo;rebaixamento&rdquo; <strong><a href="https://en.wikipedia.org/wiki/Code_lowering">lowering</a></strong>: transforma a AST numa versão mais simples chamada <strong><a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a></strong> (High-level IR).</p>
-<p>Essa transformação é fundamental porque a HIR é mais próxima do que a linguagem realmente entende — ela remove a complexidade da sintaxe e deixa tudo mais &ldquo;quadradinho&rdquo; para as próximas análises.</p>
-<p>Em seguida, ele faz a análise de tipos e gera a <strong><a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a></strong> (Typed HIR), onde cada pedacinho do código já tem um tipo definido (int, string, etc).</p>
-<p>Antes de seguir, o compilador faz uma checagem de segurança chamada <strong>unsafety</strong>: ele olha a THIR pra garantir que coisas perigosas (tipo mexer direto na memória com ponteiros) só aconteçam dentro de blocos marcados como <code>unsafe</code>. Assim, ele já barra muita coisa errada antes mesmo de virar código de verdade.</p>
-<p>A <strong><a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a></strong> converte o programa num <strong><a href="https://en.wikipedia.org/wiki/Control-flow_graph">Grafo de Fluxo de Controle (CFG)</a></strong> explícito. Esse grafo permite ao <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> rastrear, ao longo de todos os caminhos de execução, o estado de cada valor: possuído, emprestado mutável, emprestado imutável ou movido.</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp04.png" alt="CFG"></p>
-<p>A imagem acima ilustra um exemplo simplificado de um <strong>Grafo de Fluxo de Controle (CFG)</strong>. Nela, o círculo azul no topo representa um ponto de decisão ou condição no seu código (como um <code>if</code> ou <code>match</code>). As setas que partem dele mostram os possíveis caminhos que o programa pode seguir: um para o caso <code>True</code> (círculo vermelho à esquerda) e outro para o caso <code>False</code> (círculo vermelho à direita).</p>
-<p>Ambos os caminhos convergem para o círculo verde pontilhado na parte inferior, que simboliza a continuação do programa após a decisão. É essa representação em grafo que permite ao <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> do Rust analisar todos os fluxos possíveis do seu código e garantir a segurança da memória em cada um deles, independentemente de qual caminho o programa realmente tomar em tempo de execução.</p>
-<h2 id="o-mago-da-memória-entendendo-o-borrow-checker">O Mago da Memória: Entendendo o Borrow Checker</h2>
-<p>O <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> é o coração do sistema de segurança do Rust. Ele funciona como um inspetor rigoroso que analisa cada pedaço do seu código para garantir que ninguém vai mexer na memória de forma perigosa. Usando a MIR como base, o borrow checker rastreia três estados principais para cada valor:</p>
-<ol>
-<li><strong>Possuído (Owned)</strong>: O valor pertence exclusivamente a uma variável</li>
-<li><strong>Emprestado Imutável (Borrowed Immutable)</strong>: Outras partes do código podem ler, mas não modificar</li>
-<li><strong>Emprestado Mutável (Borrowed Mutable)</strong>: Apenas uma parte pode ler e modificar por vez</li>
-</ol>
-<p>Caso uma violação ocorra (uso de valor após movimento, criação de dados mutáveis e imutáveis simultâneos, etc.), o compilador rejeita o código. Esse mecanismo previne <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use‑after‑free</a></strong> sem custo em tempo de execução. O borrow checker é tão eficiente que muitos programadores Rust brincam que ele é &ldquo;o melhor professor de programação que você já teve&rdquo; — ele te ensina boas práticas de memória antes mesmo do programa rodar!</p>
-<p>Após otimizações em MIR (eliminação de código morto, <strong><a href="https://en.wikipedia.org/wiki/Inline_function">inlining</a></strong> local, etc.), a IR é traduzida para <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong>. A <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong> (Low Level Virtual Machine Intermediate Representation) é uma linguagem intermediária de baixo nível, mas independente da arquitetura do processador.</p>
-<p>É nela que o Rust traduz tudo o que foi checado e otimizado até aqui, para que a LLVM possa realizar o trabalho pesado de otimização de código. A LLVM IR não é literalmente &ldquo;entendida pelo processador&rdquo; — ela serve como uma representação intermediária que o LLVM usa para gerar o código nativo específico da arquitetura de destino (como x86-64, ARM, etc.).</p>
-<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp05.png" alt="LLVM IR"></p>
-<p>O LLVM aplica otimizações específicas de arquitetura e, por fim, gera código objeto para a plataforma‑alvo, como x86‑64 ou AArch64. Como consequência, um binário Rust é normalmente específico à arquitetura de destino, a menos que se utilize camadas de emulação.</p>
-<h2 id="por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</h2>
-<p>Pense assim: cada IR (representação intermediária) é como um filtro diferente que o compilador usa para checar seu código. Primeiro, a HIR guarda bastante informação para que o compilador possa te dar mensagens de erro detalhadas e entender o contexto do seu programa. Depois, a MIR simplifica tudo, deixando o código mais &ldquo;quadradinho&rdquo; e fácil de analisar — é nessa hora que o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> entra em ação, garantindo que ninguém vai mexer na memória de um jeito perigoso.</p>
-<p>Essa divisão em camadas faz com que cada parte do compilador só precise se preocupar com um tipo de problema por vez. Isso facilita encontrar erros antes mesmo do programa rodar, sem deixar o código final mais lento.</p>
-<p>E, pra fechar com chave de ouro, o Rust entrega a última etapa (gerar o código de máquina de verdade) pro LLVM, que já é um especialista em otimização e velocidade. Assim, o Rust foca em garantir segurança e o LLVM em deixar tudo rápido.</p>
-<p>No fim das contas, o compilador do Rust funciona como uma linha de montagem cheia de inspeções: cada etapa checa uma coisa diferente, pegando vários erros que em outras linguagens só apareceriam quando o programa já estivesse rodando (ou pior, em produção!). Por isso, muita gente acredita que esse modelo de &ldquo;camadas inteligentes&rdquo; vai ser cada vez mais comum nas linguagens do futuro, juntando robustez e desempenho sem dor de cabeça.</p>
-<p>Por fim, vale destacar: linguagens como C e C++ não adotam esse modelo de múltiplas camadas de checagem automática durante a compilação. Nelas, o compilador faz análises mais simples e deixa a maior parte dos cuidados com memória e segurança por conta do programador.</p>
-<p>Isso significa que muitos erros perigosos — como acessar memória já liberada, criar <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> ou sobrescrever dados sem querer — só aparecem quando o programa já está rodando, e às vezes nem são detectados. O Rust, ao contrário, pega esses problemas antes mesmo do código virar um executável, tornando o desenvolvimento mais seguro sem sacrificar desempenho.</p>
-<blockquote>
-<p><a href="https://www.abeacha.com/NIST_press_release_bugs_cost.html">Um estudo de 2002 e publicado em2019 da National Institute of Standards and Technology (NIST)</a> estimou que os erros de software custam à economia dos EUA mais de 59,5 bilhões de dólares anualmente, com uma parcela significativa desses custos vindo de vulnerabilidades de segurança e falhas de memória. A ausência de checagens automáticas em C/C++ contribui para que esses tipos de falhas se tornem uma preocupação constante.</p>
-</blockquote>
-<p>Para não soar como injusto, é necessário dizer que o C++23 trouxe várias novidades para tentar deixar o código mais seguro e moderno, especialmente quando o assunto é evitar bugs de memória — mas sem mudar a linguagem de cabeça pra baixo.</p>
-<p>Agora, por exemplo, dá pra declarar de forma explícita quando um objeto começa a existir na memória (com o <strong><a href="https://en.cppreference.com/w/cpp/language/lifetime#start_lifetime_as">start_lifetime_as</a></strong>), o que ajuda a evitar aqueles bugs cabeludos que nem os detectores automáticos pegavam. Também ficou mais fácil e seguro conversar com APIs em C sem correr o risco de vazar memória, graças a novos adaptadores de ponteiros inteligentes.</p>
-<p>Os containers ganharam versões que evitam acesso fora dos limites (tipo o <strong><a href="https://en.cppreference.com/w/cpp/container/mdspan">mdspan</a></strong> para matrizes), e ficou mais prático lidar com erros usando o <strong><a href="https://en.cppreference.com/w/cpp/utility/expected">std::expected</a></strong>, que incentiva o retorno explícito de falhas em vez de depender de códigos mágicos ou variáveis globais.</p>
-<p>Até a formatação de texto ficou mais fácil, <a href="https://en.cppreference.com/w/cpp/io/c/fprintf">com funções no estilo Python</a>, e agora dá pra gerar <a href="https://en.cppreference.com/w/cpp/error/stacktrace">stacktraces portáveis sem gambiarra</a>. Apesar desses avanços, algumas proteções automáticas que o Rust já oferece — como checagem de uso de ponteiros e detecção de data races — ainda não chegaram no C++ (ficaram pra próxima versão).</p>
-<blockquote>
-<p>Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p>
-</blockquote>
-<p>Enquanto o compilador do Rust atua como um inspetor de qualidade rigoroso, rejeitando qualquer código que possa violar as regras de segurança de memória, o compilador de C/C++ foca em traduzir o código de forma fiel e otimizada. Ele assume que o programador é o responsável por todas as garantias de segurança.</p>
-<hr>
-<h2 id="referências">REFERÊNCIAS</h2>
+      <title>A Batalha dos Milissegundos</title>
+      <link>https://scovl.github.io/2026/05/05/tps/</link>
+      <guid>https://scovl.github.io/2026/05/05/tps/</guid>
+      <pubDate>Tue, 05 May 2026 19:41:45 -0300</pubDate>
+      <description>&lt;![CDATA[<h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
+<p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
+<p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>]]></description>
+      <content:encoded>&lt;![CDATA[<h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
+<p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
+<p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>
+<h2 id="quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</h2>
+<p>Esta análise é relevante para sistemas onde a latência de serialização e compressão representa uma fração significativa do tempo total de resposta:</p>
 <ul>
-<li><a href="https://doc.rust-lang.org/reference/">The Rust Reference - The Rust Compiler</a> - A referência oficial do Rust sobre o compilador e a linguagem.</li>
-<li><a href="https://doc.rust-lang.org/rustc/">The Rustc Book</a> - O livro oficial do Rust sobre o compilador.</li>
-<li><a href="https://rustc-dev-guide.rust-lang.org/overview.html">Rust Compiler Architecture Overview</a> - Uma visão geral da arquitetura do compilador do Rust.</li>
-<li><a href="https://llvm.org/docs/LangRef.html">LLVM Language Reference Manual</a> - A referência oficial do LLVM sobre a linguagem intermediária.</li>
-<li><a href="https://en.cppreference.com/w/cpp/23">C++23</a> - A referência oficial do C++23.</li>
-<li><a href="https://github.com/baindlapranayraj/SolanaBlogs/blob/main/">Solana Blogs</a> - Onde o artigo se baseou.</li>
-<li><a href="https://medium.com/@humble_bee/why-is-memory-safety-without-gc-a-big-deal-in-rust-41f6bdd5902f">Why is memory safety without GC a big deal in Rust?</a> - Um artigo sobre a importância da segurança de memória sem GC no Rust.</li>
-<li><a href="https://rustc-dev-guide.rust-lang.org/overview.html#:~:text=Code%20generation">Overview of the compiler</a> - Uma seção do guia do Rust sobre a geração de código.</li>
-<li><a href="https://aneksteind.github.io/posts/2023-06-12.html#:~:text=Exploring%20Dataflow%20Analysis%20in%20the,control%20flow%20graph%20structure">Exploring Dataflow Analysis in the Rust Compiler</a> - Um artigo sobre a análise de fluxo de dados no compilador do Rust.</li>
-<li><a href="https://www.infoq.com/presentations/rust-borrow-checker/#:~:text=lowers%20it%20into%20the%20mid,also%20known%20as%20the%20MIR">Rust Borrow Checker</a> - Uma apresentação sobre o borrow checker do Rust.</li>
+<li><strong>Microsserviços internos com alto TPS</strong> — API gateways, serviços de mensageria, pipelines de dados que trocam milhões de mensagens por minuto.</li>
+<li><strong>Sistemas financeiros e de pagamento</strong> — processamento de transações, corretoras, câmbio, onde cada milissegundo impacta o custo operacional.</li>
+<li><strong>Plataformas de tempo real</strong> — streaming, jogos online, leilões, publicidade programática, onde a latência determina a experiência do usuário.</li>
+<li><strong>IoT e telemetria</strong> — coleta de métricas em massa de milhares de dispositivos, onde o volume de dados satura a rede antes da CPU.</li>
+</ul>
+<p>Por outro lado, <strong>não é uma preocupação relevante</strong> para:</p>
+<ul>
+<li><strong>APIs públicas com baixo a médio tráfego</strong> — CRUDs, sites institucionais, sistemas internos com poucos usuários simultâneos.</li>
+<li><strong>Sistemas batch e ETL</strong> — onde a latência individual de cada operação é irrelevante; o throughput geral é o que importa.</li>
+<li><strong>Aplicações com gargalo em banco de dados ou I/O de disco</strong> — nestes casos, otimizar a serialização traz ganhos marginais.</li>
+</ul>
+<p>Uma regra prática: se sua aplicação processa menos de <strong>1.000 TPS</strong> ou o tempo de serialização é inferior a <strong>1% da latência total</strong>, as otimizações discutidas aqui provavelmente não trarão ganhos significativos. Concentre-se primeiro nos gargalos dominantes.</p>
+<h2 id="o-paradoxo-da-latência">O Paradoxo da Latência</h2>
+<p>Em sistemas de alta performance, a latência total ($L_{total}$) de uma requisição não é apenas o tempo de rede. Ela pode ser expressa de forma simplificada pela seguinte equação:</p>
+<p>$$L_{total} = T_{ser} + T_{comp} + \frac{S_{payload}}{B_{rede}} + T_{decomp} + T_{deser}$$</p>
+<p>Onde:</p>
+<ul>
+<li>$T_{ser}$ / $T_{deser}$: Tempo de serialização/deserialização (CPU/Memória).</li>
+<li>$T_{comp}$ / $T_{decomp}$: Tempo de compressão/descompressão (CPU).</li>
+<li>$S_{payload}$: Tamanho do <em>payload</em> final (Bytes).</li>
+<li>$B_{rede}$: Banda disponível ou <em>throughput</em> da interface de rede.</li>
+</ul>
+<p>Simplificando em miúdos, a equação acima mostra que a latência total é a soma do tempo gasto em CPU para preparar os dados (serializar e comprimir), o tempo de transmissão na rede (que depende do tamanho do <em>payload</em> e da banda) e o tempo gasto para processar os dados no destino (descomprimir e desserializar).</p>
+<blockquote>
+<p><strong>Para se aprofundar:</strong> Este modelo é uma simplificação do custo de comunicação em sistemas distribuídos. A <a href="https://en.wikipedia.org/wiki/Little%27s_law">Lei de Little</a> e a <a href="https://en.wikipedia.org/wiki/Queueing_theory">Teoria das Filas</a> oferecem a base matemática para modelar concorrência e gargalos. A palestra de <a href="https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-2012-talk.pdf">Jeffrey Dean (Google, 2012)</a> sobre latências em sistemas de larga escala é referência essencial sobre o tema.</p>
+</blockquote>
+<p>Otimizar para alto TPS significa minimizar a soma desses fatores, equilibrando o custo computacional com o custo de I/O. Para ilustrar os caminhos possíveis, vejamos um mapa mental amigável da topologia de decisão:</p>
+
+
+  
+  <div class="mermaid">%%{init: {&#39;theme&#39;: &#39;base&#39;, &#39;themeVariables&#39;: { &#39;fontFamily&#39;: &#39;sans-serif&#39;, &#39;primaryColor&#39;: &#39;#a7c7e7&#39;, &#39;secondaryColor&#39;: &#39;#ffdfba&#39;, &#39;tertiaryColor&#39;: &#39;#baffc9&#39;, &#39;edgeLabelBackground&#39;:&#39;#ffffff&#39;, &#39;lineColor&#39;: &#39;#333333&#39;}}}%%
+graph TD
+    Client((🤓 Cliente&lt;br/&gt;&lt;i&gt;Faminto por Dados&lt;/i&gt;))
+    API{🚀 API Gateway /&lt;br/&gt;Load Balancer}
+    
+    JSON[📄 JSON Puro&lt;br/&gt;&lt;i&gt;O Tagarela&lt;/i&gt;]
+    JGZ[🗜️ JSON &#43; Gzip&lt;br/&gt;&lt;i&gt;O Esforçado&lt;/i&gt;]
+    PBG[📦 Protobuf &#43; Gzip&lt;br/&gt;&lt;i&gt;O Robusto&lt;/i&gt;]
+    ZST[⚡ Zstandard&lt;br/&gt;&lt;i&gt;O Mago do I/O&lt;/i&gt;]
+
+    Client &lt;==&gt;|100k&#43; TPS| API
+    
+    API -.-&gt;|CPU Livre / I/O Fritando| JSON
+    API -.-&gt;|I/O Médio / CPU Chorando| JGZ
+    API -.-&gt;|I/O Baixo / CPU Moderada| PBG
+    API -.-&gt;|I/O Mínimo / CPU Otimizada| ZST
+
+    JSON --&gt; GargaloRede{🔥 Gargalo&lt;br/&gt;de Rede/Banda}
+    JGZ --&gt; GargaloCPU{🔥 Gargalo&lt;br/&gt;de CPU}
+    PBG --&gt; Balanceado[✅ Balanceado]
+    ZST --&gt; Vencedor[👑 Performance&lt;br/&gt;Extrema]
+    
+    style Client fill:#ffb3ba,stroke:#333,stroke-width:2px
+    style API fill:#ffdfba,stroke:#333,stroke-width:2px
+    style Vencedor fill:#baffc9,stroke:#333,stroke-width:4px</div>
+ <h3 id="1-json-puro-a-ilusão-da-simplicidade">1. <a href="https://www.json.org/json-en.html">JSON</a> Puro: A Ilusão da Simplicidade</h3>
+<p>O JSON é onipresente, legível por humanos e possui suporte nativo em praticamente qualquer ecossistema.</p>
+<ul>
+<li><strong>O Cenário:</strong> O payload trafega em texto plano. Não há custo de $T_{comp}$ ou $T_{decomp}$.</li>
+<li><strong>O Problema no Alto TPS:</strong> Em linguagens de tipagem estática e alta performance (como <a href="https://learn.microsoft.com/en-us/dotnet/csharp/">C#</a>, <a href="https://www.rust-lang.org/">Rust</a> ou <a href="https://go.dev/">Go</a>), o <em>parsing</em> de JSON exige alocação excessiva de memória no <em>heap</em> e uso intenso de CPU para manipulação de strings e conversão de tipos (ex: parsing de <code>float64</code>). Além disso, o $S_{payload}$ é gigantesco devido à repetição de chaves, o que satura placas de rede (NICs) e buffers de socket muito antes da CPU atingir 100%.</li>
+<li><strong>Veredito:</strong> Inviável para <em>core internal services</em> em alto TPS. O custo de I/O e <em>Garbage Collection</em> (GC) destrói o <em>throughput</em>.</li>
+</ul>
+<blockquote>
+<p><strong>Para se aprofundar:</strong> Para cenários onde o JSON é mandatório (APIs públicas), parsers como <a href="https://simdjson.org/">simdjson</a> usam instruções SIMD para atingir GB/s na desserialização. Ainda assim, o tamanho do payload na rede e a alocação de memória permanecem gargalos inerentes ao formato.</p>
+</blockquote>
+<h3 id="2-json--gzip-o-cobertor-curto">2. JSON + <a href="https://www.gzip.org/">Gzip</a>: O Cobertor Curto</h3>
+<p>A reação natural ao esgotamento da banda de rede é habilitar o Gzip no <em>middleware</em>.</p>
+<ul>
+<li><strong>O Cenário:</strong> O payload é reduzido em até 70-80%. A placa de rede respira aliviada.</li>
+<li><strong>O Problema no Alto TPS:</strong> O algoritmo <a href="https://en.wikipedia.org/wiki/Deflate">DEFLATE</a> (base do Gzip) foi criado nos anos 90. Ele é computacionalmente caro. Ao habilitar Gzip em 50.000 TPS, o gargalo transfere-se imediatamente da rede para a CPU. Seus <em>workers</em> ou <em>goroutines</em> passarão a maior parte do tempo comprimindo bytes, aumentando a latência de <em>tail</em> (p99) e reduzindo a capacidade do servidor de processar novas conexões.</li>
+<li><strong>Veredito:</strong> Uma solução de legado. Útil para APIs públicas consumidas por navegadores, mas um tiro no pé para microsserviços internos.</li>
+</ul>
+<h3 id="3-protobuf--gzip-a-força-bruta-binária">3. Protobuf + Gzip: A Força Bruta Binária</h3>
+<p>Mudamos o protocolo de serialização. O <a href="https://protobuf.dev/">Protocol Buffers</a> (<a href="https://grpc.io/">gRPC</a>) entra em cena. No ecossistema chinês, o <a href="https://dubbo.apache.org/">Apache Dubbo</a> cumpre papel equivalente como framework RPC de alta performance, suportando serialização plugável (Hessian, Protobuf, JSON) e compressão customizada.</p>
+<ul>
+<li><strong>O Cenário:</strong> Apenas a troca do JSON para Protobuf reduz drasticamente o $T_{ser}$ e $T_{deser}$, além de eliminar nomes de chaves do <em>payload</em> (usando <em>tags</em> numéricas). O uso de GC cai drasticamente. Adicionar Gzip por cima diminui ainda mais o tamanho.</li>
+<li><strong>O Problema no Alto TPS:</strong> Embora o Protobuf seja incrivelmente eficiente, aplicar Gzip em <em>payloads</em> pequenos (comuns em microsserviços) é ineficiente. O Gzip precisa construir uma janela de dicionário dinâmica para cada requisição. Em um <em>payload</em> de 500 bytes, o cabeçalho do Gzip e o esforço computacional muitas vezes não justificam os poucos bytes salvos.</li>
+<li><strong>Veredito:</strong> Muito sólido e padrão de mercado (gRPC default), mas o Gzip impede que a arquitetura atinja seu limite absoluto.</li>
+</ul>
+<blockquote>
+<p><strong>Para se aprofundar:</strong> A <a href="https://developers.google.com/protocol-buffers/docs/performance">documentação de performance do Protocol Buffers</a> detalha custos de serialização por linguagem. O guia de <a href="https://grpc.io/docs/guides/benchmarking/">Benchmarking do gRPC</a> compara latência e throughput entre gRPC e REST/JSON em cenários reais.</p>
+</blockquote>
+<h3 id="4-o-triunfo-do-zstandard-zstd">4. O Triunfo do Zstandard (Zstd)</h3>
+<p>Desenvolvido pelo Facebook (<a href="https://github.com/Cyan4973">Yann Collet</a>), o Zstd mudou o paradigma da compressão, focado em velocidade de descompressão massiva e escalabilidade de níveis.</p>
+<ul>
+<li><strong>O Cenário:</strong> Zstd oferece taxas de compressão similares ou superiores ao Gzip, mas consome uma fração ínfima da CPU, especialmente na descompressão (que é até 10x mais rápida).</li>
+<li><strong>A &ldquo;Arma Secreta&rdquo; para TPS Extremo:</strong> O Zstd possui o modo <strong><a href="https://github.com/facebook/zstd#the-case-for-small-data-compression">Dictionary Compression</a></strong>. Em sistemas de alto TPS, os esquemas (seja JSON ou Protobuf) são repetitivos. Você pode treinar um dicionário Zstd com amostras do seu tráfego e distribuí-lo para os serviços. Ao comprimir um JSON pequeno de 300 bytes usando um dicionário pré-treinado, o $S_{payload}$ pode cair para 40 bytes em microssegundos, algo matematicamente impossível com o Gzip padrão.</li>
+<li><strong>Veredito:</strong> A escolha definitiva para a borda do estado da arte em engenharia de software.</li>
+</ul>
+<blockquote>
+<p><strong>Para se aprofundar:</strong> O post <a href="https://www.uber.com/blog/how-uber-uses-zstandard-for-rpc-compression/">How Uber Uses Zstandard for RPC Compression</a> (Uber Engineering, 2021) detalha a implementação de dicionários Zstd em produção. Para um guia técnico completo de treinamento, consulte a <a href="https://github.com/facebook/zstd#training">documentação oficial do Zstd</a>.</p>
+</blockquote>
+<p>Só que, como nem tudo são flores, a adoção do Zstd não é plug-and-play. Requer investimento inicial para treinar dicionários, integração de bibliotecas específicas (nem todas as linguagens têm bindings maduros) e uma curva de aprendizado para entender os parâmetros de compressão. Portanto, é uma decisão que requer a análise cuidadosa do trade-off entre complexidade de implementação e ganho de performance:</p>
+<h2 id="matriz-de-decisão-o-trade-off-final">Matriz de Decisão: O Trade-off Final</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Estratégia</th>
+          <th style="text-align: center">Uso de CPU</th>
+          <th style="text-align: center">Custo de Memória (GC/Aloc)</th>
+          <th style="text-align: center">Tamanho na Rede</th>
+          <th style="text-align: center">Complexidade de Implementação</th>
+          <th style="text-align: left">Caso de Uso Ideal</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>JSON Puro</strong></td>
+          <td style="text-align: center">Baixo</td>
+          <td style="text-align: center"><strong>Crítico</strong> (Parsing pesado)</td>
+          <td style="text-align: center"><strong>Massivo</strong></td>
+          <td style="text-align: center">Muito Baixa</td>
+          <td style="text-align: left">Prototipagem, Integração com sistemas legados externos.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>JSON + Gzip</strong></td>
+          <td style="text-align: center"><strong>Crítico</strong></td>
+          <td style="text-align: center">Alto</td>
+          <td style="text-align: center">Moderado</td>
+          <td style="text-align: center">Baixa (Middlewares prontos)</td>
+          <td style="text-align: left">APIs públicas RESTful onde o gargalo é a conexão do cliente (3G/4G).</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>Protobuf + Gzip</strong></td>
+          <td style="text-align: center">Moderado</td>
+          <td style="text-align: center">Muito Baixo</td>
+          <td style="text-align: center">Pequeno</td>
+          <td style="text-align: center">Moderada (Requer <code>.proto</code> files)</td>
+          <td style="text-align: left">Ecossistemas gRPC padrão, tráfego <em>cross-region</em> (onde banda é cara).</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>Zstd + Protobuf</strong></td>
+          <td style="text-align: center">Muito Baixo</td>
+          <td style="text-align: center">Quase Nulo (Baixa alocação)</td>
+          <td style="text-align: center"><strong>Mínimo</strong></td>
+          <td style="text-align: center">Alta (Treino de dicionários, bindings específicos)</td>
+          <td style="text-align: left"><strong>Sistemas de missão crítica, mensageria de alta densidade (<a href="https://kafka.apache.org/">Kafka</a>, <a href="https://rocketmq.apache.org/">RocketMQ</a>), e TPS extremo.</strong></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p><strong>Para se aprofundar:</strong> Os <a href="https://facebook.github.io/zstd/#benchmarks">benchmarks oficiais do Zstd</a> mostram que, no nível 3, a descompressão é 5-10x mais rápida que Gzip no nível 6 com taxa de compressão equivalente — dados concretos que fundamentam as análises deste artigo. No contexto chinês, o <strong>Double 11 (Singles&rsquo; Day)</strong> do Alibaba — que ultrapassa centenas de milhares de TPS no pico — valida na prática a combinação de serialização binária e compressão eficiente em escala real de produção.</p>
+</blockquote>
+<p>Para um cenário de <strong>TPS realmente alto</strong>, a combinação campeã indiscutível é <strong><a href="https://protobuf.dev/">Protobuf</a> (ou similar como <a href="https://flatbuffers.dev/">FlatBuffers</a>/<a href="https://capnproto.org/">Cap&rsquo;n Proto</a>) aliado ao Zstd</strong>, preferencialmente utilizando dicionários pré-treinados se os <em>payloads</em> forem pequenos (abaixo de 1KB).</p>
+<p>Essa escolha ataca os três maiores vilões da performance simultaneamente:</p>
+<ol>
+<li>Elimina o gargalo de <em>parsing</em> e <em>garbage collection</em> (vantagem do binário estruturado).</li>
+<li>Minimiza a saturação da placa de rede (vantagem da compressão eficiente).</li>
+<li>Preserva ciclos preciosos de CPU para a regra de negócio (vantagem do algoritmo Zstd).</li>
+</ol>
+<p>A adoção de tecnologias puramente textuais e algoritmos de compressão dos anos 90, embora convenientes, rapidamente se tornam um teto financeiro (custos de infraestrutura) e técnico (limite de escalabilidade vertical) quando submetidos a escalas monumentais.</p>
+<hr>
+<h3 id="fontes-e-referências">Fontes e Referências</h3>
+<ul>
+<li>Collet, Y. (2016). <a href="https://facebook.github.io/zstd/">Zstandard - Fast real-time compression algorithm</a>. (Meta/Facebook Open Source).</li>
+<li>Google Developers. (2023). <a href="https://protobuf.dev/">Protocol Buffers Documentation</a>.</li>
+<li>Uber Engineering Blog. (2021). <a href="https://www.uber.com/blog/how-uber-uses-zstandard-for-rpc-compression/">How Uber Uses Zstandard for RPC Compression</a>.</li>
+<li>Dean, J. (2012). <a href="https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-2012-talk.pdf">Latency in Large-Scale Systems</a>. Google/Stanford Talk.</li>
+<li>Little, J. D. C. (1961). <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little&rsquo;s Law</a>. <em>Operations Research</em>.</li>
+<li>simdjson Project. <a href="https://simdjson.org/">simdjson: Parsing JSON at Gigabytes per Second</a>.</li>
+<li>Google Developers. (2023). <a href="https://developers.google.com/protocol-buffers/docs/performance">Protocol Buffers Performance</a>.</li>
+<li>Apache Dubbo. <a href="https://dubbo.apache.org/">Apache Dubbo Documentation</a>.</li>
+<li>Apache RocketMQ. <a href="https://rocketmq.apache.org/">Apache RocketMQ Documentation</a>.</li>
 </ul>
 ]]></content:encoded>
       
       
-      <category>Rust,Compiladores,LLVM,Memória,Segurança</category>
+      <category>performance,latência,compressão,protobuf,zstd,arquitetura de software</category>
       
       
       
@@ -113,7 +206,7 @@
       
       
       
-      <description>&lt;![CDATA[Uma visão geral do compilador do Rust]]></description>
+      <description>&lt;![CDATA[Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam.]]></description>
       
     </item>
     
@@ -1527,6 +1620,108 @@ async function processarUsuarios() {
     </item>
     
     <item>
+      <title>Como o compilador do Rust funciona?</title>
+      <link>https://scovl.github.io/2025/07/21/rustcomp/</link>
+      <guid>https://scovl.github.io/2025/07/21/rustcomp/</guid>
+      <pubDate>Mon, 21 Jul 2025 12:00:00 &#43;0000</pubDate>
+      <description>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
+<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
+<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<h1 id="introdução">Introdução</h1>
+<p>O Rust é famoso por ser uma linguagem que evita muitos erros de memória sem precisar de um coletor de lixo rodando em segundo plano. Mas como ele faz isso? O segredo está no compilador, que passa seu código por várias etapas até virar um programa que o computador entende.</p>
+<p>Neste artigo, explicarei de forma simples cada fase desse processo: desde a leitura do código <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">lexing</a></strong>, passando pela análise da estrutura <strong><a href="https://en.wikipedia.org/wiki/Parsing">parsing</a></strong>, até a geração do código final pelo <strong><a href="https://llvm.org/">LLVM</a></strong>.</p>
+<p>Mostrarei como o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> (aquele que reclama dos seus empréstimos de variáveis), as representações intermediárias (com nomes esquisitos como <a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a>, <a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a> e <a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a>) e as otimizações finais trabalham juntos para impedir problemas como dois lugares mexendo na mesma memória ao mesmo tempo <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data race</a></strong> ou acessar algo que já foi apagado <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use-after-free</a></strong>.</p>
+<p>No fim das contas, a arquitetura em camadas do compilador do Rust permite que ele seja rápido como C, mas com muito mais garantias de que seu programa não vai dar pau por causa de bugs difíceis de achar. Tudo isso graças a essas etapas intermediárias e checagens automáticas que acontecem antes mesmo do programa rodar.</p>
+<h2 id="a-ponte-entre-seu-código-e-o-computador">A ponte entre seu código e o computador</h2>
+<p>Linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> ficam em um ponto intermediário: elas oferecem mais controle sobre o funcionamento do computador do que linguagens como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29">C#</a>, mas não são tão próximas do hardware quanto <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>.</p>
+<p>O que as diferencia é a forma como lidam com a memória: em C, o programador tem liberdade total para manipular ponteiros, mas também assume todos os riscos de erros; em Go, existe um coletor de lixo que gerencia a memória automaticamente; já o Rust criou um sistema próprio de &ldquo;posse e empréstimo&rdquo; (ownership e borrowing), que previne muitos problemas de memória já na fase de compilação, antes mesmo do programa rodar.</p>
+<blockquote>
+<p>Quando falamos que linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>) e &ldquo;alto nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>) e que elas ficam sempre no meio.</p>
+</blockquote>
+<p>Na verdade, é só uma forma de dizer que elas misturam características dos dois lados: dão bastante controle sobre o computador (como <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>), mas também oferecem recursos que facilitam a vida do programador (como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>).</p>
+<blockquote>
+<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho.</p>
+</blockquote>
+<p>Ou seja, &ldquo;intermediária&rdquo; é só um jeito de dizer que essas linguagens conseguem equilibrar controle e facilidade, ficando entre o mundo das linguagens super próximas do hardware e o das linguagens super abstratas.</p>
+<h2 id="o-compilador-do-rust">O compilador do Rust</h2>
+<p>Quando a gente fala de compilador, normalmente ele é dividido em três partes: <strong>frontend</strong> (a parte que entende o seu código e transforma em uma estrutura de árvore chamada AST), <strong>middle-end</strong> (que faz otimizações que valem pra qualquer computador) e <strong>backend</strong> (que transforma tudo em código de máquina pra rodar no seu PC). O Rust segue esse modelo, mas adiciona umas etapas extras só pra garantir que ninguém vai fazer besteira com a memória.</p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp01.png" alt="Rust Compiler"></p>
+<p>A imagem acima mostra que o compilador do Rust funciona como uma linha de montagem em três etapas: primeiro ele lê e entende seu código (frontend), depois faz uma checagem rigorosa das regras de segurança de memória (middle, onde entra o <a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a>), e por fim transforma tudo em código de máquina que o computador entende (backend); assim, cada parte cuida de um tipo de problema e, no final, seu programa sai rápido e seguro, sem aquelas dores de cabeça típicas de bugs de memória.</p>
+<p>Quando você manda o Rust compilar seu arquivo <code>.rs</code>, a primeira coisa que acontece é que o compilador lê o texto e separa tudo em &ldquo;palavrinhas&rdquo; chamadas <em>tokens</em> (nomes de variáveis, números, símbolos, etc). Isso é o trabalho do <strong><a href="https://en.wikipedia.org/wiki/Lexical_analysis">analisador léxico</a></strong>.</p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp02.png" alt="Lexing"></p>
+<p>A imagem acima mostra, de forma bem simples, como o compilador do Rust começa a entender seu código: primeiro ele lê o texto do programa e separa tudo em &ldquo;palavrinhas&rdquo; chamadas tokens (tipo nomes de variáveis, números, símbolos), e depois organiza esses tokens em uma espécie de árvore que mostra como as partes do seu código se encaixam — como se fosse um esqueleto do programa (a <strong><a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a></strong>).</p>
+<p>Ou seja, a figura mostra que o compilador transforma o texto que você escreveu em uma estrutura organizada, facilitando para as próximas etapas encontrarem erros e entenderem o que o programa realmente faz.</p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp03.png" alt="AST"></p>
+<p>Nessa etapa, o compilador também já expande as <strong>macros</strong>. Ou seja, se você usou algum &ldquo;atalho&rdquo; ou macro, ele já troca pelo código real, pra facilitar as próximas fases. Agora vem uma etapa crucial: o compilador pega a AST (que ainda tem comandos de alto nível, tipo o <code>for</code>) e faz um &ldquo;rebaixamento&rdquo; <strong><a href="https://en.wikipedia.org/wiki/Code_lowering">lowering</a></strong>: transforma a AST numa versão mais simples chamada <strong><a href="https://en.wikipedia.org/wiki/High-level_intermediate_representation">HIR</a></strong> (High-level IR).</p>
+<p>Essa transformação é fundamental porque a HIR é mais próxima do que a linguagem realmente entende — ela remove a complexidade da sintaxe e deixa tudo mais &ldquo;quadradinho&rdquo; para as próximas análises.</p>
+<p>Em seguida, ele faz a análise de tipos e gera a <strong><a href="https://en.wikipedia.org/wiki/Typed_high_level_intermediate_representation">THIR</a></strong> (Typed HIR), onde cada pedacinho do código já tem um tipo definido (int, string, etc).</p>
+<p>Antes de seguir, o compilador faz uma checagem de segurança chamada <strong>unsafety</strong>: ele olha a THIR pra garantir que coisas perigosas (tipo mexer direto na memória com ponteiros) só aconteçam dentro de blocos marcados como <code>unsafe</code>. Assim, ele já barra muita coisa errada antes mesmo de virar código de verdade.</p>
+<p>A <strong><a href="https://en.wikipedia.org/wiki/Mid-level_intermediate_representation">MIR</a></strong> converte o programa num <strong><a href="https://en.wikipedia.org/wiki/Control-flow_graph">Grafo de Fluxo de Controle (CFG)</a></strong> explícito. Esse grafo permite ao <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> rastrear, ao longo de todos os caminhos de execução, o estado de cada valor: possuído, emprestado mutável, emprestado imutável ou movido.</p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp04.png" alt="CFG"></p>
+<p>A imagem acima ilustra um exemplo simplificado de um <strong>Grafo de Fluxo de Controle (CFG)</strong>. Nela, o círculo azul no topo representa um ponto de decisão ou condição no seu código (como um <code>if</code> ou <code>match</code>). As setas que partem dele mostram os possíveis caminhos que o programa pode seguir: um para o caso <code>True</code> (círculo vermelho à esquerda) e outro para o caso <code>False</code> (círculo vermelho à direita).</p>
+<p>Ambos os caminhos convergem para o círculo verde pontilhado na parte inferior, que simboliza a continuação do programa após a decisão. É essa representação em grafo que permite ao <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> do Rust analisar todos os fluxos possíveis do seu código e garantir a segurança da memória em cada um deles, independentemente de qual caminho o programa realmente tomar em tempo de execução.</p>
+<h2 id="o-mago-da-memória-entendendo-o-borrow-checker">O Mago da Memória: Entendendo o Borrow Checker</h2>
+<p>O <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> é o coração do sistema de segurança do Rust. Ele funciona como um inspetor rigoroso que analisa cada pedaço do seu código para garantir que ninguém vai mexer na memória de forma perigosa. Usando a MIR como base, o borrow checker rastreia três estados principais para cada valor:</p>
+<ol>
+<li><strong>Possuído (Owned)</strong>: O valor pertence exclusivamente a uma variável</li>
+<li><strong>Emprestado Imutável (Borrowed Immutable)</strong>: Outras partes do código podem ler, mas não modificar</li>
+<li><strong>Emprestado Mutável (Borrowed Mutable)</strong>: Apenas uma parte pode ler e modificar por vez</li>
+</ol>
+<p>Caso uma violação ocorra (uso de valor após movimento, criação de dados mutáveis e imutáveis simultâneos, etc.), o compilador rejeita o código. Esse mecanismo previne <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/Use-after-free">use‑after‑free</a></strong> sem custo em tempo de execução. O borrow checker é tão eficiente que muitos programadores Rust brincam que ele é &ldquo;o melhor professor de programação que você já teve&rdquo; — ele te ensina boas práticas de memória antes mesmo do programa rodar!</p>
+<p>Após otimizações em MIR (eliminação de código morto, <strong><a href="https://en.wikipedia.org/wiki/Inline_function">inlining</a></strong> local, etc.), a IR é traduzida para <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong>. A <strong><a href="https://llvm.org/docs/LangRef.html">LLVM IR</a></strong> (Low Level Virtual Machine Intermediate Representation) é uma linguagem intermediária de baixo nível, mas independente da arquitetura do processador.</p>
+<p>É nela que o Rust traduz tudo o que foi checado e otimizado até aqui, para que a LLVM possa realizar o trabalho pesado de otimização de código. A LLVM IR não é literalmente &ldquo;entendida pelo processador&rdquo; — ela serve como uma representação intermediária que o LLVM usa para gerar o código nativo específico da arquitetura de destino (como x86-64, ARM, etc.).</p>
+<p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/refs/heads/main/blog/content/post/images/rustcomp05.png" alt="LLVM IR"></p>
+<p>O LLVM aplica otimizações específicas de arquitetura e, por fim, gera código objeto para a plataforma‑alvo, como x86‑64 ou AArch64. Como consequência, um binário Rust é normalmente específico à arquitetura de destino, a menos que se utilize camadas de emulação.</p>
+<h2 id="por-que-tanta-etapa-intermediária">Por que tanta etapa intermediária?</h2>
+<p>Pense assim: cada IR (representação intermediária) é como um filtro diferente que o compilador usa para checar seu código. Primeiro, a HIR guarda bastante informação para que o compilador possa te dar mensagens de erro detalhadas e entender o contexto do seu programa. Depois, a MIR simplifica tudo, deixando o código mais &ldquo;quadradinho&rdquo; e fácil de analisar — é nessa hora que o <strong><a href="https://doc.rust-lang.org/reference/borrow-checker.html">borrow checker</a></strong> entra em ação, garantindo que ninguém vai mexer na memória de um jeito perigoso.</p>
+<p>Essa divisão em camadas faz com que cada parte do compilador só precise se preocupar com um tipo de problema por vez. Isso facilita encontrar erros antes mesmo do programa rodar, sem deixar o código final mais lento.</p>
+<p>E, pra fechar com chave de ouro, o Rust entrega a última etapa (gerar o código de máquina de verdade) pro LLVM, que já é um especialista em otimização e velocidade. Assim, o Rust foca em garantir segurança e o LLVM em deixar tudo rápido.</p>
+<p>No fim das contas, o compilador do Rust funciona como uma linha de montagem cheia de inspeções: cada etapa checa uma coisa diferente, pegando vários erros que em outras linguagens só apareceriam quando o programa já estivesse rodando (ou pior, em produção!). Por isso, muita gente acredita que esse modelo de &ldquo;camadas inteligentes&rdquo; vai ser cada vez mais comum nas linguagens do futuro, juntando robustez e desempenho sem dor de cabeça.</p>
+<p>Por fim, vale destacar: linguagens como C e C++ não adotam esse modelo de múltiplas camadas de checagem automática durante a compilação. Nelas, o compilador faz análises mais simples e deixa a maior parte dos cuidados com memória e segurança por conta do programador.</p>
+<p>Isso significa que muitos erros perigosos — como acessar memória já liberada, criar <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> ou sobrescrever dados sem querer — só aparecem quando o programa já está rodando, e às vezes nem são detectados. O Rust, ao contrário, pega esses problemas antes mesmo do código virar um executável, tornando o desenvolvimento mais seguro sem sacrificar desempenho.</p>
+<blockquote>
+<p><a href="https://www.abeacha.com/NIST_press_release_bugs_cost.html">Um estudo de 2002 e publicado em2019 da National Institute of Standards and Technology (NIST)</a> estimou que os erros de software custam à economia dos EUA mais de 59,5 bilhões de dólares anualmente, com uma parcela significativa desses custos vindo de vulnerabilidades de segurança e falhas de memória. A ausência de checagens automáticas em C/C++ contribui para que esses tipos de falhas se tornem uma preocupação constante.</p>
+</blockquote>
+<p>Para não soar como injusto, é necessário dizer que o C++23 trouxe várias novidades para tentar deixar o código mais seguro e moderno, especialmente quando o assunto é evitar bugs de memória — mas sem mudar a linguagem de cabeça pra baixo.</p>
+<p>Agora, por exemplo, dá pra declarar de forma explícita quando um objeto começa a existir na memória (com o <strong><a href="https://en.cppreference.com/w/cpp/language/lifetime#start_lifetime_as">start_lifetime_as</a></strong>), o que ajuda a evitar aqueles bugs cabeludos que nem os detectores automáticos pegavam. Também ficou mais fácil e seguro conversar com APIs em C sem correr o risco de vazar memória, graças a novos adaptadores de ponteiros inteligentes.</p>
+<p>Os containers ganharam versões que evitam acesso fora dos limites (tipo o <strong><a href="https://en.cppreference.com/w/cpp/container/mdspan">mdspan</a></strong> para matrizes), e ficou mais prático lidar com erros usando o <strong><a href="https://en.cppreference.com/w/cpp/utility/expected">std::expected</a></strong>, que incentiva o retorno explícito de falhas em vez de depender de códigos mágicos ou variáveis globais.</p>
+<p>Até a formatação de texto ficou mais fácil, <a href="https://en.cppreference.com/w/cpp/io/c/fprintf">com funções no estilo Python</a>, e agora dá pra gerar <a href="https://en.cppreference.com/w/cpp/error/stacktrace">stacktraces portáveis sem gambiarra</a>. Apesar desses avanços, algumas proteções automáticas que o Rust já oferece — como checagem de uso de ponteiros e detecção de data races — ainda não chegaram no C++ (ficaram pra próxima versão).</p>
+<blockquote>
+<p>Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p>
+</blockquote>
+<p>Enquanto o compilador do Rust atua como um inspetor de qualidade rigoroso, rejeitando qualquer código que possa violar as regras de segurança de memória, o compilador de C/C++ foca em traduzir o código de forma fiel e otimizada. Ele assume que o programador é o responsável por todas as garantias de segurança.</p>
+<hr>
+<h2 id="referências">REFERÊNCIAS</h2>
+<ul>
+<li><a href="https://doc.rust-lang.org/reference/">The Rust Reference - The Rust Compiler</a> - A referência oficial do Rust sobre o compilador e a linguagem.</li>
+<li><a href="https://doc.rust-lang.org/rustc/">The Rustc Book</a> - O livro oficial do Rust sobre o compilador.</li>
+<li><a href="https://rustc-dev-guide.rust-lang.org/overview.html">Rust Compiler Architecture Overview</a> - Uma visão geral da arquitetura do compilador do Rust.</li>
+<li><a href="https://llvm.org/docs/LangRef.html">LLVM Language Reference Manual</a> - A referência oficial do LLVM sobre a linguagem intermediária.</li>
+<li><a href="https://en.cppreference.com/w/cpp/23">C++23</a> - A referência oficial do C++23.</li>
+<li><a href="https://github.com/baindlapranayraj/SolanaBlogs/blob/main/">Solana Blogs</a> - Onde o artigo se baseou.</li>
+<li><a href="https://medium.com/@humble_bee/why-is-memory-safety-without-gc-a-big-deal-in-rust-41f6bdd5902f">Why is memory safety without GC a big deal in Rust?</a> - Um artigo sobre a importância da segurança de memória sem GC no Rust.</li>
+<li><a href="https://rustc-dev-guide.rust-lang.org/overview.html#:~:text=Code%20generation">Overview of the compiler</a> - Uma seção do guia do Rust sobre a geração de código.</li>
+<li><a href="https://aneksteind.github.io/posts/2023-06-12.html#:~:text=Exploring%20Dataflow%20Analysis%20in%20the,control%20flow%20graph%20structure">Exploring Dataflow Analysis in the Rust Compiler</a> - Um artigo sobre a análise de fluxo de dados no compilador do Rust.</li>
+<li><a href="https://www.infoq.com/presentations/rust-borrow-checker/#:~:text=lowers%20it%20into%20the%20mid,also%20known%20as%20the%20MIR">Rust Borrow Checker</a> - Uma apresentação sobre o borrow checker do Rust.</li>
+</ul>
+]]></content:encoded>
+      
+      
+      <category>Rust,Compiladores,LLVM,Memória,Segurança</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Uma visão geral do compilador do Rust]]></description>
+      
+    </item>
+    
+    <item>
       <title>Busca Semântica com Ollama e PostgreSQL</title>
       <link>https://scovl.github.io/2025/03/25/semantic-postgresql/</link>
       <guid>https://scovl.github.io/2025/03/25/semantic-postgresql/</guid>
@@ -1994,187 +2189,6 @@ fi</code></pre>
     </item>
     
     <item>
-      <title>A Batalha dos Milissegundos</title>
-      <link>https://scovl.github.io/2026/05/05/tps/</link>
-      <guid>https://scovl.github.io/2026/05/05/tps/</guid>
-      <pubDate>Tue, 05 May 2026 19:41:45 -0300</pubDate>
-      <description>&lt;![CDATA[<h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
-<p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
-<p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>]]></description>
-      <content:encoded>&lt;![CDATA[<h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
-<p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
-<p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>
-<hr>
-<h2 id="o-paradoxo-da-latência">O Paradoxo da Latência</h2>
-<p>Em sistemas de alta performance, a latência total ($L_{total}$) de uma requisição não é apenas o tempo de rede. Ela pode ser expressa de forma simplificada pela seguinte equação:</p>
-<p>$$L_{total} = T_{ser} + T_{comp} + \frac{S_{payload}}{B_{rede}} + T_{decomp} + T_{deser}$$</p>
-<p>Onde:</p>
-<ul>
-<li>$T_{ser}$ / $T_{deser}$: Tempo de serialização/deserialização (CPU/Memória).</li>
-<li>$T_{comp}$ / $T_{decomp}$: Tempo de compressão/descompressão (CPU).</li>
-<li>$S_{payload}$: Tamanho do <em>payload</em> final (Bytes).</li>
-<li>$B_{rede}$: Banda disponível ou <em>throughput</em> da interface de rede.</li>
-</ul>
-<p>Simplificando em miúdos, a equação acima mostra que a latência total é a soma do tempo gasto em CPU para preparar os dados (serializar e comprimir), o tempo de transmissão na rede (que depende do tamanho do <em>payload</em> e da banda) e o tempo gasto para processar os dados no destino (descomprimir e desserializar).</p>
-<blockquote>
-<p><strong>Para se aprofundar:</strong> Este modelo é uma simplificação do custo de comunicação em sistemas distribuídos. A <a href="https://en.wikipedia.org/wiki/Little%27s_law">Lei de Little</a> e a <a href="https://en.wikipedia.org/wiki/Queueing_theory">Teoria das Filas</a> oferecem a base matemática para modelar concorrência e gargalos. A palestra de <a href="https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-2012-talk.pdf">Jeffrey Dean (Google, 2012)</a> sobre latências em sistemas de larga escala é referência essencial sobre o tema.</p>
-</blockquote>
-<p>Otimizar para alto TPS significa minimizar a soma desses fatores, equilibrando o custo computacional com o custo de I/O. Para ilustrar os caminhos possíveis, vejamos um mapa mental amigável da topologia de decisão:</p>
-
-
-  
-  <div class="mermaid">%%{init: {&#39;theme&#39;: &#39;base&#39;, &#39;themeVariables&#39;: { &#39;fontFamily&#39;: &#39;sans-serif&#39;, &#39;primaryColor&#39;: &#39;#a7c7e7&#39;, &#39;secondaryColor&#39;: &#39;#ffdfba&#39;, &#39;tertiaryColor&#39;: &#39;#baffc9&#39;, &#39;edgeLabelBackground&#39;:&#39;#ffffff&#39;, &#39;lineColor&#39;: &#39;#333333&#39;}}}%%
-graph TD
-    Client((🤓 Cliente&lt;br/&gt;&lt;i&gt;Faminto por Dados&lt;/i&gt;))
-    API{🚀 API Gateway /&lt;br/&gt;Load Balancer}
-    
-    JSON[📄 JSON Puro&lt;br/&gt;&lt;i&gt;O Tagarela&lt;/i&gt;]
-    JGZ[🗜️ JSON &#43; Gzip&lt;br/&gt;&lt;i&gt;O Esforçado&lt;/i&gt;]
-    PBG[📦 Protobuf &#43; Gzip&lt;br/&gt;&lt;i&gt;O Robusto&lt;/i&gt;]
-    ZST[⚡ Zstandard&lt;br/&gt;&lt;i&gt;O Mago do I/O&lt;/i&gt;]
-
-    Client &lt;==&gt;|100k&#43; TPS| API
-    
-    API -.-&gt;|CPU Livre / I/O Fritando| JSON
-    API -.-&gt;|I/O Médio / CPU Chorando| JGZ
-    API -.-&gt;|I/O Baixo / CPU Moderada| PBG
-    API -.-&gt;|I/O Mínimo / CPU Otimizada| ZST
-
-    JSON --&gt; GargaloRede{🔥 Gargalo&lt;br/&gt;de Rede/Banda}
-    JGZ --&gt; GargaloCPU{🔥 Gargalo&lt;br/&gt;de CPU}
-    PBG --&gt; Balanceado[✅ Balanceado]
-    ZST --&gt; Vencedor[👑 Performance&lt;br/&gt;Extrema]
-    
-    style Client fill:#ffb3ba,stroke:#333,stroke-width:2px
-    style API fill:#ffdfba,stroke:#333,stroke-width:2px
-    style Vencedor fill:#baffc9,stroke:#333,stroke-width:4px</div>
- <h3 id="1-json-puro-a-ilusão-da-simplicidade">1. <a href="https://www.json.org/json-en.html">JSON</a> Puro: A Ilusão da Simplicidade</h3>
-<p>O JSON é onipresente, legível por humanos e possui suporte nativo em praticamente qualquer ecossistema.</p>
-<ul>
-<li><strong>O Cenário:</strong> O payload trafega em texto plano. Não há custo de $T_{comp}$ ou $T_{decomp}$.</li>
-<li><strong>O Problema no Alto TPS:</strong> Em linguagens de tipagem estática e alta performance (como <a href="https://learn.microsoft.com/en-us/dotnet/csharp/">C#</a>, <a href="https://www.rust-lang.org/">Rust</a> ou <a href="https://go.dev/">Go</a>), o <em>parsing</em> de JSON exige alocação excessiva de memória no <em>heap</em> e uso intenso de CPU para manipulação de strings e conversão de tipos (ex: parsing de <code>float64</code>). Além disso, o $S_{payload}$ é gigantesco devido à repetição de chaves, o que satura placas de rede (NICs) e buffers de socket muito antes da CPU atingir 100%.</li>
-<li><strong>Veredito:</strong> Inviável para <em>core internal services</em> em alto TPS. O custo de I/O e <em>Garbage Collection</em> (GC) destrói o <em>throughput</em>.</li>
-</ul>
-<blockquote>
-<p><strong>Para se aprofundar:</strong> Para cenários onde o JSON é mandatório (APIs públicas), parsers como <a href="https://simdjson.org/">simdjson</a> usam instruções SIMD para atingir GB/s na desserialização. Ainda assim, o tamanho do payload na rede e a alocação de memória permanecem gargalos inerentes ao formato.</p>
-</blockquote>
-<h3 id="2-json--gzip-o-cobertor-curto">2. JSON + <a href="https://www.gzip.org/">Gzip</a>: O Cobertor Curto</h3>
-<p>A reação natural ao esgotamento da banda de rede é habilitar o Gzip no <em>middleware</em>.</p>
-<ul>
-<li><strong>O Cenário:</strong> O payload é reduzido em até 70-80%. A placa de rede respira aliviada.</li>
-<li><strong>O Problema no Alto TPS:</strong> O algoritmo <a href="https://en.wikipedia.org/wiki/Deflate">DEFLATE</a> (base do Gzip) foi criado nos anos 90. Ele é computacionalmente caro. Ao habilitar Gzip em 50.000 TPS, o gargalo transfere-se imediatamente da rede para a CPU. Seus <em>workers</em> ou <em>goroutines</em> passarão a maior parte do tempo comprimindo bytes, aumentando a latência de <em>tail</em> (p99) e reduzindo a capacidade do servidor de processar novas conexões.</li>
-<li><strong>Veredito:</strong> Uma solução de legado. Útil para APIs públicas consumidas por navegadores, mas um tiro no pé para microsserviços internos.</li>
-</ul>
-<h3 id="3-protobuf--gzip-a-força-bruta-binária">3. Protobuf + Gzip: A Força Bruta Binária</h3>
-<p>Mudamos o protocolo de serialização. O <a href="https://protobuf.dev/">Protocol Buffers</a> (<a href="https://grpc.io/">gRPC</a>) entra em cena. No ecossistema chinês, o <a href="https://dubbo.apache.org/">Apache Dubbo</a> cumpre papel equivalente como framework RPC de alta performance, suportando serialização plugável (Hessian, Protobuf, JSON) e compressão customizada.</p>
-<ul>
-<li><strong>O Cenário:</strong> Apenas a troca do JSON para Protobuf reduz drasticamente o $T_{ser}$ e $T_{deser}$, além de eliminar nomes de chaves do <em>payload</em> (usando <em>tags</em> numéricas). O uso de GC cai drasticamente. Adicionar Gzip por cima diminui ainda mais o tamanho.</li>
-<li><strong>O Problema no Alto TPS:</strong> Embora o Protobuf seja incrivelmente eficiente, aplicar Gzip em <em>payloads</em> pequenos (comuns em microsserviços) é ineficiente. O Gzip precisa construir uma janela de dicionário dinâmica para cada requisição. Em um <em>payload</em> de 500 bytes, o cabeçalho do Gzip e o esforço computacional muitas vezes não justificam os poucos bytes salvos.</li>
-<li><strong>Veredito:</strong> Muito sólido e padrão de mercado (gRPC default), mas o Gzip impede que a arquitetura atinja seu limite absoluto.</li>
-</ul>
-<blockquote>
-<p><strong>Para se aprofundar:</strong> A <a href="https://developers.google.com/protocol-buffers/docs/performance">documentação de performance do Protocol Buffers</a> detalha custos de serialização por linguagem. O guia de <a href="https://grpc.io/docs/guides/benchmarking/">Benchmarking do gRPC</a> compara latência e throughput entre gRPC e REST/JSON em cenários reais.</p>
-</blockquote>
-<h3 id="4-o-triunfo-do-zstandard-zstd">4. O Triunfo do Zstandard (Zstd)</h3>
-<p>Desenvolvido pelo Facebook (<a href="https://github.com/Cyan4973">Yann Collet</a>), o Zstd mudou o paradigma da compressão, focado em velocidade de descompressão massiva e escalabilidade de níveis.</p>
-<ul>
-<li><strong>O Cenário:</strong> Zstd oferece taxas de compressão similares ou superiores ao Gzip, mas consome uma fração ínfima da CPU, especialmente na descompressão (que é até 10x mais rápida).</li>
-<li><strong>A &ldquo;Arma Secreta&rdquo; para TPS Extremo:</strong> O Zstd possui o modo <strong><a href="https://github.com/facebook/zstd#the-case-for-small-data-compression">Dictionary Compression</a></strong>. Em sistemas de alto TPS, os esquemas (seja JSON ou Protobuf) são repetitivos. Você pode treinar um dicionário Zstd com amostras do seu tráfego e distribuí-lo para os serviços. Ao comprimir um JSON pequeno de 300 bytes usando um dicionário pré-treinado, o $S_{payload}$ pode cair para 40 bytes em microssegundos, algo matematicamente impossível com o Gzip padrão.</li>
-<li><strong>Veredito:</strong> A escolha definitiva para a borda do estado da arte em engenharia de software.</li>
-</ul>
-<blockquote>
-<p><strong>Para se aprofundar:</strong> O post <a href="https://www.uber.com/blog/how-uber-uses-zstandard-for-rpc-compression/">How Uber Uses Zstandard for RPC Compression</a> (Uber Engineering, 2021) detalha a implementação de dicionários Zstd em produção. Para um guia técnico completo de treinamento, consulte a <a href="https://github.com/facebook/zstd#training">documentação oficial do Zstd</a>.</p>
-</blockquote>
-<p>Só que, como nem tudo são flores, a adoção do Zstd não é plug-and-play. Requer investimento inicial para treinar dicionários, integração de bibliotecas específicas (nem todas as linguagens têm bindings maduros) e uma curva de aprendizado para entender os parâmetros de compressão. Portanto, é uma decisão que requer a análise cuidadosa do trade-off entre complexidade de implementação e ganho de performance:</p>
-<h2 id="matriz-de-decisão-o-trade-off-final">Matriz de Decisão: O Trade-off Final</h2>
-<table>
-  <thead>
-      <tr>
-          <th style="text-align: left">Estratégia</th>
-          <th style="text-align: center">Uso de CPU</th>
-          <th style="text-align: center">Custo de Memória (GC/Aloc)</th>
-          <th style="text-align: center">Tamanho na Rede</th>
-          <th style="text-align: center">Complexidade de Implementação</th>
-          <th style="text-align: left">Caso de Uso Ideal</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left"><strong>JSON Puro</strong></td>
-          <td style="text-align: center">Baixo</td>
-          <td style="text-align: center"><strong>Crítico</strong> (Parsing pesado)</td>
-          <td style="text-align: center"><strong>Massivo</strong></td>
-          <td style="text-align: center">Muito Baixa</td>
-          <td style="text-align: left">Prototipagem, Integração com sistemas legados externos.</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><strong>JSON + Gzip</strong></td>
-          <td style="text-align: center"><strong>Crítico</strong></td>
-          <td style="text-align: center">Alto</td>
-          <td style="text-align: center">Moderado</td>
-          <td style="text-align: center">Baixa (Middlewares prontos)</td>
-          <td style="text-align: left">APIs públicas RESTful onde o gargalo é a conexão do cliente (3G/4G).</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><strong>Protobuf + Gzip</strong></td>
-          <td style="text-align: center">Moderado</td>
-          <td style="text-align: center">Muito Baixo</td>
-          <td style="text-align: center">Pequeno</td>
-          <td style="text-align: center">Moderada (Requer <code>.proto</code> files)</td>
-          <td style="text-align: left">Ecossistemas gRPC padrão, tráfego <em>cross-region</em> (onde banda é cara).</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><strong>Zstd + Protobuf</strong></td>
-          <td style="text-align: center">Muito Baixo</td>
-          <td style="text-align: center">Quase Nulo (Baixa alocação)</td>
-          <td style="text-align: center"><strong>Mínimo</strong></td>
-          <td style="text-align: center">Alta (Treino de dicionários, bindings específicos)</td>
-          <td style="text-align: left"><strong>Sistemas de missão crítica, mensageria de alta densidade (<a href="https://kafka.apache.org/">Kafka</a>, <a href="https://rocketmq.apache.org/">RocketMQ</a>), e TPS extremo.</strong></td>
-      </tr>
-  </tbody>
-</table>
-<blockquote>
-<p><strong>Para se aprofundar:</strong> Os <a href="https://facebook.github.io/zstd/#benchmarks">benchmarks oficiais do Zstd</a> mostram que, no nível 3, a descompressão é 5-10x mais rápida que Gzip no nível 6 com taxa de compressão equivalente — dados concretos que fundamentam as análises deste artigo. No contexto chinês, o <strong>Double 11 (Singles&rsquo; Day)</strong> do Alibaba — que ultrapassa centenas de milhares de TPS no pico — valida na prática a combinação de serialização binária e compressão eficiente em escala real de produção.</p>
-</blockquote>
-<p>Para um cenário de <strong>TPS realmente alto</strong>, a combinação campeã indiscutível é <strong><a href="https://protobuf.dev/">Protobuf</a> (ou similar como <a href="https://flatbuffers.dev/">FlatBuffers</a>/<a href="https://capnproto.org/">Cap&rsquo;n Proto</a>) aliado ao Zstd</strong>, preferencialmente utilizando dicionários pré-treinados se os <em>payloads</em> forem pequenos (abaixo de 1KB).</p>
-<p>Essa escolha ataca os três maiores vilões da performance simultaneamente:</p>
-<ol>
-<li>Elimina o gargalo de <em>parsing</em> e <em>garbage collection</em> (vantagem do binário estruturado).</li>
-<li>Minimiza a saturação da placa de rede (vantagem da compressão eficiente).</li>
-<li>Preserva ciclos preciosos de CPU para a regra de negócio (vantagem do algoritmo Zstd).</li>
-</ol>
-<p>A adoção de tecnologias puramente textuais e algoritmos de compressão dos anos 90, embora convenientes, rapidamente se tornam um teto financeiro (custos de infraestrutura) e técnico (limite de escalabilidade vertical) quando submetidos a escalas monumentais.</p>
-<hr>
-<h3 id="fontes-e-referências">Fontes e Referências</h3>
-<ul>
-<li>Collet, Y. (2016). <a href="https://facebook.github.io/zstd/">Zstandard - Fast real-time compression algorithm</a>. (Meta/Facebook Open Source).</li>
-<li>Google Developers. (2023). <a href="https://protobuf.dev/">Protocol Buffers Documentation</a>.</li>
-<li>Uber Engineering Blog. (2021). <a href="https://www.uber.com/blog/how-uber-uses-zstandard-for-rpc-compression/">How Uber Uses Zstandard for RPC Compression</a>.</li>
-<li>Dean, J. (2012). <a href="https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-2012-talk.pdf">Latency in Large-Scale Systems</a>. Google/Stanford Talk.</li>
-<li>Little, J. D. C. (1961). <a href="https://en.wikipedia.org/wiki/Little%27s_law">Little&rsquo;s Law</a>. <em>Operations Research</em>.</li>
-<li>simdjson Project. <a href="https://simdjson.org/">simdjson: Parsing JSON at Gigabytes per Second</a>.</li>
-<li>Google Developers. (2023). <a href="https://developers.google.com/protocol-buffers/docs/performance">Protocol Buffers Performance</a>.</li>
-<li>Apache Dubbo. <a href="https://dubbo.apache.org/">Apache Dubbo Documentation</a>.</li>
-<li>Apache RocketMQ. <a href="https://rocketmq.apache.org/">Apache RocketMQ Documentation</a>.</li>
-</ul>
-]]></content:encoded>
-      
-      
-      <category>performance,latência,compressão,protobuf,zstd,arquitetura de software</category>
-      
-      
-      
-      <dc:creator>Vitor Lobo Ramos</dc:creator>
-      
-      
-      
-      
-      
-      <description>&lt;![CDATA[Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam.]]></description>
-      
-    </item>
-    
-    <item>
       <title>Prometheus e PromQL</title>
       <link>https://scovl.github.io/2025/07/27/prometheus/</link>
       <guid>https://scovl.github.io/2025/07/27/prometheus/</guid>
@@ -2263,8 +2277,7 @@ graph TD
 <p>Comece criando um arquivo <code>docker-compose.yml</code> com o seguinte conteúdo:</p>
 
 
-  <pre><code class="language-yaml">version: &#34;3&#34;
-services:
+  <pre><code class="language-yaml">services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -2301,7 +2314,7 @@ scrape_configs:
 
 
   <pre><code class="language-bash">docker-compose up -d</code></pre>
- <p>Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em <strong><a href="http://localhost:3000">http://localhost:3000</a></strong> (usuário <strong>admin</strong>, senha <strong>admin</strong> padrão). No Grafana, adicione o Prometheus como fonte de dados: vá em <em>Configuration (engrenagem) &gt; Data Sources</em>, adicione nova fonte do tipo Prometheus com URL <strong><a href="http://prometheus:9090">http://prometheus:9090</a></strong> (que, devido ao Docker Compose, resolve para o container do Prometheus).</p>
+ <p>Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em <strong><a href="http://localhost:3000">http://localhost:3000</a></strong> (usuário <strong>admin</strong>; na primeira execução o Grafana solicitará a criação de uma nova senha). No Grafana, adicione o Prometheus como fonte de dados: vá em <em>Configuration (engrenagem) &gt; Data Sources</em>, adicione nova fonte do tipo Prometheus com URL <strong><a href="http://prometheus:9090">http://prometheus:9090</a></strong> (que, devido ao Docker Compose, resolve para o container do Prometheus).</p>
 <p>Feito isso, você já pode importar ou criar painéis Grafana usando as métricas do Prometheus (inclusive as geradas pelo PromSim). O PromSim estará expondo várias métricas aleatórias – por exemplo, simulando CPU, memória, requisições – permitindo testar consultas e alertas sem precisar de uma aplicação real por trás. Para mais detalhes do PromSim, veja <strong><a href="https://github.com/dmitsh/promsim">a documentação oficial</a></strong>.</p>
 <p>Caso queira rodar apenas o Prometheus isoladamente, basta executar o container oficial: <code>docker run -p 9090:9090 prom/prometheus</code>. Depois acesse <strong><a href="http://localhost:9090">http://localhost:9090</a></strong> para abrir a UI nativa do Prometheus:</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png" alt=""></p>
@@ -3243,10 +3256,10 @@ Por exemplo:</p>
 
 
   <pre><code class="language-promql">histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))</code></pre>
- <p><strong><code>quantile(quantile, expr)</code></strong>: Calcula um quantil específico de uma expressão.</p>
+ <p><strong><code>quantile(φ, expr) by (label)</code></strong> (operador de agregação): Calcula o φ-quantil (0 ≤ φ ≤ 1) entre as séries agrupadas. Diferente de <code>histogram_quantile</code>, <strong>não</strong> se aplica a histogramas — use para calcular percentis entre instâncias.</p>
 
 
-  <pre><code class="language-promql">quantile(0.95, rate(http_requests_total[5m]))</code></pre>
+  <pre><code class="language-promql">quantile(0.95, rate(http_requests_total[5m])) by (job)</code></pre>
  <h3 id="funções-de-filtro-e-seleção">Funções de Filtro e Seleção</h3>
 <p><strong><code>topk(k, expr)</code></strong>: Retorna as k séries com os maiores valores.</p>
 
@@ -3257,14 +3270,14 @@ Por exemplo:</p>
 
   <pre><code class="language-promql">bottomk(5, rate(http_requests_total[5m]))</code></pre>
  <h3 id="funções-de-tempo">Funções de Tempo</h3>
-<p><strong><code>avg_over_time(expr[interval])</code></strong>: Calcula a média dos valores no intervalo especificado.</p>
+<p><strong><code>avg_over_time(expr[interval])</code></strong>: Calcula a média dos valores de uma métrica <strong>gauge</strong> no intervalo especificado.</p>
 
 
-  <pre><code class="language-promql">avg_over_time(http_requests_total[5m])</code></pre>
- <p><strong><code>sum_over_time(expr[interval])</code></strong>: Calcula a soma dos valores no intervalo especificado.</p>
+  <pre><code class="language-promql">avg_over_time(cpu_usage[5m])</code></pre>
+ <p><strong><code>sum_over_time(expr[interval])</code></strong>: Calcula a soma dos valores de uma métrica <strong>gauge</strong> no intervalo especificado.</p>
 
 
-  <pre><code class="language-promql">sum_over_time(http_requests_total[5m])</code></pre>
+  <pre><code class="language-promql">sum_over_time(memory_usage[5m])</code></pre>
  <p><strong><code>max_over_time(expr[interval])</code></strong>: Retorna o valor máximo no intervalo especificado.</p>
 
 
@@ -3282,205 +3295,7 @@ Por exemplo:</p>
 
 
   <pre><code class="language-promql">absent_over_time(up{job=&#34;webserver&#34;}[5m])</code></pre>
- <h2 id="promql-avançado">PromQL Avançado</h2>
-<p>O PromQL oferece recursos avançados para consultas complexas e análises sofisticadas. Esta seção aborda tópicos mais avançados como correspondência de vetores, subconsultas, operadores lógicos e funções especializadas.</p>
-<h3 id="correspondência-de-séries-temporais-on-ignoring-group_left-group_right-1">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></h3>
-<p>Quando combinamos métricas diferentes (vetor-vetor), muitas vezes precisamos controlar quais labels são usados para fazer o <em>join</em> (união) entre as séries de cada lado da operação. É aqui que entram os modificadores <code>on</code> e <code>ignoring</code>, e os operadores de junção externa <code>group_left</code> e <code>group_right</code>:</p>
-<ul>
-<li>
-<p><strong><code>on(lista_de_labels)</code></strong>: Especifica explicitamente quais labels devem ser usados para casar as séries ao aplicar o operador. Todos os demais labels são ignorados no matching (exceto os do <code>on</code> listados).
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">errors_total / on(instance) requests_total</code></pre>
- <p>Aqui dizemos: combine séries de <code>errors_total</code> e <code>requests_total</code> que tenham o mesmo valor de <code>instance</code>. Labels diferentes de <code>instance</code> serão ignorados na comparação. Isso é útil se, por exemplo, <code>errors_total</code> tem um label <code>status=&quot;5xx&quot;</code> enquanto <code>requests_total</code> não tem o label <code>status</code>. Sem o <code>on(instance)</code>, essas séries não casariam por terem conjuntos de labels distintos.</p>
-</li>
-<li>
-<p><strong><code>ignoring(lista_de_labels)</code></strong>: O inverso do <code>on</code>. Use todos os labels <em>exceto</em> os listados para fazer o matching. Ou seja, finge que os labels mencionados não existem nos vetores ao procurar pares correspondentes.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">cpu_usage{cpu=&#34;total&#34;} / ignoring(cpu) cpu_quota</code></pre>
- <p>Suponha que <code>cpu_usage</code> tenha um label <code>cpu</code> (núcleo) e valor <code>&quot;total&quot;</code> para indicar uso total da CPU, enquanto <code>cpu_quota</code> não tem esse label (aplica a todo CPU). O <code>ignoring(cpu)</code> permite desconsiderar essa diferença, casando as séries somente pelos outros labels (por exemplo, pod ou contêiner, se for o caso).</p>
-</li>
-<li>
-<p><strong>Junções um-para-muitos (many-to-one)</strong>: Por padrão, se houver múltiplas séries de um lado que poderiam casar com uma série do outro, a operação não ocorre e o resultado é vazio para evitar ambiguidades. No entanto, às vezes desejamos permitir isso — por exemplo, dividir uma métrica total por número de CPUs, onde a métrica total não tem o label <code>cpu</code> mas a de contagem de CPU tem (múltiplas séries, uma por core).
-Para isso, usamos <code>group_left</code> ou <code>group_right</code> em conjunto com <code>on</code>/<code>ignoring</code>:</p>
-<ul>
-<li><strong><code>group_left(label1, label2, ...)</code></strong>: Indica que as séries do lado esquerdo do operador devem permanecer separadas (muitas) enquanto as do lado direito serão &ldquo;espalhadas&rdquo; para casar. Em outras palavras, permite que uma única série do lado direito seja usada para múltiplas do lado esquerdo. Opcionalmente, podemos listar labels que serão <strong>copiados</strong> do lado direito para o resultado final.</li>
-<li><strong><code>group_right(label1, label2, ...)</code></strong>: O contrário, mantém o lado direito com muitas séries e espalha o lado esquerdo.</li>
-</ul>
-<p><em>Exemplo (adicionando labels com group_left):</em></p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  * on(instance) 
-  group_left(job, environment) 
-  up</code></pre>
- <p>Nesse exemplo, <code>rate(http_requests_total[5m])</code> produz séries talvez com labels <code>instance</code> e outros, mas digamos que não tenha <code>job</code> nem <code>environment</code> explicitamente (ou queremos copiar do <code>up</code>). A série <code>up</code> (métrica de saúde do alvo) tem <code>job</code>, <code>instance</code>, e <code>environment</code>. Estamos multiplicando as duas métricas apenas casando por <code>instance</code> (<code>on(instance)</code>). Como do lado direito (<code>up</code>) há possivelmente apenas uma série por instance (valor 0 ou 1), e do lado esquerdo pode haver múltiplas (por caminho de requisição, status, etc.), usamos <code>group_left(job, environment)</code> para dizer: permite que a mesma série de <code>up</code> case com múltiplas séries de requests do lado esquerdo, e traga os labels <code>job</code> e <code>environment</code> dessa série de <code>up</code> para o resultado final. Assim, o resultado terá a taxa de requests por <code>instance</code> mas agora enriquecido com os labels de job e environment.</p>
-<p><em>Exemplo (many-to-one sem copiar labels):</em></p>
-
-
-  <pre><code class="language-promql">cpu_usage 
-  / on(instance) 
-  group_right 
-  cpu_count</code></pre>
- <p>Suponha que <code>cpu_usage{instance=&quot;A&quot;}</code> representa o uso total de CPU (consolidado) em determinada máquina, e <code>cpu_count{instance=&quot;A&quot;, cpu=&quot;0&quot;}</code> e <code>cpu_count{instance=&quot;A&quot;, cpu=&quot;1&quot;}</code> etc. representam 1 para cada CPU física (cada core). Se somarmos <code>cpu_count by (instance)</code> obteríamos o número de CPUs por instância, mas podemos diretamente dividir usando o truque do <code>group_right</code>. Aqui, cada série de <code>cpu_usage</code> (uma por instancia) será comparada com múltiplas séries de <code>cpu_count</code> (uma por CPU). Sem <code>group_right</code>, não casaria por haver múltiplas séries do lado direito para o mesmo instance. Com <code>group_right</code>, permitimos isso e, por não especificar labels a copiar, o resultado herda os labels do lado esquerdo (<code>cpu_usage</code>), e a operação divisão é feita para cada combinação (na prática repetindo o mesmo valor de <code>cpu_usage</code> para cada CPU e dividindo por o respectivo <code>cpu_count</code> – o que acaba resultando no mesmo valor para cada CPU). Talvez nesse caso específico fosse melhor já agrupar <code>cpu_count</code> antes de dividir, mas esse exemplo ilustra a sintaxe.</p>
-</li>
-<li>
-<p><strong>Operador de conjunto <code>union</code>:</strong> PromQL não possui um operador explícito &ldquo;UNION&rdquo; nomeado, mas podemos realizar união de resultados simplesmente listando expressões separadas por vírgula em uma consulta. Por exemplo:</p>
-
-
-  <pre><code class="language-promql">metric_a, metric_b</code></pre>
- <p>Isso retorna todas as séries de <code>metric_a</code> e todas as de <code>metric_b</code>. Não é muito comum em consultas manuais, mas pode ser útil para junção visual.</p>
-</li>
-</ul>
-<p>Resumindo, os modificadores <code>on</code> e <code>ignoring</code> controlam <strong>quais</strong> labels considerar ao casar séries de métricas diferentes, e <code>group_left</code>/<code>group_right</code> controlam <strong>como lidar</strong> quando há cardinalidades diferentes (um-para-muitos). Combiná-los corretamente é fundamental para escrever consultas que envolvam múltiplas métricas.</p>
-<h3 id="operadores-lógicos-and-or-unless-1">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></h3>
-<p>Além dos operadores aritméticos e de comparação, PromQL também suporta operadores lógicos para vetores. Esses operadores não criam valores numéricos novos, mas sim filtram ou combinam séries com base em condições booleanas.</p>
-<ul>
-<li>
-<p><strong><code>and</code>:</strong> Retém apenas as séries que aparecem em <strong>ambos</strong> os operandos. Em outras palavras, é uma interseção: uma série do lado esquerdo só passa se existe uma série exatamente igual do lado direito (considerando labels) e vice-versa. O valor resultante de cada série será o valor do lado esquerdo (padrão) ou, se usado como comparador, segue regras de comparador bool.
-Uso típico: aplicar uma condição a um resultado. Por exemplo:</p>
-
-
-  <pre><code class="language-promql">(vector1 comparacao const) and vector1</code></pre>
- <p>Isso retornaria apenas as séries de <code>vector1</code> que atendem à comparação (pois o comparador produzirá 1 para as séries que satisfazem, e então <code>and</code> manterá apenas essas).</p>
-</li>
-<li>
-<p><strong><code>or</code>:</strong> União de séries. Retorna séries que estão em <strong>pelo menos um</strong> dos lados. Se a mesma série (mesmos labels) aparece em ambos, o valor resultante será o do lado esquerdo (padrão) ou pode ser modificado com bool se estivermos combinando booleanos. É útil para combinar resultados diferentes.
-Por exemplo:</p>
-
-
-  <pre><code class="language-promql">vector_a or vector_b</code></pre>
- <p>Isso dá todas as séries de <code>vector_a</code> e <code>vector_b</code>. Se alguma série estiver presente nos dois, aparece uma vez só (com valor de <code>vector_a</code>).</p>
-</li>
-<li>
-<p><strong><code>unless</code>:</strong> Retém as séries do lado esquerdo <strong>a menos que</strong> elas também apareçam no lado direito. Equivale a diferença de conjuntos: resultado = esquerda \ direita. (Obs: O lado direito só importa pelos labels, seus valores são ignorados).
-Por exemplo:</p>
-
-
-  <pre><code class="language-promql">up{job=&#34;api&#34;} unless up{job=&#34;api&#34;, region=&#34;us-east&#34;}</code></pre>
- <p>Isso retornaria as séries <code>up</code> do job &ldquo;api&rdquo; <strong>que não têm</strong> region=&ldquo;us-east&rdquo;, ou seja, efetivamente filtra fora todas as instâncias da região us-east.</p>
-</li>
-</ul>
-<p>Os operadores lógicos são avaliados após todos os cálculos numéricos serem feitos. Isso significa que podemos usá-los tanto em métricas brutas quanto em resultados de expressões.</p>
-<p><strong>Exemplos práticos combinando comparações e operadores lógicos:</strong></p>
-<ul>
-<li>
-<p><strong>Contar instâncias ativas em dois grupos diferentes:</strong></p>
-
-
-  <pre><code class="language-promql">sum(up{job=&#34;node&#34;} == 1) or sum(up{job=&#34;db&#34;} == 1)</code></pre>
- <p>Esse exemplo usa <code>== 1</code> para converter as séries <code>up</code> em booleanas (1 para up, 0 para down) e soma para contar quantas estão up em cada job. O <code>or</code> aqui faz a união, retornando duas séries (uma para node e outra para db) com o valor de quantas instâncias estão up em cada.</p>
-</li>
-<li>
-<p><strong>Filtrar top 5 de um conjunto e combinar com outro critério:</strong></p>
-
-
-  <pre><code class="language-promql">topk(5, rate(http_requests_total[5m])) and ignoring(instance) (rate(errors_total[5m]) &gt; 0)</code></pre>
- <p>Esse exemplo hipotético pegaria as 5 maiores taxas de requisição (independente de instância) e então, através do <code>and</code> com <code>ignoring(instance)</code> e a condição de erros, manteria somente aquelas cujo serviço (ignorando instâncias) está apresentando erros. Bastante específico, mas demonstra o uso combinado: <code>topk</code> produz séries; a outra parte produz 1/0 para serviços com erro; o <code>and ignoring(instance)</code> casa por serviço e filtra.</p>
-</li>
-</ul>
-<p>Lembrando que, se quisermos comparar valores de uma série com um número e obter diretamente 1 ou 0, podemos usar o modificador <code>bool</code>. Exemplo: <code>vector1 &gt; bool 10</code> retornaria um vetor com valor 1 para séries onde <code>vector1</code> &gt; 10 e 0 caso contrário (mantendo os labels). Sem <code>bool</code>, ele retornaria as próprias séries (com seus valores originais) porém filtradas pelas que atendem à condição.</p>
-<h3 id="subconsultas-e-análise-temporal-avançada">Subconsultas e Análise Temporal Avançada</h3>
-<p><strong>Counter Range Vectors</strong>: Contadores são métricas que apenas aumentam (ou resetam para zero e voltam a aumentar). Exemplos: número total de requisições atendidas, bytes transferidos, etc. Quando consultamos diretamente um <em>counter</em> como range vector, obteremos uma série de pontos que só crescem (com eventuais resets). Para extrair informações úteis (como taxa de eventos por segundo ou aumentos em determinado período) usamos funções especiais:</p>
-<ul>
-<li><code>rate(counter[5m])</code>: Calcula a <strong>taxa média por segundo</strong> de incremento do contador nos últimos 5 minutos. Essa função já lida corretamente com resets do contador (ignorando as quedas abruptas devido a resets e calculando a taxa considerando isso).</li>
-<li><code>irate(counter[5m])</code>: Calcula a <strong>taxa instantânea</strong> (baseada apenas nos dois pontos mais recentes dentro dos 5 minutos). É mais ruidosa, mas pode reagir mais rapidamente a mudanças repentinas.</li>
-<li><code>increase(counter[1h])</code>: Calcula <strong>quanto o contador aumentou</strong> no último 1 hora. Essencialmente integra a taxa ao longo do período.</li>
-</ul>
-<p><strong>Agregação através do tempo (Aggregating Across Time)</strong>: Às vezes, queremos primeiro agregar os dados e depois analisar a evolução temporal dessa agregação. As <strong>subconsultas</strong> nos permitem isso. Uma <em>subquery</em> (subconsulta) é quando temos uma expressão do PromQL seguida de um intervalo entre colchetes e possivelmente uma resolução, por exemplo: <code>expr[duração:passo]</code>. Isso faz o Prometheus avaliar <code>expr</code> repetidamente ao longo do intervalo dado, produzindo um range vector como resultado.</p>
-<p>Por exemplo, <code>avg_over_time(rate(http_requests_total[1m])[24h:1h])</code> funciona assim:</p>
-<ul>
-<li>Internamente, <code>rate(http_requests_total[1m])</code> é avaliado para cada passo de 1h dentro das últimas 24h, gerando a taxa média por minuto calculada a cada hora.</li>
-<li>Em seguida, <code>avg_over_time(...[24h:1h])</code> calcula a média desses 24 valores (um por hora) <strong>no tempo atual</strong>. Na prática, isso nos daria a média da taxa horária de requisições no dia.</li>
-</ul>
-<p>Subconsultas são muito poderosas e foram aprimoradas a partir do Prometheus 2.7. Com elas é possível, por exemplo, calcular tendências, baselines e sazonalidade de forma compacta.</p>
-<p><strong>Exemplos avançados de subconsultas e análise de tendências:</strong></p>
-<ul>
-<li>
-<p><strong>Tendência de taxa de erro (janela móvel):</strong> Calcular a média da taxa de erros em janelas de 1 hora, ao longo das últimas 24 horas:</p>
-
-
-  <pre><code class="language-promql">avg_over_time(
-  rate(http_requests_total{status=~&#34;5..&#34;}[1m])[24h:1h]
-)</code></pre>
- <p>Essa consulta gera 24 pontos (taxa de erro média de cada hora nas últimas 24h) e depois calcula a média disso tudo (ou seja, a média diária da taxa de erro). Poderíamos também omitir a função externa para simplesmente visualizar a série das últimas 24 horas e identificar padrões de aumento ou redução de erros ao longo do dia.</p>
-</li>
-<li>
-<p><strong>Baseline de performance (comparação com média histórica):</strong> Comparar a performance atual com a média da última semana:</p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  / avg_over_time(rate(http_requests_total[5m])[7d])</code></pre>
- <p>Essa consulta produz uma razão: valores acima de 1 indicam que a taxa atual de requisições está <strong>acima</strong> da média semanal; valores abaixo de 1, abaixo da média. Isso pode ser útil para identificar desvios significativos de tráfego.</p>
-</li>
-<li>
-<p><strong>Detecção de anomalia sazonal (padrão horário):</strong> Comparar o tráfego atual com o padrão do último dia:</p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  / avg_over_time(rate(http_requests_total[5m])[24h:1h])</code></pre>
- <p>Aqui, o denominador <code>avg_over_time(...[24h:1h])</code> produz a média da taxa em cada hora do dia anterior. Dividindo a taxa atual por esse valor da mesma hora ontem, podemos identificar se o tráfego está anormalmente alto ou baixo para este horário do dia.</p>
-</li>
-<li>
-<p><strong>Diferença diária (subconsulta com offset):</strong> Para calcular a diferença em uma métrica entre hoje e ontem, podemos usar <code>offset</code>. Exemplo:</p>
-
-
-  <pre><code class="language-promql">my_metric - my_metric offset 1d</code></pre>
- <p>Isso resulta em quanto <code>my_metric</code> variou em comparação com exatamente 24 horas atrás.</p>
-</li>
-<li>
-<p><strong>Soma acumulada (exemplo de subconsulta):</strong></p>
-
-
-  <pre><code class="language-promql">sum(my_counter) - sum(my_counter) offset 1d</code></pre>
- <p>Este exemplo soma o contador <code>my_counter</code> (provavelmente de várias instâncias) e subtrai o valor de 1 dia atrás, mostrando o incremento total em um dia. Essa é outra forma de calcular algo similar a <code>increase(my_counter[1d])</code>.</p>
-</li>
-</ul>
-<p>Em todos esses casos, as subconsultas <code>[ ... ]</code> estão permitindo observar ou reutilizar resultados ao longo do tempo dentro de uma única expressão.</p>
-<h3 id="funções-avançadas-e-especializadas">Funções Avançadas e Especializadas</h3>
-<p>Algumas funções do PromQL são menos conhecidas, mas podem ser extremamente poderosas em cenários específicos:</p>
-<ul>
-<li>
-<p><strong><code>resets(counter[interval])</code>:</strong> Conta quantas vezes um contador &ldquo;resetou&rdquo; (voltou a zero) no período. Útil para detectar reinicializações de aplicativos ou problemas de coleta.
-<em>Exemplos:</em></p>
-
-
-  <pre><code class="language-promql">resets(http_requests_total[5m])</code></pre>
- <p>Contaria quantos resets ocorreram no <code>http_requests_total</code> nos últimos 5 minutos. Se esse número for &gt; 0 constantemente, pode indicar que o serviço está reiniciando frequentemente (se o contador for interno ao serviço) ou que há overflow de contadores.</p>
-</li>
-<li>
-<p><strong><code>changes(series[interval])</code>:</strong> Conta quantas vezes o valor de uma série mudou durante o intervalo. Isso vale para qualquer métrica (não apenas counters). Pode indicar instabilidade ou flapping.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">changes(process_start_time_seconds[5m]) &gt; 0</code></pre>
- <p>O exemplo acima retornaria 1 para instâncias cujo <code>process_start_time_seconds</code> (normalmente um timestamp de início do processo) tenha mudado nos últimos 5 minutos — ou seja, o processo reiniciou nesse período.</p>
-</li>
-<li>
-<p><strong><code>predict_linear(series[interval], passos_no_futuro)</code>:</strong> Realiza uma extrapolação linear do valor da série com base na tendência nos últimos intervalos e prevê o valor daqui a X segundos (informado em <code>passos_no_futuro</code>). Útil para prever quando algo alcançará um certo limite.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">predict_linear(node_filesystem_free_bytes[1h], 3600) &lt; 0</code></pre>
- <p>Poderia ser usado para alertar se a tendência de queda do espaço livre prevê que em 1 hora (<code>3600</code> segundos) o espaço chegaria a zero.</p>
-</li>
-<li>
-<p><strong><code>holt_winters(series[interval], sf, tf)</code>:</strong> Embora mais comum no Graphite, o PromQL também tem uma função de previsão chamada <code>holt_winters</code> (Holt-Winters, série temporal com tendência e sazonalidade). Aceita uma série (geralmente resultado de subconsulta) e realiza suavização exponencial dupla. No entanto, essa função é raramente usada diretamente em alertas, servindo mais para visualização de tendências suavizadas.</p>
-</li>
-<li>
-<p><strong>Funções para histogramas nativos (Prometheus 3.x):</strong></p>
-<ul>
-<li><code>histogram_count()</code> e <code>histogram_sum()</code> – Retornam, respectivamente, a contagem total e a soma total das observações de histogramas (clássicos ou nativos). Para histogramas clássicos, esses usam as séries <code>_count</code> e <code>_sum</code> internas; para nativos, usam os valores codificados.</li>
-<li><code>histogram_avg()</code> – Computa a média dos valores observados em cada histograma, equivalente a <code>histogram_sum/histogram_count</code>.</li>
-<li><code>histogram_fraction(lower, upper, hist)</code> – Estima a fração de observações dentro do intervalo <code>[lower, upper]</code> para cada histograma. Útil, por exemplo, para calcular <em>Apdex</em> (fração de requisições abaixo de um certo limiar de latência).</li>
-</ul>
-</li>
-</ul>
-<p>Lembrando que algumas dessas funções mais novas podem requerer flags experimentais, dependendo da versão do Prometheus.</p>
-<h2 id="promql-na-prática">PromQL na Prática</h2>
+ <h2 id="promql-na-prática">PromQL na Prática</h2>
 <p>O PromQL é a linguagem de consulta do Prometheus que permite extrair insights valiosos das métricas coletadas. Vamos explorar exemplos práticos de consultas comuns para uso diário em monitoramento.</p>
 <h3 id="consultas-básicas-de-disponibilidade">Consultas Básicas de Disponibilidade</h3>
 <p><strong>Verificar se todos os targets estão up:</strong></p>
@@ -4600,6 +4415,8 @@ groups:
       <category>Prometheus,Grafana,Monitoring,TSDB,DevOps,Observability,PromQL</category>
       
       
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
       
       
       

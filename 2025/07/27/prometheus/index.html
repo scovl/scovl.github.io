@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778069197">
+<link rel="stylesheet" href="/css/main.css?v=1778071284">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778071284">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778071284">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778069197"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778071284"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -435,7 +435,7 @@ window.I18n = I18n;
     
     <div class="post-meta">
       <time datetime="2025-07-27T23:10:18-03:00">📅 27/07/2025</time>
-      
+      <span>👤 Vitor Lobo Ramos</span>
       
       
       <div class="post-tags">
@@ -526,14 +526,6 @@ window.I18n = I18n;
         <li><a href="#funções-de-filtro-e-seleção">Funções de Filtro e Seleção</a></li>
         <li><a href="#funções-de-tempo">Funções de Tempo</a></li>
         <li><a href="#funções-de-detecção-de-ausência">Funções de Detecção de Ausência</a></li>
-      </ul>
-    </li>
-    <li><a href="#promql-avançado">PromQL Avançado</a>
-      <ul>
-        <li><a href="#correspondência-de-séries-temporais-on-ignoring-group_left-group_right-1">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></a></li>
-        <li><a href="#operadores-lógicos-and-or-unless-1">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></a></li>
-        <li><a href="#subconsultas-e-análise-temporal-avançada">Subconsultas e Análise Temporal Avançada</a></li>
-        <li><a href="#funções-avançadas-e-especializadas">Funções Avançadas e Especializadas</a></li>
       </ul>
     </li>
     <li><a href="#promql-na-prática">PromQL na Prática</a>
@@ -715,8 +707,7 @@ window.I18n = I18n;
 <p>Comece criando um arquivo <code>docker-compose.yml</code> com o seguinte conteúdo:</p>
 
 
-  <pre><code class="language-yaml">version: &#34;3&#34;
-services:
+  <pre><code class="language-yaml">services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -753,7 +744,7 @@ scrape_configs:
 
 
   <pre><code class="language-bash">docker-compose up -d</code></pre>
- <p>Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em <strong><a href="http://localhost:3000">http://localhost:3000</a></strong> (usuário <strong>admin</strong>, senha <strong>admin</strong> padrão). No Grafana, adicione o Prometheus como fonte de dados: vá em <em>Configuration (engrenagem) &gt; Data Sources</em>, adicione nova fonte do tipo Prometheus com URL <strong><a href="http://prometheus:9090">http://prometheus:9090</a></strong> (que, devido ao Docker Compose, resolve para o container do Prometheus).</p>
+ <p>Isso iniciará os containers Prometheus, Grafana e PromSim em segundo plano. Após o start, acesse o Grafana em <strong><a href="http://localhost:3000">http://localhost:3000</a></strong> (usuário <strong>admin</strong>; na primeira execução o Grafana solicitará a criação de uma nova senha). No Grafana, adicione o Prometheus como fonte de dados: vá em <em>Configuration (engrenagem) &gt; Data Sources</em>, adicione nova fonte do tipo Prometheus com URL <strong><a href="http://prometheus:9090">http://prometheus:9090</a></strong> (que, devido ao Docker Compose, resolve para o container do Prometheus).</p>
 <p>Feito isso, você já pode importar ou criar painéis Grafana usando as métricas do Prometheus (inclusive as geradas pelo PromSim). O PromSim estará expondo várias métricas aleatórias – por exemplo, simulando CPU, memória, requisições – permitindo testar consultas e alertas sem precisar de uma aplicação real por trás. Para mais detalhes do PromSim, veja <strong><a href="https://github.com/dmitsh/promsim">a documentação oficial</a></strong>.</p>
 <p>Caso queira rodar apenas o Prometheus isoladamente, basta executar o container oficial: <code>docker run -p 9090:9090 prom/prometheus</code>. Depois acesse <strong><a href="http://localhost:9090">http://localhost:9090</a></strong> para abrir a UI nativa do Prometheus:</p>
 <p><img src="https://raw.githubusercontent.com/scovl/scovl.github.io/master/post/images/tsdb/ui01.png" alt=""></p>
@@ -1695,10 +1686,10 @@ Por exemplo:</p>
 
 
   <pre><code class="language-promql">histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))</code></pre>
- <p><strong><code>quantile(quantile, expr)</code></strong>: Calcula um quantil específico de uma expressão.</p>
+ <p><strong><code>quantile(φ, expr) by (label)</code></strong> (operador de agregação): Calcula o φ-quantil (0 ≤ φ ≤ 1) entre as séries agrupadas. Diferente de <code>histogram_quantile</code>, <strong>não</strong> se aplica a histogramas — use para calcular percentis entre instâncias.</p>
 
 
-  <pre><code class="language-promql">quantile(0.95, rate(http_requests_total[5m]))</code></pre>
+  <pre><code class="language-promql">quantile(0.95, rate(http_requests_total[5m])) by (job)</code></pre>
  <h3 id="funções-de-filtro-e-seleção">Funções de Filtro e Seleção</h3>
 <p><strong><code>topk(k, expr)</code></strong>: Retorna as k séries com os maiores valores.</p>
 
@@ -1709,14 +1700,14 @@ Por exemplo:</p>
 
   <pre><code class="language-promql">bottomk(5, rate(http_requests_total[5m]))</code></pre>
  <h3 id="funções-de-tempo">Funções de Tempo</h3>
-<p><strong><code>avg_over_time(expr[interval])</code></strong>: Calcula a média dos valores no intervalo especificado.</p>
+<p><strong><code>avg_over_time(expr[interval])</code></strong>: Calcula a média dos valores de uma métrica <strong>gauge</strong> no intervalo especificado.</p>
 
 
-  <pre><code class="language-promql">avg_over_time(http_requests_total[5m])</code></pre>
- <p><strong><code>sum_over_time(expr[interval])</code></strong>: Calcula a soma dos valores no intervalo especificado.</p>
+  <pre><code class="language-promql">avg_over_time(cpu_usage[5m])</code></pre>
+ <p><strong><code>sum_over_time(expr[interval])</code></strong>: Calcula a soma dos valores de uma métrica <strong>gauge</strong> no intervalo especificado.</p>
 
 
-  <pre><code class="language-promql">sum_over_time(http_requests_total[5m])</code></pre>
+  <pre><code class="language-promql">sum_over_time(memory_usage[5m])</code></pre>
  <p><strong><code>max_over_time(expr[interval])</code></strong>: Retorna o valor máximo no intervalo especificado.</p>
 
 
@@ -1734,205 +1725,7 @@ Por exemplo:</p>
 
 
   <pre><code class="language-promql">absent_over_time(up{job=&#34;webserver&#34;}[5m])</code></pre>
- <h2 id="promql-avançado">PromQL Avançado</h2>
-<p>O PromQL oferece recursos avançados para consultas complexas e análises sofisticadas. Esta seção aborda tópicos mais avançados como correspondência de vetores, subconsultas, operadores lógicos e funções especializadas.</p>
-<h3 id="correspondência-de-séries-temporais-on-ignoring-group_left-group_right-1">Correspondência de Séries Temporais: <code>on()</code>, <code>ignoring()</code>, <code>group_left</code>, <code>group_right</code></h3>
-<p>Quando combinamos métricas diferentes (vetor-vetor), muitas vezes precisamos controlar quais labels são usados para fazer o <em>join</em> (união) entre as séries de cada lado da operação. É aqui que entram os modificadores <code>on</code> e <code>ignoring</code>, e os operadores de junção externa <code>group_left</code> e <code>group_right</code>:</p>
-<ul>
-<li>
-<p><strong><code>on(lista_de_labels)</code></strong>: Especifica explicitamente quais labels devem ser usados para casar as séries ao aplicar o operador. Todos os demais labels são ignorados no matching (exceto os do <code>on</code> listados).
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">errors_total / on(instance) requests_total</code></pre>
- <p>Aqui dizemos: combine séries de <code>errors_total</code> e <code>requests_total</code> que tenham o mesmo valor de <code>instance</code>. Labels diferentes de <code>instance</code> serão ignorados na comparação. Isso é útil se, por exemplo, <code>errors_total</code> tem um label <code>status=&quot;5xx&quot;</code> enquanto <code>requests_total</code> não tem o label <code>status</code>. Sem o <code>on(instance)</code>, essas séries não casariam por terem conjuntos de labels distintos.</p>
-</li>
-<li>
-<p><strong><code>ignoring(lista_de_labels)</code></strong>: O inverso do <code>on</code>. Use todos os labels <em>exceto</em> os listados para fazer o matching. Ou seja, finge que os labels mencionados não existem nos vetores ao procurar pares correspondentes.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">cpu_usage{cpu=&#34;total&#34;} / ignoring(cpu) cpu_quota</code></pre>
- <p>Suponha que <code>cpu_usage</code> tenha um label <code>cpu</code> (núcleo) e valor <code>&quot;total&quot;</code> para indicar uso total da CPU, enquanto <code>cpu_quota</code> não tem esse label (aplica a todo CPU). O <code>ignoring(cpu)</code> permite desconsiderar essa diferença, casando as séries somente pelos outros labels (por exemplo, pod ou contêiner, se for o caso).</p>
-</li>
-<li>
-<p><strong>Junções um-para-muitos (many-to-one)</strong>: Por padrão, se houver múltiplas séries de um lado que poderiam casar com uma série do outro, a operação não ocorre e o resultado é vazio para evitar ambiguidades. No entanto, às vezes desejamos permitir isso — por exemplo, dividir uma métrica total por número de CPUs, onde a métrica total não tem o label <code>cpu</code> mas a de contagem de CPU tem (múltiplas séries, uma por core).
-Para isso, usamos <code>group_left</code> ou <code>group_right</code> em conjunto com <code>on</code>/<code>ignoring</code>:</p>
-<ul>
-<li><strong><code>group_left(label1, label2, ...)</code></strong>: Indica que as séries do lado esquerdo do operador devem permanecer separadas (muitas) enquanto as do lado direito serão &ldquo;espalhadas&rdquo; para casar. Em outras palavras, permite que uma única série do lado direito seja usada para múltiplas do lado esquerdo. Opcionalmente, podemos listar labels que serão <strong>copiados</strong> do lado direito para o resultado final.</li>
-<li><strong><code>group_right(label1, label2, ...)</code></strong>: O contrário, mantém o lado direito com muitas séries e espalha o lado esquerdo.</li>
-</ul>
-<p><em>Exemplo (adicionando labels com group_left):</em></p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  * on(instance) 
-  group_left(job, environment) 
-  up</code></pre>
- <p>Nesse exemplo, <code>rate(http_requests_total[5m])</code> produz séries talvez com labels <code>instance</code> e outros, mas digamos que não tenha <code>job</code> nem <code>environment</code> explicitamente (ou queremos copiar do <code>up</code>). A série <code>up</code> (métrica de saúde do alvo) tem <code>job</code>, <code>instance</code>, e <code>environment</code>. Estamos multiplicando as duas métricas apenas casando por <code>instance</code> (<code>on(instance)</code>). Como do lado direito (<code>up</code>) há possivelmente apenas uma série por instance (valor 0 ou 1), e do lado esquerdo pode haver múltiplas (por caminho de requisição, status, etc.), usamos <code>group_left(job, environment)</code> para dizer: permite que a mesma série de <code>up</code> case com múltiplas séries de requests do lado esquerdo, e traga os labels <code>job</code> e <code>environment</code> dessa série de <code>up</code> para o resultado final. Assim, o resultado terá a taxa de requests por <code>instance</code> mas agora enriquecido com os labels de job e environment.</p>
-<p><em>Exemplo (many-to-one sem copiar labels):</em></p>
-
-
-  <pre><code class="language-promql">cpu_usage 
-  / on(instance) 
-  group_right 
-  cpu_count</code></pre>
- <p>Suponha que <code>cpu_usage{instance=&quot;A&quot;}</code> representa o uso total de CPU (consolidado) em determinada máquina, e <code>cpu_count{instance=&quot;A&quot;, cpu=&quot;0&quot;}</code> e <code>cpu_count{instance=&quot;A&quot;, cpu=&quot;1&quot;}</code> etc. representam 1 para cada CPU física (cada core). Se somarmos <code>cpu_count by (instance)</code> obteríamos o número de CPUs por instância, mas podemos diretamente dividir usando o truque do <code>group_right</code>. Aqui, cada série de <code>cpu_usage</code> (uma por instancia) será comparada com múltiplas séries de <code>cpu_count</code> (uma por CPU). Sem <code>group_right</code>, não casaria por haver múltiplas séries do lado direito para o mesmo instance. Com <code>group_right</code>, permitimos isso e, por não especificar labels a copiar, o resultado herda os labels do lado esquerdo (<code>cpu_usage</code>), e a operação divisão é feita para cada combinação (na prática repetindo o mesmo valor de <code>cpu_usage</code> para cada CPU e dividindo por o respectivo <code>cpu_count</code> – o que acaba resultando no mesmo valor para cada CPU). Talvez nesse caso específico fosse melhor já agrupar <code>cpu_count</code> antes de dividir, mas esse exemplo ilustra a sintaxe.</p>
-</li>
-<li>
-<p><strong>Operador de conjunto <code>union</code>:</strong> PromQL não possui um operador explícito &ldquo;UNION&rdquo; nomeado, mas podemos realizar união de resultados simplesmente listando expressões separadas por vírgula em uma consulta. Por exemplo:</p>
-
-
-  <pre><code class="language-promql">metric_a, metric_b</code></pre>
- <p>Isso retorna todas as séries de <code>metric_a</code> e todas as de <code>metric_b</code>. Não é muito comum em consultas manuais, mas pode ser útil para junção visual.</p>
-</li>
-</ul>
-<p>Resumindo, os modificadores <code>on</code> e <code>ignoring</code> controlam <strong>quais</strong> labels considerar ao casar séries de métricas diferentes, e <code>group_left</code>/<code>group_right</code> controlam <strong>como lidar</strong> quando há cardinalidades diferentes (um-para-muitos). Combiná-los corretamente é fundamental para escrever consultas que envolvam múltiplas métricas.</p>
-<h3 id="operadores-lógicos-and-or-unless-1">Operadores Lógicos: <code>and</code>, <code>or</code>, <code>unless</code></h3>
-<p>Além dos operadores aritméticos e de comparação, PromQL também suporta operadores lógicos para vetores. Esses operadores não criam valores numéricos novos, mas sim filtram ou combinam séries com base em condições booleanas.</p>
-<ul>
-<li>
-<p><strong><code>and</code>:</strong> Retém apenas as séries que aparecem em <strong>ambos</strong> os operandos. Em outras palavras, é uma interseção: uma série do lado esquerdo só passa se existe uma série exatamente igual do lado direito (considerando labels) e vice-versa. O valor resultante de cada série será o valor do lado esquerdo (padrão) ou, se usado como comparador, segue regras de comparador bool.
-Uso típico: aplicar uma condição a um resultado. Por exemplo:</p>
-
-
-  <pre><code class="language-promql">(vector1 comparacao const) and vector1</code></pre>
- <p>Isso retornaria apenas as séries de <code>vector1</code> que atendem à comparação (pois o comparador produzirá 1 para as séries que satisfazem, e então <code>and</code> manterá apenas essas).</p>
-</li>
-<li>
-<p><strong><code>or</code>:</strong> União de séries. Retorna séries que estão em <strong>pelo menos um</strong> dos lados. Se a mesma série (mesmos labels) aparece em ambos, o valor resultante será o do lado esquerdo (padrão) ou pode ser modificado com bool se estivermos combinando booleanos. É útil para combinar resultados diferentes.
-Por exemplo:</p>
-
-
-  <pre><code class="language-promql">vector_a or vector_b</code></pre>
- <p>Isso dá todas as séries de <code>vector_a</code> e <code>vector_b</code>. Se alguma série estiver presente nos dois, aparece uma vez só (com valor de <code>vector_a</code>).</p>
-</li>
-<li>
-<p><strong><code>unless</code>:</strong> Retém as séries do lado esquerdo <strong>a menos que</strong> elas também apareçam no lado direito. Equivale a diferença de conjuntos: resultado = esquerda \ direita. (Obs: O lado direito só importa pelos labels, seus valores são ignorados).
-Por exemplo:</p>
-
-
-  <pre><code class="language-promql">up{job=&#34;api&#34;} unless up{job=&#34;api&#34;, region=&#34;us-east&#34;}</code></pre>
- <p>Isso retornaria as séries <code>up</code> do job &ldquo;api&rdquo; <strong>que não têm</strong> region=&ldquo;us-east&rdquo;, ou seja, efetivamente filtra fora todas as instâncias da região us-east.</p>
-</li>
-</ul>
-<p>Os operadores lógicos são avaliados após todos os cálculos numéricos serem feitos. Isso significa que podemos usá-los tanto em métricas brutas quanto em resultados de expressões.</p>
-<p><strong>Exemplos práticos combinando comparações e operadores lógicos:</strong></p>
-<ul>
-<li>
-<p><strong>Contar instâncias ativas em dois grupos diferentes:</strong></p>
-
-
-  <pre><code class="language-promql">sum(up{job=&#34;node&#34;} == 1) or sum(up{job=&#34;db&#34;} == 1)</code></pre>
- <p>Esse exemplo usa <code>== 1</code> para converter as séries <code>up</code> em booleanas (1 para up, 0 para down) e soma para contar quantas estão up em cada job. O <code>or</code> aqui faz a união, retornando duas séries (uma para node e outra para db) com o valor de quantas instâncias estão up em cada.</p>
-</li>
-<li>
-<p><strong>Filtrar top 5 de um conjunto e combinar com outro critério:</strong></p>
-
-
-  <pre><code class="language-promql">topk(5, rate(http_requests_total[5m])) and ignoring(instance) (rate(errors_total[5m]) &gt; 0)</code></pre>
- <p>Esse exemplo hipotético pegaria as 5 maiores taxas de requisição (independente de instância) e então, através do <code>and</code> com <code>ignoring(instance)</code> e a condição de erros, manteria somente aquelas cujo serviço (ignorando instâncias) está apresentando erros. Bastante específico, mas demonstra o uso combinado: <code>topk</code> produz séries; a outra parte produz 1/0 para serviços com erro; o <code>and ignoring(instance)</code> casa por serviço e filtra.</p>
-</li>
-</ul>
-<p>Lembrando que, se quisermos comparar valores de uma série com um número e obter diretamente 1 ou 0, podemos usar o modificador <code>bool</code>. Exemplo: <code>vector1 &gt; bool 10</code> retornaria um vetor com valor 1 para séries onde <code>vector1</code> &gt; 10 e 0 caso contrário (mantendo os labels). Sem <code>bool</code>, ele retornaria as próprias séries (com seus valores originais) porém filtradas pelas que atendem à condição.</p>
-<h3 id="subconsultas-e-análise-temporal-avançada">Subconsultas e Análise Temporal Avançada</h3>
-<p><strong>Counter Range Vectors</strong>: Contadores são métricas que apenas aumentam (ou resetam para zero e voltam a aumentar). Exemplos: número total de requisições atendidas, bytes transferidos, etc. Quando consultamos diretamente um <em>counter</em> como range vector, obteremos uma série de pontos que só crescem (com eventuais resets). Para extrair informações úteis (como taxa de eventos por segundo ou aumentos em determinado período) usamos funções especiais:</p>
-<ul>
-<li><code>rate(counter[5m])</code>: Calcula a <strong>taxa média por segundo</strong> de incremento do contador nos últimos 5 minutos. Essa função já lida corretamente com resets do contador (ignorando as quedas abruptas devido a resets e calculando a taxa considerando isso).</li>
-<li><code>irate(counter[5m])</code>: Calcula a <strong>taxa instantânea</strong> (baseada apenas nos dois pontos mais recentes dentro dos 5 minutos). É mais ruidosa, mas pode reagir mais rapidamente a mudanças repentinas.</li>
-<li><code>increase(counter[1h])</code>: Calcula <strong>quanto o contador aumentou</strong> no último 1 hora. Essencialmente integra a taxa ao longo do período.</li>
-</ul>
-<p><strong>Agregação através do tempo (Aggregating Across Time)</strong>: Às vezes, queremos primeiro agregar os dados e depois analisar a evolução temporal dessa agregação. As <strong>subconsultas</strong> nos permitem isso. Uma <em>subquery</em> (subconsulta) é quando temos uma expressão do PromQL seguida de um intervalo entre colchetes e possivelmente uma resolução, por exemplo: <code>expr[duração:passo]</code>. Isso faz o Prometheus avaliar <code>expr</code> repetidamente ao longo do intervalo dado, produzindo um range vector como resultado.</p>
-<p>Por exemplo, <code>avg_over_time(rate(http_requests_total[1m])[24h:1h])</code> funciona assim:</p>
-<ul>
-<li>Internamente, <code>rate(http_requests_total[1m])</code> é avaliado para cada passo de 1h dentro das últimas 24h, gerando a taxa média por minuto calculada a cada hora.</li>
-<li>Em seguida, <code>avg_over_time(...[24h:1h])</code> calcula a média desses 24 valores (um por hora) <strong>no tempo atual</strong>. Na prática, isso nos daria a média da taxa horária de requisições no dia.</li>
-</ul>
-<p>Subconsultas são muito poderosas e foram aprimoradas a partir do Prometheus 2.7. Com elas é possível, por exemplo, calcular tendências, baselines e sazonalidade de forma compacta.</p>
-<p><strong>Exemplos avançados de subconsultas e análise de tendências:</strong></p>
-<ul>
-<li>
-<p><strong>Tendência de taxa de erro (janela móvel):</strong> Calcular a média da taxa de erros em janelas de 1 hora, ao longo das últimas 24 horas:</p>
-
-
-  <pre><code class="language-promql">avg_over_time(
-  rate(http_requests_total{status=~&#34;5..&#34;}[1m])[24h:1h]
-)</code></pre>
- <p>Essa consulta gera 24 pontos (taxa de erro média de cada hora nas últimas 24h) e depois calcula a média disso tudo (ou seja, a média diária da taxa de erro). Poderíamos também omitir a função externa para simplesmente visualizar a série das últimas 24 horas e identificar padrões de aumento ou redução de erros ao longo do dia.</p>
-</li>
-<li>
-<p><strong>Baseline de performance (comparação com média histórica):</strong> Comparar a performance atual com a média da última semana:</p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  / avg_over_time(rate(http_requests_total[5m])[7d])</code></pre>
- <p>Essa consulta produz uma razão: valores acima de 1 indicam que a taxa atual de requisições está <strong>acima</strong> da média semanal; valores abaixo de 1, abaixo da média. Isso pode ser útil para identificar desvios significativos de tráfego.</p>
-</li>
-<li>
-<p><strong>Detecção de anomalia sazonal (padrão horário):</strong> Comparar o tráfego atual com o padrão do último dia:</p>
-
-
-  <pre><code class="language-promql">rate(http_requests_total[5m]) 
-  / avg_over_time(rate(http_requests_total[5m])[24h:1h])</code></pre>
- <p>Aqui, o denominador <code>avg_over_time(...[24h:1h])</code> produz a média da taxa em cada hora do dia anterior. Dividindo a taxa atual por esse valor da mesma hora ontem, podemos identificar se o tráfego está anormalmente alto ou baixo para este horário do dia.</p>
-</li>
-<li>
-<p><strong>Diferença diária (subconsulta com offset):</strong> Para calcular a diferença em uma métrica entre hoje e ontem, podemos usar <code>offset</code>. Exemplo:</p>
-
-
-  <pre><code class="language-promql">my_metric - my_metric offset 1d</code></pre>
- <p>Isso resulta em quanto <code>my_metric</code> variou em comparação com exatamente 24 horas atrás.</p>
-</li>
-<li>
-<p><strong>Soma acumulada (exemplo de subconsulta):</strong></p>
-
-
-  <pre><code class="language-promql">sum(my_counter) - sum(my_counter) offset 1d</code></pre>
- <p>Este exemplo soma o contador <code>my_counter</code> (provavelmente de várias instâncias) e subtrai o valor de 1 dia atrás, mostrando o incremento total em um dia. Essa é outra forma de calcular algo similar a <code>increase(my_counter[1d])</code>.</p>
-</li>
-</ul>
-<p>Em todos esses casos, as subconsultas <code>[ ... ]</code> estão permitindo observar ou reutilizar resultados ao longo do tempo dentro de uma única expressão.</p>
-<h3 id="funções-avançadas-e-especializadas">Funções Avançadas e Especializadas</h3>
-<p>Algumas funções do PromQL são menos conhecidas, mas podem ser extremamente poderosas em cenários específicos:</p>
-<ul>
-<li>
-<p><strong><code>resets(counter[interval])</code>:</strong> Conta quantas vezes um contador &ldquo;resetou&rdquo; (voltou a zero) no período. Útil para detectar reinicializações de aplicativos ou problemas de coleta.
-<em>Exemplos:</em></p>
-
-
-  <pre><code class="language-promql">resets(http_requests_total[5m])</code></pre>
- <p>Contaria quantos resets ocorreram no <code>http_requests_total</code> nos últimos 5 minutos. Se esse número for &gt; 0 constantemente, pode indicar que o serviço está reiniciando frequentemente (se o contador for interno ao serviço) ou que há overflow de contadores.</p>
-</li>
-<li>
-<p><strong><code>changes(series[interval])</code>:</strong> Conta quantas vezes o valor de uma série mudou durante o intervalo. Isso vale para qualquer métrica (não apenas counters). Pode indicar instabilidade ou flapping.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">changes(process_start_time_seconds[5m]) &gt; 0</code></pre>
- <p>O exemplo acima retornaria 1 para instâncias cujo <code>process_start_time_seconds</code> (normalmente um timestamp de início do processo) tenha mudado nos últimos 5 minutos — ou seja, o processo reiniciou nesse período.</p>
-</li>
-<li>
-<p><strong><code>predict_linear(series[interval], passos_no_futuro)</code>:</strong> Realiza uma extrapolação linear do valor da série com base na tendência nos últimos intervalos e prevê o valor daqui a X segundos (informado em <code>passos_no_futuro</code>). Útil para prever quando algo alcançará um certo limite.
-<em>Exemplo:</em></p>
-
-
-  <pre><code class="language-promql">predict_linear(node_filesystem_free_bytes[1h], 3600) &lt; 0</code></pre>
- <p>Poderia ser usado para alertar se a tendência de queda do espaço livre prevê que em 1 hora (<code>3600</code> segundos) o espaço chegaria a zero.</p>
-</li>
-<li>
-<p><strong><code>holt_winters(series[interval], sf, tf)</code>:</strong> Embora mais comum no Graphite, o PromQL também tem uma função de previsão chamada <code>holt_winters</code> (Holt-Winters, série temporal com tendência e sazonalidade). Aceita uma série (geralmente resultado de subconsulta) e realiza suavização exponencial dupla. No entanto, essa função é raramente usada diretamente em alertas, servindo mais para visualização de tendências suavizadas.</p>
-</li>
-<li>
-<p><strong>Funções para histogramas nativos (Prometheus 3.x):</strong></p>
-<ul>
-<li><code>histogram_count()</code> e <code>histogram_sum()</code> – Retornam, respectivamente, a contagem total e a soma total das observações de histogramas (clássicos ou nativos). Para histogramas clássicos, esses usam as séries <code>_count</code> e <code>_sum</code> internas; para nativos, usam os valores codificados.</li>
-<li><code>histogram_avg()</code> – Computa a média dos valores observados em cada histograma, equivalente a <code>histogram_sum/histogram_count</code>.</li>
-<li><code>histogram_fraction(lower, upper, hist)</code> – Estima a fração de observações dentro do intervalo <code>[lower, upper]</code> para cada histograma. Útil, por exemplo, para calcular <em>Apdex</em> (fração de requisições abaixo de um certo limiar de latência).</li>
-</ul>
-</li>
-</ul>
-<p>Lembrando que algumas dessas funções mais novas podem requerer flags experimentais, dependendo da versão do Prometheus.</p>
-<h2 id="promql-na-prática">PromQL na Prática</h2>
+ <h2 id="promql-na-prática">PromQL na Prática</h2>
 <p>O PromQL é a linguagem de consulta do Prometheus que permite extrair insights valiosos das métricas coletadas. Vamos explorar exemplos práticos de consultas comuns para uso diário em monitoramento.</p>
 <h3 id="consultas-básicas-de-disponibilidade">Consultas Básicas de Disponibilidade</h3>
 <p><strong>Verificar se todos os targets estão up:</strong></p>
@@ -3072,31 +2865,6 @@ groups:
                 
                     
                 
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
             
@@ -3122,6 +2890,10 @@ groups:
                 
                     
                 
+                    
+                
+                    
+                
             
             
             
@@ -3134,6 +2906,27 @@ groups:
             
                 
                     
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
+        
+    
+        
+            
+            
+            
+            
                 
                     
                 
@@ -3282,24 +3075,24 @@ groups:
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069197"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778071284"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778069197"></script>
-    <script src="/js/lazy-loading.js?v=1778069197"></script>
-    <script src="/js/toc.js?v=1778069197"></script>
+    <script src="/js/main-minimal.js?v=1778071284"></script>
+    <script src="/js/lazy-loading.js?v=1778071284"></script>
+    <script src="/js/toc.js?v=1778071284"></script>
     
     
     

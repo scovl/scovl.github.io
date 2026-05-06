@@ -4,7 +4,7 @@ description = "Quando uma arquitetura atinge a marca de dezenas ou centenas de m
 date = 2026-05-05T19:41:45-03:00
 tags = ["performance", "latência", "compressão", "protobuf", "zstd", "arquitetura de software"]
 draft = false
-weight = 3
+weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
@@ -14,7 +14,22 @@ Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Tran
 
 Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um *outage* em horário de pico. Vamos dissecar os *trade-offs* entre [JSON](https://www.json.org/json-en.html) Puro, JSON com [Gzip](https://www.gzip.org/), [Protobuf](https://protobuf.dev/) com Gzip e a adoção do [Zstandard](https://facebook.github.io/zstd/) (Zstd).
 
----
+## Quando essa preocupação se aplica?
+
+Esta análise é relevante para sistemas onde a latência de serialização e compressão representa uma fração significativa do tempo total de resposta:
+
+* **Microsserviços internos com alto TPS** — API gateways, serviços de mensageria, pipelines de dados que trocam milhões de mensagens por minuto.
+* **Sistemas financeiros e de pagamento** — processamento de transações, corretoras, câmbio, onde cada milissegundo impacta o custo operacional.
+* **Plataformas de tempo real** — streaming, jogos online, leilões, publicidade programática, onde a latência determina a experiência do usuário.
+* **IoT e telemetria** — coleta de métricas em massa de milhares de dispositivos, onde o volume de dados satura a rede antes da CPU.
+
+Por outro lado, **não é uma preocupação relevante** para:
+
+* **APIs públicas com baixo a médio tráfego** — CRUDs, sites institucionais, sistemas internos com poucos usuários simultâneos.
+* **Sistemas batch e ETL** — onde a latência individual de cada operação é irrelevante; o throughput geral é o que importa.
+* **Aplicações com gargalo em banco de dados ou I/O de disco** — nestes casos, otimizar a serialização traz ganhos marginais.
+
+Uma regra prática: se sua aplicação processa menos de **1.000 TPS** ou o tempo de serialização é inferior a **1% da latência total**, as otimizações discutidas aqui provavelmente não trarão ganhos significativos. Concentre-se primeiro nos gargalos dominantes.
 
 ## O Paradoxo da Latência
 

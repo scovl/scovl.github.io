@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778069197">
+<link rel="stylesheet" href="/css/main.css?v=1778071284">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778071284">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069197">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778071284">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778069197"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778071284"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -473,6 +473,7 @@ window.I18n = I18n;
         <nav id="TableOfContents">
   <ul>
     <li><a href="#otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</a></li>
+    <li><a href="#quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</a></li>
     <li><a href="#o-paradoxo-da-latência">O Paradoxo da Latência</a>
       <ul>
         <li><a href="#1-json-puro-a-ilusão-da-simplicidade">1. JSON Puro: A Ilusão da Simplicidade</a></li>
@@ -504,7 +505,21 @@ window.I18n = I18n;
     <h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
 <p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
 <p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>
-<hr>
+<h2 id="quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</h2>
+<p>Esta análise é relevante para sistemas onde a latência de serialização e compressão representa uma fração significativa do tempo total de resposta:</p>
+<ul>
+<li><strong>Microsserviços internos com alto TPS</strong> — API gateways, serviços de mensageria, pipelines de dados que trocam milhões de mensagens por minuto.</li>
+<li><strong>Sistemas financeiros e de pagamento</strong> — processamento de transações, corretoras, câmbio, onde cada milissegundo impacta o custo operacional.</li>
+<li><strong>Plataformas de tempo real</strong> — streaming, jogos online, leilões, publicidade programática, onde a latência determina a experiência do usuário.</li>
+<li><strong>IoT e telemetria</strong> — coleta de métricas em massa de milhares de dispositivos, onde o volume de dados satura a rede antes da CPU.</li>
+</ul>
+<p>Por outro lado, <strong>não é uma preocupação relevante</strong> para:</p>
+<ul>
+<li><strong>APIs públicas com baixo a médio tráfego</strong> — CRUDs, sites institucionais, sistemas internos com poucos usuários simultâneos.</li>
+<li><strong>Sistemas batch e ETL</strong> — onde a latência individual de cada operação é irrelevante; o throughput geral é o que importa.</li>
+<li><strong>Aplicações com gargalo em banco de dados ou I/O de disco</strong> — nestes casos, otimizar a serialização traz ganhos marginais.</li>
+</ul>
+<p>Uma regra prática: se sua aplicação processa menos de <strong>1.000 TPS</strong> ou o tempo de serialização é inferior a <strong>1% da latência total</strong>, as otimizações discutidas aqui provavelmente não trarão ganhos significativos. Concentre-se primeiro nos gargalos dominantes.</p>
 <h2 id="o-paradoxo-da-latência">O Paradoxo da Latência</h2>
 <p>Em sistemas de alta performance, a latência total ($L_{total}$) de uma requisição não é apenas o tempo de rede. Ela pode ser expressa de forma simplificada pela seguinte equação:</p>
 <p>$$L_{total} = T_{ser} + T_{comp} + \frac{S_{payload}}{B_{rede}} + T_{decomp} + T_{deser}$$</p>
@@ -670,25 +685,6 @@ graph TD
     
     
         
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
     
         
             
@@ -756,13 +752,32 @@ graph TD
                 
                     
                 
-                    
-                
             
             
             
         
     
+        
+            
+            
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            
+            
+            
         
     
         
@@ -897,24 +912,24 @@ graph TD
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778069197"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069197"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778071284"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778069197"></script>
-    <script src="/js/lazy-loading.js?v=1778069197"></script>
-    <script src="/js/toc.js?v=1778069197"></script>
+    <script src="/js/main-minimal.js?v=1778071284"></script>
+    <script src="/js/lazy-loading.js?v=1778071284"></script>
+    <script src="/js/toc.js?v=1778071284"></script>
     
     
     
