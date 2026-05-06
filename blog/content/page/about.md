@@ -34,6 +34,8 @@ Sou entusiasta de **infraestrutura como código, engenharia de plataforma e cult
 
 ## Golang
 
+- [GopherLab](https://github.com/scovl/gopherlab) – laboratório de experimentação e aprendizado em **Go**, onde exploro conceitos avançados de linguagem, padrões de design e integração com sistemas distribuídos. O objetivo é criar uma coleção de projetos e tutoriais que ajudem outros engenheiros a dominar Go através de exemplos práticos e desafios reais.
+
 - [**Ollanta**](https://github.com/scovl/ollanta) – plataforma de análise de código estático multi-linguagem, resiliente, escalável e efêmera, escrita em **Go**. Foca em fornecer insights de qualidade de código e segurança para projetos de software, integrando-se facilmente a pipelines de CI/CD. Resolve o desafio de manter a qualidade do código em projetos grandes e dinâmicos, oferecendo feedback rápido e acionável para desenvolvedores.
 
 - [**Saitama**](https://github.com/scovl/saitama) – ferramenta para **gerenciamento e finalização segura de processos** em sistemas Unix-like, escrita em **Go**. Resolve cenários onde processos precisam ser terminados de forma controlada, respeitando sinais de shutdown graceful e garantindo limpeza adequada de recursos.

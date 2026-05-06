@@ -23,21 +23,39 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778071284">
+<link rel="stylesheet" href="/css/main.css?v=1778083013">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778071284">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778083013">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778071284">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778083013">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778071284"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1778083013"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -473,7 +491,11 @@ window.I18n = I18n;
         <nav id="TableOfContents">
   <ul>
     <li><a href="#otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</a></li>
-    <li><a href="#quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</a></li>
+    <li><a href="#quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</a>
+      <ul>
+        <li><a href="#quando-protobuf--zstd-vira-over-engineering">Quando Protobuf + Zstd vira over-engineering</a></li>
+      </ul>
+    </li>
     <li><a href="#o-paradoxo-da-latência">O Paradoxo da Latência</a>
       <ul>
         <li><a href="#1-json-puro-a-ilusão-da-simplicidade">1. JSON Puro: A Ilusão da Simplicidade</a></li>
@@ -505,6 +527,9 @@ window.I18n = I18n;
     <h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
 <p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
 <p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>
+<p>Esta análise nasceu de uma decisão de arquitetura durante o desenvolvimento do <strong><a href="https://github.com/scovl/Ollanta">Ollanta</a></strong>, uma plataforma de análise estática multilinguagem escrita em Go. O scanner local precisa enviar relatórios de análise para o servidor.</p>
+<img src="https://github.com/scovl/Ollanta/raw/main/docs/imgs/logo-dark.png" alt="ollanta" width="250" style="display: block; margin: 1em auto;" />
+<p>Um cenário que envolve dezenas de milhares de mensagens por minuto, cada uma com payloads semi-estruturados e repetitivos, o que torna a escolha entre serialização textual e binária uma decisão crítica de infraestrutura. Este artigo documenta os trade-offs considerados e o caminho adotado.</p>
 <h2 id="quando-essa-preocupação-se-aplica">Quando essa preocupação se aplica?</h2>
 <p>Esta análise é relevante para sistemas onde a latência de serialização e compressão representa uma fração significativa do tempo total de resposta:</p>
 <ul>
@@ -520,6 +545,17 @@ window.I18n = I18n;
 <li><strong>Aplicações com gargalo em banco de dados ou I/O de disco</strong> — nestes casos, otimizar a serialização traz ganhos marginais.</li>
 </ul>
 <p>Uma regra prática: se sua aplicação processa menos de <strong>1.000 TPS</strong> ou o tempo de serialização é inferior a <strong>1% da latência total</strong>, as otimizações discutidas aqui provavelmente não trarão ganhos significativos. Concentre-se primeiro nos gargalos dominantes.</p>
+<h3 id="quando-protobuf--zstd-vira-over-engineering">Quando Protobuf + Zstd vira over-engineering</h3>
+<p>Mesmo em cenários legítimos de otimização, as soluções mais avançadas podem se tornar um custo desproporcional ao benefício. Eis onde <strong>JSON + Gzip</strong> ainda é a escolha sensata:</p>
+<ul>
+<li><strong>Time pequeno e entrega rápida</strong> — Se você tem 2-3 devs e um prazo curto, a complexidade de manter arquivos <code>.proto</code>, treinar dicionários Zstd e integrar bindings específicos desacelera o ciclo de desenvolvimento. JSON funciona em qualquer linguagem sem dependências extras.</li>
+<li><strong>Payloads grandes (&gt; 5 KB por mensagem)</strong> — A partir desse tamanho, o Gzip já atinge taxas de compressão próximas às do Zstd (70-80%), e a diferença de CPU deixa de ser significativa. O ganho marginal do Zstd não justifica a complexidade adicional.</li>
+<li><strong>APIs consumidas externamente</strong> — Se seus clientes são aplicações de terceiros, navegadores ou sistemas legados, JSON é o denominador comum universal. Impor Protobuf força um contrato binário que exige codegen, atualização coordenada de stubs e perde a interoperabilidade imediata.</li>
+<li><strong>Ferramentas de observabilidade e debug</strong> — Com JSON, você inspeciona payloads no olho, usa <code>curl | jq</code> para testar, e ferramentas de tracing já renderizam o conteúdo. Com Protobuf comprimido com Zstd, cada troubleshooting exige desserialização com schema — o custo cognitivo do dia a dia sobe.</li>
+<li><strong>Ecossistema com linguagens sem bindings maduros para Zstd</strong> — Embora C, Rust, Go e Java tenham ótimo suporte, linguagens como Ruby, Elixir ou PHP podem ter bindings experimentais ou incompletos. Se seu stack é heterogêneo, Zstd pode introduzir fragilidade.</li>
+<li><strong>Carga de CPU já é o gargalo, não a rede</strong> — Se seu perfil mostra CPU a 80% e rede a 20%, trocar Gzip por Zstd reduz ainda mais o uso de rede mas não ataca o problema real. JSON + Gzip com caching de serialização pode ser uma vitória mais barata.</li>
+</ul>
+<p>Resumindo: <strong>Protobuf + Zstd é a resposta certa para a pergunta errada quando você está otimizando um sistema que não tem TPS suficiente para justificar o investimento.</strong> JSON + Gzip, com todas as suas limitações, entrega 80% do resultado com 20% da complexidade — e isso é frequentemente o suficiente.</p>
 <h2 id="o-paradoxo-da-latência">O Paradoxo da Latência</h2>
 <p>Em sistemas de alta performance, a latência total ($L_{total}$) de uma requisição não é apenas o tempo de rede. Ela pode ser expressa de forma simplificada pela seguinte equação:</p>
 <p>$$L_{total} = T_{ser} + T_{comp} + \frac{S_{payload}}{B_{rede}} + T_{decomp} + T_{deser}$$</p>
@@ -565,7 +601,7 @@ graph TD
     style Client fill:#ffb3ba,stroke:#333,stroke-width:2px
     style API fill:#ffdfba,stroke:#333,stroke-width:2px
     style Vencedor fill:#baffc9,stroke:#333,stroke-width:4px</div>
- <h3 id="1-json-puro-a-ilusão-da-simplicidade">1. <a href="https://www.json.org/json-en.html">JSON</a> Puro: A Ilusão da Simplicidade</h3>
+ <h3 id="1-json-puro-a-ilusão-da-simplicidade">1. JSON Puro: A Ilusão da Simplicidade</h3>
 <p>O JSON é onipresente, legível por humanos e possui suporte nativo em praticamente qualquer ecossistema.</p>
 <ul>
 <li><strong>O Cenário:</strong> O payload trafega em texto plano. Não há custo de $T_{comp}$ ou $T_{decomp}$.</li>
@@ -575,7 +611,7 @@ graph TD
 <blockquote>
 <p><strong>Para se aprofundar:</strong> Para cenários onde o JSON é mandatório (APIs públicas), parsers como <a href="https://simdjson.org/">simdjson</a> usam instruções SIMD para atingir GB/s na desserialização. Ainda assim, o tamanho do payload na rede e a alocação de memória permanecem gargalos inerentes ao formato.</p>
 </blockquote>
-<h3 id="2-json--gzip-o-cobertor-curto">2. JSON + <a href="https://www.gzip.org/">Gzip</a>: O Cobertor Curto</h3>
+<h3 id="2-json--gzip-o-cobertor-curto">2. JSON + Gzip: O Cobertor Curto</h3>
 <p>A reação natural ao esgotamento da banda de rede é habilitar o Gzip no <em>middleware</em>.</p>
 <ul>
 <li><strong>O Cenário:</strong> O payload é reduzido em até 70-80%. A placa de rede respira aliviada.</li>
@@ -912,24 +948,24 @@ graph TD
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778071284"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778071284"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778083013"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778083013"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778071284"></script>
-    <script src="/js/lazy-loading.js?v=1778071284"></script>
-    <script src="/js/toc.js?v=1778071284"></script>
+    <script src="/js/main-minimal.js?v=1778083013"></script>
+    <script src="/js/lazy-loading.js?v=1778083013"></script>
+    <script src="/js/toc.js?v=1778083013"></script>
     
     
     

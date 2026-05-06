@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <title> | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,39 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758843324">
+<link rel="stylesheet" href="/css/main.css?v=1778082455">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758843324">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778082455">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758843324">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778082455">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758843324"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1778082455"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -468,7 +486,11 @@ window.I18n = I18n;
       <nav class="toc-nav" id="toc-nav">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#projetos">Projetos</a></li>
+    <li><a href="#rust">Rust</a></li>
+    <li><a href="#c">C</a></li>
+    <li><a href="#java">Java</a></li>
+    <li><a href="#clojure">Clojure</a></li>
+    <li><a href="#golang">Golang</a></li>
   </ul>
 </nav></nav>
     </div>
@@ -485,21 +507,57 @@ window.I18n = I18n;
 
   <div class="post-content">
     <p>Sejam bem vindos ao meu blog!</p>
-<p>Me chamo Vitor Lobo e meu nickname no github é scovl (uma brincadeira com a palavra Scoville scale e o meu nome), visto que gosto bastante de pimentas. Sou um engenheiro de software, escritor, gamer nas horas vagas e pesquisador independente. Trabalho com tecnologia há mais de 10 anos e sou apaixonado por arte e cultura, como literatura, cinema, música, quadrinhos, mangás, animes, viajar e conhecer novos lugares!</p>
-<h2 id="projetos">Projetos</h2>
-<p>Minha trajetória na programação começou em 2009, quando passei a colaborar com projetos open source. Na época, eu era um usuário ativo do <a href="https://freenode.net/">IRC</a> na freenode, onde tive a oportunidade de conhecer diversos desenvolvedores que influenciaram profundamente minha carreira.</p>
-<p>Contribuir com projetos open source foi fundamental para meu aprendizado em programação e, principalmente, para desenvolver habilidades de trabalho em comunidade. Essa experiência teve um impacto significativo no meu crescimento profissional. Abaixo, listo alguns dos projetos open source com os quais tenho colaborado:</p>
+<p>Olá, eu sou <strong>Vitor Lobo</strong> — ou simplesmente <em>Lobo</em>, como muitos me conhecem.</p>
+<p>Sou <strong>programador em plataformas e infraestrutura</strong>, com mais de 15 anos de experiência construindo sistemas que unem confiabilidade, automação e propósito. Trabalho atualmente com <strong>engenharia de software, plataforma e SRE</strong>, projetando plataformas internas, pipelines de CI/CD, ambientes Kubernetes e soluções de observabilidade para times de desenvolvimento e operações.</p>
+<p>Minha jornada começou em <strong>2009</strong>, dentro de comunidades open source no <a href="https://freenode.net/">IRC</a> da Freenode. Foi ali que aprendi a escrever código colaborativamente, contribuir com projetos reais e, acima de tudo, entender o impacto de boas práticas de engenharia — da automação ao design de sistemas resilientes.</p>
+<p>Sou entusiasta de <strong>infraestrutura como código, engenharia de plataforma e cultura DevX</strong>. Acredito que <strong>empoderar desenvolvedores através de ferramentas e abstrações simples</strong> é uma das formas mais poderosas de escalar tecnologia com qualidade. Além disso, defendo o aprendizado profundo e livre. Nos meus projetos pessoais, procuro sempre unir <strong>software e experimentação prática</strong>. Alguns deles:</p>
+<h2 id="rust">Rust</h2>
 <ul>
-<li><a href="https://github.com/rochacbruno/marmite">Marmite</a> - Marmite é gerador de site/blog estáticos escrito em Rust.</li>
-<li><a href="https://github.com/scovl/checkrc">checkrc</a> - checkrc é um validador de configurações para o freeBSD.</li>
-<li><a href="https://github.com/scovl/java-kubernetes">java-kubernetes</a> - java-kubernetes é um projeto da CNCF que tem como objetivo facilitar a configuração e implantação de aplicações java no kubernetes.</li>
-<li><a href="https://github.com/scovl/pomodoro">pomodoro</a> - pomodoro é um aplicativo de gerenciamento de tempo escrito para o GNU Emacs.</li>
-<li><a href="https://github.com/scovl/dogai">Dogai</a> - Sistema de Detecção de Objetos em Vídeo.</li>
-<li><a href="https://github.com/scovl/docai">Doca</a> - Assistente RAG para Documentação Técnica</li>
-<li><a href="https://github.com/scovl/saitama">Saitama</a> - Mata processos com um soco (de uma vez).</li>
+<li><a href="https://github.com/rochacbruno/marmite"><strong>Marmite</strong></a> – gerador de sites estáticos em <strong>Rust</strong>, focado em simplicidade e performance. Oferece uma alternativa leve e rápida para compilar conteúdo estático sem a complexidade de ferramentas maiores. A escolha por Rust garante máxima eficiência, sendo ideal para workflows de build em CI/CD e ambientes com recursos limitados.</li>
 </ul>
-<hr>
-<p><em>Obrigado por visitar meu blog! Espero que encontre conteúdo útil aqui.</em></p>
+<h2 id="c">C</h2>
+<ul>
+<li><a href="https://github.com/scovl/checkrc"><strong>checkrc</strong></a> – validador modular de configurações para <strong>FreeBSD</strong>, projetado para automatizar a verificação de arquivos de configuração em sistemas operacionais. Resolve um problema comum em infraestrutura: validar sintaxe e integridade de múltiplos arquivos antes de aplicarem-se em produção, prevenindo downtime causado por erros de configuração.</li>
+</ul>
+<h2 id="java">Java</h2>
+<ul>
+<li><a href="https://github.com/scovl/java-kubernetes"><strong>java-kubernetes</strong></a> – demonstra padrões de integração entre aplicações <strong>Java</strong> e <strong>Kubernetes</strong>, focando em deploys automatizados, service discovery e orquestração de contêineres. Serve como referência prática para engenheiros que trabalham com infraestrutura em Kubernetes, simplificando o ciclo de build, deploy e scaling de aplicações Java em ambientes containerizados.</li>
+</ul>
+<h2 id="clojure">Clojure</h2>
+<ul>
+<li>
+<p><a href="https://github.com/scovl/pomodoro"><strong>pomodoro</strong></a> – gerenciador de tempo integrado a <strong>GNU Emacs</strong>, implementado em <strong>Clojure</strong>. Aplica a técnica Pomodoro diretamente no editor de texto, demonstrando como usar a elegância funcional de Clojure para construir ferramentas de produtividade com foco em workflow integrado e minimalismo.</p>
+</li>
+<li>
+<p><a href="https://github.com/scovl/dogai"><strong>Dogai</strong></a> – sistema de <strong>detecção de objetos em vídeo</strong> escrito em <strong>Clojure</strong>, aproveitando redes neurais pré-treinadas para análise em tempo real. Combina processamento de imagem com programação funcional, provando que linguagens funcionais podem ser eficazes em tarefas computacionalmente intensivas como visão computacional.</p>
+</li>
+<li>
+<p><a href="https://github.com/scovl/docai"><strong>Doca</strong></a> – assistente <strong>RAG (Retrieval-Augmented Generation)</strong> para <strong>documentação técnica</strong>, permitindo consultas inteligentes sobre documentos técnicos combinando busca semântica com geração de respostas contextualizadas. Democratiza o acesso a documentação técnica complexa, permitindo que engenheiros façam perguntas em linguagem natural e recebam respostas precisas baseadas em suas bases de conhecimento.</p>
+</li>
+</ul>
+<h2 id="golang">Golang</h2>
+<ul>
+<li>
+<p><a href="https://github.com/scovl/gopherlab">GopherLab</a> – laboratório de experimentação e aprendizado em <strong>Go</strong>, onde exploro conceitos avançados de linguagem, padrões de design e integração com sistemas distribuídos. O objetivo é criar uma coleção de projetos e tutoriais que ajudem outros engenheiros a dominar Go através de exemplos práticos e desafios reais.</p>
+</li>
+<li>
+<p><a href="https://github.com/scovl/ollanta"><strong>Ollanta</strong></a> – plataforma de análise de código estático multi-linguagem, resiliente, escalável e efêmera, escrita em <strong>Go</strong>. Foca em fornecer insights de qualidade de código e segurança para projetos de software, integrando-se facilmente a pipelines de CI/CD. Resolve o desafio de manter a qualidade do código em projetos grandes e dinâmicos, oferecendo feedback rápido e acionável para desenvolvedores.</p>
+</li>
+<li>
+<p><a href="https://github.com/scovl/saitama"><strong>Saitama</strong></a> – ferramenta para <strong>gerenciamento e finalização segura de processos</strong> em sistemas Unix-like, escrita em <strong>Go</strong>. Resolve cenários onde processos precisam ser terminados de forma controlada, respeitando sinais de shutdown graceful e garantindo limpeza adequada de recursos.</p>
+</li>
+<li>
+<p><a href="https://github.com/SpectoLabs/hoverfly"><strong>Hoverfly</strong></a> – ferramenta para <strong>simulação e mock de APIs</strong>, permitindo que times testem suas aplicações contra endpoints virtualizados sem depender de serviços reais. Especialmente útil em ambientes de CI/CD, onde testes precisam rodar rapidamente e de forma isolada, sendo mantida como projeto colaborativo open source.</p>
+</li>
+<li>
+<p><a href="https://github.com/elazarl/goproxy"><strong>Go Proxy</strong></a> – biblioteca para criar <strong>proxies HTTP/HTTPS customizados</strong> em <strong>Go</strong>, oferecendo controle fino sobre requisições e respostas. Demonstra como construir middleware de rede em Go, sendo útil para logging, filtering, compression e modificação de tráfego em tempo real.</p>
+</li>
+<li>
+<p><a href="https://github.com/spf13/cobra"><strong>Cobra</strong></a> – biblioteca para criar <strong>aplicações CLI robustas</strong> em <strong>Go</strong>, com suporte a subcomandos, flags e auto-completion. Amplamente adotada em projetos como Docker, Kubernetes e Prometheus, facilita a construção de ferramentas de linha de comando profissionais com uma API elegante e intuitiva.</p>
+</li>
+</ul>
+<p>Quando não estou programando, me dedico a escrever, estudar arte, literatura, filosofia e cultura — porque acredito que o pensamento crítico e criativo é tão essencial para engenharia quanto o código em si.
+A propósito, coleciono livros da editora DarkSide (inclusive os clássicos).</p>
 
   </div>
 
@@ -562,7 +620,7 @@ window.I18n = I18n;
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -570,24 +628,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758843324"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758843324"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778082455"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778082455"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758843324"></script>
-    <script src="/js/lazy-loading.js?v=1758843324"></script>
-    <script src="/js/toc.js?v=1758843324"></script>
+    <script src="/js/main-minimal.js?v=1778082455"></script>
+    <script src="/js/lazy-loading.js?v=1778082455"></script>
+    <script src="/js/toc.js?v=1778082455"></script>
     
     
     

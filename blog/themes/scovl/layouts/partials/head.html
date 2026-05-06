@@ -18,6 +18,24 @@
 <!-- Prism.js local para syntax highlighting -->
 <link rel="stylesheet" href="{{ "vendor/prism/prism-tomorrow.min.css" | relURL }}?v={{ now.Unix }}">
 
+{{ if .Site.Params.math }}
+<!-- KaTeX para renderização de equações LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+{{ end }}
+
 {{ if .Site.Params.mermaid }}
 <!-- Mermaid local para diagramas -->
 <script src="{{ "vendor/mermaid/mermaid.min.js" | relURL }}?v={{ now.Unix }}"></script>

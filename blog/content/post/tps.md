@@ -14,6 +14,12 @@ Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Tran
 
 Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um *outage* em horário de pico. Vamos dissecar os *trade-offs* entre [JSON](https://www.json.org/json-en.html) Puro, JSON com [Gzip](https://www.gzip.org/), [Protobuf](https://protobuf.dev/) com Gzip e a adoção do [Zstandard](https://facebook.github.io/zstd/) (Zstd).
 
+Esta análise nasceu de uma decisão de arquitetura durante o desenvolvimento do **[Ollanta](https://github.com/scovl/Ollanta)**, uma plataforma de análise estática multilinguagem escrita em Go. O scanner local precisa enviar relatórios de análise para o servidor. 
+
+<img src="https://github.com/scovl/Ollanta/raw/main/docs/imgs/logo-dark.png" alt="ollanta" width="250" style="display: block; margin: 1em auto;" />
+
+Um cenário que envolve dezenas de milhares de mensagens por minuto, cada uma com payloads semi-estruturados e repetitivos, o que torna a escolha entre serialização textual e binária uma decisão crítica de infraestrutura. Este artigo documenta os trade-offs considerados e o caminho adotado.
+
 ## Quando essa preocupação se aplica?
 
 Esta análise é relevante para sistemas onde a latência de serialização e compressão representa uma fração significativa do tempo total de resposta:
@@ -30,6 +36,19 @@ Por outro lado, **não é uma preocupação relevante** para:
 * **Aplicações com gargalo em banco de dados ou I/O de disco** — nestes casos, otimizar a serialização traz ganhos marginais.
 
 Uma regra prática: se sua aplicação processa menos de **1.000 TPS** ou o tempo de serialização é inferior a **1% da latência total**, as otimizações discutidas aqui provavelmente não trarão ganhos significativos. Concentre-se primeiro nos gargalos dominantes.
+
+### Quando Protobuf + Zstd vira over-engineering
+
+Mesmo em cenários legítimos de otimização, as soluções mais avançadas podem se tornar um custo desproporcional ao benefício. Eis onde **JSON + Gzip** ainda é a escolha sensata:
+
+* **Time pequeno e entrega rápida** — Se você tem 2-3 devs e um prazo curto, a complexidade de manter arquivos `.proto`, treinar dicionários Zstd e integrar bindings específicos desacelera o ciclo de desenvolvimento. JSON funciona em qualquer linguagem sem dependências extras.
+* **Payloads grandes (> 5 KB por mensagem)** — A partir desse tamanho, o Gzip já atinge taxas de compressão próximas às do Zstd (70-80%), e a diferença de CPU deixa de ser significativa. O ganho marginal do Zstd não justifica a complexidade adicional.
+* **APIs consumidas externamente** — Se seus clientes são aplicações de terceiros, navegadores ou sistemas legados, JSON é o denominador comum universal. Impor Protobuf força um contrato binário que exige codegen, atualização coordenada de stubs e perde a interoperabilidade imediata.
+* **Ferramentas de observabilidade e debug** — Com JSON, você inspeciona payloads no olho, usa `curl | jq` para testar, e ferramentas de tracing já renderizam o conteúdo. Com Protobuf comprimido com Zstd, cada troubleshooting exige desserialização com schema — o custo cognitivo do dia a dia sobe.
+* **Ecossistema com linguagens sem bindings maduros para Zstd** — Embora C, Rust, Go e Java tenham ótimo suporte, linguagens como Ruby, Elixir ou PHP podem ter bindings experimentais ou incompletos. Se seu stack é heterogêneo, Zstd pode introduzir fragilidade.
+* **Carga de CPU já é o gargalo, não a rede** — Se seu perfil mostra CPU a 80% e rede a 20%, trocar Gzip por Zstd reduz ainda mais o uso de rede mas não ataca o problema real. JSON + Gzip com caching de serialização pode ser uma vitória mais barata.
+
+Resumindo: **Protobuf + Zstd é a resposta certa para a pergunta errada quando você está otimizando um sistema que não tem TPS suficiente para justificar o investimento.** JSON + Gzip, com todas as suas limitações, entrega 80% do resultado com 20% da complexidade — e isso é frequentemente o suficiente.
 
 ## O Paradoxo da Latência
 
@@ -77,7 +96,7 @@ graph TD
     style Vencedor fill:#baffc9,stroke:#333,stroke-width:4px
 ```
 
-### 1. [JSON](https://www.json.org/json-en.html) Puro: A Ilusão da Simplicidade
+### 1. JSON Puro: A Ilusão da Simplicidade
 O JSON é onipresente, legível por humanos e possui suporte nativo em praticamente qualquer ecossistema. 
 
 *   **O Cenário:** O payload trafega em texto plano. Não há custo de $T_{comp}$ ou $T_{decomp}$.
@@ -86,7 +105,7 @@ O JSON é onipresente, legível por humanos e possui suporte nativo em praticame
 
 > **Para se aprofundar:** Para cenários onde o JSON é mandatório (APIs públicas), parsers como [simdjson](https://simdjson.org/) usam instruções SIMD para atingir GB/s na desserialização. Ainda assim, o tamanho do payload na rede e a alocação de memória permanecem gargalos inerentes ao formato.
 
-### 2. JSON + [Gzip](https://www.gzip.org/): O Cobertor Curto
+### 2. JSON + Gzip: O Cobertor Curto
 A reação natural ao esgotamento da banda de rede é habilitar o Gzip no *middleware*.
 
 *   **O Cenário:** O payload é reduzido em até 70-80%. A placa de rede respira aliviada.
