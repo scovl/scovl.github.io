@@ -23,17 +23,17 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778083597">
+<link rel="stylesheet" href="/css/main.css?v=1778085927">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778083597">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778085927">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778083597">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778085927">
 
 
 
@@ -55,7 +55,7 @@
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778083597"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778085927"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -505,9 +505,9 @@ window.I18n = I18n;
         
         
         <div class="post-item-summary">
-            <h2 id="otimizando-serialização-e-compressão-em-cenários-de-alto-tps">Otimizando Serialização e Compressão em Cenários de Alto TPS</h2>
-<p>Quando uma arquitetura atinge a marca de dezenas ou centenas de milhares de Transações Por Segundo (TPS), as regras do jogo mudam. A latência deixa de ser um número abstrato e se torna um teto de vidro para a escalabilidade, enquanto o uso de CPU e banda de rede travam uma guerra de recursos.</p>
-<p>Nesse nível de exigência, a escolha do formato de troca de dados e do algoritmo de compressão pode ser a diferença entre um sistema resiliente e um <em>outage</em> em horário de pico. Vamos dissecar os <em>trade-offs</em> entre <a href="https://www.json.org/json-en.html">JSON</a> Puro, JSON com <a href="https://www.gzip.org/">Gzip</a>, <a href="https://protobuf.dev/">Protobuf</a> com Gzip e a adoção do <a href="https://facebook.github.io/zstd/">Zstandard</a> (Zstd).</p>
+            <h2 id="como-reduzimos-62-consultas-ao-banco-para-4-e-ganhamos-8-de-throughput">Como reduzimos 62 consultas ao banco para 4 e ganhamos 8× de throughput</h2>
+<p>Quando você atinge dezenas de milhares de transações por segundo, a pergunta mais perigosa que você pode fazer é <em>&ldquo;qual formato de serialização devo usar?&rdquo;</em>. Não porque a resposta seja irrelevante, mas porque ela quase nunca é o gargalo real.</p>
+<p>Esta é a história de como, durante o desenvolvimento do <strong><a href="https://github.com/scovl/Ollanta">Ollanta</a></strong>, uma plataforma de análise estática multilinguagem escrita em Go, eu quase caí na armadilha de otimizar o problema errado.</p>
             
             <a href="https://scovl.github.io/2026/05/05/tps/" class="read-more">Leia mais →</a>
             
@@ -577,24 +577,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778083597"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778083597"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778085927"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778085927"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778083597"></script>
-    <script src="/js/lazy-loading.js?v=1778083597"></script>
-    <script src="/js/toc.js?v=1778083597"></script>
+    <script src="/js/main-minimal.js?v=1778085927"></script>
+    <script src="/js/lazy-loading.js?v=1778085927"></script>
+    <script src="/js/toc.js?v=1778085927"></script>
     
     
     
