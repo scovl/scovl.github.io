@@ -11,7 +11,7 @@ author = "Vitor Lobo Ramos"
 
 O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter. 
 
-O modelo `try/catch` foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como [PL/I](https://en.wikipedia.org/wiki/PL/I), [Ada](https://en.wikipedia.org/wiki/Ada_(programming_language)), [C++](https://en.wikipedia.org/wiki/C%2B%2B) e [Java](https://en.wikipedia.org/wiki/Java_(programming_language)), e depois sendo adotado por outras como [JavaScript](https://en.wikipedia.org/wiki/JavaScript). 
+O modelo de tratamento estruturado de exceções evoluiu desde os anos 60, ganhando formas mais concretas em linguagens como [PL/I](https://en.wikipedia.org/wiki/PL/I), [Ada](https://en.wikipedia.org/wiki/Ada_(programming_language)), [C++](https://en.wikipedia.org/wiki/C%2B%2B) e [Java](https://en.wikipedia.org/wiki/Java_(programming_language)), e depois sendo adotado por outras como [JavaScript](https://en.wikipedia.org/wiki/JavaScript). 
 
 O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar `try/catch` como controle de fluxo é um erro e qual é o seu propósito real.
 
@@ -20,7 +20,7 @@ O objetivo sempre foi permitir que programas lidassem de forma controlada com er
 
 A linguagem **[PL/I](https://en.wikipedia.org/wiki/PL/I)** (1964) foi pioneira ao introduzir um sistema estruturado de tratamento de condições excepcionais através do constructo `ON ... DO` para casos como falhas de operações de **[I/O](https://en.wikipedia.org/wiki/Input/output)** (entrada/saída) e outros erros de execução.
 
-Esse mecanismo de **[handlers](https://en.wikipedia.org/wiki/Error_handling#Error_handlers)** de erro já demonstrava a vantagem de estruturar o código para lidar separadamente com situações de erro. **[SIMULA 67](https://en.wikipedia.org/wiki/SIMULA)** – precursora da programação orientada a objetos, introduzindo conceitos fundamentais como classes e herança – focou principalmente em contribuições para paradigmas de programação, não em mecanismos de tratamento de exceções. Em essência, o modelo PL/I possuía:
+Esse mecanismo de **[handlers](https://en.wikipedia.org/wiki/Error_handling#Error_handlers)** de erro já demonstrava a vantagem de estruturar o código para lidar separadamente com situações de erro. Em essência, o modelo PL/I possuía:
 
 * **Bloco Protegido** – equivalente funcional ao bloco `try`, delimitando o código onde erros poderiam ocorrer.
 * **Rotina de Tratamento (Handler)** – definida via construções `ON ... DO`, análoga ao `catch` atual, executada caso uma condição excepcional fosse detectada.
@@ -45,7 +45,7 @@ Basicamente, marcava-se um ponto de captura com uma *tag* simbólica usando `cat
 
 O verdadeiro avanço do Lisp no tratamento de exceções veio posteriormente com o **[Common Lisp Condition System](https://en.wikipedia.org/wiki/Common_Lisp#Condition_system)**, que introduziu conceitos sofisticados como *handlers* tipados, *restarts* (pontos de recuperação) e a separação entre sinalização (`signal`) e tratamento de condições. Este sistema permite não apenas capturar erros, mas também corrigi-los e continuar a execução — um paradigma que vai além do simples `try/catch` e influenciou sistemas modernos de tratamento de erros.
 
-A distinção é crucial: enquanto `catch/throw` eram ferramentas de controle de fluxo (similares a um `goto` estruturado), o Condition System modelava verdadeiramente o tratamento de situações excepcionais com tipagem, recuperação e estratégias de reinício — conceitos que inspiraram os mecanismos modernos de exceções em linguagens como [C++](https://en.wikipedia.org/wiki/C%2B%2B) e [Java](https://en.wikipedia.org/wiki/Java_(programming_language)).
+A distinção é crucial: enquanto `catch/throw` eram ferramentas de controle de fluxo (similares a um `goto` estruturado), o Condition System modelava verdadeiramente o tratamento de situações excepcionais com tipagem, recuperação e estratégias de reinício — conceitos que, embora formalizados após a introdução de exceções no C++, influenciaram linguagens posteriores como [Java](https://en.wikipedia.org/wiki/Java_(programming_language)) e seguem como referência para sistemas modernos de tratamento de erros.
 
 Consolidando essa evolução histórica, linguagens como [C++](https://en.wikipedia.org/wiki/C%2B%2B) formalizaram e refinaram esses conceitos pioneiros por meio das estruturas **`try`** e **`catch`**, introduzindo um sistema de exceções baseado em tipos. Em [C++](https://en.wikipedia.org/wiki/C%2B%2B), por exemplo, podemos proteger um bloco de código e tratar erros assim:
 
@@ -282,11 +282,13 @@ void transferir(Conta& a, Conta& b, double v) {
 
     std::scoped_lock lk(a.mtx(), b.mtx());  // C++17: adquire ambos sem deadlock
 
+    bool debitado = false;
     try {
         a.debitar(v);
+        debitado = true;
         b.creditar(v);
-    } catch (...) {          // qualquer erro ⇒ rollback
-        a.creditar(v);
+    } catch (...) {          // qualquer erro ⇒ rollback se necessário
+        if (debitado) a.creditar(v);
         throw;
     }
 }
@@ -297,7 +299,7 @@ void transferir(Conta& a, Conta& b, double v) {
 
 > **✅ Prevenção de deadlock**: O código utiliza `std::scoped_lock` (C++17+) que adquire ambos os mutexes simultaneamente usando um algoritmo livre de deadlock. Isso elimina a necessidade de ordenação manual dos locks e previne deadlocks que poderiam ocorrer com `lock_guard` separados quando diferentes threads adquirem os mesmos mutexes em ordens distintas.
 
-O exemplo acima ilustra como implementar uma operação transacional utilizando exceções para garantir a atomicidade: se qualquer etapa da transferência falhar (por exemplo, por saldo insuficiente ou erro inesperado), o código faz o rollback debitando e depois creditando novamente o valor na conta de origem, antes de propagar a exceção. 
+O exemplo acima ilustra como implementar uma operação transacional utilizando exceções para garantir a atomicidade: se qualquer etapa da transferência falhar (por exemplo, por saldo insuficiente ou erro inesperado), o código faz o rollback condicional — creditando a conta de origem apenas se o débito foi efetivamente aplicado — antes de propagar a exceção. 
 
 O uso de `scoped_lock` assegura que os mutexes das contas sejam adquiridos de forma livre de deadlock e liberados automaticamente, mesmo em caso de erro, evitando tanto deadlocks quanto vazamentos de recursos. 
 
@@ -360,7 +362,7 @@ Adicionalmente, mesmo quando não lançadas, exceções **podem** limitar certas
 
 > Essa ideia está diretamente alinhada ao conselho do livro **[The Pragmatic Programmer](https://en.wikipedia.org/wiki/The_Pragmatic_Programmer)**: trate apenas o que realmente é excepcional como exceção — caso contrário, você adiciona complexidade desnecessária e viola princípios como [Principle of Least Astonishment](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 
-> Além disso, conforme [Matt Klein](https://en.wikipedia.org/wiki/Matt_Klein) argumenta em seu artigo **"Crash early and crash often for more reliable software"** (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: *"The only error checking a program needs are for errors that can actually happen during normal control flow"* (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal). 
+> Além disso, conforme [Matt Klein](https://github.com/mattklein123) argumenta em seu artigo **"Crash early and crash often for more reliable software"** (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: *"The only error checking a program needs are for errors that can actually happen during normal control flow"* (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal). 
 
 Klein explica que checks desnecessários aumentam a complexidade e geram dívida de manutenção ao proliferarem ramos de código raramente exercitados, que por sua vez se tornam fontes de bugs ocultos e comportamentos imprevisíveis.
 
@@ -449,7 +451,7 @@ O **Design by Contract** (DbC) é um paradigma de desenvolvimento que define um 
 
 Se a pré-condição de uma função não for atendida, ou seja, se o uso já começa errado (por exemplo, tentar sacar um valor negativo ou maior que o saldo), lançar uma exceção é apropriado, pois indica um erro de uso da interface; por outro lado, se a violação da pré-condição é algo frequente e esperado, como um campo vazio em um formulário, o ideal é tratar esse caso antes mesmo de chamar a função, evitando o uso de exceções para fluxos normais. 
 
-O exemplo abaixo em C++ abaixo ilustra como aplicar esse princípio, diferenciando claramente quando lançar exceção por violação de contrato e quando validar previamente:
+O exemplo em C++ abaixo ilustra como aplicar esse princípio, diferenciando claramente quando lançar exceção por violação de contrato e quando validar previamente:
 
 ```cpp
 class Conta {
@@ -459,7 +461,7 @@ public:
         if (v <= 0)                      // pré‑condição violada → erro do usuário
             throw std::invalid_argument("valor ≤ 0");
         if (v > saldo_)                  // pré‑condição violada → uso incorreto
-            throw std::domain_error("saldo insuficiente");
+            throw std::runtime_error("saldo insuficiente");
 
         double antigo = saldo_;
         saldo_ -= v;
@@ -650,7 +652,7 @@ Para facilitar decisões técnicas em governança de código, use este checklist
   
 - **Violação de contrato do chamador** → pré-condições quebradas
   - `throw std::invalid_argument("Índice fora dos limites")`
-  - `throw std::domain_error("Saldo insuficiente")`
+  - `throw std::runtime_error("Saldo insuficiente")`
   
 - **Condição irrecuperável** → corrupção, invariante violada
   - `throw std::logic_error("Estado interno inconsistente")`

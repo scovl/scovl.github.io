@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <title>Tratamento Funcional de Erros em TypeScript | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1760118174">
+<link rel="stylesheet" href="/css/main.css?v=1778069000">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069000">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069000">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1760118174"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778069000"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -513,7 +513,8 @@ window.I18n = I18n;
 </ul>
 <p>Cada uma dessas bibliotecas tem seus pontos fortes. O <a href="https://gcanti.github.io/fp-ts/">fp-ts</a> continua sendo uma escolha sólida pela sua maturidade e estabilidade, enquanto o <a href="https://effect.website/">Effect</a> representa a evolução natural desses conceitos. Neste artigo, focaremos no fp-ts e em como ele aborda o tratamento de erros de forma funcional.</p>
 <blockquote>
-<p><strong>Nota sobre versões:</strong> Este artigo utiliza a sintaxe atual do fp-ts 2.x (versão estável), que permanece a versão recomendada para produção. A versão 3.x ainda está em fase pré-release/alpha. Para acompanhar a evolução da biblioteca, consulte a documentação oficial em <a href="https://github.com/gcanti/fp-ts">https://github.com/gcanti/fp-ts</a>.</p></blockquote>
+<p><strong>Nota sobre versões:</strong> Este artigo utiliza a sintaxe atual do fp-ts 2.x (versão estável), que permanece a versão recomendada para produção. A versão 3.x ainda está em fase pré-release/alpha. Para acompanhar a evolução da biblioteca, consulte a documentação oficial em <a href="https://github.com/gcanti/fp-ts">https://github.com/gcanti/fp-ts</a>.</p>
+</blockquote>
 <hr>
 <h2 id="o-dilema-do-tratamento-de-erros-convencional">O Dilema do Tratamento de Erros Convencional</h2>
 <p>No ecossistema JavaScript/TypeScript, historicamente, recorremos a duas abordagens principais para lidar com erros, cada uma com suas armadilhas. A forma mais comum de sinalizar e capturar erros é através de exceções, usando <code>throw</code> e <code>try/catch</code>. Porém, essa abordagem tem alguns problemas:</p>
@@ -534,7 +535,8 @@ try {
   // Saída: &#34;Ops, algo deu errado: Divisão por zero não é permitida!&#34;
 }</code></pre>
  <blockquote>
-<p><strong>Nota:</strong> O uso de <code>any</code> para o tipo do erro é uma prática comum, mas não é a melhor opção. Em um sistema mais complexo, isso pode levar a erros de tipo que são difíceis de detectar.</p></blockquote>
+<p><strong>Nota:</strong> O uso de <code>any</code> para o tipo do erro é uma prática comum, mas não é a melhor opção. Em um sistema mais complexo, isso pode levar a erros de tipo que são difíceis de detectar.</p>
+</blockquote>
 <p>O uso de exceções apresenta sérios problemas de design: a assinatura da função <code>dividirLegado</code> não revela ao compilador a possibilidade de exceções, criando um contrato implícito onde o chamador precisa adivinhar a necessidade de um <code>try/catch</code>.</p>
 <p>Além disso, o <code>throw</code> interrompe abruptamente o fluxo de execução, dificultando o rastreamento e comprometendo a pureza funcional, enquanto a facilidade de esquecer blocos <code>try/catch</code> pode resultar em erros não capturados que derrubam aplicações inteiras. Uma alternativa comum é retornar valores especiais como <code>null</code>, <code>undefined</code> ou objetos de erro para sinalizar falhas, embora essa abordagem também apresente suas próprias limitações. Por exemplo:</p>
 
@@ -615,7 +617,8 @@ pipe(
  <p>Note que <code>Option</code> é perfeito para casos onde a ausência não é necessariamente um &ldquo;erro&rdquo;, mas um estado esperado. Ele nos permite modelar de forma elegante situações como buscas que podem não retornar resultados, valores opcionais em formulários, ou acessos a propriedades que podem não existir.</p>
 <p>Ao usar <code>Option</code>, tornamos explícito no sistema de tipos que um valor pode estar ausente, forçando o desenvolvedor a lidar com ambos os casos. Isso elimina erros comuns como referências nulas inesperadas e torna o código mais robusto, previsível e auto-documentado, sem a necessidade de verificações defensivas espalhadas pelo código.</p>
 <blockquote>
-<p><strong>Nota:</strong> O uso de <code>Option</code> é uma abordagem mais moderna e elegante para lidar com valores que podem estar ausentes. Ele é preferível ao uso de <code>null</code> ou <code>undefined</code> em muitos casos, pois fornece um tipo mais explícito e seguro para representar a ausência de valor.</p></blockquote>
+<p><strong>Nota:</strong> O uso de <code>Option</code> é uma abordagem mais moderna e elegante para lidar com valores que podem estar ausentes. Ele é preferível ao uso de <code>null</code> ou <code>undefined</code> em muitos casos, pois fornece um tipo mais explícito e seguro para representar a ausência de valor.</p>
+</blockquote>
 <p>Para ilustrar ainda mais a utilidade de <code>Option</code>, especialmente em cenários do mundo real, vamos considerar uma operação assíncrona, como buscar dados de uma API. Muitas vezes, uma API pode não encontrar o recurso solicitado, e <code>Option</code> é uma excelente forma de modelar essa possibilidade sem recorrer a <code>null</code> ou exceções para um &ldquo;não encontrado&rdquo; esperado. Imagine que estamos buscando uma notícia por ID:</p>
 
 
@@ -1097,7 +1100,8 @@ const fetchUserK = (id: number): TE.TaskEither&lt;Error, UserData&gt; =&gt;
   )(id);</code></pre>
  <p>Estas funções são mais idiomáticas e type-safe, especialmente quando você está integrando bibliotecas existentes que já trabalham com Promises.</p>
 <blockquote>
-<p><strong>Nota:</strong> A abordagem lazy evaluation é uma técnica que adia a execução de uma computação até que seu resultado seja realmente necessário. Em outras palavras, a computação não é executada imediatamente, mas apenas quando realmente precisamos do resultado. Isso pode ser benéfico em situações onde a computação é cara (em termos de tempo ou recursos) e não é necessária imediatamente.</p></blockquote>
+<p><strong>Nota:</strong> A abordagem lazy evaluation é uma técnica que adia a execução de uma computação até que seu resultado seja realmente necessário. Em outras palavras, a computação não é executada imediatamente, mas apenas quando realmente precisamos do resultado. Isso pode ser benéfico em situações onde a computação é cara (em termos de tempo ou recursos) e não é necessária imediatamente.</p>
+</blockquote>
 <p>Um dos benefícios mais profundos de <code>Either</code> e <code>TaskEither</code> é como eles tornam os efeitos colaterais explícitos no sistema de tipos. Em programação funcional, um &ldquo;efeito colateral&rdquo; é qualquer interação com o mundo externo: leitura/escrita de arquivos, chamadas de rede, acesso a banco de dados, ou qualquer operação que possa falhar por razões fora do controle do programa.</p>
 <p>Tradicionalmente, esses efeitos são &ldquo;invisíveis&rdquo; na assinatura das funções em TypeScript/JavaScript. Uma função que faz uma chamada HTTP não indica isso em seu tipo de retorno, e as exceções que podem ocorrer não são capturadas pelo sistema de tipos. Isso cria um &ldquo;vazamento&rdquo; onde efeitos potencialmente perigosos escapam da análise estática.</p>
 <h2 id="compondo-múltiplas-requisições-assíncronas">Compondo Múltiplas Requisições Assíncronas</h2>
@@ -1245,27 +1249,6 @@ async function processarUsuarios() {
             
                 
                     
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
                         
                         
                     
@@ -1304,50 +1287,6 @@ async function processarUsuarios() {
             
             
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
                 
                     
                 
@@ -1426,8 +1365,7 @@ async function processarUsuarios() {
                             </h4>
                             <p class="related-post-excerpt">
                                 <p>O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter.</p>
-<p>O modelo <code>try/catch</code> foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
-<p>O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar <code>try/catch</code> como controle de fluxo é um erro e qual é o seu propósito real.</p>
+<p>O modelo de tratamento estruturado de exceções evoluiu desde os anos 60, ganhando formas mais concretas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
                             </p>
                             <div class="related-post-meta">
                                 <span class="related-post-date">23/05/2025</span>
@@ -1468,7 +1406,7 @@ async function processarUsuarios() {
                 data-emit-metadata="0"
                 data-input-position="bottom"
                 data-theme="light"
-                data-lang="pt"
+                data-lang="pt-br"
                 crossorigin="anonymous"
                 async>
         </script>
@@ -1529,7 +1467,7 @@ async function processarUsuarios() {
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -1537,24 +1475,24 @@ async function processarUsuarios() {
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1760118174"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069000"></script>
     
     
-    <script src="/js/main-minimal.js?v=1760118174"></script>
-    <script src="/js/lazy-loading.js?v=1760118174"></script>
-    <script src="/js/toc.js?v=1760118174"></script>
+    <script src="/js/main-minimal.js?v=1778069000"></script>
+    <script src="/js/lazy-loading.js?v=1778069000"></script>
+    <script src="/js/toc.js?v=1778069000"></script>
     
     
     

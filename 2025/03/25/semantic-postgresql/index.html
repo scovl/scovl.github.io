@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <title>Busca Semântica com Ollama e PostgreSQL | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1760118174">
+<link rel="stylesheet" href="/css/main.css?v=1778069000">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069000">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069000">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1760118174"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778069000"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -510,7 +510,7 @@ window.I18n = I18n;
 
   <div class="post-content">
     <p>Olá, pessoal! 👋</p>
-<p>No <a href="/2025/03/23/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
+<p>No <a href="/post/rag/">artigo anterior</a>, exploramos como construir um sistema RAG (Retrieval-Augmented Generation) usando <a href="https://clojure.org/">Clojure</a> e <a href="https://ollama.com/">Ollama</a> com uma implementação simples de <a href="/post/tf-idf/">TF-IDF</a>. Embora essa abordagem seja excelente para aprender os fundamentos, quando pensamos em soluções de produção, precisamos de algo mais robusto e escalável.</p>
 <p>Neste artigo, vamos descobrir como construir um sistema de busca semântica poderoso usando <a href="https://ollama.com/">Ollama</a>, <a href="https://www.postgresql.org/">PostgreSQL</a> e suas extensões para manipulação de vetores. Esta solução é perfeitamente adequada para aplicações de produção e pode servir como base para sistemas RAG, agentes de IA, assistentes em geral. Diferentemente do artigo anterior, vamos usar o <a href="https://ollama.com/">Ollama</a> via Docker assim como o <a href="https://www.postgresql.org/">PostgreSQL</a> e as extensões <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>.</p>
 <p>A combinação do <a href="https://www.postgresql.org/">PostgreSQL</a> com extensões como <a href="https://github.com/pgvector/pgvector">pgvector</a> e <a href="https://github.com/timescale/pgai">pgai</a>, junto com o <a href="https://ollama.com/">Ollama</a> (que permite executar modelos de linguagem localmente), cria uma solução completa e de alto desempenho para <a href="https://en.wikipedia.org/wiki/Semantic_search">processamento semântico de dados</a>.</p>
 <h2 id="entendendo-a-arquitetura">Entendendo a Arquitetura</h2>
@@ -542,7 +542,8 @@ window.I18n = I18n;
 <li><strong>PostgreSQL com pgvector e pgai</strong>: Para armazenar e consultar embeddings</li>
 </ol>
 <blockquote>
-<p><strong>NOTA</strong>: No artigo anterior sobre <a href="/2025/03/23/rag/">RAG em Clojure</a>, usamos o <a href="https://ollama.com/">Ollama</a> com <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> baixando o projeto ollama diretamente na máquina. Nesta abordagem, vamos usar o Ollama via Docker. Portanto, recomendo que você feche o Ollama para usar-mos ele inteiramente via Docker aqui nesta abordagem (é necessário fechar para não conflitar com o endpoint do Ollama que vamos usar no Docker Compose).</p></blockquote>
+<p><strong>NOTA</strong>: No artigo anterior sobre <a href="/post/rag/">RAG em Clojure</a>, usamos o <a href="https://ollama.com/">Ollama</a> com <a href="https://ollama.com/models/deepseek-r1">DeepSeek R1</a> baixando o projeto ollama diretamente na máquina. Nesta abordagem, vamos usar o Ollama via Docker. Portanto, recomendo que você feche o Ollama para usar-mos ele inteiramente via Docker aqui nesta abordagem (é necessário fechar para não conflitar com o endpoint do Ollama que vamos usar no Docker Compose).</p>
+</blockquote>
 <p>Vamos configurar tudo isso rapidamente usando Docker Compose:</p>
 
 
@@ -668,7 +669,8 @@ CREATE EXTENSION IF NOT EXISTS ai CASCADE;</code></pre>
 (&#39;Tutorial RAG&#39;, &#39;Sistemas RAG combinam busca e geração...&#39;, &#39;IA&#39;),
 (&#39;PostgreSQL Avançado&#39;, &#39;Técnicas de otimização para PostgreSQL...&#39;, &#39;Banco de Dados&#39;);</code></pre>
  <blockquote>
-<p><strong>NOTA</strong>: O <a href="https://huggingface.co/">Hugging Face</a> é uma plataforma de dados e modelos de IA.</p></blockquote>
+<p><strong>NOTA</strong>: O <a href="https://huggingface.co/">Hugging Face</a> é uma plataforma de dados e modelos de IA.</p>
+</blockquote>
 <p>Agora vamos configurar o vectorizer para gerar embeddings automaticamente.</p>
 <h3 id="4-configurando-o-vectorizer">4. Configurando o Vectorizer</h3>
 <p>O <a href="https://github.com/timescale/pgai">pgai</a> inclui uma ferramenta chamada <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer</a> que automatiza a criação e sincronização de embeddings. Esta é uma das funcionalidades mais poderosas desta solução, pois elimina a necessidade de ferramentas externas para criar <a href="https://en.wikipedia.org/wiki/Embedding_%28machine_learning%29">embeddings</a>. Vamos configurá-la:</p>
@@ -713,8 +715,8 @@ LIMIT 5;</code></pre>
 <li><code>&lt;#&gt;</code>: <a href="https://en.wikipedia.org/wiki/Dot_product">Produto interno</a></li>
 <li><code>&lt;=&gt;</code>: <a href="https://en.wikipedia.org/wiki/Cosine_distance">Distância de cosseno</a> (geralmente a melhor opção)</li>
 </ul>
-<p>E pronto! Com apenas esses poucos passos, temos um sistema de busca semântica totalmente funcional, diretamente no PostgreSQL. <strong><a href="/2025/03/23/rag/">Para quem acompanhou o artigo anterior sobre a implementação de RAG em Clojure</a></strong>, vale a pena comparar as duas abordagens:</p>
-<p>A diferença entre as duas abordagens é bem clara quando olhamos lado a lado. <a href="/2025/03/23/rag/">No artigo anterior sobre RAG em Clojure</a>, usamos uma técnica mais simples <a href="/post/tf-idf/">(TF-IDF)</a> que funciona bem para projetos pequenos e didáticos. É como usar uma bicicleta para se locomover para distâncias curtas. O código em Clojure mantém tudo em memória, o que é ótimo para aprender os conceitos, mas começa a dar problema quando a quantidade de documentos cresce.</p>
+<p>E pronto! Com apenas esses poucos passos, temos um sistema de busca semântica totalmente funcional, diretamente no PostgreSQL. <strong><a href="/post/rag/">Para quem acompanhou o artigo anterior sobre a implementação de RAG em Clojure</a></strong>, vale a pena comparar as duas abordagens:</p>
+<p>A diferença entre as duas abordagens é bem clara quando olhamos lado a lado. <a href="/post/rag/">No artigo anterior sobre RAG em Clojure</a>, usamos uma técnica mais simples <a href="/post/tf-idf/">(TF-IDF)</a> que funciona bem para projetos pequenos e didáticos. É como usar uma bicicleta para se locomover para distâncias curtas. O código em Clojure mantém tudo em memória, o que é ótimo para aprender os conceitos, mas começa a dar problema quando a quantidade de documentos cresce.</p>
 <p>Já a abordagem com PostgreSQL + pgai é como trocar a bicicleta por um carro esportivo! Estamos usando embeddings densos gerados por LLMs, que capturam muito melhor o significado semântico dos textos. O PostgreSQL cuida de toda a parte chata de persistência e indexação, permitindo que você escale para milhões de documentos sem suar. Os índices especializados para vetores (como HNSW) fazem buscas em bilhões de embeddings parecerem instantâneas, algo que nossa implementação anterior jamais conseguiria.</p>
 <p>O mais legal é que a manutenção fica muito mais simples. Com o <a href="https://github.com/timescale/pgai/tree/main/vectorizer">vectorizer do pgai</a>, você só precisa inserir documentos no banco normalmente, e ele cuida automaticamente de gerar e atualizar os embeddings.</p>
 <hr>
@@ -753,7 +755,8 @@ LIMIT 5;</code></pre>
         results (jdbc/execute! conn [sql query limit])]
     results))</code></pre>
  <blockquote>
-<p><strong>NOTA</strong>: O código acima é um exemplo de como integrar a busca semântica no PostgreSQL com uma aplicação Clojure. O código completo está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a>.</p></blockquote>
+<p><strong>NOTA</strong>: O código acima é um exemplo de como integrar a busca semântica no PostgreSQL com uma aplicação Clojure. O código completo está disponível no <a href="https://github.com/scovl/docai">https://github.com/scovl/docai</a>.</p>
+</blockquote>
 <h2 id="configuração-de-contêineres-e-resolução-de-problemas">Configuração de Contêineres e Resolução de Problemas</h2>
 <p>Ao trabalhar com contêineres Docker ou Podman, você pode encontrar alguns desafios específicos relacionados à comunicação entre serviços. Vamos explorar algumas dicas para garantir que sua configuração funcione sem problemas:</p>
 <h3 id="nomeação-de-contêineres-e-comunicação-entre-serviços">Nomeação de Contêineres e Comunicação entre Serviços</h3>
@@ -946,7 +949,7 @@ fi</code></pre>
 <li><a href="https://supabase.com/blog/openai-embeddings-postgres-vector">Embeddings Eficientes com PostgreSQL</a> - Artigo sobre como usar embeddings com PostgreSQL.</li>
 <li><a href="https://www.pinecone.io/learn/hnsw-ivfflat/">HNSW vs. IVFFlat para Busca de Similaridade</a> - Artigo sobre as diferenças entre HNSW e IVFFlat para busca de similaridade.</li>
 <li><a href="https://ollama.com/">Ollama - Rodando LLMs localmente</a> - Documentação do Ollama, uma ferramenta open-source para executar modelos de linguagem de grande escala localmente.</li>
-<li><a href="/2025/03/23/rag/">Artigo anterior sobre RAG com Clojure</a> - Artigo sobre como implementar RAG com Clojure.</li>
+<li><a href="/post/rag/">Artigo anterior sobre RAG com Clojure</a> - Artigo sobre como implementar RAG com Clojure.</li>
 </ul>
 
   </div>
@@ -995,27 +998,6 @@ fi</code></pre>
                 
                     
                 
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -1051,30 +1033,6 @@ fi</code></pre>
         
     
         
-            
-            
-            
-            
-                
-                    
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-                
-            
-        
-    
-        
     
         
             
@@ -1106,42 +1064,6 @@ fi</code></pre>
             
             
             
-                
-                    
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                        
-                        
-                    
-                
-                    
-                        
-                        
-                    
-                
-            
-            
-            
-                
-            
-        
-    
-        
-            
-            
-            
-            
             
             
         
@@ -1156,78 +1078,6 @@ fi</code></pre>
         
     
     
-    
-        
-        
-        
-        <div class="related-posts">
-            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
-            <div class="related-posts-grid">
-                
-                    
-                    <article class="related-post-item animate-on-scroll">
-                        <div class="related-post-content">
-                            <h4 class="related-post-title">
-                                <a href="/2025/03/28/rag02/">Técnicas Avançadas para RAG em Produção</a>
-                            </h4>
-                            <p class="related-post-excerpt">
-                                <h2 id="introdução">Introdução</h2>
-<p>Olá pessoal! 👋</p>
-<p>Nos artigos anteriores, exploramos como <a href="/2025/03/23/rag/">implementar um RAG básico em Clojure</a> em memória e como <a href="/2025/03/25/semantic-postgresql/">construir um sistema de busca semântica com PostgreSQL e Ollama</a>. Agora, vamos dar o próximo passo: transformar nosso protótipo em um sistema RAG pronto para produção.</p>
-<p>Como muitos desenvolvedores já descobriram, criar um protótipo funcional de <a href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">RAG</a> com alguns documentos é relativamente simples. O verdadeiro desafio começa quando precisamos escalar esse sistema para lidar com milhares de documentos, garantir respostas precisas e manter o desempenho sob carga. Neste artigo, vamos explorar técnicas avançadas para superar esses desafios e levar nosso <a href="https://github.com/scovl/docai">DocAI</a> para um novo patamar de qualidade e confiabilidade.</p>
-                            </p>
-                            <div class="related-post-meta">
-                                <span class="related-post-date">28/03/2025</span>
-                                
-                                    <div class="related-post-tags">
-                                        
-                                            <span class="tag">RAG</span>
-                                        
-                                            <span class="tag">LLM</span>
-                                        
-                                    </div>
-                                
-                            </div>
-                            <div class="related-post-score">
-                                <modern-badge variant="info">3 tags em comum</modern-badge>
-                            </div>
-                        </div>
-                    </article>
-                
-                    
-                    <article class="related-post-item animate-on-scroll">
-                        <div class="related-post-content">
-                            <h4 class="related-post-title">
-                                <a href="/2025/03/23/rag/">01 - RAG Simples com Clojure e Ollama</a>
-                            </h4>
-                            <p class="related-post-excerpt">
-                                <h2 id="introdução">Introdução</h2>
-<p>Olá, pessoal! 👋</p>
-<p>Neste artigo, vamos explorar como construir uma aplicação <a href="https://pt.wikipedia.org/wiki/Gera%C3%A7%C3%A3o_aumentada_por_recupera%C3%A7%C3%A3o">RAG (Retrieval-Augmented Generation)</a> completa do zero usando <a href="https://clojure.org/">Clojure</a>. Vamos mergulhar em uma implementação prática que combina processamento de texto, busca semântica e geração de respostas com LLMs locais. Se você está interessado em melhorar a precisão e relevância das respostas dos seus modelos de linguagem com informações atualizadas, este guia é para você!</p>
-<h2 id="fundamentos-do-rag">Fundamentos do RAG</h2>
-<h3 id="o-que-é-rag">O que é RAG?</h3>
-<p>Os Modelos de Linguagem de Grande Escala (<a href="https://en.wikipedia.org/wiki/Large_language_model">LLMs</a>), como o <a href="https://openai.com/api/">GPT</a>, <a href="https://openai.com/api/">ChatGPT</a> e outros, revolucionaram a forma como interagimos com a inteligência artificial. Eles são capazes de gerar textos coerentes, responder perguntas complexas e até mesmo criar conteúdo criativo. No entanto, esses modelos possuem uma limitação fundamental: seu conhecimento é &ldquo;congelado&rdquo; no tempo.</p>
-                            </p>
-                            <div class="related-post-meta">
-                                <span class="related-post-date">23/03/2025</span>
-                                
-                                    <div class="related-post-tags">
-                                        
-                                            <span class="tag">RAG</span>
-                                        
-                                            <span class="tag">LLM</span>
-                                        
-                                    </div>
-                                
-                            </div>
-                            <div class="related-post-score">
-                                <modern-badge variant="info">1 tags em comum</modern-badge>
-                            </div>
-                        </div>
-                    </article>
-                
-            </div>
-        </div>
     
 
 
@@ -1247,7 +1097,7 @@ fi</code></pre>
                 data-emit-metadata="0"
                 data-input-position="bottom"
                 data-theme="light"
-                data-lang="pt"
+                data-lang="pt-br"
                 crossorigin="anonymous"
                 async>
         </script>
@@ -1308,7 +1158,7 @@ fi</code></pre>
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -1316,24 +1166,24 @@ fi</code></pre>
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1760118174"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069000"></script>
     
     
-    <script src="/js/main-minimal.js?v=1760118174"></script>
-    <script src="/js/lazy-loading.js?v=1760118174"></script>
-    <script src="/js/toc.js?v=1760118174"></script>
+    <script src="/js/main-minimal.js?v=1778069000"></script>
+    <script src="/js/lazy-loading.js?v=1778069000"></script>
+    <script src="/js/toc.js?v=1778069000"></script>
     
     
     

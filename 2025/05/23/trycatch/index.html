@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <title>Try/Catch: Origem, Propósito e o Erro de Usá-lo como Fluxo Lógico | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1760118174">
+<link rel="stylesheet" href="/css/main.css?v=1778069000">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069000">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069000">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1760118174"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778069000"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -522,11 +522,11 @@ window.I18n = I18n;
 
   <div class="post-content">
     <p>O tratamento de exceções surgiu para separar o fluxo normal do programa do tratamento de situações inesperadas, como falhas de hardware ou erros de entrada/saída. Inicialmente, programas usavam códigos de retorno para lidar com erros, mas isso era propenso a falhas e difícil de manter.</p>
-<p>O modelo <code>try/catch</code> foi evoluindo desde os anos 60, ganhando formas mais estruturadas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
+<p>O modelo de tratamento estruturado de exceções evoluiu desde os anos 60, ganhando formas mais concretas em linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a>, <a href="https://en.wikipedia.org/wiki/Ada_%28programming_language%29">Ada</a>, <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, e depois sendo adotado por outras como <a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a>.</p>
 <p>O objetivo sempre foi permitir que programas lidassem de forma controlada com erros imprevisíveis, sem travar o sistema. As exceções não foram criadas para controlar o fluxo normal do programa, mas sim para tratar casos realmente excepcionais. Neste artigo, vamos ver por que usar <code>try/catch</code> como controle de fluxo é um erro e qual é o seu propósito real.</p>
 <h2 id="propósito-do-trycatch">Propósito do Try/Catch</h2>
 <p>A linguagem <strong><a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a></strong> (1964) foi pioneira ao introduzir um sistema estruturado de tratamento de condições excepcionais através do constructo <code>ON ... DO</code> para casos como falhas de operações de <strong><a href="https://en.wikipedia.org/wiki/Input/output">I/O</a></strong> (entrada/saída) e outros erros de execução.</p>
-<p>Esse mecanismo de <strong><a href="https://en.wikipedia.org/wiki/Error_handling#Error_handlers">handlers</a></strong> de erro já demonstrava a vantagem de estruturar o código para lidar separadamente com situações de erro. <strong><a href="https://en.wikipedia.org/wiki/SIMULA">SIMULA 67</a></strong> – precursora da programação orientada a objetos, introduzindo conceitos fundamentais como classes e herança – focou principalmente em contribuições para paradigmas de programação, não em mecanismos de tratamento de exceções. Em essência, o modelo PL/I possuía:</p>
+<p>Esse mecanismo de <strong><a href="https://en.wikipedia.org/wiki/Error_handling#Error_handlers">handlers</a></strong> de erro já demonstrava a vantagem de estruturar o código para lidar separadamente com situações de erro. Em essência, o modelo PL/I possuía:</p>
 <ul>
 <li><strong>Bloco Protegido</strong> – equivalente funcional ao bloco <code>try</code>, delimitando o código onde erros poderiam ocorrer.</li>
 <li><strong>Rotina de Tratamento (Handler)</strong> – definida via construções <code>ON ... DO</code>, análoga ao <code>catch</code> atual, executada caso uma condição excepcional fosse detectada.</li>
@@ -545,7 +545,7 @@ END;</code></pre>
 <p>Versões do <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">Lisp</a> nos anos 1970 introduziram as funções <code>catch</code> e <code>throw</code> como um mecanismo de <strong>controle de fluxo não-local</strong> — uma forma de &ldquo;saltar&rdquo; diretamente para um ponto específico da pilha de chamadas, ignorando o código intermediário. É importante distinguir que <code>catch/throw</code> no Lisp não eram propriamente um sistema de tratamento de exceções, mas sim uma ferramenta de controle de fluxo.</p>
 <p>Basicamente, marcava-se um ponto de captura com uma <em>tag</em> simbólica usando <code>catch</code> e, quando necessário, utilizava-se <code>throw</code> com a mesma tag para desviar imediatamente a execução para lá. Esse mecanismo era útil para sair de loops aninhados ou retornar de funções profundamente encadeadas, mas não oferecia tipagem de erros, handlers especializados ou capacidade de reinício como um sistema de exceções moderno.</p>
 <p>O verdadeiro avanço do Lisp no tratamento de exceções veio posteriormente com o <strong><a href="https://en.wikipedia.org/wiki/Common_Lisp#Condition_system">Common Lisp Condition System</a></strong>, que introduziu conceitos sofisticados como <em>handlers</em> tipados, <em>restarts</em> (pontos de recuperação) e a separação entre sinalização (<code>signal</code>) e tratamento de condições. Este sistema permite não apenas capturar erros, mas também corrigi-los e continuar a execução — um paradigma que vai além do simples <code>try/catch</code> e influenciou sistemas modernos de tratamento de erros.</p>
-<p>A distinção é crucial: enquanto <code>catch/throw</code> eram ferramentas de controle de fluxo (similares a um <code>goto</code> estruturado), o Condition System modelava verdadeiramente o tratamento de situações excepcionais com tipagem, recuperação e estratégias de reinício — conceitos que inspiraram os mecanismos modernos de exceções em linguagens como <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> e <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>.</p>
+<p>A distinção é crucial: enquanto <code>catch/throw</code> eram ferramentas de controle de fluxo (similares a um <code>goto</code> estruturado), o Condition System modelava verdadeiramente o tratamento de situações excepcionais com tipagem, recuperação e estratégias de reinício — conceitos que, embora formalizados após a introdução de exceções no C++, influenciaram linguagens posteriores como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> e seguem como referência para sistemas modernos de tratamento de erros.</p>
 <p>Consolidando essa evolução histórica, linguagens como <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> formalizaram e refinaram esses conceitos pioneiros por meio das estruturas <strong><code>try</code></strong> e <strong><code>catch</code></strong>, introduzindo um sistema de exceções baseado em tipos. Em <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a>, por exemplo, podemos proteger um bloco de código e tratar erros assim:</p>
 
 
@@ -558,7 +558,8 @@ END;</code></pre>
 }</code></pre>
  <p>O objetivo principal desse mecanismo é ajudar os programadores a lidar com problemas que ocorram durante a execução de forma organizada, separando claramente a lógica normal do tratamento de erros. Ele leva adiante – e aprimora – os princípios introduzidos por linguagens como <a href="https://en.wikipedia.org/wiki/PL/I">PL/I</a> e <a href="https://en.wikipedia.org/wiki/Lisp_%28programming_language%29">Lisp</a>, porém com uma implementação mais robusta e integrada à tipagem da linguagem.</p>
 <blockquote>
-<p>Nesse ponto, vale destacar um princípio essencial do livro <strong><a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer">The Pragmatic Programmer</a></strong>, que recomenda: “Crash early” — ou seja, falhe cedo e com clareza quando algo realmente inesperado ocorre. Segundo os autores, &ldquo;dead programs tell no lies&rdquo; — um programa que trava rapidamente pode ser mais confiável que um inválido operando silenciosamente com dados corrompidos. Isso reforça o propósito original das exceções: detectar falhas graves imediatamente, evitando consequências imprevisíveis.</p></blockquote>
+<p>Nesse ponto, vale destacar um princípio essencial do livro <strong><a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer">The Pragmatic Programmer</a></strong>, que recomenda: “Crash early” — ou seja, falhe cedo e com clareza quando algo realmente inesperado ocorre. Segundo os autores, &ldquo;dead programs tell no lies&rdquo; — um programa que trava rapidamente pode ser mais confiável que um inválido operando silenciosamente com dados corrompidos. Isso reforça o propósito original das exceções: detectar falhas graves imediatamente, evitando consequências imprevisíveis.</p>
+</blockquote>
 <p>Antes de explorarmos os detalhes técnicos e as melhores práticas do uso de <code>try/catch</code>, é importante entender o propósito fundamental desse mecanismo no contexto da programação moderna. O tratamento estruturado de exceções surgiu para resolver problemas clássicos de legibilidade, robustez e manutenção do código, especialmente em situações onde o fluxo normal de execução pode ser interrompido por eventos inesperados.</p>
 <p>A seguir, vamos analisar como o <code>try/catch</code> evoluiu historicamente, quais problemas ele resolve em relação a abordagens mais antigas (como códigos de erro) e por que sua adoção tornou-se um marco na organização e clareza dos programas:</p>
 <ol>
@@ -616,7 +617,8 @@ Se uma exceção não for capturada por nenhum handler correspondente, o C++ cha
 <li><strong>Fluxo de erro:</strong> qualquer falha salta direto para o <code>catch</code>.</li>
 </ul>
 <blockquote>
-<p><strong>Importante sobre Streams C++</strong>: Por padrão, as streams (<code>std::ifstream</code>, <code>std::ofstream</code>, etc.) <strong>não lançam exceções</strong> quando encontram erros — elas apenas definem bits de estado interno (<code>failbit</code>, <code>badbit</code>, <code>eofbit</code>) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método <code>exceptions()</code>.</p></blockquote>
+<p><strong>Importante sobre Streams C++</strong>: Por padrão, as streams (<code>std::ifstream</code>, <code>std::ofstream</code>, etc.) <strong>não lançam exceções</strong> quando encontram erros — elas apenas definem bits de estado interno (<code>failbit</code>, <code>badbit</code>, <code>eofbit</code>) que devem ser verificados manualmente. Para que uma stream lance exceções automaticamente, é necessário configurar explicitamente quais condições devem disparar exceções usando o método <code>exceptions()</code>.</p>
+</blockquote>
 <p>No exemplo acima, <code>arq.exceptions(std::ios::failbit | std::ios::badbit)</code> instrui a stream a lançar uma exceção do tipo <code>std::ios_base::failure</code> sempre que ocorrer uma falha de operação (<code>failbit</code>) ou um erro irrecuperável (<code>badbit</code>). Sem essa configuração, operações como <code>std::getline()</code> ou <code>read()</code> falhariam silenciosamente, exigindo verificações manuais de estado.</p>
 <p><strong>Alternativa com Códigos de Status</strong> (quando exceções não estão habilitadas):</p>
 
@@ -642,7 +644,8 @@ while (std::getline(arq, linha)) {
 }</code></pre>
  <p><strong>Comparação</strong>: Com exceções habilitadas, o <code>try/catch</code> separa claramente o fluxo principal do tratamento de erros usando <code>std::ios_base::failure</code> específico. Sem exceções, você deve verificar manualmente os estados da stream (<code>bad()</code>, <code>fail()</code>, <code>eof()</code>) após cada operação. A abordagem com exceções mantém o código principal mais limpo, enquanto códigos de status oferecem controle mais granular sobre cada tipo de falha.</p>
 <blockquote>
-<p>Conforme discutido por <a href="https://en.wikipedia.org/wiki/Scott_Meyers">Scott Meyers</a> no seu livro <strong><a href="https://en.wikipedia.org/wiki/Effective_C%2B%2B">Effective C++</a></strong>, página 61-65, item 13, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety. Ver também Item 29, p.115.</p></blockquote>
+<p>Conforme discutido por <a href="https://en.wikipedia.org/wiki/Scott_Meyers">Scott Meyers</a> no seu livro <strong><a href="https://en.wikipedia.org/wiki/Effective_C%2B%2B">Effective C++</a></strong>, página 61-65, item 13, o uso de RAII e arquiteturas seguras de exceção (exception-safe) garante que recursos sejam sempre liberados corretamente mesmo em falha, movendo o código para o nível de basic ou strong exception safety. Ver também Item 29, p.115.</p>
+</blockquote>
 <hr>
 <h3 id="papel-do-raii-limpeza-automática">Papel do RAII: limpeza automática</h3>
 <p>Em C++ não há <code>finally</code>, porque o RAII resolve a liberação de recursos durante o “desenrolar” da pilha:</p>
@@ -676,11 +679,13 @@ void processarArquivo(const std::string&amp; caminho) {
 <p>Esse mecanismo faz com que, mesmo em situações em que &ldquo;tudo dá errado&rdquo;, o programa consiga fechar arquivos, devolver memória e encerrar de maneira previsível. Caso seja apropriado, o programa pode até continuar sua execução após o tratamento, dependendo da gravidade do erro e da lógica implementada.</p>
 <p>Por outro lado, é importante não usar <code>try/catch</code> para controlar o fluxo nominal do programa. Exceções não devem ser empregadas para lidar com situações esperadas, como o fim de um arquivo durante uma leitura sequencial. Da mesma forma, se um resultado pode ser tratado por meio de valores de retorno, essa abordagem deve ser preferida. Reservar exceções para falhas realmente irrecuperáveis mantém o código mais claro e eficiente.</p>
 <blockquote>
-<p>Em resumo, o <code>try/catch</code> serve para isolar o código de negócio do tratamento de falhas, garantir a liberação automática de recursos (graças ao RAII) e evitar que erros críticos passem despercebidos. Essa separação contribui para a clareza, robustez e manutenibilidade do software.</p></blockquote>
+<p>Em resumo, o <code>try/catch</code> serve para isolar o código de negócio do tratamento de falhas, garantir a liberação automática de recursos (graças ao RAII) e evitar que erros críticos passem despercebidos. Essa separação contribui para a clareza, robustez e manutenibilidade do software.</p>
+</blockquote>
 <h2 id="tratamento-de-exceções-em-diferentes-contextos">Tratamento de Exceções em Diferentes Contextos</h2>
 <p>Agora que vimos <strong>por que</strong> e <strong>quando</strong> usar <code>try/catch</code>, vamos explorar o mecanismo em ação em cenários do dia a dia. Os exemplos abaixo seguem o mesmo princípio apresentado na seção anterior:</p>
 <blockquote>
-<p><strong>separe a lógica &ldquo;feliz&rdquo; do que acontece quando algo dá errado</strong>.</p></blockquote>
+<p><strong>separe a lógica &ldquo;feliz&rdquo; do que acontece quando algo dá errado</strong>.</p>
+</blockquote>
 <h3 id="gerenciamento-de-recursos">Gerenciamento de recursos</h3>
 
 
@@ -703,7 +708,8 @@ void processarArquivo(const std::string&amp; caminho) {
 <p>O exemplo acima ilustra como o uso combinado de <code>try/catch</code> e RAII (através do <code>unique_ptr</code>) simplifica o gerenciamento de recursos em C++. Ao encapsular a lógica principal dentro de um bloco <code>try</code>, garantimos que qualquer exceção lançada durante o carregamento, processamento ou salvamento dos dados seja capturada no <code>catch</code>, onde podemos registrar o erro e, se necessário, propagar a exceção para níveis superiores.</p>
 <p>O uso do <code>unique_ptr</code> assegura que a memória alocada para o buffer será automaticamente liberada ao final do escopo, mesmo que uma exceção ocorra — eliminando a necessidade de blocos <code>finally</code> ou liberações manuais.</p>
 <blockquote>
-<p>Assim, o código permanece limpo, seguro e robusto, pois separa claramente o fluxo normal do tratamento de falhas, um dos principais propósitos do mecanismo de exceções discutido neste artigo.</p></blockquote>
+<p>Assim, o código permanece limpo, seguro e robusto, pois separa claramente o fluxo normal do tratamento de falhas, um dos principais propósitos do mecanismo de exceções discutido neste artigo.</p>
+</blockquote>
 <h3 id="validação-de-dados">Validação de dados</h3>
 
 
@@ -730,7 +736,8 @@ try {
 </ul>
 <p>O exemplo acima demonstra como encapsular regras de validação diretamente na classe, lançando exceções quando os dados não atendem aos critérios esperados (por exemplo, uma idade fora do intervalo permitido). Isso centraliza a lógica de negócio e simplifica o uso da API, pois quem consome a classe só precisa tratar possíveis exceções, sem se preocupar em checar retornos de erro manualmente.</p>
 <blockquote>
-<p>Esse padrão torna o código mais limpo, seguro e fácil de manter, além de separar claramente o fluxo normal do tratamento de falhas. Essa abordagem de propagação de exceções é especialmente útil em cenários mais complexos, como operações transacionais, que veremos a seguir.</p></blockquote>
+<p>Esse padrão torna o código mais limpo, seguro e fácil de manter, além de separar claramente o fluxo normal do tratamento de falhas. Essa abordagem de propagação de exceções é especialmente útil em cenários mais complexos, como operações transacionais, que veremos a seguir.</p>
+</blockquote>
 <h3 id="transações-atômicas">Transações atômicas</h3>
 
 
@@ -739,11 +746,13 @@ try {
 
     std::scoped_lock lk(a.mtx(), b.mtx());  // C&#43;&#43;17: adquire ambos sem deadlock
 
+    bool debitado = false;
     try {
         a.debitar(v);
+        debitado = true;
         b.creditar(v);
-    } catch (...) {          // qualquer erro ⇒ rollback
-        a.creditar(v);
+    } catch (...) {          // qualquer erro ⇒ rollback se necessário
+        if (debitado) a.creditar(v);
         throw;
     }
 }</code></pre>
@@ -752,11 +761,13 @@ try {
 <li><code>scoped_lock</code> adquire ambos os mutexes simultaneamente e os libera automaticamente, mesmo em caso de exceção.</li>
 </ul>
 <blockquote>
-<p><strong>✅ Prevenção de deadlock</strong>: O código utiliza <code>std::scoped_lock</code> (C++17+) que adquire ambos os mutexes simultaneamente usando um algoritmo livre de deadlock. Isso elimina a necessidade de ordenação manual dos locks e previne deadlocks que poderiam ocorrer com <code>lock_guard</code> separados quando diferentes threads adquirem os mesmos mutexes em ordens distintas.</p></blockquote>
-<p>O exemplo acima ilustra como implementar uma operação transacional utilizando exceções para garantir a atomicidade: se qualquer etapa da transferência falhar (por exemplo, por saldo insuficiente ou erro inesperado), o código faz o rollback debitando e depois creditando novamente o valor na conta de origem, antes de propagar a exceção.</p>
+<p><strong>✅ Prevenção de deadlock</strong>: O código utiliza <code>std::scoped_lock</code> (C++17+) que adquire ambos os mutexes simultaneamente usando um algoritmo livre de deadlock. Isso elimina a necessidade de ordenação manual dos locks e previne deadlocks que poderiam ocorrer com <code>lock_guard</code> separados quando diferentes threads adquirem os mesmos mutexes em ordens distintas.</p>
+</blockquote>
+<p>O exemplo acima ilustra como implementar uma operação transacional utilizando exceções para garantir a atomicidade: se qualquer etapa da transferência falhar (por exemplo, por saldo insuficiente ou erro inesperado), o código faz o rollback condicional — creditando a conta de origem apenas se o débito foi efetivamente aplicado — antes de propagar a exceção.</p>
 <p>O uso de <code>scoped_lock</code> assegura que os mutexes das contas sejam adquiridos de forma livre de deadlock e liberados automaticamente, mesmo em caso de erro, evitando tanto deadlocks quanto vazamentos de recursos.</p>
 <blockquote>
-<p>Esse padrão é fundamental em sistemas financeiros e outros domínios críticos, pois assegura que as alterações de estado sejam consistentes e não deixem o sistema em situação intermediária caso ocorra uma falha.</p></blockquote>
+<p>Esse padrão é fundamental em sistemas financeiros e outros domínios críticos, pois assegura que as alterações de estado sejam consistentes e não deixem o sistema em situação intermediária caso ocorra uma falha.</p>
+</blockquote>
 <p>A seguir, veremos como enriquecer o contexto das exceções ao longo das camadas da aplicação, facilitando o diagnóstico e a rastreabilidade dos erros.</p>
 <h3 id="enriquecendo-contexto-em-camadas">Enriquecendo contexto em camadas</h3>
 
@@ -776,7 +787,8 @@ void alta()   { try { media(); }
   <pre><code class="language-">&#34;Camada alta: Camada média: DB offline&#34;</code></pre>
  <p>Exceções devem ser usadas exclusivamente para situações realmente excepcionais, ou seja, aquelas que impedem o fluxo normal do programa de continuar. Não utilize exceções para controlar o fluxo rotineiro da aplicação, pois isso pode tornar o código confuso, difícil de manter e impactar negativamente a performance.</p>
 <blockquote>
-<p>Algumas boas práticas são fundamentais para um uso correto do <code>try/catch</code>: sempre capture tipos específicos de exceção primeiro, evitando tratar tudo como erro genérico; nunca ignore exceções silenciosamente — registre o erro ou converta-o em um erro de domínio; em C++, garanta o uso de RAII (Resource Acquisition Is Initialization) para liberar recursos automaticamente, dispensando a necessidade de blocos <code>finally</code> e prevenindo vazamentos (em outras linguagens, utilize os mecanismos equivalentes, como <code>with</code> em Python ou <code>using</code> em C#).</p></blockquote>
+<p>Algumas boas práticas são fundamentais para um uso correto do <code>try/catch</code>: sempre capture tipos específicos de exceção primeiro, evitando tratar tudo como erro genérico; nunca ignore exceções silenciosamente — registre o erro ou converta-o em um erro de domínio; em C++, garanta o uso de RAII (Resource Acquisition Is Initialization) para liberar recursos automaticamente, dispensando a necessidade de blocos <code>finally</code> e prevenindo vazamentos (em outras linguagens, utilize os mecanismos equivalentes, como <code>with</code> em Python ou <code>using</code> em C#).</p>
+</blockquote>
 <p>Documente claramente quais exceções sua função pode lançar, facilitando o uso e os testes; e lembre-se de que lançar exceções tem custo, então não utilize esse mecanismo para situações comuns do fluxo de controle.</p>
 <hr>
 <h3 id="má-prática-de-design--quando-o-trycatch-vira-gambiarra">Má prática de design — quando o <code>try/catch</code> vira gambiarra</h3>
@@ -798,9 +810,11 @@ function getItemPrice(item: { name: string; price?: number }): number {
 <p>O processo envolve: busca por metadados no PC (program counter), decodificação de dados DWARF compactados, chamadas ao <em>personality routine</em>, e o custoso <strong>stack unwinding</strong>. <a href="https://isocpp.org/blog/2019/09/cppcon-2019-de-fragmenting-cpp-making-exceptions-and-rtti-more-affordable-a">Herb Sutter</a> demonstra que exceções violam o <em>zero-overhead principle</em> do C++, sendo uma das únicas duas funcionalidades da linguagem (junto com RTTI) que têm opções para serem desabilitadas pelos compiladores.</p>
 <p>Adicionalmente, mesmo quando não lançadas, exceções <strong>podem</strong> limitar certas otimizações do compilador: antes de operações que podem gerar exceção, o compilador pode precisar descarregar registradores para memória e evitar reordenações que quebrariam a semântica de unwinding. As <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#e3-use-exceptions-for-error-handling-only">C++ Core Guidelines</a> enfatizam que &ldquo;exceptions are for error handling only&rdquo; e que usar exceções para controle de fluxo normal &ldquo;makes code hard to follow and maintain.&rdquo;</p>
 <blockquote>
-<p>Essa ideia está diretamente alinhada ao conselho do livro <strong><a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer">The Pragmatic Programmer</a></strong>: trate apenas o que realmente é excepcional como exceção — caso contrário, você adiciona complexidade desnecessária e viola princípios como <a href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">Principle of Least Astonishment</a>.</p></blockquote>
+<p>Essa ideia está diretamente alinhada ao conselho do livro <strong><a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer">The Pragmatic Programmer</a></strong>: trate apenas o que realmente é excepcional como exceção — caso contrário, você adiciona complexidade desnecessária e viola princípios como <a href="https://en.wikipedia.org/wiki/Principle_of_least_astonishment">Principle of Least Astonishment</a>.</p>
+</blockquote>
 <blockquote>
-<p>Além disso, conforme <a href="https://en.wikipedia.org/wiki/Matt_Klein">Matt Klein</a> argumenta em seu artigo <strong>&ldquo;Crash early and crash often for more reliable software&rdquo;</strong> (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: <em>&ldquo;The only error checking a program needs are for errors that can actually happen during normal control flow&rdquo;</em> (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal).</p></blockquote>
+<p>Além disso, conforme <a href="https://github.com/mattklein123">Matt Klein</a> argumenta em seu artigo <strong>&ldquo;Crash early and crash often for more reliable software&rdquo;</strong> (7 abr 2019), verificações de erro excessivas prejudicam a confiabilidade do software. Ele afirma literalmente: <em>&ldquo;The only error checking a program needs are for errors that can actually happen during normal control flow&rdquo;</em> (A única verificação de erro que um programa precisa é para erros que podem realmente acontecer durante o fluxo de controle normal).</p>
+</blockquote>
 <p>Klein explica que checks desnecessários aumentam a complexidade e geram dívida de manutenção ao proliferarem ramos de código raramente exercitados, que por sua vez se tornam fontes de bugs ocultos e comportamentos imprevisíveis.</p>
 <p>Outro problema é que esse uso inadequado de exceções <a href="https://en.wikipedia.org/wiki/Stack_trace">polui o stack-trace</a>, tornando mais difícil depurar e analisar o comportamento do sistema. O excesso de exceções desnecessárias pode mascarar erros reais, dificultar o profiling e tornar o código mais difícil de manter.</p>
 <p>Por isso, para validações simples e previsíveis, prefira sempre estruturas de controle explícitas, reservando as exceções apenas para situações realmente inesperadas ou graves. Vamos ver um exemplo idiomático em TypeScript:</p>
@@ -833,7 +847,8 @@ function getItemPriceResult(item: { name: string; price?: number }): Result&lt;n
 </ol>
 <p>O resultado de evitar exceções para casos esperados é um código mais claro, eficiente e sem armadilhas ocultas. Em vez de usar <code>try/catch</code> para controlar fluxos normais, prefira estruturas explícitas como <code>if</code>, valores opcionais (<code>std::optional</code>, <code>std::expected</code> em C++23, <code>tl::expected</code>, <code>nullish ??</code>) ou retornos convencionais.</p>
 <blockquote>
-<p>Assim, situações como campo obrigatório não preenchido, busca sem resultado ou divisão por zero prevista são tratadas de forma transparente e previsível, sem sobrecarregar o sistema com o custo e a complexidade das exceções.</p></blockquote>
+<p>Assim, situações como campo obrigatório não preenchido, busca sem resultado ou divisão por zero prevista são tratadas de forma transparente e previsível, sem sobrecarregar o sistema com o custo e a complexidade das exceções.</p>
+</blockquote>
 <p>Já para eventos realmente excepcionais — como disco cheio, queda de conexão, corrupção de dados ou necessidade de desfazer uma operação crítica — o uso de exceções (<code>throw</code>) é apropriado.</p>
 <p>Nesses casos, não há como prever ou contornar o problema apenas com verificações simples, e a exceção serve para interromper o fluxo e sinalizar que algo grave aconteceu, permitindo que o erro seja tratado em um nível superior ou que o programa seja encerrado de forma segura.</p>
 <p>Diversas linguagens modernas reforçam essa separação: <strong>Rust</strong> usa <code>Result&lt;T, E&gt;</code> para erros esperados e reserva <code>panic!</code> para condições irrecuperáveis (bugs, invariantes violadas); <strong>Clojure</strong> herda exceções da JVM mas favorece erros como dados (mapas, keywords) nas camadas de domínio; <strong>TypeScript</strong> incentiva o uso de tipos como <code>unknown</code> e alternativas funcionais como <code>Either</code>.</p>
@@ -857,7 +872,8 @@ if (!media) {                          // falha prevista
  <p>No exemplo apresentado acima, vemos que tratar situações esperadas com exceções — como retornar 0 quando o preço está indefinido — prejudica a clareza e a eficiência do código. Isso ocorre porque exceções interrompem o fluxo normal e impactam significativamente otimizações do compilador: impedem marcação de funções com <code>noexcept</code> (essencial para move semântics eficientes na STL), forçam spilling de registradores para memória, e limitam reordenação de instruções que poderiam melhorar o pipeline do processador.</p>
 <p>O ideal é reservar exceções para eventos realmente inesperados, como um air-bag que só deve ser acionado em caso de acidente, enquanto validações de domínio e casos previstos devem ser tratados com retornos explícitos, usando estruturas como <code>if</code>, valores opcionais ou operadores como <code>??</code>.</p>
 <blockquote>
-<p>Linguagens modernas reforçam essa separação ao tratar erros esperados como dados e reservar exceções para situações imprevisíveis. Seguindo essas práticas, seu código permanece limpo, eficiente e fácil de manter, pois cada ferramenta é usada para o propósito correto, evitando surpresas e facilitando o diagnóstico de problemas reais.</p></blockquote>
+<p>Linguagens modernas reforçam essa separação ao tratar erros esperados como dados e reservar exceções para situações imprevisíveis. Seguindo essas práticas, seu código permanece limpo, eficiente e fácil de manter, pois cada ferramenta é usada para o propósito correto, evitando surpresas e facilitando o diagnóstico de problemas reais.</p>
+</blockquote>
 <hr>
 <h3 id="designbycontract-e-asserções">Design by Contract e asserções</h3>
 <p>Beleza, mas como decidir, de forma objetiva, o que é “inesperado”? A resposta clássica vem do <strong><a href="https://en.wikipedia.org/wiki/Design_by_contract">Design by Contract (DbC)</a></strong> de <a href="https://en.wikipedia.org/wiki/Bertrand_Meyer">Bertrand Meyer</a>.</p>
@@ -868,7 +884,7 @@ if (!media) {                          // falha prevista
 <li><strong>Invariantes</strong>: Propriedades que devem ser mantidas ao longo do tempo.</li>
 </ol>
 <p>Se a pré-condição de uma função não for atendida, ou seja, se o uso já começa errado (por exemplo, tentar sacar um valor negativo ou maior que o saldo), lançar uma exceção é apropriado, pois indica um erro de uso da interface; por outro lado, se a violação da pré-condição é algo frequente e esperado, como um campo vazio em um formulário, o ideal é tratar esse caso antes mesmo de chamar a função, evitando o uso de exceções para fluxos normais.</p>
-<p>O exemplo abaixo em C++ abaixo ilustra como aplicar esse princípio, diferenciando claramente quando lançar exceção por violação de contrato e quando validar previamente:</p>
+<p>O exemplo em C++ abaixo ilustra como aplicar esse princípio, diferenciando claramente quando lançar exceção por violação de contrato e quando validar previamente:</p>
 
 
   <pre><code class="language-cpp">class Conta {
@@ -878,7 +894,7 @@ public:
         if (v &lt;= 0)                      // pré‑condição violada → erro do usuário
             throw std::invalid_argument(&#34;valor ≤ 0&#34;);
         if (v &gt; saldo_)                  // pré‑condição violada → uso incorreto
-            throw std::domain_error(&#34;saldo insuficiente&#34;);
+            throw std::runtime_error(&#34;saldo insuficiente&#34;);
 
         double antigo = saldo_;
         saldo_ -= v;
@@ -905,7 +921,8 @@ public:
 <p>O mini-checklist apresentado resume o contrato em três etapas: primeiro, garantir as pré-condições (validando entradas e lançando exceções quando necessário); segundo, executar o trabalho principal da função; e, por fim, verificar as pós-condições e usar asserções para garantir que as invariantes do objeto foram mantidas.</p>
 <p>Assim, o chamador sabe exatamente o que precisa fornecer, a função garante o resultado correto ou lança uma exceção se não puder cumprir, e o objeto permanece sempre em um estado válido. Essa abordagem torna o código mais seguro, previsível e fácil de manter.</p>
 <blockquote>
-<p>Isso fecha, de forma formal, o ciclo começado lá atrás: <em>&ldquo;exceção para o inesperado, valor para o esperado, assert para o impossível&rdquo;</em>.</p></blockquote>
+<p>Isso fecha, de forma formal, o ciclo começado lá atrás: <em>&ldquo;exceção para o inesperado, valor para o esperado, assert para o impossível&rdquo;</em>.</p>
+</blockquote>
 <p>Até aqui vimos que <strong>pré‑/pós‑condições e asserções</strong> deixam claro <em>o que</em> cada parte deve cumprir — e que exceções só aparecem quando o contrato é quebrado. Mas o inverso também é verdadeiro: <strong>quando usamos exceções para controlar o fluxo diário, criamos contratos escondidos</strong> que amarram módulos sem ninguém notar.</p>
 <p>Quando usamos exceções para controlar o fluxo normal do programa, criamos dependências ocultas entre módulos: o cliente precisa conhecer os tipos de exceção internos do serviço, o que torna o contrato implícito — afinal, as ações a serem tomadas em caso de erro (“se der erro X faça Y”) não aparecem na assinatura da função, mas apenas nos blocos <code>catch</code> espalhados pelo código.</p>
 <p>Isso gera fragilidade, pois qualquer alteração nos tipos de exceção ou nas condições que as disparam pode quebrar vários pontos do sistema, como ilustrado no exemplo em C++ abaixo, onde o serviço lança exceções específicas e o cliente é obrigado a capturar cada uma delas individualmente. Observe o exemplo abaixo:</p>
@@ -927,7 +944,8 @@ if (resultado.has_value()) {
 }</code></pre>
  <p>Quando um serviço lança exceções específicas para sinalizar falhas, qualquer alteração nesses tipos de erro obriga o desenvolvedor a revisar e atualizar todos os blocos <code>catch</code> espalhados pelo código cliente.</p>
 <blockquote>
-<p><strong>Isso cria um acoplamento invisível entre módulos</strong>: o cliente precisa conhecer detalhes internos do serviço para capturar corretamente cada exceção, tornando a manutenção mais trabalhosa e sujeita a erros. O controle de fluxo baseado em exceções, nesse contexto, esconde contratos importantes e dificulta a evolução segura da API.</p></blockquote>
+<p><strong>Isso cria um acoplamento invisível entre módulos</strong>: o cliente precisa conhecer detalhes internos do serviço para capturar corretamente cada exceção, tornando a manutenção mais trabalhosa e sujeita a erros. O controle de fluxo baseado em exceções, nesse contexto, esconde contratos importantes e dificulta a evolução segura da API.</p>
+</blockquote>
 <p>Para tornar o contrato explícito e facilitar a manutenção, o <strong>C++23</strong> introduziu o <code>std::expected&lt;T, E&gt;</code>, que incorpora o erro ao próprio tipo de retorno da função. Para versões anteriores do C++, alternativas incluem <code>tl::expected</code> (biblioteca header-only), <code>boost::outcome</code>, ou a combinação de <code>std::optional&lt;T&gt;</code> com um código de erro separado. Assim, a assinatura já deixa claro para o usuário todas as possibilidades de sucesso ou falha:</p>
 
 
@@ -945,12 +963,14 @@ outcome::result&lt;Usuario, ErroAuth&gt;            // por valor
 std::optional&lt;std::unique_ptr&lt;Usuario&gt;&gt;       // smart pointer &#43; erro separado</code></pre>
  <p>O resultado é um código menos acoplado, mais documentado e mais seguro. O usuário da função já sabe todas as possibilidades de sucesso ou falha, e o compilador força o tratamento via <code>resultado.error()</code>.</p>
 <blockquote>
-<p><strong>Contratos de Propriedade</strong>: Evitar raw pointers em APIs públicas elimina ambiguidades sobre quem é responsável pela memória. Retorno por valor (<code>Usuario</code>) transfere propriedade claramente, enquanto <code>std::unique_ptr&lt;Usuario&gt;</code> indica propriedade exclusiva transferida. Ambos evitam vazamentos e dangling pointers que podem surgir com <code>Usuario*</code> quando não está claro se o caller deve fazer <code>delete</code>.</p></blockquote>
+<p><strong>Contratos de Propriedade</strong>: Evitar raw pointers em APIs públicas elimina ambiguidades sobre quem é responsável pela memória. Retorno por valor (<code>Usuario</code>) transfere propriedade claramente, enquanto <code>std::unique_ptr&lt;Usuario&gt;</code> indica propriedade exclusiva transferida. Ambos evitam vazamentos e dangling pointers que podem surgir com <code>Usuario*</code> quando não está claro se o caller deve fazer <code>delete</code>.</p>
+</blockquote>
 <hr>
 <h3 id="testabilidade-e-caminhos-de-erro">Testabilidade e caminhos de erro</h3>
 <p>Na seção anterior, vimos que tornar os contratos explícitos e como é possível reduzir o acoplamento entre módulos e deixa o código mais robusto. Um benefício imediato dessa abordagem é a facilidade de testar: quando o erro é representado como valor de retorno, fica muito mais simples cobrir todos os caminhos possíveis em testes unitários, sem depender de manipulação de exceções.</p>
 <blockquote>
-<p>Isso está totalmente alinhado com o conselho do livro <strong>Pragmatic Programmer</strong> que diz: “<strong>Test your software, or your users will</strong>”. Ou seja, &ldquo;se você não testar seu software, seus usuários vão testar&rdquo;.</p></blockquote>
+<p>Isso está totalmente alinhado com o conselho do livro <strong>Pragmatic Programmer</strong> que diz: “<strong>Test your software, or your users will</strong>”. Ou seja, &ldquo;se você não testar seu software, seus usuários vão testar&rdquo;.</p>
+</blockquote>
 <p>Cenários de erro merecem atenção especial nos testes, pois é justamente no tratamento de falhas que costumam aparecer os bugs mais críticos. Testar apenas o “caminho feliz” não garante a qualidade do sistema. Além disso, garantir que mudanças internas não quebrem o contrato de erro é fundamental para evitar regressões. Testes bem escritos também funcionam como documentação viva, mostrando claramente como o sistema reage a cada tipo de problema.</p>
 <p>Por outro lado, quando o tratamento de falhas depende de exceções, surgem desafios práticos. Simular e capturar exceções em testes exige o uso de mocks que lançam erros, além de poluir o código de teste com blocos <code>try-catch</code> ou macros como <code>EXPECT_THROW</code>. Isso pode prejudicar a legibilidade e facilitar a omissão de casos importantes, já que é fácil esquecer de testar um <code>catch</code> específico. O resultado é uma cobertura de testes parcial e menos confiável.</p>
 <p>Ao adotar contratos explícitos, como no exemplo em C++ abaixo usando <code>std::expected</code>, o teste se torna mais direto: basta verificar o valor retornado, sem precisar capturar exceções. Isso simplifica o código de teste, aumenta a clareza e garante que todos os ramos — inclusive os de erro — sejam exercitados de forma sistemática.</p>
@@ -1049,7 +1069,7 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
 <p><strong>Violação de contrato do chamador</strong> → pré-condições quebradas</p>
 <ul>
 <li><code>throw std::invalid_argument(&quot;Índice fora dos limites&quot;)</code></li>
-<li><code>throw std::domain_error(&quot;Saldo insuficiente&quot;)</code></li>
+<li><code>throw std::runtime_error(&quot;Saldo insuficiente&quot;)</code></li>
 </ul>
 </li>
 <li>
@@ -1098,7 +1118,8 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
 </ul>
 <h3 id="-regra-de-ouro">🎯 <strong>Regra de Ouro:</strong></h3>
 <blockquote>
-<p><strong>&ldquo;Exceção para o inesperado, valor para o esperado, assert para o impossível&rdquo;</strong></p></blockquote>
+<p><strong>&ldquo;Exceção para o inesperado, valor para o esperado, assert para o impossível&rdquo;</strong></p>
+</blockquote>
 <ul>
 <li><strong>Inesperado</strong>: Falhas de sistema, violações de contrato, recursos indisponíveis</li>
 <li><strong>Esperado</strong>: Validações, buscas sem resultado, parsing que pode falhar</li>
@@ -1182,27 +1203,6 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
         
     
         
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
     
         
             
@@ -1243,50 +1243,6 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
             
             
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
                 
                     
                 
@@ -1412,7 +1368,7 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
                 data-emit-metadata="0"
                 data-input-position="bottom"
                 data-theme="light"
-                data-lang="pt"
+                data-lang="pt-br"
                 crossorigin="anonymous"
                 async>
         </script>
@@ -1473,7 +1429,7 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -1481,24 +1437,24 @@ outcome::result&lt;Dados,ErroIO&gt; lerArquivo(...);     // boost::outcome</code
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1760118174"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069000"></script>
     
     
-    <script src="/js/main-minimal.js?v=1760118174"></script>
-    <script src="/js/lazy-loading.js?v=1760118174"></script>
-    <script src="/js/toc.js?v=1760118174"></script>
+    <script src="/js/main-minimal.js?v=1778069000"></script>
+    <script src="/js/lazy-loading.js?v=1778069000"></script>
+    <script src="/js/toc.js?v=1778069000"></script>
     
     
     

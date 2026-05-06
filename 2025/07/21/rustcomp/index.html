@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <title>Como o compilador do Rust funciona? | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1760118174">
+<link rel="stylesheet" href="/css/main.css?v=1778069000">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069000">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069000">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1760118174"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778069000"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -501,10 +501,12 @@ window.I18n = I18n;
 <p>Linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> ficam em um ponto intermediário: elas oferecem mais controle sobre o funcionamento do computador do que linguagens como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29">C#</a>, mas não são tão próximas do hardware quanto <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>.</p>
 <p>O que as diferencia é a forma como lidam com a memória: em C, o programador tem liberdade total para manipular ponteiros, mas também assume todos os riscos de erros; em Go, existe um coletor de lixo que gerencia a memória automaticamente; já o Rust criou um sistema próprio de &ldquo;posse e empréstimo&rdquo; (ownership e borrowing), que previne muitos problemas de memória já na fase de compilação, antes mesmo do programa rodar.</p>
 <blockquote>
-<p>Quando falamos que linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>) e &ldquo;alto nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>) e que elas ficam sempre no meio.</p></blockquote>
+<p>Quando falamos que linguagens como <a href="https://en.wikipedia.org/wiki/C_%28programming_language%29">C</a>, <a href="https://en.wikipedia.org/wiki/Go_%28programming_language%29">Go</a> e <a href="https://en.wikipedia.org/wiki/Rust_%28programming_language%29">Rust</a> são &ldquo;intermediárias&rdquo;, isso não quer dizer que existe uma escala fixa entre &ldquo;baixo nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>) e &ldquo;alto nível&rdquo; (<a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a>, <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>) e que elas ficam sempre no meio.</p>
+</blockquote>
 <p>Na verdade, é só uma forma de dizer que elas misturam características dos dois lados: dão bastante controle sobre o computador (como <a href="https://en.wikipedia.org/wiki/Assembly_language">Assembly</a>), mas também oferecem recursos que facilitam a vida do programador (como <a href="https://en.wikipedia.org/wiki/Java_%28programming_language%29">Java</a> ou <a href="https://en.wikipedia.org/wiki/Python_%28programming_language%29">Python</a>).</p>
 <blockquote>
-<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho.</p></blockquote>
+<p>Por exemplo, C deixa você mexer direto na memória, mas ainda é mais fácil de usar do que Assembly. Go e Rust vão além: trazem recursos modernos, ajudam a evitar erros de memória e, no caso do Rust, permitem escrever código seguro e rápido sem perder desempenho.</p>
+</blockquote>
 <p>Ou seja, &ldquo;intermediária&rdquo; é só um jeito de dizer que essas linguagens conseguem equilibrar controle e facilidade, ficando entre o mundo das linguagens super próximas do hardware e o das linguagens super abstratas.</p>
 <h2 id="o-compilador-do-rust">O compilador do Rust</h2>
 <p>Quando a gente fala de compilador, normalmente ele é dividido em três partes: <strong>frontend</strong> (a parte que entende o seu código e transforma em uma estrutura de árvore chamada AST), <strong>middle-end</strong> (que faz otimizações que valem pra qualquer computador) e <strong>backend</strong> (que transforma tudo em código de máquina pra rodar no seu PC). O Rust segue esse modelo, mas adiciona umas etapas extras só pra garantir que ninguém vai fazer besteira com a memória.</p>
@@ -543,13 +545,15 @@ window.I18n = I18n;
 <p>Por fim, vale destacar: linguagens como C e C++ não adotam esse modelo de múltiplas camadas de checagem automática durante a compilação. Nelas, o compilador faz análises mais simples e deixa a maior parte dos cuidados com memória e segurança por conta do programador.</p>
 <p>Isso significa que muitos erros perigosos — como acessar memória já liberada, criar <strong><a href="https://en.wikipedia.org/wiki/Race_condition">data races</a></strong> ou sobrescrever dados sem querer — só aparecem quando o programa já está rodando, e às vezes nem são detectados. O Rust, ao contrário, pega esses problemas antes mesmo do código virar um executável, tornando o desenvolvimento mais seguro sem sacrificar desempenho.</p>
 <blockquote>
-<p><a href="https://www.abeacha.com/NIST_press_release_bugs_cost.html">Um estudo de 2002 e publicado em2019 da National Institute of Standards and Technology (NIST)</a> estimou que os erros de software custam à economia dos EUA mais de 59,5 bilhões de dólares anualmente, com uma parcela significativa desses custos vindo de vulnerabilidades de segurança e falhas de memória. A ausência de checagens automáticas em C/C++ contribui para que esses tipos de falhas se tornem uma preocupação constante.</p></blockquote>
+<p><a href="https://www.abeacha.com/NIST_press_release_bugs_cost.html">Um estudo de 2002 e publicado em2019 da National Institute of Standards and Technology (NIST)</a> estimou que os erros de software custam à economia dos EUA mais de 59,5 bilhões de dólares anualmente, com uma parcela significativa desses custos vindo de vulnerabilidades de segurança e falhas de memória. A ausência de checagens automáticas em C/C++ contribui para que esses tipos de falhas se tornem uma preocupação constante.</p>
+</blockquote>
 <p>Para não soar como injusto, é necessário dizer que o C++23 trouxe várias novidades para tentar deixar o código mais seguro e moderno, especialmente quando o assunto é evitar bugs de memória — mas sem mudar a linguagem de cabeça pra baixo.</p>
 <p>Agora, por exemplo, dá pra declarar de forma explícita quando um objeto começa a existir na memória (com o <strong><a href="https://en.cppreference.com/w/cpp/language/lifetime#start_lifetime_as">start_lifetime_as</a></strong>), o que ajuda a evitar aqueles bugs cabeludos que nem os detectores automáticos pegavam. Também ficou mais fácil e seguro conversar com APIs em C sem correr o risco de vazar memória, graças a novos adaptadores de ponteiros inteligentes.</p>
 <p>Os containers ganharam versões que evitam acesso fora dos limites (tipo o <strong><a href="https://en.cppreference.com/w/cpp/container/mdspan">mdspan</a></strong> para matrizes), e ficou mais prático lidar com erros usando o <strong><a href="https://en.cppreference.com/w/cpp/utility/expected">std::expected</a></strong>, que incentiva o retorno explícito de falhas em vez de depender de códigos mágicos ou variáveis globais.</p>
 <p>Até a formatação de texto ficou mais fácil, <a href="https://en.cppreference.com/w/cpp/io/c/fprintf">com funções no estilo Python</a>, e agora dá pra gerar <a href="https://en.cppreference.com/w/cpp/error/stacktrace">stacktraces portáveis sem gambiarra</a>. Apesar desses avanços, algumas proteções automáticas que o Rust já oferece — como checagem de uso de ponteiros e detecção de data races — ainda não chegaram no C++ (ficaram pra próxima versão).</p>
 <blockquote>
-<p>Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p></blockquote>
+<p>Ou seja: o C++23 está caminhando para fechar várias brechas históricas e facilitar a vida do programador, mas ainda depende bastante de disciplina e ferramentas externas, enquanto o Rust já faz muita coisa “no automático” para garantir a segurança do seu código.</p>
+</blockquote>
 <p>Enquanto o compilador do Rust atua como um inspetor de qualidade rigoroso, rejeitando qualquer código que possa violar as regras de segurança de memória, o compilador de C/C++ foca em traduzir o código de forma fiel e otimizada. Ele assume que o programador é o responsável por todas as garantias de segurança.</p>
 <hr>
 <h2 id="referências">REFERÊNCIAS</h2>
@@ -588,32 +592,6 @@ window.I18n = I18n;
                     
                 
                     
-                        
-                        
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-                
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
                 
                     
                 
@@ -639,25 +617,6 @@ window.I18n = I18n;
                     
                 
                     
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
                 
                     
                 
@@ -725,31 +684,6 @@ window.I18n = I18n;
             
             
             
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
             
             
         
@@ -764,45 +698,6 @@ window.I18n = I18n;
         
     
     
-    
-        
-        
-        
-        <div class="related-posts">
-            <h3 class="related-posts-title">📚 Posts Relacionados</h3>
-            <div class="related-posts-grid">
-                
-                    
-                    <article class="related-post-item animate-on-scroll">
-                        <div class="related-post-content">
-                            <h4 class="related-post-title">
-                                <a href="/2025/07/18/type01/">Inferência de Tipos em Rust e C&#43;&#43;</a>
-                            </h4>
-                            <p class="related-post-excerpt">
-                                <h2 id="introdução">Introdução</h2>
-<p>Inferência de tipos é o mecanismo pelo qual o compilador descobre automaticamente o tipo de uma variável ou expressão em uma linguagem de programação. Esse recurso permite que o programador omita anotações de tipo em muitas situações sem comprometer a segurança de tipos do programa.</p>
-<p>Neste artigo, discutimos como as linguagens <strong><a href="https://www.rust-lang.org/">Rust</a></strong> e <strong><a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a></strong> implementam inferência de tipos de formas fundamentalmente diferentes, analisando as consequências práticas de cada abordagem.</p>
-                            </p>
-                            <div class="related-post-meta">
-                                <span class="related-post-date">18/07/2025</span>
-                                
-                                    <div class="related-post-tags">
-                                        
-                                            <span class="tag">Inferência de Tipos</span>
-                                        
-                                            <span class="tag">Programação</span>
-                                        
-                                    </div>
-                                
-                            </div>
-                            <div class="related-post-score">
-                                <modern-badge variant="info">1 tags em comum</modern-badge>
-                            </div>
-                        </div>
-                    </article>
-                
-            </div>
-        </div>
     
 
 
@@ -822,7 +717,7 @@ window.I18n = I18n;
                 data-emit-metadata="0"
                 data-input-position="bottom"
                 data-theme="light"
-                data-lang="pt"
+                data-lang="pt-br"
                 crossorigin="anonymous"
                 async>
         </script>
@@ -883,7 +778,7 @@ window.I18n = I18n;
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -891,24 +786,24 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1760118174"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069000"></script>
     
     
-    <script src="/js/main-minimal.js?v=1760118174"></script>
-    <script src="/js/lazy-loading.js?v=1760118174"></script>
-    <script src="/js/toc.js?v=1760118174"></script>
+    <script src="/js/main-minimal.js?v=1778069000"></script>
+    <script src="/js/lazy-loading.js?v=1778069000"></script>
+    <script src="/js/toc.js?v=1778069000"></script>
     
     
     

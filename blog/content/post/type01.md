@@ -3,7 +3,7 @@ title = "Inferência de Tipos em Rust e C++"
 description = "Por que isso pode facilitar sua vida."
 date = 2025-07-18T23:18:18-03:00
 tags = ["Inferência de Tipos", "Programação", "Rust", "C++", "Swift"]
-draft = false
+draft = true
 weight = 1
 +++
 

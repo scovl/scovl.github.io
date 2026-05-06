@@ -3,7 +3,7 @@ title = "01 - RAG Simples com Clojure e Ollama"
 description = "Um protótipo funcional do zero"
 date = 2025-03-23T19:00:00-00:00
 tags = ["RAG", "LLM", "AI", "Clojure"]
-draft = false
+draft = true
 weight = 1
 author = "Vitor Lobo Ramos"
 +++

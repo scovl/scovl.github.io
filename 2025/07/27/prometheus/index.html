@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <title>Prometheus e PromQL | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,21 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1760118174">
+<link rel="stylesheet" href="/css/main.css?v=1778069000">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778069000">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1760118174">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778069000">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1760118174"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778069000"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -636,10 +636,12 @@ window.I18n = I18n;
   <div class="post-content">
     <p>O <strong><a href="https://prometheus.io/">Prometheus</a></strong> é uma ferramenta open-source de monitoramento de sistemas e aplicações que revolucionou a forma de pensar observabilidade em ambientes distribuídos. Ele coleta e armazena métricas como séries temporais, ou seja, valores numéricos associados a um carimbo de tempo e a pares chave-valor chamados <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong>.</p>
 <blockquote>
-<p>A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a></strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p></blockquote>
+<p>A potência do Prometheus vem, em parte, da sua linguagem de consulta própria, <strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a></strong>, que permite criar consultas complexas para analisar os dados coletados em tempo real. A interface web integrada (Expression browser) facilita visualizar e explorar métricas, possibilitando análises rápidas para identificar tendências e anomalias.</p>
+</blockquote>
 <p>Desenvolvido inicialmente na SoundCloud em 2012 por <a href="https://github.com/juliusv">Julius Volz</a> e equipe, o Prometheus foi projetado para ser simples, eficiente e altamente dimensionável. Em 2016, o projeto foi adotado pela <strong><a href="https://www.cncf.io/">Cloud Native Computing Foundation (CNCF)</a></strong> como o segundo projeto hospedado (logo após o <a href="https://kubernetes.io/">Kubernetes</a>), reforçando sua maturidade e ampla adoção pela comunidade.</p>
 <blockquote>
-<p>Hoje, o Prometheus é um pilar no ecossistema de observabilidade cloud-native, frequentemente usado em conjunto com o Grafana para visualizações avançadas, formando uma poderosa stack de monitoramento.</p></blockquote>
+<p>Hoje, o Prometheus é um pilar no ecossistema de observabilidade cloud-native, frequentemente usado em conjunto com o Grafana para visualizações avançadas, formando uma poderosa stack de monitoramento.</p>
+</blockquote>
 <h2 id="tipos-de-métricas">Tipos de métricas</h2>
 <p>O Prometheus suporta quatro tipos principais de métricas:</p>
 <ul>
@@ -657,7 +659,8 @@ window.I18n = I18n;
 </li>
 </ul>
 <blockquote>
-<p>Use Histogramas quando precisar agregar latências de múltiplas instâncias e calcular percentis globais. Use Sumários quando os percentis calculados no cliente são suficientes e a agregação não é necessária.</p></blockquote>
+<p>Use Histogramas quando precisar agregar latências de múltiplas instâncias e calcular percentis globais. Use Sumários quando os percentis calculados no cliente são suficientes e a agregação não é necessária.</p>
+</blockquote>
 <p>Além desses tipos principais, o Prometheus expõe métricas especiais de estado – por exemplo, a métrica interna <code>up</code> indica se um determinado alvo foi coletado com sucesso (valor 1) ou não (0). Essa métrica é muito útil para monitorar disponibilidade de serviços: se um <strong>endpoint</strong> monitorado ficar indisponível, <code>up{instance=&quot;endpoint:porta&quot;} == 0</code> sinaliza falha. Vale notar que não existe um &ldquo;tipo&rdquo; separado para essas métricas de saúde; elas normalmente são gauges (0 ou 1) usadas para esse propósito.</p>
 <h2 id="monitoramento-pull-vs-push">Monitoramento pull vs push</h2>
 <p>Para entender <strong>pull</strong> vs <strong>push</strong>, imagine cuidar de plantas: no modelo <strong>pull</strong> você vai todo dia verificar se precisam de água; no modelo <strong>push</strong> as próprias plantas enviam um sinal quando precisam ser regadas. Tecnicamente, no monitoramento <strong>pull</strong> um sistema central (como o Prometheus) consulta periodicamente os alvos para coletar métricas – ele &ldquo;puxa&rdquo; as informações. Já no monitoramento <strong>push</strong>, os próprios alvos enviam (<em>empurram</em>) as métricas para um coletor central sem serem solicitados.</p>
@@ -696,10 +699,12 @@ window.I18n = I18n;
 <p>No contexto do Prometheus, a cada scrape o valor de cada métrica coletada é um sample (com timestamp e valor). Esses samples ficam armazenados como uma série temporal etiquetada, permitindo ver a evolução daquele valor no tempo.</p>
 <p>Por exemplo, considere a métrica gauge <code>node_cpu_usage</code> com label <code>host</code>. Para cada host monitorado, teremos uma série separada, e a cada intervalo de coleta obtemos um sample novo do uso de CPU daquele host. Assim, podemos consultar a série para ver como a CPU variou ao longo de um dia inteiro para cada máquina.</p>
 <blockquote>
-<p><strong>Exemplo de séries temporais no Prometheus</strong>: cada ponto representa um sample (valor observado) etiquetado por instância ou outra dimensão, armazenado em sequência temporal.</p></blockquote>
+<p><strong>Exemplo de séries temporais no Prometheus</strong>: cada ponto representa um sample (valor observado) etiquetado por instância ou outra dimensão, armazenado em sequência temporal.</p>
+</blockquote>
 <p>Em resumo, <strong><a href="https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels">labels</a></strong> fornecem contexto (quem, onde, o quê) e <strong><a href="https://prometheus.io/docs/concepts/data_model/#samples-and-series">samples</a></strong> fornecem o valor numérico no tempo. Essa combinação é o que torna o Prometheus poderoso para agregar métricas semelhantes e, ao mesmo tempo, permitir recortes por dimensão. Vale ressaltar a importância de escolher labels com cardinalidade controlada – ou seja, evitar labels que possam assumir valores extremamente variados (como IDs únicos, URLs completas ou timestamps).</p>
 <blockquote>
-<p><strong>Nota:</strong> Labels com variação descontrolada podem causar uma explosão de séries e sobrecarregar o Prometheus, conforme discutiremos em melhores práticas.</p></blockquote>
+<p><strong>Nota:</strong> Labels com variação descontrolada podem causar uma explosão de séries e sobrecarregar o Prometheus, conforme discutiremos em melhores práticas.</p>
+</blockquote>
 <h2 id="instalação">Instalação</h2>
 <p>Existem diversas maneiras de instalar e executar o Prometheus. Aqui vou demonstrar uma configuração simples usando <strong><a href="https://www.docker.com/">Docker</a></strong> e <strong><a href="https://docs.docker.com/compose/">Docker Compose</a></strong>, incluindo o Grafana e uma ferramenta de simulação de métricas chamada <strong><a href="https://github.com/dmitsh/promsim">PromSim</a></strong> (útil para testes). Essa stack de exemplo traz:</p>
 <ul>
@@ -776,7 +781,8 @@ scrape_configs:
 <li><strong><a href="https://prometheus.io/docs/prometheus/latest/querying/basics/#evaluation-time">Evaluation time</a></strong>: permite fixar um timestamp específico para avaliar a query (por padrão é &ldquo;now&rdquo;, mas você pode ver valores históricos escolhendo um horário passado).</li>
 </ul>
 <blockquote>
-<p><strong>Dica:</strong> a UI do Prometheus é ótima para explorar e depurar métricas rapidamente, mas para dashboards permanentes e mais bonitos geralmente usamos o Grafana. O Grafana se conecta ao Prometheus via API e permite combinar múltiplas consultas em gráficos customizados.</p></blockquote>
+<p><strong>Dica:</strong> a UI do Prometheus é ótima para explorar e depurar métricas rapidamente, mas para dashboards permanentes e mais bonitos geralmente usamos o Grafana. O Grafana se conecta ao Prometheus via API e permite combinar múltiplas consultas em gráficos customizados.</p>
+</blockquote>
 <h3 id="configuração">Configuração</h3>
 <p>Após instalar, o principal arquivo a ajustar é o de <strong><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/">configuração do Prometheus</a></strong> (<code>prometheus.yml</code>). Nele definimos os parâmetros globais, jobs de scrape, regras de alerta, etc. Vamos examinar a estrutura básica e algumas customizações comuns. Um exemplo mínimo de <code>prometheus.yml</code> poderia ser:</p>
 
@@ -798,7 +804,8 @@ scrape_configs:
  <p>Isso instruirá o Prometheus a coletar periodicamente métricas em <strong><a href="http://my-app:8080/metrics">http://my-app:8080/metrics</a></strong>. Podemos repetir o processo para cada serviço ou componente que queremos incluir, definindo um <code>job_name</code> descritivo e a lista de endpoints (targets).</p>
 <p>Para ambientes com muitos alvos ou infraestrutura dinâmica, é inviável gerenciar esses targets manualmente. Nesses casos, o Prometheus oferece integrações de <strong>Service Discovery</strong> (<a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config">Kubernetes</a>, <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#ec2_sd_config">AWS EC2</a>, <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config">Consul</a>, <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#dns_sd_config">DNS</a>, etc.) e também o <strong>file-based discovery</strong> (descoberta via arquivos).</p>
 <blockquote>
-<p>Este último permite apontar para um ou mais arquivos JSON externos contendo a lista de targets. Assim, ferramentas externas ou scripts podem atualizar esses arquivos conforme os serviços mudam, e o Prometheus percebe as alterações automaticamente. Por exemplo, poderíamos alterar o job acima para usar arquivo:</p></blockquote>
+<p>Este último permite apontar para um ou mais arquivos JSON externos contendo a lista de targets. Assim, ferramentas externas ou scripts podem atualizar esses arquivos conforme os serviços mudam, e o Prometheus percebe as alterações automaticamente. Por exemplo, poderíamos alterar o job acima para usar arquivo:</p>
+</blockquote>
 
 
   <pre><code class="language-yaml">scrape_configs:
@@ -832,7 +839,8 @@ scrape_configs:
   --config.file=/opt/prometheus/prometheus.yml \
   --storage.tsdb.retention.time=30d</code></pre>
  <blockquote>
-<p><strong>Nota:</strong> O formato aceita unidades como <code>h</code>, <code>d</code>, <code>w</code>, <code>y</code>. Você também pode usar a opção <code>--storage.tsdb.retention.size</code> para definir um tamanho máximo (por ex: <code>50GB</code>), o que ocorrer primeiro (tempo ou tamanho) aciona a limpeza de dados antigos.</p></blockquote>
+<p><strong>Nota:</strong> O formato aceita unidades como <code>h</code>, <code>d</code>, <code>w</code>, <code>y</code>. Você também pode usar a opção <code>--storage.tsdb.retention.size</code> para definir um tamanho máximo (por ex: <code>50GB</code>), o que ocorrer primeiro (tempo ou tamanho) aciona a limpeza de dados antigos.</p>
+</blockquote>
 <p>Em instalações via pacote ou container, normalmente a estrutura de diretórios do Prometheus é assim:</p>
 
 
@@ -845,7 +853,8 @@ scrape_configs:
 └── data/      (armazenamento local das séries temporais)</code></pre>
  <p>A pasta <code>data/</code> merece destaque – ali ficam todos os dados das métricas coletadas. Abordaremos sua estrutura interna na seção &ldquo;Under the Hood&rdquo;.</p>
 <blockquote>
-<p>Em resumo, após instalar, você deve editar o <code>prometheus.yml</code> para incluir todos os targets que deseja monitorar (seja listando estaticamente ou via mecanismos dinâmicos) e ajustar parâmetros globais (intervalos, regras, retenção).</p></blockquote>
+<p>Em resumo, após instalar, você deve editar o <code>prometheus.yml</code> para incluir todos os targets que deseja monitorar (seja listando estaticamente ou via mecanismos dinâmicos) e ajustar parâmetros globais (intervalos, regras, retenção).</p>
+</blockquote>
 <p>Depois reinicie o serviço/container do Prometheus para aplicar as alterações. Para validar se a sintaxe do arquivo está correta antes de reiniciar, podemos usar o <strong><a href="https://prometheus.io/docs/prometheus/latest/tools/promtool/">promtool</a></strong> conforme abaixo.</p>
 <h2 id="-instrumentação">🔍 Instrumentação</h2>
 <p>A <strong>instrumentação</strong> é o processo de inserir coleta de métricas em sistemas e aplicações. No contexto Prometheus, podemos dividir em dois tipos:</p>
@@ -876,7 +885,8 @@ scrape_configs:
 </li>
 </ul>
 <blockquote>
-<p><strong>Como usar exporters?</strong> Normalmente é executar o binário do exporter próximo do serviço alvo, e então adicionar um job no <code>prometheus.yml</code> apontando para o endpoint do exporter. Por exemplo, para Node Exporter em várias máquinas, você rodaria node_exporter em cada host (porta 9100) e adicionaria algo como:</p></blockquote>
+<p><strong>Como usar exporters?</strong> Normalmente é executar o binário do exporter próximo do serviço alvo, e então adicionar um job no <code>prometheus.yml</code> apontando para o endpoint do exporter. Por exemplo, para Node Exporter em várias máquinas, você rodaria node_exporter em cada host (porta 9100) e adicionaria algo como:</p>
+</blockquote>
 
 
   <pre><code class="language-yaml">scrape_configs:
@@ -885,7 +895,8 @@ scrape_configs:
       - targets: [&#39;host1:9100&#39;, &#39;host2:9100&#39;, ...]</code></pre>
  <p>Assim o Prometheus coletará as métricas de cada máquina. Cada métrica virá automaticamente com labels como <code>instance=&quot;host1:9100&quot;</code> e outras específicas (o Node Exporter adiciona label <code>job=&quot;node&quot;</code> e por vezes labels como <code>cpu=&quot;0&quot;</code> para métricas por CPU, etc.).</p>
 <blockquote>
-<p>Em resumo, a instrumentação indireta via exporters é fundamental para trazer para o Prometheus dados de componentes que não expõem nativamente as métricas. É um jeito de <em>bridge</em> (ponte) entre sistemas legados e o moderno mundo do Prometheus.</p></blockquote>
+<p>Em resumo, a instrumentação indireta via exporters é fundamental para trazer para o Prometheus dados de componentes que não expõem nativamente as métricas. É um jeito de <em>bridge</em> (ponte) entre sistemas legados e o moderno mundo do Prometheus.</p>
+</blockquote>
 <h2 id="configuração-avançada">Configuração Avançada</h2>
 <h3 id="discovery-dinâmico-e-relabeling">Discovery Dinâmico e Relabeling</h3>
 <p>Em ambientes modernos com infraestrutura dinâmica (Kubernetes, cloud, microsserviços), configurar targets manualmente no <code>prometheus.yml</code> torna-se inviável. O Prometheus oferece mecanismos de <strong>Service Discovery</strong> que permitem descobrir automaticamente alvos para monitoramento, e o <strong>Relabeling</strong> permite transformar dinamicamente essas descobertas durante o processo de configuração.</p>
@@ -964,7 +975,8 @@ scrape_configs:
 <li><strong>Normalização de nomes</strong>: Padronizar nomes de instâncias ou serviços</li>
 </ul>
 <blockquote>
-<p><strong>Importante</strong>: O relabeling é aplicado <strong>antes</strong> do scrape, então você pode usar <code>__meta_*</code> labels (metadados do discovery) para tomar decisões sobre quais targets monitorar e como rotulá-los.</p></blockquote>
+<p><strong>Importante</strong>: O relabeling é aplicado <strong>antes</strong> do scrape, então você pode usar <code>__meta_*</code> labels (metadados do discovery) para tomar decisões sobre quais targets monitorar e como rotulá-los.</p>
+</blockquote>
 <h2 id="promql-os-fundamentos">PromQL: Os Fundamentos</h2>
 <p>PromQL é a linguagem de consulta poderosa usada pelo Prometheus para extrair dados de métricas e configurar alertas. Seu principal objetivo é possibilitar a análise e monitoramento de métricas (como requisições HTTP por segundo ou a média de utilização de CPU por servidor) por meio de expressões que definem cálculos específicos.</p>
 <p>O PromQL suporta funções matemáticas, operações booleanas e de comparação, além de agrupamento de dados e agregações. Ela também conta com recursos avançados, como subconsultas e funções de análise temporal.</p>
@@ -975,7 +987,8 @@ scrape_configs:
 <p>O Prometheus armazena os dados em um formato binário chamado TSDB (Time Series Database). O TSDB é um banco de dados de séries temporais otimizado para armazenar métricas de forma eficiente.</p>
 <p>Para simplificar o entendimento, imagine que você tem um diário onde registra, todos os dias e nos mesmos horários, informações como a temperatura do ar, velocidade do vento e pressão atmosférica.</p>
 <blockquote>
-<p>Essas informações são armazenadas em ordem cronológica (por tempo) e podem ser consultadas para ver como variam ao longo do tempo. Essa é a essência de um banco de dados de série temporal: armazenar e consultar dados que possuem uma dimensão temporal.</p></blockquote>
+<p>Essas informações são armazenadas em ordem cronológica (por tempo) e podem ser consultadas para ver como variam ao longo do tempo. Essa é a essência de um banco de dados de série temporal: armazenar e consultar dados que possuem uma dimensão temporal.</p>
+</blockquote>
 <p>Monitorar métricas a partir de um banco de dados de séries temporais traz várias vantagens:</p>
 <ul>
 <li><strong>Análise histórica:</strong> Por armazenar dados em ordem cronológica, é possível analisar tendências e padrões ao longo do tempo. Isso ajuda a entender como o desempenho do sistema evolui e identificar tendências que possam indicar problemas futuros.</li>
@@ -1117,7 +1130,8 @@ scrape_configs:
 
   <pre><code class="language-promql">max_over_time(network_traffic[30m]) by (instance)</code></pre>
  <blockquote>
-<p>Resumindo: um <strong>Instant Vector</strong> é adequado para consultas que requerem o valor atual (ou de um instante específico) de uma métrica, enquanto um <strong>Range Vector</strong> é necessário para consultas que envolvem cálculo ao longo do tempo (taxas, médias móveis, etc.). Muitas funções do PromQL, como <code>rate</code> e <code>avg_over_time</code>, só funcionam com range vectors porque precisam de vários pontos de dados para produzir um resultado.</p></blockquote>
+<p>Resumindo: um <strong>Instant Vector</strong> é adequado para consultas que requerem o valor atual (ou de um instante específico) de uma métrica, enquanto um <strong>Range Vector</strong> é necessário para consultas que envolvem cálculo ao longo do tempo (taxas, médias móveis, etc.). Muitas funções do PromQL, como <code>rate</code> e <code>avg_over_time</code>, só funcionam com range vectors porque precisam de vários pontos de dados para produzir um resultado.</p>
+</blockquote>
 <h3 id="segurança-do-seletor-seletores-seguros-vs-inseguros">Segurança do seletor (Seletores seguros vs inseguros)</h3>
 <p>Ao escrever consultas PromQL, é importante construir seletores de métricas que capturem exatamente as séries desejadas, evitando resultados imprecisos ou indesejados. Alguns seletores podem ser considerados &ldquo;inseguros&rdquo; porque podem abranger séries não pretendidas.</p>
 <p>Por exemplo, usar uma correspondência de prefixo muito genérica em um label pode ser problemático. Considere o seletor de label <code>job=~&quot;prom.*&quot;</code>. Ele selecionará todas as séries de métricas cujo label <code>job</code> começa com &ldquo;prom&rdquo;.</p>
@@ -2073,7 +2087,8 @@ sum(rate(http_requests_total[5m]))</code></pre>
   <pre><code class="language-yaml">    - record: job:http_request_duration_seconds:p95
       expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, job))</code></pre>
  <blockquote>
-<p><strong>Dica</strong>: Use recording rules para pré-calcular consultas complexas e frequentes. Isso melhora a performance e reduz a carga no Prometheus.</p></blockquote>
+<p><strong>Dica</strong>: Use recording rules para pré-calcular consultas complexas e frequentes. Isso melhora a performance e reduz a carga no Prometheus.</p>
+</blockquote>
 <h3 id="instrumentação-direta-exemplos-por-linguagem">Instrumentação direta: exemplos por linguagem</h3>
 <p>Agora vejamos como instrumentar aplicações escritas em algumas linguagens populares. A ideia geral em qualquer linguagem é: instalar a biblioteca cliente do Prometheus, criar métricas (<a href="https://prometheus.io/docs/concepts/metric_types/#counter">counters</a>, <a href="https://prometheus.io/docs/concepts/metric_types/#gauge">gauges</a>, etc.) em pontos estratégicos do código, e expor um endpoint HTTP <code>/metrics</code> onde essas métricas são servidas (em formato de texto). O Prometheus então coleta nesse endpoint.</p>
 <h4 id="java-micrometer--cliente-java-do-prometheus">Java (Micrometer / Cliente Java do Prometheus)</h4>
@@ -2124,7 +2139,8 @@ management.endpoint.prometheus.enabled=true</code></pre>
 </li>
 </ol>
 <blockquote>
-<p>Em resumo, no Java/Spring o processo pode ser muito simples aproveitando frameworks existentes. Para outras aplicações Java sem Spring, existe também o cliente Java do Prometheus (simpleclient) onde você manualmente gerencia as métricas e HTTP endpoint.</p></blockquote>
+<p>Em resumo, no Java/Spring o processo pode ser muito simples aproveitando frameworks existentes. Para outras aplicações Java sem Spring, existe também o cliente Java do Prometheus (simpleclient) onde você manualmente gerencia as métricas e HTTP endpoint.</p>
+</blockquote>
 <h4 id="javascriptnodejs">JavaScript/Node.js</h4>
 <p>No Node.js podemos usar o pacote <strong>prom-client</strong> para instrumentação:</p>
 <ol>
@@ -2238,15 +2254,18 @@ def example():
 </li>
 </ul>
 <blockquote>
-<p>Em resumo, <strong>sempre</strong> é possível integrar algo ao Prometheus, ainda que indiretamente. A comunidade já produziu exporters para muitos sistemas fechados (WebLogic, SAP, etc.). E como último recurso, extrair dados e expor manualmente não é tão complexo graças às bibliotecas cliente disponíveis.</p></blockquote>
+<p>Em resumo, <strong>sempre</strong> é possível integrar algo ao Prometheus, ainda que indiretamente. A comunidade já produziu exporters para muitos sistemas fechados (WebLogic, SAP, etc.). E como último recurso, extrair dados e expor manualmente não é tão complexo graças às bibliotecas cliente disponíveis.</p>
+</blockquote>
 <h2 id="alertmanager">Alertmanager</h2>
 <p>O <strong><a href="https://prometheus.io/docs/alerting/latest/alertmanager/">Alertmanager</a></strong> complementa o Prometheus no tratamento de alertas. Enquanto o Prometheus detecta condições de alerta (com base nas métricas e regras definidas), ele delega ao Alertmanager a função de envio de notificações e gerenciamento desses alertas. Isso inclui agregar alertas similares, evitar duplicações, silenciar alertas durante manutenção, e encaminhá-los para canais apropriados (e-mail, sistemas de chat, PagerDuty, etc.).</p>
 <p><strong>Alta Disponibilidade:</strong> O Alertmanager suporta configuração em cluster para alta disponibilidade. Quando múltiplas instâncias do Alertmanager estão ativas, elas se comunicam entre si para deduplicar alertas vindos de dois Prometheus idênticos, garantindo que apenas uma notificação seja enviada mesmo quando múltiplas fontes detectam o mesmo problema.</p>
 <blockquote>
-<p>Como funciona: você define no Prometheus regras de alerta (no arquivo de configuração ou separado) com expressões PromQL que identificam situações problemáticas. Por exemplo: &ldquo;se a métrica <code>up</code> de um servidor for 0 por 5 minutos, dispare alerta&rdquo;.</p></blockquote>
+<p>Como funciona: você define no Prometheus regras de alerta (no arquivo de configuração ou separado) com expressões PromQL que identificam situações problemáticas. Por exemplo: &ldquo;se a métrica <code>up</code> de um servidor for 0 por 5 minutos, dispare alerta&rdquo;.</p>
+</blockquote>
 <p>Quando a condição é verdadeira, o Prometheus gera um evento de alerta e o envia para o Alertmanager (que está configurado na seção <code>alerting</code> do prometheus.yml).</p>
 <blockquote>
-<p>O Alertmanager então aplica suas próprias regras de roteamento: por exemplo, enviar alertas de severidade crítica para um webhook do Slack e para email da equipe X, alertas menos graves só para email, etc&hellip;</p></blockquote>
+<p>O Alertmanager então aplica suas próprias regras de roteamento: por exemplo, enviar alertas de severidade crítica para um webhook do Slack e para email da equipe X, alertas menos graves só para email, etc&hellip;</p>
+</blockquote>
 <p><strong>Exemplo prático:</strong> Vamos configurar um alerta de servidor fora do ar com notificação no Slack.</p>
 <ol>
 <li><strong>Definir regra de alerta (Prometheus):</strong> Crie um arquivo <code>alert.rules.yml</code>:</li>
@@ -2302,7 +2321,8 @@ receivers:
 </ol>
 <p>Esse foi um exemplo focado em Slack, mas o Alertmanager suporta muitos outros <strong>receivers</strong>: e-mail (SMTP), PagerDuty, OpsGenie, VictorOps, Webhooks genéricos, entre outros. Com ele, você ganha flexibilidade para gerenciar o &ldquo;barulho&rdquo; de alertas: por exemplo, suprimir alertas filhos quando um pai já ocorreu (<a href="https://prometheus.io/docs/alerting/latest/configuration/#inhibition">inhibition</a>), ou silenciar certos alertas durante janelas de manutenção planejada.</p>
 <blockquote>
-<p><strong>Observação:</strong> O Alertmanager não é obrigatório – você pode rodar o Prometheus sem ele se não precisar de notificações externas. Porém, para qualquer ambiente de produção, é altamente recomendado configurá-lo para não depender de ficar olhando a página /alerts manualmente. Em outro artigo abordaremos em detalhes boas práticas de configuração do Alertmanager.</p></blockquote>
+<p><strong>Observação:</strong> O Alertmanager não é obrigatório – você pode rodar o Prometheus sem ele se não precisar de notificações externas. Porém, para qualquer ambiente de produção, é altamente recomendado configurá-lo para não depender de ficar olhando a página /alerts manualmente. Em outro artigo abordaremos em detalhes boas práticas de configuração do Alertmanager.</p>
+</blockquote>
 <h3 id="alertmanager-avançado-silencing-e-inhibition">Alertmanager Avançado: Silencing e Inhibition</h3>
 <p>Em ambientes de produção com muitos alertas, o <strong>&ldquo;alert fatigue&rdquo;</strong> (fadiga de alertas) pode ser um problema sério. O Alertmanager oferece funcionalidades avançadas para gerenciar esse cenário: <strong>silencing</strong> (silenciamento) e <strong>inhibition</strong> (inibição).</p>
 <h4 id="silencing">Silencing</h4>
@@ -2449,7 +2469,8 @@ receivers:
 <p>O Prometheus, ao raspar, terá essa informação agregada do job. Como esse tipo de job não tem um &ldquo;endpoint&rdquo; próprio para scrap, o Pushgateway serve como cache.</p>
 <p>Para outros cenários, onde o push é considerado porque há firewall/NAT impedindo scrapes, a documentação sugere alternativas melhores – como rodar Prometheus perto dos alvos (dentro da rede) ou usar algo como o <strong><a href="https://github.com/prometheus/pushprox">PushProx</a></strong> para atravessar firewalls mantendo o modelo pull. E para jobs cron por máquina, que têm contexto de host, recomenda-se usar o <strong><a href="https://github.com/prometheus/node_exporter#textfile-collector">Node Exporter Textfile Collector</a></strong> (escrever métricas em um arquivo que o Node Exporter lê), ao invés do Pushgateway.</p>
 <blockquote>
-<p>Resumindo: o Pushgateway é útil, mas <strong>somente</strong> em casos específicos. Evite usá-lo para coletar métricas de serviços normais (isso seria “usar push por preguiça”, e acarretaria problemas de dados stale e falta de detecção de falha). Use-o para jobs batch pontuais, e mesmo assim, sem abusar – lembre-se de limpar métricas antigas se necessário, ou projetar os labels de modo que cada job substitua seu próprio valor sem acumular lixo.</p></blockquote>
+<p>Resumindo: o Pushgateway é útil, mas <strong>somente</strong> em casos específicos. Evite usá-lo para coletar métricas de serviços normais (isso seria “usar push por preguiça”, e acarretaria problemas de dados stale e falta de detecção de falha). Use-o para jobs batch pontuais, e mesmo assim, sem abusar – lembre-se de limpar métricas antigas se necessário, ou projetar os labels de modo que cada job substitua seu próprio valor sem acumular lixo.</p>
+</blockquote>
 <h2 id="federação">Federação</h2>
 <p>A <strong>federação</strong> no Prometheus permite que uma instância do Prometheus (geralmente chamada de <strong>federadora</strong> ou <strong>global</strong>) faça scrape em endpoints de outras instâncias do Prometheus (<strong>federadas</strong>) para obter um subconjunto de suas métricas.</p>
 <p>Em outras palavras, é uma forma de <strong>hierarquizar</strong> o monitoramento: por exemplo, você pode ter um Prometheus por data center coletando tudo localmente, e um Prometheus global que apenas busca métricas já agregadas de cada data center para ter uma visão geral corporativa.</p>
@@ -2472,7 +2493,8 @@ receivers:
 </ul>
 <p>Em razão desses fatores, a federação deve ser usada <strong>apenas</strong> para casos de uso bem planejados (tipicamente agregações de baixo volume ou métricas específicas). Não é a solução adequada para retenção de longo prazo nem para alta disponibilidade.</p>
 <blockquote>
-<p><strong>NOTA:</strong> Para necessidades de <strong>escalabilidade horizontal</strong> e <strong>armazenamento de longo prazo</strong>, surgiram outros projetos que complementam o Prometheus, como <strong>Thanos</strong>, <strong>Cortex</strong> e <strong>Mimir</strong> (Grafana Labs). Essas soluções armazenam as séries em storage distribuído (objeto, bigtable, etc.) e permitem “juntar” múltiplas instâncias como se fossem uma só, suportando consultas globais e retenção virtualmente infinita. Exploraremos essas alternativas em outro artigo, mas adianta-se que elas resolvem muitos dos problemas de tentar usar federação pura para esses fins.</p></blockquote>
+<p><strong>NOTA:</strong> Para necessidades de <strong>escalabilidade horizontal</strong> e <strong>armazenamento de longo prazo</strong>, surgiram outros projetos que complementam o Prometheus, como <strong>Thanos</strong>, <strong>Cortex</strong> e <strong>Mimir</strong> (Grafana Labs). Essas soluções armazenam as séries em storage distribuído (objeto, bigtable, etc.) e permitem “juntar” múltiplas instâncias como se fossem uma só, suportando consultas globais e retenção virtualmente infinita. Exploraremos essas alternativas em outro artigo, mas adianta-se que elas resolvem muitos dos problemas de tentar usar federação pura para esses fins.</p>
+</blockquote>
 <h2 id="remote-write-e-remote-read">Remote Write e Remote Read</h2>
 <p>O Prometheus pode ser configurado para enviar suas métricas em tempo real para bancos externos (<strong>remote write</strong>) e buscar dados históricos de outros sistemas (<strong>remote read</strong>). Essa funcionalidade é fundamental para integração com soluções de armazenamento de longo prazo, compliance e análise de dados.</p>
 <h3 id="remote-write">Remote Write</h3>
@@ -2557,7 +2579,8 @@ receivers:
         regex: &#39;app_.*&#39;
         action: keep</code></pre>
  <blockquote>
-<p><strong>Importante</strong>: Remote write/read não substitui o armazenamento local do Prometheus. O TSDB local continua sendo usado para consultas recentes e alertas. O remote write é <strong>aditivo</strong> - você mantém os dados locais e envia uma cópia para sistemas externos.</p></blockquote>
+<p><strong>Importante</strong>: Remote write/read não substitui o armazenamento local do Prometheus. O TSDB local continua sendo usado para consultas recentes e alertas. O remote write é <strong>aditivo</strong> - você mantém os dados locais e envia uma cópia para sistemas externos.</p>
+</blockquote>
 <h2 id="under-the-hood">Under the Hood</h2>
 <p>Nesta seção, vamos dissecar o funcionamento interno do armazenamento de dados do Prometheus – o <strong><a href="https://prometheus.io/docs/introduction/architecture/#time-series-database">Time Series Database</a></strong> (TSDB) local – e entender por que ele consome recursos como consome.</p>
 <p>Quando instalamos o Prometheus, uma pasta de dados (por padrão chamada <code>data/</code>) é usada para persistir as séries temporais coletadas. Dentro dela, os dados são organizados em blocos de tempo fixo. Por padrão, cada <strong>bloco</strong> cobre 2 horas de métricas. Após duas horas de coleta, o Prometheus fecha aquele bloco e inicia outro.</p>
@@ -2631,7 +2654,8 @@ receivers:
 <p>O <em>design</em> de manter dados recentes em memória traz a consequência de que <strong>o uso de RAM aumenta com a carga de métricas e não é liberado até que os blocos sejam fechados ou as séries cessem</strong>. Em períodos de pico (muitas séries novas aparecendo rapidamente), o Prometheus pode chegar a consumir muita memória para acompanhar.</p>
 <p>Se faltar RAM, o processo corre risco de OOM (matar por falta de memória) ou, no melhor caso, o sistema operacional vai começar a usar swap – o que degrada muito a performance. Na imagem acima, vemos que tanto a RAM quanto o armazenamento em disco podem crescer substancialmente à medida que aumentamos o volume de dados monitorados.</p>
 <blockquote>
-<p><strong>Quanto mais dias de retenção mantidos no Prometheus, mais recursos são usados e maior o esforço para consultas longas. Manter dados históricos demais pode sobrecarregar a memória e o disco, além de dificultar encontrar informações recentes relevantes.</strong></p></blockquote>
+<p><strong>Quanto mais dias de retenção mantidos no Prometheus, mais recursos são usados e maior o esforço para consultas longas. Manter dados históricos demais pode sobrecarregar a memória e o disco, além de dificultar encontrar informações recentes relevantes.</strong></p>
+</blockquote>
 <p>Embora possamos configurar retenções longas (30, 60 dias), isso não significa que o Prometheus foi otimizado para operar eficientemente com esse histórico todo localmente. Lembre-se: ele não indexa por data de forma distribuída – consultas que abrangem muitos dias terão que ler vários blocos do disco e processar um grande volume de amostras.</p>
 <p>Na prática, reter além de algumas semanas começa a tornar as consultas bem lentas e o uso de disco muito alto (sem falar nos backups dessa quantidade de data). Consultas extensas acabam exigindo leitura de múltiplos blocos e processamento de grandes volumes de dados, o que impacta diretamente a performance do sistema.</p>
 <p>A imagem acima ilustra que, à medida que guardamos mais dias, o custo de recursos cresce e pode inclusive ofuscar tendências atuais no meio de tanto dado antigo.</p>
@@ -2640,7 +2664,8 @@ receivers:
 <p>Para análises históricas longas ou compliance (guardar métricas por 1 ano, por exemplo), a solução comum é integrar um back-end de longo prazo (Thanos, Cortex, databases remotas) que arquivem esses dados, enquanto o Prometheus local mantém só o necessário para operação/alertas recentes.</p>
 <p>Assim você tem o melhor dos dois mundos: rapidez no real-time e histórico completo disponível quando precisar, sem sobrecarregar o Prometheus diariamente.</p>
 <blockquote>
-<p>Todas as amostras recentes residem na memória principal (Head), com flush periódico para disco a cada 2 horas. O WAL no disco captura as escritas para garantir durabilidade. Em situação de carga extrema, o OS pode usar swap, mas isso deve ser evitado pois degrada o desempenho.</p></blockquote>
+<p>Todas as amostras recentes residem na memória principal (Head), com flush periódico para disco a cada 2 horas. O WAL no disco captura as escritas para garantir durabilidade. Em situação de carga extrema, o OS pode usar swap, mas isso deve ser evitado pois degrada o desempenho.</p>
+</blockquote>
 <p>Vamos recapitular o ciclo de vida dos dados no Prometheus e seu impacto em memória/disco:</p>
 <ul>
 <li>
@@ -2729,7 +2754,8 @@ histogram_quantile(0.99, rate(http_request_duration_seconds[5m]))</code></pre>
 <li><strong>Compatibilidade</strong>: Funciona apenas com versões recentes do Prometheus</li>
 </ul>
 <blockquote>
-<p><strong>Nota</strong>: Native histograms são especialmente úteis para métricas de latência em aplicações de alta performance, onde a precisão dos percentis é crítica.</p></blockquote>
+<p><strong>Nota</strong>: Native histograms são especialmente úteis para métricas de latência em aplicações de alta performance, onde a precisão dos percentis é crítica.</p>
+</blockquote>
 <h2 id="melhores-práticas">Melhores Práticas</h2>
 <p>Depois de entender a mecânica interna do Prometheus, é válido reunir algumas recomendações para tirar o melhor proveito da ferramenta de forma escalável e confiável.</p>
 <h3 id="planejamento-de-capacidade">Planejamento de Capacidade</h3>
@@ -2816,7 +2842,8 @@ histogram_quantile(0.99, rate(http_request_duration_seconds[5m]))</code></pre>
 </li>
 </ul>
 <blockquote>
-<p>O Thanos, por exemplo, atua como um <em>sidecar</em> pegando os dados de cada Prometheus e enviando para o objeto storage, depois uma camada de <em>querier</em> unifica as consultas. O Grafana Mimir segue arquitetura semelhante, nascida da experiência do Cortex, permitindo <strong>escala praticamente ilimitada (bilhões de séries) e alta disponibilidade</strong>, com compatibilidade total com PromQL e remote write. Claro, adicionam complexidade – mas são soluções maduras mantidas pela CNCF/Grafana Labs.</p></blockquote>
+<p>O Thanos, por exemplo, atua como um <em>sidecar</em> pegando os dados de cada Prometheus e enviando para o objeto storage, depois uma camada de <em>querier</em> unifica as consultas. O Grafana Mimir segue arquitetura semelhante, nascida da experiência do Cortex, permitindo <strong>escala praticamente ilimitada (bilhões de séries) e alta disponibilidade</strong>, com compatibilidade total com PromQL e remote write. Claro, adicionam complexidade – mas são soluções maduras mantidas pela CNCF/Grafana Labs.</p>
+</blockquote>
 <ul>
 <li><strong>Federação bem aplicada:</strong> Caso use federação, siga a orientação de federar apenas métricas já agregadas e necessárias globalmente. Por exemplo, federar só métricas começando com <code>job:</code> (indicando que são resultados de recording rules já agregadas). Não federar todas as métricas crus. E realize alertas localmente, deixando o global só para visualização.</li>
 </ul>
@@ -2968,7 +2995,8 @@ groups:
       annotations:
         summary: &#34;Prometheus não foi reiniciado recentemente (possível problema de backup)&#34;</code></pre>
  <blockquote>
-<p><strong>Importante</strong>: Sempre teste backups e procedimentos de recuperação em ambiente de desenvolvimento antes de aplicar em produção. A integridade dos dados de monitoramento é tão crítica quanto os dados da aplicação.</p></blockquote>
+<p><strong>Importante</strong>: Sempre teste backups e procedimentos de recuperação em ambiente de desenvolvimento antes de aplicar em produção. A integridade dos dados de monitoramento é tão crítica quanto os dados da aplicação.</p>
+</blockquote>
 <p>Seguindo essas práticas, você deverá manter seu ambiente Prometheus funcionando de forma mais suave, evitando as armadilhas comuns de desempenho e garantindo que as métricas coletadas realmente agreguem valor (e alertas disparem quando devem, sem falso positivos ou negativos).</p>
 <h2 id="operação-e-manutenção">Operação e Manutenção</h2>
 <h3 id="promtool">Promtool</h3>
@@ -3065,27 +3093,6 @@ groups:
                 
                     
                 
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -3134,25 +3141,6 @@ groups:
                 
                     
                 
-            
-            
-            
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
                     
                 
                     
@@ -3162,31 +3150,6 @@ groups:
             
         
     
-        
-    
-        
-            
-            
-            
-            
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-                    
-                
-            
-            
-            
         
     
         
@@ -3227,7 +3190,7 @@ groups:
                 data-emit-metadata="0"
                 data-input-position="bottom"
                 data-theme="light"
-                data-lang="pt"
+                data-lang="pt-br"
                 crossorigin="anonymous"
                 async>
         </script>
@@ -3288,7 +3251,7 @@ groups:
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -3296,24 +3259,24 @@ groups:
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1760118174"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1760118174"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778069000"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778069000"></script>
     
     
-    <script src="/js/main-minimal.js?v=1760118174"></script>
-    <script src="/js/lazy-loading.js?v=1760118174"></script>
-    <script src="/js/toc.js?v=1760118174"></script>
+    <script src="/js/main-minimal.js?v=1778069000"></script>
+    <script src="/js/lazy-loading.js?v=1778069000"></script>
+    <script src="/js/toc.js?v=1778069000"></script>
     
     
     
