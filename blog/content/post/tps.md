@@ -18,7 +18,16 @@ Esta análise nasceu de uma decisão de arquitetura durante o desenvolvimento do
 
 <img src="https://github.com/scovl/Ollanta/raw/main/docs/imgs/logo-dark.png" alt="ollanta" width="250" style="display: block; margin: 1em auto;" />
 
-Um cenário que envolve dezenas de milhares de mensagens por minuto, cada uma com payloads semi-estruturados e repetitivos, o que torna a escolha entre serialização textual e binária uma decisão crítica de infraestrutura. Este artigo documenta os trade-offs considerados e o caminho adotado.
+Um cenário que envolve dezenas de milhares de mensagens por minuto, cada uma com payloads semi-estruturados e repetitivos, o que torna a escolha entre serialização textual e binária uma decisão crítica de infraestrutura.
+
+Depois de passar por toda a análise que você vai ler neste artigo, o escolhi o caminho do **JSON com Gzip condicional** onde payloads acima de 1 KB são comprimidos com Gzip antes de enviar; abaixo disso, trafegam em texto puro. Protobuf e Zstd ficaram de fora. Isso parece contradizer a conclusão do artigo? Sim e não. O artigo descreve o *limite teórico* e o *melhor cenário possível* para TPS extremo; mas a decisão real depende do contexto, e o contexto do Ollanta é:
+
+- **Go stdlib é excepcionalmente eficiente com JSON** — ao contrário de linguagens como C# ou Java, onde JSON parsing gera alocação pesada, o `encoding/json` do Go utiliza tipos concretos e preflete os struct tags uma única vez, mantendo o custo de serialização baixo mesmo em escalas moderadas.
+- **Zero dependências externas para serialização** — nem Protobuf (que exige codegen e pipeline de build), nem Zstd (que exige binding CGo ou biblioteca externa). Tudo roda com stdlib pura, o que simplifica manutenção, build cross-compilation e CI.
+- **Debugabilidade** — relatórios em JSON são legíveis por humanos; um `curl | jq` resolve qualquer troubleshooting sem precisar de schema ou desserializador.
+- **O TPS real não é extremo** — embora o volume chegue a dezenas de milhares de mensagens por minuto, o gargalo está mais na I/O de disco e na latência da análise estática do que na serialização. A troca para Protobuf+Zstd eliminaria ~2 ms por requisição — insuficiente para justificar a complexidade adicional.
+
+No fim, a métrica que selou a decisão foi: **80% do ganho potencial com 20% da complexidade**. O Gzip condicional deu conta do recado, e o tempo economizado com Protobuf e dicionários Zstd foi reinvestido em funcionalidades que realmente importam para os usuários. As seções a seguir documentam exatamente essa análise de trade-offs, para que você possa tomar a melhor decisão no seu contexto.
 
 ## Quando essa preocupação se aplica?
 
