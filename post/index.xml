@@ -5,7 +5,7 @@
     <link>https://scovl.github.io/post/</link>
     <description>scovl - Blog sobre tecnologia, programação e desenvolvimento</description>
     <language>pt-br</language>
-    <lastBuildDate>Tue, 05 May 2026 19:41:45 -0300</lastBuildDate>
+    <lastBuildDate>Thu, 07 May 2026 10:00:00 -0300</lastBuildDate>
     <sy:updatePeriod>daily</sy:updatePeriod>
     <sy:updateFrequency>1</sy:updateFrequency>
     <atom:link href="https://scovl.github.io/post/" rel="self" type="application/rss+xml" />
@@ -14,6 +14,319 @@
     
     
     
+    
+    <item>
+      <title>Resolução de um bug silencioso em Go</title>
+      <link>https://scovl.github.io/2026/05/07/fixgo01/</link>
+      <guid>https://scovl.github.io/2026/05/07/fixgo01/</guid>
+      <pubDate>Thu, 07 May 2026 10:00:00 -0300</pubDate>
+      <description>&lt;![CDATA[<h1 id="um-canal-que-não-escuta">Um canal que não escuta</h1>
+<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go é uma daquelas features que parecem simples até você precisar usá-la em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que &ldquo;a jiripoca começa a piar&rdquo;.</p>
+<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<h1 id="um-canal-que-não-escuta">Um canal que não escuta</h1>
+<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go é uma daquelas features que parecem simples até você precisar usá-la em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que &ldquo;a jiripoca começa a piar&rdquo;.</p>
+<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>
+<p><img src="/post/images/fixgo01.png" alt="ollanta"></p>
+<blockquote>
+<p><strong>saiba mais:</strong> <em>graceful shutdown</em> é quando um programa para de aceitar trabalho novo e conclui o que já está em andamento antes de desligar. O contrário seria matar o processo abruptamente, perdendo trabalho pela metade. Em Go, isso geralmente se faz com <a href="https://pkg.go.dev/context"><code>context.Context</code></a> e <a href="https://pkg.go.dev/os/signal#NotifyContext"><code>signal.NotifyContext</code></a>.</p>
+</blockquote>
+<h2 id="o-contexto">O contexto</h2>
+<p>O Ollanta precisa analisar centenas de arquivos fonte em paralelo. Para isso, usa um <a href="https://gobyexample.com/worker-pools">worker pool</a>, um conjunto fixo de goroutines que processam tarefas de uma fila com semáforo implementado via <a href="https://go.dev/tour/concurrency/2">channel</a>:</p>
+
+
+  <pre><code class="language-go">// application/scan/executor.go
+
+type Executor struct {
+    parser    port.IParser
+    analyzers []port.IAnalyzer
+    workers   int
+}
+
+func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
+    w := runtime.NumCPU() * 2
+    return &amp;Executor{parser: p, analyzers: analyzers, workers: w}
+}</code></pre>
+ <p>O número de workers é <a href="https://pkg.go.dev/runtime#NumCPU"><code>runtime.NumCPU()</code></a> <code>* 2</code>. Numa máquina com 8 cores, 16 goroutines processam arquivos simultaneamente. O semáforo controla esse limite. Visualmente, o fluxo é uma fila com gargalo controlado: os 200 arquivos descobertos em disco são empurrados para o semáforo, que só deixa passar 16 de cada vez. Cada worker que pega um arquivo o analisa e devolve o resultado. Os outros 184 ficam esperando na porta.</p>
+
+
+  
+  <div class="mermaid">flowchart LR
+    FILES[&#34;📂 200 arquivos&#34;]:::files --&gt; QUEUE[/&#34;🚦 semáforo&lt;br/&gt;16 vagas&#34;/]:::sem
+    QUEUE --&gt; W1[&#34;🔧 worker 1&#34;]:::worker
+    QUEUE --&gt; W2[&#34;🔧 worker 2&#34;]:::worker
+    QUEUE --&gt; WN[&#34;🔧 ...&#34;]:::worker
+    QUEUE --&gt; W16[&#34;🔧 worker 16&#34;]:::worker
+    W1 &amp; W2 &amp; WN &amp; W16 --&gt; OUT[&#34;📊 resultados&#34;]:::out
+    
+    classDef files fill:#e1f5fe,stroke:#0288d1
+    classDef sem fill:#fff3e0,stroke:#e65100
+    classDef worker fill:#e8f5e9,stroke:#2e7d32
+    classDef out fill:#f3e5f5,stroke:#7b1fa2</div>
+ <p>Esse desenho é bom: colocar 200 goroutines para disputar CPU ao mesmo tempo seria pior do que serializar tudo, porque o sistema gastaria mais tempo trocando de contexto do que analisando código. O semáforo resolve isso. O problema é que ele também introduz um ponto cego e é nele que o bug se esconde.</p>
+<blockquote>
+<p><strong>saiba mais:</strong> um <strong>semáforo</strong> é um mecanismo de controle de concorrência que limita quantas goroutines podem acessar um recurso ao mesmo tempo. Pense nele como um estacionamento: se tem 16 vagas e 200 carros querem estacionar, os 184 excedentes esperam na entrada. Em Go, um channel bufferizado (<code>make(chan struct{}, vagas)</code>) faz esse papel: cada goroutine &ldquo;estaciona&rdquo; enviando um token vazio (<code>sem &lt;- struct{}{}</code>) e &ldquo;sai&rdquo; retirando-o (<code>&lt;-sem</code>). Enquanto o canal estiver cheio, o <a href="https://go.dev/tour/concurrency/2">send bloqueia</a>.</p>
+</blockquote>
+<h2 id="o-semáforo-ingênuo">O semáforo ingênuo</h2>
+<p>O padrão é conhecido:</p>
+
+
+  <pre><code class="language-go">sem := make(chan struct{}, e.workers)</code></pre>
+ <p>Um channel bufferizado de structs vazias. Cada goroutine envia um token antes de começar e retira ao terminar. Até aqui, nenhum problema. A questão está em <strong>onde</strong> o código verifica se o usuário pediu para cancelar tudo. O código original do executor era assim:</p>
+
+
+  <pre><code class="language-go">func (e *Executor) Run(ctx context.Context, files []DiscoveredFile) ([]*model.Issue, error) {
+    sem := make(chan struct{}, e.workers)       // semáforo: limite de concorrência
+    out := make(chan result, len(files))        // canal de saída com buffer
+
+    var wg sync.WaitGroup
+    for _, f := range files {
+        f := f                                  // captura pro loop
+        wg.Add(1)
+        go func() {
+            defer wg.Done()
+            sem &lt;- struct{}{}                   // (1) espera slot livre
+            defer func() { &lt;-sem }()            //    libera ao final
+
+            defer func() {
+                if r := recover(); r != nil {   // recupera de panic
+                    out &lt;- result{}
+                }
+            }()
+
+            select {
+            case &lt;-ctx.Done():                  // (2) verifica cancelamento após acquire
+                out &lt;- result{}
+                return
+            default:
+            }
+
+            out &lt;- result{issues: e.analyzeFile(ctx, f, policy)}
+        }()
+    }
+
+    go func() {
+        wg.Wait()
+        close(out)
+    }()
+
+    for r := range out { /* coleta resultados */ }
+}</code></pre>
+ <p>As APIs que esse código usa <code>WaitGroup</code>, <code>defer</code>, <code>recover</code> são corretas e bem aplicadas. O isolamento de falha por arquivo impede que um panic derrube a análise inteira. A sincronização com <code>wg.Wait()</code> e <code>close(out)</code> garante que o coletor de resultados nunca leia de um canal fechado antes da hora. Do ponto de vista de threading tradicional, está tudo certo. O problema é de <strong>ordenação</strong>: o cancelamento é verificado no passo errado.</p>
+<blockquote>
+<p><strong>saiba mais:</strong> <a href="https://pkg.go.dev/sync#WaitGroup"><code>sync.WaitGroup</code></a> é um contador atômico usado para esperar que várias goroutines terminem. Cada <code>wg.Add(1)</code> incrementa, cada <code>defer wg.Done()</code> decrementa ao sair da goroutine, e <code>wg.Wait()</code> bloqueia até o contador zerar. O <a href="https://go.dev/tour/flowcontrol/12"><code>defer</code></a> garante que <code>wg.Done()</code> seja chamado mesmo se a goroutine retornar por erro ou <a href="https://go.dev/blog/defer-panic-and-recover"><code>panic</code></a>. Já <code>recover()</code> captura um panic e evita que ele derrube o programa inteiro, aqui ele serve para isolar a falha a um único arquivo sem abortar a análise dos demais.</p>
+</blockquote>
+<h2 id="o-problema">O problema</h2>
+<p>Repare nos passos marcados como <code>(1)</code> e <code>(2)</code>. A sequência que cada goroutine executa é:</p>
+<ol>
+<li><strong>Bloqueia</strong> no <code>sem &lt;- struct{}{}</code> até conseguir um slot</li>
+<li><strong>Depois</strong> verifica se o contexto foi cancelado</li>
+</ol>
+<p>Essa ordem é fatal. Se o contexto for cancelado enquanto TODAS as vagas do semáforo estão ocupadas, as goroutines que esperam na fila <strong>não têm como saber que o cancelamento aconteceu</strong>, elas estão travadas no passo 1 e nunca chegam ao passo 2. O diagrama abaixo mostra essa tragédia em câmera lenta. Acompanhe a timeline de cima para baixo: o <code>Ctrl+C</code> chega, o canal de cancelamento fecha, mas as goroutines da fila estão olhando para o semáforo, não para o contexto.</p>
+
+
+  
+  <div class="mermaid">sequenceDiagram
+    actor User as 👤 Ctrl&#43;C
+    participant Ctx as 🎯 ctx.Done()
+    participant G1 as 🔧 worker 1..16&lt;br/&gt;(ocupados)
+    participant G2 as ⏳ worker 17..200&lt;br/&gt;(na fila)
+    participant Sem as 🚦 semáforo
+
+    User-&gt;&gt;Ctx: cancela contexto
+    Ctx--&gt;&gt;Ctx: canal fechado
+    Note over G1: processando arquivos&lt;br/&gt;(30s cada)
+    G2-&gt;&gt;Sem: sem &lt;- struct{}{}
+    Note over G2,Sem: ❌ BLOQUEADO&lt;br/&gt;não escuta ctx.Done()
+    Note over G1: ... 30 segundos depois ...
+    G1--&gt;&gt;Sem: &lt;-sem (libera vaga)
+    Sem--&gt;&gt;G2: slot liberado
+    G2-&gt;&gt;G2: select { case &lt;-ctx.Done() }
+    Note over G2: 😞 tarde demais&lt;br/&gt;já esperou 30s à toa</div>
+ <p>Veja o que acontece no último quadro: a goroutine finalmente chega ao <code>select</code> e descobre que <code>ctx.Done()</code> está fechado. Ela retorna. Mas isso só aconteceu porque um worker terminou e liberou uma vaga, não porque o cancelamento foi detectado. A goroutine esperou 30 segundos para descobrir algo que já era verdade no primeiro milissegundo. Num cenário concreto, o estrago é proporcional ao tamanho do pool e dos arquivos:</p>
+<ul>
+<li>Máquina com 8 cores → 16 workers</li>
+<li>200 arquivos para analisar</li>
+<li>16 arquivos grandes (30 segundos cada) ocupam todas as goroutines</li>
+<li>As 184 goroutines restantes estão bloqueadas em <code>sem &lt;- struct{}{}</code></li>
+<li>O <code>Ctrl+C</code> chega → contexto é cancelado</li>
+<li>As 184 goroutines <strong>continuam bloqueadas</strong> até que uma das 16 termine e libere um slot</li>
+<li>Isso pode levar <strong>até 30 segundos</strong> de shutdown travado</li>
+</ul>
+<blockquote>
+<p><strong>saiba mais:</strong> <a href="https://pkg.go.dev/context"><code>context.Context</code></a> é o mecanismo padrão de Go para propagar cancelamento, deadlines e valores entre goroutines. Quando você cria um contexto com <a href="https://pkg.go.dev/context#WithTimeout"><code>WithTimeout</code></a> ou <a href="https://pkg.go.dev/context#WithCancel"><code>WithCancel</code></a>, o canal <code>ctx.Done()</code> é fechado quando o prazo expira ou quando <code>cancel()</code> é chamado. Um <code>select</code> com <code>case &lt;-ctx.Done()</code> detecta isso. O problema aqui é que o <code>select</code> está <strong>depois</strong> de uma operação bloqueante — ele nunca chega a rodar se a goroutine travar antes.</p>
+</blockquote>
+<h2 id="o-contraste-com-o-que-parece-certo">O contraste com o que parece &ldquo;certo&rdquo;</h2>
+<p>O código tem <code>ctx.Done()</code>. O <a href="https://go.dev/tour/concurrency/5"><code>select</code></a> com <code>default</code> também existe. A intenção estava lá, e eu sabia que precisava verificar o cancelamento. Mas a ordem errada transforma um graceful shutdown numa espera potencialmente longa. Esse é um padrão enganoso porque ataca em três frentes que nenhuma ferramenta pega:</p>
+<ul>
+<li><strong>Testes unitários não pegam</strong>: a menos que você force o pool inteiro a ficar ocupado <strong>e</strong> cancele o contexto ao mesmo tempo, o caminho de cancelamento nunca é exercitado. Um teste com 2 arquivos e 16 workers nunca vai encher o semáforo.</li>
+<li><strong>Operação normal não revela</strong>: o cancelamento só acontece em shutdown. Em desenvolvimento, você raramente espera o pool encher completamente antes de o programa terminar naturalmente.</li>
+<li><strong>O linter não alerta</strong>: não há regra no <a href="https://golangci-lint.run">golangci-lint</a> que detecte &ldquo;context check after blocking channel operation&rdquo; — você está por conta própria.</li>
+</ul>
+<blockquote>
+<p><strong>saiba mais:</strong> <code>select</code> em Go funciona como um multiplexador de canais. Ele espera até que <strong>um</strong> dos <code>case</code> esteja pronto e executa esse bloco. Se vários estiverem prontos, escolhe um aleatoriamente. O <code>default</code> faz o <code>select</code> ser não-bloqueante: se nenhum canal estiver pronto, executa o <code>default</code> imediatamente. Isso é útil para &ldquo;tentar&rdquo; sem travar, mas não substitui um <code>select</code> bloqueante que de fato aguarda o canal ficar disponível.</p>
+</blockquote>
+<h2 id="a-correção">A correção</h2>
+<p>A solução é fundir os dois passos — adquirir slot e verificar cancelamento — num único <code>select</code>:</p>
+
+
+  <pre><code class="language-go">go func() {
+    defer wg.Done()
+    select {                                   // (1) TENTA adquirir OU cancela
+    case sem &lt;- struct{}{}:
+        defer func() { &lt;-sem }()               // adquiriu slot, libera ao final
+    case &lt;-ctx.Done():
+        out &lt;- result{}
+        return                                 // cancelado: sai sem adquirir
+    }
+
+    defer func() {
+        if r := recover(); r != nil {
+            slog.Warn(&#34;panic analyzing file&#34;, &#34;path&#34;, f.Path, &#34;panic&#34;, r)
+            out &lt;- result{}
+        }
+    }()
+
+    out &lt;- result{issues: e.analyzeFile(ctx, f, policy)}
+}()</code></pre>
+ <p>A diferença parece cosmética, mas é profunda. Antes, a goroutine fazia <code>sem &lt;- struct{}{}</code> e <strong>depois</strong> olhava para <code>ctx.Done()</code>. Agora, ela pergunta para o runtime: &ldquo;tem vaga no semáforo OU o contexto foi cancelado?&rdquo; e obedece quem responder primeiro. O diagrama abaixo mostra a mesma cena de antes, mas com a correção aplicada. Dessa vez, quando o <code>Ctrl+C</code> chega, as goroutines da fila percebem na hora:</p>
+
+
+  
+  <div class="mermaid">sequenceDiagram
+    actor User as 👤 Ctrl&#43;C
+    participant Ctx as 🎯 ctx.Done()
+    participant G1 as 🔧 worker 1..16&lt;br/&gt;(ocupados)
+    participant G2 as ⏳ worker 17
+    participant Sem as 🚦 semáforo
+
+    User-&gt;&gt;Ctx: cancela contexto
+    Ctx--&gt;&gt;Ctx: canal fechado
+    Note over G1: processando arquivos
+    G2-&gt;&gt;Sem: select {&lt;br/&gt;  case sem &lt;- struct{}{}:&lt;br/&gt;  case &lt;-ctx.Done():&lt;br/&gt;}
+    Note over G2,Sem: ✅ ctx.Done() já está pronto!
+    Ctx--&gt;&gt;G2: escolhe case &lt;-ctx.Done()
+    G2-&gt;&gt;G2: return (sai sem bloquear)
+    Note over G2: 🎉 sai sem bloquear</div>
+ <p>Compare com o diagrama do bug: lá a goroutine da fila ficava 30 segundos olhando para o semáforo; aqui ela olha para os dois ao mesmo tempo e o cancelamento vence. As 184 goroutines da fila saem imediatamente — liberam memória e param de disputar o semáforo à toa. Os 16 workers ativos, porém, continuam processando: <code>analyzeFile</code> não verifica <code>ctx.Done()</code> em cada etapa (<code>os.ReadFile</code>, <code>parseGoFile</code>, e o <code>AnalyzerBridge.Check</code> também ignora o contexto recebido).</p>
+<p>O <code>wg.Wait()</code> espera os ativos terminarem. O tempo total de shutdown continua nos mesmos ~30 segundos. O que muda é o <strong>custo</strong> da espera: sem a correção, além dos 16 workers ativos, mais 184 goroutines ficavam presas no semáforo, ocupando stacks no <em>runtime</em> sem fazer nada útil.</p>
+<p>Por que o runtime escolhe <code>ctx.Done()</code> e não o semáforo? Porque quando o contexto é cancelado, <code>ctx.Done()</code> é fechado e um canal fechado que está <strong>permanentemente pronto para leitura</strong>. O semáforo, por outro lado, está cheio e portanto <strong>não está pronto para escrita</strong>. O <code>select</code> sempre escolhe um caso pronto. Vitória do cancelamento.</p>
+<blockquote>
+<p><strong>saiba mais:</strong> a ordem dos <code>case</code> em um <code>select</code> <strong>não</strong> determina prioridade — o runtime escolhe pseudo-aleatoriamente entre os canais prontos. Mas quando <code>ctx.Done()</code> já está fechado, ele está permanentemente pronto, enquanto o semáforo cheio está permanentemente bloqueado. Isso garante que o cancelamento <strong>sempre</strong> vence a espera.</p>
+</blockquote>
+<h2 id="o-diff-completo">O diff completo</h2>
+
+
+  <pre><code class="language-bash">- sem &lt;- struct{}{}
+- defer func() { &lt;-sem }()
+&#43; select {
+&#43; case sem &lt;- struct{}{}:
+&#43;     defer func() { &lt;-sem }()
+&#43; case &lt;-ctx.Done():
+&#43;     out &lt;- result{}
+&#43;     return
+&#43; }
+
+- select {
+- case &lt;-ctx.Done():
+-     out &lt;- result{}
+-     return
+- default:
+- }
+&#43; // removido — ctx.Done() já é tratado no acquire do semáforo</code></pre>
+ <p>Duas mudanças, ambas no mesmo arquivo, zero linhas de lógica de negócio alteradas:</p>
+<ol>
+<li>O send no semáforo virou um <code>select</code> que escuta também <code>ctx.Done()</code></li>
+<li>O <code>select { default: }</code> separado de cancelamento foi removido — agora é redundante</li>
+</ol>
+<p>O <code>defer func() { &lt;-sem }()</code> continua no caminho feliz: a goroutine que adquiriu o slot ainda precisa liberá-lo. E, crucialmente, ele está <strong>dentro</strong> do <code>case sem &lt;- struct{}{}:</code> só executa se o slot foi de fato adquirido. Se a goroutine caiu no <code>case &lt;-ctx.Done()</code>, não há token para devolver, e o <code>defer</code> dentro do <code>case</code> simplesmente não roda.</p>
+<h2 id="por-que-isso-é-um-padrão-e-como-evitar">Por que isso é um padrão (e como evitar)</h2>
+<p>Esse tipo de bug não é exclusivo do Ollanta. É comum em Go porque a linguagem te dá blocos de construção poderosos com goroutines, channels, <code>select</code>, <code>context</code> mas não te protege da ordem em que você os combina. Você pode escrever código que compila, passa nos testes e funciona há meses, mas que esconde uma bomba-relógio de concorrência. Algumas heurísticas que adotei depois dessa descoberta:</p>
+<p><strong>1. Todo <code>channel send</code> bloqueante que depende de contexto deveria ser um <code>select</code></strong></p>
+
+
+  <pre><code class="language-go">// suspeito:
+ch &lt;- value
+
+// resiliente:
+select {
+case ch &lt;- value:
+case &lt;-ctx.Done():
+    return
+}</code></pre>
+ <p><strong>2. <code>ctx.Done()</code> antes de bloquear, não depois</strong></p>
+<p>Se você precisa verificar cancelamento, faça-o <strong>antes ou durante</strong> a operação bloqueante. Um <code>select</code> que combina o send e o cancelamento anula os dois riscos de uma vez.</p>
+<p><strong>3. Teste o caminho do cancelamento forçando o pool ao limite</strong></p>
+
+
+  <pre><code class="language-go">func TestExecutorShutdownWhenPoolFull(t *testing.T) {
+    e := NewExecutor(nil, nil)
+    e.workers = 1  // só uma vaga — força contenção
+
+    files := make([]DiscoveredFile, 2)
+    files[0] = DiscoveredFile{Path: &#34;slow.go&#34;}   // ocupa a vaga por 10s
+    files[1] = DiscoveredFile{Path: &#34;fast.go&#34;}   // vai esperar na fila
+
+    ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+    defer cancel()
+
+    _, err := e.Run(ctx, files, AllowAllProfilePolicy())
+    if !errors.Is(err, context.DeadlineExceeded) {
+        t.Fatal(&#34;esperava deadline exceeded, obteve&#34;, err)
+    }
+}</code></pre>
+ <p>Sem a correção, esse teste <strong>trava por 10 segundos</strong>, tempo suficiente para ninguém nunca rodá-lo. Com a correção, ele termina em 100ms. Um teste que demora 10 segundos é um teste que não existe na prática.</p>
+<hr>
+<h2 id="o-que-aprendi-com-isso">O que aprendi com isso</h2>
+<p>Canais em Go parecem simples, mas o diabo está na ordem. O padrão de semáforo com channel é ensinado em todos os tutoriais de <a href="https://go.dev/tour/concurrency/1">concorrência em Go</a>, mas poucos mencionam a interação com <a href="https://pkg.go.dev/context">contextos canceláveis</a>. A maioria dos exemplos assume que a operação vai completar rápido, mas em produção não vai!</p>
+<p>O resumo em números: duas linhas de diff, zero mudanças de lógica. A diferença não está no tempo total de shutdown — que continua limitado pelos workers ativos (~30 segundos nos piores casos) — mas em <strong>quem</strong> ocupa recursos durante a espera.</p>
+<p>Antes, 184 goroutines ociosas ficavam empilhadas no semáforo; depois, elas saem de cena no primeiro milissegundo, deixando apenas o trabalho realmente útil consumindo CPU e memória. Os workers que já estão processando continuam até terminar, e isso é exatamente o comportamento esperado de um graceful shutdown.</p>
+<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>Workers ocupados</th>
+          <th>Goroutines na fila</th>
+          <th>Shutdown total</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>❌ Antes (<code>sem &lt;-</code> puro)</td>
+          <td>30s processando</td>
+          <td>30s travadas esperando vaga</td>
+          <td><strong>~30 segundos</strong></td>
+      </tr>
+      <tr>
+          <td>✅ Depois (<code>select</code> + <code>ctx</code>)</td>
+          <td>30s processando</td>
+          <td>0s — detectam cancelamento</td>
+          <td><strong>~30 segundos</strong>*</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>O tempo total de shutdown é gated pelos workers ativos via <code>wg.Wait()</code>. A correção elimina o <strong>custo adicional</strong> de 184 goroutines zumbis disputando o semáforo sem necessidade.</li>
+</ul>
+<p>No Ollanta, essa correção de duas linhas eliminou 184 goroutines ociosas que sobreviviam ao <code>Ctrl+C</code> sem propósito, reduzindo o consumo de memória durante o shutdown e evitando a cascata de passagens pelo semáforo após os workers terminarem. Se você está escrevendo um worker pool em Go, lembre-se: o semáforo bloqueia. E bloqueio sem <code>select</code> não escuta o cancelamento.</p>
+<blockquote>
+<p>Este artigo foi escrito a partir de uma correção real no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O diff completo está em <a href="https://github.com/scovl/Ollanta/commit/3d95d5399b5cb0143637cce51e787ce8bb752285">https://github.com/scovl/Ollanta/blob/main/application/scan/executor.go</a>.</p>
+</blockquote>
+]]></content:encoded>
+      
+      
+      <category>Go,concurrency,channels,static-analysis,ollanta</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Como um select ausente quase matou o graceful shutdown do projeto]]></description>
+      
+    </item>
     
     <item>
       <title>A Batalha dos Milissegundos</title>

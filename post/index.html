@@ -23,17 +23,17 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778088232">
+<link rel="stylesheet" href="/css/main.css?v=1778196013">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778088232">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778196013">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778088232">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778196013">
 
 
 
@@ -55,7 +55,7 @@
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778088232"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778196013"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -459,6 +459,59 @@ window.I18n = I18n;
     
     
     
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="https://scovl.github.io/2026/05/07/fixgo01/">Resolução de um bug silencioso em Go</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-07T10:00:00-03:00">
+                Thu, May 7, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/go/" class="tag">Go</a>
+                
+                <a href="/tags/concurrency/" class="tag">concurrency</a>
+                
+                <a href="/tags/channels/" class="tag">channels</a>
+                
+                <a href="/tags/static-analysis/" class="tag">static-analysis</a>
+                
+                <a href="/tags/ollanta/" class="tag">ollanta</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Como um select ausente quase matou o graceful shutdown do projeto
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="um-canal-que-não-escuta">Um canal que não escuta</h1>
+<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go é uma daquelas features que parecem simples até você precisar usá-la em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que &ldquo;a jiripoca começa a piar&rdquo;.</p>
+<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>
+            
+            <a href="https://scovl.github.io/2026/05/07/fixgo01/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
     
     
     
@@ -914,26 +967,26 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-go.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-sql.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778088232"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778088232"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-go.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-sql.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778196013"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778196013"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778088232"></script>
-    <script src="/js/lazy-loading.js?v=1778088232"></script>
-    <script src="/js/toc.js?v=1778088232"></script>
+    <script src="/js/main-minimal.js?v=1778196013"></script>
+    <script src="/js/lazy-loading.js?v=1778196013"></script>
+    <script src="/js/toc.js?v=1778196013"></script>
     
     
     
