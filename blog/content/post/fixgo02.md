@@ -169,7 +169,7 @@ A verdade é que o design da API tree-sitter separa **matches estruturais** de *
 
 ## A correção
 
-O fluxograma abaixo mostra o caminho que o código percorre desde o arquivo fonte até o resultado da análise. A seta tracejada em vermelho representa o **bug** — sem `FilterPredicates`, o match estrutural vira falso positivo. A seta cheia em verde representa a **correção** — com `FilterPredicates`, o match é testado contra o predicado e só vira issue se passar:
+O fluxograma abaixo mostra o caminho que o código percorre desde o arquivo fonte até o resultado da análise. A seta tracejada em vermelho representa o **bug** sem `FilterPredicates`, o match estrutural vira falso positivo. A seta cheia em verde representa a **correção** com `FilterPredicates`, o match é testado contra o predicado e só vira issue se passar:
 
 ``` mermaid
 graph TD
