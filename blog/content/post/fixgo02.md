@@ -1,275 +1,320 @@
-﻿+++
-title = "O diabo das duplicações"
-description = "Como uma auditoria de SOLID, DRY, KISS e ISP removeu duplicação e melhorou as interfaces do Ollanta sem quebrar nada"
-date = 2026-05-07T14:00:00-03:00
-tags = ["Go", "design-patterns", "SOLID", "DRY", "static-analysis", "ollanta", "refactoring"]
-draft = true
-weight = 2
++++
+title = "O predicado que ninguém chamou"
+description = "Como uma linha de código ausente fez 20 regras de análise estática produzirem centenas de falsos positivos por meses"
+date = 2026-05-08T18:40:00-03:00
+tags = ["Go", "tree-sitter", "static-analysis", "ollanta", "CGo"]
+draft = false
+weight = 1
 author = "Vitor Lobo Ramos"
 +++
 
-Existe uma diferença entre "funcionar" e "estar certo". Todo código que funciona costumar passar nos testes, mas código com duplicação silenciosa corrói a base ao longo do tempo. Isto é, cada nova feature exige editar mais arquivos, cada bug precisa ser corrigido em mais lugares, e cada onboarder demora mais para entender o que está acontecendo.
 
-Este artigo conta a história de uma auditoria de [design patterns](https://en.wikipedia.org/wiki/Software_design_pattern) que fiz no [Ollanta](https://github.com/scovl/Ollanta), um projeto pessoal de análise de código estático multi-linguagem escrito em Go. Fiz uma auditoria que revelou 7 violações de princípios como DRY, KISS e ISP. Implementei 6 delas em cerca de 2 horas, com zero quebras de teste. O resultado: 72 blocos if/else removidos, 3 funções duplicadas centralizadas, 2 sentinelas de erro unificados, e 2 interfaces poluídas segregadas.
+O [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O [Neovim](https://neovim.io/), [Atom](https://atom.io/) (RIP), [Zed](https://zed.dev/) e o próprio [GitHub](https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/) usam tree-sitter para syntax highlighting, folding e code navigation.
 
-> **saiba mais:** [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (Don't Repeat Yourself) prega que cada pedaço de conhecimento deve ter uma única representação no sistema. [KISS](https://en.wikipedia.org/wiki/KISS_principle) (Keep It Simple, Stupid) diz que simplicidade deve ser priorizada. [ISP](https://en.wikipedia.org/wiki/Interface_segregation_principle) (Interface Segregation Principle, o I do SOLID) estabelece que nenhum cliente deve depender de métodos que não usa.
+O [Ollanta](https://github.com/scovl/ollanta) usa tree-sitter de uma forma diferente: para **análise estática**. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:
 
-## O contexto
+```scheme
+;; Encontra chamadas a eval() em JavaScript
+(call_expression
+  function: (identifier) @eval
+  (#eq? @eval "eval")
+) @expr
+```
 
-O Ollanta tem 10 módulos Go numa arquitetura hexagonal (ports & adapters). O núcleo (`domain/`) define interfaces; a camada de aplicação (`application/`) orquestra casos de uso; é os adapters (`ollantaweb/`, `ollantastore/`, `ollantarules/`) implementam as interfaces. Migrei recentemente de uma estrutura monolítica para hexagonal e neste processo, notei que acumulei muitas duplicações pelo caminho. Aqui vou contar apenas o que corrigi, o diff e o impacto.
+Essa query diz: "encontre toda `call_expression` cuja função seja um identificador de nome `eval`". O `(#eq? @eval "eval")` é um **predicado**. Isto é, uma condição extra que filtra matches estruturais pelo texto do nó capturado. Sem ele, qualquer chamada de função (de `console.log` a `fetch`) seria um match.
 
-## Correção 1: Centralizar helper `ParamInt` [DRY]
+> **Importante:** em computação e lógica matemática, **predicado** é a tradução oficial e consagrada para _predicate_. Refere-se especificamente a uma expressão, condição ou função que é avaliada e retorna um valor booleano (verdadeiro ou falso). Na programação funcional, por exemplo, é padrão falarmos em "passar uma função predicado para o `filter`". 
 
-O Ollanta tem regras de análise estática escritas como closures Go. Regras aceitam parâmetros configuraveis, por exemplo, `max_lines: 40` para a regra que detecta funções muito longas. Para ler esses parâmetros, cada regra precisa de uma função que leia um inteiro de um `map[string]string` com fallback para um valor padrão. **O problema** é que essa função existia em 2 lugares com nomes diferentes é implementação idêntica:
+O termo aparece nas S-expressions do tree-sitter com a sintaxe `(#eq? ...)`, `(#match? ...)`, etc.. são predicados que o motor de queries avalia para decidir se um match estrutural deve ser mantido ou descartado.
+
+E foi exatamente isso que aconteceu. O Ollanta estava reportando `eval()` em cada linha de código JavaScript que continha uma chamada de função. Centenas delas. O `configureProjectFlowFeature({ render })`, `bootBrowserApp()`, `renderView()`, tudo era "eval" para o scanner. Este artigo conta a história de como uma única linha de código ausente transformou 20 regras tree-sitter em geradores de ruído e falsos positivos.
+
+<img src="https://tree-sitter.github.io/tree-sitter/assets/images/tree-sitter-small.png" alt="ollanta" width="250" style="display: block; margin: 1em auto; opacity: 1; transition: opacity 0.3s;">
+
+> **Saiba mais:** tree-sitter foi criado por [Max Brunsfeld](https://github.com/maxbrunsfeld) enquanto trabalhava no [Atom Editor](https://atom.io/). A ideia era substituir o sistema de syntax highlighting baseado em regex do TextMate por um parser real que entendesse a estrutura do código. O resultado foi tão bom que o GitHub adotou para o syntax highlighting do próprio site. A versão em Go que o Ollanta usa é o [go-tree-sitter](https://github.com/smacker/go-tree-sitter), um binding CGo que expõe a API em C da tree-sitter para Go.
+
+## A descoberta
+
+Tudo começou com um usuário (eu mesmo, escaneando o próprio frontend do Ollanta) reportando um número absurdo de issues do tipo `js:detect-eval`:
+
+```bash
+critical  Vulnerability
+eval() executes arbitrary code and must not be used with untrusted input
+app/main.js:L13     js:detect-eval
+app/main.js:L14     js:detect-eval
+app/main.js:L15     js:detect-eval
+...mais 150 linhas...
+```
+
+Toda chamada de função em cada arquivo `.js` aparecia como `eval()`. A primeira reação foi verificar o código: será que o frontend realmente tem 150 chamadas a `eval()` escondidas?
+
+```javascript
+// app/main.js
+configureProjectFlowFeature({ render });
+configureActivityFeature({ render });
+configureCodeFeature({ render });
+```
+
+Zero `eval()` em 682 linhas de código. Falso positivo. Mas o scanner sempre retornando os mesmos resultados. A regra `js:detect-eval` usa a seguinte query tree-sitter:
 
 ```go
-// ollantarules/languages/golang/rules/no_large_functions.go
-func paramInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
+// detect_eval_javascript.go
+query := `(call_expression
+  function: (identifier) @eval
+  (#eq? @eval "eval")
+) @expr`
+matches, err := ctx.Query.Run(ctx.ParsedFile, query, ctx.Grammar)
+```
+
+O predicado `(#eq? @eval "eval")` deveria garantir que só matches com texto literal `"eval"` fossem retornados. Mas o scanner retornava **todas** as `call_expression`. Duas hipóteses:
+
+1. O parser tree-sitter está quebrado e não reconhece a sintaxe do predicado
+2. O `go-tree-sitter` não está avaliando o predicado
+
+Hipótese 1 é fácil de descartar: se o parser não reconhecesse `(#eq?)`, a query nem compilaria.
+
+> **Saiba mais:** o ciclo de vida de uma query tree-sitter começa com **compilação** (`ts_query_new`), que valida a sintaxe da S-expression e dos predicados. Se o predicado for inválido (argumentos errados, tipo errado), a compilação falha com um `QueryError`. Depois, a query é **executada** via cursor (`ts_query_cursor_exec` e `ts_query_cursor_next_match`), que retorna matches **estruturais** — isto é, nós que casam com os padrões da S-expression **independentemente dos predicados**. A **avaliação dos predicados** é responsabilidade do binding em linguagem hospedeira (Go, Python, Rust, etc.), não do C da tree-sitter.
+
+## A biblioteca
+
+O `go-tree-sitter` expõe a API tree-sitter através dessas funções principais:
+
+```go
+// bindings.go — smacker/go-tree-sitter
+
+func NewQuery(pattern []byte, lang *Language) (*Query, error)  // compila a query
+func (qc *QueryCursor) Exec(q *Query, n *Node)                 // executa no nó raiz
+func (qc *QueryCursor) NextMatch() (*QueryMatch, bool)          // itera sobre matches
+```
+
+Olhando a documentação, encontrei o método que faltava:
+
+```go
+func (qc *QueryCursor) FilterPredicates(m *QueryMatch, input []byte) *QueryMatch
+```
+
+Ele existe. Foi implementado com suporte completo a `#eq?`, `#not-eq?`, `#match?`, `#not-match?`. Tem testes e funciona. Mas e o problema? **Ninguém o chamava.**
+
+## O ponto cego
+
+O `QueryRunner` do Ollanta em `ollantaparser/query.go`:
+
+```go
+func (qr *QueryRunner) Run(f *ParsedFile, query string, lang Language) ([]QueryMatch, error) {
+    q, err := sitter.NewQuery([]byte(query), lang.tsLanguage())
+    // ...
+    cursor.Exec(q, f.RootNode())
+
+    var matches []QueryMatch
+    for {
+        m, ok := cursor.NextMatch()
+        if !ok {
+            break
         }
-    }
-    return defaultVal
-}
-
-// ollantarules/languages/treesitter/no_large_functions_javascript.go
-func tsParamInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
+        qm := QueryMatch{Captures: make(map[string]*sitter.Node, len(m.Captures))}
+        for _, cap := range m.Captures {
+            name := q.CaptureNameForId(cap.Index)
+            qm.Captures[name] = cap.Node
         }
+        matches = append(matches, qm)
     }
-    return defaultVal
+    return matches, nil
 }
 ```
 
-Eram 11 chamadas espalhadas entre os dois names. A solução foi trivial:
+Perceba que o `NextMatch()` retorna matches estruturais. `FilterPredicates()` filtra pelos predicados. O `Run()` chamava o primeiro e ignorava o segundo. Um `for` que devolve **tudo que estruturalmente casa**, sem aplicar o filtro semântico. Isso afetava **20 regras** que usavam `#eq?` ou `#match?`:
 
 ```go
-// ollantarules/params.go --- nova
-func ParamInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
-        }
+// Detectar eval()
+(#eq? @eval "eval")
+
+// Detectar WebSocket
+(#eq? @ctor "WebSocket")
+
+// Detectar pickle.load
+(#eq? @mod "pickle")
+(#match? @func "^(load|loads)$")
+
+// Detectar hashlib.md5
+(#eq? @mod "hashlib")
+(#match? @func "^(md5|sha1)$")
+```
+
+Todas retornando falsos positivos em todas as linguagens. As regras Python (pickle, hashlib, subprocess) e JavaScript (eval, WebSocket, child_process) compartilhavam o mesmo destino: qualquer chamada de função que casasse com a S-expression era reportada, porque o predicado `#eq?` ou `#match?` nunca era avaliado. O binding Go expõe `FilterPredicates` desde que o klothoplatform contribuiu com a implementação, mas o `QueryRunner.Run()` do Ollanta nunca foi atualizado para usá-lo.
+
+## Por que demorei para perceber?
+
+O teste existente para `js:detect-eval`:
+
+```go
+func TestTreeSitterSensor_JS_DetectEval(t *testing.T) {
+    src := []byte("const r = eval(input);\n")
+    s := defaultSensor()
+    issues, err := s.Analyze("test.js", src, "javascript", nil)
+    // ... verifica se encontrou js:detect-eval
+}
+```
+
+Testa o caso **positivo** — existe um `eval(input)`, ele é detectado. Mas não testa o caso **negativo** — chamadas que **não** são `eval()` não deveriam ser detectadas.
+
+Sem teste negativo, o bug passou despercebido. Os 35 testes da suíte continuavam verdes porque todos só verificavam a presença de issues, nunca a ausência de falsos positivos. O código que retorna tudo sem filtrar ainda passa no teste, porque `eval(input)` é estruturalmente um `call_expression` com `function: (identifier)` — o match está correto, o filtro é que nunca roda.
+
+> **Saiba mais:** esse fenômeno tem nome: **viés de confirmação** em testes. Quando você só testa que "a feature funciona" mas nunca que "a feature não dispara onde não deveria", você está testando a presença do seu código, não a correção dele. Em análise estática, testes negativos são tão importantes quanto positivos — uma regra que só dispara em código suspeito mas nunca em código limpo é o que separa uma ferramenta utilizável de um gerador de ruído.
+
+## O contraste
+
+O que torna esse bug particularmente insidioso é que, à primeira vista, o código parece correto. A query tree-sitter está certa `(#eq? @eval "eval")` é a sintaxe padrão e compila sem erro. O `QueryRunner` também parece correto — ele recebe uma query, executa contra a árvore sintática e retorna matches. Nada grita "estou faltando um filtro".
+
+A verdade é que o design da API tree-sitter separa **matches estruturais** de **predicados semânticos**. O C da tree-sitter retorna matches brutos o binding é que decide se aplica predicados ou não. Em Python, isso é automático. Em Rust, também. Em Go, depende de você chamar `FilterPredicates` explicitamente. Se você não sabe disso, seu código compila, seus testes passam, e seus usuários recebem 150 falsos positivos.
+
+## A correção
+
+O fluxograma abaixo mostra o caminho que o código percorre desde o arquivo fonte até o resultado da análise. A seta tracejada em vermelho representa o **bug** — sem `FilterPredicates`, o match estrutural vira falso positivo. A seta cheia em verde representa a **correção** — com `FilterPredicates`, o match é testado contra o predicado e só vira issue se passar:
+
+``` mermaid
+graph TD
+    A["📄 Código Fonte<br>ex: configure({render})"]:::code --> B["🔧 Tree-sitter Parser"]:::parser
+    B --> C{"🔍 NextMatch()<br>Match Estrutural"}:::decision
+    
+    C -->|"✅ é call_expression? Sim"| D["📦 Match Bruto"]:::raw
+    C -->|"❌ Não"| Z["🚫 Ignorado"]:::ignore
+    
+    D -.->|"⚠️ Sem FilterPredicates<br>O BUG"| E(("❌ Falso Positivo<br>js:detect-eval")):::fp
+    
+    D ==>|"✅ Com FilterPredicates<br>A CORREÇÃO"| F{"🧪 O predicado é válido?<br>#eq? @eval 'eval'"}:::filter
+    
+    F ==>|"🚫 Não"| G["✅ Match Descartado"]:::pass
+    F ==>|"✅ Sim"| H(("🎯 Verdadeiro Positivo")):::tp
+
+    classDef code fill:#e1f5fe,stroke:#0288d1
+    classDef parser fill:#f3e5f5,stroke:#7b1fa2
+    classDef decision fill:#fff3e0,stroke:#e65100
+    classDef raw fill:#f5f5f5,stroke:#9e9e9e
+    classDef ignore fill:#eeeeee,stroke:#bdbdbd
+    classDef fp fill:#ffebee,stroke:#c62828
+    classDef filter fill:#fff8e1,stroke:#f57f17
+    classDef pass fill:#e8f5e9,stroke:#2e7d32
+    classDef tp fill:#e8f5e9,stroke:#2e7d32
+```
+
+Quatro linhas, um `continue`:
+
+```go
+for {
+    m, ok := cursor.NextMatch()
+    if !ok {
+        break
     }
-    return defaultVal
+    m = cursor.FilterPredicates(m, f.Source)  // ← linha adicionada
+    if len(m.Captures) == 0 {                  // ← linha adicionada
+        continue                                // ← linha adicionada
+    }                                           // ← linha adicionada (chave)
+    qm := QueryMatch{...}
+    for _, cap := range m.Captures { ... }
+    matches = append(matches, qm)
 }
 ```
 
-E 11 substituições mecânicas: `paramInt(` -> `ollantarules.ParamInt(` é `tsParamInt(` -> `ollantarules.ParamInt(`. Duas funções removidas, uma adicionada, zero mudança de comportamento.
+O `FilterPredicates` recebe o match bruto e os bytes do arquivo fonte. Ele basicamente faz o seguinte:
+1. Obtém os predicados definidos para o padrão que gerou aquele match
+2. Para cada predicado `#eq?`, compara o texto do nó capturado com o valor esperado
+3. Para `#match?`, compila uma regex e testa contra o texto do nó
+4. Retorna um novo match **com as capturas que passaram em TODOS os predicados**
 
-## Correção 2: Centralizar função `Violated` [DRY]
+Se nenhuma captura passar, `FilterPredicates` retorna um match vazio (`len(Captures) == 0`), e o loop simplesmente pula para o próximo match. Sem a correção, cada regra com predicado devolvia N matches (N = número de nós que casam estruturalmente). Com a correção, devolve apenas os matches que passam nos predicados — exatamente o que a query pede.
 
-A função `violated(actual, operator, threshold) bool` avalia se um valor numérico viola uma condição de quality gate. Ela existia em **3 lugares** com o mesmo switch-case:
+## O diff completo
 
-| Arquivo | Operadores suportados |
-|---------|----------------------|
-| `domain/service/gate_evaluator.go` | gt, lt, eq, gte, lte |
-| `ollantaengine/qualitygate/gate.go` | gt, lt, eq, gte, lte |
-| `ollantarules/threshold.go` | gt, lt, gte, lte (sem eq) |
+```bash
+// ollantaparser/query.go — Run()
+  for {
+      m, ok := cursor.NextMatch()
+      if !ok {
+          break
+      }
++     m = cursor.FilterPredicates(m, f.Source)
++     if len(m.Captures) == 0 {
++         continue
++     }
+      qm := QueryMatch{...}
+      for _, cap := range m.Captures {
+          name := q.CaptureNameForId(cap.Index)
+          qm.Captures[name] = cap.Node
+      }
+      matches = append(matches, qm)
+  }
+```
 
-As duas primeiras eram idênticas linha por linha --- inclusive duplicando o tipo `Operator` é seus consts `OpGreaterThan`, `OpLessThan`, `OpEqual`, `OpGreaterOrEq`, `OpLessOrEq`. A terceira usava strings puras é não implementava `eq`. A correção criou um único ponto de verdade em `ollantacore/condition.go`:
+```bash
+// ollantarules/languages/treesitter/sensor_test.go
++ func TestTreeSitterSensor_JS_DetectEval_NoFalsePositive(t *testing.T)
++ func TestTreeSitterSensor_JS_DetectEval_NoFalsePositiveOtherCalls(t *testing.T)
++ func TestTreeSitterSensor_PY_DangerousSubprocess_NoFalsePositive(t *testing.T)
+```
+
+Três testes negativos que verificam que as regras **não** disparam onde não devem. Isso garante que, se alguém no futuro remover ou quebrar o `FilterPredicates`, os testes vão falhar imediatamente — não mais na mão do usuário.
+
+## Por que isso é um padrão de erro comum?
+
+Esse bug não é um bug específico do Ollanta. É um sintoma de um problema clássico de design conhecido como **[acoplamento temporal](https://medium.com/itautech/hands-on-o-que-%C3%A9-acoplamento-temporal-e-como-solucion%C3%A1-lo-5ef31d37ca0d)** (temporal coupling).
+
+O diagrama de sequência abaixo mostra a conversa entre as três camadas envolvidas. O Ollanta chama o binding, que chama o C. O C devolve um match bruto, e o binding o repassa sem filtrar. O ponto crítico está na nota "Ponto de Falha": depois que `NextMatch()` retorna, a API **permite** que o código prossiga sem chamar `FilterPredicates`. Não há erro, não há exceção, eu simplesmente sigo em frente e trato o match bruto como resultado final. A correção (em verde no diagrama) é o passo esquecido de chamar `FilterPredicates` antes de aceitar o match:
+
+``` mermaid
+sequenceDiagram
+    participant Dev as 🧑‍💻 Ollanta (Go)
+    participant Bind as 🔗 go-tree-sitter
+    participant C as ⚙️ Tree-sitter (C)
+
+    Dev->>Bind: Run(query)
+    Bind->>C: ts_query_cursor_exec()
+    
+    loop 🔄 Todo match estrutural
+        Dev->>Bind: NextMatch()
+        Bind->>C: ts_query_cursor_next_match()
+        C-->>Bind: 📦 Match Bruto
+        Bind-->>Dev: QueryMatch (Ignora Predicados)
+
+        Note right of Dev: ⚠️ Ponto de Falha:<br/>A API permite que o Dev<br/>prossiga sem filtrar.
+
+        opt ✅ A Correção (Passo Esquecido)
+            Dev->>Bind: FilterPredicates(QueryMatch)
+            Bind-->>Dev: 🚫 Match Vazio (Filtro Falhou)
+        end
+    end
+```
+
+A operação principal (`NextMatch`) retorna resultados incompletos, e uma operação secundária (`FilterPredicates`) precisa ser chamada na sequência para valida-los mas não há aviso ou erro se você simplesmente esquecer. É uma API que esconde uma armadilha em vez de tornar o código correto a opção mais fácil. Algumas heurísticas que adotei depois dessa descoberta:
+
+**1. Para cada regra, adicione um teste negativo**
+
+Um teste positivo comprova que a regra detecta código ruim. Um teste negativo comprova que ela não incomoda código bom. Ambos são necessários:
 
 ```go
-func Violated(actual float64, relation string, threshold float64) bool {
-    switch relation {
-    case "gt":  return actual > threshold
-    case "lt":  return actual < threshold
-    case "eq":  return actual == threshold
-    case "gte": return actual >= threshold
-    case "lte": return actual <= threshold
-    }
-    return false
-}
+// Testa detecção
+src := []byte("eval(input)")
+// → deve retornar issue
+
+// Testa silêncio
+src := []byte("configureFeature({ render })")
+// → NÃO deve retornar issue
 ```
 
-E os 3 callers passaram a converter seu tipo local para string na chamada:
+**2. APIs que exigem um passo extra deveriam ser um `must`**
 
-```go
-// domain/service/gate_evaluator.go --- antes
-if violated(actual, c.Operator, c.ErrorThreshold) { ... }
+Se `NextMatch()` sempre precisa ser seguido de `FilterPredicates()`, talvez o método correto seja `NextFilteredMatch()` que já aplica os predicados. Ou, no mínimo, uma documentação que grite "VOCÊ PRECISA CHAMAR FILTERPREDICATES DEPOIS DE NEXTMATCH". No Ollanta, a correção ideal seria fazer o `QueryRunner.Run` já retornar matches filtrados — encapsulando o padrão para que ninguém mais esqueça.
 
-// domain/service/gate_evaluator.go --- depois
-if ollantacore.Violated(actual, string(c.Operator), c.ErrorThreshold) { ... }
-```
+**3. Leia o binding, não só a documentação da lib original**
 
-Resultado: 3 funções `violated` removidas, 1 função `Violated` adicionada em `ollantacore/`, 5 callers atualizados. Não mexi na duplicação do tipo `Operator` --- isso é debito da migração hexagonal é sera resolvido quando o legacy `ollantaengine` for absorvido por `domain/`.
-
-> **saiba mais:** O tipo `Operator` é um `type Operator string` com consts `OpGreaterThan Operator = "gt"`, etc. A conversão `string(c.Operator)` é gratuita em Go --- não aloca, não copia, é só uma reinterpretação de tipo em tempo de compilação. Por isso a chamada `ollantacore.Violated(actual, string(c.Operator), c.ErrorThreshold)` tem o mesmo custo da chamada original.
-
-## Correção 3: Unificar sentinel `ErrNotFound` [DRY]
-
-Dois sentinelas de erro idênticos em lugares diferentes:
-
-```go
-// domain/model/project.go
-var ErrNotFound = errors.New("not found")
-
-// ollantastore/postgres/projects.go
-var ErrNotFound = errors.New("not found")
-```
-
-Mesma string, mesmo propósito, mas são ponteiros diferentes. Isso forcava handlers que podiam receber erros de ambas as camadas a testar os dois:
-
-```go
-// antes --- testava dois sentinelas diferentes
-if errors.Is(err, postgres.ErrNotFound) || errors.Is(err, model.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, "not found")
-    return
-}
-```
-
-A correção foi fazer `postgres.ErrNotFound` apontar para o mesmo sentinel do domínio:
-
-```go
-// ollantastore/postgres/projects.go --- depois
-var ErrNotFound = model.ErrNotFound
-```
-
-Isso eliminou o double-check em `issues.go` é `tags_handler.go`. Os outros 70 lugares que usam `postgres.ErrNotFound` continuam funcionando porque `errors.Is` compara por referência --- se os dois sentinelas são o mesmo ponteiro, `errors.Is(err, postgres.ErrNotFound)` é `errors.Is(err, model.ErrNotFound)` são equivalentes.
-
-> **saiba mais:** [`errors.Is`](https://pkg.go.dev/errors#Is) percorre a cadeia de wrapping é compara cada erro com o target usando `==`. Como `errors.New("not found")` retorna um ponteiro, dois sentinelas criados separadamente com a mesma string são diferentes para `errors.Is`. A solução é fazer ambos apontarem para a mesma instancia.
-
-## Correção 4: Extrair `handleNotFound` [DRY]
-
-Esta foi a correção de maior volume. O padrão abaixo aparecia **72 vezes** em 18 arquivos da camada web:
-
-```go
-if errors.Is(err, postgres.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, "project not found")
-    return
-}
-```
-
-A tripla (testar erro, status HTTP, mensagem) era idêntica em estrutura, variando apenas a mensagem. A correção foi extrair um helper de 6 linhas:
-
-```go
-// ollantaweb/api/helpers.go
-func handleNotFound(w http.ResponseWriter, err error, message string) bool {
-    if errors.Is(err, postgres.ErrNotFound) {
-        jsonError(w, http.StatusNotFound, message)
-        return true
-    }
-    return false
-}
-```
-
-Cada chamada passou de 4 linhas para 1:
-
-```go
-// antes
-if errors.Is(err, postgres.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, "project not found")
-    return
-}
-
-// depois
-if handleNotFound(w, err, "project not found") {
-    return
-}
-```
-
-O volume de substituições por arquivo da uma ideia da escala da duplicação:
-
-| Arquivo | Ocorrencias |
-|---------|------------|
-| `project_scope.go` | 11 |
-| `issues.go` | 6 |
-| `profiles_handler.go` | 5 |
-| `scans.go` | 4 |
-| `gates_handler.go` | 3 |
-| `projects.go` | 3 |
-| `custom_rules_handler.go` | 3 |
-| Demais 11 arquivos | 4 |
-| **Total** | **39** |
-
-Outros 33 casos de `errors.Is(err, postgres.ErrNotFound)` em arquivos não-HTTP (`ingest/`, `webhook/`, `postgres/`) foram mantidos como estavam --- eles não chamam `jsonError` é portanto não se beneficiam do helper.
-
-> **saiba mais:** A decisão de não criar uma abstração mais pesada (como middleware ou error-to-HTTP mapper) foi deliberada. O KISS manda não introduzir complexidade desnecessária. Um helper de 6 linhas que substitui 72 blocos idênticos é o ponto exato onde simplicidade é DRY se encontram.
-
-## Correção 5: Segregar `IProfileRepo` [ISP]
-
-A interface `IProfileRepo` em `domain/port/profile.go` tinha 17 métodos. O problema não era o número --- era que clientes diferentes precisavam de subconjuntos completamente diferentes:
-
-| Responsabilidade | Métodos | Clientes típicos |
-|-----------------|---------|-----------------|
-| CRUD de perfis | `List`, `GetByID`, `Create`, `Update`, `Delete`, `Copy`, `SetDefault`, `ApplyProfileRules`, `ApplyProfileYAML` | Handlers de perfil, sync de built-in |
-| Regras do perfil | `ActivateRule`, `DeactivateRule` | Handlers de regras |
-| Associação projeto-perfil | `AssignToProject`, `ByProjectAndLanguage`, `ResolveEffectiveRules`, `ProjectProfiles`, `ProjectEffectiveProfiles` | Ingestão, handlers de projeto |
-| Changelog | `ProfileChangelog` | Handler de auditoria |
-
-A correção criou 3 interfaces segregadas **em adição** a interface original (mantida por compatibilidade):
-
-```go
-type IProfileRuleRepo interface {
-    ActivateRule(ctx context.Context, profileID int64, ruleKey, severity string, params map[string]string) error
-    DeactivateRule(ctx context.Context, profileID int64, ruleKey string) error
-}
-
-type IProjectProfileRepo interface {
-    AssignToProject(ctx context.Context, projectID int64, language string, profileID int64) error
-    ByProjectAndLanguage(ctx context.Context, projectID int64, language string) (*model.QualityProfile, error)
-    ResolveEffectiveRules(ctx context.Context, profileID int64) ([]*model.EffectiveRule, error)
-    ProjectProfiles(ctx context.Context, projectID int64) ([]*model.ProjectQualityProfile, error)
-    ProjectEffectiveProfiles(ctx context.Context, projectID int64) ([]*model.EffectiveQualityProfile, error)
-}
-
-type IProfileChangelogRepo interface {
-    ProfileChangelog(ctx context.Context, profileID int64, limit, offset int) ([]model.ProfileChangelogEntry, int, error)
-}
-```
-
-A implementação concreta (`postgres.ProfileRepository`) continua a mesma struct --- ela satisfaz todas as 4 interfaces (a original + as 3 novas). As verificações em tempo de compilação foram adicionadas:
-
-```go
-var _ port.IProfileRepo         = (*ProfileRepository)(nil)
-var _ port.IProfileRuleRepo     = (*ProfileRepository)(nil)
-var _ port.IProjectProfileRepo  = (*ProfileRepository)(nil)
-var _ port.IProfileChangelogRepo = (*ProfileRepository)(nil)
-```
-
-Nenhum código cliente precisou ser alterado. O ganho é para o futuro: quando um handler só precisa ativar/desativar regras, ele pode declarar sua dependência como `IProfileRuleRepo` em vez de `IProfileRepo`. Isso reduz o acoplamento é torna os testes mais focados.
-
-## Correção 6: Segregar `IMeasureRepo` [ISP]
-
-Mesmo princípio, escala menor. `IMeasureRepo` tinha 10 métodos de 3 granularidades:
-
-| Granularidade | Métodos |
-|--------------|---------|
-| Histórica (por scan) | `BulkInsert`, `GetLatest`, `Trend` |
-| Live (projeto) | `UpsertLive`, `UpsertLiveBatch`, `GetLive` |
-| Diaria (time-series) | `UpsertDailyAggregate`, `UpsertDailyAggregateBatch`, `GetDailyAggregates` |
-
-As interfaces segregadas:
-
-```go
-type ILiveMeasureRepo interface {
-    UpsertLive(ctx context.Context, ...) error
-    UpsertLiveBatch(ctx context.Context, ...) error
-    GetLive(ctx context.Context, ...) (map[string]float64, error)
-}
-
-type IDailyAggregateRepo interface {
-    UpsertDailyAggregate(ctx context.Context, ...) error
-    UpsertDailyAggregateBatch(ctx context.Context, ...) error
-    GetDailyAggregates(ctx context.Context, ...) ([]model.TrendPoint, error)
-}
-```
-
-A ingestão de scans, por exemplo, só insere medidas históricas --- não precisa conhecer `GetDailyAggregates`. Com a interface segregada, essa dependência desnecessária desaparece da assinatura.
+A documentação do tree-sitter C diz "predicates are not evaluated by default". Mas quem lê a documentação do tree-sitter C quando está programando em Go? O binding `go-tree-sitter` tem uma implementação completa de `FilterPredicates`, mas ela só funciona se você souber que ela existe. Quando você usa uma biblioteca via CGo, o contrato da API é o que o binding Go expõe, não o que o C original faz. Leia a fonte do binding.
 
 ## O que aprendi com isso
 
-Auditar código com o olhar de design patterns não é questão de pureza acadêmica --- é questão de atrito. Cada função duplicada é um lugar a mais para corrigir o mesmo bug. Cada interface gorda é um mock maior para escrever no teste. Cada sentinela duplicado é um `||` a mais no handler.
+- **`QueryRunner.Run()`** — antes retornava matches estruturais; depois retorna matches **filtrados por predicados**.
+- **150 falsos positivos de `detect-eval` por scan** — depois 0 (o código não tem `eval()`).
+- **20 regras com `#eq?`/`#match?`** — antes geravam ruído; depois todas silenciosas onde deveriam ser.
+- **Testes** — antes só verificavam presença de issues; depois verificam presença **e** ausência.
 
-O mais revelador foi a correção 4: 72 blocos idênticos. Nenhum deles estava "errado". Cada um, isoladamente, era perfeitamente razoável --- um handler que verifica se o erro é `NotFound` e retorna 404. Mas quando você lê o arquivo pela vigésima vez e vê o mesmo padrão, algo está errado. Não no código --- na inércia. A inércia de não parar para extrair o padrão porque "são só 4 linhas".
+A linha `m = cursor.FilterPredicates(m, f.Source)` não é complexa. Não envolve algoritmos, estruturas de dados ou padrões de concorrência. É uma chamada de método que faltava e que, por faltar, transformou um analisador estático em um gerador de ruídos.
 
-Quatro linhas vezes 72. Quase 300 linhas de código que diziam exatamente a mesma coisa.
-
-A maioria dos guias de clean code fala sobre grandes refatorações arquiteturais --- extrair microsserviços, inverter dependências, introduzir camadas de abstração. Mas as correções que fiz aqui foram o oposto: remover abstração redundante, unificar conhecimento duplicado, segregar interfaces gordas. Não adicionei nenhuma camada nova. Só limpei o que já estava lá.
-
-O resultado é um código que conta a mesma história com menos palavras. E isso, no fim, é o que DRY, KISS e ISP realmente significam.
-
-> Este artigo foi escrito a partir das 6 correções implementadas no repositório do [Ollanta](https://github.com/scovl/Ollanta). O OpenSpec completo está em `openspec/changes/design-patterns-correction.md`. O artigo anterior da série --- sobre um bug silencioso de concorrência --- está em [fixgo01.md](/post/fixgo01/).
+> Este artigo foi escrito a partir de uma correção real no repositório do [Ollanta](https://github.com/scovl/Ollanta). O diff completo está em [https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9](https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9).

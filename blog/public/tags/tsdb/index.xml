@@ -16,22 +16,279 @@
     
     
     <item>
+      <title>Falsos positivos em regras tree-sitter: o predicado que ninguém chamou</title>
+      <link>http://localhost:1313/2026/05/08/fixgo02/</link>
+      <guid>http://localhost:1313/2026/05/08/fixgo02/</guid>
+      <pubDate>Fri, 08 May 2026 18:00:00 -0300</pubDate>
+      <description>&lt;![CDATA[<h1 id="o-predicado-que-ninguém-chamou">O predicado que ninguém chamou</h1>
+<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
+<p>O <a href="https://github.com/scovl/ollanta">Ollanta</a> usa tree-sitter de uma forma diferente: para <strong>análise estática</strong>. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:</p>]]></description>
+      <content:encoded>&lt;![CDATA[<h1 id="o-predicado-que-ninguém-chamou">O predicado que ninguém chamou</h1>
+<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
+<p>O <a href="https://github.com/scovl/ollanta">Ollanta</a> usa tree-sitter de uma forma diferente: para <strong>análise estática</strong>. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:</p>
+
+
+  <pre><code class="language-scheme">;; Encontra chamadas a eval() em JavaScript
+(call_expression
+  function: (identifier) @eval
+  (#eq? @eval &#34;eval&#34;)
+) @expr</code></pre>
+ <p>Essa query diz: &ldquo;encontre toda <code>call_expression</code> cuja função seja um identificador de nome <code>eval</code>&rdquo;. O <code>(#eq? @eval &quot;eval&quot;)</code> é um <strong>predicado</strong>. Isto é, uma condição extra que filtra matches estruturais pelo texto do nó capturado. Sem ele, qualquer chamada de função (de <code>console.log</code> a <code>fetch</code>) seria um match.</p>
+<blockquote>
+<p><strong>Importante:</strong> em computação e lógica matemática, <strong>predicado</strong> é a tradução oficial e consagrada para <em>predicate</em>. Refere-se especificamente a uma expressão, condição ou função que é avaliada e retorna um valor booleano (verdadeiro ou falso). Na programação funcional, por exemplo, é padrão falarmos em &ldquo;passar uma função predicado para o <code>filter</code>&rdquo;.</p>
+</blockquote>
+<p>O termo aparece nas S-expressions do tree-sitter com a sintaxe <code>(#eq? ...)</code>, <code>(#match? ...)</code>, etc.. são predicados que o motor de queries avalia para decidir se um match estrutural deve ser mantido ou descartado.</p>
+<p>E foi exatamente isso que aconteceu. O Ollanta estava reportando <code>eval()</code> em cada linha de código JavaScript que continha uma chamada de função. Centenas delas. O <code>configureProjectFlowFeature({ render })</code>, <code>bootBrowserApp()</code>, <code>renderView()</code>, tudo era &ldquo;eval&rdquo; para o scanner. Este artigo conta a história de como uma única linha de código ausente transformou 20 regras tree-sitter em geradores de ruído e falsos positivos.</p>
+<img src="https://tree-sitter.github.io/tree-sitter/assets/images/tree-sitter-small.png" alt="ollanta" width="250" style="display: block; margin: 1em auto; opacity: 1; transition: opacity 0.3s;">
+<blockquote>
+<p><strong>Saiba mais:</strong> tree-sitter foi criado por <a href="https://github.com/maxbrunsfeld">Max Brunsfeld</a> enquanto trabalhava no <a href="https://atom.io/">Atom Editor</a>. A ideia era substituir o sistema de syntax highlighting baseado em regex do TextMate por um parser real que entendesse a estrutura do código. O resultado foi tão bom que o GitHub adotou para o syntax highlighting do próprio site. A versão em Go que o Ollanta usa é o <a href="https://github.com/smacker/go-tree-sitter">go-tree-sitter</a>, um binding CGo que expõe a API em C da tree-sitter para Go.</p>
+</blockquote>
+<h2 id="a-descoberta">A descoberta</h2>
+<p>Tudo começou com um usuário (eu mesmo, escaneando o próprio frontend do Ollanta) reportando um número absurdo de issues do tipo <code>js:detect-eval</code>:</p>
+
+
+  <pre><code class="language-bash">critical  Vulnerability
+eval() executes arbitrary code and must not be used with untrusted input
+app/main.js:L13     js:detect-eval
+app/main.js:L14     js:detect-eval
+app/main.js:L15     js:detect-eval
+...mais 150 linhas...</code></pre>
+ <p>Toda chamada de função em cada arquivo <code>.js</code> aparecia como <code>eval()</code>. A primeira reação foi verificar o código: será que o frontend realmente tem 150 chamadas a <code>eval()</code> escondidas?</p>
+
+
+  <pre><code class="language-javascript">// app/main.js
+configureProjectFlowFeature({ render });
+configureActivityFeature({ render });
+configureCodeFeature({ render });</code></pre>
+ <p>Zero <code>eval()</code> em 682 linhas de código. Falso positivo. Mas o scanner sempre retornando os mesmos resultados. A regra <code>js:detect-eval</code> usa a seguinte query tree-sitter:</p>
+
+
+  <pre><code class="language-go">// detect_eval_javascript.go
+query := `(call_expression
+  function: (identifier) @eval
+  (#eq? @eval &#34;eval&#34;)
+) @expr`
+matches, err := ctx.Query.Run(ctx.ParsedFile, query, ctx.Grammar)</code></pre>
+ <p>O predicado <code>(#eq? @eval &quot;eval&quot;)</code> deveria garantir que só matches com texto literal <code>&quot;eval&quot;</code> fossem retornados. Mas o scanner retornava <strong>todas</strong> as <code>call_expression</code>. Duas hipóteses:</p>
+<ol>
+<li>O parser tree-sitter está quebrado e não reconhece a sintaxe do predicado</li>
+<li>O <code>go-tree-sitter</code> não está avaliando o predicado</li>
+</ol>
+<p>Hipótese 1 é fácil de descartar: se o parser não reconhecesse <code>(#eq?)</code>, a query nem compilaria.</p>
+<blockquote>
+<p><strong>Saiba mais:</strong> o ciclo de vida de uma query tree-sitter começa com <strong>compilação</strong> (<code>ts_query_new</code>), que valida a sintaxe da S-expression e dos predicados. Se o predicado for inválido (argumentos errados, tipo errado), a compilação falha com um <code>QueryError</code>. Depois, a query é <strong>executada</strong> via cursor (<code>ts_query_cursor_exec</code> e <code>ts_query_cursor_next_match</code>), que retorna matches <strong>estruturais</strong> — isto é, nós que casam com os padrões da S-expression <strong>independentemente dos predicados</strong>. A <strong>avaliação dos predicados</strong> é responsabilidade do binding em linguagem hospedeira (Go, Python, Rust, etc.), não do C da tree-sitter.</p>
+</blockquote>
+<h2 id="a-biblioteca">A biblioteca</h2>
+<p>O <code>go-tree-sitter</code> expõe a API tree-sitter através dessas funções principais:</p>
+
+
+  <pre><code class="language-go">// bindings.go — smacker/go-tree-sitter
+
+func NewQuery(pattern []byte, lang *Language) (*Query, error)  // compila a query
+func (qc *QueryCursor) Exec(q *Query, n *Node)                 // executa no nó raiz
+func (qc *QueryCursor) NextMatch() (*QueryMatch, bool)          // itera sobre matches</code></pre>
+ <p>Olhando a documentação, encontrei o método que faltava:</p>
+
+
+  <pre><code class="language-go">func (qc *QueryCursor) FilterPredicates(m *QueryMatch, input []byte) *QueryMatch</code></pre>
+ <p>Ele existe. Foi implementado com suporte completo a <code>#eq?</code>, <code>#not-eq?</code>, <code>#match?</code>, <code>#not-match?</code>. Tem testes e funciona. Mas e o problema? <strong>Ninguém o chamava.</strong></p>
+<h2 id="o-ponto-cego">O ponto cego</h2>
+<p>O <code>QueryRunner</code> do Ollanta em <code>ollantaparser/query.go</code>:</p>
+
+
+  <pre><code class="language-go">func (qr *QueryRunner) Run(f *ParsedFile, query string, lang Language) ([]QueryMatch, error) {
+    q, err := sitter.NewQuery([]byte(query), lang.tsLanguage())
+    // ...
+    cursor.Exec(q, f.RootNode())
+
+    var matches []QueryMatch
+    for {
+        m, ok := cursor.NextMatch()
+        if !ok {
+            break
+        }
+        qm := QueryMatch{Captures: make(map[string]*sitter.Node, len(m.Captures))}
+        for _, cap := range m.Captures {
+            name := q.CaptureNameForId(cap.Index)
+            qm.Captures[name] = cap.Node
+        }
+        matches = append(matches, qm)
+    }
+    return matches, nil
+}</code></pre>
+ <p>Perceba que o <code>NextMatch()</code> retorna matches estruturais. <code>FilterPredicates()</code> filtra pelos predicados. O <code>Run()</code> chamava o primeiro e ignorava o segundo. Um <code>for</code> que devolve <strong>tudo que estruturalmente casa</strong>, sem aplicar o filtro semântico. Isso afetava <strong>20 regras</strong> que usavam <code>#eq?</code> ou <code>#match?</code>:</p>
+
+
+  <pre><code class="language-go">// Detectar eval()
+(#eq? @eval &#34;eval&#34;)
+
+// Detectar WebSocket
+(#eq? @ctor &#34;WebSocket&#34;)
+
+// Detectar pickle.load
+(#eq? @mod &#34;pickle&#34;)
+(#match? @func &#34;^(load|loads)$&#34;)
+
+// Detectar hashlib.md5
+(#eq? @mod &#34;hashlib&#34;)
+(#match? @func &#34;^(md5|sha1)$&#34;)</code></pre>
+ <p>Todas retornando falsos positivos em todas as linguagens. As regras Python (pickle, hashlib, subprocess) e JavaScript (eval, WebSocket, child_process) compartilhavam o mesmo destino: qualquer chamada de função que casasse com a S-expression era reportada, porque o predicado <code>#eq?</code> ou <code>#match?</code> nunca era avaliado. O binding Go expõe <code>FilterPredicates</code> desde que o klothoplatform contribuiu com a implementação, mas o <code>QueryRunner.Run()</code> do Ollanta nunca foi atualizado para usá-lo.</p>
+<h2 id="por-que-demorei-para-perceber">Por que demorei para perceber?</h2>
+<p>O teste existente para <code>js:detect-eval</code>:</p>
+
+
+  <pre><code class="language-go">func TestTreeSitterSensor_JS_DetectEval(t *testing.T) {
+    src := []byte(&#34;const r = eval(input);\n&#34;)
+    s := defaultSensor()
+    issues, err := s.Analyze(&#34;test.js&#34;, src, &#34;javascript&#34;, nil)
+    // ... verifica se encontrou js:detect-eval
+}</code></pre>
+ <p>Testa o caso <strong>positivo</strong> — existe um <code>eval(input)</code>, ele é detectado. Mas não testa o caso <strong>negativo</strong> — chamadas que <strong>não</strong> são <code>eval()</code> não deveriam ser detectadas.</p>
+<p>Sem teste negativo, o bug passou despercebido. Os 35 testes da suíte continuavam verdes porque todos só verificavam a presença de issues, nunca a ausência de falsos positivos. O código que retorna tudo sem filtrar ainda passa no teste, porque <code>eval(input)</code> é estruturalmente um <code>call_expression</code> com <code>function: (identifier)</code> o match está correto, o filtro é que nunca roda.</p>
+<blockquote>
+<p><strong>Saiba mais:</strong> esse fenômeno tem nome: <strong>viés de confirmaçãos</strong> em testes. Quando você só testa que &ldquo;a feature funciona&rdquo; mas nunca que &ldquo;a feature não dispara onde não deveria&rdquo;, você está testando a presença do seu código, não a correção dele. Em análise estática, testes negativos são tão importantes quanto positivos — uma regra que só dispara em código suspeito mas nunca em código limpo é o que separa uma ferramenta utilizável de um gerador de ruído.</p>
+</blockquote>
+<h2 id="o-contraste">O contraste</h2>
+<p>O que torna esse bug particularmente insidioso é que, à primeira vista, o código parece correto. A query tree-sitter está certa <code>(#eq? @eval &quot;eval&quot;)</code> é a sintaxe padrão e compila sem erro. O <code>QueryRunner</code> também parece correto — ele recebe uma query, executa contra a árvore sintática e retorna matches. Nada grita &ldquo;estou faltando um filtro&rdquo;.</p>
+<p>A verdade é que o design da API tree-sitter separa <strong>matches estruturais</strong> de <strong>predicados semânticos</strong>. O C da tree-sitter retorna matches brutos o binding é que decide se aplica predicados ou não. Em Python, isso é automático. Em Rust, também. Em Go, depende de você chamar <code>FilterPredicates</code> explicitamente. Se você não sabe disso, seu código compila, seus testes passam, e seus usuários recebem 150 falsos positivos.</p>
+<h2 id="a-correção">A correção</h2>
+<p>Quatro linhas, um <code>continue</code>:</p>
+
+
+  <pre><code class="language-go">for {
+    m, ok := cursor.NextMatch()
+    if !ok {
+        break
+    }
+    m = cursor.FilterPredicates(m, f.Source)  // ← linha adicionada
+    if len(m.Captures) == 0 {                  // ← linha adicionada
+        continue                                // ← linha adicionada
+    }                                           // ← linha adicionada (chave)
+    qm := QueryMatch{...}
+    for _, cap := range m.Captures { ... }
+    matches = append(matches, qm)
+}</code></pre>
+ <p>O <code>FilterPredicates</code> recebe o match bruto e os bytes do arquivo fonte. Ele basicamente faz o seguinte:</p>
+<ol>
+<li>Obtém os predicados definidos para o padrão que gerou aquele match</li>
+<li>Para cada predicado <code>#eq?</code>, compara o texto do nó capturado com o valor esperado</li>
+<li>Para <code>#match?</code>, compila uma regex e testa contra o texto do nó</li>
+<li>Retorna um novo match <strong>com as capturas que passaram em TODOS os predicados</strong></li>
+</ol>
+<p>Se nenhuma captura passar, <code>FilterPredicates</code> retorna um match vazio (<code>len(Captures) == 0</code>), e o loop simplesmente pula para o próximo match. Sem a correção, cada regra com predicado devolvia N matches (N = número de nós que casam estruturalmente). Com a correção, devolve apenas os matches que passam nos predicados exatamente o que a query pede.</p>
+<h2 id="o-diff-completo">O diff completo</h2>
+
+
+  <pre><code class="language-bash">// ollantaparser/query.go — Run()
+  for {
+      m, ok := cursor.NextMatch()
+      if !ok {
+          break
+      }
+&#43;     m = cursor.FilterPredicates(m, f.Source)
+&#43;     if len(m.Captures) == 0 {
+&#43;         continue
+&#43;     }
+      qm := QueryMatch{...}
+      for _, cap := range m.Captures {
+          name := q.CaptureNameForId(cap.Index)
+          qm.Captures[name] = cap.Node
+      }
+      matches = append(matches, qm)
+  }</code></pre>
+ 
+
+  <pre><code class="language-bash">// ollantarules/languages/treesitter/sensor_test.go
+&#43; func TestTreeSitterSensor_JS_DetectEval_NoFalsePositive(t *testing.T)
+&#43; func TestTreeSitterSensor_JS_DetectEval_NoFalsePositiveOtherCalls(t *testing.T)
+&#43; func TestTreeSitterSensor_PY_DangerousSubprocess_NoFalsePositive(t *testing.T)</code></pre>
+ <p>Três testes negativos que verificam que as regras <strong>não</strong> disparam onde não devem. Isso garante que, se alguém no futuro remover ou quebrar o <code>FilterPredicates</code>, os testes vão falhar imediatamente — não mais na mão do usuário.</p>
+<h2 id="por-que-isso-é-um-padrão-de-erro-comum">Por que isso é um padrão de erro comum?</h2>
+<p>Esse bug não é um bug específico do Ollanta. É um sintoma de um problema clássico de design conhecido como <strong><a href="https://medium.com/itautech/hands-on-o-que-%C3%A9-acoplamento-temporal-e-como-solucion%C3%A1-lo-5ef31d37ca0c">acoplamento temporal</a></strong> (temporal coupling). A operação principal (<code>NextMatch</code>) retorna resultados incompletos, e uma operação secundária (<code>FilterPredicates</code>) precisa ser chamada na sequência para valida-los mas não há aviso ou erro se você simplesmente esquecer. É uma API que esconde uma armadilha em vez de tornar o código correto a opção mais fácil. Algumas heurísticas que adotei depois dessa descoberta:</p>
+<p><strong>1. Para cada regra, adicione um teste negativo</strong></p>
+<p>Um teste positivo comprova que a regra detecta código ruim. Um teste negativo comprova que ela não incomoda código bom. Ambos são necessários:</p>
+
+
+  <pre><code class="language-go">// Testa detecção
+src := []byte(&#34;eval(input)&#34;)
+// → deve retornar issue
+
+// Testa silêncio
+src := []byte(&#34;configureFeature({ render })&#34;)
+// → NÃO deve retornar issue</code></pre>
+ <p><strong>2. APIs que exigem um passo extra deveriam ser um <code>must</code></strong></p>
+<p>Se <code>NextMatch()</code> sempre precisa ser seguido de <code>FilterPredicates()</code>, talvez o método correto seja <code>NextFilteredMatch()</code> que já aplica os predicados. Ou, no mínimo, uma documentação que grite &ldquo;VOCÊ PRECISA CHAMAR FILTERPREDICATES DEPOIS DE NEXTMATCH&rdquo;. No Ollanta, a correção ideal seria fazer o <code>QueryRunner.Run</code> já retornar matches filtrados — encapsulando o padrão para que ninguém mais esqueça.</p>
+<p><strong>3. Leia o binding, não só a documentação da lib original</strong></p>
+<p>A documentação do tree-sitter C diz &ldquo;predicates are not evaluated by default&rdquo;. Mas quem lê a documentação do tree-sitter C quando está programando em Go? O binding <code>go-tree-sitter</code> tem uma implementação completa de <code>FilterPredicates</code>, mas ela só funciona se você souber que ela existe. Quando você usa uma biblioteca via CGo, o contrato da API é o que o binding Go expõe, não o que o C original faz. Leia a fonte do binding.</p>
+<h2 id="o-que-aprendi-com-isso">O que aprendi com isso</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Antes</th>
+          <th>Depois</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>QueryRunner.Run()</code> retorna matches estruturais</td>
+          <td><code>QueryRunner.Run()</code> retorna matches <strong>filtrados por predicados</strong></td>
+      </tr>
+      <tr>
+          <td>150 falsos positivos de <code>detect-eval</code> por scan</td>
+          <td>0 — o código não tem <code>eval()</code></td>
+      </tr>
+      <tr>
+          <td>20 regras com <code>#eq?</code>/<code>#match?</code> gerando ruído</td>
+          <td>Todas as 20 regras silenciosas onde deveriam ser</td>
+      </tr>
+      <tr>
+          <td>Testes só verificavam presença de issues</td>
+          <td>Testes verificam presença E ausência</td>
+      </tr>
+      <tr>
+          <td><code>make recreate</code> só reconstruía o server Docker</td>
+          <td><code>make recreate</code> também reconstroi o scanner</td>
+      </tr>
+  </tbody>
+</table>
+<p>A linha <code>m = cursor.FilterPredicates(m, f.Source)</code> não é complexa. Não envolve algoritmos, estruturas de dados ou padrões de concorrência. É uma chamada de método que faltava e que, por faltar, transformou um analisador estático em um gerador de ruídos.</p>
+<blockquote>
+<p>Este artigo foi escrito a partir de uma correção real no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O diff completo está em <a href="https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9">https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9</a>.</p>
+</blockquote>
+]]></content:encoded>
+      
+      
+      <category>Go,tree-sitter,static-analysis,ollanta,CGo</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Como uma linha de código ausente fez 20 regras de análise estática produzirem centenas de falsos positivos por meses]]></description>
+      
+    </item>
+    
+    <item>
       <title>Resolução de um bug silencioso em Go</title>
       <link>http://localhost:1313/2026/05/07/fixgo01/</link>
       <guid>http://localhost:1313/2026/05/07/fixgo01/</guid>
       <pubDate>Thu, 07 May 2026 10:00:00 -0300</pubDate>
       <description>&lt;![CDATA[<h1 id="um-canal-que-não-escuta">Um canal que não escuta</h1>
-<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go são uma daquelas features que parecem simples até você precisar usá-los em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que os detalhes aparecem.</p>
-<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um analisador estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>]]></description>
+<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go é uma daquelas features que parecem simples até você precisar usá-la em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que &ldquo;a jiripoca começa a piar&rdquo;.</p>
+<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>]]></description>
       <content:encoded>&lt;![CDATA[<h1 id="um-canal-que-não-escuta">Um canal que não escuta</h1>
-<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go são uma daquelas features que parecem simples até você precisar usá-los em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que os detalhes aparecem.</p>
-<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um analisador estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>
+<p><a href="https://go.dev/tour/concurrency/2">Canais</a> em Go é uma daquelas features que parecem simples até você precisar usá-la em produção com centenas de <a href="https://go.dev/tour/concurrency/1">goroutines</a> concorrentes. E é aí que &ldquo;a jiripoca começa a piar&rdquo;.</p>
+<p>Este artigo conta a história de um bug silencioso que encontrei durante uma revisão de código no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. O bug não quebrava testes, não produzia <a href="https://go.dev/blog/defer-panic-and-recover">panic</a>, não gerava erro no <a href="https://golangci-lint.run">linter</a>. Mas, em condições específicas, impedia o <a href="https://learn.microsoft.com/pt-br/dotnet/core/extensions/graceful-shutdown">graceful shutdown</a> do scanner por tempo indeterminado.</p>
 <p><img src="/post/images/fixgo01.png" alt="ollanta"></p>
 <blockquote>
 <p><strong>saiba mais:</strong> <em>graceful shutdown</em> é quando um programa para de aceitar trabalho novo e conclui o que já está em andamento antes de desligar. O contrário seria matar o processo abruptamente, perdendo trabalho pela metade. Em Go, isso geralmente se faz com <a href="https://pkg.go.dev/context"><code>context.Context</code></a> e <a href="https://pkg.go.dev/os/signal#NotifyContext"><code>signal.NotifyContext</code></a>.</p>
 </blockquote>
 <h2 id="o-contexto">O contexto</h2>
-<p>O Ollanta precisa analisar centenas de arquivos fonte em paralelo. Para isso, usa um <a href="https://gobyexample.com/worker-pools">worker pool</a> — um conjunto fixo de goroutines que processam tarefas de uma fila — com semáforo implementado via <a href="https://go.dev/tour/concurrency/2">channel</a>:</p>
+<p>O Ollanta precisa analisar centenas de arquivos fonte em paralelo. Para isso, usa um <a href="https://gobyexample.com/worker-pools">worker pool</a>, um conjunto fixo de goroutines que processam tarefas de uma fila com semáforo implementado via <a href="https://go.dev/tour/concurrency/2">channel</a>:</p>
 
 
   <pre><code class="language-go">// application/scan/executor.go
@@ -46,8 +303,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
     w := runtime.NumCPU() * 2
     return &amp;Executor{parser: p, analyzers: analyzers, workers: w}
 }</code></pre>
- <p>O número de workers é <a href="https://pkg.go.dev/runtime#NumCPU"><code>runtime.NumCPU()</code></a> <code>* 2</code>. Numa máquina com 8 cores, 16 goroutines processam arquivos simultaneamente. O semáforo controla esse limite.</p>
-<p>Visualmente, o fluxo é uma fila com gargalo controlado: os 200 arquivos descobertos em disco são empurrados para o semáforo, que só deixa passar 16 de cada vez. Cada worker que pega um arquivo o analisa e devolve o resultado. Os outros 184 ficam esperando na porta.</p>
+ <p>O número de workers é <a href="https://pkg.go.dev/runtime#NumCPU"><code>runtime.NumCPU()</code></a> <code>* 2</code>. Numa máquina com 8 cores, 16 goroutines processam arquivos simultaneamente. O semáforo controla esse limite. Visualmente, o fluxo é uma fila com gargalo controlado: os 200 arquivos descobertos em disco são empurrados para o semáforo, que só deixa passar 16 de cada vez. Cada worker que pega um arquivo o analisa e devolve o resultado. Os outros 184 ficam esperando na porta.</p>
 
 
   
@@ -112,8 +368,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
 
     for r := range out { /* coleta resultados */ }
 }</code></pre>
- <p>As APIs que esse código usa <code>WaitGroup</code>, <code>defer</code>, <code>recover</code> são corretas e bem aplicadas. O isolamento de falha por arquivo impede que um panic derrube a análise inteira. A sincronização com <code>wg.Wait()</code> e <code>close(out)</code> garante que o coletor de resultados nunca leia de um canal fechado antes da hora.</p>
-<p>Do ponto de vista de threading tradicional, está tudo certo. O problema é de <strong>ordenação</strong>: o cancelamento é verificado no passo errado.</p>
+ <p>As APIs que esse código usa <code>WaitGroup</code>, <code>defer</code>, <code>recover</code> são corretas e bem aplicadas. O isolamento de falha por arquivo impede que um panic derrube a análise inteira. A sincronização com <code>wg.Wait()</code> e <code>close(out)</code> garante que o coletor de resultados nunca leia de um canal fechado antes da hora. Do ponto de vista de threading tradicional, está tudo certo. O problema é de <strong>ordenação</strong>: o cancelamento é verificado no passo errado.</p>
 <blockquote>
 <p><strong>saiba mais:</strong> <a href="https://pkg.go.dev/sync#WaitGroup"><code>sync.WaitGroup</code></a> é um contador atômico usado para esperar que várias goroutines terminem. Cada <code>wg.Add(1)</code> incrementa, cada <code>defer wg.Done()</code> decrementa ao sair da goroutine, e <code>wg.Wait()</code> bloqueia até o contador zerar. O <a href="https://go.dev/tour/flowcontrol/12"><code>defer</code></a> garante que <code>wg.Done()</code> seja chamado mesmo se a goroutine retornar por erro ou <a href="https://go.dev/blog/defer-panic-and-recover"><code>panic</code></a>. Já <code>recover()</code> captura um panic e evita que ele derrube o programa inteiro, aqui ele serve para isolar a falha a um único arquivo sem abortar a análise dos demais.</p>
 </blockquote>
@@ -123,8 +378,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
 <li><strong>Bloqueia</strong> no <code>sem &lt;- struct{}{}</code> até conseguir um slot</li>
 <li><strong>Depois</strong> verifica se o contexto foi cancelado</li>
 </ol>
-<p>Essa ordem é fatal. Se o contexto for cancelado enquanto TODAS as vagas do semáforo estão ocupadas, as goroutines que esperam na fila <strong>não têm como saber que o cancelamento aconteceu</strong> — elas estão travadas no passo 1 e nunca chegam ao passo 2.</p>
-<p>O diagrama abaixo mostra essa tragédia em câmera lenta. Acompanhe a timeline de cima para baixo: o <code>Ctrl+C</code> chega, o canal de cancelamento fecha, mas as goroutines da fila estão olhando para o semáforo, não para o contexto.</p>
+<p>Essa ordem é fatal. Se o contexto for cancelado enquanto TODAS as vagas do semáforo estão ocupadas, as goroutines que esperam na fila <strong>não têm como saber que o cancelamento aconteceu</strong>, elas estão travadas no passo 1 e nunca chegam ao passo 2. O diagrama abaixo mostra essa tragédia em câmera lenta. Acompanhe a timeline de cima para baixo: o <code>Ctrl+C</code> chega, o canal de cancelamento fecha, mas as goroutines da fila estão olhando para o semáforo, não para o contexto.</p>
 
 
   
@@ -145,7 +399,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
     Sem--&gt;&gt;G2: slot liberado
     G2-&gt;&gt;G2: select { case &lt;-ctx.Done() }
     Note over G2: 😞 tarde demais&lt;br/&gt;já esperou 30s à toa</div>
- <p>Veja o que acontece no último quadro: a goroutine finalmente chega ao <code>select</code> e descobre que <code>ctx.Done()</code> está fechado. Ela retorna. Mas isso só aconteceu porque um worker terminou e liberou uma vaga não porque o cancelamento foi detectado. A goroutine esperou 30 segundos para descobrir algo que já era verdade no primeiro milissegundo. Num cenário concreto, o estrago é proporcional ao tamanho do pool e dos arquivos:</p>
+ <p>Veja o que acontece no último quadro: a goroutine finalmente chega ao <code>select</code> e descobre que <code>ctx.Done()</code> está fechado. Ela retorna. Mas isso só aconteceu porque um worker terminou e liberou uma vaga, não porque o cancelamento foi detectado. A goroutine esperou 30 segundos para descobrir algo que já era verdade no primeiro milissegundo. Num cenário concreto, o estrago é proporcional ao tamanho do pool e dos arquivos:</p>
 <ul>
 <li>Máquina com 8 cores → 16 workers</li>
 <li>200 arquivos para analisar</li>
@@ -191,8 +445,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
 
     out &lt;- result{issues: e.analyzeFile(ctx, f, policy)}
 }()</code></pre>
- <p>A diferença parece cosmética, mas é profunda. Antes, a goroutine fazia <code>sem &lt;- struct{}{}</code> e <strong>depois</strong> olhava para <code>ctx.Done()</code>. Agora, ela pergunta para o runtime: &ldquo;tem vaga no semáforo OU o contexto foi cancelado?&rdquo; e obedece quem responder primeiro.</p>
-<p>O diagrama abaixo mostra a mesma cena de antes, mas com a correção aplicada. Dessa vez, quando o <code>Ctrl+C</code> chega, as goroutines da fila percebem na hora:</p>
+ <p>A diferença parece cosmética, mas é profunda. Antes, a goroutine fazia <code>sem &lt;- struct{}{}</code> e <strong>depois</strong> olhava para <code>ctx.Done()</code>. Agora, ela pergunta para o runtime: &ldquo;tem vaga no semáforo OU o contexto foi cancelado?&rdquo; e obedece quem responder primeiro. O diagrama abaixo mostra a mesma cena de antes, mas com a correção aplicada. Dessa vez, quando o <code>Ctrl+C</code> chega, as goroutines da fila percebem na hora:</p>
 
 
   
@@ -210,9 +463,10 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
     Note over G2,Sem: ✅ ctx.Done() já está pronto!
     Ctx--&gt;&gt;G2: escolhe case &lt;-ctx.Done()
     G2-&gt;&gt;G2: return (sai sem bloquear)
-    Note over G2: 🎉 shutdown instantâneo</div>
- <p>Compare com o diagrama do bug: lá a goroutine da fila ficava 30 segundos olhando para o semáforo; aqui ela olha para os dois ao mesmo tempo e o cancelamento vence. A thread principal faz o <code>wg.Wait()</code>, todas as goroutines da fila retornam, o coletor de resultados recebe <code>out</code> vazio para cada uma delas, e o programa desliga em milissegundos.</p>
-<p>Por que o runtime escolhe <code>ctx.Done()</code> e não o semáforo? Porque quando o contexto é cancelado, <code>ctx.Done()</code> é fechado — e um canal fechado está <strong>permanentemente pronto para leitura</strong>. O semáforo, por outro lado, está cheio e portanto <strong>não está pronto para escrita</strong>. O <code>select</code> sempre escolhe um caso pronto. Vitória do cancelamento.</p>
+    Note over G2: 🎉 sai sem bloquear</div>
+ <p>Compare com o diagrama do bug: lá a goroutine da fila ficava 30 segundos olhando para o semáforo; aqui ela olha para os dois ao mesmo tempo e o cancelamento vence. As 184 goroutines da fila saem imediatamente — liberam memória e param de disputar o semáforo à toa. Os 16 workers ativos, porém, continuam processando: <code>analyzeFile</code> não verifica <code>ctx.Done()</code> em cada etapa (<code>os.ReadFile</code>, <code>parseGoFile</code>, e o <code>AnalyzerBridge.Check</code> também ignora o contexto recebido).</p>
+<p>O <code>wg.Wait()</code> espera os ativos terminarem. O tempo total de shutdown continua nos mesmos ~30 segundos. O que muda é o <strong>custo</strong> da espera: sem a correção, além dos 16 workers ativos, mais 184 goroutines ficavam presas no semáforo, ocupando stacks no <em>runtime</em> sem fazer nada útil.</p>
+<p>Por que o runtime escolhe <code>ctx.Done()</code> e não o semáforo? Porque quando o contexto é cancelado, <code>ctx.Done()</code> é fechado e um canal fechado que está <strong>permanentemente pronto para leitura</strong>. O semáforo, por outro lado, está cheio e portanto <strong>não está pronto para escrita</strong>. O <code>select</code> sempre escolhe um caso pronto. Vitória do cancelamento.</p>
 <blockquote>
 <p><strong>saiba mais:</strong> a ordem dos <code>case</code> em um <code>select</code> <strong>não</strong> determina prioridade — o runtime escolhe pseudo-aleatoriamente entre os canais prontos. Mas quando <code>ctx.Done()</code> já está fechado, ele está permanentemente pronto, enquanto o semáforo cheio está permanentemente bloqueado. Isso garante que o cancelamento <strong>sempre</strong> vence a espera.</p>
 </blockquote>
@@ -243,7 +497,7 @@ func NewExecutor(p port.IParser, analyzers []port.IAnalyzer) *Executor {
 </ol>
 <p>O <code>defer func() { &lt;-sem }()</code> continua no caminho feliz: a goroutine que adquiriu o slot ainda precisa liberá-lo. E, crucialmente, ele está <strong>dentro</strong> do <code>case sem &lt;- struct{}{}:</code> só executa se o slot foi de fato adquirido. Se a goroutine caiu no <code>case &lt;-ctx.Done()</code>, não há token para devolver, e o <code>defer</code> dentro do <code>case</code> simplesmente não roda.</p>
 <h2 id="por-que-isso-é-um-padrão-e-como-evitar">Por que isso é um padrão (e como evitar)</h2>
-<p>Esse tipo de bug não é exclusivo do Ollanta. É comum em Go porque a linguagem te dá blocos de construção poderosos — goroutines, channels, <code>select</code>, <code>context</code> mas não te protege da ordem em que você os combina. Você pode escrever código que compila, passa nos testes e funciona há meses, mas que esconde uma bomba-relógio de concorrência. Algumas heurísticas que adotei depois dessa descoberta:</p>
+<p>Esse tipo de bug não é exclusivo do Ollanta. É comum em Go porque a linguagem te dá blocos de construção poderosos com goroutines, channels, <code>select</code>, <code>context</code> mas não te protege da ordem em que você os combina. Você pode escrever código que compila, passa nos testes e funciona há meses, mas que esconde uma bomba-relógio de concorrência. Algumas heurísticas que adotei depois dessa descoberta:</p>
 <p><strong>1. Todo <code>channel send</code> bloqueante que depende de contexto deveria ser um <code>select</code></strong></p>
 
 
@@ -277,10 +531,12 @@ case &lt;-ctx.Done():
         t.Fatal(&#34;esperava deadline exceeded, obteve&#34;, err)
     }
 }</code></pre>
- <p>Sem a correção, esse teste <strong>trava por 10 segundos</strong> — tempo suficiente para ninguém nunca rodá-lo. Com a correção, ele termina em 100ms. Um teste que demora 10 segundos é um teste que não existe na prática.</p>
+ <p>Sem a correção, esse teste <strong>trava por 10 segundos</strong>, tempo suficiente para ninguém nunca rodá-lo. Com a correção, ele termina em 100ms. Um teste que demora 10 segundos é um teste que não existe na prática.</p>
+<hr>
 <h2 id="o-que-aprendi-com-isso">O que aprendi com isso</h2>
-<p>Canais em Go parecem simples, mas o diabo está na ordem. O padrão de semáforo com channel é ensinado em todos os tutoriais de <a href="https://go.dev/tour/concurrency/1">concorrência em Go</a>, mas poucos mencionam a interação com <a href="https://pkg.go.dev/context">contextos canceláveis</a>. A maioria dos exemplos assume que a operação vai completar rápido — e em produção, ela não vai.</p>
-<p>O resumo em números é direto: duas linhas de diff, zero mudanças de lógica, e a diferença no shutdown é de 30 segundos para zero. Os workers que já estão processando continuam trabalhando até terminar — eles não são interrompidos, o que é exatamente o comportamento esperado de um graceful shutdown. A diferença é que as 184 goroutines que estavam na fila não precisam mais esperar alguém sair para descobrir que o jogo acabou.</p>
+<p>Canais em Go parecem simples, mas o diabo está na ordem. O padrão de semáforo com channel é ensinado em todos os tutoriais de <a href="https://go.dev/tour/concurrency/1">concorrência em Go</a>, mas poucos mencionam a interação com <a href="https://pkg.go.dev/context">contextos canceláveis</a>. A maioria dos exemplos assume que a operação vai completar rápido, mas em produção não vai!</p>
+<p>O resumo em números: duas linhas de diff, zero mudanças de lógica. A diferença não está no tempo total de shutdown — que continua limitado pelos workers ativos (~30 segundos nos piores casos) — mas em <strong>quem</strong> ocupa recursos durante a espera.</p>
+<p>Antes, 184 goroutines ociosas ficavam empilhadas no semáforo; depois, elas saem de cena no primeiro milissegundo, deixando apenas o trabalho realmente útil consumindo CPU e memória. Os workers que já estão processando continuam até terminar, e isso é exatamente o comportamento esperado de um graceful shutdown.</p>
 <table>
   <thead>
       <tr>
@@ -295,19 +551,22 @@ case &lt;-ctx.Done():
           <td>❌ Antes (<code>sem &lt;-</code> puro)</td>
           <td>30s processando</td>
           <td>30s travadas esperando vaga</td>
-          <td><strong>30 segundos</strong></td>
+          <td><strong>~30 segundos</strong></td>
       </tr>
       <tr>
           <td>✅ Depois (<code>select</code> + <code>ctx</code>)</td>
           <td>30s processando</td>
           <td>0s — detectam cancelamento</td>
-          <td><strong>milissegundos</strong></td>
+          <td><strong>~30 segundos</strong>*</td>
       </tr>
   </tbody>
 </table>
-<p>No Ollanta, essa correção de duas linhas reduziu o shutdown de até 30 segundos para milissegundos, sem alterar uma única linha de lógica de negócio. Se você está escrevendo um worker pool em Go, lembre: o semáforo bloqueia. E bloqueio sem <code>select</code> não escuta cancelamento.</p>
+<ul>
+<li>O tempo total de shutdown é gated pelos workers ativos via <code>wg.Wait()</code>. A correção elimina o <strong>custo adicional</strong> de 184 goroutines zumbis disputando o semáforo sem necessidade.</li>
+</ul>
+<p>No Ollanta, essa correção de duas linhas eliminou 184 goroutines ociosas que sobreviviam ao <code>Ctrl+C</code> sem propósito, reduzindo o consumo de memória durante o shutdown e evitando a cascata de passagens pelo semáforo após os workers terminarem. Se você está escrevendo um worker pool em Go, lembre-se: o semáforo bloqueia. E bloqueio sem <code>select</code> não escuta o cancelamento.</p>
 <blockquote>
-<p>Este artigo foi escrito a partir de uma correção real no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O diff completo está em <code>application/scan/executor.go</code>.</p>
+<p>Este artigo foi escrito a partir de uma correção real no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O diff completo está em <a href="https://github.com/scovl/Ollanta/commit/3d95d5399b5cb0143637cce51e787ce8bb752285">https://github.com/scovl/Ollanta/blob/main/application/scan/executor.go</a>.</p>
 </blockquote>
 ]]></content:encoded>
       
@@ -322,7 +581,7 @@ case &lt;-ctx.Done():
       
       
       
-      <description>&lt;![CDATA[Como um select ausente quase matou o graceful shutdown do Ollanta]]></description>
+      <description>&lt;![CDATA[Como um select ausente quase matou o graceful shutdown do projeto]]></description>
       
     </item>
     
@@ -2012,342 +2271,6 @@ async function processarUsuarios() {
       
       
       <description>&lt;![CDATA[Usando fp-ts para gerenciar erros de forma robusta e tipada]]></description>
-      
-    </item>
-    
-    <item>
-      <title>6 correções de design pattern em 2 horas</title>
-      <link>http://localhost:1313/2026/05/07/fixgo02/</link>
-      <guid>http://localhost:1313/2026/05/07/fixgo02/</guid>
-      <pubDate>Thu, 07 May 2026 14:00:00 -0300</pubDate>
-      <description>&lt;![CDATA[<h1 id="o-diabo-mora-na-duplicação">O diabo mora na duplicação</h1>
-<p>Existe uma diferença entre &ldquo;funcionar&rdquo; e &ldquo;estar certo&rdquo;. Todo código que funciona costumar passar nos testes, mas código com duplicação silenciosa corrói a base ao longo do tempo. Isto é, cada nova feature exige editar mais arquivos, cada bug precisa ser corrigido em mais lugares, e cada onboarder demora mais para entender o que está acontecendo.</p>
-<p>Este artigo conta a história de uma auditoria de <a href="https://en.wikipedia.org/wiki/Software_design_pattern">design patterns</a> que fiz no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. Fiz uma auditoria que revelou 7 violações de princípios como DRY, KISS e ISP. Implementei 6 delas em cerca de 2 horas, com zero quebras de teste. O resultado: 72 blocos if/else removidos, 3 funções duplicadas centralizadas, 2 sentinelas de erro unificados, e 2 interfaces poluídas segregadas.</p>]]></description>
-      <content:encoded>&lt;![CDATA[<h1 id="o-diabo-mora-na-duplicação">O diabo mora na duplicação</h1>
-<p>Existe uma diferença entre &ldquo;funcionar&rdquo; e &ldquo;estar certo&rdquo;. Todo código que funciona costumar passar nos testes, mas código com duplicação silenciosa corrói a base ao longo do tempo. Isto é, cada nova feature exige editar mais arquivos, cada bug precisa ser corrigido em mais lugares, e cada onboarder demora mais para entender o que está acontecendo.</p>
-<p>Este artigo conta a história de uma auditoria de <a href="https://en.wikipedia.org/wiki/Software_design_pattern">design patterns</a> que fiz no <a href="https://github.com/scovl/Ollanta">Ollanta</a>, um projeto pessoal de análise de código estático multi-linguagem escrito em Go. Fiz uma auditoria que revelou 7 violações de princípios como DRY, KISS e ISP. Implementei 6 delas em cerca de 2 horas, com zero quebras de teste. O resultado: 72 blocos if/else removidos, 3 funções duplicadas centralizadas, 2 sentinelas de erro unificados, e 2 interfaces poluídas segregadas.</p>
-<blockquote>
-<p><strong>saiba mais:</strong> <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> (Don&rsquo;t Repeat Yourself) prega que cada pedaço de conhecimento deve ter uma única representação no sistema. <a href="https://en.wikipedia.org/wiki/KISS_principle">KISS</a> (Keep It Simple, Stupid) diz que simplicidade deve ser priorizada. <a href="https://en.wikipedia.org/wiki/Interface_segregation_principle">ISP</a> (Interface Segregation Principle, o I do SOLID) estabelece que nenhum cliente deve depender de métodos que não usa.</p>
-</blockquote>
-<h2 id="o-contexto">O contexto</h2>
-<p>O Ollanta tem 10 módulos Go numa arquitetura hexagonal (ports &amp; adapters). O núcleo (<code>domain/</code>) define interfaces; a camada de aplicação (<code>application/</code>) orquestra casos de uso; é os adapters (<code>ollantaweb/</code>, <code>ollantastore/</code>, <code>ollantarules/</code>) implementam as interfaces. Migrei recentemente de uma estrutura monolítica para hexagonal é neste processo acumulei duplicações pelo caminho. Aqui vou contar apenas o que corrigi, o diff é o impacto.</p>
-<h2 id="correção-1-centralizar-helper-paramint-dry">Correção 1: Centralizar helper <code>ParamInt</code> [DRY]</h2>
-<p>O Ollanta tem regras de análise estática escritas como closures Go. Regras aceitam parâmetros configuraveis, por exemplo, <code>max_lines: 40</code> para a regra que detecta funções muito longas. Para ler esses parâmetros, cada regra precisa de uma função que leia um inteiro de um <code>map[string]string</code> com fallback para um valor padrão. <strong>O problema</strong>: essa função existia em 2 lugares com nomes diferentes é implementação idêntica:</p>
-
-
-  <pre><code class="language-go">// ollantarules/languages/golang/rules/no_large_functions.go
-func paramInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
-        }
-    }
-    return defaultVal
-}
-
-// ollantarules/languages/treesitter/no_large_functions_javascript.go
-func tsParamInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
-        }
-    }
-    return defaultVal
-}</code></pre>
- <p>Eram 11 chamadas espalhadas entre os dois names. A solução foi trivial:</p>
-
-
-  <pre><code class="language-go">// ollantarules/params.go --- nova
-func ParamInt(params map[string]string, key string, defaultVal int) int {
-    if v, ok := params[key]; ok {
-        if n, err := strconv.Atoi(v); err == nil {
-            return n
-        }
-    }
-    return defaultVal
-}</code></pre>
- <p>E 11 substituições mecânicas: <code>paramInt(</code> -&gt; <code>ollantarules.ParamInt(</code> é <code>tsParamInt(</code> -&gt; <code>ollantarules.ParamInt(</code>. Duas funções removidas, uma adicionada, zero mudança de comportamento.</p>
-<h2 id="correção-2-centralizar-função-violated-dry">Correção 2: Centralizar função <code>Violated</code> [DRY]</h2>
-<p>A função <code>violated(actual, operator, threshold) bool</code> avalia se um valor numérico viola uma condição de quality gate. Ela existia em <strong>3 lugares</strong> com o mesmo switch-case:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Arquivo</th>
-          <th>Operadores suportados</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>domain/service/gate_evaluator.go</code></td>
-          <td>gt, lt, eq, gte, lte</td>
-      </tr>
-      <tr>
-          <td><code>ollantaengine/qualitygate/gate.go</code></td>
-          <td>gt, lt, eq, gte, lte</td>
-      </tr>
-      <tr>
-          <td><code>ollantarules/threshold.go</code></td>
-          <td>gt, lt, gte, lte (sem eq)</td>
-      </tr>
-  </tbody>
-</table>
-<p>As duas primeiras eram idênticas linha por linha &mdash; inclusive duplicando o tipo <code>Operator</code> é seus consts <code>OpGreaterThan</code>, <code>OpLessThan</code>, <code>OpEqual</code>, <code>OpGreaterOrEq</code>, <code>OpLessOrEq</code>. A terceira usava strings puras é não implementava <code>eq</code>.</p>
-<p>A correção criou um único ponto de verdade em <code>ollantacore/condition.go</code>:</p>
-
-
-  <pre><code class="language-go">func Violated(actual float64, relation string, threshold float64) bool {
-    switch relation {
-    case &#34;gt&#34;:  return actual &gt; threshold
-    case &#34;lt&#34;:  return actual &lt; threshold
-    case &#34;eq&#34;:  return actual == threshold
-    case &#34;gte&#34;: return actual &gt;= threshold
-    case &#34;lte&#34;: return actual &lt;= threshold
-    }
-    return false
-}</code></pre>
- <p>E os 3 callers passaram a converter seu tipo local para string na chamada:</p>
-
-
-  <pre><code class="language-go">// domain/service/gate_evaluator.go --- antes
-if violated(actual, c.Operator, c.ErrorThreshold) { ... }
-
-// domain/service/gate_evaluator.go --- depois
-if ollantacore.Violated(actual, string(c.Operator), c.ErrorThreshold) { ... }</code></pre>
- <p>Resultado: 3 funções <code>violated</code> removidas, 1 função <code>Violated</code> adicionada em <code>ollantacore/</code>, 5 callers atualizados. Não mexi na duplicação do tipo <code>Operator</code> &mdash; isso é debito da migração hexagonal é sera resolvido quando o legacy <code>ollantaengine</code> for absorvido por <code>domain/</code>.</p>
-<blockquote>
-<p><strong>saiba mais:</strong> O tipo <code>Operator</code> é um <code>type Operator string</code> com consts <code>OpGreaterThan Operator = &quot;gt&quot;</code>, etc. A conversão <code>string(c.Operator)</code> é gratuita em Go &mdash; não aloca, não copia, é só uma reinterpretação de tipo em tempo de compilação. Por isso a chamada <code>ollantacore.Violated(actual, string(c.Operator), c.ErrorThreshold)</code> tem o mesmo custo da chamada original.</p>
-</blockquote>
-<h2 id="correção-3-unificar-sentinel-errnotfound-dry">Correção 3: Unificar sentinel <code>ErrNotFound</code> [DRY]</h2>
-<p>Dois sentinelas de erro idênticos em lugares diferentes:</p>
-
-
-  <pre><code class="language-go">// domain/model/project.go
-var ErrNotFound = errors.New(&#34;not found&#34;)
-
-// ollantastore/postgres/projects.go
-var ErrNotFound = errors.New(&#34;not found&#34;)</code></pre>
- <p>Mesma string, mesmo propósito, mas são ponteiros diferentes. Isso forcava handlers que podiam receber erros de ambas as camadas a testar os dois:</p>
-
-
-  <pre><code class="language-go">// antes --- testava dois sentinelas diferentes
-if errors.Is(err, postgres.ErrNotFound) || errors.Is(err, model.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, &#34;not found&#34;)
-    return
-}</code></pre>
- <p>A correção foi fazer <code>postgres.ErrNotFound</code> apontar para o mesmo sentinel do domínio:</p>
-
-
-  <pre><code class="language-go">// ollantastore/postgres/projects.go --- depois
-var ErrNotFound = model.ErrNotFound</code></pre>
- <p>Isso eliminou o double-check em <code>issues.go</code> é <code>tags_handler.go</code>. Os outros 70 lugares que usam <code>postgres.ErrNotFound</code> continuam funcionando porque <code>errors.Is</code> compara por referência &mdash; se os dois sentinelas são o mesmo ponteiro, <code>errors.Is(err, postgres.ErrNotFound)</code> é <code>errors.Is(err, model.ErrNotFound)</code> são equivalentes.</p>
-<blockquote>
-<p><strong>saiba mais:</strong> <a href="https://pkg.go.dev/errors#Is"><code>errors.Is</code></a> percorre a cadeia de wrapping é compara cada erro com o target usando <code>==</code>. Como <code>errors.New(&quot;not found&quot;)</code> retorna um ponteiro, dois sentinelas criados separadamente com a mesma string são diferentes para <code>errors.Is</code>. A solução é fazer ambos apontarem para a mesma instancia.</p>
-</blockquote>
-<h2 id="correção-4-extrair-handlenotfound-dry">Correção 4: Extrair <code>handleNotFound</code> [DRY]</h2>
-<p>Esta foi a correção de maior volume. O padrão abaixo aparecia <strong>72 vezes</strong> em 18 arquivos da camada web:</p>
-
-
-  <pre><code class="language-go">if errors.Is(err, postgres.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, &#34;project not found&#34;)
-    return
-}</code></pre>
- <p>A tripla (testar erro, status HTTP, mensagem) era idêntica em estrutura, variando apenas a mensagem. A correção foi extrair um helper de 6 linhas:</p>
-
-
-  <pre><code class="language-go">// ollantaweb/api/helpers.go
-func handleNotFound(w http.ResponseWriter, err error, message string) bool {
-    if errors.Is(err, postgres.ErrNotFound) {
-        jsonError(w, http.StatusNotFound, message)
-        return true
-    }
-    return false
-}</code></pre>
- <p>Cada chamada passou de 4 linhas para 1:</p>
-
-
-  <pre><code class="language-go">// antes
-if errors.Is(err, postgres.ErrNotFound) {
-    jsonError(w, http.StatusNotFound, &#34;project not found&#34;)
-    return
-}
-
-// depois
-if handleNotFound(w, err, &#34;project not found&#34;) {
-    return
-}</code></pre>
- <p>O volume de substituições por arquivo da uma ideia da escala da duplicação:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Arquivo</th>
-          <th>Ocorrencias</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>project_scope.go</code></td>
-          <td>11</td>
-      </tr>
-      <tr>
-          <td><code>issues.go</code></td>
-          <td>6</td>
-      </tr>
-      <tr>
-          <td><code>profiles_handler.go</code></td>
-          <td>5</td>
-      </tr>
-      <tr>
-          <td><code>scans.go</code></td>
-          <td>4</td>
-      </tr>
-      <tr>
-          <td><code>gates_handler.go</code></td>
-          <td>3</td>
-      </tr>
-      <tr>
-          <td><code>projects.go</code></td>
-          <td>3</td>
-      </tr>
-      <tr>
-          <td><code>custom_rules_handler.go</code></td>
-          <td>3</td>
-      </tr>
-      <tr>
-          <td>Demais 11 arquivos</td>
-          <td>4</td>
-      </tr>
-      <tr>
-          <td><strong>Total</strong></td>
-          <td><strong>39</strong></td>
-      </tr>
-  </tbody>
-</table>
-<p>Outros 33 casos de <code>errors.Is(err, postgres.ErrNotFound)</code> em arquivos não-HTTP (<code>ingest/</code>, <code>webhook/</code>, <code>postgres/</code>) foram mantidos como estavam &mdash; eles não chamam <code>jsonError</code> é portanto não se beneficiam do helper.</p>
-<blockquote>
-<p><strong>saiba mais:</strong> A decisão de não criar uma abstração mais pesada (como middleware ou error-to-HTTP mapper) foi deliberada. O KISS manda não introduzir complexidade desnecessária. Um helper de 6 linhas que substitui 72 blocos idênticos é o ponto exato onde simplicidade é DRY se encontram.</p>
-</blockquote>
-<h2 id="correção-5-segregar-iprofilerepo-isp">Correção 5: Segregar <code>IProfileRepo</code> [ISP]</h2>
-<p>A interface <code>IProfileRepo</code> em <code>domain/port/profile.go</code> tinha 17 métodos. O problema não era o número &mdash; era que clientes diferentes precisavam de subconjuntos completamente diferentes:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Responsabilidade</th>
-          <th>Métodos</th>
-          <th>Clientes típicos</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>CRUD de perfis</td>
-          <td><code>List</code>, <code>GetByID</code>, <code>Create</code>, <code>Update</code>, <code>Delete</code>, <code>Copy</code>, <code>SetDefault</code>, <code>ApplyProfileRules</code>, <code>ApplyProfileYAML</code></td>
-          <td>Handlers de perfil, sync de built-in</td>
-      </tr>
-      <tr>
-          <td>Regras do perfil</td>
-          <td><code>ActivateRule</code>, <code>DeactivateRule</code></td>
-          <td>Handlers de regras</td>
-      </tr>
-      <tr>
-          <td>Associação projeto-perfil</td>
-          <td><code>AssignToProject</code>, <code>ByProjectAndLanguage</code>, <code>ResolveEffectiveRules</code>, <code>ProjectProfiles</code>, <code>ProjectEffectiveProfiles</code></td>
-          <td>Ingestão, handlers de projeto</td>
-      </tr>
-      <tr>
-          <td>Changelog</td>
-          <td><code>ProfileChangelog</code></td>
-          <td>Handler de auditoria</td>
-      </tr>
-  </tbody>
-</table>
-<p>A correção criou 3 interfaces segregadas <strong>em adição</strong> a interface original (mantida por compatibilidade):</p>
-
-
-  <pre><code class="language-go">type IProfileRuleRepo interface {
-    ActivateRule(ctx context.Context, profileID int64, ruleKey, severity string, params map[string]string) error
-    DeactivateRule(ctx context.Context, profileID int64, ruleKey string) error
-}
-
-type IProjectProfileRepo interface {
-    AssignToProject(ctx context.Context, projectID int64, language string, profileID int64) error
-    ByProjectAndLanguage(ctx context.Context, projectID int64, language string) (*model.QualityProfile, error)
-    ResolveEffectiveRules(ctx context.Context, profileID int64) ([]*model.EffectiveRule, error)
-    ProjectProfiles(ctx context.Context, projectID int64) ([]*model.ProjectQualityProfile, error)
-    ProjectEffectiveProfiles(ctx context.Context, projectID int64) ([]*model.EffectiveQualityProfile, error)
-}
-
-type IProfileChangelogRepo interface {
-    ProfileChangelog(ctx context.Context, profileID int64, limit, offset int) ([]model.ProfileChangelogEntry, int, error)
-}</code></pre>
- <p>A implementação concreta (<code>postgres.ProfileRepository</code>) continua a mesma struct &mdash; ela satisfaz todas as 4 interfaces (a original + as 3 novas). As verificações em tempo de compilação foram adicionadas:</p>
-
-
-  <pre><code class="language-go">var _ port.IProfileRepo         = (*ProfileRepository)(nil)
-var _ port.IProfileRuleRepo     = (*ProfileRepository)(nil)
-var _ port.IProjectProfileRepo  = (*ProfileRepository)(nil)
-var _ port.IProfileChangelogRepo = (*ProfileRepository)(nil)</code></pre>
- <p>Nenhum código cliente precisou ser alterado. O ganho é para o futuro: quando um handler só precisa ativar/desativar regras, ele pode declarar sua dependência como <code>IProfileRuleRepo</code> em vez de <code>IProfileRepo</code>. Isso reduz o acoplamento é torna os testes mais focados.</p>
-<h2 id="correção-6-segregar-imeasurerepo-isp">Correção 6: Segregar <code>IMeasureRepo</code> [ISP]</h2>
-<p>Mesmo princípio, escala menor. <code>IMeasureRepo</code> tinha 10 métodos de 3 granularidades:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Granularidade</th>
-          <th>Métodos</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>Histórica (por scan)</td>
-          <td><code>BulkInsert</code>, <code>GetLatest</code>, <code>Trend</code></td>
-      </tr>
-      <tr>
-          <td>Live (projeto)</td>
-          <td><code>UpsertLive</code>, <code>UpsertLiveBatch</code>, <code>GetLive</code></td>
-      </tr>
-      <tr>
-          <td>Diaria (time-series)</td>
-          <td><code>UpsertDailyAggregate</code>, <code>UpsertDailyAggregateBatch</code>, <code>GetDailyAggregates</code></td>
-      </tr>
-  </tbody>
-</table>
-<p>As interfaces segregadas:</p>
-
-
-  <pre><code class="language-go">type ILiveMeasureRepo interface {
-    UpsertLive(ctx context.Context, ...) error
-    UpsertLiveBatch(ctx context.Context, ...) error
-    GetLive(ctx context.Context, ...) (map[string]float64, error)
-}
-
-type IDailyAggregateRepo interface {
-    UpsertDailyAggregate(ctx context.Context, ...) error
-    UpsertDailyAggregateBatch(ctx context.Context, ...) error
-    GetDailyAggregates(ctx context.Context, ...) ([]model.TrendPoint, error)
-}</code></pre>
- <p>A ingestão de scans, por exemplo, só insere medidas históricas &mdash; não precisa conhecer <code>GetDailyAggregates</code>. Com a interface segregada, essa dependência desnecessária desaparece da assinatura.</p>
-<h2 id="o-que-aprendi-com-isso">O que aprendi com isso</h2>
-<p>Auditar código com o olhar de design patterns não é questão de pureza acadêmica &mdash; é questão de atrito. Cada função duplicada é um lugar a mais para corrigir o mesmo bug. Cada interface gorda é um mock maior para escrever no teste. Cada sentinela duplicado é um <code>||</code> a mais no handler.</p>
-<p>O mais revelador foi a correção 4: 72 blocos idênticos. Nenhum deles estava &ldquo;errado&rdquo;. Cada um, isoladamente, era perfeitamente razoável &mdash; um handler que verifica se o erro é <code>NotFound</code> e retorna 404. Mas quando você lê o arquivo pela vigésima vez e vê o mesmo padrão, algo está errado. Não no código &mdash; na inércia. A inércia de não parar para extrair o padrão porque &ldquo;são só 4 linhas&rdquo;.</p>
-<p>Quatro linhas vezes 72. Quase 300 linhas de código que diziam exatamente a mesma coisa.</p>
-<p>A maioria dos guias de clean code fala sobre grandes refatorações arquiteturais &mdash; extrair microsserviços, inverter dependências, introduzir camadas de abstração. Mas as correções que fiz aqui foram o oposto: remover abstração redundante, unificar conhecimento duplicado, segregar interfaces gordas. Não adicionei nenhuma camada nova. Só limpei o que já estava lá.</p>
-<p>O resultado é um código que conta a mesma história com menos palavras. E isso, no fim, é o que DRY, KISS e ISP realmente significam.</p>
-<blockquote>
-<p>Este artigo foi escrito a partir das 6 correções implementadas no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O OpenSpec completo está em <code>openspec/changes/design-patterns-correction.md</code>. O artigo anterior da série &mdash; sobre um bug silencioso de concorrência &mdash; está em <a href="/2026/05/07/fixgo01/">fixgo01.md</a>.</p>
-</blockquote>
-]]></content:encoded>
-      
-      
-      <category>Go,design-patterns,SOLID,DRY,static-analysis,ollanta,refactoring</category>
-      
-      
-      
-      <dc:creator>Vitor Lobo Ramos</dc:creator>
-      
-      
-      
-      
-      
-      <description>&lt;![CDATA[Como uma auditoria de SOLID, DRY, KISS e ISP removeu duplicação e melhorou as interfaces do Ollanta sem quebrar nada]]></description>
       
     </item>
     
