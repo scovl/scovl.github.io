@@ -16,15 +16,1336 @@
     
     
     <item>
-      <title>Falsos positivos em regras tree-sitter: o predicado que ninguém chamou</title>
+      <title>Base01 - Códigos e Combinações</title>
+      <link>http://localhost:1313/2026/05/12/histcomp01/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp01/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>O Código Morse foi inventado por volta de 1837 por <a href="https://pt.wikipedia.org/wiki/Samuel_Morse">Samuel Finley Breese Morse</a> (1791–1872). Ele foi aprimorado por outros inventores, notavelmente <a href="https://en.wikipedia.org/wiki/Alfred_Vail">Alfred Vail</a> (1807–1859), e evoluiu para algumas versões diferentes. O sistema que utilizamos e estudamos hoje é mais formalmente conhecido como <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Morse">Código Morse Internacional</a></strong>.</p>
+<p>Mais de 180 anos depois, o Código Morse continua tão relevante que, em maio de 2026, um hacker o utilizou para enganar o grok da x.ai e fazê-lo transferir US$ 213 mil (R$ 1 milhão) em criptomoedas, uma técnica de <a href="https://pt.wikipedia.org/wiki/Inje%C3%A7%C3%A3o_de_prompt">injeção de prompt</a> que escondeu comandos maliciosos em código Morse interpretados como instruções legítimas (<a href="https://livecoins.com.br/hacker-usa-codigo-morse-para-fazer-agente-autonomo-de-ia-lhe-enviar-r-1-milhao-em-criptomoeda/">Livecoins</a>). O caso mostra que a estrutura binária de pontos e traços que você aprenderá a seguir não é apenas história, ela ainda povoa o submundo da segurança digital.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>O Código Morse foi inventado por volta de 1837 por <a href="https://pt.wikipedia.org/wiki/Samuel_Morse">Samuel Finley Breese Morse</a> (1791–1872). Ele foi aprimorado por outros inventores, notavelmente <a href="https://en.wikipedia.org/wiki/Alfred_Vail">Alfred Vail</a> (1807–1859), e evoluiu para algumas versões diferentes. O sistema que utilizamos e estudamos hoje é mais formalmente conhecido como <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Morse">Código Morse Internacional</a></strong>.</p>
+<p>Mais de 180 anos depois, o Código Morse continua tão relevante que, em maio de 2026, um hacker o utilizou para enganar o grok da x.ai e fazê-lo transferir US$ 213 mil (R$ 1 milhão) em criptomoedas, uma técnica de <a href="https://pt.wikipedia.org/wiki/Inje%C3%A7%C3%A3o_de_prompt">injeção de prompt</a> que escondeu comandos maliciosos em código Morse interpretados como instruções legítimas (<a href="https://livecoins.com.br/hacker-usa-codigo-morse-para-fazer-agente-autonomo-de-ia-lhe-enviar-r-1-milhao-em-criptomoeda/">Livecoins</a>). O caso mostra que a estrutura binária de pontos e traços que você aprenderá a seguir não é apenas história, ela ainda povoa o submundo da segurança digital.</p>
+<p><img src="/post/images/hist/grok-morse.png" alt="grok-morse"></p>
+<p>A invenção do código Morse caminha lado a lado com a invenção do <a href="https://pt.wikipedia.org/wiki/Tel%C3%A9grafo">telégrafo</a>.  Assim como o código Morse fornece uma excelente introdução à natureza dos códigos e da informação, o telégrafo inclui um hardware que consegue imitar o funcionamento básico de um computador.</p>
+<h2 id="o-desafio-da-tradução-enviar-vs-receber">O Desafio da Tradução: Enviar vs. Receber</h2>
+<p>A maioria das pessoas acha muito mais fácil <strong>enviar</strong> código Morse do que <strong>receber</strong>. Mesmo que você não tenha o código memorizado, para enviar uma mensagem basta usar uma tabela de tradução organizada em ordem alfabética. Você olha a letra &ldquo;A&rdquo;, vê que é <code>Ponto-Traço</code> (<code>.-</code>), e transmite.</p>
+<p>No entanto, <strong>receber</strong> o código Morse e traduzi-lo de volta para palavras é consideravelmente mais difícil e demorado. Por quê? Porque você precisa trabalhar de trás para frente. O problema é que possuímos uma tabela que faz esta tradução:</p>
+<blockquote>
+<p><strong>Letra do Alfabeto → Pontos e Traços do Código Morse</strong></p>
+</blockquote>
+<p>Mas não temos uma tabela natural que nos permita fazer o caminho inverso:</p>
+<blockquote>
+<p><strong>Pontos e Traços do Código Morse → Letra do Alfabeto</strong></p>
+</blockquote>
+<p>Se você recebe a sequência <code>Traço-Ponto-Traço-Traço</code> (<code>-.--</code>), e não tem o código decorado, terá que escanear a tabela inteira, letra por letra, até descobrir finalmente que se trata da letra <strong>Y</strong>. Não há nada nos pontos e traços que possamos simplesmente colocar em &ldquo;ordem alfabética&rdquo;.</p>
+<p>Para facilitar, vamos esquecer a ordem alfabética. Uma abordagem muito melhor e mais didática para organizar esses códigos é agrupá-los com base em <strong>quantos pontos e traços eles possuem</strong>. Vejamos uma sequência que contém apenas um ponto ou um traço pode representar apenas <strong>duas</strong> letras:</p>
+<p><img src="/post/images/hist/morse01.png" alt="morse01"></p>
+<p>Uma combinação de exatamente dois pontos ou traços nos fornece <strong>quatro</strong> novas letras:</p>
+<p><img src="/post/images/hist/morse02.png" alt="morse02"></p>
+<p>Um padrão de três pontos ou traços nos dá <strong>oito</strong> letras adicionais:
+<em>(Ex: <code>...</code> para S, <code>---</code> para O, etc.)</em>. Sequências de quatro pontos e traços permitem mais <strong>16</strong> caracteres. Se somarmos tudo isso, essas quatro categorias nos dão:
+<strong>2 + 4 + 8 + 16 = 30 letras disponíveis.</strong> Isso é mais do que suficiente para as 26 letras do alfabeto latino (os 4 códigos extras são usados para letras acentuadas em alguns idiomas).</p>
+<h2 id="o-padrão-matemático-potências-de-2">O Padrão Matemático: Potências de 2</h2>
+<p>Você conseguiu notar um padrão no tamanho das categorias acima? <strong>Cada grupo possui exatamente o dobro de códigos do grupo anterior.</strong> Isso faz total sentido lógico: cada novo nível pega todos os códigos do nível anterior e adiciona um Ponto no final, e depois pega todos os códigos do nível anterior e adiciona um Traço no final.</p>
+<p>Podemos resumir essa tendência fascinante da seguinte forma:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Quantidade de Símbolos (Pontos/Traços)</th>
+          <th>Cálculo</th>
+          <th>Número de Códigos Possíveis</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>2</td>
+          <td><strong>2</strong></td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>2 × 2</td>
+          <td><strong>4</strong></td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>2 × 2 × 2</td>
+          <td><strong>8</strong></td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>2 × 2 × 2 × 2</td>
+          <td><strong>16</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>Sempre que multiplicamos um número por ele mesmo várias vezes, podemos usar <strong><a href="https://pt.wikipedia.org/wiki/Exponencia%C3%A7%C3%A3o">expoentes</a></strong>. Por exemplo, <code>2 × 2 × 2 × 2</code> pode ser escrito como <strong>2⁴</strong> (2 elevado à 4ª potência). A matemática dos códigos se resume a esta fórmula elegante:</p>
+<blockquote>
+<p><strong>Número de códigos = 2^(número de pontos e traços)</strong></p>
+</blockquote>
+<h2 id="a-árvore-de-decodificação-o-método-visual">A Árvore de Decodificação (O Método Visual)</h2>
+<p>Para tornar o processo de decodificação ainda mais fácil e para visualizar essa matemática perfeitamente, podemos desenhar um diagrama em formato de árvore. Abaixo está a representação de como as letras se ramificam a cada novo símbolo adicionado. Para decodificar uma sequência, você começa à esquerda e segue as setas para a direita, escolhendo &ldquo;Ponto&rdquo; ou &ldquo;Traço&rdquo; a cada passo:</p>
+<p><img src="/post/images/hist/morse-map.png" alt="morse-map"></p>
+<p><em>Exemplo prático:</em> Suponha que você queira saber qual letra corresponde ao código <code>.-.</code> (Ponto-Traço-Ponto).</p>
+<ol>
+<li>Comece no <code>Início</code>.</li>
+<li>Siga a seta do <strong>Ponto</strong> (chegando no E).</li>
+<li>Siga a seta do <strong>Traço</strong> (chegando no A).</li>
+<li>Siga a seta do <strong>Ponto</strong>. Você chegará à letra <strong>R</strong> (destacada em azul acima).</li>
+</ol>
+<p>Construir essa estrutura mental (ou em papel) garante que não se cometa o erro bobo de usar o mesmo código para duas letras diferentes, além de garantir o aproveitamento de todas as combinações possíveis sem criar sequências desnecessariamente longas. O que acontece se precisarmos incluir números e sinais de pontuação? Nós apenas continuamos seguindo a fórmula.</p>
+<ul>
+<li>Uma sequência de <strong>5</strong> pontos e traços nos dá <strong>32</strong> códigos adicionais (2⁵). Isso cobre os dez números e vários acentos.</li>
+<li>Para incluir toda a pontuação, expandimos para <strong>6</strong> pontos e traços, o que nos dá <strong>64</strong> códigos adicionais (2⁶).</li>
+</ul>
+<p>No total, teríamos <code>2 + 4 + 8 + 16 + 32 + 64 = 126</code> caracteres possíveis (a soma cumulativa de todas as combinações de 1 a 6 símbolos). Isso é mais do que o código Morse precisa! Por causa disso, muitos desses códigos mais longos são &ldquo;indefinidos&rdquo; (não significam nada). Se você receber um deles, provavelmente alguém cometeu um erro de digitação no telégrafo.</p>
+<h3 id="a-conexão-com-os-computadores">A Conexão com os Computadores</h3>
+<p>O código Morse é dito ser <strong><a href="https://pt.wikipedia.org/wiki/Sistema_bin%C3%A1rio">binário</a></strong> (que literalmente significa &ldquo;de dois em dois&rdquo;) porque os componentes do código consistem em apenas duas opções: um ponto ou um traço. Isso é exatamente semelhante a uma moeda, que só pode cair no lado cara ou no lado coroa. Se você jogar uma moeda 10 vezes seguidas, existem 2¹⁰ (ou 1024) sequências diferentes possíveis de caras e coroas.</p>
+<p>Combinações de objetos binários (como moedas) e códigos binários (como o código Morse) são <em>sempre</em> descritas por <strong>potências de dois</strong>. Entender essa simples progressão matemática é o primeiro passo fundamental para entender como os computadores modernos processam, armazenam e transmitem toda a informação do mundo digital.</p>
+<p>O código Morse representa letras como sequências que se desenrolam no tempo (pontos e traços sucessivos). O próximo sistema que veremos faz o oposto: representa letras como padrões que existem no espaço, percebidos de uma só vez pelo tato.</p>
+<p>Se você acha que Samuel Morse foi a primeira pessoa a traduzir com sucesso as letras da linguagem escrita para um código interpretável (ou o primeiro a ser mais lembrado pelo seu código do que por si mesmo), pense novamente. Essa honra pertence a um adolescente francês cego, <a href="https://pt.wikipedia.org/wiki/Louis_Braille">Louis Braille</a>, que nasceu 18 anos depois de Morse (1809) e publicou seu sistema de pontos em relevo aos 15 anos — mais de uma década antes de Morse apresentar seu telégrafo:</p>
+<p><img src="/post/images/hist/morse-vs-braille.png" alt="morse-vs-braille"></p>
+<p>A história de Louis Braille (1809–1852) não é apenas uma lição de superação; é uma aula magna sobre lógica binária e design de sistemas. O maior obstáculo na educação de crianças cegas no século XIX era a incapacidade de ler livros impressos. Até então, a solução tentada por <a href="https://pt.wikipedia.org/wiki/Valentin_Ha%C3%BCy">Valentin Haüy</a> (fundador da escola para cegos em Paris, onde Braille estudou) era imprimir letras normais do alfabeto em um formato grande e em alto-relevo.</p>
+<p>O problema? Para quem enxerga, um &ldquo;A&rdquo; tem que ter a forma de um &ldquo;A&rdquo;. Mas apalpar as curvas complexas de letras tradicionais com os dedos é um processo incrivelmente lento e frustrante. Haüy estava preso a um paradigma visual. Ele não percebeu que um <strong>código alternativo</strong>, e não a cópia da letra em si, seria muito mais eficiente.</p>
+<p>A verdadeira inspiração de Louis Braille veio do exército francês. O <a href="https://pt.wikipedia.org/wiki/Charles_Barbier">Capitão Charles Barbier</a> havia inventado a <em>écriture nocturne</em> (escrita noturna), um sistema de pontos em alto-relevo no papel para que soldados pudessem ler mensagens no escuro, em silêncio. Braille conheceu o sistema aos 12 anos. Aos 15, já o havia aprimorado e criado o sistema incrivelmente lógico que usamos até hoje.</p>
+<p><img src="/post/images/hist/charles-barbier.png" alt="charles-barbier"></p>
+<h2 id="a-célula-braille-uma-matriz-binária">A Célula Braille: Uma Matriz Binária</h2>
+<p>No sistema Braille, cada símbolo (letras, números e pontuação) é codificado como um ou mais pontos em alto-relevo dentro de uma pequena matriz retangular de 2 colunas por 3 linhas, chamada de <strong>célula</strong>. Os pontos são numerados de 1 a 6:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Coluna Esquerda</th>
+          <th>Coluna Direita</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Ponto <strong>1</strong></td>
+          <td>Ponto <strong>4</strong></td>
+      </tr>
+      <tr>
+          <td>Ponto <strong>2</strong></td>
+          <td>Ponto <strong>5</strong></td>
+      </tr>
+      <tr>
+          <td>Ponto <strong>3</strong></td>
+          <td>Ponto <strong>6</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>O que torna isso brilhante para nós, que estamos estudando a natureza dos códigos, é que <strong>os pontos são binários</strong>. Um ponto específico pode estar apenas em um de dois estados: <strong>plano</strong> ou em <strong>alto-relevo</strong>. Lembra da regra matemática das potências de 2 que vimos com o Código Morse? Podemos aplicá-la perfeitamente aqui. Se temos 6 pontos e cada ponto tem 2 estados possíveis, o número total de combinações é:</p>
+<blockquote>
+<p><strong>2 × 2 × 2 × 2 × 2 × 2 = 2⁶ = 64 combinações possíveis</strong></p>
+</blockquote>
+<p>Com uma única célula, o sistema Braille é capaz de representar <strong>64 códigos únicos</strong>. (Um deles é o espaço em branco, onde nenhum ponto é elevado).</p>
+<h2 id="a-lógica-elegante-do-alfabeto">A Lógica Elegante do Alfabeto</h2>
+<p>Louis Braille não distribuiu os pontos de forma aleatória. Como o sistema original era perfurado à mão com um punção (o que podia gerar imprecisões), ele criou padrões focados em formas reconhecíveis e redundância, reduzindo a chance de erros de leitura (erros de decodificação). Ele organizou o alfabeto latino básico em uma estrutura lógica em blocos:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    %% Estrutura Lógica do Alfabeto Braille
+    A[&lt;b&gt;Letras &#39;a&#39; até &#39;j&#39;&lt;/b&gt;&lt;br&gt;Usam APENAS os 4 pontos superiores&lt;br&gt;Pontos: 1, 2, 4, 5] --&gt; B(&lt;b&gt;Letras &#39;k&#39; até &#39;t&#39;&lt;/b&gt;&lt;br&gt;Copia a exata mesma forma de a-j&lt;br&gt;ADICIONA o Ponto 3)
+    B --&gt; C(&lt;b&gt;Letras &#39;u&#39; até &#39;z&#39;&lt;/b&gt;&lt;br&gt;Copia a exata mesma forma de k-t&lt;br&gt;ADICIONA o Ponto 6&lt;br&gt;*Exceto o &#39;w&#39;)
+    
+    style A fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px
+    style B fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style C fill:#e8f5e9,stroke:#4caf50,stroke-width:2px</div>
+ <blockquote>
+<p>(Nota: A letra &lsquo;w&rsquo; não fazia parte do alfabeto clássico francês na época, por isso ficou de fora dessa regra sequencial original).</p>
+</blockquote>
+<p>Mesmo com letras, espaços e algumas pontuações, não chegamos a 64 códigos. Em sistemas modernos, como o <strong><a href="https://pt.wikipedia.org/wiki/Braille#Graus_do_braille">Braille Grau 2</a></strong> (usado em livros em inglês), nada é desperdiçado. O sistema usa combinações para representar palavras inteiras (como &ldquo;and&rdquo;, &ldquo;the&rdquo;, &ldquo;with&rdquo;) ou pedaços de palavras (como &ldquo;ble&rdquo;), para economizar papel e acelerar a leitura.</p>
+<p>Mas como diferenciamos uma pontuação de uma letra, se os códigos se sobrepõem? É aqui que o Braille se mostra um verdadeiro predecessor da ciência da computação moderna, usando <strong>indicadores de contexto</strong>.</p>
+<p>As letras de &ldquo;a&rdquo; a &ldquo;j&rdquo; também são usadas para representar os números de &ldquo;1&rdquo; a &ldquo;0&rdquo;. Para que o leitor saiba que não está lendo letras, existe um código especial de número (pontos 3, 4, 5, 6).
+Quando esse código aparece, ele altera o significado de <strong>todos os códigos que o seguem</strong> (de letras para números) até que outro código o disfaça. É exatamente a mesma lógica de segurar a tecla <strong>Shift</strong> ou o <em>Caps Lock</em> no seu teclado!</p>
+<p>Como indicamos uma letra maiúscula? Usando o ponto 6 sozinho. Esse indicador de maiúscula diz que <strong>apenas a próxima letra</strong> deve ser interpretada de forma diferente (como maiúscula). Em computação, chamamos isso de código de escape: ele permite que você &ldquo;escape&rdquo; da interpretação normal apenas para o próximo caractere.</p>
+<hr>
+<h2 id="milênios-de-binário-o-i-ching-e-a-china-antiga">Milênios de Binário: O I Ching e a China Antiga</h2>
+<p>Muito antes de Morse, Braille ou qualquer computador, a civilização chinesa já havia codificado o pensamento binário no <strong><a href="https://pt.wikipedia.org/wiki/I_Ching">I Ching</a></strong> (易经, <em>O Livro das Mutações</em>), compilado há mais de três mil anos. No I Ching, cada linha de um diagrama pode assumir dois estados:</p>
+<ul>
+<li><strong>Linha Yang (⚊):</strong> contínua, sólida — representa o 1, o ativo, o firme.</li>
+<li><strong>Linha Yin (⚋):</strong> partida, quebrada — representa o 0, o receptivo, o flexível.</li>
+</ul>
+<p>Três linhas empilhadas formam um <strong>trigrama</strong> (卦). Com 3 linhas binárias, existem 2³ = 8 trigramas possíveis — exatamente a mesma lógica da árvore de decodificação de três níveis que vimos no Código Morse. Seis linhas empilhadas formam um <strong>hexagrama</strong>, com 2⁶ = <strong>64 combinações possíveis</strong> — o mesmo número de células do Braille e o mesmo número de valores que um byte de 6 bits poderia representar.</p>
+<p>Quando o matemático e filósofo alemão <a href="https://pt.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz">Gottfried Wilhelm Leibniz</a> tomou contato com o I Ching através de missionários jesuítas no século XVII, reconheceu imediatamente a correspondência entre os hexagramas e seu próprio sistema binário recém-desenvolvido. Leibniz viu na sabedoria chinesa antiga a confirmação de que a lógica de dois estados não era uma invenção arbitrária, mas um princípio fundamental do pensamento humano.</p>
+<p>O Código Morse (século XIX) e o Braille (século XIX) são manifestações modernas de uma intuição que a civilização chinesa já dominava milênios antes. O binário não nasceu com os computadores — ele sempre esteve ali, esperando para ser descoberto.</p>
+<hr>
+<h2 id="o-futuro-expandindo-o-binário">O Futuro: Expandindo o Binário</h2>
+<p>Assim como nossos computadores evoluíram, o Braille também precisou crescer. Códigos de turno e escape são geniais, mas adicionam complexidade: você não pode ler um caractere isolado sem saber o que veio antes dele. Para resolver isso em áreas complexas (como notação musical, ideogramas japoneses Kanji ou programação de computadores), foi criado o <strong>Braille de 8 pontos</strong> (adicionando mais uma linha à matriz). A matemática ataca novamente:</p>
+<blockquote>
+<p><strong>2⁸ = 256 combinações possíveis</strong></p>
+</blockquote>
+<p>Com 256 códigos únicos, letras maiúsculas, minúsculas, números e pontuações têm seu próprio código exclusivo, eliminando a necessidade de indicadores de contexto.</p>
+<p>E se o número 256 soa familiar para você, não é coincidência: <strong>256 é exatamente o número de valores que cabem em 1 <a href="https://pt.wikipedia.org/wiki/Byte">Byte</a> (8 bits) da memória do seu computador ou smartphone atual.</strong> A revolução binária começou muito antes das telas brilharem. O que a princípio eram apenas abstrações matemáticas — códigos de dois estados, combinações, potências de dois — logo encontraria seu lar em fios, interruptores e circuitos elétricos.</p>
+<hr>
+<h3 id="fonte">Fonte</h3>
+<ul>
+<li><a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</li>
+</ul>
+]]></content:encoded>
+      
+      
+      <category>morse,historia,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[A lógica binária do código morse]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Base02 - A Linguagem Oculta do Hardware</title>
+      <link>http://localhost:1313/2026/05/12/histcomp02/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp02/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>Os computadores parecem caixas mágicas, mas em seu núcleo absoluto, eles operam sob princípios incrivelmente simples e tangíveis. Para compreender como a eletricidade se transforma em lógica e, eventualmente, em computação, precisamos dar um passo atrás. Vamos esquecer os microprocessadores por um momento e olhar para algo muito mais simples: uma lanterna.</p>
+<h2 id="a-anatomia-de-uma-lanterna-e-a-dança-dos-elétrons">A Anatomia de uma Lanterna e a Dança dos Elétrons</h2>
+<p>Uma lanterna comum é um dos aparelhos elétricos mais simples que existem. Desmonte-a e você encontrará baterias, uma lâmpada, algumas peças de metal e, o mais importante, um <strong>interruptor</strong>. A eletricidade não é magia; é o fluxo de <a href="https://pt.wikipedia.org/wiki/El%C3%A9tron">elétrons</a> através de materiais condutores (como o cobre). Para entender esse fluxo, precisamos da analogia clássica da água encanada, definida por três grandezas fundamentais:</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>Os computadores parecem caixas mágicas, mas em seu núcleo absoluto, eles operam sob princípios incrivelmente simples e tangíveis. Para compreender como a eletricidade se transforma em lógica e, eventualmente, em computação, precisamos dar um passo atrás. Vamos esquecer os microprocessadores por um momento e olhar para algo muito mais simples: uma lanterna.</p>
+<h2 id="a-anatomia-de-uma-lanterna-e-a-dança-dos-elétrons">A Anatomia de uma Lanterna e a Dança dos Elétrons</h2>
+<p>Uma lanterna comum é um dos aparelhos elétricos mais simples que existem. Desmonte-a e você encontrará baterias, uma lâmpada, algumas peças de metal e, o mais importante, um <strong>interruptor</strong>. A eletricidade não é magia; é o fluxo de <a href="https://pt.wikipedia.org/wiki/El%C3%A9tron">elétrons</a> através de materiais condutores (como o cobre). Para entender esse fluxo, precisamos da analogia clássica da água encanada, definida por três grandezas fundamentais:</p>
+<ul>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Tens%C3%A3o_el%C3%A9trica">Tensão</a> (Volts - E):</strong> É a &ldquo;pressão&rdquo; da água. Uma bateria tem o potencial de realizar trabalho (como uma caixa d&rsquo;água no alto de um prédio).</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Corrente_el%C3%A9trica">Corrente</a> (Amperes - I):</strong> É a quantidade de água (elétrons) fluindo pelo cano.</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Resist%C3%AAncia_el%C3%A9trica">Resistência</a> (Ohms - R):</strong> É o &ldquo;estreitamento&rdquo; do cano. Quanto mais fino ou mais longo o cano, maior a resistência — menos água passa. O mesmo vale para os fios: fios mais longos ou mais finos oferecem maior resistência à corrente.</li>
+</ul>
+<p>A famosa <a href="https://pt.wikipedia.org/wiki/Lei_de_Ohm">Lei de Ohm</a> conecta essas grandezas matematicamente:</p>
+<p><strong>I = E / R</strong></p>
+<p>Em português: a corrente (I) é igual à tensão (E) dividida pela resistência (R). Na prática, quanto maior a resistência, menor a corrente — por isso fios muito longos não conseguem acender uma lâmpada no outro extremo.</p>
+<p>Para que a lâmpada brilhe, o caminho da bateria até a lâmpada e de volta à bateria deve ser contínuo. É um <strong>circuito</strong> (um círculo). O papel do interruptor é simplesmente quebrar ou completar esse círculo. Ele é puramente binário: ligado ou desligado. Sem meio-termo.</p>
+
+
+  
+  <div class="mermaid">graph LR
+    subgraph Circuito Simples
+    B[Bateria &#43;] -- Corrente Elétrica --&gt; S(Interruptor)
+    S -- Se Fechado --&gt; L((Lâmpada))
+    L -- Retorno --&gt; B_neg[Bateria -]
+    end
+    
+    style S fill:#ff9999,stroke:#333,stroke-width:2px
+    style L fill:#fff0a0,stroke:#333,stroke-width:2px</div>
+ <h2 id="telégrafos-relés-e-a-comunicação-a-distância">Telégrafos, Relés e a Comunicação a Distância</h2>
+<p>Imagine que você queira usar lanternas para se comunicar em código Morse com um vizinho, mas as janelas de vocês não se alinham. A solução? Estender os fios da sua bateria até a lâmpada no quarto dele.</p>
+<p>No entanto, fios muito longos possuem muita resistência. Se você esticar um fio por quilômetros, a corrente elétrica (I) cairá drasticamente, e a lâmpada não acenderá. Foi exatamente esse o problema enfrentado na criação do <a href="https://pt.wikipedia.org/wiki/Tel%C3%A9grafo">telégrafo</a>. A solução genial para isso foi o <strong><a href="https://pt.wikipedia.org/wiki/Rel%C3%A9">Relé</a></strong> (Relay).</p>
+<p>Um relé é essencialmente um interruptor, mas em vez de ser acionado por um dedo humano, ele é acionado pela própria <em>eletricidade</em>. Ele usa um <a href="https://pt.wikipedia.org/wiki/Eletro%C3%ADm%C3%A3">eletroímã</a>: quando uma corrente fraca entra, ela magnetiza uma barra de ferro, que puxa um contato metálico, fechando um segundo circuito alimentado por uma bateria nova e forte.</p>
+
+
+  
+  <div class="mermaid">graph LR
+    subgraph Relé: O Interruptor Automático
+    SinalFraco[Sinal de Entrada Fraco] --&gt;|Magnetiza| Eletroima[Eletroímã]
+    Eletroima -. Puxa .-&gt; Contato[Contato Metálico]
+    BateriaForte[Nova Bateria Forte] --&gt; Contato
+    Contato --&gt;|Sinal Renovado| Saida[Sinal de Saída Forte]
+    end</div>
+ <p>O relé permitiu que o sinal do telégrafo cruzasse continentes, sendo &ldquo;amplificado&rdquo; (retransmitido) de estação em estação. Mas a verdadeira revolução do relé ocorreu quando engenheiros perceberam que, se a eletricidade pode controlar interruptores, podemos construir máquinas que processam <strong>lógica</strong>.</p>
+<h2 id="a-álgebra-de-boole">A Álgebra de Boole</h2>
+<p>No século XIX, o matemático <a href="https://pt.wikipedia.org/wiki/George_Boole">George Boole</a> inventou uma forma de álgebra onde os operandos não são números (como 3 ou 5), mas sim <em>classes</em> (verdadeiro/falso, 1 ou 0). Na <a href="https://pt.wikipedia.org/wiki/%C3%81lgebra_booliana">Álgebra Booleana</a>, operamos com conceitos como <strong>E</strong> (AND) e <strong>OU</strong> (OR). O brilho da engenharia foi perceber que circuitos elétricos são a manifestação física perfeita dessa álgebra. Veja como:</p>
+<h3 id="conexão-em-série-a-porta-and">Conexão em Série (A Porta AND)</h3>
+<p>Se ligarmos dois interruptores um após o outro (em série), a lâmpada só acenderá se o Interruptor A <strong>E</strong> o Interruptor B estiverem fechados. Se qualquer um estiver aberto, o circuito se quebra e a lâmpada apaga. Isso é uma multiplicação booleana (A × B): o resultado só é 1 (aceso) quando ambos os fatores são 1.</p>
+<h3 id="conexão-em-paralelo-a-porta-or">Conexão em Paralelo (A Porta OR)</h3>
+<p>Se ligarmos os interruptores lado a lado (em paralelo), a corrente terá dois caminhos possíveis. A lâmpada acenderá se o Interruptor A <strong>OU</strong> o Interruptor B estiver fechado (ou ambos). Isso é uma adição booleana (A + B): basta um dos operandos ser 1 para o resultado ser 1.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    subgraph Porta AND Lógica em Série
+    A1[Bateria] --&gt; S1[Interruptor A]
+    S1 --&gt; S2[Interruptor B]
+    S2 --&gt; L1((Lâmpada))
+    end
+    
+    subgraph Porta OR Lógica em Paralelo
+    A2[Bateria] --&gt; S3[Interruptor A]
+    A2 --&gt; S4[Interruptor B]
+    S3 --&gt; L2((Lâmpada))
+    S4 --&gt; L2
+    end</div>
+ <h2 id="o-nascimento-das-portas-lógicas">O Nascimento das Portas Lógicas</h2>
+<p>Como os relés podem atuar como interruptores controlados por eletricidade, podemos substituir os interruptores manuais por relés em cascata. Isso cria o que chamamos de <strong>Portas Lógicas</strong> (Logic Gates), os blocos fundamentais de construção de qualquer computador. Aqui estão as portas primárias:</p>
+<ol>
+<li><strong>AND (E):</strong> Dois relés em série. A saída só é 1 se <em>todas</em> as entradas forem 1.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">Saída (A AND B)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+  </tbody>
+</table>
+<ol start="2">
+<li><strong>OR (OU):</strong> Dois relés em paralelo. A saída é 1 se <em>qualquer</em> entrada for 1.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">Saída (A OR B)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+  </tbody>
+</table>
+<ol start="3">
+<li><strong>NOT (Inversor):</strong> Enquanto a AND e a OR usam contatos que fecham quando o eletroímã é ativado, a NOT usa um contato que <em>abre</em> quando ativado. Se a entrada tem corrente (1), o eletroímã puxa o contato e corta a corrente na saída, gerando 0. Ele simplesmente inverte o sinal.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada</th>
+          <th style="text-align: center">Saída (NOT A)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>0</strong></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="portas-universais-nand-e-nor">Portas Universais: NAND e NOR</h3>
+<p>Combinando um inversor (NOT) com uma porta AND ou OR, obtemos as portas <strong>NAND</strong> e <strong>NOR</strong>. Elas têm um comportamento fascinante regido pelas <strong><a href="https://pt.wikipedia.org/wiki/Leis_de_De_Morgan">Leis de De Morgan</a></strong>:</p>
+<p>Em português, a primeira lei diz: &ldquo;Não ser (A e B) é o mesmo que (Não A) ou (Não B)&rdquo;. A segunda: &ldquo;Não ser (A ou B) é o mesmo que (Não A) e (Não B)&rdquo;. Em símbolos:</p>
+<p><strong>¬(A ∧ B) = ¬A ∨ ¬B</strong></p>
+<p><strong>¬(A ∨ B) = ¬A ∧ ¬B</strong></p>
+<p>Na prática, isso significa:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">NAND (¬(A∧B))</th>
+          <th style="text-align: center">NOR (¬(A∨B))</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+  </tbody>
+</table>
+<p>Isso não é só teoria — na engenharia, se você tiver apenas relés configurados como portas NAND (ou NOR), pode construir literalmente todas as outras portas combinando-as.</p>
+
+
+  
+  <div class="mermaid">graph LR
+    subgraph Símbolos das Portas Lógicas
+    InA1(Entrada A) --&gt; AND{AND}
+    InB1(Entrada B) --&gt; AND
+    AND --&gt; Out1(Saída)
+
+    InA2(Entrada A) --&gt; OR{OR}
+    InB2(Entrada B) --&gt; OR
+    OR --&gt; Out2(Saída)
+    
+    InA3(Entrada) --&gt; NOT{NOT}
+    NOT --&gt; Out3(Saída Invertida)
+    end</div>
+ <hr>
+<h2 id="conclusão-da-lanterna-ao-computador">Conclusão: Da Lanterna ao Computador</h2>
+<p>A lanterna nos ensinou que um circuito fechado permite o fluxo de elétrons. O telégrafo nos introduziu ao relé, um interruptor controlado remotamente. Ao organizar esses relés em série ou em paralelo, materializamos a Álgebra de Boole em hardware físico.</p>
+<p>Quando você digita no seu teclado ou clica em uma tela hoje, bilhões de minúsculos interruptores (<a href="https://pt.wikipedia.org/wiki/Trans%C3%ADstor">transistores</a> modernos, que substituíram os antigos relés barulhentos) estão abrindo e fechando de acordo com essas exatas mesmas regras fundamentais de AND, OR e NOT. Toda a complexidade da computação moderna, do seu smartphone aos servidores na nuvem, é apenas uma orquestração maciça dessas operações lógicas incrivelmente simples — a mesma lógica que começou com uma lanterna, alguns fios e um interruptor. Agora que o hardware sabe como pensar em termos de 0 e 1, a pergunta seguinte é inevitável: como representar números maiores que 1 nessa linguagem de dois estados?</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>hardware,portas lógicas,álgebra booleana,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Como interruptores, relés e álgebra booleana deram origem aos computadores]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Base03 - Dos nossos dez dedos aos Bits e Bytes</title>
+      <link>http://localhost:1313/2026/05/12/histcomp03/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp03/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>A ideia de que a linguagem é apenas um código é facilmente aceitável para a maioria de nós. Sabemos que o animal que chamamos de &ldquo;gato&rdquo; pode ser <em>cat</em>, <em>chat</em>, <em>Katze</em>, <em>кошка</em> ou <em>γάτα</em> dependendo do idioma. Os números, no entanto, parecem menos maleáveis culturalmente. A matemática é frequentemente chamada de &ldquo;linguagem universal&rdquo; porque, independentemente de como pronunciamos, escrevemos nossos algarismos da mesma forma em quase todo o planeta: <strong>0, 1, 2, 3, 4, 5, 6, 7, 8, 9</strong>.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>A ideia de que a linguagem é apenas um código é facilmente aceitável para a maioria de nós. Sabemos que o animal que chamamos de &ldquo;gato&rdquo; pode ser <em>cat</em>, <em>chat</em>, <em>Katze</em>, <em>кошка</em> ou <em>γάτα</em> dependendo do idioma. Os números, no entanto, parecem menos maleáveis culturalmente. A matemática é frequentemente chamada de &ldquo;linguagem universal&rdquo; porque, independentemente de como pronunciamos, escrevemos nossos algarismos da mesma forma em quase todo o planeta: <strong>0, 1, 2, 3, 4, 5, 6, 7, 8, 9</strong>.</p>
+<p>Mas será que o nosso sistema numérico tem algo de intrinsecamente mágico ou especial? A verdade é que a fundação de toda a computação moderna exige que abandonemos o nosso apego ao número dez.</p>
+<h2 id="1-a-ilusão-da-base-10">1. A Ilusão da Base 10</h2>
+<p>Os números são abstrações puras. Quando vemos o símbolo <strong>3</strong>, não precisamos relacioná-lo imediatamente a 3 maçãs. Pode ser um canal de televisão, um dia do mês ou o número de xícaras em uma receita.</p>
+<p>Historicamente, os números foram inventados para contar posses e transações. Se alguém tivesse quatro patos, desenhava quatro patos. Eventualmente, para simplificar, usaram-se marcas ou riscos. E quando alguém tinha 27 patos? Fazer 27 riscos era inviável. Foi assim que os sistemas numéricos evoluíram.</p>
+<p>A maioria dos sistemas antigos, como os numerais romanos, era péssima para matemática avançada. Experimente multiplicar <code>MCMLIII</code> por <code>XIV</code>. O sistema que usamos hoje, o <strong><a href="https://pt.wikipedia.org/wiki/Sistema_de_numera%C3%A7%C3%A3o_hindu-ar%C3%A1bico">Hindu-Arábico</a></strong>, revolucionou a matemática por três motivos:</p>
+<ol>
+<li><strong>Notação Posicional:</strong> A posição do dígito altera seu valor. O &ldquo;1&rdquo; em 100 vale muito mais que o &ldquo;1&rdquo; em 10.</li>
+<li><strong>Ausência de um Símbolo para Dez:</strong> O dez é representado por dois dígitos (1 e 0), mudando a posição do 1.</li>
+<li><strong>O Zero:</strong> A invenção do zero é um dos maiores marcos da história. Ele serve como marcador de posição, permitindo distinguir instantaneamente 25, 205 e 250, facilitando imensamente a multiplicação e a divisão.</li>
+</ol>
+<p>A estrutura do nosso sistema decimal (base 10) é baseada em potências de dez. O número 4825, por exemplo, é lido e decomposto matematicamente como:</p>
+<p><strong>4825 = 4 × 10³ + 8 × 10² + 2 × 10¹ + 5 × 10⁰</strong></p>
+<blockquote>
+<p><strong>Curiosidade:</strong> Usamos a base 10 puramente por um acidente anatômico: temos dez dedos nas mãos. Se fôssemos personagens de desenhos animados com apenas quatro dedos em cada mão, acharíamos perfeitamente natural usar um sistema de base 8.</p>
+</blockquote>
+<hr>
+<h2 id="2-bases-alternativas-octal-e-quaternário">2. Bases Alternativas: Octal e Quaternário</h2>
+<p>Se fôssemos personagens de desenho animado e contássemos na base 8 (Sistema Octal), os símbolos <strong>8</strong> e <strong>9</strong> simplesmente não existiriam. A contagem seria: <code>0, 1, 2, 3, 4, 5, 6, 7...</code> e, ao esgotarmos os símbolos, passaríamos para o <strong>10</strong> (que equivaleria ao nosso 8 decimal).</p>
+<p>O sistema octal possui a mesma estrutura posicional, mas usa potências de 8:</p>
+<p><strong>3725₈ = 3 × 8³ + 7 × 8² + 2 × 8¹ + 5 × 8⁰</strong></p>
+<p>Se fôssemos lagostas e usássemos apenas nossas duas pinças principais para contar, usaríamos a base 4 (Sistema Quaternário), contando com os dígitos <code>0, 1, 2, 3</code>. E se fôssemos golfinhos, contando apenas com duas nadadeiras? Chegaríamos à base da computação moderna.</p>
+<hr>
+<h2 id="3-a-linguagem-dos-computadores-o-sistema-binário">3. A Linguagem dos Computadores: O Sistema Binário</h2>
+<p>O sistema binário (base 2) usa apenas dois dígitos: <strong>0</strong> e <strong>1</strong>. O maior problema do binário é que esgotamos os dígitos rapidamente. A contagem é assim: <code>0, 1, 10, 11, 100, 101, 110, 111, 1000...</code></p>
+<p>Os números binários ficam longos muito depressa, mas sua estrutura posicional segue as potências de 2:</p>
+<p><strong>1101₂ = 1 × 2³ + 1 × 2² + 0 × 2¹ + 1 × 2⁰ = 13₁₀</strong></p>
+<h3 id="convertendo-binário-para-decimal-e-vice-versa">Convertendo Binário para Decimal e Vice-Versa</h3>
+
+
+  
+  <div class="mermaid">graph LR
+    subgraph Binário para Decimal
+    direction TB
+    B1[10010110] --&gt; M[Multiplicar cada bit pela sua potência de 2 respectiva]
+    M --&gt; S[128 &#43; 0 &#43; 0 &#43; 16 &#43; 0 &#43; 4 &#43; 2 &#43; 0]
+    S --&gt; R1[150]
+    end</div>
+ <p>Para converter decimal para binário, fazemos divisões sucessivas pelo maior valor de potência de 2 possível, anotando os quocientes (que serão sempre 0 ou 1) e passando o resto adiante.</p>
+<hr>
+<h2 id="4-o-bit-a-menor-unidade-de-informação">4. O &ldquo;Bit&rdquo;: A Menor Unidade de Informação</h2>
+<p>A palavra <strong><a href="https://pt.wikipedia.org/wiki/Bit">bit</a></strong> foi cunhada pelo matemático <a href="https://en.wikipedia.org/wiki/John_Tukey">John Tukey</a> na década de 1940 como uma contração de <em>binary digit</em> (dígito binário).</p>
+<p>Um bit é a menor quantidade possível de informação: uma escolha entre duas alternativas mutuamente exclusivas. Sim ou Não. Verdadeiro ou Falso. Luz acesa ou apagada. Quando Paul Revere precisou saber como os britânicos atacariam, usou lanternas:</p>
+<ul>
+<li>1 lanterna = por terra</li>
+<li>2 lanternas = pelo mar</li>
+<li>Nenhuma lanterna = sem ataque</li>
+</ul>
+<p>Com múltiplos bits, aumentamos exponencialmente a quantidade de possibilidades (2ⁿ).</p>
+<ul>
+<li><strong>1 bit:</strong> 2 estados (0, 1)</li>
+<li><strong>2 bits:</strong> 4 estados (00, 01, 10, 11)</li>
+<li><strong>3 bits:</strong> 8 estados (000 a 111)</li>
+<li><strong>8 bits:</strong> 256 estados</li>
+</ul>
+<h3 id="decodificadores-conectando-lógica-e-hardware">Decodificadores: Conectando Lógica e Hardware</h3>
+<p>Na eletrônica, agrupamentos de bits controlam circuitos físicos através de portas lógicas (AND, OR, NOT). Um decodificador <em>3-to-8</em> lê 3 interruptores (bits) e ilumina 1 de 8 lâmpadas (estados).</p>
+
+
+  
+  <div class="mermaid">flowchart LR
+    A[Switch 2: Bit Mais Significativo] --&gt; D{Decodificador Lógico}
+    B[Switch 1: Bit Intermediário] --&gt; D
+    C[Switch 0: Bit Menos Significativo] --&gt; D
+    
+    D --&gt;|000| O0(Saída 0 Ativa)
+    D --&gt;|001| O1(Saída 1 Ativa)
+    D --&gt;|111| O7(Saída 7 Ativa)
+    
+    style D fill:#333,stroke:#f66,stroke-width:2px,color:#fff</div>
+ <hr>
+<h2 id="5-bits-no-mundo-real-código-de-barras-e-qr-code">5. Bits no Mundo Real: Código de Barras e QR Code</h2>
+<p>Bits não estão apenas nos fios. Eles estão ao nosso redor em representações físicas.</p>
+<h3 id="o-código-de-barras-upc">O Código de Barras (UPC)</h3>
+<p>O <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_de_barras">Código de Barras</a> (UPC)</strong> que vemos nos supermercados é uma string de 95 bits. O scanner não lê números; ele lê uma fatia horizontal onde:</p>
+<ul>
+<li><strong>Barra Preta Fina</strong> = <code>1</code></li>
+<li><strong>Espaço Branco Fino</strong> = <code>0</code></li>
+<li><strong>Barras mais grossas</strong> = <code>11</code>, <code>111</code> ou <code>1111</code></li>
+</ul>
+<p>O UPC utiliza <strong>bits de paridade</strong> (garantindo número par ou ímpar de uns) e padrões de guarda (nas pontas e no centro, ex: <code>101</code>) para permitir a leitura de trás para frente e garantir consistência, evitando adulterações simples com uma caneta preta.</p>
+<h3 id="qr-codes">QR Codes</h3>
+<p>O <a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_QR">QR Code</a> move os bits para duas dimensões. Quadrados pretos são <code>1</code> e brancos são <code>0</code>. Ele possui:</p>
+<ol>
+<li><strong>Padrões Fixos:</strong> Os grandes quadrados nos cantos (finder patterns) para orientação do leitor.</li>
+<li><strong>Máscaras:</strong> A leitura ótica funciona melhor se houver equilíbrio entre áreas claras e escuras. O QR aplica um &ldquo;padrão de máscara&rdquo; matematicamente para inverter bits estrategicamente antes da leitura.</li>
+<li><strong>Indicadores de Tipo:</strong> Bits que dizem ao leitor se a informação é texto, número, link, etc.</li>
+</ol>
+<hr>
+<h2 id="6-bytes-e-hexadecimal">6. Bytes e Hexadecimal</h2>
+<p>À medida que os computadores evoluíram, organizar os bits individualmente tornou-se caótico. A indústria começou a agrupar bits no que chamamos de <strong>Word</strong> (Palavra). O tamanho ideal estabelecido para a computação geral foi o agrupamento de 8 bits: o <strong><a href="https://pt.wikipedia.org/wiki/Byte">Byte</a></strong>.</p>
+<p>Um Byte pode representar 2⁸ (256) valores diferentes, indo de <code>00000000</code> a <code>11111111</code> (0 a 255 em decimal). É o tamanho perfeito para codificar caracteres de texto ocidentais (ASCII) e intensidades de cores em uma tela (onde RGB = 3 bytes).</p>
+<h3 id="o-sistema-hexadecimal-base-16">O Sistema Hexadecimal (Base 16)</h3>
+<p>Ler grandes cadeias de bits (<code>1011011001010111</code>) é insano para humanos. O sistema Octal (agrupamento de 3 bits) foi tentado, mas existe uma incompatibilidade estrutural: 8 bits não dividem igualmente por 3.</p>
+<p>A solução? O <strong><a href="https://pt.wikipedia.org/wiki/Sistema_hexadecimal">Hexadecimal</a></strong> (base 16). Cada dígito hexadecimal mapeia perfeitamente um grupo de 4 bits (um <em><a href="https://en.wikipedia.org/wiki/Nibble">nibble</a></em>). Dois dígitos hexadecimais formam exatamente 1 Byte.</p>
+<p>Como nosso alfabeto decimal acaba no 9, o hexadecimal empresta as seis primeiras letras do alfabeto latino:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Decimal</th>
+          <th>Binário</th>
+          <th>Hex</th>
+          <th></th>
+          <th>Decimal</th>
+          <th>Binário</th>
+          <th>Hex</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>0000</td>
+          <td><strong>0</strong></td>
+          <td></td>
+          <td>8</td>
+          <td>1000</td>
+          <td><strong>8</strong></td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>0001</td>
+          <td><strong>1</strong></td>
+          <td></td>
+          <td>9</td>
+          <td>1001</td>
+          <td><strong>9</strong></td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>0010</td>
+          <td><strong>2</strong></td>
+          <td></td>
+          <td>10</td>
+          <td>1010</td>
+          <td><strong>A</strong></td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>0011</td>
+          <td><strong>3</strong></td>
+          <td></td>
+          <td>11</td>
+          <td>1011</td>
+          <td><strong>B</strong></td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>0100</td>
+          <td><strong>4</strong></td>
+          <td></td>
+          <td>12</td>
+          <td>1100</td>
+          <td><strong>C</strong></td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>0101</td>
+          <td><strong>5</strong></td>
+          <td></td>
+          <td>13</td>
+          <td>1101</td>
+          <td><strong>D</strong></td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>0110</td>
+          <td><strong>6</strong></td>
+          <td></td>
+          <td>14</td>
+          <td>1110</td>
+          <td><strong>E</strong></td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>0111</td>
+          <td><strong>7</strong></td>
+          <td></td>
+          <td>15</td>
+          <td>1111</td>
+          <td><strong>F</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>Assim, a longa string binária <code>0010010001101000101011001110</code> pode ser separada em blocos de 4 e traduzida instantaneamente:
+<code>0010</code> <code>0100</code> <code>0110</code> <code>1000</code> <code>1010</code> <code>1100</code> <code>1110</code></p>
+<p><strong>2</strong>           <strong>4</strong>          <strong>6</strong>         <strong>8</strong>          <strong>A</strong>         <strong>C</strong>         <strong>E</strong></p>
+<p>O número é <code>2468ACEh</code> (o &lsquo;h&rsquo; é um sufixo comum para identificar hexadecimais, assim como o <code>#</code> no HTML, ex: <code>#E74536</code>).</p>
+<p>A matemática posicional do Hexadecimal funciona igual a todas as outras bases:</p>
+<p><strong>9A48C₁₆ = 9 × 16⁴ + 10 × 16³ + 4 × 16² + 8 × 16¹ + 12 × 16⁰ = 631948₁₀</strong></p>
+<p>Nossa familiaridade com os números baseados em &ldquo;dez&rdquo; nos cega para a elegância abstrata da matemática posicional. Ao dominarmos a maleabilidade das bases numéricas, compreendemos o segredo fundamental por trás de todos os sistemas computacionais já criados. Com os números representados em bits e os bits agrupados em bytes, surge o próximo desafio: como usar esses bytes para representar não apenas números, mas letras, símbolos e todo o texto que lemos na tela?</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>numeração,binário,hexadecimal,bits,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Sistemas de numeração, binário e hexadecimal para computação]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Base04 - Do Bit ao Símbolo, do Relé ao Chip</title>
+      <link>http://localhost:1313/2026/05/12/histcomp04/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp04/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>Como desenvolvedores, passamos a maior parte do nosso tempo em abstrações elevadas, escrevendo código em Go, C#, Elixir ou Rust, e confiando que o compilador e o sistema operacional farão a mágica acontecer. Mas, sob as camadas de frameworks e interfaces, tudo se resume a uma dança perfeitamente orquestrada de elétrons, portas lógicas e convenções de bits.</p>
+<p>Este artigo é um mergulho profundo nas fundações de duas das engrenagens mais vitais da computação: <strong>como representamos a linguagem humana em zeros e uns</strong> e <strong>como construímos o hardware capaz de processar esses dados</strong>. Prepare o seu café, pois vamos descer ao escovão de bits.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>Como desenvolvedores, passamos a maior parte do nosso tempo em abstrações elevadas, escrevendo código em Go, C#, Elixir ou Rust, e confiando que o compilador e o sistema operacional farão a mágica acontecer. Mas, sob as camadas de frameworks e interfaces, tudo se resume a uma dança perfeitamente orquestrada de elétrons, portas lógicas e convenções de bits.</p>
+<p>Este artigo é um mergulho profundo nas fundações de duas das engrenagens mais vitais da computação: <strong>como representamos a linguagem humana em zeros e uns</strong> e <strong>como construímos o hardware capaz de processar esses dados</strong>. Prepare o seu café, pois vamos descer ao escovão de bits.</p>
+<p>Toda vez que você digita em um teclado ou lê um texto na tela, está confiando em um sistema padronizado de codificação de caracteres. Sem isso, a comunicação moderna entre sistemas operacionais e arquiteturas diferentes seria impossível.</p>
+<h3 id="a-era-do-telégrafo-e-o-código-baudot">A Era do Telégrafo e o Código Baudot</h3>
+<p>Muito antes dos computadores modernos, a necessidade de transmitir texto via cabos elétricos gerou o <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Baudot">Código Baudot</a></strong> (usado em teletipos). Diferente do Código Morse (que tem tamanho variável), o Baudot era um código de <strong>5 bits</strong>. Com 5 bits, você só consegue representar 2⁵ = 32 caracteres.</p>
+<p>Como encaixar o alfabeto, números e pontuação em 32 slots? A solução foi o uso de <strong>Shift Codes</strong> (Códigos de Mudança). Havia um código para &ldquo;Letter Shift&rdquo; e outro para &ldquo;Figure Shift&rdquo;.</p>
+<ul>
+<li>Se o teletipo recebesse o código de <em>Figure Shift</em>, tudo que viesse a seguir seria interpretado como números ou pontuação.</li>
+<li>Se recebesse <em>Letter Shift</em>, voltava para letras.</li>
+</ul>
+<p>O problema? Se um código de <em>Shift</em> fosse perdido ou se você começasse a ler o fluxo de dados na metade, o texto virava lixo. A frase <code>I SPENT $25 TODAY.</code> poderia sair como <code>8 '03,5 $25 TODAY.</code> se a máquina não soubesse em qual &ldquo;estado&rdquo; estava. Precisávamos de algo melhor, sem a dependência de estados (stateless).</p>
+<h3 id="a-ascensão-do-ascii">A Ascensão do ASCII</h3>
+<p>Para evitar os problemáticos Shift Codes e acomodar letras maiúsculas, minúsculas, números e pontuações do inglês, a indústria chegou a um número mágico: <strong>7 bits</strong> (128 combinações possíveis).</p>
+<p>Assim nasceu o <strong><a href="https://pt.wikipedia.org/wiki/ASCII">ASCII</a></strong> (American Standard Code for Information Interchange).
+No ASCII, os caracteres gráficos (letras, números) convivem com caracteres de controle (como <code>Carriage Return - 0Dh</code> e <code>Line Feed - 0Ah</code>, heranças diretas das máquinas de escrever mecânicas).</p>
+<p>Uma sacada genial do ASCII: a diferença entre uma letra maiúscula (ex: <code>A</code> = <code>41h</code> ou <code>1000001</code>) e sua versão minúscula (<code>a</code> = <code>61h</code> ou <code>1100001</code>) é de exatos <code>20h</code> (ou apenas um bit, o sexto bit, invertido). Isso tornou a conversão entre caixas incrivelmente rápida em nível de processador: basta uma operação lógica simples, sem tabelas de conversão complexas.</p>
+<p>Enquanto o ASCII dominava o mundo, a IBM tentou emplacar o <strong>EBCDIC</strong> (um código de 8 bits derivado dos cartões perfurados), mas suas sequências de letras tinham &ldquo;buracos&rdquo; não lineares, tornando a ordenação alfabética um pesadelo computacional. O ASCII venceu essa batalha.</p>
+<h3 id="o-caos-das-extensões-e-a-solução-unicode">O Caos das Extensões e a Solução Unicode</h3>
+<p>O ASCII era perfeito&hellip; se você falasse apenas inglês americano. Não havia <code>£</code>, <code>ç</code>, <code>á</code> ou suporte para cirílico, árabe ou mandarim.</p>
+<p>Como a memória passou a ser organizada em <em>bytes</em> de 8 bits (256 valores), o bit extra que sobrava no ASCII (que usava 7) começou a ser usado para criar as <strong>Code Pages</strong> (Páginas de Código), como a famigerada <code>Windows-1252</code> ou <code>ISO-8859-1</code>. Os primeiros 128 caracteres eram ASCII, os 128 seguintes variavam de acordo com o país. Foi a era de ouro de abrir um site e ver <code>Weâ€™ve</code> no lugar de <code>We've</code>.</p>
+<p>A verdadeira salvação foi o <strong><a href="https://pt.wikipedia.org/wiki/Unicode">Unicode</a></strong>. Originalmente pensado como um código fixo de 16 bits (65.536 caracteres), ele logo precisou ser expandido para 21 bits (chegando ao limite de <code>U+10FFFF</code>), permitindo mais de 1 milhão de caracteres — de hieróglifos egípcios ao emoji de gatinho chorando de rir 😹.</p>
+<p>Mas como salvar tudo isso sem triplicar o tamanho de todos os arquivos de texto do mundo e sem quebrar sistemas legados?</p>
+<h3 id="a-mágica-do-utf-8">A Mágica do UTF-8</h3>
+<p>A solução elegante foi o <strong><a href="https://pt.wikipedia.org/wiki/UTF-8">UTF-8</a></strong>, um formato de transformação de tamanho variável. Ele é brilhante porque é 100% retrocompatível com o ASCII puro.</p>
+<p>A regra é simples e determinada pelos bits iniciais do primeiro byte:</p>
+<ol>
+<li>Se o byte começa com <code>0</code>, é um caractere ASCII de 1 byte (exatamente igual ao ASCII tradicional).</li>
+<li>Se começa com <code>110</code>, é o primeiro de <strong>2 bytes</strong>.</li>
+<li>Se começa com <code>1110</code>, é o primeiro de <strong>3 bytes</strong>.</li>
+<li>Se começa com <code>11110</code>, é o primeiro de <strong>4 bytes</strong>.</li>
+<li>Qualquer byte de continuação <em>sempre</em> começa com <code>10</code>.</li>
+</ol>
+
+
+  
+    
+  
+  <div class="mermaid">flowchart TD
+    A[Ler o primeiro Byte] --&gt; B{Começa com 0?}
+    B -- Sim --&gt; C[1 Byte: Caractere ASCII Tradicional]
+    B -- Não --&gt; D{Começa com 110?}
+    D -- Sim --&gt; E[2 Bytes: Ex: Letras Latinas c/ acento, Grego]
+    D -- Não --&gt; F{Começa com 1110?}
+    F -- Sim --&gt; G[3 Bytes: Ex: Símbolos complexos, Hiragana]
+    F -- Não --&gt; H[4 Bytes: Ex: Emojis, Ideogramas raros]</div>
+ <p>Se um programa tropeçar no meio de um arquivo UTF-8, ele consegue se sincronizar rapidamente apenas procurando um byte que não comece com <code>10</code>. É um design robusto e tolerante a falhas.</p>
+<hr>
+<h2 id="parte-2-a-matemática-ganhando-vida">Parte 2: A Matemática Ganhando Vida</h2>
+<p>Saber representar a informação é apenas metade da equação. Como uma máquina realmente a manipula? Na sua essência, tudo o que um computador faz é somar. Se você sabe somar, sabe subtrair (somando o complemento), multiplicar (somando repetidamente) e, a partir daí, renderizar gráficos 3D ou treinar redes neurais.</p>
+<h3 id="adição-em-binário-e-portas-lógicas">Adição em Binário e Portas Lógicas</h3>
+<p>A tabela de adição binária é extremamente simples:</p>
+<ul>
+<li>0 + 0 = 0</li>
+<li>0 + 1 = 1</li>
+<li>1 + 0 = 1</li>
+<li>1 + 1 = 0 (e &ldquo;vai um&rdquo; / carry 1)</li>
+</ul>
+<p>Se mapearmos isso para lógica booleana, percebemos que o bit de <strong>Soma</strong> (Sum) comporta-se exatamente como uma porta lógica <strong>XOR</strong> (Exclusive OR), enquanto o bit de <strong>Carry</strong> (Vai-um) comporta-se como uma porta <strong>AND</strong>.</p>
+<p>Se juntarmos uma porta XOR e uma AND, criamos o bloco fundamental da computação: o <strong>Half Adder</strong> (Meio Somador).</p>
+
+
+  
+  <div class="mermaid">graph LR
+    A((Input A)) --&gt; XOR{XOR}
+    B((Input B)) --&gt; XOR
+    A --&gt; AND{AND}
+    B --&gt; AND
+    XOR --&gt; Sum((Sum Bit))
+    AND --&gt; Carry((Carry Bit))</div>
+ <p>O problema do <em>Half Adder</em> é que ele não aceita um &ldquo;Carry In&rdquo; (o &ldquo;vai-um&rdquo; da coluna anterior). Para somar números maiores, precisamos de um <strong>Full Adder</strong> (Somador Completo), que utiliza dois Half Adders e uma porta OR.</p>
+<p>Ao conectar 8 Full Adders em cascata — ligando o <code>Carry Out</code> de um no <code>Carry In</code> do próximo — temos um <strong>Ripple Carry Adder de 8 bits</strong>.</p>
+<h3 id="a-evolução-da-mecânica-ao-estado-sólido">A Evolução: Da Mecânica ao Estado Sólido</h3>
+<p>Como implementamos essas portas lógicas no mundo físico? A evolução do hardware é a verdadeira &ldquo;batalha dos milissegundos&rdquo; e, posteriormente, dos nanossegundos.</p>
+<p><strong>1. Relés Eletromecânicos:</strong>
+Os primeiros computadores digitais, como o Harvard Mark I e as criações de George Stibitz na Bell Labs, usavam relés de telefonia. Eram máquinas gigantescas e barulhentas. Um relé demora cerca de 1 milissegundo para mudar de estado. E eles falhavam fisicamente (o famoso caso de Grace Hopper encontrando uma mariposa — o primeiro &ldquo;bug&rdquo; literal — presa em um relé do Mark II).</p>
+<p><strong>2. Válvulas a Vácuo:</strong>
+Substituindo componentes mecânicos por fluxos de elétrons no vácuo, as válvulas (usadas no monstruoso ENIAC de 30 toneladas) saltaram a velocidade de comutação para a casa dos microssegundos. Foi aqui que John von Neumann ajudou a formalizar a arquitetura que usamos até hoje: a ideia de um <em>stored-program</em> (dados e instruções residindo na mesma memória). O grande gargalo? Válvulas queimavam constantemente, gastavam muita energia e geravam calor extremo.</p>
+<p><strong>3. Transistores:</strong>
+Em 1947, <a href="https://pt.wikipedia.org/wiki/Trans%C3%ADstor">Bardeen, Brattain e Shockley</a> (Bell Labs) mudaram a história da humanidade ao inventar o <a href="https://pt.wikipedia.org/wiki/Trans%C3%ADstor">transistor</a>. Feitos de material semicondutor (como Germânio ou Silício) dopado com impurezas para formar áreas N (negativas) e P (positivas), eles permitiam controlar uma grande corrente usando uma pequena corrente na base. Sendo estado sólido, não queimavam como válvulas, não esquentavam quase nada e eram microscópicos em comparação.</p>
+<p>Na prática, o transistor funciona como um relé, mas sem partes móveis: uma pequena corrente aplicada na base (equivalente ao eletroímã do relé) abre ou fecha o caminho entre o coletor e o emissor (equivalente aos contatos do relé). Se pensarmos no transistor como um interruptor controlado por eletricidade, podemos construir as mesmas portas lógicas que vimos com relés — AND, OR, NOT — mas ocupando uma fração do espaço e consumindo uma fração da energia. Dois transistores podem formar uma porta NAND; seis podem formar um flip-flop. O relé era barulhento, lento e frágil; o transistor é silencioso, rápido e dura décadas.</p>
+<h3 id="como-se-fabrica-um-transistor">Como se Fabrica um Transistor</h3>
+<p>A fabricação de um transistor começa com uma pastilha (wafer) de <strong>silício ultrapuro</strong> — o elemento mais abundante na crosta terrestre depois do oxigênio, extraído da areia e refinado até atingir pureza de 99,9999999% (grau eletrônico). Sobre essa base de silício puro, o processo de <strong>dopagem</strong> introduz átomos de outros elementos (como fósforo ou boro) para criar regiões com excesso de elétrons (tipo N) ou falta deles (tipo P). A junção entre uma região N e uma região P forma uma barreira que a corrente só atravessa em uma direção — a essência do semicondutor.</p>
+<p>Para construir um transistor planar (o tipo usado em circuitos integrados), o processo segue estas etapas:</p>
+<ol>
+<li><strong>Oxidação:</strong> A pastilha de silício é aquecida em forno com oxigênio, formando uma camada de dióxido de silício (SiO₂) — isolante elétrico.</li>
+<li><strong>Fotolitografia:</strong> A pastilha é coberta com um material fotossensível (fotorresiste). Uma máscara contendo o desenho do transistor (uma fotografia em escala microscópica) é projetada sobre a pastilha com luz ultravioleta. As áreas expostas à luz tornam-se solúveis e são removidas por um revelador químico, abrindo &ldquo;janelas&rdquo; no fotorresiste.</li>
+<li><strong>Corrosão (Etch):</strong> Um ácido corrói o dióxido de silício nas áreas abertas pela janela, expondo o silício puro abaixo.</li>
+<li><strong>Dopagem:</strong> A pastilha é exposta a um gás contendo os átomos dopantes em um forno de alta temperatura. Os átomos difundem-se no silício exposto, criando as regiões N e P.</li>
+<li><strong>Metalização:</strong> Uma fina camada de alumínio ou cobre é depositada sobre toda a pastilha. Uma segunda fotolitografia remove o metal onde não é necessário, deixando apenas os contatos elétricos (os &ldquo;fios&rdquo; que conectam o transistor aos seus vizinhos).</li>
+<li><strong>Repetição:</strong> Camadas sucessivas de óxido, polissilício e metal são depositadas e esculpidas, construindo um transistor tridimensional com dezenas de camadas sobrepostas — como um edifício de centenas de andares em escala nanométrica.</li>
+</ol>
+<p>Um transistor moderno mede entre 3 e 10 nanômetros de comprimento — cerca de 10.000 vezes mais fino que um fio de cabelo humano. Um chip de processador atual pode conter <strong>dezenas de bilhões</strong> desses transistores, todos fabricados por esse mesmo processo de dopagem, luz e corrosão química, repetido dezenas de vezes sobre a mesma pastilha de silício.</p>
+<p><strong>4. Circuitos Integrados (O Chip):</strong>
+Fazer portas lógicas soldando transistores individuais era um pesadelo logístico. No final dos anos 1950, <a href="https://pt.wikipedia.org/wiki/Jack_Kilby">Jack Kilby</a> (Texas Instruments) e <a href="https://pt.wikipedia.org/wiki/Robert_Noyce">Robert Noyce</a> (Fairchild Semiconductor) perceberam que múltiplos transistores e resistores poderiam ser gravados em uma única placa de silício. Nascia o <strong><a href="https://pt.wikipedia.org/wiki/Circuito_integrado">Circuito Integrado</a></strong> (IC).</p>
+<p>A partir dos anos 70, componentes pré-fabricados revolucionaram a engenharia. Com um catálogo como o <em>TTL Data Book</em>, engenheiros podiam comprar chips da série 7400. Um chip <code>7400</code> trazia quatro portas NAND puras. Um <code>7483</code> trazia um somador completo de 4 bits empacotado.</p>
+<p>O tempo de propagação do sinal nesses chips já era medido em <strong>nanossegundos</strong> (bilionésimos de segundo). Para contexto: a luz viaja cerca de 30 centímetros em um nanossegundo.</p>
+<p>A computação moderna não surgiu por acaso. Ela é o resultado do empilhamento cuidadoso de abstrações.</p>
+<p>O silício dopado forma transistores. Transistores formam portas lógicas (AND, XOR). Portas lógicas formam somadores matemáticos. Esses processadores lêem bytes da memória. Esses bytes, por sua vez, obedecem a padrões geniais como o UTF-8 para garantir que, não importa onde você esteja no mundo, a máquina saiba exatamente como pintar os pixels corretos na sua tela.</p>
+<p>É quando entendemos essa ponte contínua — da física dos semicondutores à arquitetura do software — que deixamos de ser apenas digitadores de código e passamos a dominar verdadeiramente a máquina.</p>
+<hr>
+<h2 id="a-máquina-que-pensa-e-lembra-desmistificando-a-subtração-flip-flops-e-relógios-digitais">A Máquina Que Pensa e Lembra: Desmistificando a Subtração, Flip-Flops e Relógios Digitais</h2>
+<p>Depois de se convencer de que relés, válvulas ou transistores podem ser interligados para somar números binários, uma pergunta natural e perspicaz costuma surgir: <em>&ldquo;E quanto à subtração?&rdquo;</em>.</p>
+<p>A adição flui elegantemente da direita para a esquerda, levando o &ldquo;vai-um&rdquo; (carry) de uma coluna para a próxima. A subtração, no entanto, possui uma mecânica intrinsecamente diferente e bagunçada. Nós não levamos um valor adiante; nós <em>pegamos emprestado</em>. E implementar esse mecanismo de &ldquo;vai-e-vem&rdquo; em portas lógicas parece, à primeira vista, um verdadeiro pesadelo.</p>
+<p>Como convencer um monte de transistores a fazer isso? A resposta é brilhante: <strong>nós não tentamos</strong>.</p>
+<hr>
+<h2 id="1-a-ilusão-da-subtração-e-o-complemento-de-nove">1. A Ilusão da Subtração e o Complemento de Nove</h2>
+<p>Imagine o seguinte problema em decimal:</p>
+<blockquote>
+<h2 id="-176">253
+− 176</h2>
+<p>???</p>
+</blockquote>
+<p>Ao olhar para a coluna da direita, você vê que 6 é maior que 3. Instantaneamente, você sabe que precisa pegar emprestado da próxima coluna, que por sua vez precisará de outro empréstimo. O resultado final é 77. Em vez de criar circuitos complexos para lidar com isso, usamos um truque engenhoso para subtrair sem nunca precisar pegar emprestado.</p>
+<p>Sabemos que subtrair é o mesmo que somar um número negativo. Podemos reescrever o problema matemático injetando números neutros no meio da equação sem alterar o resultado. O que acontece se somarmos e subtrairmos 1000 ao mesmo tempo? E se reescrevermos 1000 como 999 + 1?</p>
+<p><strong>999 − 176 + 253 + 1 − 1000 =</strong></p>
+<p>Parece uma bagunça, mas observe a primeira operação da esquerda para a direita: <strong>999 − 176</strong>. Subtrair qualquer número de uma sequência de noves <strong>nunca exige empréstimo!</strong> É incrivelmente fácil calcular que 999 − 176 = 823. Esse resultado é chamado de <strong>Complemento de Nove</strong>.</p>
+<p>Substituindo na nossa equação:</p>
+<ul>
+<li>823 + 253 + 1 − 1000</li>
+<li>1076 + 1 − 1000</li>
+<li><strong>1077 − 1000 = 77</strong></li>
+</ul>
+<p>Chegamos à mesma resposta, usando apenas uma subtração incrivelmente simples no início (sem nenhum empréstimo) seguida apenas de adições!</p>
+<hr>
+<h2 id="2-o-mundo-binário-complementos-e-sinais">2. O Mundo Binário: Complementos e Sinais</h2>
+<p>Nos computadores, essa técnica não só se aplica aos números binários, como é absurdamente mais fácil. O nosso problema original (253 - 176) em binário se parece com isso:</p>
+<blockquote>
+<p>11111101 (253)
+− 10110000 (176)</p>
+</blockquote>
+<p>Aplicando a mesma lógica do complemento, vamos adicionar 11111111 (255) no início, e depois somar 00000001 (1) e subtrair 100000000 (256):</p>
+<p><strong>11111111 − 10110000 + 11111101 + 00000001 − 100000000 =</strong></p>
+<p>Subtrair um número binário de uma string de 1s é chamado de <strong>Complemento de Um</strong>. E a grande mágica do hardware é que não precisamos fazer conta nenhuma! Subtrair de 11111111 é exatamente o mesmo que <strong>inverter todos os bits</strong>. Todo 0 vira 1 e todo 1 vira 0.</p>
+<p>O complemento de um de 10110000 é 01001111. O hardware faz isso instantaneamente passando o sinal por portas lógicas inversoras. Se adicionarmos o &ldquo;+ 1&rdquo; final, obtemos o <strong>Complemento de Dois</strong>. Este é o padrão universal que os computadores usam para representar números negativos, permitindo que o processador use o <em>mesmo</em> circuito de soma para fazer subtrações.</p>
+<h3 id="o-contexto-dos-bits">O Contexto dos Bits</h3>
+<p>Bits são apenas 0s e 1s. Eles não carregam etiquetas explicando o que são. Um byte como 10110110 precisa de contexto:</p>
+<ul>
+<li>Se for um inteiro <strong>sem sinal (unsigned)</strong>, ele representa 182.</li>
+<li>Se for um inteiro <strong>com sinal (signed)</strong> usando Complemento de Dois, o bit mais à esquerda atua como o &ldquo;bit de sinal&rdquo; (1 = negativo, 0 = positivo). Nesse caso, ele vale -74.</li>
+</ul>
+<hr>
+<h2 id="3-feedback-e-osciladores-o-coração-da-máquina">3. Feedback e Osciladores: O Coração da Máquina</h2>
+<p>Até agora, nossos circuitos apenas reagem a interruptores que humanos pressionam. Para criar automação, o circuito precisa agir por conta própria. A chave para isso é o <strong>Feedback</strong> — quando a saída de um circuito alimenta a sua própria entrada.</p>
+<p>Se você ligar a saída de um inversor (que transforma 0 em 1, e 1 em 0) na sua própria entrada, ele tentará mudar de estado infinitamente. Ele se tornará 1, o que fará a entrada ser 1, forçando a saída a ser 0, e assim por diante.</p>
+<p>Isso cria um <strong>Oscilador</strong> (ou <em>Clock</em>).</p>
+
+
+  
+  <div class="mermaid">graph LR
+    A[Porta Inversora] --&gt;|Saída| B((Sinal: 0 ou 1))
+    B --&gt;|Feedback| A
+    
+    style A fill:#e74c3c,stroke:#c0392b,color:#fff,stroke-width:2px
+    style B fill:#3498db,stroke:#2980b9,color:#fff,stroke-width:2px</div>
+ <p>A taxa com que ele altera de estado é medida em Hertz (Hz). Este &ldquo;Clock&rdquo; é o metrônomo que dita o ritmo de todo o computador.</p>
+<hr>
+<h2 id="4-flip-flops-a-origem-da-memória">4. Flip-Flops: A Origem da Memória</h2>
+<p>Se conectarmos duas portas lógicas NOR cruzadas (a saída de uma alimenta a entrada da outra), criamos um circuito com dois estados estáveis: o <strong>Flip-Flop R-S (Reset-Set)</strong>.</p>
+<ul>
+<li>Acionar a entrada <strong>Set (1)</strong> faz a saída principal (Q) virar 1. E assim permanece, mesmo se o Set voltar para 0.</li>
+<li>Acionar a entrada <strong>Reset (1)</strong> faz Q virar 0. E assim permanece.</li>
+</ul>
+<p>O Flip-Flop é mágico: <strong>ele lembra qual botão foi apertado por último.</strong> É o bloco fundamental de uma memória.</p>
+<h3 id="o-flip-flop-tipo-d-edge-triggered">O Flip-Flop Tipo D (Edge-Triggered)</h3>
+<p>Para um computador, o Flip-Flop R-S é muito rústico. Precisamos de controle exato sobre <em>quando</em> a memória deve ser gravada. Entra em cena o <strong>Flip-Flop Tipo D</strong> (D de <em>Data</em>). Nele, adicionamos uma porta de &ldquo;Clock&rdquo; (ou <em>Hold That Bit</em>). O circuito só lê a entrada &ldquo;Data&rdquo; quando o sinal de Clock permite.</p>
+<p>Para evitar que a informação fique circulando em loops infinitos, usamos uma versão refinada chamada <strong>Edge-Triggered</strong> (Acionado por Borda). Em vez de deixar a porta aberta enquanto o Clock for 1, ele tira uma &ldquo;fotografia&rdquo; do dado <em>exatamente no instante</em> em que o Clock transita de 0 para 1.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    D[Entrada: Data] --&gt; Latch1(Primeiro Estágio)
+    Clk[Entrada: Clock] --&gt; Inv[Inversor]
+    Inv --&gt; Latch1
+    
+    Latch1 --&gt; Latch2(Segundo Estágio)
+    Clk --&gt; Latch2
+    
+    Latch2 --&gt; Q[Saída: Q]
+    Latch2 --&gt; NQ[Saída: Não-Q]
+    
+    style D fill:#2ecc71,color:#fff
+    style Clk fill:#f1c40f,color:#333
+    style Q fill:#9b59b6,color:#fff
+    style NQ fill:#34495e,color:#fff</div>
+ <hr>
+<h2 id="5-contadores-e-o-relógio-digital">5. Contadores e o Relógio Digital</h2>
+<p>Se ligarmos o Clock de um flip-flop a um Oscilador e alimentarmos sua entrada Data com sua própria saída invertida (Não-Q), o flip-flop alternará de estado exatamente na metade da velocidade do oscilador original. Ele atua como um <strong>Divisor de Frequência</strong>.</p>
+<p>Se encadearmos vários flip-flops assim (o Clock do segundo ligado à saída do primeiro), eles começarão a contar em binário de forma fluida: 0000, 0001, 0010, 0011&hellip; Isso é um <strong>Ripple Counter</strong>.</p>
+<h3 id="o-problema-do-tempo-humano-bcd">O Problema do Tempo Humano (BCD)</h3>
+<p>Com um oscilador de 1 Hz, podemos contar segundos. Mas há um problema: não queremos exibir as horas convertendo enormes números binários como 101111 (47 segundos) de cabeça.</p>
+<p>A solução é o <strong>BCD (Binary-Coded Decimal)</strong>. Em vez de um grande contador binário, usamos pequenos contadores independentes para cada dígito decimal:</p>
+<ul>
+<li><strong>Dígito baixo dos segundos:</strong> Um contador de 4 bits que vai de 0 a 9. Usamos uma porta lógica AND configurada para detectar o padrão 1010 (10). Assim que atinge 10, a porta manda um sinal de &ldquo;Clear&rdquo;, zerando esse dígito.</li>
+<li><strong>Dígito alto dos segundos:</strong> O sinal de &ldquo;Clear&rdquo; do dígito baixo serve como Clock para este. Ele vai de 0 a 5. Uma porta AND detecta o 0110 (6) e o zera, incrementando os minutos.</li>
+</ul>
+<p>Esse processo se repete para os minutos. Para as horas, a lógica é levemente mais complexa, pois um relógio de 12 horas não começa no 0, mas transita de 12:59:59 para 1:00:00. Isso exige portas lógicas adicionais para detectar quando o dígito alto é 1 e o baixo é 2.</p>
+<hr>
+<h2 id="6-o-toque-final-matrizes-e-displays">6. O Toque Final: Matrizes e Displays</h2>
+<p>Como transformar nossa saída BCD de 4 bits em uma representação visual?</p>
+<p>No passado, usávamos o <strong>Tubo Nixie</strong>, onde um decodificador energizava um pino específico para acender um filamento de neon no formato do número. Hoje, usamos <strong>Displays de 7 Segmentos</strong> ou <strong>Matrizes de Pontos (LED)</strong>.</p>
+<p>Em uma matriz 5x7 (35 LEDs), criar circuitos lógicos manuais para acender os LEDs exatos de cada dígito exigiria milhares de componentes. A solução industrial foi a criação da <strong>Memória ROM de Matriz de Diodos</strong>.</p>
+<p>Nesta abordagem, cruzamos fios de linhas e colunas e colocamos diodos (que permitem a passagem de corrente em apenas uma direção) nas interseções específicas que formam o desenho de um número (como o &ldquo;3&rdquo;). Quando o contador seleciona o dígito 3, a corrente flui por essa matriz e acende apenas os LEDs corretos no display.</p>
+<blockquote>
+<p><strong>A Ilusão da Matriz:</strong> Para economizar fios, não acendemos todos os LEDs de uma vez. O circuito varre as colunas do display de LEDs de forma absurdamente rápida, sincronizando a energia nas linhas através da ROM de Diodos e conectando a coluna ao terra através de transistores (<em>Sinkers</em>). A velocidade é tão alta que o olho humano não percebe a piscada, enxergando o número completamente aceso.</p>
+</blockquote>
+<p>A matemática binária da subtração nos permitiu construir processadores eficientes. Mas foi a invenção do oscilador e do flip-flop — a capacidade de fazer a eletricidade pulsar ritmicamente e &ldquo;lembrar&rdquo; do seu estado anterior — que transformou calculadoras estáticas nas máquinas dinâmicas e vivas que temos hoje. O flip-flop é a menor semente da memória; o próximo passo é entender como multiplicamos essa semente até construir uma arquitetura completa de processamento.</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>hardware,portas lógicas,álgebra booleana,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[A fundação da computação moderna]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Base05 - Flip Flop</title>
+      <link>http://localhost:1313/2026/05/12/histcomp05/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp05/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>Quando acordamos todas as manhãs, nossa memória preenche as lacunas. Lembramos onde estamos, o que fizemos no dia anterior e o que planejamos para hoje. Podemos levar alguns minutos para juntar as peças, mas, no geral, conseguimos remontar nossas vidas e obter continuidade suficiente para iniciar mais um dia.</p>
+<p>A memória humana, claro, não é muito ordenada e nem infalível. Na verdade, a escrita provavelmente foi inventada de forma específica para compensar as falhas da nossa memória. Nós escrevemos e lemos depois; salvamos e recuperamos. A função da memória é manter a informação intacta entre esses dois eventos.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>Quando acordamos todas as manhãs, nossa memória preenche as lacunas. Lembramos onde estamos, o que fizemos no dia anterior e o que planejamos para hoje. Podemos levar alguns minutos para juntar as peças, mas, no geral, conseguimos remontar nossas vidas e obter continuidade suficiente para iniciar mais um dia.</p>
+<p>A memória humana, claro, não é muito ordenada e nem infalível. Na verdade, a escrita provavelmente foi inventada de forma específica para compensar as falhas da nossa memória. Nós escrevemos e lemos depois; salvamos e recuperamos. A função da memória é manter a informação intacta entre esses dois eventos.</p>
+<p>Ao abrir o Emacs para compilar um projeto em Rust ou Zig, ou ao analisar os bytes de uma DLL durante a engenharia reversa de um mecanismo de <em>anti-cheat</em>, o que estamos manipulando em sua essência mais fundamental é a memória do computador. E essa memória, em seu nível mais baixo, não passa de um intrincado arranjo de portas lógicas.</p>
+<p>Neste artigo, vamos descer ao nível do silício e entender como saímos de um simples interruptor para formar a memória RAM, a Unidade Lógica e Aritmética (ALU) e, por fim, a arquitetura fundamental de uma CPU.</p>
+<hr>
+<h2 id="1-o-bloco-fundacional-o-flip-flop">1. O Bloco Fundacional: O Flip-Flop</h2>
+<p>Tudo começa com o armazenamento de <strong>1 bit</strong>. Como vimos no estudo de portas lógicas, um <em><a href="https://pt.wikipedia.org/wiki/Flip-flop">flip-flop</a></em> tipo D (acionado por nível) é construído com um inversor, duas portas AND e duas portas NOR.</p>
+<p>Para o nosso propósito, vamos simplificar a nomenclatura de suas entradas e saídas:</p>
+<ul>
+<li><strong>Data In (DI):</strong> O bit que queremos salvar.</li>
+<li><strong>Write (W):</strong> O sinal de controle (antes chamado de Clock).</li>
+<li><strong>Data Out (DO):</strong> O bit armazenado.</li>
+</ul>
+<p>Normalmente, o sinal <code>Write</code> é <code>0</code>, e qualquer mudança no <code>Data In</code> não afeta a saída. Mas, quando queremos armazenar um bit, nós elevamos o <code>Write</code> para <code>1</code> e depois de volta para <code>0</code>. O circuito &ldquo;captura&rdquo; (ou <em>latches</em>, por isso também é chamado de <em>latch</em>) aquele bit de dados.</p>
+
+
+  
+    
+  
+  <div class="mermaid">flowchart LR
+    DI(Data In) --&gt; LATCH{Flip-Flop\nMemory Cell}
+    W(Write) --&gt; LATCH
+    LATCH --&gt; DO(Data Out)
+    
+    style LATCH fill:#2d3436,stroke:#74b9ff,stroke-width:2px,color:#fff</div>
+ <p>Isso é <strong>1 bit de memória</strong>. Isolado, não faz muito. Mas se conectarmos oito desses flip-flops lado a lado e unirmos todos os seus sinais <code>Write</code>, teremos um armazenamento de <strong>1 byte</strong>.</p>
+<h2 id="2-construindo-a-ram-random-access-memory">2. Construindo a RAM (Random Access Memory)</h2>
+<p>Imagine que queremos armazenar não apenas 1 byte, mas oito valores separados de 1 bit. Poderíamos ter oito sinais <code>Write</code> separados, mas isso seria ineficiente. Em vez disso, usamos um componente chamado <strong>Decodificador 3-para-8</strong>.</p>
+<p>Com três sinais (que chamaremos de S0, S1 e S2), podemos representar em binário os números de 0 a 7. O decodificador pega esses três sinais e garante que apenas <em>uma</em> de suas oito saídas seja acionada por vez.</p>
+<p>Se aplicarmos esses mesmos sinais para selecionar qual bit queremos <em>ler</em>, criamos o conceito de <strong>Endereço (Address)</strong>. É como um endereço postal: as combinações <code>000</code>, <code>001</code>, <code>010</code>, etc., apontam para &ldquo;caixas&rdquo; específicas onde nosso bit mora.</p>
+
+
+  
+  <div class="mermaid">graph TD
+    subgraph RAM de 8x1 (8 endereços de 1 bit)
+        A[Address 3-bits] --&gt; DEC[Decodificador 3-para-8]
+        W[Write Signal] --&gt; DEC
+        
+        DEC --&gt;|000| C0[Cell 0]
+        DEC --&gt;|001| C1[Cell 1]
+        DEC --&gt;|...| Cdots[...]
+        DEC --&gt;|111| C7[Cell 7]
+        
+        DI[Data In] --&gt; C0 &amp; C1 &amp; Cdots &amp; C7
+        
+        C0 &amp; C1 &amp; Cdots &amp; C7 --&gt; SEL[Seletor 8-para-1]
+        A --&gt; SEL
+        SEL --&gt; DO[Data Out]
+    end</div>
+ <p>Quando você pode alterar os sinais de endereço à vontade para ler ou escrever em qualquer local instantaneamente, você tem uma <strong><a href="https://pt.wikipedia.org/wiki/RAM">RAM</a></strong> (Random Access Memory).</p>
+<h3 id="expandindo-a-memória-e-o-problema-do-curto-circuito">Expandindo a Memória e o Problema do Curto-Circuito</h3>
+<p>Para escalar essa memória (de 16 bytes para 64 Kilobytes), encontramos um obstáculo elétrico. Se tentarmos juntar as saídas de várias células de memória em um único fio de <code>Data Out</code>, criaremos curtos-circuitos (voltagens ligadas diretamente ao terra).</p>
+<p>A solução mágica da eletrônica para isso é o <strong><a href="https://en.wikipedia.org/wiki/Three-state_logic">Buffer Tri-State</a></strong> (Três Estados).</p>
+<p>Um buffer tri-state tem três saídas possíveis:</p>
+<ol>
+<li>Voltagem (1 lógico)</li>
+<li>Terra (0 lógico)</li>
+<li><strong>Nada (Flutuante)</strong> - como se o fio estivesse cortado.</li>
+</ol>
+<p>Isso nos permite conectar milhares de saídas no mesmo barramento (bus). Desde que apenas <em>um</em> buffer tri-state esteja ativado (Enable = 1) em um dado momento, não haverá conflito. É essa mágica que permite que módulos de memória escalem para 64KB (e muito além, seguindo a lógica de potências de 2, onde 1 Kilobyte = 1024 bytes).</p>
+<h2 id="3-automatizando-a-aritmética">3. Automatizando a Aritmética</h2>
+<p>Os seres humanos são incrivelmente inventivos, mas também profundamente preguiçosos. Digitar números manualmente em interruptores para somá-los é tedioso.</p>
+<p>Se acoplarmos nossa RAM a um <strong>Somador de 8 bits</strong>, e usarmos um contador (acionado por um oscilador, ou <em>clock</em>) para percorrer os endereços da memória sequencialmente, podemos automatizar a soma. A cada pulso de clock, a máquina lê um byte da RAM, soma ao valor salvo em um latch (<em>o acumulador</em>) e guarda o resultado.</p>
+<h3 id="o-problema-do-tamanho-endianness-e-opcodes">O Problema do Tamanho (Endianness e Opcodes)</h3>
+<p>Um byte só vai até 255. Para lidar com valores maiores (como finanças ou ponteiros de memória em jogos), precisamos agrupar bytes. Se usarmos 3 bytes (24 bits), podemos representar milhões. Mas em que ordem armazenamos esses bytes na memória?</p>
+<ul>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Extremidade_%28ordena%C3%A7%C3%A3o%29">Big-endian</a>:</strong> O byte mais significativo vem primeiro (ordem natural de leitura humana).</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Extremidade_%28ordena%C3%A7%C3%A3o%29">Little-endian</a>:</strong> O byte menos significativo vem primeiro.</li>
+</ul>
+<p>Para o nosso hardware, a abordagem <strong>Little-endian</strong> (adotada pela Intel) faz muito mais sentido. Quando fazemos adições em papel, começamos da direita para a esquerda, certo? O processador faz o mesmo: ele precisa somar os bytes menos significativos primeiro, porque eles podem gerar um &ldquo;vai-um&rdquo; (<em>Carry</em>) que afetará a soma do próximo byte.</p>
+<p>Para que a máquina saiba se deve somar ou subtrair, introduzimos bytes de controle antes dos dados. Chamamos isso de <strong>Códigos de Operação (Opcodes)</strong> ou Instruções de Máquina.</p>
+
+
+  
+  <div class="mermaid">flowchart LR
+    subgraph Memória RAM
+        O1[02h - OPCODE: ADD] --&gt; D1[Baixo]
+        D1 --&gt; D2[Médio]
+        D2 --&gt; D3[Alto]
+    end</div>
+ <p>Neste momento transcendemos o hardware puro. Nossa RAM agora contém <strong>Código</strong> (instruções) e <strong>Dados</strong> (números). A união indissociável entre software e hardware.</p>
+<h2 id="4-a-unidade-lógica-e-aritmética-alu">4. A Unidade Lógica e Aritmética (ALU)</h2>
+<p>Uma CPU não faz apenas contas de padaria. Onde entra a lógica? A lógica booleana é vital. Pense na conversão de caracteres ASCII.</p>
+<p>O &ldquo;A&rdquo; maiúsculo é <code>41h</code> (<code>01000001</code>). O &ldquo;a&rdquo; minúsculo é <code>61h</code> (<code>01100001</code>).
+A única diferença é um único bit. Em vez de fazer adições matemáticas complexas para manipular strings, a CPU possui portas lógicas dedicadas:</p>
+<ul>
+<li><strong>OR bit-a-bit:</strong> Força bits a 1 (ex: converter para minúsculas usando OR com <code>20h</code>).</li>
+<li><strong>AND bit-a-bit:</strong> Isola bits ou força a 0 (ex: converter para maiúsculas usando AND com <code>DFh</code>).</li>
+<li><strong>XOR bit-a-bit:</strong> Inverte bits específicos.</li>
+</ul>
+<p>Além disso, a ALU tem a função <strong>Compare (CMP)</strong>. Se queremos saber se o Jogador A tem mais vida que o Jogador B, a ALU os subtrai. Ela descarta o resultado numérico, mas salva os <strong>Flags</strong>:</p>
+<ul>
+<li><strong>Zero Flag (Z):</strong> Se o resultado foi 0 (são iguais).</li>
+<li><strong>Carry Flag (CY):</strong> Se houve empréstimo na subtração (um é menor que o outro).</li>
+<li><strong>Sign Flag (S):</strong> Se o bit mais significativo é 1 (negativo).</li>
+</ul>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Input A 8-bit] --&gt; ADD[Add/Sub Module]
+    B[Input B 8-bit] --&gt; ADD
+    
+    A --&gt; LOGIC[Logic Module AND/OR/XOR]
+    B --&gt; LOGIC
+    
+    F[Function Bits F0-F2] --&gt; ADD
+    F --&gt; LOGIC
+    
+    ADD --&gt; TRI1[Tri-State Buffer]
+    LOGIC --&gt; TRI2[Tri-State Buffer]
+    
+    TRI1 --&gt; OUT[Saída 8-bit]
+    TRI2 --&gt; OUT
+    
+    ADD -.-&gt; FLAGS[Flags: Zero, Carry, Sign]</div>
+ <h2 id="5-registradores-e-barramentos-a-arquitetura-8080">5. Registradores e Barramentos: A Arquitetura 8080</h2>
+<p>Para alimentar a <a href="https://pt.wikipedia.org/wiki/Unidade_l%C3%B3gica_e_aritm%C3%A9tica">ALU</a> rapidamente sem depender do acesso lento à RAM o tempo todo, a CPU possui &ldquo;bancadas de trabalho&rdquo; internas super-rápidas chamadas <strong><a href="https://pt.wikipedia.org/wiki/Registrador_%28inform%C3%A1tica%29">Registradores</a></strong>.</p>
+<p>Baseando-nos na arquitetura histórica do <strong>Intel 8080</strong> (o avô da arquitetura x86 e pedra fundamental dos PCs), temos sete registradores de 8 bits: <strong>A, B, C, D, E, H, L</strong>.</p>
+<p>O registrador <strong>A</strong> é especial. É o <strong>Acumulador</strong>. Todas as operações da ALU recebem o Acumulador como entrada primária, e o resultado é inevitavelmente salvo de volta nele.</p>
+<h3 id="endereçamento-indireto-a-dupla-hl">Endereçamento Indireto: A dupla HL</h3>
+<p>Os registradores H (High) e L (Low) recebem esse nome porque frequentemente são usados juntos para formar um endereço de memória de 16 bits (<code>[HL]</code>). Se <code>H = 20h</code> e <code>L = 44h</code>, o par HL aponta para o endereço <code>2044h</code> da RAM.</p>
+<p>Para coordenar tudo isso, a CPU utiliza <strong><a href="https://pt.wikipedia.org/wiki/Barramento_%28inform%C3%A1tica%29">Barramentos</a></strong> (Buses):</p>
+<ol>
+<li><strong>Data Bus (Barramento de Dados):</strong> Uma &ldquo;rodovia&rdquo; de 8 bits por onde trafegam os valores entre os registradores, a ALU e a RAM.</li>
+<li><strong>Address Bus (Barramento de Endereço):</strong> Uma rodovia paralela de 16 bits que diz à RAM <em>onde</em> o Data Bus deve atuar.</li>
+</ol>
+
+
+  
+  <div class="mermaid">graph TD
+    subgraph CPU Internals
+        BUS_D[Data Bus 8-bit]
+        BUS_A[Address Bus 16-bit]
+        
+        REG_A[Reg A / Accumulator] &lt;--&gt; BUS_D
+        REG_B[Reg B] &lt;--&gt; BUS_D
+        REG_C[Reg C] &lt;--&gt; BUS_D
+        REG_H[Reg H] &lt;--&gt; BUS_D
+        REG_L[Reg L] &lt;--&gt; BUS_D
+        
+        REG_H --&gt; PAIR_HL{Par HL 16-bit}
+        REG_L --&gt; PAIR_HL
+        PAIR_HL --&gt; BUS_A
+        
+        PC[Program Counter 16-bit] --&gt; BUS_A
+        ALU[ALU] &lt;--&gt; BUS_D
+    end</div>
+ <h3 id="o-conjunto-de-instruções-em-ação-assembly">O Conjunto de Instruções em Ação (Assembly)</h3>
+<p>Em vez de decorar opcodes hexadecimais (como <code>3Eh</code>), usamos mnemônicos do <em>Assembly</em>, uma representação legível dessas portas lógicas abrindo e fechando:</p>
+<ul>
+<li><code>LDA 2044h</code> (Load Accumulator): Coloca o valor do endereço 2044h no Acumulador (Reg A).</li>
+<li><code>MVI B, 33h</code> (Move Immediate): Coloca o valor 33h no registrador B.</li>
+<li><code>ADD B</code>: A ALU soma A + B, e o resultado volta para o A.</li>
+<li><code>STA 2044h</code> (Store Accumulator): Salva o resultado do Acumulador de volta na RAM.</li>
+</ul>
+<p>No coração dessa orquestra está o <strong>Program Counter (PC)</strong>, um registrador especial de 16 bits que diz qual é o endereço da próxima instrução. Ele conta inexoravelmente, incrementando a cada leitura, movendo o fluxo da execução para frente através de instruções e dados, até encontrar a instrução <code>HLT</code> (Halt), interrompendo o ciclo.</p>
+<hr>
+<p>O que começamos como uma simples reflexão sobre a memória e um arranjo rudimentar de portas NAND se transformou em uma máquina formidável. Ao abstrair decodificadores em registradores e somadores em uma ALU, destilamos a complexidade elétrica em algo que podemos programar. E é exatamente essa ponte entre o estado dos transistores e os códigos de operação que torna a computação a disciplina fascinante que é. Mas ainda falta um ingrediente: o maestro invisível que orquestra todos esses componentes para que eles executem cada instrução no momento certo.</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>memória,RAM,ALU,arquitetura,assembly,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Como construir memória RAM, ALU e a arquitetura de uma CPU]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Base06 - Do Silício ao Software</title>
+      <link>http://localhost:1313/2026/05/12/histcomp06/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp06/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<h1 id="do-silício-ao-software-desvendando-a-arquitetura-dos-computadores">Do Silício ao Software: Desvendando a Arquitetura dos Computadores</h1>
+<p>Na engenharia, costuma-se dizer que os últimos 10% de um projeto exigem 90% do esforço. Quando olhamos para a construção de um computador a partir de portas lógicas, a Unidade Lógica e Aritmética (ALU) e os registradores parecem ser o coração de tudo. No entanto, conectar essas partes e fazê-las dançar em sincronia para executar um programa exige uma infraestrutura invisível, porém vital: os <strong><a href="https://en.wikipedia.org/wiki/Control_unit">sinais de controle</a></strong>.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<h1 id="do-silício-ao-software-desvendando-a-arquitetura-dos-computadores">Do Silício ao Software: Desvendando a Arquitetura dos Computadores</h1>
+<p>Na engenharia, costuma-se dizer que os últimos 10% de um projeto exigem 90% do esforço. Quando olhamos para a construção de um computador a partir de portas lógicas, a Unidade Lógica e Aritmética (ALU) e os registradores parecem ser o coração de tudo. No entanto, conectar essas partes e fazê-las dançar em sincronia para executar um programa exige uma infraestrutura invisível, porém vital: os <strong><a href="https://en.wikipedia.org/wiki/Control_unit">sinais de controle</a></strong>.</p>
+<p>Este artigo explora, com profundidade e didática, a ponte fundamental entre o hardware nu e o software interativo, partindo dos sinais elétricos mais básicos de uma CPU (usando o clássico Intel 8080 como guia), passando pelo gerenciamento de periféricos, até chegar à abstração dos Sistemas Operacionais.</p>
+<hr>
+<h2 id="1-a-dança-dos-sinais-de-controle">1. A Dança dos Sinais de Controle</h2>
+<p>Uma CPU como o Intel 8080 é composta por várias peças autônomas: o <em>Program Counter</em> (PC), a ALU, a matriz de registradores (A, B, C, D, E, H, L) e os <em>latches</em> de instruções. Eles se comunicam através de duas vias principais:</p>
+<ul>
+<li><strong>Barramento de Dados (8 bits):</strong> Transporta os bytes de informação.</li>
+<li><strong>Barramento de Endereço (16 bits):</strong> Aponta para onde a informação deve ir ou de onde deve vir na Memória RAM.</li>
+</ul>
+<p>Mas como a CPU garante que dois componentes não tentem &ldquo;falar&rdquo; no barramento ao mesmo tempo? É aqui que entram os <strong>sinais de controle</strong>, que agem como as cordas de uma marionete. Eles se dividem em dois tipos fundamentais:</p>
+<ol>
+<li><strong>Sinais que <em>colocam</em> um valor no barramento:</strong> Conectados aos <em>Enable</em> (Habilitadores) de <em>buffers</em> tri-state.</li>
+<li><strong>Sinais que <em>salvam</em> um valor do barramento:</strong> Conectados aos <em>Clock</em> (Relógios) dos <em>latches</em> ou ao sinal de <em>Write</em> (Escrita) da RAM.</li>
+</ol>
+<h3 id="a-anatomia-de-uma-instrução">A Anatomia de uma Instrução</h3>
+<p>Vamos analisar a execução da instrução <code>MVI A, 27h</code> (Mover o valor Imediato <code>27h</code> para o Acumulador). A execução não é mágica; ela ocorre em ciclos de máquina rigorosos.</p>
+
+
+  
+    
+  
+  <div class="mermaid">sequenceDiagram
+    participant PC as Program Counter
+    participant Address as Barramento de Endereço
+    participant RAM as Memória RAM
+    participant Data as Barramento de Dados
+    participant Latch as Latch de Instrução
+    participant Acc as Acumulador
+
+    Note over PC, Acc: Ciclo de Busca (Fetch)
+    PC-&gt;&gt;Address: PC Enable (Coloca 0000h no barramento)
+    RAM-&gt;&gt;Data: RAM Data Out (Coloca o Opcode 3Eh)
+    Data-&gt;&gt;Latch: Latch Clock (Salva o Opcode)
+    Note over PC, Acc: Incremento do PC
+    PC-&gt;&gt;PC: PC Increment
+    
+    Note over PC, Acc: Busca do Segundo Byte
+    PC-&gt;&gt;Address: PC Enable (Coloca 0001h no barramento)
+    RAM-&gt;&gt;Data: RAM Data Out (Coloca o valor 27h)
+    Data-&gt;&gt;Latch: Latch 2 Clock (Salva o valor 27h)
+    Note over PC, Acc: Incremento do PC
+    PC-&gt;&gt;PC: PC Increment
+    
+    Note over PC, Acc: Ciclo de Execução
+    Latch-&gt;&gt;Data: Latch 2 Enable (Coloca 27h no barramento)
+    Data-&gt;&gt;Acc: Accumulator Clock (Salva 27h no Acumulador)</div>
+ <p>Nesta coreografia, o relógio (oscilador) do sistema gera pulsos constantes. Circuitos decodificadores traduzem o <em>Opcode</em> (código de operação, como <code>3Eh</code>) em uma sequência exata de aberturas e fechamentos de <em>buffers</em>, garantindo que os dados fluam da RAM para o Acumulador.</p>
+<hr>
+<h2 id="2-quebrando-a-sequência-saltos-loops-e-a-pilha">2. Quebrando a Sequência: Saltos, Loops e a Pilha</h2>
+<p>Um computador que apenas executa instruções linearmente seria apenas uma calculadora superdimensionada. A verdadeira essência da computação—e o que torna uma máquina <em><a href="https://pt.wikipedia.org/wiki/Turing_completude">Turing Completa</a></em>—é a capacidade de repetição (loops) e de tomada de decisão.</p>
+<h3 id="jumps-condicionais-e-incondicionais">Jumps Condicionais e Incondicionais</h3>
+<p>A instrução <code>JMP</code> (Jump) altera o fluxo do programa substituindo o valor do <em>Program Counter</em> por um novo endereço de 16 bits fornecido logo após a instrução. Mas o poder real reside nos saltos condicionais, como <code>JZ</code> (Jump if Zero) e <code>JC</code> (Jump if Carry).</p>
+<p>Essas instruções consultam as <strong>Flags da ALU</strong>. Se você subtrai 1 de um contador e o resultado chega a zero, a Flag <em>Zero</em> é ativada. Um <code>JZ</code> lerá essa flag; se for 1, o salto ocorre. Se for 0, o programa segue para a próxima linha.</p>
+<blockquote>
+<p><strong>O Famoso &ldquo;Off-By-One&rdquo;:</strong> Ao programar loops em baixo nível, é extremamente comum errar o número de iterações por um valor (ex: inicializar o contador com 200 quando deveria ser 199), dependendo de onde a avaliação da condição <code>JNZ</code> ocorre no código.</p>
+</blockquote>
+<h3 id="sub-rotinas-e-a-estrutura-de-pilha-stack">Sub-rotinas e a Estrutura de Pilha (Stack)</h3>
+<p>Para evitar a repetição de código, criamos sub-rotinas (ou funções). O problema é: ao pular para uma sub-rotina usando <code>CALL</code>, como o processador sabe para onde voltar depois?</p>
+<p>A resposta é a <strong><a href="https://pt.wikipedia.org/wiki/Pilha_%28inform%C3%A1tica%29">Pilha</a> (Stack)</strong>, uma estrutura LIFO (<em>Last-In-First-Out</em>) mantida na RAM, gerenciada por um registrador especial chamado <em><a href="https://en.wikipedia.org/wiki/Stack_register">Stack Pointer</a></em> (SP).</p>
+
+
+  
+  <div class="mermaid">graph TD
+    subgraph Memória RAM (Final do Endereçamento)
+        FFFF[&#34;Endereço FFFFh (Vazio)&#34;]
+        FFFE[&#34;Endereço FFFEh (High Byte Retorno)&#34;]
+        FFFD[&#34;Endereço FFFDh (Low Byte Retorno)&#34;]
+        FFFC[&#34;Endereço FFFCh &lt;-- Stack Pointer (SP) Atual&#34;]
+    end
+    
+    CALL_Inst[&#34;Instrução CALL 14F8h&#34;] --&gt; |1. Decrementa SP&lt;br&gt;2. Salva endereço atual| FFFE
+    RET_Inst[&#34;Instrução RET&#34;] --&gt; |1. Lê endereço&lt;br&gt;2. Incrementa SP&lt;br&gt;3. Pula de volta| FFFC</div>
+ <p>Quando um <code>CALL</code> é executado:</p>
+<ol>
+<li>O <em>Stack Pointer</em> é decrementado.</li>
+<li>O endereço da próxima instrução (endereço de retorno) é guardado (&ldquo;pushed&rdquo;) na memória.</li>
+<li>O <code>PC</code> assume o novo endereço da sub-rotina.</li>
+</ol>
+<p>Quando um <code>RET</code> é executado, o processo inverso (&ldquo;pop&rdquo;) ocorre, devolvendo a execução exatamente para onde estava. Falhas no balanceamento de <code>CALL/RET</code> ou <code>PUSH/POP</code> causam os temidos <em>Stack Overflows</em> (estouro de pilha) ou <em>Underflows</em>.</p>
+<hr>
+<h2 id="3-a-evolução-da-cpu-do-8080-aos-processadores-modernos">3. A Evolução da CPU: Do 8080 aos Processadores Modernos</h2>
+<p>O Intel 8080 que usamos como modelo executa uma instrução por vez: busca, decodifica, executa, busca a próxima. É simples, didático e lento. As CPUs modernas empregam truques de engenharia que as tornam ordens de grandeza mais rápidas sem alterar o conjunto de instruções visível ao programador.</p>
+<p><strong>Pipeline:</strong> Em vez de esperar uma instrução terminar para começar a próxima, a CPU divide cada instrução em estágios (busca, decodificação, execução, escrita do resultado) e sobrepõe a execução. Enquanto a instrução 1 está no estágio de execução, a instrução 2 já está sendo decodificada e a instrução 3 já está sendo buscada na memória. Um pipeline de 5 estágios pode, idealmente, completar uma instrução por ciclo de clock — cinco vezes mais rápido que o 8080.</p>
+<p><strong>Cache:</strong> Buscar dados da RAM leva dezenas de ciclos de clock. Para evitar essa espera, as CPUs modernas incorporam pequenas memórias ultrarrápidas na própria pastilha de silício: os caches L1, L2 e L3. O cache L1, o mais rápido e menor (alguns kilobytes), fica dentro do núcleo da CPU; o L3 é maior (megabytes) e compartilhado entre núcleos. A CPU verifica o cache antes de buscar na RAM — e na maioria das vezes o dado está lá (<em>cache hit</em>).</p>
+<p><strong>Execução Fora de Ordem:</strong> Se a instrução 3 precisa de um dado que ainda está sendo carregado da RAM, a CPU não precisa esperar parada. Ela analisa as instruções seguintes, identifica quais não dependem desse dado, e as executa antes. O resultado final respeita a ordem original — mas internamente a execução foi reordenada para manter o pipeline cheio.</p>
+<p><strong>Múltiplos Núcleos:</strong> Em vez de um único pipeline, colocamos vários processadores completos (núcleos) no mesmo chip e conectamos cada um ao cache compartilhado. O sistema operacional pode então distribuir programas entre os núcleos, executando múltiplas tarefas verdadeiramente em paralelo — algo que o 8080, com sua execução estritamente sequencial, jamais poderia fazer.</p>
+<hr>
+<h2 id="4-o-mundo-exterior-periféricos-e-io">4. O Mundo Exterior: Periféricos e I/O</h2>
+<p>Até agora, nossa CPU é um cérebro enclausurado. Para ser útil, ela precisa de Entrada/Saída (I/O).</p>
+<h3 id="portas-mapeadas-vs-memória-mapeada">Portas Mapeadas vs. Memória Mapeada</h3>
+<p>Existem duas formas principais de comunicação com periféricos:</p>
+<ul>
+<li><strong>I/O Mapeado em Memória:</strong> O periférico (como a placa de vídeo) ocupa endereços normais da RAM. Escrever no endereço <code>A000h</code> pode, na verdade, acender um pixel na tela.</li>
+<li><strong>I/O em Portas Isoladas:</strong> Instruções específicas como <code>IN</code> e <code>OUT</code> (usadas no 8080) se comunicam com um barramento secundário. O comando <code>IN 25h</code> lê o teclado na porta 25h, sem consumir endereços da memória RAM principal.</li>
+</ul>
+<h3 id="polling-vs-interrupções">Polling vs. Interrupções</h3>
+<p>Como saber se uma tecla foi pressionada?</p>
+<ul>
+<li><strong>Polling:</strong> A CPU pergunta repetidamente: &ldquo;Tecla pressionada? Tecla pressionada?&rdquo;. Isso desperdiça ciclos de processamento.</li>
+<li><strong>Interrupts:</strong> O hardware do teclado envia um sinal de <em>Interrupção</em> para a CPU. A CPU pausa o que está fazendo, salva o estado atual na Pilha, executa uma rotina específica (handler do teclado) e depois volta. É muito mais eficiente.</li>
+</ul>
+<h3 id="vídeo-e-áudio-traduzindo-o-mundo">Vídeo e Áudio: Traduzindo o Mundo</h3>
+<p>Tudo no computador é digital, mas o mundo é analógico.</p>
+<ul>
+<li><strong>Monitores:</strong> Um monitor Full HD (1920x1080) possui cerca de 2 milhões de pixels. Se cada pixel usa 3 bytes (RGB, totalizando 16,7 milhões de cores), precisamos de pelo menos 6 MB de <em>Video RAM</em>. Conversões de sinal são feitas por Conversores Digital-Analógico (DACs).</li>
+<li><strong>Áudio:</strong> O som é captado por um microfone e traduzido para números por um ADC (<em>Analog-to-Digital Converter</em>). Seguindo o Teorema de Nyquist, um CD grava áudio a 44.100 amostras por segundo, com 16 bits por amostra (estéreo), permitindo capturar frequências de até 22 kHz com excelente faixa dinâmica.</li>
+</ul>
+<h3 id="armazenamento-persistente-discos-e-ssds">Armazenamento Persistente: Discos e SSDs</h3>
+<p>A RAM é volátil — quando a energia acaba, tudo se apaga. Para manter dados entre reinicializações, precisamos de armazenamento persistente.</p>
+<p><strong>Discos Magnéticos (HDD):</strong> Um disco rígido armazena bits em finas camadas de material magnético sobre discos de metal ou vidro que giram a até 15.000 RPM. Uma cabeça de leitura/gravação, montada na ponta de um braço mecânico, voa a nanômetros de distância da superfície. A direção do campo magnético em cada região minúscula da superfície define se aquele bit é 0 ou 1. A superfície do disco é organizada em trilhas concêntricas, divididas em setores (tipicamente 512 bytes cada). O controlador do disco traduz um endereço lógico (como o setor 1.234) em uma coordenada física (trilha X, setor Y). Esse mapeamento é uma abstração — o sistema operacional nunca precisa saber onde a cabeça leitora está.</p>
+<p><strong>Unidades de Estado Sólido (SSD):</strong> SSDs não têm partes móveis. Eles usam células de memória flash NAND, onde cada célula é um transistor de porta flutuante capaz de reter elétrons (e portanto um valor binário) mesmo sem energia. A grande diferença em relação à RAM é que a leitura é rápida, a escrita é mais lenta, e cada célula suporta um número finito de ciclos de gravação (desgaste). Para contornar isso, o controlador do SSD usa um <em>wear-leveling</em> (nivelamento de desgaste): espalha as gravações por todo o chip para que nenhuma região se desgaste antes das outras.</p>
+<p><strong>Sistemas de Arquivos:</strong> Um setor bruto de 512 bytes é inútil sem organização. O sistema operacional (seja FAT32, NTFS, ext4 ou APFS) impõe uma estrutura: divide o disco em clusters (grupos de setores), mantém uma tabela que mapeia quais clusters pertencem a qual arquivo, e registra metadados como nome, tamanho, data de criação e permissões. Quando você salva um arquivo, o OS consulta essa tabela, encontra espaço livre e escreve os dados; quando o lê, segue o caminho inverso. Tudo isso acontece sem que o programador precise saber em qual setor físico o byte está.</p>
+<hr>
+<h2 id="5-o-maestro-do-sistema-o-sistema-operacional">5. O Maestro do Sistema: O Sistema Operacional</h2>
+<p>Você terminou de montar seu computador, ligou a energia e olhou para a tela. O que aparece? <em>Lixo</em>. Pixels aleatórios e caracteres sem sentido. Isso acontece porque a RAM acorda em um estado imprevisível e não há software carregado.</p>
+<p>Antigamente, usavam-se painéis frontais cheios de chaves para inserir, bit a bit, um pequeno programa na memória. Esse pequeno código (o <em>Bootstrap Loader</em>) tinha uma única função: ler o primeiro setor do disco magnético e executá-lo. O código do disco, por sua vez, carregava o resto do <strong>Sistema Operacional (OS)</strong>.</p>
+<h3 id="a-revolução-da-abstração">A Revolução da Abstração</h3>
+<p>O OS é essencial por gerenciar o <em>File System</em> (organizando blocos dispersos do disco rígido em arquivos nomeados) e por fornecer <strong>APIs</strong>.</p>
+<p>Sistemas históricos como o <strong>CP/M</strong> (de Gary Kildall) introduziram uma arquitetura dividida:</p>
+<ol>
+<li><strong>BIOS (Basic I/O System):</strong> O código específico que falava diretamente com o hardware.</li>
+<li><strong>BDOS (Basic Disk Operating System):</strong> O código de alto nível que gerenciava arquivos.</li>
+</ol>
+<p>Se você fosse criar um software, não precisaria saber qual tela ou qual disco o usuário tinha. Bastava chamar a API do sistema operacional (no CP/M, a famosa interrupção <code>CALL 5</code>). Essa &ldquo;independência de dispositivo&rdquo; permitiu o nascimento da indústria de software comercial.</p>
+<h3 id="da-linha-de-comando-à-interface-gráfica">Da Linha de Comando à Interface Gráfica</h3>
+<p>Sistemas como o CP/M, MS-DOS e o próprio UNIX (projetado para ser elegante, modular e focado em texto) operavam por <strong>Interface de Linha de Comando (CLI)</strong>. A interação era focada no teclado.</p>
+<p>A mudança de paradigma ocorreu em laboratórios como o Xerox PARC com o projeto <em>Alto</em>, seguido pela Apple (Lisa/Macintosh). A tela deixou de ser um simples terminal de texto para se tornar uma matriz bidimensional densa gerenciada por uma <strong>Interface Gráfica do Usuário (GUI)</strong>.</p>
+<p>Um OS gráfico moderno é monumentalmente mais complexo. Em vez de simplesmente &ldquo;imprimir um caractere&rdquo;, a API gráfica desenha linhas, calcula preenchimentos e mapeia fontes em bitmaps variados. Ele unifica a forma como janelas, botões e menus são desenhados, oferecendo uma interface coesa para o usuário e ferramentas robustas para o programador.</p>
+<p>A jornada do hardware ao software é uma odisseia de abstração empilhada. Relés e transistores formam portas lógicas; portas lógicas formam ALUs e registradores. Sinais de controle orquestram esses elementos, decodificando Opcodes para acessar a memória e interagir com o mundo externo através de interrupções e ADCs/DACs. Por fim, o Sistema Operacional doma todo esse hardware bruto, fornecendo um ambiente amigável e um sistema de arquivos coeso.</p>
+<h2 id="da-escovação-de-bits-à-mente-global-a-evolução-do-código-e-da-internet">Da Escovação de Bits à Mente Global: A Evolução do Código e da Internet</h2>
+<p>Programar diretamente em código de máquina é como tentar almoçar usando apenas um palito de dentes: as porções são minúsculas, o processo é exaustivamente trabalhoso e a refeição parece durar uma eternidade. No fundo, todo computador executa apenas instruções primárias — mover um byte da memória para o processador, somar dois valores, guardar o resultado —, mas a abstração dessas tarefas foi o que nos permitiu construir desde simples calculadoras até a rede global que hoje interliga a humanidade.</p>
+<hr>
+<h2 id="1-a-escada-da-abstração-do-silício-à-semântica">1. A Escada da Abstração: Do Silício à Semântica</h2>
+<p>Nos primórdios da computação, a entrada de dados era feita literalmente alterando chaves em um painel frontal. O primeiro grande salto de abstração foi a <strong>Linguagem Assembly</strong>. Em vez de decorar que o byte <code>46h</code> do Intel 8080 fazia o processador mover um dado da memória para o registrador B, os programadores começaram a usar mnemônicos como <code>MOV B,M</code>.</p>
+<p>O problema? A CPU não entende Assembly. Inicialmente, o programador escrevia o código no papel e fazia o <em>hand-assembling</em> (a conversão manual para hexadecimal), calculando na unha os endereços de memória para cada instrução de pulo (<code>JMP</code>) ou chamada (<code>CALL</code>).</p>
+<p>A virada de jogo foi ensinar o próprio computador a fazer esse trabalho sujo através de um programa chamado <strong>Assembler</strong> (Montador). Em sistemas operacionais clássicos como o CP/M, você usava um editor de texto (<code>ED.COM</code>) para escrever um arquivo <code>.ASM</code> e, em seguida, rodava o <code>ASM.COM</code>. O montador lia o texto, realizava o <em>parsing</em> (separando comandos e argumentos) e gerava o arquivo <code>.COM</code> executável, substituindo o trabalho monótono por eficiência de máquina.</p>
+<h3 id="linguagens-de-alto-nível-falando-quase-como-humanos">Linguagens de Alto Nível: Falando (Quase) como Humanos</h3>
+<p>O Assembly ainda tinha dois gargalos cruciais: era maçante (você precisava microgerenciar a CPU) e não era portável (um código de Intel 8080 não rodava num Motorola 6800). A solução lógica foi criar <strong>linguagens de alto nível</strong>.</p>
+<p>A pioneira na compilação prática foi <a href="https://pt.wikipedia.org/wiki/Grace_Hopper">Grace Hopper</a>, que em 1952 criou o A-0 para o UNIVAC. Logo surgiram gigantes como FORTRAN (focado em engenharia e cálculos de ponto flutuante), COBOL (focado em negócios) e ALGOL. O ALGOL, em especial, introduziu a <strong>programação estruturada</strong>, estabelecendo blocos lógicos como <code>if</code> e <code>for</code>, banindo a necessidade de espaguetes de código baseados em pulos diretos (<code>goto</code>).</p>
+<p>Abaixo, podemos ver como um fluxo de execução difere entre linguagens compiladas e interpretadas:</p>
+
+
+  
+  <div class="mermaid">graph TD
+    A[Código Fonte&lt;br&gt;Alto Nível] --&gt; B{Processo}
+    B --&gt;|Compilador| C[Arquivo Executável&lt;br&gt;Código de Máquina]
+    C --&gt; D[CPU executa diretamente]
+    
+    B --&gt;|Interpretador| E[Lê e Executa simultaneamente&lt;br&gt;Instrução por Instrução]
+    E --&gt; F[CPU executa via Interpretador]
+    
+    B --&gt;|Máquina Virtual&lt;br&gt;Java/C#| G[Bytecode/Intermediate Code]
+    G --&gt; H[JIT Compiler / VM]
+    H --&gt; I[CPU executa]</div>
+ <p>Linguagens como Pascal (popularizada pelo Turbo Pascal e sua revolucionária IDE integrada) e C (que manteve o perigoso, porém poderoso, conceito de <em>ponteiros</em> de memória) pavimentaram o caminho. O C inspirou quase tudo que usamos hoje: C++, Java, C# e, claro, o onipresente <strong>JavaScript</strong>.</p>
+<hr>
+<h2 id="2-javascript-e-o-caos-controlado-dos-números-fracionários">2. JavaScript e o Caos Controlado dos Números Fracionários</h2>
+<p>O JavaScript, criado por Brendan Eich em 1995, começou como uma forma de dar interatividade a páginas HTML estáticas. Hoje, engines JIT (Just-In-Time) dentro dos navegadores compilam o JS sob demanda, transformando-o em uma potência que roda em quase toda a web.</p>
+<p>Para entender o poder do controle de fluxo de uma linguagem de alto nível, considere o <strong><a href="https://pt.wikipedia.org/wiki/Crivo_de_Erat%C3%B3stenes">Crivo de Eratóstenes</a></strong>, um algoritmo clássico para encontrar números primos. Em JS, manipulamos o <em>DOM</em> (Document Object Model) da página HTML para exibir resultados dinamicamente:</p>
+
+
+  <pre><code class="language-javascript">let primes = new Array(10000).fill(true);
+
+for (let i1 = 2; i1 &lt;= 100; i1&#43;&#43;) {
+    if (primes[i1]) {
+        for (let i2 = 2; i2 &lt; 10000 / i1; i2&#43;&#43;) {
+            primes[i1 * i2] = false;
+        }
+    }
+}
+// Exibição na página web
+for (let index = 2; index &lt; 10000; index&#43;&#43;) {
+    if (primes[index]) {
+        document.getElementById(&#34;result&#34;).innerHTML &#43;= index &#43; &#34; &#34;;
+    }
+}</code></pre>
+ <p>No entanto, linguagens de alto nível mascaram complexidades brutais do hardware. Experimente rodar o seguinte no JS: <code>55.2 * 27.8</code>. O resultado não será o exato <code>1534.56</code>, mas sim <code>1534.5600000000002</code>. Por quê? Bem-vindo ao padrão <strong><a href="https://pt.wikipedia.org/wiki/IEEE_754">IEEE 754</a></strong>.</p>
+<h3 id="o-padrão-ieee-754-ponto-flutuante">O Padrão IEEE 754 (Ponto Flutuante)</h3>
+<p>Para representar números com casas decimais, os computadores usam a notação científica binária. O Javascript utiliza exclusivamente precisão dupla (64 bits). Esses 64 bits são divididos de forma engenhosa:</p>
+
+
+  
+  <div class="mermaid">pie title Estrutura de um Double Precision Float (64 bits)
+    &#34;Sinal (1 bit)&#34; : 1
+    &#34;Expoente (11 bits)&#34; : 11
+    &#34;Mantissa/Significando (52 bits)&#34; : 52</div>
+ <p>A fórmula matemática que o processador utiliza para calcular o valor real a partir desses bits é:</p>
+<p><strong>(-1)^s × 1.f × 2^(e-1023)</strong></p>
+<ul>
+<li><strong>s (Sinal):</strong> Define se é positivo (0) ou negativo (1).</li>
+<li><strong>e (Expoente):</strong> Um valor <em>biased</em> (adiciona-se 1023 ao expoente real para lidar com negativos sem sinal extra).</li>
+<li><strong>1.f (Significando):</strong> Como em binário normalizado o primeiro dígito antes da vírgula é <em>sempre</em> 1, ele é omitido da memória. Ganhamos um bit de graça! Os 52 bits armazenam apenas a parte fracionária (a resolução chega a cerca de 16 casas decimais).</li>
+</ul>
+<p>O erro de <code>0.0000000000002</code> ocorre porque a vasta maioria das frações decimais (como <code>1.1</code>) tornam-se dízimas periódicas infinitas quando convertidas para frações binárias (somas de 2⁻¹, 2⁻², 2⁻³&hellip;). A memória corta aos 52 bits de precisão, causando leves arredondamentos. Antigamente, operações como senos e cossenos (calculadas através de complexas expansões em série como sen(x) = x − x³/3! + x⁵/5! − &hellip;) eram feitas inteiramente por software. Tudo mudou em 1980 com o <strong>Intel 8087</strong>, um coprocessador matemático (FPU) dedicado inteiramente a mastigar cálculos de ponto flutuante via hardware.</p>
+<hr>
+<h2 id="3-o-cérebro-mundial-das-fichas-à-fibra-óptica">3. O Cérebro Mundial: Das Fichas à Fibra Óptica</h2>
+<p>Muito antes do primeiro bit viajar pela rede, visionários já sonhavam com o conhecimento interconectado. Em 1938, H.G. Wells propôs o <em>World Brain</em>, uma enciclopédia global, viva e colaborativa. Em 1945, Vannevar Bush imaginou o <strong>Memex</strong>, uma mesa mecanizada de microfilmes onde pesquisadores criariam &ldquo;trilhas associativas&rdquo; entre documentos. Duas décadas depois, Ted Nelson cunhou o termo <strong>Hipertexto</strong> para descrever ligações de informação impossíveis de mapear no papel.</p>
+<p>O que esses gênios não sabiam é <em>como</em> isso seria construído. A resposta veio nos anos 60 com a ARPANET e a brilhante invenção da <strong>Comutação de Pacotes</strong> (Packet Switching).</p>
+<h3 id="cortando-o-arquivo-a-comutação-de-pacotes">Cortando o Arquivo: A Comutação de Pacotes</h3>
+<p>Em vez de monopolizar uma linha direta entre o Computador A e B para enviar um arquivo de 30KB, o protocolo divide o arquivo em pequenos pacotes de, digamos, 1500 bytes.</p>
+<p>Cada pacote carrega um <strong>Cabeçalho</strong> contendo:</p>
+<ul>
+<li>Endereços de origem e destino.</li>
+<li>Número da sequência (ex: pacote 7 de 20).</li>
+<li>Um <strong>Checksum</strong> (cálculo matemático dos bytes do payload). Se o computador receptor calcula o checksum e ele não bate com o do cabeçalho, ele sabe que o pacote foi corrompido no caminho e pede apenas aquele trecho novamente. Isso traz resiliência e permite que múltiplos dispositivos compartilhem a mesma rede simultaneamente.</li>
+</ul>
+<h3 id="modulações-e-fibras-o-meio-físico">Modulações e Fibras: O Meio Físico</h3>
+<p>A infraestrutura inicial surfou nas costas das linhas telefônicas de voz (300 a 3400 Hz). Aparelhos como o lendário modem Bell 103 (1962) usavam FSK (<em>Frequency-Shift Keying</em>). Para transmitir dados, o modem convertia bits em frequências audíveis: no terminal de origem, um sinal de 1070 Hz significava o bit <code>0</code>, e 1270 Hz significava o bit <code>1</code>. Essa conversão de sinal digital para analógico e vice-versa é o que dá o nome ao <strong>Mo</strong>dulador-<strong>Dem</strong>odulador.</p>
+<p>Hoje, as espinhas dorsais da internet (backbones) são cabos submarinos de <strong>Fibra Óptica</strong>, onde feixes de luz infravermelha refletem nas paredes internas de tubos capilares de vidro puro. A luz acesa é <code>1</code>, apagada é <code>0</code>, permitindo velocidades colossais inimagináveis na era dos 300 <em>bauds</em>.</p>
+<hr>
+<h2 id="4-anatomia-de-um-request-http">4. Anatomia de um Request HTTP</h2>
+<p>A internet moderna, popularizada pela <strong>World Wide Web</strong> (criada por <a href="https://pt.wikipedia.org/wiki/Tim_Berners-Lee">Tim Berners-Lee</a> em 1989), é um amálgama de protocolos complexos trabalhando em uníssono. A topologia não é centralizada; é uma teia descentralizada de Servidores, Clientes e Roteadores.</p>
+<p>Quando você acessa um site digitando uma <strong>URL</strong> (Uniform Resource Locator) no navegador, eis a mágica que acontece em milissegundos:</p>
+
+
+  
+  <div class="mermaid">sequenceDiagram
+    participant B as Navegador (Client)
+    participant DNS as Servidor DNS
+    participant R as Roteadores (Internet)
+    participant S as Servidor Web
+    
+    B-&gt;&gt;DNS: Qual é o IP de dominio.com?
+    DNS--&gt;&gt;B: É 50.87.147.75 (IPv4)
+    B-&gt;&gt;S: HTTP Request: GET /index.xhtml via TCP/IP
+    Note over B,S: Pacotes viajam passando de Roteador em Roteador (Routing Tables)
+    S--&gt;&gt;B: HTTP Response: Retorna o arquivo HTML (Pacotes TCP)
+    Note over B: Navegador faz o parsing do HTML
+    B-&gt;&gt;S: Solicita style.css e script.js encontrados no HTML
+    S--&gt;&gt;B: Retorna os assets
+    Note over B: Engine JS compila o código (JIT) e renderiza a tela</div>
+ <p>Nesse trajeto, dois identificadores cruciais coexistem:</p>
+<ol>
+<li><strong>Endereço IP (Internet Protocol):</strong> O endereço lógico que orienta a rota do pacote pelas estradas virtuais da internet (Pense no seu CEP).</li>
+<li><strong>Endereço MAC (Media Access Control):</strong> Um identificador de 12 dígitos hexadecimais fisicamente embutido na sua placa de rede (NIC). Conforme o pacote pula de roteador em roteador pela teia, os endereços MAC de origem e destino no cabeçalho são atualizados a cada salto, como uma corrida de revezamento local, enquanto o IP permanece o mesmo do início ao fim.</li>
+</ol>
+<h3 id="a-concretização-do-sonho">A Concretização do Sonho</h3>
+<p>H.G. Wells estaria orgulhoso? Projetos como o Google Books digitalizaram o passado, mas falham em usabilidade de catalogação. Bases como o JSTOR são incríveis repositórios acadêmicos. Mas talvez a realização mais visceral e próxima do ideal do &ldquo;Cérebro Mundial&rdquo; de Wells seja a <strong>Wikipedia</strong>. Em suas palestras originais, Wells descreveu uma base que precisava rechaçar propaganda e dogmas agressivamente, focando na organização em prol de uma comunidade global.</p>
+<p>O fato de termos saído de chaves elétricas rudimentares para linguagens expressivas, e de frequências de áudio em linhas de cobre para a vastidão óptica do conhecimento compartilhado, é o verdadeiro triunfo da engenharia e do software. O código abstraiu as limitações da máquina, e a internet abstraiu as limitações da mente humana.</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed. — Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>arquitetura,CPU,sistema operacional,rede,compiladores,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Sinais de controle, fluxo de execução, periféricos, sistemas operacionais e a história da computação]]></description>
+      
+    </item>
+    
+    <item>
+      <title>O predicado que ninguém chamou</title>
       <link>http://localhost:1313/2026/05/08/fixgo02/</link>
       <guid>http://localhost:1313/2026/05/08/fixgo02/</guid>
-      <pubDate>Fri, 08 May 2026 18:00:00 -0300</pubDate>
-      <description>&lt;![CDATA[<h1 id="o-predicado-que-ninguém-chamou">O predicado que ninguém chamou</h1>
-<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
+      <pubDate>Fri, 08 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>O <a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
 <p>O <a href="https://github.com/scovl/ollanta">Ollanta</a> usa tree-sitter de uma forma diferente: para <strong>análise estática</strong>. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:</p>]]></description>
-      <content:encoded>&lt;![CDATA[<h1 id="o-predicado-que-ninguém-chamou">O predicado que ninguém chamou</h1>
-<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
+      <content:encoded>&lt;![CDATA[<p>O <a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
 <p>O <a href="https://github.com/scovl/ollanta">Ollanta</a> usa tree-sitter de uma forma diferente: para <strong>análise estática</strong>. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:</p>
 
 
@@ -144,15 +1465,44 @@ func (qc *QueryCursor) NextMatch() (*QueryMatch, bool)          // itera sobre m
     // ... verifica se encontrou js:detect-eval
 }</code></pre>
  <p>Testa o caso <strong>positivo</strong> — existe um <code>eval(input)</code>, ele é detectado. Mas não testa o caso <strong>negativo</strong> — chamadas que <strong>não</strong> são <code>eval()</code> não deveriam ser detectadas.</p>
-<p>Sem teste negativo, o bug passou despercebido. Os 35 testes da suíte continuavam verdes porque todos só verificavam a presença de issues, nunca a ausência de falsos positivos. O código que retorna tudo sem filtrar ainda passa no teste, porque <code>eval(input)</code> é estruturalmente um <code>call_expression</code> com <code>function: (identifier)</code> o match está correto, o filtro é que nunca roda.</p>
+<p>Sem teste negativo, o bug passou despercebido. Os 35 testes da suíte continuavam verdes porque todos só verificavam a presença de issues, nunca a ausência de falsos positivos. O código que retorna tudo sem filtrar ainda passa no teste, porque <code>eval(input)</code> é estruturalmente um <code>call_expression</code> com <code>function: (identifier)</code> — o match está correto, o filtro é que nunca roda.</p>
 <blockquote>
-<p><strong>Saiba mais:</strong> esse fenômeno tem nome: <strong>viés de confirmaçãos</strong> em testes. Quando você só testa que &ldquo;a feature funciona&rdquo; mas nunca que &ldquo;a feature não dispara onde não deveria&rdquo;, você está testando a presença do seu código, não a correção dele. Em análise estática, testes negativos são tão importantes quanto positivos — uma regra que só dispara em código suspeito mas nunca em código limpo é o que separa uma ferramenta utilizável de um gerador de ruído.</p>
+<p><strong>Saiba mais:</strong> esse fenômeno tem nome: <strong>viés de confirmação</strong> em testes. Quando você só testa que &ldquo;a feature funciona&rdquo; mas nunca que &ldquo;a feature não dispara onde não deveria&rdquo;, você está testando a presença do seu código, não a correção dele. Em análise estática, testes negativos são tão importantes quanto positivos — uma regra que só dispara em código suspeito mas nunca em código limpo é o que separa uma ferramenta utilizável de um gerador de ruído.</p>
 </blockquote>
 <h2 id="o-contraste">O contraste</h2>
 <p>O que torna esse bug particularmente insidioso é que, à primeira vista, o código parece correto. A query tree-sitter está certa <code>(#eq? @eval &quot;eval&quot;)</code> é a sintaxe padrão e compila sem erro. O <code>QueryRunner</code> também parece correto — ele recebe uma query, executa contra a árvore sintática e retorna matches. Nada grita &ldquo;estou faltando um filtro&rdquo;.</p>
 <p>A verdade é que o design da API tree-sitter separa <strong>matches estruturais</strong> de <strong>predicados semânticos</strong>. O C da tree-sitter retorna matches brutos o binding é que decide se aplica predicados ou não. Em Python, isso é automático. Em Rust, também. Em Go, depende de você chamar <code>FilterPredicates</code> explicitamente. Se você não sabe disso, seu código compila, seus testes passam, e seus usuários recebem 150 falsos positivos.</p>
 <h2 id="a-correção">A correção</h2>
-<p>Quatro linhas, um <code>continue</code>:</p>
+<p>O fluxograma abaixo mostra o caminho que o código percorre desde o arquivo fonte até o resultado da análise. A seta tracejada em vermelho representa o <strong>bug</strong> sem <code>FilterPredicates</code>, o match estrutural vira falso positivo. A seta cheia em verde representa a <strong>correção</strong> com <code>FilterPredicates</code>, o match é testado contra o predicado e só vira issue se passar:</p>
+
+
+  
+    
+  
+  <div class="mermaid">graph TD
+    A[&#34;📄 Código Fonte&lt;br&gt;ex: configure({render})&#34;]:::code --&gt; B[&#34;🔧 Tree-sitter Parser&#34;]:::parser
+    B --&gt; C{&#34;🔍 NextMatch()&lt;br&gt;Match Estrutural&#34;}:::decision
+    
+    C --&gt;|&#34;✅ é call_expression? Sim&#34;| D[&#34;📦 Match Bruto&#34;]:::raw
+    C --&gt;|&#34;❌ Não&#34;| Z[&#34;🚫 Ignorado&#34;]:::ignore
+    
+    D -.-&gt;|&#34;⚠️ Sem FilterPredicates&lt;br&gt;O BUG&#34;| E((&#34;❌ Falso Positivo&lt;br&gt;js:detect-eval&#34;)):::fp
+    
+    D ==&gt;|&#34;✅ Com FilterPredicates&lt;br&gt;A CORREÇÃO&#34;| F{&#34;🧪 O predicado é válido?&lt;br&gt;#eq? @eval &#39;eval&#39;&#34;}:::filter
+    
+    F ==&gt;|&#34;🚫 Não&#34;| G[&#34;✅ Match Descartado&#34;]:::pass
+    F ==&gt;|&#34;✅ Sim&#34;| H((&#34;🎯 Verdadeiro Positivo&#34;)):::tp
+
+    classDef code fill:#e1f5fe,stroke:#0288d1
+    classDef parser fill:#f3e5f5,stroke:#7b1fa2
+    classDef decision fill:#fff3e0,stroke:#e65100
+    classDef raw fill:#f5f5f5,stroke:#9e9e9e
+    classDef ignore fill:#eeeeee,stroke:#bdbdbd
+    classDef fp fill:#ffebee,stroke:#c62828
+    classDef filter fill:#fff8e1,stroke:#f57f17
+    classDef pass fill:#e8f5e9,stroke:#2e7d32
+    classDef tp fill:#e8f5e9,stroke:#2e7d32</div>
+ <p>Quatro linhas, um <code>continue</code>:</p>
 
 
   <pre><code class="language-go">for {
@@ -175,7 +1525,7 @@ func (qc *QueryCursor) NextMatch() (*QueryMatch, bool)          // itera sobre m
 <li>Para <code>#match?</code>, compila uma regex e testa contra o texto do nó</li>
 <li>Retorna um novo match <strong>com as capturas que passaram em TODOS os predicados</strong></li>
 </ol>
-<p>Se nenhuma captura passar, <code>FilterPredicates</code> retorna um match vazio (<code>len(Captures) == 0</code>), e o loop simplesmente pula para o próximo match. Sem a correção, cada regra com predicado devolvia N matches (N = número de nós que casam estruturalmente). Com a correção, devolve apenas os matches que passam nos predicados exatamente o que a query pede.</p>
+<p>Se nenhuma captura passar, <code>FilterPredicates</code> retorna um match vazio (<code>len(Captures) == 0</code>), e o loop simplesmente pula para o próximo match. Sem a correção, cada regra com predicado devolvia N matches (N = número de nós que casam estruturalmente). Com a correção, devolve apenas os matches que passam nos predicados — exatamente o que a query pede.</p>
 <h2 id="o-diff-completo">O diff completo</h2>
 
 
@@ -204,7 +1554,33 @@ func (qc *QueryCursor) NextMatch() (*QueryMatch, bool)          // itera sobre m
 &#43; func TestTreeSitterSensor_PY_DangerousSubprocess_NoFalsePositive(t *testing.T)</code></pre>
  <p>Três testes negativos que verificam que as regras <strong>não</strong> disparam onde não devem. Isso garante que, se alguém no futuro remover ou quebrar o <code>FilterPredicates</code>, os testes vão falhar imediatamente — não mais na mão do usuário.</p>
 <h2 id="por-que-isso-é-um-padrão-de-erro-comum">Por que isso é um padrão de erro comum?</h2>
-<p>Esse bug não é um bug específico do Ollanta. É um sintoma de um problema clássico de design conhecido como <strong><a href="https://medium.com/itautech/hands-on-o-que-%C3%A9-acoplamento-temporal-e-como-solucion%C3%A1-lo-5ef31d37ca0c">acoplamento temporal</a></strong> (temporal coupling). A operação principal (<code>NextMatch</code>) retorna resultados incompletos, e uma operação secundária (<code>FilterPredicates</code>) precisa ser chamada na sequência para valida-los mas não há aviso ou erro se você simplesmente esquecer. É uma API que esconde uma armadilha em vez de tornar o código correto a opção mais fácil. Algumas heurísticas que adotei depois dessa descoberta:</p>
+<p>Esse bug não é um bug específico do Ollanta. É um sintoma de um problema clássico de design conhecido como <strong><a href="https://medium.com/itautech/hands-on-o-que-%C3%A9-acoplamento-temporal-e-como-solucion%C3%A1-lo-5ef31d37ca0d">acoplamento temporal</a></strong> (temporal coupling).</p>
+<p>O diagrama de sequência abaixo mostra a conversa entre as três camadas envolvidas. O Ollanta chama o binding, que chama o C. O C devolve um match bruto, e o binding o repassa sem filtrar. O ponto crítico está na nota &ldquo;Ponto de Falha&rdquo;: depois que <code>NextMatch()</code> retorna, a API <strong>permite</strong> que o código prossiga sem chamar <code>FilterPredicates</code>. Não há erro, não há exceção, eu simplesmente sigo em frente e trato o match bruto como resultado final. A correção (em verde no diagrama) é o passo esquecido de chamar <code>FilterPredicates</code> antes de aceitar o match:</p>
+
+
+  
+  <div class="mermaid">sequenceDiagram
+    participant Dev as 🧑‍💻 Ollanta (Go)
+    participant Bind as 🔗 go-tree-sitter
+    participant C as ⚙️ Tree-sitter (C)
+
+    Dev-&gt;&gt;Bind: Run(query)
+    Bind-&gt;&gt;C: ts_query_cursor_exec()
+    
+    loop 🔄 Todo match estrutural
+        Dev-&gt;&gt;Bind: NextMatch()
+        Bind-&gt;&gt;C: ts_query_cursor_next_match()
+        C--&gt;&gt;Bind: 📦 Match Bruto
+        Bind--&gt;&gt;Dev: QueryMatch (Ignora Predicados)
+
+        Note right of Dev: ⚠️ Ponto de Falha:&lt;br/&gt;A API permite que o Dev&lt;br/&gt;prossiga sem filtrar.
+
+        opt ✅ A Correção (Passo Esquecido)
+            Dev-&gt;&gt;Bind: FilterPredicates(QueryMatch)
+            Bind--&gt;&gt;Dev: 🚫 Match Vazio (Filtro Falhou)
+        end
+    end</div>
+ <p>A operação principal (<code>NextMatch</code>) retorna resultados incompletos, e uma operação secundária (<code>FilterPredicates</code>) precisa ser chamada na sequência para valida-los mas não há aviso ou erro se você simplesmente esquecer. É uma API que esconde uma armadilha em vez de tornar o código correto a opção mais fácil. Algumas heurísticas que adotei depois dessa descoberta:</p>
 <p><strong>1. Para cada regra, adicione um teste negativo</strong></p>
 <p>Um teste positivo comprova que a regra detecta código ruim. Um teste negativo comprova que ela não incomoda código bom. Ambos são necessários:</p>
 
@@ -221,36 +1597,12 @@ src := []byte(&#34;configureFeature({ render })&#34;)
 <p><strong>3. Leia o binding, não só a documentação da lib original</strong></p>
 <p>A documentação do tree-sitter C diz &ldquo;predicates are not evaluated by default&rdquo;. Mas quem lê a documentação do tree-sitter C quando está programando em Go? O binding <code>go-tree-sitter</code> tem uma implementação completa de <code>FilterPredicates</code>, mas ela só funciona se você souber que ela existe. Quando você usa uma biblioteca via CGo, o contrato da API é o que o binding Go expõe, não o que o C original faz. Leia a fonte do binding.</p>
 <h2 id="o-que-aprendi-com-isso">O que aprendi com isso</h2>
-<table>
-  <thead>
-      <tr>
-          <th>Antes</th>
-          <th>Depois</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><code>QueryRunner.Run()</code> retorna matches estruturais</td>
-          <td><code>QueryRunner.Run()</code> retorna matches <strong>filtrados por predicados</strong></td>
-      </tr>
-      <tr>
-          <td>150 falsos positivos de <code>detect-eval</code> por scan</td>
-          <td>0 — o código não tem <code>eval()</code></td>
-      </tr>
-      <tr>
-          <td>20 regras com <code>#eq?</code>/<code>#match?</code> gerando ruído</td>
-          <td>Todas as 20 regras silenciosas onde deveriam ser</td>
-      </tr>
-      <tr>
-          <td>Testes só verificavam presença de issues</td>
-          <td>Testes verificam presença E ausência</td>
-      </tr>
-      <tr>
-          <td><code>make recreate</code> só reconstruía o server Docker</td>
-          <td><code>make recreate</code> também reconstroi o scanner</td>
-      </tr>
-  </tbody>
-</table>
+<ul>
+<li><strong><code>QueryRunner.Run()</code></strong> — antes retornava matches estruturais; depois retorna matches <strong>filtrados por predicados</strong>.</li>
+<li><strong>150 falsos positivos de <code>detect-eval</code> por scan</strong> — depois 0 (o código não tem <code>eval()</code>).</li>
+<li><strong>20 regras com <code>#eq?</code>/<code>#match?</code></strong> — antes geravam ruído; depois todas silenciosas onde deveriam ser.</li>
+<li><strong>Testes</strong> — antes só verificavam presença de issues; depois verificam presença <strong>e</strong> ausência.</li>
+</ul>
 <p>A linha <code>m = cursor.FilterPredicates(m, f.Source)</code> não é complexa. Não envolve algoritmos, estruturas de dados ou padrões de concorrência. É uma chamada de método que faltava e que, por faltar, transformou um analisador estático em um gerador de ruídos.</p>
 <blockquote>
 <p>Este artigo foi escrito a partir de uma correção real no repositório do <a href="https://github.com/scovl/Ollanta">Ollanta</a>. O diff completo está em <a href="https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9">https://github.com/scovl/Ollanta/commit/0a73aa2ec05c1dfa7c7a0b0e750cb05c841cb4f9</a>.</p>

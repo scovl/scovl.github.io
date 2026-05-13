@@ -23,17 +23,17 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1778371465">
+<link rel="stylesheet" href="/css/main.css?v=1778711574">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778371465">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778711574">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778371465">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778711574">
 
 
 
@@ -55,7 +55,7 @@
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1778371465"></script>
+<script src="/vendor/mermaid/mermaid.min.js?v=1778711574"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -464,12 +464,330 @@ window.I18n = I18n;
     
     <article class="post-item">
         <h2 class="post-item-title">
-            <a href="http://localhost:1313/2026/05/08/fixgo02/">Falsos positivos em regras tree-sitter: o predicado que ninguém chamou</a>
+            <a href="http://localhost:1313/2026/05/12/histcomp01/">Base01 - Códigos e Combinações</a>
         </h2>
         
         <div class="post-item-meta">
             
-            <time datetime="2026-05-08T18:00:00-03:00">
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/morse/" class="tag">morse</a>
+                
+                <a href="/tags/historia/" class="tag">historia</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                A lógica binária do código morse
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>O Código Morse foi inventado por volta de 1837 por <a href="https://pt.wikipedia.org/wiki/Samuel_Morse">Samuel Finley Breese Morse</a> (1791–1872). Ele foi aprimorado por outros inventores, notavelmente <a href="https://en.wikipedia.org/wiki/Alfred_Vail">Alfred Vail</a> (1807–1859), e evoluiu para algumas versões diferentes. O sistema que utilizamos e estudamos hoje é mais formalmente conhecido como <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Morse">Código Morse Internacional</a></strong>.</p>
+<p>Mais de 180 anos depois, o Código Morse continua tão relevante que, em maio de 2026, um hacker o utilizou para enganar o grok da x.ai e fazê-lo transferir US$ 213 mil (R$ 1 milhão) em criptomoedas, uma técnica de <a href="https://pt.wikipedia.org/wiki/Inje%C3%A7%C3%A3o_de_prompt">injeção de prompt</a> que escondeu comandos maliciosos em código Morse interpretados como instruções legítimas (<a href="https://livecoins.com.br/hacker-usa-codigo-morse-para-fazer-agente-autonomo-de-ia-lhe-enviar-r-1-milhao-em-criptomoeda/">Livecoins</a>). O caso mostra que a estrutura binária de pontos e traços que você aprenderá a seguir não é apenas história, ela ainda povoa o submundo da segurança digital.</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp01/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/12/histcomp02/">Base02 - A Linguagem Oculta do Hardware</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/hardware/" class="tag">hardware</a>
+                
+                <a href="/tags/portas-l%C3%B3gicas/" class="tag">portas lógicas</a>
+                
+                <a href="/tags/%C3%A1lgebra-booleana/" class="tag">álgebra booleana</a>
+                
+                <a href="/tags/hist%C3%B3ria/" class="tag">história</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Como interruptores, relés e álgebra booleana deram origem aos computadores
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>Os computadores parecem caixas mágicas, mas em seu núcleo absoluto, eles operam sob princípios incrivelmente simples e tangíveis. Para compreender como a eletricidade se transforma em lógica e, eventualmente, em computação, precisamos dar um passo atrás. Vamos esquecer os microprocessadores por um momento e olhar para algo muito mais simples: uma lanterna.</p>
+<h2 id="a-anatomia-de-uma-lanterna-e-a-dança-dos-elétrons">A Anatomia de uma Lanterna e a Dança dos Elétrons</h2>
+<p>Uma lanterna comum é um dos aparelhos elétricos mais simples que existem. Desmonte-a e você encontrará baterias, uma lâmpada, algumas peças de metal e, o mais importante, um <strong>interruptor</strong>. A eletricidade não é magia; é o fluxo de <a href="https://pt.wikipedia.org/wiki/El%C3%A9tron">elétrons</a> através de materiais condutores (como o cobre). Para entender esse fluxo, precisamos da analogia clássica da água encanada, definida por três grandezas fundamentais:</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp02/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/12/histcomp03/">Base03 - Dos nossos dez dedos aos Bits e Bytes</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/numera%C3%A7%C3%A3o/" class="tag">numeração</a>
+                
+                <a href="/tags/bin%C3%A1rio/" class="tag">binário</a>
+                
+                <a href="/tags/hexadecimal/" class="tag">hexadecimal</a>
+                
+                <a href="/tags/bits/" class="tag">bits</a>
+                
+                <a href="/tags/hist%C3%B3ria/" class="tag">história</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Sistemas de numeração, binário e hexadecimal para computação
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>A ideia de que a linguagem é apenas um código é facilmente aceitável para a maioria de nós. Sabemos que o animal que chamamos de &ldquo;gato&rdquo; pode ser <em>cat</em>, <em>chat</em>, <em>Katze</em>, <em>кошка</em> ou <em>γάτα</em> dependendo do idioma. Os números, no entanto, parecem menos maleáveis culturalmente. A matemática é frequentemente chamada de &ldquo;linguagem universal&rdquo; porque, independentemente de como pronunciamos, escrevemos nossos algarismos da mesma forma em quase todo o planeta: <strong>0, 1, 2, 3, 4, 5, 6, 7, 8, 9</strong>.</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp03/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/12/histcomp04/">Base04 - Do Bit ao Símbolo, do Relé ao Chip</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/hardware/" class="tag">hardware</a>
+                
+                <a href="/tags/portas-l%C3%B3gicas/" class="tag">portas lógicas</a>
+                
+                <a href="/tags/%C3%A1lgebra-booleana/" class="tag">álgebra booleana</a>
+                
+                <a href="/tags/hist%C3%B3ria/" class="tag">história</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                A fundação da computação moderna
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>Como desenvolvedores, passamos a maior parte do nosso tempo em abstrações elevadas, escrevendo código em Go, C#, Elixir ou Rust, e confiando que o compilador e o sistema operacional farão a mágica acontecer. Mas, sob as camadas de frameworks e interfaces, tudo se resume a uma dança perfeitamente orquestrada de elétrons, portas lógicas e convenções de bits.</p>
+<p>Este artigo é um mergulho profundo nas fundações de duas das engrenagens mais vitais da computação: <strong>como representamos a linguagem humana em zeros e uns</strong> e <strong>como construímos o hardware capaz de processar esses dados</strong>. Prepare o seu café, pois vamos descer ao escovão de bits.</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp04/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/12/histcomp05/">Base05 - Flip Flop</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/mem%C3%B3ria/" class="tag">memória</a>
+                
+                <a href="/tags/ram/" class="tag">RAM</a>
+                
+                <a href="/tags/alu/" class="tag">ALU</a>
+                
+                <a href="/tags/arquitetura/" class="tag">arquitetura</a>
+                
+                <a href="/tags/assembly/" class="tag">assembly</a>
+                
+                <a href="/tags/hist%C3%B3ria/" class="tag">história</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Como construir memória RAM, ALU e a arquitetura de uma CPU
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <p>Quando acordamos todas as manhãs, nossa memória preenche as lacunas. Lembramos onde estamos, o que fizemos no dia anterior e o que planejamos para hoje. Podemos levar alguns minutos para juntar as peças, mas, no geral, conseguimos remontar nossas vidas e obter continuidade suficiente para iniciar mais um dia.</p>
+<p>A memória humana, claro, não é muito ordenada e nem infalível. Na verdade, a escrita provavelmente foi inventada de forma específica para compensar as falhas da nossa memória. Nós escrevemos e lemos depois; salvamos e recuperamos. A função da memória é manter a informação intacta entre esses dois eventos.</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp05/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/12/histcomp06/">Base06 - Do Silício ao Software</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-12T18:40:00-03:00">
+                Tue, May 12, 2026
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/arquitetura/" class="tag">arquitetura</a>
+                
+                <a href="/tags/cpu/" class="tag">CPU</a>
+                
+                <a href="/tags/sistema-operacional/" class="tag">sistema operacional</a>
+                
+                <a href="/tags/rede/" class="tag">rede</a>
+                
+                <a href="/tags/compiladores/" class="tag">compiladores</a>
+                
+                <a href="/tags/hist%C3%B3ria/" class="tag">história</a>
+                
+                <a href="/tags/computa%C3%A7%C3%A3o/" class="tag">computação</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Sinais de controle, fluxo de execução, periféricos, sistemas operacionais e a história da computação
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="do-silício-ao-software-desvendando-a-arquitetura-dos-computadores">Do Silício ao Software: Desvendando a Arquitetura dos Computadores</h1>
+<p>Na engenharia, costuma-se dizer que os últimos 10% de um projeto exigem 90% do esforço. Quando olhamos para a construção de um computador a partir de portas lógicas, a Unidade Lógica e Aritmética (ALU) e os registradores parecem ser o coração de tudo. No entanto, conectar essas partes e fazê-las dançar em sincronia para executar um programa exige uma infraestrutura invisível, porém vital: os <strong><a href="https://en.wikipedia.org/wiki/Control_unit">sinais de controle</a></strong>.</p>
+            
+            <a href="http://localhost:1313/2026/05/12/histcomp06/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2026/05/08/fixgo02/">O predicado que ninguém chamou</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2026-05-08T18:40:00-03:00">
                 Fri, May 8, 2026
             </time>
             
@@ -503,8 +821,7 @@ window.I18n = I18n;
         
         
         <div class="post-item-summary">
-            <h1 id="o-predicado-que-ninguém-chamou">O predicado que ninguém chamou</h1>
-<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
+            <p>O <a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> é uma biblioteca que produz árvores sintáticas concretas para dezenas de linguagens. Diferente de um parser tradicional que produz AST, tree-sitter foi projetado para editores de código e ele é incremental, tolerante a erros e capaz de reanalisar um arquivo em milissegundos após uma edição. O <a href="https://neovim.io/">Neovim</a>, <a href="https://atom.io/">Atom</a> (RIP), <a href="https://zed.dev/">Zed</a> e o próprio <a href="https://github.blog/engineering/user-experience/remodeling-the-github-code-editor/">GitHub</a> usam tree-sitter para syntax highlighting, folding e code navigation.</p>
 <p>O <a href="https://github.com/scovl/ollanta">Ollanta</a> usa tree-sitter de uma forma diferente: para <strong>análise estática</strong>. Em vez de realçar sintaxe, ele usa S-expressions para detectar padrões problemáticos no código-fonte:</p>
             
             <a href="http://localhost:1313/2026/05/08/fixgo02/" class="read-more">Leia mais →</a>
@@ -1020,26 +1337,26 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-go.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-sql.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1778371465"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1778371465"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-go.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-sql.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778711574"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778711574"></script>
     
     
-    <script src="/js/main-minimal.js?v=1778371465"></script>
-    <script src="/js/lazy-loading.js?v=1778371465"></script>
-    <script src="/js/toc.js?v=1778371465"></script>
+    <script src="/js/main-minimal.js?v=1778711574"></script>
+    <script src="/js/lazy-loading.js?v=1778711574"></script>
+    <script src="/js/toc.js?v=1778711574"></script>
     
     
     
