@@ -22,9 +22,7 @@ A famosa [Lei de Ohm](https://pt.wikipedia.org/wiki/Lei_de_Ohm) conecta essas gr
 
 **I = E / R**
 
-Em português: a corrente (I) é igual à tensão (E) dividida pela resistência (R). Na prática, quanto maior a resistência, menor a corrente — por isso fios muito longos não conseguem acender uma lâmpada no outro extremo.
-
-Para que a lâmpada brilhe, o caminho da bateria até a lâmpada e de volta à bateria deve ser contínuo. É um **circuito** (um círculo). O papel do interruptor é simplesmente quebrar ou completar esse círculo. Ele é puramente binário: ligado ou desligado. Sem meio-termo.
+Em português: a corrente (I) é igual à tensão (E) dividida pela resistência (R). Na prática, quanto maior a resistência, menor a corrente — por isso fios muito longos não conseguem acender uma lâmpada no outro extremo. Para que a lâmpada brilhe, o caminho da bateria até a lâmpada e de volta à bateria deve ser contínuo. É um **circuito** (um círculo). O papel do interruptor é simplesmente quebrar ou completar esse círculo. Ele é puramente binário: ligado ou desligado. Sem meio-termo.
 
 ```mermaid
 graph LR
