@@ -1,5 +1,5 @@
 +++
-title = "Base05 - Flip Flop"
+title = "Petzold05 - Flip Flop"
 description = "Como construir memória RAM, ALU e a arquitetura de uma CPU"
 date = 2026-05-12T18:40:00-03:00
 tags = ["memória", "RAM", "ALU", "arquitetura", "assembly", "história", "computação"]
@@ -32,11 +32,11 @@ Normalmente, o sinal `Write` é `0`, e qualquer mudança no `Data In` não afeta
 
 ```mermaid
 flowchart LR
-    DI(Data In) --> LATCH{Flip-Flop\nMemory Cell}
-    W(Write) --> LATCH
-    LATCH --> DO(Data Out)
-    
-    style LATCH fill:#2d3436,stroke:#74b9ff,stroke-width:2px,color:#fff
+  DI(Data In) --> LATCH{Flip-Flop\nMemory Cell}
+  W(Write) --> LATCH
+  LATCH --> DO(Data Out)
+  
+  style LATCH fill:#2d3436,stroke:#74b9ff,stroke-width:2px,color:#fff
 
 ```
 
@@ -52,21 +52,21 @@ Se aplicarmos esses mesmos sinais para selecionar qual bit queremos *ler*, criam
 
 ```mermaid
 graph TD
-    subgraph RAM de 8x1 (8 endereços de 1 bit)
-        A[Address 3-bits] --> DEC[Decodificador 3-para-8]
-        W[Write Signal] --> DEC
-        
-        DEC -->|000| C0[Cell 0]
-        DEC -->|001| C1[Cell 1]
-        DEC -->|...| Cdots[...]
-        DEC -->|111| C7[Cell 7]
-        
-        DI[Data In] --> C0 & C1 & Cdots & C7
-        
-        C0 & C1 & Cdots & C7 --> SEL[Seletor 8-para-1]
-        A --> SEL
-        SEL --> DO[Data Out]
-    end
+  subgraph RAM de 8x1 (8 endereços de 1 bit)
+    A[Address 3-bits] --> DEC[Decodificador 3-para-8]
+    W[Write Signal] --> DEC
+    
+    DEC -->|000| C0[Cell 0]
+    DEC -->|001| C1[Cell 1]
+    DEC -->|...| Cdots[...]
+    DEC -->|111| C7[Cell 7]
+    
+    DI[Data In] --> C0 & C1 & Cdots & C7
+    
+    C0 & C1 & Cdots & C7 --> SEL[Seletor 8-para-1]
+    A --> SEL
+    SEL --> DO[Data Out]
+  end
 
 ```
 
@@ -92,28 +92,36 @@ Os seres humanos são incrivelmente inventivos, mas também profundamente pregui
 
 Se acoplarmos nossa RAM a um **Somador de 8 bits**, e usarmos um contador (acionado por um oscilador, ou *clock*) para percorrer os endereços da memória sequencialmente, podemos automatizar a soma. A cada pulso de clock, a máquina lê um byte da RAM, soma ao valor salvo em um latch (*o acumulador*) e guarda o resultado.
 
-### O Problema do Tamanho (Endianness e Opcodes)
+### O Problema do Tamanho: Juntando Bytes
 
-Um byte só vai até 255. Para lidar com valores maiores (como finanças ou ponteiros de memória em jogos), precisamos agrupar bytes. Se usarmos 3 bytes (24 bits), podemos representar milhões. Mas em que ordem armazenamos esses bytes na memória?
+Um byte só vai até 255. Para representar números maiores, a CPU combina bytes consecutivos. Um valor de 16 bits usa 2 bytes; um de 32 bits usa 4. Mas **em que ordem** os bytes são armazenados na memória? Existem duas convenções, e os fabricantes历史上 se dividem entre elas:
 
-* **[Big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordenação)):** O byte mais significativo vem primeiro (ordem natural de leitura humana).
-* **[Little-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordenação)):** O byte menos significativo vem primeiro.
+* **Big-endian:** O byte mais significativo vem primeiro. É a ordem natural para humanos, o número `0x1234` é armazenado como `12 34`.
+* **Little-endian:** O byte menos significativo vem primeiro. O `0x1234` vira `34 12` na memória. É a ordem dos processadores Intel.
 
-Para o nosso hardware, a abordagem **Little-endian** (adotada pela Intel) faz muito mais sentido. Quando fazemos adições em papel, começamos da direita para a esquerda, certo? O processador faz o mesmo: ele precisa somar os bytes menos significativos primeiro, porque eles podem gerar um "vai-um" (*Carry*) que afetará a soma do próximo byte.
+Por que a Intel adotou little-endian? Por razões históricas de compatibilidade com o 8008 (1972). Na prática, não há vantagem técnica absoluta, o que importa é que todos os componentes do sistema concordem com a mesma convenção. Protocolos de rede (TCP/IP) usam big-endian como padrão (*network byte order*), e é por isso que programadores precisam usar funções como `htonl()` ao enviar inteiros pela rede.
 
-Para que a máquina saiba se deve somar ou subtrair, introduzimos bytes de controle antes dos dados. Chamamos isso de **Códigos de Operação (Opcodes)** ou Instruções de Máquina.
+### Separando Instruções de Dados
+
+Até agora, nossa máquina somava números fixos emendereços fixos. Para torná-la programável, precisamos que a **própria operação** (somar, subtrair, mover) seja armazenada na memória junto com os números. É aqui que nasce o conceito de **instrução de máquina**.
+
+Cada instrução é um número que ocupa um ou mais bytes na RAM. O primeiro byte é o **código de operação (opcode)**, ele diz ao hardware o que fazer:
+
+* `80h` = somar dois números
+* `90h` = subtrair
+* `A0h` = mover dados da memória para o acumulador
+
+Os bytes seguintes são os **operandos**, os valores ou endereços sobre os quais a operação age:
 
 ```mermaid
-flowchart LR
-    subgraph Memória RAM
-        O1[02h - OPCODE: ADD] --> D1[Baixo]
-        D1 --> D2[Médio]
-        D2 --> D3[Alto]
-    end
-
+graph LR
+  subgraph "Layout de uma instrução ADD de 3 bytes"
+    I1["Byte 0: 80h<br>OPCODE = ADD"] --> I2["Byte 1: 35h<br>Segundo operando<br>(valor a somar)"]
+    I2 --> I3["Byte 2: 00h<br>Extensão<br>(endereçamento)"]
+  end
 ```
 
-Neste momento transcendemos o hardware puro. Nossa RAM agora contém **Código** (instruções) e **Dados** (números). A união indissociável entre software e hardware.
+Neste momento, a RAM deixa de ser apenas um depósito de números para se tornar algo mais poderoso: um repositório de **instruções** e **dados** indistinguíveis entre si. A CPU não sabe se um byte é código ou dado, ela simplesmente busca o próximo byte apontado pelo Program Counter e o executa. A mesma sequência de bytes pode ser uma instrução em um contexto e um número em outro. É o programador (e o compilador) que organiza a memória para que essa distinção faça sentido.
 
 ## 4. A Unidade Lógica e Aritmética (ALU)
 
@@ -134,22 +142,22 @@ Além disso, a ALU tem a função **Compare (CMP)**. Se queremos saber se o Joga
 
 ```mermaid
 graph TD
-    A[Input A 8-bit] --> ADD[Add/Sub Module]
-    B[Input B 8-bit] --> ADD
-    
-    A --> LOGIC[Logic Module AND/OR/XOR]
-    B --> LOGIC
-    
-    F[Function Bits F0-F2] --> ADD
-    F --> LOGIC
-    
-    ADD --> TRI1[Tri-State Buffer]
-    LOGIC --> TRI2[Tri-State Buffer]
-    
-    TRI1 --> OUT[Saída 8-bit]
-    TRI2 --> OUT
-    
-    ADD -.-> FLAGS[Flags: Zero, Carry, Sign]
+  A[Input A 8-bit] --> ADD[Add/Sub Module]
+  B[Input B 8-bit] --> ADD
+  
+  A --> LOGIC[Logic Module AND/OR/XOR]
+  B --> LOGIC
+  
+  F[Function Bits F0-F2] --> ADD
+  F --> LOGIC
+  
+  ADD --> TRI1[Tri-State Buffer]
+  LOGIC --> TRI2[Tri-State Buffer]
+  
+  TRI1 --> OUT[Saída 8-bit]
+  TRI2 --> OUT
+  
+  ADD -.-> FLAGS[Flags: Zero, Carry, Sign]
 
 ```
 
@@ -172,23 +180,23 @@ Para coordenar tudo isso, a CPU utiliza **[Barramentos](https://pt.wikipedia.org
 
 ```mermaid
 graph TD
-    subgraph CPU Internals
-        BUS_D[Data Bus 8-bit]
-        BUS_A[Address Bus 16-bit]
-        
-        REG_A[Reg A / Accumulator] <--> BUS_D
-        REG_B[Reg B] <--> BUS_D
-        REG_C[Reg C] <--> BUS_D
-        REG_H[Reg H] <--> BUS_D
-        REG_L[Reg L] <--> BUS_D
-        
-        REG_H --> PAIR_HL{Par HL 16-bit}
-        REG_L --> PAIR_HL
-        PAIR_HL --> BUS_A
-        
-        PC[Program Counter 16-bit] --> BUS_A
-        ALU[ALU] <--> BUS_D
-    end
+  subgraph CPU Internals
+    BUS_D[Data Bus 8-bit]
+    BUS_A[Address Bus 16-bit]
+    
+    REG_A[Reg A / Accumulator] <--> BUS_D
+    REG_B[Reg B] <--> BUS_D
+    REG_C[Reg C] <--> BUS_D
+    REG_H[Reg H] <--> BUS_D
+    REG_L[Reg L] <--> BUS_D
+    
+    REG_H --> PAIR_HL{Par HL 16-bit}
+    REG_L --> PAIR_HL
+    PAIR_HL --> BUS_A
+    
+    PC[Program Counter 16-bit] --> BUS_A
+    ALU[ALU] <--> BUS_D
+  end
 
 ```
 
@@ -203,10 +211,85 @@ Em vez de decorar opcodes hexadecimais (como `3Eh`), usamos mnemônicos do *Asse
 
 No coração dessa orquestra está o **Program Counter (PC)**, um registrador especial de 16 bits que diz qual é o endereço da próxima instrução. Ele conta inexoravelmente, incrementando a cada leitura, movendo o fluxo da execução para frente através de instruções e dados, até encontrar a instrução `HLT` (Halt), interrompendo o ciclo.
 
+### Mão na Massa: Executando um Programa
+
+Até aqui falamos sobre instruções em abstrato. Vamos executar um programa inteiro passo a passo. O programa abaixo soma dois números, 5 e 3, e armazena o resultado na memória:
+
+```asm
+; Programa: Soma 5 + 3 e armazena na memória
+0000: MVI A, 05  ; Carrega 5 no Acumulador (A)
+0002: MVI B, 03  ; Carrega 3 no registrador B
+0004: ADD B    ; Soma B ao A: A = A + B
+0005: STA 00FFh  ; Armazena A no endereço 00FFh da RAM
+0008: HLT     ; Para a execução
+```
+
+A tabela abaixo mostra o estado interno da CPU após **cada instrução executada**. Experimente acompanhar linha a linha:
+
+| Instrução executada | PC (aponta para) | Acumulador A | Reg B | Mem[00FFh] |
+|---|---|---|---|---|
+| *(estado inicial)* | 0000 | `??` | `??` | `??` |
+| `MVI A, 05` | 0002 | `05` | `??` | `??` |
+| `MVI B, 03` | 0004 | `05` | `03` | `??` |
+| `ADD B` | 0005 | `08` | `03` | `??` |
+| `STA 00FFh` | 0008 | `08` | `03` | `08` |
+| `HLT` |, | `08` | `03` | `08` |
+
+Observe alguns detalhes importantes:
+
+* O **PC** é incrementado automaticamente após cada instrução. Cada instrução ocupa um número diferente de bytes: `MVI` (2 bytes), `ADD` (1 byte), `STA` (3 bytes), `HLT` (1 byte).
+* O **Acumulador** é o centro das operações: `ADD B` sempre soma o registrador B ao Acumulador, e o resultado fica no Acumulador.
+* `STA 00FFh` não modifica registrador algum, ela apenas copia o Acumulador para a memória RAM.
+* Após `HLT`, o processador simplesmente para. O PC não é incrementado.
+
+O fluxo do programa pode ser visualizado como uma máquina de estados:
+
+```mermaid
+graph LR
+  S0["MVI A, 5<br>A = 5"] --> S1["MVI B, 3<br>B = 3"]
+  S1 --> S2["ADD B<br>A = A + B = 8"]
+  S2 --> S3["STA 00FFh<br>Mem[00FF] = 8"]
+  S3 --> S4["HLT"]
+```
+
+### 🔧 Exercícios
+
+**1. Rastreamento:** Qual o valor final do Acumulador ao executar este programa?
+```asm
+MVI A, 10
+MVI B, 07
+ADD B
+ADD B
+HLT
+```
+
+**2. Modificação:** Partindo do programa original (5 + 3), como você faria para calcular 5 + 3 + 2? Quais instruções seriam necessárias?
+
+**3. Subtração:** Sabendo que existe a instrução `SUB B` (subtrai o registrador B do Acumulador), escreva um programa que calcule 15 − 8 e armazene o resultado no endereço 2000h.
+
+**4. Decifrando:** O que o programa abaixo calcula? *(Dica: rastreie os valores de A a cada passo.)*
+```asm
+MVI A, 01
+MVI B, 01
+ADD B
+ADD B
+STA 2000h
+HLT
+```
+
+<details>
+<summary><b>Respostas</b></summary>
+
+1. A começa em 10, soma 7 (17), soma 7 novamente. Resultado: **24** (hex 0x18).
+2. Adicione `MVI C, 02` e `ADD C`. O registrador C extra guarda o valor 2, e `ADD C` o soma ao Acumulador.
+3. `MVI A, 15` / `MVI B, 8` / `SUB B` / `STA 2000h` / `HLT`. Resultado: 7.
+4. Calcula 1 + 1 + 1 = **3** e armazena em 2000h. (O valor inicial 1 é somado três vezes.)
+</details>
+
 ---
 
 O que começamos como uma simples reflexão sobre a memória e um arranjo rudimentar de portas NAND se transformou em uma máquina formidável. Ao abstrair decodificadores em registradores e somadores em uma ALU, destilamos a complexidade elétrica em algo que podemos programar. E é exatamente essa ponte entre o estado dos transistores e os códigos de operação que torna a computação a disciplina fascinante que é. Mas ainda falta um ingrediente: o maestro invisível que orquestra todos esses componentes para que eles executem cada instrução no momento certo.
 
 ---
 
-**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed. — Charles Petzold
+**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed., Charles Petzold

@@ -1,5 +1,5 @@
 +++
-title = "Base04 - Do Bit ao Símbolo, do Relé ao Chip"
+title = "Petzold04 - Do Bit ao Símbolo, do Relé ao Chip"
 description = "A fundação da computação moderna"
 date = 2026-05-12T18:40:00-03:00
 tags = ["hardware", "portas lógicas", "álgebra booleana", "história", "computação"]
@@ -42,7 +42,7 @@ O ASCII era perfeito... se você falasse apenas inglês americano. Não havia `�
 
 Como a memória passou a ser organizada em *bytes* de 8 bits (256 valores), o bit extra que sobrava no ASCII (que usava 7) começou a ser usado para criar as **Code Pages** (Páginas de Código), como a famigerada `Windows-1252` ou `ISO-8859-1`. Os primeiros 128 caracteres eram ASCII, os 128 seguintes variavam de acordo com o país. Foi a era de ouro de abrir um site e ver `Weâ€™ve` no lugar de `We've`.
 
-A verdadeira salvação foi o **[Unicode](https://pt.wikipedia.org/wiki/Unicode)**. Originalmente pensado como um código fixo de 16 bits (65.536 caracteres), ele logo precisou ser expandido para 21 bits (chegando ao limite de `U+10FFFF`), permitindo mais de 1 milhão de caracteres — de hieróglifos egípcios ao emoji de gatinho chorando de rir 😹.
+A verdadeira salvação foi o **[Unicode](https://pt.wikipedia.org/wiki/Unicode)**. Originalmente pensado como um código fixo de 16 bits (65.536 caracteres), ele logo precisou ser expandido para 21 bits (chegando ao limite de `U+10FFFF`), permitindo mais de 1 milhão de caracteres, de hieróglifos egípcios ao emoji de gatinho chorando de rir 😹.
 
 Mas como salvar tudo isso sem triplicar o tamanho de todos os arquivos de texto do mundo e sem quebrar sistemas legados?
 
@@ -60,13 +60,13 @@ A regra é simples e determinada pelos bits iniciais do primeiro byte:
 
 ```mermaid
 flowchart TD
-    A[Ler o primeiro Byte] --> B{Começa com 0?}
-    B -- Sim --> C[1 Byte: Caractere ASCII Tradicional]
-    B -- Não --> D{Começa com 110?}
-    D -- Sim --> E[2 Bytes: Ex: Letras Latinas c/ acento, Grego]
-    D -- Não --> F{Começa com 1110?}
-    F -- Sim --> G[3 Bytes: Ex: Símbolos complexos, Hiragana]
-    F -- Não --> H[4 Bytes: Ex: Emojis, Ideogramas raros]
+  A[Ler o primeiro Byte] --> B{Começa com 0?}
+  B -- Sim --> C[1 Byte: Caractere ASCII Tradicional]
+  B -- Não --> D{Começa com 110?}
+  D -- Sim --> E[2 Bytes: Ex: Letras Latinas c/ acento, Grego]
+  D -- Não --> F{Começa com 1110?}
+  F -- Sim --> G[3 Bytes: Ex: Símbolos complexos, Hiragana]
+  F -- Não --> H[4 Bytes: Ex: Emojis, Ideogramas raros]
 
 ```
 
@@ -93,25 +93,25 @@ Se juntarmos uma porta XOR e uma AND, criamos o bloco fundamental da computaçã
 
 ```mermaid
 graph LR
-    A((Input A)) --> XOR{XOR}
-    B((Input B)) --> XOR
-    A --> AND{AND}
-    B --> AND
-    XOR --> Sum((Sum Bit))
-    AND --> Carry((Carry Bit))
+  A((Input A)) --> XOR{XOR}
+  B((Input B)) --> XOR
+  A --> AND{AND}
+  B --> AND
+  XOR --> Sum((Sum Bit))
+  AND --> Carry((Carry Bit))
 
 ```
 
 O problema do *Half Adder* é que ele não aceita um "Carry In" (o "vai-um" da coluna anterior). Para somar números maiores, precisamos de um **Full Adder** (Somador Completo), que utiliza dois Half Adders e uma porta OR.
 
-Ao conectar 8 Full Adders em cascata — ligando o `Carry Out` de um no `Carry In` do próximo — temos um **Ripple Carry Adder de 8 bits**.
+Ao conectar 8 Full Adders em cascata, ligando o `Carry Out` de um no `Carry In` do próximo, temos um **Ripple Carry Adder de 8 bits**.
 
 ### A Evolução: Da Mecânica ao Estado Sólido
 
 Como implementamos essas portas lógicas no mundo físico? A evolução do hardware é a verdadeira "batalha dos milissegundos" e, posteriormente, dos nanossegundos.
 
 **1. Relés Eletromecânicos:**
-Os primeiros computadores digitais, como o Harvard Mark I e as criações de George Stibitz na Bell Labs, usavam relés de telefonia. Eram máquinas gigantescas e barulhentas. Um relé demora cerca de 1 milissegundo para mudar de estado. E eles falhavam fisicamente (o famoso caso de Grace Hopper encontrando uma mariposa — o primeiro "bug" literal — presa em um relé do Mark II).
+Os primeiros computadores digitais, como o Harvard Mark I e as criações de George Stibitz na Bell Labs, usavam relés de telefonia. Eram máquinas gigantescas e barulhentas. Um relé demora cerca de 1 milissegundo para mudar de estado. E eles falhavam fisicamente (o famoso caso de Grace Hopper encontrando uma mariposa, o primeiro "bug" literal, presa em um relé do Mark II).
 
 **2. Válvulas a Vácuo:**
 Substituindo componentes mecânicos por fluxos de elétrons no vácuo, as válvulas (usadas no monstruoso ENIAC de 30 toneladas) saltaram a velocidade de comutação para a casa dos microssegundos. Foi aqui que John von Neumann ajudou a formalizar a arquitetura que usamos até hoje: a ideia de um *stored-program* (dados e instruções residindo na mesma memória). O grande gargalo? Válvulas queimavam constantemente, gastavam muita energia e geravam calor extremo.
@@ -119,35 +119,40 @@ Substituindo componentes mecânicos por fluxos de elétrons no vácuo, as válvu
 **3. Transistores:**
 Em 1947, [Bardeen, Brattain e Shockley](https://pt.wikipedia.org/wiki/Transístor) (Bell Labs) mudaram a história da humanidade ao inventar o [transistor](https://pt.wikipedia.org/wiki/Transístor). Feitos de material semicondutor (como Germânio ou Silício) dopado com impurezas para formar áreas N (negativas) e P (positivas), eles permitiam controlar uma grande corrente usando uma pequena corrente na base. Sendo estado sólido, não queimavam como válvulas, não esquentavam quase nada e eram microscópicos em comparação.
 
-Na prática, o transistor funciona como um relé, mas sem partes móveis: uma pequena corrente aplicada na base (equivalente ao eletroímã do relé) abre ou fecha o caminho entre o coletor e o emissor (equivalente aos contatos do relé). Se pensarmos no transistor como um interruptor controlado por eletricidade, podemos construir as mesmas portas lógicas que vimos com relés — AND, OR, NOT — mas ocupando uma fração do espaço e consumindo uma fração da energia. Dois transistores podem formar uma porta NAND; seis podem formar um flip-flop. O relé era barulhento, lento e frágil; o transistor é silencioso, rápido e dura décadas.
+Na prática, o transistor funciona como um relé, mas sem partes móveis: uma pequena corrente aplicada na base (equivalente ao eletroímã do relé) abre ou fecha o caminho entre o coletor e o emissor (equivalente aos contatos do relé). Se pensarmos no transistor como um interruptor controlado por eletricidade, podemos construir as mesmas portas lógicas que vimos com relés, AND, OR, NOT, mas ocupando uma fração do espaço e consumindo uma fração da energia. Dois transistores podem formar uma porta NAND; seis podem formar um flip-flop. O relé era barulhento, lento e frágil; o transistor é silencioso, rápido e dura décadas.
 
 ### Como se Fabrica um Transistor
 
-A fabricação de um transistor começa com uma pastilha (wafer) de **silício ultrapuro** — o elemento mais abundante na crosta terrestre depois do oxigênio, extraído da areia e refinado até atingir pureza de 99,9999999% (grau eletrônico). Sobre essa base de silício puro, o processo de **dopagem** introduz átomos de outros elementos (como fósforo ou boro) para criar regiões com excesso de elétrons (tipo N) ou falta deles (tipo P). A junção entre uma região N e uma região P forma uma barreira que a corrente só atravessa em uma direção — a essência do semicondutor.
+A fabricação de um transistor começa com uma pastilha (wafer) de **silício ultrapuro**, o elemento mais abundante na crosta terrestre depois do oxigênio, extraído da areia e refinado até atingir pureza de 99,9999999% (grau eletrônico). Sobre essa base de silício puro, o processo de **dopagem** introduz átomos de outros elementos (como fósforo ou boro) para criar regiões com excesso de elétrons (tipo N) ou falta deles (tipo P). A junção entre uma região N e uma região P forma uma barreira que a corrente só atravessa em uma direção, a essência do semicondutor.
 
 Para construir um transistor planar (o tipo usado em circuitos integrados), o processo segue estas etapas:
 
-1. **Oxidação:** A pastilha de silício é aquecida em forno com oxigênio, formando uma camada de dióxido de silício (SiO₂) — isolante elétrico.
+1. **Oxidação:** A pastilha de silício é aquecida em forno com oxigênio, formando uma camada de dióxido de silício (SiO₂), isolante elétrico.
 2. **Fotolitografia:** A pastilha é coberta com um material fotossensível (fotorresiste). Uma máscara contendo o desenho do transistor (uma fotografia em escala microscópica) é projetada sobre a pastilha com luz ultravioleta. As áreas expostas à luz tornam-se solúveis e são removidas por um revelador químico, abrindo "janelas" no fotorresiste.
 3. **Corrosão (Etch):** Um ácido corrói o dióxido de silício nas áreas abertas pela janela, expondo o silício puro abaixo.
 4. **Dopagem:** A pastilha é exposta a um gás contendo os átomos dopantes em um forno de alta temperatura. Os átomos difundem-se no silício exposto, criando as regiões N e P.
 5. **Metalização:** Uma fina camada de alumínio ou cobre é depositada sobre toda a pastilha. Uma segunda fotolitografia remove o metal onde não é necessário, deixando apenas os contatos elétricos (os "fios" que conectam o transistor aos seus vizinhos).
-6. **Repetição:** Camadas sucessivas de óxido, polissilício e metal são depositadas e esculpidas, construindo um transistor tridimensional com dezenas de camadas sobrepostas — como um edifício de centenas de andares em escala nanométrica.
+6. **Repetição:** Camadas sucessivas de óxido, polissilício e metal são depositadas e esculpidas, construindo um transistor tridimensional com dezenas de camadas sobrepostas, como um edifício de centenas de andares em escala nanométrica.
 
-Um transistor moderno mede entre 3 e 10 nanômetros de comprimento — cerca de 10.000 vezes mais fino que um fio de cabelo humano. Um chip de processador atual pode conter **dezenas de bilhões** desses transistores, todos fabricados por esse mesmo processo de dopagem, luz e corrosão química, repetido dezenas de vezes sobre a mesma pastilha de silício.
+Um transistor moderno mede entre 3 e 10 nanômetros de comprimento, cerca de 10.000 vezes mais fino que um fio de cabelo humano. Um chip de processador atual pode conter **dezenas de bilhões** desses transistores, todos fabricados por esse mesmo processo de dopagem, luz e corrosão química, repetido dezenas de vezes sobre a mesma pastilha de silício.
 
 **4. Circuitos Integrados (O Chip):**
-Fazer portas lógicas soldando transistores individuais era um pesadelo logístico. No final dos anos 1950, [Jack Kilby](https://pt.wikipedia.org/wiki/Jack_Kilby) (Texas Instruments) e [Robert Noyce](https://pt.wikipedia.org/wiki/Robert_Noyce) (Fairchild Semiconductor) perceberam que múltiplos transistores e resistores poderiam ser gravados em uma única placa de silício. Nascia o **[Circuito Integrado](https://pt.wikipedia.org/wiki/Circuito_integrado)** (IC).
+Fazer portas lógicas conectando transistores individuais com fios era viável para um somador de 4 bits, mas impraticável para um processador completo. Em 1958, [Jack Kilby](https://pt.wikipedia.org/wiki/Jack_Kilby) (Texas Instruments) e, independentemente, [Robert Noyce](https://pt.wikipedia.org/wiki/Robert_Noyce) (Fairchild Semiconductor) em 1959, perceberam que múltiplos transistores, resistores e conexões poderiam ser fabricados numa **única pastilha de silício**, o **[Circuito Integrado](https://pt.wikipedia.org/wiki/Circuito_integrado)** (IC).
 
-A partir dos anos 70, componentes pré-fabricados revolucionaram a engenharia. Com um catálogo como o *TTL Data Book*, engenheiros podiam comprar chips da série 7400. Um chip `7400` trazia quatro portas NAND puras. Um `7483` trazia um somador completo de 4 bits empacotado.
+O impacto foi imediato e profundo. O que antes exigia uma placa cheia de componentes discretos agora cabia num chip do tamanho de uma unha. A indústria rapidamente classificou os ICs por densidade:
 
-O tempo de propagação do sinal nesses chips já era medido em **nanossegundos** (bilionésimos de segundo). Para contexto: a luz viaja cerca de 30 centímetros em um nanossegundo.
+| Sigla | Nome | Transistores por chip | Exemplo |
+|---|---|---|---|
+| **SSI** | Small-Scale Integration | 2 a 64 | Portas NAND 7400 (anos 60) |
+| **MSI** | Medium-Scale Integration | 64 a 4.000 | Somador 7483 (anos 70) |
+| **LSI** | Large-Scale Integration | 4.000 a 100.000 | Microprocessador 8080 (1974) |
+| **VLSI** | Very Large-Scale Integration | > 100.000 | Core i7 (2008) |
 
-A computação moderna não surgiu por acaso. Ela é o resultado do empilhamento cuidadoso de abstrações.
+A série **7400** da Texas Instruments tornou-se a linguagem franca da engenharia digital. Com o catálogo *TTL Data Book* em mãos, um engenheiro podia projetar um computador inteiro conectando chips pré-fabricados: um `7400` para quatro portas NAND, um `7483` para somar 4 bits, um `7493` para contar. Cada chip era uma abstração, o engenheiro não precisava saber quantos transistores havia dentro, apenas o que ele fazia e quais pinos conectar.
 
-O silício dopado forma transistores. Transistores formam portas lógicas (AND, XOR). Portas lógicas formam somadores matemáticos. Esses processadores lêem bytes da memória. Esses bytes, por sua vez, obedecem a padrões geniais como o UTF-8 para garantir que, não importa onde você esteja no mundo, a máquina saiba exatamente como pintar os pixels corretos na sua tela.
+O tempo de propagação do sinal nesses chips era medido em **nanossegundos** (bilionésimos de segundo). Para dar contexto: a luz viaja cerca de 30 centímetros num nanossegundo, o sinal elétrico dentro de um chip de 1 cm percorre essa distância em apenas 30 picosegundos (0,03 ns).
 
-É quando entendemos essa ponte contínua — da física dos semicondutores à arquitetura do software — que deixamos de ser apenas digitadores de código e passamos a dominar verdadeiramente a máquina.
+**A Hierarquia da Abstração:** O que torna essa progressão notável é que cada nível esconde a complexidade do anterior. O engenheiro do 7400 não precisava entender dopagem de silício; o programador em C não precisa saber que o 7483 usa portas XOR internamente; o usuário do navegador não precisa saber que a letra 'A' na tela começou como o byte `01000001` na memória. Esta é a base de toda a computação moderna, complexidade gerenciada por camadas de abstração.
 
 ---
 
@@ -214,7 +219,7 @@ Bits são apenas 0s e 1s. Eles não carregam etiquetas explicando o que são. Um
 
 ## 3. Feedback e Osciladores: O Coração da Máquina
 
-Até agora, nossos circuitos apenas reagem a interruptores que humanos pressionam. Para criar automação, o circuito precisa agir por conta própria. A chave para isso é o **Feedback** — quando a saída de um circuito alimenta a sua própria entrada.
+Até agora, nossos circuitos apenas reagem a interruptores que humanos pressionam. Para criar automação, o circuito precisa agir por conta própria. A chave para isso é o **Feedback**, quando a saída de um circuito alimenta a sua própria entrada.
 
 Se você ligar a saída de um inversor (que transforma 0 em 1, e 1 em 0) na sua própria entrada, ele tentará mudar de estado infinitamente. Ele se tornará 1, o que fará a entrada ser 1, forçando a saída a ser 0, e assim por diante.
 
@@ -222,11 +227,11 @@ Isso cria um **Oscilador** (ou *Clock*).
 
 ```mermaid
 graph LR
-    A[Porta Inversora] -->|Saída| B((Sinal: 0 ou 1))
-    B -->|Feedback| A
-    
-    style A fill:#e74c3c,stroke:#c0392b,color:#fff,stroke-width:2px
-    style B fill:#3498db,stroke:#2980b9,color:#fff,stroke-width:2px
+  A[Porta Inversora] -->|Saída| B((Sinal: 0 ou 1))
+  B -->|Feedback| A
+  
+  style A fill:#e74c3c,stroke:#c0392b,color:#fff,stroke-width:2px
+  style B fill:#3498db,stroke:#2980b9,color:#fff,stroke-width:2px
 
 ```
 
@@ -251,20 +256,20 @@ Para evitar que a informação fique circulando em loops infinitos, usamos uma v
 
 ```mermaid
 graph TD
-    D[Entrada: Data] --> Latch1(Primeiro Estágio)
-    Clk[Entrada: Clock] --> Inv[Inversor]
-    Inv --> Latch1
-    
-    Latch1 --> Latch2(Segundo Estágio)
-    Clk --> Latch2
-    
-    Latch2 --> Q[Saída: Q]
-    Latch2 --> NQ[Saída: Não-Q]
-    
-    style D fill:#2ecc71,color:#fff
-    style Clk fill:#f1c40f,color:#333
-    style Q fill:#9b59b6,color:#fff
-    style NQ fill:#34495e,color:#fff
+  D[Entrada: Data] --> Latch1(Primeiro Estágio)
+  Clk[Entrada: Clock] --> Inv[Inversor]
+  Inv --> Latch1
+  
+  Latch1 --> Latch2(Segundo Estágio)
+  Clk --> Latch2
+  
+  Latch2 --> Q[Saída: Q]
+  Latch2 --> NQ[Saída: Não-Q]
+  
+  style D fill:#2ecc71,color:#fff
+  style Clk fill:#f1c40f,color:#333
+  style Q fill:#9b59b6,color:#fff
+  style NQ fill:#34495e,color:#fff
 
 ```
 
@@ -301,8 +306,38 @@ Nesta abordagem, cruzamos fios de linhas e colunas e colocamos diodos (que permi
 
 > **A Ilusão da Matriz:** Para economizar fios, não acendemos todos os LEDs de uma vez. O circuito varre as colunas do display de LEDs de forma absurdamente rápida, sincronizando a energia nas linhas através da ROM de Diodos e conectando a coluna ao terra através de transistores (*Sinkers*). A velocidade é tão alta que o olho humano não percebe a piscada, enxergando o número completamente aceso.
 
-A matemática binária da subtração nos permitiu construir processadores eficientes. Mas foi a invenção do oscilador e do flip-flop — a capacidade de fazer a eletricidade pulsar ritmicamente e "lembrar" do seu estado anterior — que transformou calculadoras estáticas nas máquinas dinâmicas e vivas que temos hoje. O flip-flop é a menor semente da memória; o próximo passo é entender como multiplicamos essa semente até construir uma arquitetura completa de processamento.
+### 🔧 Exercícios
+
+**1. Codificação UTF-8:** Dada a sequência de bytes em hexa `48 C3 A9 6C 6C 6F`, e sabendo que bytes começando com `0` são ASCII (1 byte), bytes começando com `110` são início de caractere de 2 bytes, e `10` são continuação, quantos caracteres Unicode formam essa string? Qual o significado dela? *(Dica: 0x48 = 'H', 0x65 = 'e', 0x6C = 'l', 0x6F = 'o')*
+
+**2. Trace do Half-Adder:** Complete a tabela abaixo para um half-adder (XOR soma bit, AND carry):
+
+| A | B | Soma (A XOR B) | Carry (A AND B) |
+|---|---|---|---|
+| 0 | 0 | 0 | 0 |
+| 0 | 1 | ? | ? |
+| 1 | 0 | ? | ? |
+| 1 | 1 | ? | ? |
+
+**3. Somador completo:** Um somador completo de 1 bit recebe A, B e um CarryIn. Sua equação é S = A ⊕ B ⊕ CarryIn. Qual o valor de S quando A=1, B=1, CarryIn=1? E o CarryOut?
+
+**4. Transistor:** Qual a principal vantagem do transistor sobre a válvula a vácuo? *(Dica: pense em aquecimento e confiabilidade.)*
+
+<details>
+<summary><b>Respostas</b></summary>
+
+1. `48` = 'H' (1 byte), `C3 A9` = 'é' (2 bytes), `6C` = 'l', `6C` = 'l', `6F` = 'o'. Forma a palavra **"Héllo"** (um "Hello" com acento cômico no e).
+2. Soma: 0, 1, 1, 0. Carry: 0, 0, 0, 1.
+3. S = 1 ⊕ 1 ⊕ 1 = 0 ⊕ 1 = **1**. CarryOut = (A ∧ B) ∨ (CarryIn ∧ (A ⊕ B)) = (1∧1) ∨ (1∧(1⊕1)) = 1 ∨ (1∧0) = **1**.
+4. Transistores são estado sólido: não aquecem como válvulas, não queimam, são muito menores, consomem menos energia e duram mais.
+</details>
 
 ---
 
-**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed. — Charles Petzold
+Este artigo foi um mergulho em duas frentes. Na primeira, vimos como caracteres, números e símbolos são codificados em sequências de bits, do Baudot de 5 bits ao UTF-8 que seus dispositivos usam hoje. Na segunda, percorremos a evolução do hardware que processa esses bits: o half-adder que soma dois bits, o full adder que os encadeia, o complemento de dois que torna a subtração um passeio, e o flip-flop que memoriza resultados.
+
+O oscilador deu o ritmo; o flip-flop deu a memória. Com eles, deixamos de ter apenas circuitos que reagem a entradas para ter **máquinas de estado** que lembram o passado e decidem o futuro. É essa capacidade de armazenar e processar, bits que codificam números, números que codificam instruções, instruções que formam programas, que separa uma calculadora de um computador de propósito geral. O próximo passo é juntar todas essas peças em uma arquitetura completa de processamento.
+
+---
+
+**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed., Charles Petzold

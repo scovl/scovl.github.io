@@ -5,7 +5,7 @@
     <link>http://localhost:1313/</link>
     <description>scovl - Blog sobre tecnologia, programação e desenvolvimento</description>
     <language>pt-br</language>
-    <lastBuildDate>Fri, 08 May 2026 18:40:00 -0300</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2026 18:40:00 -0300</lastBuildDate>
     <sy:updatePeriod>daily</sy:updatePeriod>
     <sy:updateFrequency>1</sy:updateFrequency>
     <atom:link href="http://localhost:1313/" rel="self" type="application/rss+xml" />
@@ -14,6 +14,650 @@
     
     
     
+    
+    <item>
+      <title>Petzold01 - Códigos e Combinações</title>
+      <link>http://localhost:1313/2026/05/12/histcomp01/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp01/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>Ao concluir a leitura do livro <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a> 2ª ed. de Charles Petzold, decidi criar uma série de artigos sintetizando seu conteúdo e em Português. Então vamos ao ponto de partida:</p>
+<p>O Código Morse foi inventado por volta de 1837 por <a href="https://pt.wikipedia.org/wiki/Samuel_Morse">Samuel Finley Breese Morse</a> (1791–1872). Ele foi aprimorado por outros inventores, notavelmente <a href="https://en.wikipedia.org/wiki/Alfred_Vail">Alfred Vail</a> (1807–1859), e evoluiu para algumas versões diferentes. O sistema que utilizamos e estudamos hoje é mais formalmente conhecido como <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Morse">Código Morse Internacional</a></strong>.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>Ao concluir a leitura do livro <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a> 2ª ed. de Charles Petzold, decidi criar uma série de artigos sintetizando seu conteúdo e em Português. Então vamos ao ponto de partida:</p>
+<p>O Código Morse foi inventado por volta de 1837 por <a href="https://pt.wikipedia.org/wiki/Samuel_Morse">Samuel Finley Breese Morse</a> (1791–1872). Ele foi aprimorado por outros inventores, notavelmente <a href="https://en.wikipedia.org/wiki/Alfred_Vail">Alfred Vail</a> (1807–1859), e evoluiu para algumas versões diferentes. O sistema que utilizamos e estudamos hoje é mais formalmente conhecido como <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_Morse">Código Morse Internacional</a></strong>.</p>
+<p>Mais de 180 anos depois, o Código Morse continua tão relevante que, em maio de 2026, um hacker o utilizou para enganar um agente de inteligência artificial. A técnica foi a <a href="https://pt.wikipedia.org/wiki/Inje%C3%A7%C3%A3o_de_prompt">injeção de prompt</a>: comandos maliciosos em código Morse foram enviados ao sistema, que os interpretou como instruções legítimas e transferiu US$ 213 mil (R$ 1 milhão) em criptomoedas (<a href="https://livecoins.com.br/hacker-usa-codigo-morse-para-fazer-agente-autonomo-de-ia-lhe-enviar-r-1-milhao-em-criptomoeda/">Livecoins</a>). O caso mostra que a estrutura binária de pontos e traços que você aprenderá a seguir não é apenas história, ela ainda povoa o submundo da segurança digital.</p>
+<p><img src="/post/images/hist/grok-morse.png" alt="grok-morse"></p>
+<p>A invenção do código Morse caminha lado a lado com a invenção do <a href="https://pt.wikipedia.org/wiki/Tel%C3%A9grafo">telégrafo</a>, o primeiro sistema a transmitir informação codificada por impulsos elétricos através de fios. Essa união entre <strong>código binário</strong> (ponto/traço) e <strong>sinal elétrico</strong> (pulso curto/pulso longo) é exatamente a base de como os computadores funcionam, a diferença é que o telégrafo era operado manualmente, enquanto o computador faz tudo automaticamente e bilhões de vezes mais rápido.</p>
+<h2 id="o-desafio-da-tradução-enviar-vs-receber">O Desafio da Tradução: Enviar vs. Receber</h2>
+<p>A maioria das pessoas acha muito mais fácil <strong>enviar</strong> código Morse do que <strong>receber</strong>. Mesmo que você não tenha o código memorizado, para enviar uma mensagem basta usar uma tabela de tradução organizada em ordem alfabética. Você olha a letra &ldquo;A&rdquo;, vê que é <code>Ponto-Traço</code> (<code>.-</code>), e transmite.</p>
+<p>No entanto, <strong>receber</strong> o código Morse e traduzi-lo de volta para palavras é consideravelmente mais difícil e demorado. Por quê? Porque você precisa trabalhar de trás para frente. O problema é que possuímos uma tabela que faz esta tradução:</p>
+<blockquote>
+<p><strong>Letra do Alfabeto → Pontos e Traços do Código Morse</strong></p>
+</blockquote>
+<p>Mas não temos uma tabela natural que nos permita fazer o caminho inverso:</p>
+<blockquote>
+<p><strong>Pontos e Traços do Código Morse → Letra do Alfabeto</strong></p>
+</blockquote>
+<p>Se você recebe a sequência <code>Traço-Ponto-Traço-Traço</code> (<code>-.--</code>), e não tem o código decorado, terá que escanear a tabela inteira, letra por letra, até descobrir finalmente que se trata da letra <strong>Y</strong>. Não há nada nos pontos e traços que possamos simplesmente colocar em &ldquo;ordem alfabética&rdquo;.</p>
+<p>Para facilitar, vamos esquecer a ordem alfabética. Uma abordagem muito melhor e mais didática para organizar esses códigos é agrupá-los com base em <strong>quantos pontos e traços eles possuem</strong>. Começando pelo mais simples: uma sequência de apenas um ponto ou um traço pode representar <strong>duas</strong> letras:</p>
+<p><img src="/post/images/hist/morse01.png" alt="morse01"></p>
+<p>Uma combinação de exatamente dois pontos ou traços nos fornece <strong>quatro</strong> novas letras:</p>
+<p><img src="/post/images/hist/morse02.png" alt="morse02"></p>
+<p>Um padrão de três pontos ou traços nos dá <strong>oito</strong> letras adicionais:
+<em>(Ex: <code>...</code> para S, <code>---</code> para O, etc.)</em>. Sequências de quatro pontos e traços permitem mais <strong>16</strong> caracteres. Se somarmos tudo isso, essas quatro categorias nos dão:
+<strong>2 + 4 + 8 + 16 = 30 letras disponíveis.</strong> Isso é mais do que suficiente para as 26 letras do alfabeto latino, os 4 códigos restantes na verdade representam três letras com tremas (umlauts: ä, ö, ü) e o dígrafo <strong>CH</strong> (usado em alemão e em outras línguas).</p>
+<h2 id="o-padrão-matemático-potências-de-2">O Padrão Matemático: Potências de 2</h2>
+<p>Você conseguiu notar um padrão no tamanho das categorias acima? <strong>Cada grupo possui exatamente o dobro de códigos do grupo anterior.</strong> Cada novo nível pega todos os códigos do nível anterior, adiciona um Ponto no final, repete o processo com um Traço, e dobra.</p>
+<p>Podemos estender esta tabela para visualizar o crescimento exponencial até o ponto em que o número de combinações atinge a marca de 1024:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Pontos/Traços</th>
+          <th>Potência</th>
+          <th>Número de Códigos</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>2¹</td>
+          <td><strong>2</strong></td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>2²</td>
+          <td><strong>4</strong></td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>2³</td>
+          <td><strong>8</strong></td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>2⁴</td>
+          <td><strong>16</strong></td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>2⁵</td>
+          <td><strong>32</strong></td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>2⁶</td>
+          <td><strong>64</strong></td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>2⁷</td>
+          <td><strong>128</strong></td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td>2⁸</td>
+          <td><strong>256</strong></td>
+      </tr>
+      <tr>
+          <td>9</td>
+          <td>2⁹</td>
+          <td><strong>512</strong></td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td>2¹⁰</td>
+          <td><strong>1024</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>A palavra &ldquo;binário&rdquo;, do latim <em>binarius</em>, significa literalmente &ldquo;dois a dois&rdquo; (<em>two by two</em>). É exatamente isso: a cada novo símbolo, o número de combinações <strong>dobra</strong>. A matemática é simples, mas as consequências são profundas:</p>
+<blockquote>
+<p><strong>Número de códigos = 2^(número de pontos e traços)</strong></p>
+</blockquote>
+<h2 id="a-árvore-de-decodificação-o-método-visual">A Árvore de Decodificação (O Método Visual)</h2>
+<p>Para tornar o processo de decodificação ainda mais fácil e para visualizar essa matemática perfeitamente, podemos desenhar um diagrama em formato de árvore. Abaixo está a representação de como as letras se ramificam a cada novo símbolo adicionado. Para decodificar uma sequência, você começa à esquerda e segue as setas para a direita, escolhendo &ldquo;Ponto&rdquo; ou &ldquo;Traço&rdquo; a cada passo:</p>
+<p><img src="/post/images/hist/morse-map.png" alt="morse-map"></p>
+<p><em>Exemplo prático:</em> Suponha que você queira saber qual letra corresponde ao código <code>.-.</code> (Ponto-Traço-Ponto).</p>
+<ol>
+<li>Comece no <code>Início</code>.</li>
+<li>Siga a seta do <strong>Ponto</strong> (chegando no E).</li>
+<li>Siga a seta do <strong>Traço</strong> (chegando no A).</li>
+<li>Siga a seta do <strong>Ponto</strong>. Você chegará à letra <strong>R</strong> (destacada em azul acima).</li>
+</ol>
+<p>Construir essa estrutura mental (ou em papel) garante que não se cometa o erro bobo de usar o mesmo código para duas letras diferentes, além de garantir o aproveitamento de todas as combinações possíveis sem criar sequências desnecessariamente longas. O que acontece se precisarmos incluir números e sinais de pontuação? Nós apenas continuamos seguindo a fórmula:</p>
+<ul>
+<li>Sequências de <strong>5</strong> símbolos (2⁵ = 32 códigos) cobrem os dez números, mas a maioria desses 32 códigos é usada para letras acentuadas adicionais, não para pontuação.</li>
+<li>Sinais como ponto final, vírgula e interrogação acabam precisando de <strong>6</strong> símbolos (2⁶ = 64 códigos). Isso é intencional: como a pontuação é menos frequente que letras e números, atribuir-lhe códigos mais longos segue a mesma lógica de compressão por frequência que Vail usou para o &lsquo;E&rsquo;.</li>
+</ul>
+<p>No total, teríamos <code>2 + 4 + 8 + 16 + 32 + 64 = 126</code> caracteres possíveis (a soma cumulativa de todas as combinações de 1 a 6 símbolos). Isso é mais do que o código Morse precisa! Muitos desses códigos mais longos são &ldquo;indefinidos&rdquo;, se você receber um, provavelmente alguém cometeu um erro de digitação no telégrafo.</p>
+<h3 id="o-fator-tempo-onde-uma-letra-termina">O Fator Tempo: Onde uma Letra Termina?</h3>
+<p>Se o código Morse usa apenas pontos e traços, como o receptor sabe onde uma letra termina e a outra começa? Se você ouvir <code>...</code>, é um &ldquo;S&rdquo; (três pontos) ou são três letras &ldquo;E&rdquo; (<code>. . .</code>)?</p>
+<p>A resposta está no <strong>silêncio</strong>. O Morse não é feito apenas de pontos e traços, mas também de <strong>pausas</strong> com durações rigorosamente definidas:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Elemento</th>
+          <th>Duração relativa</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Ponto (.)</td>
+          <td>1 unidade</td>
+      </tr>
+      <tr>
+          <td>Traço (−)</td>
+          <td>3 unidades</td>
+      </tr>
+      <tr>
+          <td>Silêncio entre elementos da mesma letra</td>
+          <td>1 unidade</td>
+      </tr>
+      <tr>
+          <td>Silêncio entre letras</td>
+          <td>3 unidades</td>
+      </tr>
+      <tr>
+          <td>Silêncio entre palavras</td>
+          <td>7 unidades</td>
+      </tr>
+  </tbody>
+</table>
+<p>Assim, a letra &ldquo;R&rdquo; (<code>.-.</code>) é transmitida como: <strong>sinal (1) + silêncio (1) + sinal (3) + silêncio (1) + sinal (1)</strong>. Já três letras &ldquo;E&rdquo; seriam: <strong>sinal (1) + silêncio (3) + sinal (1) + silêncio (3) + sinal (1)</strong>. A diferença no silêncio entre os elementos é o que permite distinguir &ldquo;R&rdquo; de &ldquo;EEE&rdquo;.</p>
+<p>Este é o mesmo princípio dos protocolos de comunicação digital modernos: bits são transmitidos em intervalos de tempo fixos, e o receptor usa um relógio sincronizado com o transmissor para saber onde cada símbolo termina. <a href="https://pt.wikipedia.org/wiki/USB">USB</a>, <a href="https://pt.wikipedia.org/wiki/Ethernet">Ethernet</a> e <a href="https://pt.wikipedia.org/wiki/Wi-Fi">Wi-Fi</a> usam versões sofisticadas deste mesmo mecanismo.</p>
+<h3 id="a-origem-da-compressão-por-que-o-e-é-um-ponto">A Origem da Compressão: Por que o &lsquo;E&rsquo; é um Ponto</h3>
+<p>Alfred Vail, colaborador de Morse, percebeu que enviar mensagens longas seria cansativo. Ele visitou uma tipografia e literalmente <strong>contou as letras de chumbo</strong> usadas para imprimir jornais, um inventário rudimentar da frequência de cada letra no inglês.</p>
+<p>O resultado foi um código de <strong>comprimento variável</strong>: a letra <strong>E</strong> (a mais comum) recebeu o código mais curto, um único ponto. A letra <strong>T</strong> (a segunda mais comum) recebeu um traço. Letras raras como <strong>Q</strong> (<code>--.-</code>) e <strong>Z</strong> (<code>--..</code>) ficaram com sequências longas e portanto mais lentas de transmitir.</p>
+<p>Esta foi a primeira aplicação prática de <strong><a href="https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_por_entropia">codificação por entropia</a></strong>, atribuir símbolos mais curtos a eventos mais frequentes. O mesmo princípio, formalizado matematicamente por <a href="https://pt.wikipedia.org/wiki/David_Huffman">David Huffman</a> em 1952, é o coração dos algoritmos de compressão modernos:</p>
+<ul>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_de_Huffman">Codificação de Huffman</a></strong> → ZIP, JPEG, PNG</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Codifica%C3%A7%C3%A3o_aritm%C3%A9tica">Codificação aritmética</a></strong> → MP4, H.264</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/LZ77">Lempel-Ziv (LZ77)</a></strong> → GIF, gzip, PDF</li>
+</ul>
+<p>O Morse não é apenas o primeiro código binário; é o ancestral direto da compressão de dados.</p>
+<h3 id="a-conexão-com-os-computadores">A Conexão com os Computadores</h3>
+<p>O código Morse é <strong>binário</strong>: seus componentes têm apenas dois valores possíveis, ponto ou traço. É como uma moeda, que só pode cair em cara ou coroa. Se você a jogar 10 vezes, existem 2¹⁰ = 1024 sequências possíveis.</p>
+<p>Esta é a mesma lógica que os computadores usam. A diferença é que, em vez de pontos e traços, os computadores usam <strong>níveis de tensão</strong>: 0 volts representa o bit <code>0</code>, e uma tensão de referência (como 3,3V ou 5V) representa o bit <code>1</code>. Agrupe 8 bits e você tem um byte, capaz de representar 256 valores diferentes, como letras, números ou cores.</p>
+<p>Assim como a árvore de decodificação do Morse garante que cada código seja único, a tabela de encoding (como ASCII) mapeia cada padrão de bits a um símbolo específico. O princípio é exatamente o mesmo, o que muda é o meio físico (fios em vez de sinais sonoros) e a velocidade (bilhões de bits por segundo em vez de alguns pontos por segundo).</p>
+<hr>
+<h2 id="o-sistema-braille-uma-codificação-paralela">O Sistema Braille: Uma Codificação Paralela</h2>
+<p>Se o código Morse representa letras como sequências no <strong>tempo</strong> (pontos e traços sucessivos), outra invenção, criada por um menino francês em 1824, faz o oposto: representa letras como padrões <strong>espaciais</strong>, percebidos de uma só vez pelo tato.</p>
+<h3 id="a-tragédia-e-a-invenção">A Tragédia e a Invenção</h3>
+<p><a href="https://pt.wikipedia.org/wiki/Louis_Braille">Louis Braille</a> (1809–1852) perdeu a visão aos três anos de idade em um acidente na oficina de arreios de seu pai: uma <strong>sovela</strong> (ferramenta perfurante de couro) escorregou e atingiu seu olho. A infecção se espalhou para o outro olho, deixando-o completamente cego.</p>
+<p>Aos dez anos, ganhou uma bolsa para o Instituto Real para Jovens Cegos em Paris. Lá, o ensino era baseado no sistema de <a href="https://pt.wikipedia.org/wiki/Valentin_Ha%C3%BCy">Valentin Haüy</a>, que consistia em imprimir letras do alfabeto comum em alto-relevo no papel, para que fossem sentidas pelo tato. O problema? Apalpar as curvas complexas das letras tradicionais era extremamente lento, impreciso e frustrante, e os livros eram caríssimos de produzir.</p>
+<p>Aos doze anos, Braille conheceu o sistema <em>écriture nocturne</em> (escrita noturna), inventado pelo capitão do exército francês <a href="https://en.wikipedia.org/wiki/Charles_Barbier">Charles Barbier</a> para que soldados pudessem ler mensagens no escuro. Era um código de 12 pontos em relevo representando sons, não letras. Braille enxergou o potencial, mas simplificou o sistema radicalmente: reduziu a matriz para <strong>6 pontos</strong> (2 colunas, 3 linhas) e o adaptou para representar letras reais.</p>
+<p>Aos <strong>quinze anos</strong>, em 1824, ele já tinha seu sistema pronto.</p>
+<h3 id="a-célula-braille-uma-matriz-binária">A Célula Braille: Uma Matriz Binária</h3>
+<p>Cada símbolo é codificado por pontos em relevo dentro de uma célula de 2 colunas por 3 linhas:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Coluna Esquerda</th>
+          <th>Coluna Direita</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Ponto <strong>1</strong></td>
+          <td>Ponto <strong>4</strong></td>
+      </tr>
+      <tr>
+          <td>Ponto <strong>2</strong></td>
+          <td>Ponto <strong>5</strong></td>
+      </tr>
+      <tr>
+          <td>Ponto <strong>3</strong></td>
+          <td>Ponto <strong>6</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>Cada ponto pode estar em <strong>um de dois estados</strong>: plano (0) ou relevo (1). Aplicando a regra das potências de 2:</p>
+<blockquote>
+<p><strong>2⁶ = 64 combinações possíveis</strong></p>
+</blockquote>
+<p>Destas, 26 são letras do alfabeto, mas o francês clássico da época não usava o <strong>W</strong>, que só foi incorporado depois. Braille organizou as letras que restaram em blocos hierárquicos:</p>
+
+
+  
+  <div class="mermaid">graph TD
+  A[&lt;b&gt;Bloco 1: Letras &#39;a&#39; a &#39;j&#39;&lt;/b&gt;&lt;br&gt;Usam apenas os 4 pontos superiores&lt;br&gt;Pontos 1, 2, 4, 5] --&gt; B[&lt;b&gt;Bloco 2: Letras &#39;k&#39; a &#39;t&#39;&lt;/b&gt;&lt;br&gt;Cópia do Bloco 1,&lt;br&gt;ADICIONA o Ponto 3]
+  B --&gt; C[&lt;b&gt;Bloco 3: Letras &#39;u&#39; a &#39;z&#39;&lt;/b&gt;&lt;br&gt;Cópia do Bloco 2,&lt;br&gt;ADICIONA o Ponto 6]
+  
+  style A fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px
+  style B fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+  style C fill:#e8f5e9,stroke:#4caf50,stroke-width:2px</div>
+ <blockquote>
+<p>Nota: O &lsquo;W&rsquo; não aparece na tabela original porque não faz parte do alfabeto francês clássico. Quando o Braille foi adaptado para o inglês e outros idiomas, o W foi acrescentado rearranjando algumas combinações.</p>
+</blockquote>
+<h3 id="lições-de-engenharia-do-braille">Lições de Engenharia do Braille</h3>
+<p>O sistema de Braille ensina conceitos que a computação moderna redescobriria décadas depois:</p>
+<p><strong>1. Codificação hierárquica.</strong> Os blocos não reinventam cada letra do zero. O Bloco 2 copia exatamente o padrão do Bloco 1 e adiciona o Ponto 3. O Bloco 3 copia o Bloco 2 e adiciona o Ponto 6. Isto é <strong>design incremental</strong>: aproveitar a estrutura existente em vez de partir do zero, o mesmo princípio usado em <a href="https://pt.wikipedia.org/wiki/Tabela_de_p%C3%A1ginas">paginação hierárquica de memória</a>, <a href="https://pt.wikipedia.org/wiki/Sistema_de_arquivos">sistemas de arquivos</a> e <a href="https://pt.wikipedia.org/wiki/Banco_de_dados">bancos de dados</a>.</p>
+<p><strong>2. Indicadores de contexto (shift e escape).</strong> Com apenas 64 códigos para letras, números e pontuação, Braille precisou de um truque: código especial de número (pontos 3,4,5,6) que altera a interpretação de <em>todos</em> os símbolos seguintes (como <strong>Shift</strong> ou <strong>Caps Lock</strong>), e o ponto 6 isolado como <strong>escape</strong> para maiúsculas (altera apenas o próximo caractere). Esta ideia sobrevive no HTTP (%20), no <strong><a href="https://pt.wikipedia.org/wiki/UTF-8">UTF-8</a></strong> (prefixos 110, 1110) e no ASCII (caractere ESC).</p>
+<p><strong>3. Compressão por contração (<a href="https://en.wikipedia.org/wiki/English_Braille">Grade 2 Braille</a>).</strong> Como apenas 26 letras + números + pontuação não preenchem as 64 combinações, os códigos extras foram reaproveitados para criar <strong>atalhos</strong>. No Braille Grau 2, que domina as publicações em inglês, combinações únicas representam palavras inteiras frequentes como <em>but</em>, <em>can</em>, <em>do</em>, <em>every</em>, <em>from</em> e <em>have</em>, além de contrações como <em>ch</em>, <em>sh</em>, <em>th</em>, <em>ed</em>, <em>er</em> e <em>ou</em>. Isto economiza papel (cerca de 25%) e acelera a leitura, uma forma de compressão de dados por substituição, exatamente como a codificação de Huffman que vimos no Morse e os dicionários do algoritmo LZ usados em ZIP e PNG.</p>
+<p><strong>4. Tolerância a erros de leitura.</strong> Braille sabia que a perfuração manual com sovela podia gerar imprecisões, e que o papel amassado podia achatar pontos. Por isso, ele distribuiu os padrões de forma a <strong>minimizar ambiguidades</strong>: letras que poderiam ser confundidas receberam padrões visualmente distintos. Isso é análogo aos <strong><a href="https://pt.wikipedia.org/wiki/Bit_de_paridade">bits de paridade</a></strong>, <strong><a href="https://pt.wikipedia.org/wiki/Soma_de_verifica%C3%A7%C3%A3o">checksums</a></strong> e <strong><a href="https://pt.wikipedia.org/wiki/C%C3%B3digo_corretor_de_erro">códigos corretores de erro</a></strong> (como <a href="https://pt.wikipedia.org/wiki/Reed-Solomon">Reed-Solomon</a>, usado em CDs e QR Codes) que a computação moderna usa para detectar e corrigir dados corrompidos.</p>
+<p>O Braille provou que um código bem projetado não precisa ser complexo, precisa ser <strong>sistemático</strong>. E, como Morse, mostrou que com 6 bits binários é possível representar qualquer informação textual básica. A diferença é que Braille faz isso no espaço, não no tempo: todos os 6 pontos são lidos simultaneamente pelo tato, como bytes na memória de um computador.</p>
+<hr>
+<h2 id="o-mesmo-princípio-3000-anos-antes-o-i-ching">O Mesmo Princípio, 3.000 Anos Antes: O I Ching</h2>
+<p>Antes de Morse, Braille ou circuitos elétricos, a civilização chinesa já explorava combinações binárias no <strong><a href="https://pt.wikipedia.org/wiki/I_Ching">I Ching</a></strong> (易经), <em>O Livro das Mutações</em>.</p>
+<p>No I Ching, cada linha de um diagrama pode ser <strong>Yang (⚊)</strong>, contínua, firme, ou <strong>Yin (⚋)</strong>, partida, flexível. Três linhas formam um <strong>trigrama</strong> (卦), com 2³ = 8 possibilidades. Seis linhas formam um <strong>hexagrama</strong>, com 2⁶ = 64 combinações.</p>
+<p>A coincidência numérica com as 64 células do Braille não é mágica, é matemática. Seis posições binárias sempre geram 64 combinações, independentemente de serem pontos em relevo ou linhas num livro de oráculo. Quando o matemático <a href="https://pt.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz">Gottfried Wilhelm Leibniz</a> tomou contato com o I Ching no século XVII, reconheceu imediatamente a correspondência com seu sistema binário recém-desenvolvido e viu nisso a confirmação de que a lógica de dois estados não era arbitrária, mas fundamental.</p>
+<hr>
+<h2 id="o-elo-perdido-o-código-baudot">O Elo Perdido: O Código Baudot</h2>
+<p>O Morse era genial para humanos, mas terrível para máquinas. Como decodificar automaticamente um sinal de comprimento variável, dependente de temporização precisa, usando relés do século XIX?</p>
+<p>Em 1870, o engenheiro francês <a href="https://pt.wikipedia.org/wiki/%C3%89mile_Baudot">Émile Baudot</a> resolveu o problema radicalmente: em vez de códigos de tamanho variável, criou um código de <strong>tamanho fixo</strong>, exatos <strong>5 bits</strong> por caractere, capaz de representar 2⁵ = 32 caracteres. O operador usava um teclado de 5 teclas (como um piano simplificado), e a máquina convertia cada combinação de teclas em 5 sinais elétricos sequenciais. Pela primeira vez na história, uma <strong>máquina</strong>, não um humano, podia codificar e decodificar texto automaticamente.</p>
+<p>O código Baudot deu origem aos <strong><a href="https://pt.wikipedia.org/wiki/Teleimpressor">teletipos</a></strong> (teleprinters), que dominaram as comunicações empresariais até meados do século XX, e às <strong><a href="https://pt.wikipedia.org/wiki/Fita_perfurada">fitas perfuradas</a></strong>, que foram o principal meio de armazenamento dos primeiros computadores. O termo &ldquo;<a href="https://pt.wikipedia.org/wiki/Baud">baud</a>&rdquo; (medida de taxa de transmissão em telecomunicações, como &ldquo;9600 baud&rdquo;) deriva diretamente do nome de Baudot.</p>
+<p>Do Morse ao Baudot, a evolução é cristalina: o Morse provou que informação pode ser binária; o Baudot provou que pode ser <strong>uniforme</strong>, cada caractere ocupa exatamente o mesmo número de bits, permitindo que máquinas processem texto sem ambiguidade. O ASCII, que veremos a seguir, é o herdeiro direto dessa ideia.</p>
+<hr>
+<h2 id="a-ponte-para-os-computadores-modernos-ascii">A Ponte para os Computadores Modernos: ASCII</h2>
+<p>Morse e Braille são códigos binários, mas não são códigos <em>de computador</em>. A ponte entre esses mundos é o <strong><a href="https://pt.wikipedia.org/wiki/ASCII">ASCII</a></strong> (American Standard Code for Information Interchange), publicado em 1963.</p>
+<p>O ASCII usa <strong>7 bits</strong> para representar 128 caracteres: letras maiúsculas e minúsculas, números, pontuação e códigos de controle. Observe a correspondência direta com os princípios que aprendemos:</p>
+
+
+  
+  <div class="mermaid">graph LR
+  subgraph &#34;A letra &#39;A&#39; em três códigos&#34;
+    M[&#34;Morse: .-&lt;br&gt;2 símbolos&#34;] --&gt; B[&#34;Braille: ⠁&lt;br&gt;Ponto 1 em relevo&lt;br&gt;(6 bits)&#34;]
+    B --&gt; A[&#34;ASCII: 1000001&lt;br&gt;7 bits, valor 65&#34;]
+  end</div>
+ <p>A tabela ASCII revela padrões que só fazem sentido quando entendemos a lógica binária dos códigos:</p>
+<ul>
+<li>A diferença entre <code>'A'</code> (65 = <code>1000001</code>) e <code>'a'</code> (97 = <code>1100001</code>) é exatamente <strong>32</strong>, ou <strong>um único bit</strong> (o sexto). Inverter esse bit converte maiúsculas em minúsculas, uma operação que a CPU faz com uma única instrução, sem tabelas de consulta.</li>
+<li>O caractere <code>'0'</code> tem valor 48. <code>'1'</code> é 49, <code>'2'</code> é 50&hellip; Os dígitos são sequenciais. Para converter o caractere <code>'3'</code> no número 3, basta subtrair 48, outra operação de custo zero.</li>
+<li>Os 32 primeiros valores (0 a 31) são códigos de <strong>controle</strong>, análogos aos códigos de shift e escape do Braille: <code>10</code> = Line Feed (pula linha), <code>13</code> = Carriage Return (volta ao início), <code>27</code> = Escape.</li>
+</ul>
+<p>O Morse nos deu a árvore binária. O Braille nos deu a matriz de bits e os indicadores de contexto. O ASCII aplicou esses mesmos princípios à computação eletrônica. E com 7 bits por caractere, um arquivo de texto ASCII pode ser armazenado, transmitido e processado por qualquer computador do mundo, exatamente porque todos concordam com a mesma tabela de códigos.</p>
+<hr>
+<h2 id="o-futuro-expandindo-o-binário">O Futuro: Expandindo o Binário</h2>
+<p>Assim como nossos computadores evoluíram, o Braille também precisou crescer. Códigos de turno e escape são geniais, mas adicionam complexidade: você não pode ler um caractere isolado sem saber o que veio antes dele. Para resolver isso em áreas complexas (como notação musical, ideogramas japoneses <a href="https://pt.wikipedia.org/wiki/Kanji">Kanji</a> ou programação de computadores), foi criado o <strong>Braille de 8 pontos</strong> (adicionando mais uma linha à matriz). A matemática ataca novamente:</p>
+<blockquote>
+<p><strong>2⁸ = 256 combinações possíveis</strong></p>
+</blockquote>
+<p>Com 256 códigos únicos, letras maiúsculas, minúsculas, números e pontuações têm seu próprio código exclusivo, eliminando a necessidade de indicadores de contexto.</p>
+<p>E se o número 256 soa familiar para você, não é coincidência: <strong>256 é exatamente o número de valores que cabem em 1 <a href="https://pt.wikipedia.org/wiki/Byte">Byte</a> (8 bits) da memória do seu computador ou smartphone atual.</strong> A revolução binária começou muito antes das telas brilharem. O que a princípio eram apenas abstrações matemáticas, códigos de dois estados, combinações, potências de dois, logo encontraria seu lar em fios, interruptores e circuitos elétricos.</p>
+<hr>
+<h3 id="-exercícios">🔧 Exercícios</h3>
+<p><strong>1. Codifique seu nome:</strong> Usando a árvore de decodificação da seção 3 (ou a imagem morse-map), escreva seu primeiro nome em código Morse. Cada letra deve ser separada por um espaço, cada palavra por dois espaços. Exemplo: <code>VITOR</code> → <code>...- .. - --- .-.</code>.</p>
+<p><strong>2. Potências de 2:</strong> Quantos códigos diferentes existem no código Morse com exatamente 4 pontos-e-traços? <em>(Dica: use a fórmula 2ⁿ.)</em></p>
+<p><strong>3. Árvore de decodificação:</strong> Usando a lógica da árvore binária, decodifique a sequência Morse <code>-. .- - ..-.</code> letra por letra.</p>
+<p><strong>4. Bits no Braille:</strong> Se o Braille tivesse 4 pontos em vez de 6 (numa matriz 2,2), quantos símbolos seriam possíveis? E se cada ponto pudesse ter 3 estados (plano, alto relevo, baixo relevo)?</p>
+<p><strong>5. Códigos de escape:</strong> Explique por que o código de número no Braille (pontos 3, 4, 5, 6) é análogo à tecla <strong>Shift</strong> do teclado de um computador.</p>
+<details>
+<summary><b>Respostas</b></summary>
+<ol>
+<li>(Depende do seu nome. Verifique cada letra na árvore: E = <code>.</code>, T = <code>-</code>, A = <code>.-</code>, N = <code>-.</code>, etc.)</li>
+<li>Com 4 símbolos: 2⁴ = <strong>16 códigos</strong>.</li>
+<li><code>-.</code> = N, <code>.-</code> = A, <code>-</code> = T, <code>..-.</code> = F. Forma a palavra <strong>NATF</strong> (não é uma palavra inglesa comum, mas demonstra o processo de decodificação).</li>
+<li>Com 4 pontos: 2⁴ = <strong>16 símbolos</strong>. Com 3 estados por ponto: 3⁴ = <strong>81 símbolos</strong>.</li>
+<li>O código de número (como o Shift) altera a interpretação de <strong>todos os códigos seguintes</strong> até que outro código especial o desfaça, exatamente como segurar Shift transforma letras em maiúsculas.</li>
+</ol>
+</details>
+]]></content:encoded>
+      
+      
+      <category>morse,historia,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[A lógica binária do código morse]]></description>
+      
+    </item>
+    
+    <item>
+      <title>Petzold02 - A Linguagem Oculta do Hardware</title>
+      <link>http://localhost:1313/2026/05/12/histcomp02/</link>
+      <guid>http://localhost:1313/2026/05/12/histcomp02/</guid>
+      <pubDate>Tue, 12 May 2026 18:40:00 -0300</pubDate>
+      <description>&lt;![CDATA[<p>Os computadores parecem caixas mágicas, mas em seu núcleo absoluto, eles operam sob princípios incrivelmente simples e tangíveis. Para compreender como a eletricidade se transforma em lógica e, eventualmente, em computação, precisamos dar um passo atrás. Vamos esquecer os microprocessadores por um momento e olhar para algo muito mais simples: uma lanterna.</p>
+<h2 id="a-anatomia-de-uma-lanterna-e-a-dança-dos-elétrons">A Anatomia de uma Lanterna e a Dança dos Elétrons</h2>
+<p>Uma lanterna comum é um dos aparelhos elétricos mais simples que existem. Desmonte-a e você encontrará baterias, uma lâmpada, algumas peças de metal e, o mais importante, um <strong>interruptor</strong>.</p>]]></description>
+      <content:encoded>&lt;![CDATA[<p>Os computadores parecem caixas mágicas, mas em seu núcleo absoluto, eles operam sob princípios incrivelmente simples e tangíveis. Para compreender como a eletricidade se transforma em lógica e, eventualmente, em computação, precisamos dar um passo atrás. Vamos esquecer os microprocessadores por um momento e olhar para algo muito mais simples: uma lanterna.</p>
+<h2 id="a-anatomia-de-uma-lanterna-e-a-dança-dos-elétrons">A Anatomia de uma Lanterna e a Dança dos Elétrons</h2>
+<p>Uma lanterna comum é um dos aparelhos elétricos mais simples que existem. Desmonte-a e você encontrará baterias, uma lâmpada, algumas peças de metal e, o mais importante, um <strong>interruptor</strong>.</p>
+<h3 id="o-que-é-eletricidade-de-fato">O que é Eletricidade, de Fato?</h3>
+<p>Toda matéria é feita de <a href="https://pt.wikipedia.org/wiki/%C3%81tomo">átomos</a>, e cada átomo é como um sistema solar em miniatura: um núcleo de <strong><a href="https://pt.wikipedia.org/wiki/N%C3%AAutron">nêutrons</a></strong> (sem carga) e <strong><a href="https://pt.wikipedia.org/wiki/Pr%C3%B3ton">prótons</a></strong> (carga positiva), orbitado por <strong><a href="https://pt.wikipedia.org/wiki/El%C3%A9tron">elétrons</a></strong> (carga negativa). Todos os elétrons do universo são idênticos e indistinguíveis entre si.</p>
+<p>Em condições normais, cada átomo tem o mesmo número de prótons e elétrons, mantendo-se eletricamente neutro. Mas se um átomo perde um elétron, ele fica positivamente carregado e tentará roubar um elétron de um átomo vizinho. Este, por sua vez, roubará de outro, e assim por diante. Uma <strong>corrente elétrica</strong> é exatamente isso: um efeito cascata de elétrons sendo passados de átomo em átomo através de um material condutor. Os elétrons não percorrem o fio inteiro como bolas de gude num cano, eles empurram seus vizinhos, que empurram os próximos, num efeito dominó quase instantâneo.</p>
+<p>Há uma diferença crucial entre dois tipos de eletricidade:</p>
+<ul>
+<li><strong>Eletricidade estática:</strong> Um desequilíbrio momentâneo de elétrons tentando se corrigir. É o choque ao tocar uma maçaneta, ou um raio durante uma tempestade. A carga se acumula e se descarrega de uma vez.</li>
+<li><strong>Eletricidade em circuito:</strong> Um fluxo contínuo e controlado de elétrons através de um caminho fechado (fios e componentes). É o que alimenta sua lanterna e seu computador.</li>
+</ul>
+<p>No circuito, os elétrons viajam do terminal <strong>negativo</strong> da bateria para o terminal <strong>positivo</strong> (sentido anti-horário no diagrama). Por convenção histórica, a engenharia desenha a corrente no sentido oposto (do positivo para o negativo), mas a realidade física é que os elétrons vão do negativo para o positivo.</p>
+<h3 id="tensão-corrente-e-resistência">Tensão, Corrente e Resistência</h3>
+<p><img src="/post/images/hist/corrente01.png" alt="corrente01"></p>
+<p>Para entender esse fluxo, usamos a analogia clássica da água encanada:</p>
+<ul>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Tens%C3%A3o_el%C3%A9trica">Tensão</a> (Volts - E):</strong> É a &ldquo;pressão&rdquo; da água. Uma bateria tem o potencial de realizar trabalho, como uma caixa d&rsquo;água no alto de um prédio.</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Corrente_el%C3%A9trica">Corrente</a> (Amperes - I):</strong> É a quantidade de água (elétrons) fluindo pelo cano.</li>
+<li><strong><a href="https://pt.wikipedia.org/wiki/Resist%C3%AAncia_el%C3%A9trica">Resistência</a> (Ohms - R):</strong> É o &ldquo;estreitamento&rdquo; do cano. Quanto mais fino ou mais longo o cano, maior a resistência, menos água passa.</li>
+</ul>
+<p>A famosa <a href="https://pt.wikipedia.org/wiki/Lei_de_Ohm">Lei de Ohm</a> conecta essas grandezas:</p>
+<p><strong>I = E / R</strong></p>
+<p>Quanto maior a resistência, menor a corrente. É por isso que fios muito longos não conseguem acender uma lâmpada no outro extremo.</p>
+<h3 id="a-lâmpada-incandescente">A Lâmpada Incandescente</h3>
+<p>Embora <a href="https://pt.wikipedia.org/wiki/Thomas_Edison">Thomas Edison</a> costume levar o crédito, foi o britânico <a href="https://pt.wikipedia.org/wiki/Joseph_Swan">Joseph Swan</a> quem de fato inventou a lâmpada incandescente prática. Dentro do bulbo de vidro há um fino <strong><a href="https://pt.wikipedia.org/wiki/Tungst%C3%AAnio">filamento de tungstênio</a></strong> que brilha quando aquecido pela passagem de corrente elétrica. O bulbo é preenchido com um <strong>gás inerte</strong> (<a href="https://pt.wikipedia.org/wiki/%C3%81rgon">argônio</a> ou <a href="https://pt.wikipedia.org/wiki/Nitrog%C3%A9nio">nitrogênio</a>) para evitar que o filamento entre em combustão e queime instantaneamente ao entrar em contato com o oxigênio.</p>
+<p>O filamento de uma lâmpada comum tem uma resistência de aproximadamente <strong>4 ohms</strong> quando frio (a resistência aumenta quando o filamento aquece). É essa resistência que transforma energia elétrica em luz e calor.</p>
+<h3 id="potência-baterias-e-curto-circuito">Potência, Baterias e Curto-Circuito</h3>
+<p>A potência consumida por um componente é dada pela <strong><a href="https://pt.wikipedia.org/wiki/James_Watt">Lei de Watt</a></strong> (homenagem a <a href="https://pt.wikipedia.org/wiki/James_Watt">James Watt</a>, o inventor da <a href="https://pt.wikipedia.org/wiki/M%C3%A1quina_a_vapor">máquina a vapor</a>):</p>
+<p><strong>P = R × I²</strong></p>
+<p>Ou seja, a potência (em Watts) é a resistência multiplicada pelo quadrado da corrente. Um filamento de 4 ohms com 0,5 amperes dissipa 1 Watt.</p>
+<p>Quanto às baterias, a forma como você as conecta muda completamente o comportamento do circuito:</p>
+<ul>
+<li><strong>Em série:</strong> As tensões se somam. Duas pilhas de 1,5V em série fornecem <strong>3V</strong>, com a mesma duração de uma só.</li>
+<li><strong>Em paralelo:</strong> A tensão permanece <strong>1,5V</strong>, mas a duração <strong>dobra</strong>, pois cada pilha contribui com metade da corrente.</li>
+</ul>
+<p>Se você conectar o fio positivo diretamente ao negativo sem nenhuma resistência no caminho (resistência ≈ 0), a corrente dispara para valores altíssimos (I = E / R, e R é quase zero). Isso é um <strong>curto-circuito</strong>: o fio esquenta, pode brilhar e até derreter. É por isso que <strong><a href="https://pt.wikipedia.org/wiki/Fus%C3%ADvel">fusíveis</a></strong> e <strong><a href="https://pt.wikipedia.org/wiki/Disjuntor">disjuntores</a></strong> existem, para interromper o circuito antes que o fio vire um incêndio.</p>
+<h3 id="o-interruptor-a-primeira-porta-lógica">O Interruptor: A Primeira Porta Lógica</h3>
+<p>Com tudo conectado, para que a lâmpada brilhe, o caminho da bateria até a lâmpada e de volta à bateria deve ser contínuo. É um <strong>circuito</strong> (um círculo). O papel do interruptor é quebrar ou completar esse círculo.</p>
+<p>Aqui há uma pegadinha de terminologia que confunde iniciantes: em eletrônica, uma chave <strong>fechada</strong> (<em>closed</em>) permite o fluxo de eletricidade, enquanto uma chave <strong>aberta</strong> (<em>open</em>) impede o fluxo. É o oposto da intuição com portas físicas, onde uma porta fechada bloqueia a passagem e uma aberta permite.</p>
+<p>O interruptor é puramente <strong>binário</strong>: ligado ou desligado, 1 ou 0, sem meio-termo. Dentro de um chip moderno, bilhões de interruptores microscópicos (transistores) fazem exatamente a mesma coisa, apenas muito menores e muito mais rápidos.</p>
+
+
+  
+  <div class="mermaid">graph LR
+  subgraph Circuito Simples
+  B[Bateria &#43;] -- Corrente Elétrica --&gt; S(Interruptor)
+  S -- Se Fechado --&gt; L((Lâmpada))
+  L -- Retorno --&gt; B_neg[Bateria -]
+  end
+  
+  style S fill:#ff9999,stroke:#333,stroke-width:2px
+  style L fill:#fff0a0,stroke:#333,stroke-width:2px</div>
+ <h2 id="telégrafos-relés-e-a-comunicação-a-distância">Telégrafos, Relés e a Comunicação a Distância</h2>
+<p>Imagine que você queira usar lanternas para se comunicar em código Morse com um vizinho, mas as janelas de vocês não se alinham. A solução? Estender os fios da sua bateria até a lâmpada no quarto dele.</p>
+<p>Mas há um problema: fios longos têm resistência. Um fio de cobre de <a href="https://pt.wikipedia.org/wiki/American_wire_gauge">bitola 20 AWG</a> (típico de instalações elétricas) tem cerca de 10 ohms de resistência a cada 300 metros. Se a casa do vizinho estiver a 1,5 km, o fio terá mais de <strong>100 ohms</strong> de resistência. Pela Lei de Ohm (I = 3V / 100Ω = 0,03A), uma bateria de 3V mal conseguiria gerar corrente suficiente para fazer uma lâmpada de 4 ohms brilhar. Por isso o telégrafo não usava lâmpadas: em vez disso, usava <strong><a href="https://pt.wikipedia.org/wiki/Eletro%C3%ADm%C3%A3">eletroímãs</a></strong> que emitiam &ldquo;cliques&rdquo; audíveis, dispositivos que exigem muito menos corrente para operar.</p>
+<h3 id="reduzindo-custos-a-evolução-da-fiação">Reduzindo Custos: A Evolução da Fiação</h3>
+<p>Entre duas casas, o sistema mais simples usa <strong>4 fios</strong>: dois circuitos completos e independentes (um para enviar, outro para receber). Mas engenheiros logo perceberam que os terminais negativos de ambas as baterias poderiam compartilhar um único fio <strong>comum</strong> (<em>common</em>), reduzindo o sistema para <strong>3 fios</strong>, uma economia de 25% em cobre.</p>
+<p>Pode-se reduzir ainda mais? Sim. O planeta Terra é um condutor massivo de eletricidade. Enterrando uma haste de cobre no solo em cada extremidade e conectando o fio comum a elas, o <strong>solo</strong> passa a completar o circuito. Agora bastam <strong>2 fios</strong> entre as casas.</p>
+
+
+  
+  <div class="mermaid">graph LR
+    subgraph &#34;Evolução da Fiação&#34;
+        A[&#34;4 fios&#34;] --&gt; B[&#34;3 fios&lt;br&gt;(fio comum)&#34;]
+        B --&gt; C[&#34;2 fios&lt;br&gt;(terra como condutor)&#34;]
+    end</div>
+ <h3 id="o-conceito-de-terra-ground">O Conceito de Terra (Ground)</h3>
+<p>O <strong><a href="https://pt.wikipedia.org/wiki/Terra_%28eletricidade%29">aterramento</a></strong> é um dos conceitos mais importantes da engenharia elétrica. A terra é considerada um ponto de <strong>potencial zero</strong> (0 volts), um oceano virtualmente infinito de elétrons onde a adição ou remoção de alguns não altera o nível total. É como despejar um balde d&rsquo;água no oceano: o volume do oceano não muda de forma mensurável.</p>
+<p>O símbolo clássico de aterramento são três linhas horizontais decrescentes:</p>
+
+
+  <pre><code class="language-">───
+──
+─</code></pre>
+ <p>Quando o terminal negativo da bateria está conectado à terra, o terminal positivo pode ser representado simplesmente por um <strong>V</strong> (de <em>Voltage</em>), já que a referência de potencial zero está implícita.</p>
+<h3 id="o-relé-amplificando-o-sinal">O Relé: Amplificando o Sinal</h3>
+<p>Mesmo com 2 fios, a resistência em longas distâncias continua sendo um problema. Foi exatamente esse o desafio enfrentado na criação do <a href="https://pt.wikipedia.org/wiki/Tel%C3%A9grafo">telégrafo</a>. A solução genial foi o <strong><a href="https://pt.wikipedia.org/wiki/Rel%C3%A9">Relé</a></strong> (Relay).</p>
+<p><img src="/post/images/hist/rele01.png" alt="corrente01"></p>
+<p>Um relé é um interruptor acionado pela própria <em>eletricidade</em>. Ele usa um <strong>eletroímã</strong>, uma bobina de fio que se comporta como um ímã quando a corrente passa por ela. Quando a corrente fraca do sinal original entra no eletroímã, ele magnetiza uma barra de ferro, que puxa um contato metálico, fechando um segundo circuito alimentado por uma bateria nova e forte.</p>
+
+
+  
+  <div class="mermaid">graph LR
+  subgraph Relé: O Interruptor Automático
+  SinalFraco[Sinal de Entrada Fraco] --&gt;|Magnetiza| Eletroima[Eletroímã]
+  Eletroima -. Puxa .-&gt; Contato[Contato Metálico]
+  BateriaForte[Nova Bateria Forte] --&gt; Contato
+  Contato --&gt;|Sinal Renovado| Saida[Sinal de Saída Forte]
+  end</div>
+ <p>O relé permitiu que o sinal do telégrafo cruzasse continentes, sendo &ldquo;amplificado&rdquo; (retransmitido) de estação em estação.</p>
+<h3 id="comunicação-bidirecional">Comunicação Bidirecional</h3>
+<p>Com este sistema de 2 fios e relés, ambas as casas podem <strong>enviar e receber</strong> mensagens simultaneamente pela mesma infraestrutura física compartilhada. Cada lado tem seu próprio eletroímã receptor que emite cliques quando a outra parte fecha seu interruptor. É o início da <strong>comunicação bidirecional</strong> (<a href="https://pt.wikipedia.org/wiki/Duplex_%28telecomunica%C3%A7%C3%B5es%29"><em>full-duplex</em></a>), o mesmo princípio que permite que você baixe um arquivo enquanto envia um email pelo mesmo cabo de rede.</p>
+<p>Mas a verdadeira revolução do relé ocorreu quando engenheiros perceberam que, se a eletricidade pode controlar interruptores, podemos construir máquinas que processam <strong>lógica</strong>.</p>
+<h2 id="a-álgebra-de-boole">A Álgebra de Boole</h2>
+<p>No século XIX, o matemático <a href="https://pt.wikipedia.org/wiki/George_Boole">George Boole</a> inventou uma forma de álgebra onde os operandos não são números (como 3 ou 5), mas sim <em>valores lógicos</em>: verdadeiro (1) ou falso (0). Ela é chamada de <strong>álgebra</strong> porque as operações obedecem a propriedades similares às da álgebra comum, comutatividade, associatividade, distributividade, mas aplicadas a operações lógicas:</p>
+<ul>
+<li><strong>AND (E)</strong> equivale à multiplicação: 0·0=0, 0·1=0, 1·1=1. O resultado só é 1 quando <em>todos</em> os fatores são 1.</li>
+<li><strong>OR (OU)</strong> equivale à adição, com uma diferença crucial: 1+1=1 (em vez de 2, porque não há &ldquo;2&rdquo; em binário lógico). O resultado é 1 quando <em>qualquer</em> operando é 1.</li>
+<li><strong>NOT (NÃO)</strong> é o inversor: 0 vira 1, 1 vira 0.</li>
+</ul>
+<p>O brilho da engenharia foi perceber que circuitos elétricos são a manifestação física perfeita dessa álgebra. Veja como dois interruptores podem implementar AND e OR:</p>
+<h3 id="conexão-em-série-a-porta-and">Conexão em Série (A Porta AND)</h3>
+<p>Se ligarmos dois interruptores um após o outro (em série), a lâmpada só acenderá se o Interruptor A <strong>E</strong> o Interruptor B estiverem fechados. Se qualquer um estiver aberto, o circuito se quebra e a lâmpada apaga. Isso é uma multiplicação booleana (A, B): o resultado só é 1 (aceso) quando ambos os fatores são 1.</p>
+<h3 id="conexão-em-paralelo-a-porta-or">Conexão em Paralelo (A Porta OR)</h3>
+<p>Se ligarmos os interruptores lado a lado (em paralelo), a corrente terá dois caminhos possíveis. A lâmpada acenderá se o Interruptor A <strong>OU</strong> o Interruptor B estiver fechado (ou ambos). Isso é uma adição booleana (A + B): basta um dos operandos ser 1 para o resultado ser 1.</p>
+
+
+  
+  <div class="mermaid">graph TD
+  subgraph Porta AND Lógica em Série
+  A1[Bateria] --&gt; S1[Interruptor A]
+  S1 --&gt; S2[Interruptor B]
+  S2 --&gt; L1((Lâmpada))
+  end
+  
+  subgraph Porta OR Lógica em Paralelo
+  A2[Bateria] --&gt; S3[Interruptor A]
+  A2 --&gt; S4[Interruptor B]
+  S3 --&gt; L2((Lâmpada))
+  S4 --&gt; L2
+  end</div>
+ <h2 id="o-nascimento-das-portas-lógicas">O Nascimento das Portas Lógicas</h2>
+<p>Como os relés podem atuar como interruptores controlados por eletricidade, podemos substituir os interruptores manuais por relés em cascata. Isso cria o que chamamos de <strong>Portas Lógicas</strong> (Logic Gates), os blocos fundamentais de construção de qualquer computador. Aqui estão as portas primárias:</p>
+<ol>
+<li><strong>AND (E):</strong> Dois relés em série. A saída só é 1 se <em>todas</em> as entradas forem 1.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">Saída (A AND B)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+  </tbody>
+</table>
+<ol start="2">
+<li><strong>OR (OU):</strong> Dois relés em paralelo. A saída é 1 se <em>qualquer</em> entrada for 1.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">Saída (A OR B)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+  </tbody>
+</table>
+<ol start="3">
+<li><strong>NOT (Inversor):</strong> Enquanto a AND e a OR usam contatos que fecham quando o eletroímã é ativado, a NOT usa um contato que <em>abre</em> quando ativado. Se a entrada tem corrente (1), o eletroímã puxa o contato e corta a corrente na saída, gerando 0. Ele simplesmente inverte o sinal.</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada</th>
+          <th style="text-align: center">Saída (NOT A)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>0</strong></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="portas-universais-nand-e-nor">Portas Universais: NAND e NOR</h3>
+<p>Combinando um inversor (NOT) com uma porta AND ou OR, obtemos as portas <strong>NAND</strong> e <strong>NOR</strong>, regidas pelas <strong>[Leis de De Morgan](<a href="https://pt.wikipedia.org/wiki/Leis_de_De">https://pt.wikipedia.org/wiki/Leis_de_De</a> Morgan)</strong>:</p>
+<p><strong>¬(A ∧ B) = ¬A ∨ ¬B</strong> (Não ser A e B é o mesmo que Não A ou Não B)</p>
+<p><strong>¬(A ∨ B) = ¬A ∧ ¬B</strong> (Não ser A ou B é o mesmo que Não A e Não B)</p>
+<p>Estas leis não são apenas curiosidade teórica, elas permitem <strong>simplificar circuitos</strong>. Por exemplo, suponha que você queira um circuito que acenda uma lâmpada quando A=1 e B=0. A expressão直觉 é S = A ∧ ¬B. Usando De Morgan, podemos reescrever ¬(A ∧ ¬B) = ¬A ∨ B, o que significa que S = ¬(¬A ∨ B), uma expressão que pode ser implementada com apenas portas NOR, que são mais baratas de fabricar que AND + NOT separados.</p>
+<p>Na prática, isso significa:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Entrada A</th>
+          <th style="text-align: center">Entrada B</th>
+          <th style="text-align: center">NAND (¬(A∧B))</th>
+          <th style="text-align: center">NOR (¬(A∨B))</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center"><strong>1</strong></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center"><strong>1</strong></td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">0</td>
+      </tr>
+  </tbody>
+</table>
+<p>Isso não é só teoria, na engenharia, se você tiver apenas relés configurados como portas NAND (ou NOR), pode construir literalmente todas as outras portas combinando-as.</p>
+
+
+  
+  <div class="mermaid">graph LR
+  subgraph Símbolos das Portas Lógicas
+  InA1(Entrada A) --&gt; AND{AND}
+  InB1(Entrada B) --&gt; AND
+  AND --&gt; Out1(Saída)
+
+  InA2(Entrada A) --&gt; OR{OR}
+  InB2(Entrada B) --&gt; OR
+  OR --&gt; Out2(Saída)
+  
+  InA3(Entrada) --&gt; NOT{NOT}
+  NOT --&gt; Out3(Saída Invertida)
+  end</div>
+ <h3 id="-exercícios">🔧 Exercícios</h3>
+<p><strong>1. Complete a tabela verdade</strong> para a porta <strong>NAND</strong> (NOT AND) e <strong>NOR</strong> (NOT OR). Use as Leis de De Morgan para verificar suas respostas.</p>
+<table>
+  <thead>
+      <tr>
+          <th>A</th>
+          <th>B</th>
+          <th>A NAND B</th>
+          <th>A NOR B</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>0</td>
+          <td>?</td>
+          <td>?</td>
+      </tr>
+      <tr>
+          <td>0</td>
+          <td>1</td>
+          <td>?</td>
+          <td>?</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>0</td>
+          <td>?</td>
+          <td>?</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>1</td>
+          <td>?</td>
+          <td>?</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>2. Aplicando De Morgan:</strong> Simplifique a expressão ¬(A ∨ B) usando apenas portas AND e NOT. (Dica: por onde começar?)</p>
+<p><strong>3. Projetando lógica:</strong> Você quer um circuito que acenda uma lâmpada apenas quando o interruptor A estiver ligado <strong>E</strong> o interruptor B estiver desligado. Escreva a expressão booleana e desenhe o circuito com portas AND, OR e NOT.</p>
+<p><strong>4. Portas universais:</strong> Projetar um inversor (NOT) usando apenas portas NAND. <em>(Dica: o que acontece se você ligar as duas entradas de uma NAND juntas?)</em></p>
+<details>
+<summary><b>Respostas</b></summary>
+<ol>
+<li>NAND: 1, 1, 1, 0. NOR: 1, 0, 0, 0.</li>
+<li>¬(A ∨ B) = ¬A ∧ ¬B (segunda lei de De Morgan). Isto é: &ldquo;Não ser (A ou B) é o mesmo que (Não A) e (Não B)&rdquo;.</li>
+<li>Expressão: S = A ∧ ¬B. Implementação: use uma porta NOT para inverter B e uma porta AND para combinar A com ¬B.</li>
+<li>Ligue as duas entradas da NAND juntas: se A=0, NAND(0,0)=1; se A=1, NAND(1,1)=0. A NAND com entradas curto-circuitadas funciona exatamente como um inversor.</li>
+</ol>
+</details>
+<hr>
+<h2 id="conclusão-da-lanterna-ao-computador">Conclusão: Da Lanterna ao Computador</h2>
+<p>A lanterna nos ensinou que um circuito fechado permite o fluxo de elétrons. O telégrafo nos introduziu ao relé, um interruptor controlado remotamente. Ao organizar esses relés em série ou em paralelo, materializamos a Álgebra de Boole em hardware físico.</p>
+<p>Quando você digita no seu teclado ou clica em uma tela hoje, bilhões de minúsculos interruptores (<a href="https://pt.wikipedia.org/wiki/Trans%C3%ADstor">transistores</a> modernos, que substituíram os antigos relés barulhentos) estão abrindo e fechando de acordo com essas exatas mesmas regras fundamentais de AND, OR e NOT. Toda a complexidade da computação moderna, do seu smartphone aos servidores na nuvem, é apenas uma orquestração maciça dessas operações lógicas incrivelmente simples, a mesma lógica que começou com uma lanterna, alguns fios e um interruptor. Agora que o hardware sabe como pensar em termos de 0 e 1, a pergunta seguinte é inevitável: como representar números maiores que 1 nessa linguagem de dois estados?</p>
+<hr>
+<p><strong>Fonte:</strong> <a href="https://a.co/d/0a3DsSsn">Code: The Hidden Language of Computer Hardware and Software</a>, 2ª ed., Charles Petzold</p>
+]]></content:encoded>
+      
+      
+      <category>hardware,portas lógicas,álgebra booleana,história,computação</category>
+      
+      
+      
+      <dc:creator>Vitor Lobo Ramos</dc:creator>
+      
+      
+      
+      
+      
+      <description>&lt;![CDATA[Como interruptores, relés e álgebra booleana deram origem aos computadores]]></description>
+      
+    </item>
     
     <item>
       <title>O predicado que ninguém chamou</title>

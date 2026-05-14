@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <title>OOP | scovl</title>
     <meta charset="UTF-8">
@@ -23,21 +23,39 @@
 <meta name="format-detection" content="telephone=no"> 
 
 
-<link rel="stylesheet" href="/css/main.css?v=1758225188">
+<link rel="stylesheet" href="/css/main.css?v=1778777980">
 
 
-<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1758225188">
+<link rel="stylesheet" href="/vendor/fonts/fonts.css?v=1778777980">
 
 
 <link rel="preload" href="/fonts/abril-fatface.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/rokkitt.woff2" as="font" type="font/woff2" crossorigin>
 
 
-<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1758225188">
+<link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css?v=1778777980">
 
 
 
-<script src="/vendor/mermaid/mermaid.min.js?v=1758225188"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+
+
+
+
+<script src="/vendor/mermaid/mermaid.min.js?v=1778777980"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         mermaid.initialize({
@@ -368,6 +386,8 @@ window.I18n = I18n;
                         
                         <li><a href="/page/contact/">Contact</a></li>
                         
+                        <li><a href="/page/books/">Books</a></li>
+                        
                     </ul>
                 </nav>
                 
@@ -483,10 +503,62 @@ window.I18n = I18n;
         <div class="post-item-summary">
             <p>Após anos experimentando diversos editores de texto para escrita e programação, comecei a me frustrar com a dependência excessiva de plugins que tornavam a experiência cada vez mais pesada, instável e lenta.</p>
 <blockquote>
-<p>O que deveria ser uma ferramenta simples de escrita se transformava em um ambiente sobrecarregado e pouco confiável.</p></blockquote>
+<p>O que deveria ser uma ferramenta simples de escrita se transformava em um ambiente sobrecarregado e pouco confiável.</p>
+</blockquote>
 <p>A migração dessas configurações complexas entre diferentes ambientes — especialmente ao alternar entre sistemas operacionais — tornou-se um obstáculo significativo que me levou a questionar fundamentalmente minha abordagem na escolha de editores. Se você enfrenta desafios similares, este artigo oferece uma perspectiva alternativa.</p>
             
             <a href="http://localhost:1313/2025/08/08/emacs/" class="read-more">Leia mais →</a>
+            
+        </div>
+        
+    </article>
+    
+    
+    
+    <article class="post-item">
+        <h2 class="post-item-title">
+            <a href="http://localhost:1313/2025/03/23/dd01/">Análise de código estático</a>
+        </h2>
+        
+        <div class="post-item-meta">
+            
+            <time datetime="2025-03-23T19:00:00Z">
+                Sun, Mar 23, 2025
+            </time>
+            
+            
+            
+            <span class="post-author">por Vitor Lobo Ramos</span>
+            
+            
+            
+            <div class="post-item-tags">
+                
+                <a href="/tags/oop/" class="tag">OOP</a>
+                
+                <a href="/tags/software/" class="tag">software</a>
+                
+                <a href="/tags/engineering/" class="tag">engineering</a>
+                
+                <a href="/tags/clojure/" class="tag">Clojure</a>
+                
+            </div>
+            
+            
+            
+            <div class="post-description">
+                Deep Dive
+            </div>
+            
+        </div>
+        
+        
+        <div class="post-item-summary">
+            <h1 id="análise-estática-de-código-entendendo-seu-programa-sem-executá-lo">Análise Estática de Código: Entendendo seu Programa sem Executá-lo</h1>
+<p>Muitos mecanismos que ocorrem naturalmente em nosso dia-a-dia no desenvolvimento de software, muitas vezes, não são devidamente apreciados e nem mesmo conhecidos. Ações das quais parecem mágicas, mas que na verdade são resultado de um grande esforço de muitas pessoas ao longo de décadas.</p>
+<p>Como quando você abre uma IDE e tem à sua disposição ferramentas que parecem mágicas como <a href="https://en.wikipedia.org/wiki/Intelligent_code_completion">intelisense</a>, <a href="https://en.wikipedia.org/wiki/Autocompletion">autocompletion</a>, <a href="https://en.wikipedia.org/wiki/Variable_dumping">dumping de variáveis</a> e <a href="https://en.wikipedia.org/wiki/Reserved_word">palavras reservadas</a> de cada linguagem de programação, entre outras. Neste artigo, vou compartilhar um pouco do que eu aprendi e ainda estou aprendendo sobre análise estática de código com o intuito de ajudar você a entender um pouco mais sobre como esses mecanismos funcionam.</p>
+            
+            <a href="http://localhost:1313/2025/03/23/dd01/" class="read-more">Leia mais →</a>
             
         </div>
         
@@ -546,7 +618,7 @@ window.I18n = I18n;
             </div>
             
             <div class="copyright">
-                &copy; 2025 scovl
+                &copy; 2026 scovl
             </div>
         </div>
     </div>
@@ -554,24 +626,26 @@ window.I18n = I18n;
     
     
     
-    <script src="/vendor/prism/prism-core.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-clike.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-c.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-cpp.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-rust.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-clojure.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-lisp.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-swift.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-bash.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-javascript.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-typescript.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-zig.min.js?v=1758225188"></script>
-    <script src="/vendor/prism/prism-autoloader.min.js?v=1758225188"></script>
+    <script src="/vendor/prism/prism-core.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-clike.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-c.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-cpp.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-rust.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-clojure.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-lisp.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-swift.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-bash.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-javascript.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-typescript.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-go.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-sql.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-zig.min.js?v=1778777980"></script>
+    <script src="/vendor/prism/prism-autoloader.min.js?v=1778777980"></script>
     
     
-    <script src="/js/main-minimal.js?v=1758225188"></script>
-    <script src="/js/lazy-loading.js?v=1758225188"></script>
-    <script src="/js/toc.js?v=1758225188"></script>
+    <script src="/js/main-minimal.js?v=1778777980"></script>
+    <script src="/js/lazy-loading.js?v=1778777980"></script>
+    <script src="/js/toc.js?v=1778777980"></script>
     
     
     

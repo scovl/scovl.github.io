@@ -1,5 +1,5 @@
 +++
-title = "Base06 - Do Silício ao Software"
+title = "Petzold06 - Do Silício ao Software"
 description = "Sinais de controle, fluxo de execução, periféricos, sistemas operacionais e a história da computação"
 date = 2026-05-12T18:40:00-03:00
 tags = ["arquitetura", "CPU", "sistema operacional", "rede", "compiladores", "história", "computação"]
@@ -35,30 +35,30 @@ Vamos analisar a execução da instrução `MVI A, 27h` (Mover o valor Imediato 
 
 ```mermaid
 sequenceDiagram
-    participant PC as Program Counter
-    participant Address as Barramento de Endereço
-    participant RAM as Memória RAM
-    participant Data as Barramento de Dados
-    participant Latch as Latch de Instrução
-    participant Acc as Acumulador
+  participant PC as Program Counter
+  participant Address as Barramento de Endereço
+  participant RAM as Memória RAM
+  participant Data as Barramento de Dados
+  participant Latch as Latch de Instrução
+  participant Acc as Acumulador
 
-    Note over PC, Acc: Ciclo de Busca (Fetch)
-    PC->>Address: PC Enable (Coloca 0000h no barramento)
-    RAM->>Data: RAM Data Out (Coloca o Opcode 3Eh)
-    Data->>Latch: Latch Clock (Salva o Opcode)
-    Note over PC, Acc: Incremento do PC
-    PC->>PC: PC Increment
-    
-    Note over PC, Acc: Busca do Segundo Byte
-    PC->>Address: PC Enable (Coloca 0001h no barramento)
-    RAM->>Data: RAM Data Out (Coloca o valor 27h)
-    Data->>Latch: Latch 2 Clock (Salva o valor 27h)
-    Note over PC, Acc: Incremento do PC
-    PC->>PC: PC Increment
-    
-    Note over PC, Acc: Ciclo de Execução
-    Latch->>Data: Latch 2 Enable (Coloca 27h no barramento)
-    Data->>Acc: Accumulator Clock (Salva 27h no Acumulador)
+  Note over PC, Acc: Ciclo de Busca (Fetch)
+  PC->>Address: PC Enable (Coloca 0000h no barramento)
+  RAM->>Data: RAM Data Out (Coloca o Opcode 3Eh)
+  Data->>Latch: Latch Clock (Salva o Opcode)
+  Note over PC, Acc: Incremento do PC
+  PC->>PC: PC Increment
+  
+  Note over PC, Acc: Busca do Segundo Byte
+  PC->>Address: PC Enable (Coloca 0001h no barramento)
+  RAM->>Data: RAM Data Out (Coloca o valor 27h)
+  Data->>Latch: Latch 2 Clock (Salva o valor 27h)
+  Note over PC, Acc: Incremento do PC
+  PC->>PC: PC Increment
+  
+  Note over PC, Acc: Ciclo de Execução
+  Latch->>Data: Latch 2 Enable (Coloca 27h no barramento)
+  Data->>Acc: Accumulator Clock (Salva 27h no Acumulador)
 
 ```
 
@@ -68,7 +68,7 @@ Nesta coreografia, o relógio (oscilador) do sistema gera pulsos constantes. Cir
 
 ## 2. Quebrando a Sequência: Saltos, Loops e a Pilha
 
-Um computador que apenas executa instruções linearmente seria apenas uma calculadora superdimensionada. A verdadeira essência da computação—e o que torna uma máquina *[Turing Completa](https://pt.wikipedia.org/wiki/Turing_completude)*—é a capacidade de repetição (loops) e de tomada de decisão.
+Um computador que apenas executa instruções linearmente seria apenas uma calculadora superdimensionada. A verdadeira essência da computação, e o que torna uma máquina **Turing Completa** (capaz de computar qualquer coisa computável, desde que tenha memória e tempo suficientes), é a capacidade de repetição (loops) e de tomada de decisão.
 
 ### Jumps Condicionais e Incondicionais
 
@@ -86,15 +86,15 @@ A resposta é a **[Pilha](https://pt.wikipedia.org/wiki/Pilha_(inform%C3%A1tica)
 
 ```mermaid
 graph TD
-    subgraph Memória RAM (Final do Endereçamento)
-        FFFF["Endereço FFFFh (Vazio)"]
-        FFFE["Endereço FFFEh (High Byte Retorno)"]
-        FFFD["Endereço FFFDh (Low Byte Retorno)"]
-        FFFC["Endereço FFFCh <-- Stack Pointer (SP) Atual"]
-    end
-    
-    CALL_Inst["Instrução CALL 14F8h"] --> |1. Decrementa SP<br>2. Salva endereço atual| FFFE
-    RET_Inst["Instrução RET"] --> |1. Lê endereço<br>2. Incrementa SP<br>3. Pula de volta| FFFC
+  subgraph Memória RAM (Final do Endereçamento)
+    FFFF["Endereço FFFFh (Vazio)"]
+    FFFE["Endereço FFFEh (High Byte Retorno)"]
+    FFFD["Endereço FFFDh (Low Byte Retorno)"]
+    FFFC["Endereço FFFCh <-- Stack Pointer (SP) Atual"]
+  end
+  
+  CALL_Inst["Instrução CALL 14F8h"] --> |1. Decrementa SP<br>2. Salva endereço atual| FFFE
+  RET_Inst["Instrução RET"] --> |1. Lê endereço<br>2. Incrementa SP<br>3. Pula de volta| FFFC
 
 ```
 
@@ -112,13 +112,29 @@ Quando um `RET` é executado, o processo inverso ("pop") ocorre, devolvendo a ex
 
 O Intel 8080 que usamos como modelo executa uma instrução por vez: busca, decodifica, executa, busca a próxima. É simples, didático e lento. As CPUs modernas empregam truques de engenharia que as tornam ordens de grandeza mais rápidas sem alterar o conjunto de instruções visível ao programador.
 
-**Pipeline:** Em vez de esperar uma instrução terminar para começar a próxima, a CPU divide cada instrução em estágios (busca, decodificação, execução, escrita do resultado) e sobrepõe a execução. Enquanto a instrução 1 está no estágio de execução, a instrução 2 já está sendo decodificada e a instrução 3 já está sendo buscada na memória. Um pipeline de 5 estágios pode, idealmente, completar uma instrução por ciclo de clock — cinco vezes mais rápido que o 8080.
+**Pipeline:** Em vez de esperar uma instrução terminar para começar a próxima, a CPU divide cada instrução em estágios (busca, decodificação, execução, escrita do resultado) e sobrepõe a execução. Enquanto a instrução 1 está no estágio de execução, a instrução 2 já está sendo decodificada e a instrução 3 já está sendo buscada na memória. Um pipeline de 5 estágios pode, idealmente, completar uma instrução por ciclo de clock, cinco vezes mais rápido que o 8080.
 
-**Cache:** Buscar dados da RAM leva dezenas de ciclos de clock. Para evitar essa espera, as CPUs modernas incorporam pequenas memórias ultrarrápidas na própria pastilha de silício: os caches L1, L2 e L3. O cache L1, o mais rápido e menor (alguns kilobytes), fica dentro do núcleo da CPU; o L3 é maior (megabytes) e compartilhado entre núcleos. A CPU verifica o cache antes de buscar na RAM — e na maioria das vezes o dado está lá (*cache hit*).
+**Cache:** Buscar dados da RAM leva dezenas de ciclos de clock, tempo suficiente para a CPU executar centenas de operações. Para evitar essa espera, as CPUs modernas incorporam pequenas memórias ultrarrápidas na própria pastilha de silício: os caches L1, L2 e L3. O cache L1, o mais rápido e menor (dezenas de kilobytes), opera quase na velocidade dos registradores. O L2 é maior (centenas de kilobytes), e o L3, maior ainda (megabytes), é compartilhado entre todos os núcleos do processador.
 
-**Execução Fora de Ordem:** Se a instrução 3 precisa de um dado que ainda está sendo carregado da RAM, a CPU não precisa esperar parada. Ela analisa as instruções seguintes, identifica quais não dependem desse dado, e as executa antes. O resultado final respeita a ordem original — mas internamente a execução foi reordenada para manter o pipeline cheio.
+A eficácia do cache depende de um fenômeno chamado **localidade de referência**: programas tendem a acessar dados e instruções em regiões próximas da memória. Quando você itera um array, ao acessar o elemento `[0]`, o cache carrega um bloco inteiro de elementos adjacentes, e a chance de o próximo acesso (`[1]`) já estar no cache é altíssima. Programadores experientes exploram esse princípio organizando dados de forma sequencial, maximizando os *cache hits* e evitando buscas lentas à RAM.
 
-**Múltiplos Núcleos:** Em vez de um único pipeline, colocamos vários processadores completos (núcleos) no mesmo chip e conectamos cada um ao cache compartilhado. O sistema operacional pode então distribuir programas entre os núcleos, executando múltiplas tarefas verdadeiramente em paralelo — algo que o 8080, com sua execução estritamente sequencial, jamais poderia fazer.
+**Hierarquia da Memória:** Esse conceito de usar memórias menores e rápidas como cache para memórias maiores e lentas se estende por todo o sistema computacional. Os registradores da CPU são o nível mais rápido (acesso em ~1 ciclo). Abaixo vêm L1, L2, L3 (alguns ciclos cada), depois a RAM (dezenas de ciclos), e por fim o disco rígido ou SSD (milhões de ciclos). Cada nível serve como cache para o próximo: a RAM cacheia dados do disco, o cache L3 cacheia dados da RAM, e assim por diante. Um programador que entende essa hierarquia consegue ganhos enormes de desempenho apenas reorganizando loops e escolhendo estruturas de dados que respeitem a localidade.
+
+```mermaid
+graph BT
+  subgraph Hierarquia da Memória
+    REG["Registradores (~1 ciclo)<br>Menor, mais rápido, mais caro"] --> L1
+    L1["Cache L1 (~3 ciclos)"] --> L2
+    L2["Cache L2 (~10 ciclos)"] --> L3
+    L3["Cache L3 (~30 ciclos)"] --> RAM
+    RAM["RAM (~100 ciclos)"] --> DISK
+    DISK["Disco/SSD (~10⁷ ciclos)<br>Maior, mais lento, mais barato"]
+  end
+```
+
+**Execução Fora de Ordem:** Se a instrução 3 precisa de um dado que ainda está sendo carregado da RAM, a CPU não precisa esperar parada. Ela analisa as instruções seguintes, identifica quais não dependem desse dado, e as executa antes. O resultado final respeita a ordem original, mas internamente a execução foi reordenada para manter o pipeline cheio.
+
+**Múltiplos Núcleos:** Em vez de um único pipeline, colocamos vários processadores completos (núcleos) no mesmo chip e conectamos cada um ao cache compartilhado. O sistema operacional pode então distribuir programas entre os núcleos, executando múltiplas tarefas verdadeiramente em paralelo, algo que o 8080, com sua execução estritamente sequencial, jamais poderia fazer.
 
 ---
 
@@ -149,9 +165,9 @@ Tudo no computador é digital, mas o mundo é analógico.
 
 ### Armazenamento Persistente: Discos e SSDs
 
-A RAM é volátil — quando a energia acaba, tudo se apaga. Para manter dados entre reinicializações, precisamos de armazenamento persistente.
+A RAM é volátil, quando a energia acaba, tudo se apaga. Para manter dados entre reinicializações, precisamos de armazenamento persistente.
 
-**Discos Magnéticos (HDD):** Um disco rígido armazena bits em finas camadas de material magnético sobre discos de metal ou vidro que giram a até 15.000 RPM. Uma cabeça de leitura/gravação, montada na ponta de um braço mecânico, voa a nanômetros de distância da superfície. A direção do campo magnético em cada região minúscula da superfície define se aquele bit é 0 ou 1. A superfície do disco é organizada em trilhas concêntricas, divididas em setores (tipicamente 512 bytes cada). O controlador do disco traduz um endereço lógico (como o setor 1.234) em uma coordenada física (trilha X, setor Y). Esse mapeamento é uma abstração — o sistema operacional nunca precisa saber onde a cabeça leitora está.
+**Discos Magnéticos (HDD):** Um disco rígido armazena bits em finas camadas de material magnético sobre discos de metal ou vidro que giram a até 15.000 RPM. Uma cabeça de leitura/gravação, montada na ponta de um braço mecânico, voa a nanômetros de distância da superfície. A direção do campo magnético em cada região minúscula da superfície define se aquele bit é 0 ou 1. A superfície do disco é organizada em trilhas concêntricas, divididas em setores (tipicamente 512 bytes cada). O controlador do disco traduz um endereço lógico (como o setor 1.234) em uma coordenada física (trilha X, setor Y). Esse mapeamento é uma abstração, o sistema operacional nunca precisa saber onde a cabeça leitora está.
 
 **Unidades de Estado Sólido (SSD):** SSDs não têm partes móveis. Eles usam células de memória flash NAND, onde cada célula é um transistor de porta flutuante capaz de reter elétrons (e portanto um valor binário) mesmo sem energia. A grande diferença em relação à RAM é que a leitura é rápida, a escrita é mais lenta, e cada célula suporta um número finito de ciclos de gravação (desgaste). Para contornar isso, o controlador do SSD usa um *wear-leveling* (nivelamento de desgaste): espalha as gravações por todo o chip para que nenhuma região se desgaste antes das outras.
 
@@ -188,11 +204,11 @@ A jornada do hardware ao software é uma odisseia de abstração empilhada. Rel�
 
 ## Da Escovação de Bits à Mente Global: A Evolução do Código e da Internet
 
-Programar diretamente em código de máquina é como tentar almoçar usando apenas um palito de dentes: as porções são minúsculas, o processo é exaustivamente trabalhoso e a refeição parece durar uma eternidade. No fundo, todo computador executa apenas instruções primárias — mover um byte da memória para o processador, somar dois valores, guardar o resultado —, mas a abstração dessas tarefas foi o que nos permitiu construir desde simples calculadoras até a rede global que hoje interliga a humanidade.
+Programar diretamente em código de máquina é como tentar almoçar usando apenas um palito de dentes: as porções são minúsculas, o processo é exaustivamente trabalhoso e a refeição parece durar uma eternidade. No fundo, todo computador executa apenas instruções primárias, mover um byte da memória para o processador, somar dois valores, guardar o resultado,, mas a abstração dessas tarefas foi o que nos permitiu construir desde simples calculadoras até a rede global que hoje interliga a humanidade.
 
 ---
 
-## 1. A Escada da Abstração: Do Silício à Semântica
+## 6. A Escada da Abstração: Do Silício à Semântica
 
 Nos primórdios da computação, a entrada de dados era feita literalmente alterando chaves em um painel frontal. O primeiro grande salto de abstração foi a **Linguagem Assembly**. Em vez de decorar que o byte `46h` do Intel 8080 fazia o processador mover um dado da memória para o registrador B, os programadores começaram a usar mnemônicos como `MOV B,M`.
 
@@ -210,16 +226,16 @@ Abaixo, podemos ver como um fluxo de execução difere entre linguagens compilad
 
 ```mermaid
 graph TD
-    A[Código Fonte<br>Alto Nível] --> B{Processo}
-    B -->|Compilador| C[Arquivo Executável<br>Código de Máquina]
-    C --> D[CPU executa diretamente]
-    
-    B -->|Interpretador| E[Lê e Executa simultaneamente<br>Instrução por Instrução]
-    E --> F[CPU executa via Interpretador]
-    
-    B -->|Máquina Virtual<br>Java/C#| G[Bytecode/Intermediate Code]
-    G --> H[JIT Compiler / VM]
-    H --> I[CPU executa]
+  A[Código Fonte<br>Alto Nível] --> B{Processo}
+  B -->|Compilador| C[Arquivo Executável<br>Código de Máquina]
+  C --> D[CPU executa diretamente]
+  
+  B -->|Interpretador| E[Lê e Executa simultaneamente<br>Instrução por Instrução]
+  E --> F[CPU executa via Interpretador]
+  
+  B -->|Máquina Virtual<br>Java/C#| G[Bytecode/Intermediate Code]
+  G --> H[JIT Compiler / VM]
+  H --> I[CPU executa]
 
 ```
 
@@ -227,117 +243,203 @@ Linguagens como Pascal (popularizada pelo Turbo Pascal e sua revolucionária IDE
 
 ---
 
-## 2. JavaScript e o Caos Controlado dos Números Fracionários
+## 7. A Grande Ilusão: Memória Virtual
 
-O JavaScript, criado por Brendan Eich em 1995, começou como uma forma de dar interatividade a páginas HTML estáticas. Hoje, engines JIT (Just-In-Time) dentro dos navegadores compilam o JS sob demanda, transformando-o em uma potência que roda em quase toda a web.
+Todo programa que você escreve acredita que tem a memória inteira só para si. Um programa em C pode usar o endereço `0x1000` para uma variável, e outro programa rodando ao mesmo tempo pode usar o **mesmo** endereço `0x1000` para uma variável diferente, sem conflito. Como isso é possível?
 
-Para entender o poder do controle de fluxo de uma linguagem de alto nível, considere o **[Crivo de Eratóstenes](https://pt.wikipedia.org/wiki/Crivo_de_Eratóstenes)**, um algoritmo clássico para encontrar números primos. Em JS, manipulamos o *DOM* (Document Object Model) da página HTML para exibir resultados dinamicamente:
+A resposta é a **memória virtual**, uma das ideias mais engenhosas da computação.
 
-```javascript
-let primes = new Array(10000).fill(true);
+O sistema operacional, com ajuda de hardware especializado (a **MMU**, Memory Management Unit), cria para cada processo a ilusão de um espaço de endereçamento privado e contínuo. Na realidade, esses endereços virtuais são mapeados para posições físicas reais da RAM, possivelmente fragmentadas e compartilhadas.
 
-for (let i1 = 2; i1 <= 100; i1++) {
-    if (primes[i1]) {
-        for (let i2 = 2; i2 < 10000 / i1; i2++) {
-            primes[i1 * i2] = false;
-        }
-    }
-}
-// Exibição na página web
-for (let index = 2; index < 10000; index++) {
-    if (primes[index]) {
-        document.getElementById("result").innerHTML += index + " ";
-    }
-}
+### Page Tables: O Tradutor
 
-```
+O mapeamento de endereços virtuais para físicos é feito através de uma estrutura chamada **page table** (tabela de páginas). A memória virtual é dividida em blocos de tamanho fixo chamados **páginas** (tipicamente 4 KB). Cada entrada na page table diz:
 
-No entanto, linguagens de alto nível mascaram complexidades brutais do hardware. Experimente rodar o seguinte no JS: `55.2 * 27.8`. O resultado não será o exato `1534.56`, mas sim `1534.5600000000002`. Por quê? Bem-vindo ao padrão **[IEEE 754](https://pt.wikipedia.org/wiki/IEEE_754)**.
-
-### O Padrão IEEE 754 (Ponto Flutuante)
-
-Para representar números com casas decimais, os computadores usam a notação científica binária. O Javascript utiliza exclusivamente precisão dupla (64 bits). Esses 64 bits são divididos de forma engenhosa:
+* **Válida?** Esta página virtual existe ou não foi alocada?
+* **Presente na RAM?** Se sim, qual o endereço físico correspondente?
+* **Permissões:** Leitura? Escrita? Execução?
 
 ```mermaid
-pie title Estrutura de um Double Precision Float (64 bits)
-    "Sinal (1 bit)" : 1
-    "Expoente (11 bits)" : 11
-    "Mantissa/Significando (52 bits)" : 52
-
+graph LR
+  subgraph "Espaço Virtual (Processo A)"
+    V1["Página 1"] --> PT["Page Table"]
+    V2["Página 2"] --> PT
+    V3["Página 3"] --> PT
+  end
+  subgraph "RAM Física"
+    direction LR
+    F1["Frame 1<br>(código)"]
+    F2["Frame 2<br>(dados)"]
+    F3["(vazio)"]
+  end
+  PT -->|"Mapeia"| F1
+  PT -->|"Mapeia"| F2
+  PT -.->|"Página nao está na RAM"| DISK["Disco"]
 ```
 
-A fórmula matemática que o processador utiliza para calcular o valor real a partir desses bits é:
+### Page Faults: Quando a Memória Mente
 
-**(-1)^s × 1.f × 2^(e-1023)**
+Quando um programa acessa um endereço virtual cuja página não está na RAM, a MMU dispara uma exceção chamada **page fault**. O sistema operacional então:
 
-* **s (Sinal):** Define se é positivo (0) ou negativo (1).
-* **e (Expoente):** Um valor *biased* (adiciona-se 1023 ao expoente real para lidar com negativos sem sinal extra).
-* **1.f (Significando):** Como em binário normalizado o primeiro dígito antes da vírgula é *sempre* 1, ele é omitido da memória. Ganhamos um bit de graça! Os 52 bits armazenam apenas a parte fracionária (a resolução chega a cerca de 16 casas decimais).
+1. Interrompe o programa.
+2. Localiza a página necessária no disco (no arquivo de *swap* ou no executável original).
+3. Escolhe uma página na RAM para sacrificar (a **vítima**).
+4. Se a vítima foi modificada, copia-a de volta ao disco.
+5. Carrega a nova página do disco para a RAM.
+6. Atualiza a page table.
+7. Retoma o programa exatamente de onde parou.
 
-O erro de `0.0000000000002` ocorre porque a vasta maioria das frações decimais (como `1.1`) tornam-se dízimas periódicas infinitas quando convertidas para frações binárias (somas de 2⁻¹, 2⁻², 2⁻³...). A memória corta aos 52 bits de precisão, causando leves arredondamentos. Antigamente, operações como senos e cossenos (calculadas através de complexas expansões em série como sen(x) = x − x³/3! + x⁵/5! − ...) eram feitas inteiramente por software. Tudo mudou em 1980 com o **Intel 8087**, um coprocessador matemático (FPU) dedicado inteiramente a mastigar cálculos de ponto flutuante via hardware.
+O programa nunca sabe que isso aconteceu, a ilusão é perfeita.
 
----
+### TLB: O Cache do Tradutor
 
-## 3. O Cérebro Mundial: Das Fichas à Fibra Óptica
+Traduzir endereços virtuais toda hora seria lentíssimo se exigisse uma ida à RAM a cada acesso. Por isso, a CPU possui um cache minúsculo e ultrarrápido dentro da MMU chamado **TLB** (Translation Lookaside Buffer). Ele guarda as traduções mais usadas recentemente. Para a maioria dos acessos, a tradução ocorre em um único ciclo de clock, sem ida à RAM, sem page fault.
 
-Muito antes do primeiro bit viajar pela rede, visionários já sonhavam com o conhecimento interconectado. Em 1938, H.G. Wells propôs o *World Brain*, uma enciclopédia global, viva e colaborativa. Em 1945, Vannevar Bush imaginou o **Memex**, uma mesa mecanizada de microfilmes onde pesquisadores criariam "trilhas associativas" entre documentos. Duas décadas depois, Ted Nelson cunhou o termo **Hipertexto** para descrever ligações de informação impossíveis de mapear no papel.
+### Por Que Isso Importa?
 
-O que esses gênios não sabiam é *como* isso seria construído. A resposta veio nos anos 60 com a ARPANET e a brilhante invenção da **Comutação de Pacotes** (Packet Switching).
+A memória virtual não é apenas uma curiosidade técnica, ela é o que torna possível:
 
-### Cortando o Arquivo: A Comutação de Pacotes
-
-Em vez de monopolizar uma linha direta entre o Computador A e B para enviar um arquivo de 30KB, o protocolo divide o arquivo em pequenos pacotes de, digamos, 1500 bytes.
-
-Cada pacote carrega um **Cabeçalho** contendo:
-
-* Endereços de origem e destino.
-* Número da sequência (ex: pacote 7 de 20).
-* Um **Checksum** (cálculo matemático dos bytes do payload). Se o computador receptor calcula o checksum e ele não bate com o do cabeçalho, ele sabe que o pacote foi corrompido no caminho e pede apenas aquele trecho novamente. Isso traz resiliência e permite que múltiplos dispositivos compartilhem a mesma rede simultaneamente.
-
-### Modulações e Fibras: O Meio Físico
-
-A infraestrutura inicial surfou nas costas das linhas telefônicas de voz (300 a 3400 Hz). Aparelhos como o lendário modem Bell 103 (1962) usavam FSK (*Frequency-Shift Keying*). Para transmitir dados, o modem convertia bits em frequências audíveis: no terminal de origem, um sinal de 1070 Hz significava o bit `0`, e 1270 Hz significava o bit `1`. Essa conversão de sinal digital para analógico e vice-versa é o que dá o nome ao **Mo**dulador-**Dem**odulador.
-
-Hoje, as espinhas dorsais da internet (backbones) são cabos submarinos de **Fibra Óptica**, onde feixes de luz infravermelha refletem nas paredes internas de tubos capilares de vidro puro. A luz acesa é `1`, apagada é `0`, permitindo velocidades colossais inimagináveis na era dos 300 *bauds*.
+* **Isolamento entre processos:** Um programa não pode ler ou corromper a memória de outro.
+* **Compartilhamento seguro:** Bibliotecas compartilhadas (como `libc.so`) ocupam uma única cópia na RAM física, mas aparecem no espaço virtual de cada processo.
+* **Programação simplificada:** Cada programa age como se tivesse um espaço contínuo gigantesco, sem se preocupar com os outros processos.
 
 ---
 
-## 4. Anatomia de um Request HTTP
+## 8. Como um Programa se Torna Processo
 
-A internet moderna, popularizada pela **World Wide Web** (criada por [Tim Berners-Lee](https://pt.wikipedia.org/wiki/Tim_Berners-Lee) em 1989), é um amálgama de protocolos complexos trabalhando em uníssono. A topologia não é centralizada; é uma teia descentralizada de Servidores, Clientes e Roteadores.
+Você escreve código em C, o compilador gera assembly, o montador gera código de máquina. Agora você tem um arquivo executável no disco. Como ele vira um processo rodando na memória?
 
-Quando você acessa um site digitando uma **URL** (Uniform Resource Locator) no navegador, eis a mágica que acontece em milissegundos:
+### O Linking
+
+Primeiro, o **linker** (ligador) entra em cena. Seu programa chama funções como `printf`, que estão em bibliotecas separadas. O linker costura seu código com essas bibliotecas, resolve os endereços e gera o executável final.
+
+```mermaid
+graph LR
+  A["Programa.c"] -->|Compilador| B["Programa.o"]
+  C["libc.a<br>(printf, etc.)"] --> D["Linker (ld)"]
+  B --> D
+  D --> E["Executável<br>(a.out)"]
+```
+
+### O Loading
+
+Quando você digita `./programa` no shell, o sistema operacional faz:
+
+1. **Cria um novo processo** com seu próprio espaço de endereçamento.
+2. **Mapeia o executável na memória virtual**, as páginas do código e dos dados são ligadas ao arquivo no disco via page tables, mas ainda não carregadas na RAM.
+3. **Inicia a execução** pulando para a primeira instrução.
+
+Conforme o programa executa e acessa novas páginas, o mecanismo de **page fault** descrito acima as carrega da memória **sob demanda** (*demand paging*). É por isso que programas enormes podem iniciar quase instantaneamente: apenas as páginas realmente necessárias são carregadas.
+
+### System Calls: A Porta de Entrada para o Kernel
+
+Programas de usuário não podem acessar hardware diretamente, isso quebraria o isolamento. Quando seu programa precisa ler um arquivo, criar um processo ou alocar memória, ele faz uma **chamada de sistema** (system call):
 
 ```mermaid
 sequenceDiagram
-    participant B as Navegador (Client)
-    participant DNS as Servidor DNS
-    participant R as Roteadores (Internet)
-    participant S as Servidor Web
-    
-    B->>DNS: Qual é o IP de dominio.com?
-    DNS-->>B: É 50.87.147.75 (IPv4)
-    B->>S: HTTP Request: GET /index.xhtml via TCP/IP
-    Note over B,S: Pacotes viajam passando de Roteador em Roteador (Routing Tables)
-    S-->>B: HTTP Response: Retorna o arquivo HTML (Pacotes TCP)
-    Note over B: Navegador faz o parsing do HTML
-    B->>S: Solicita style.css e script.js encontrados no HTML
-    S-->>B: Retorna os assets
-    Note over B: Engine JS compila o código (JIT) e renderiza a tela
-
+  participant P as Programa (modo usuário)
+  participant K as Kernel (modo privilegiado)
+  
+  P->>K: read(fd, buf, size)
+  Note over K: Kernel acessa o disco<br>ou o cache de arquivos
+  K-->>P: Retorna bytes lidos
+  Note over P: O programa não sabe<br>como o disco foi acessado
 ```
 
-Nesse trajeto, dois identificadores cruciais coexistem:
-
-1. **Endereço IP (Internet Protocol):** O endereço lógico que orienta a rota do pacote pelas estradas virtuais da internet (Pense no seu CEP).
-2. **Endereço MAC (Media Access Control):** Um identificador de 12 dígitos hexadecimais fisicamente embutido na sua placa de rede (NIC). Conforme o pacote pula de roteador em roteador pela teia, os endereços MAC de origem e destino no cabeçalho são atualizados a cada salto, como uma corrida de revezamento local, enquanto o IP permanece o mesmo do início ao fim.
-
-### A Concretização do Sonho
-
-H.G. Wells estaria orgulhoso? Projetos como o Google Books digitalizaram o passado, mas falham em usabilidade de catalogação. Bases como o JSTOR são incríveis repositórios acadêmicos. Mas talvez a realização mais visceral e próxima do ideal do "Cérebro Mundial" de Wells seja a **Wikipedia**. Em suas palestras originais, Wells descreveu uma base que precisava rechaçar propaganda e dogmas agressivamente, focando na organização em prol de uma comunidade global.
-
-O fato de termos saído de chaves elétricas rudimentares para linguagens expressivas, e de frequências de áudio em linhas de cobre para a vastidão óptica do conhecimento compartilhado, é o verdadeiro triunfo da engenharia e do software. O código abstraiu as limitações da máquina, e a internet abstraiu as limitações da mente humana.
+A chave aqui é o **modo de execução**: o processador alterna entre modo usuário (restrito) e modo kernel (privilegiado) através de uma instrução especial de *trap*. É a única maneira de um programa de usuário realizar operações que exigem privilégio.
 
 ---
 
-**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed. — Charles Petzold
+## 9. Números Reais no Mundo Digital: IEEE 754
+
+Experimente `0.1 + 0.2` em JavaScript, Python ou C com float. O resultado não é `0.3`, é `0.30000000000000004`. Isso não é um bug; é uma consequência inevitável de como os computadores representam números reais.
+
+O padrão **IEEE 754** define como números de ponto flutuante são armazenados em 32 bits (float) ou 64 bits (double). Um número de precisão dupla (64 bits) é dividido assim:
+
+```mermaid
+pie title Estrutura de um Double Precision Float (64 bits)
+  "Sinal (1 bit)" : 1
+  "Expoente (11 bits)" : 11
+  "Mantissa/Significando (52 bits)" : 52
+```
+
+O valor real é calculado por:
+
+**(-1)^s, 1.f, 2^(e−1023)**
+
+* **s (Sinal):** 0 para positivo, 1 para negativo.
+* **e (Expoente):** Armazenado com um *viés* (bias) de 1023, permitindo representar expoentes negativos sem usar um bit de sinal separado.
+* **1.f (Significando):** Como em binário normalizado o primeiro dígito antes da vírgula é sempre 1, ele é omitido ("implied leading 1"). Ganhamos um bit extra de precisão gratuitamente.
+
+O erro de `0.1 + 0.2` ocorre porque `0.1` em decimal é uma dízima periódica em binário: `0.00011001100110011...`. Não importa quantos bits você use, nunca conseguirá representá-lo exatamente. O IEEE 754 corta em 52 bits de mantissa, daí a pequena diferença.
+
+O padrão define também **casos especiais**: infinito (+∞, −∞), NaN (Not a Number, para resultados como 0/0), e valores denormalizados para números muito próximos de zero.
+
+---
+
+## 10. Redes: O Computador como Parte de um Todo
+
+Nenhum computador moderno é uma ilha. A capacidade de conectar máquinas em rede é o que possibilitou a internet, a web, o email e praticamente tudo que torna os computadores úteis hoje.
+
+Os dados trafegam em **pacotes**, pequenos blocos de bytes com cabeçalho (endereço de origem/destino) e payload (dados). Estes pacotes são roteados através de uma série de roteadores até chegar ao destino. Se um pacote se perde, ele é retransmitido.
+
+O modelo de camadas organiza a comunicação:
+
+* **Camada de Aplicação:** HTTP (web), SMTP (email), DNS (nomes).
+* **Camada de Transporte:** TCP (conexão confiável) ou UDP (mensagens rápidas).
+* **Camada de Rede:** IP (endereçamento e roteamento).
+* **Camada de Enlace:** Ethernet, Wi-Fi (meio físico).
+
+Cada máquina na internet possui um **endereço IP** único (como `192.168.1.1`). Como seres humanos preferem nomes a números, o **DNS** (Domain Name System) traduz nomes como `google.com` para endereços IP.
+
+```mermaid
+sequenceDiagram
+  participant N as Navegador
+  participant DNS as Servidor DNS
+  participant S as Servidor Web
+  
+  N->>DNS: google.com?
+  DNS-->>N: 142.250.80.46
+  N->>S: GET /index.html
+  S-->>N: (páginas HTML)
+```
+
+Quando você digita uma URL no navegador, é isso que acontece: seu computador consulta o DNS, descobre o IP do servidor, e então troca pacotes TCP/IP com ele para baixar e exibir a página.
+
+---
+
+### 🔧 Exercícios
+
+**1. Page Table:** Um sistema tem espaço virtual de 32 bits e páginas de 4 KB. Quantos bits tem o número de página virtual (VPN)? Quantas entradas há em uma page table de um único nível?
+
+**2. Sob demanda:** Por que um executável de 100 MB pode iniciar em milissegundos, enquanto carregar 100 MB do disco levaria segundos?
+
+**3. IEEE 754:** Quantos números diferentes podem ser representados com um float de 32 bits (1 bit de sinal, 8 de expoente, 23 de mantissa)? (Dica: 2³².) Isso significa que a reta real é totalmente coberta? Explique.
+
+**4. Camadas:** Quando você envia um email, em qual camada do modelo de redes ele é encapsulado? E o endereço IP do destinatário, em qual camada ele pertence?
+
+**5. Linking:** Por que um linker consegue detectar que você chamou `printf` mas esqueceu de incluir `#include <stdio.h>`? (Dica: pense em quando o erro aparece, é na compilação ou na linkedição?)
+
+<details>
+<summary><b>Respostas</b></summary>
+
+1. VPN = 32 − 12 (offset) = **20 bits**. A page table tem 2²⁰ = **1.048.576 entradas**.
+2. **Demand paging:** apenas as páginas efetivamente acessadas são carregadas. Um executável de 100 MB pode ter apenas 1-2 MB de código realmente executado na inicialização.
+3. 2³² = **4.294.967.296 valores distintos**. Porém, a reta real é infinita e contínua, então mesmo 2³² valores são um subconjunto infinitesimal, daí os erros de arredondamento.
+4. O email (aplicação) está na **camada de aplicação**. O endereço IP está na **camada de rede**.
+5. O linker só detecta o erro na **etapa de linkedição** (ld), não na compilação. O compilador aceita a declaração implícita de `printf` (ou um protótipo sem corpo), mas o linker não encontra o código objeto da função e gera *"undefined reference"*.
+</details>
+
+---
+
+## O Quadro Completo
+
+Este artigo percorreu um caminho imenso: começamos nos sinais de controle que coordenam a CPU, passamos pela pilha de execução, cache e memória virtual, até chegar à internet. Se há um tema unificador, é a **abstração em camadas**.
+
+Cada nível esconde a complexidade do anterior e oferece uma interface mais simples ao próximo. O programador em C não precisa saber em que frame da RAM física sua variável está; o usuário do navegador não precisa saber quantos roteadores seu pacote atravessou. Mas alguém, em cada nível, *precisa* saber, e esse alguém é o engenheiro de sistemas que entende a máquina de cima a baixo.
+
+O processador 8080 que começou esta série como um modelo didático de 6.000 transistores evoluiu para chips com bilhões. As instruções assembly que ocupavam bytes agora são traduzidas por pipelines superscalares que executam múltiplas instruções por ciclo. Nada disso seria possível sem as abstrações que construímos: portas lógicas, flip-flops, barramentos, endereçamento virtual, camadas de rede. Cada uma apoia-se na anterior.
+
+---
+
+**Fonte:** [Code: The Hidden Language of Computer Hardware and Software](https://a.co/d/0a3DsSsn), 2ª ed., Charles Petzold
