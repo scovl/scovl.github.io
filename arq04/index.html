@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title> — lobovit</title>
+  <link rel="stylesheet" href="/css/main.css?v=3">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/prism/prism-mocha.min.css">
+</head>
+<body>
+  <div class="frame">
+    <header>
+      <nav>
+        <a class="site-title" href="http://localhost:1313/">lobovit</a>
+        <span class="nav-links">
+          <a href="/page/about/">about</a>
+          <a href="/page/contact/">contact</a>
+        </span>
+      </nav>
+      <hr>
+    </header>
+    <main>
+      
+<article>
+  <header>
+    <h1></h1>
+    <p class="meta"><time>0001-01-01</time></p>
+  </header>
+  <div class="content">
+    
+<p>O estilo de arquitetura em camadas, também chamado de arquitetura em <strong>n-tiers</strong> (ou n-camadas), é um dos tipos mais comuns por aí. Ele é praticamente o padrão para muitos sistemas antigos (<strong>legacy</strong>) porque é simples, todo mundo conhece e custa barato para implementar. O problema é que esse estilo acaba caindo fácil em alguns antia-padrões, como o da &#34;Arquitetura por Implicação&#34; ou &#34;Arquitetura Acidental&#34;. Sabe quando os desenvolvedores ou arquitetos &#34;simplesmente começam a programar&#34; sem ter definido bem qual estilo vão usar? Pois é, na maioria das vezes, eles acabam fazendo uma arquitetura em camadas sem nem perceber.</p>
+<p>
+### Topologia</p>
+<p>
+Os componentes aqui são organizados em camadas horizontais lógicas, como você pode ver na Figura 10-1. Cada camada tem um papel específico, tipo cuidar da interface do usuário (apresentação) ou da lógica de negócio. Não existe uma regra rígida de quantas camadas você deve ter, mas o padrão costuma ser quatro: Apresentação, Negócio, Persistência e Banco de Dados. Às vezes, o pessoal junta a camada de Negócio com a de Persistência, principalmente se a lógica do banco (tipo SQL) estiver misturada no código de negócio. Em aplicações pequenas, três camadas já bastam; mas, em sistemas complexos, pode ter cinco ou mais.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-1. Camadas lógicas padrão no estilo de arquitetura em camadas</p>
+<p>
+A Figura 10-2 mostra variações de como isso funciona na prática (na hora de colocar para rodar, ou seja, no <strong>deployment</strong>). A primeira opção coloca Apresentação, Negócio e Persistência tudo num pacote só, enquanto o Banco de Dados fica separado num servidor físico ou sistema de arquivos à parte. A segunda opção separa a camada de Apresentação num pacote próprio, deixando Negócio e Persistência juntos em outro. De novo, o Banco de Dados fica fora. Já na terceira variação, tudo — inclusive o banco — fica num único pacote. Isso é muito usado em apps de celular, onde o banco de dados é embutido no aparelho, ou em softwares <strong>on-premises</strong> (instalados direto nos servidores do cliente).</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-2. Variações da topologia física (implantação)</p>
+<p>
+Cada camada tem sua responsabilidade e serve como uma &#34;capa&#34; para esconder a complexidade do trabalho necessário para atender a um pedido do usuário. Por exemplo, a camada de Apresentação cuida só do que o usuário vê na tela e da comunicação com o navegador; ela nem quer saber como os dados do cliente são buscados, só precisa mostrar na tela. Do outro lado, a camada de Negócio não precisa se preocupar com formatação de tela nem de onde os dados vêm; o trabalho dela é pegar os dados da camada de Persistência, fazer as contas ou aplicar as regras de negócio, e passar o resultado para cima.</p>
+<p>
+Essa separação ajuda muito a organizar quem faz o quê. Cada componente dentro de uma camada tem um escopo limitado. Isso deixa os desenvolvedores focarem no que são especialistas — uns em interface, outros em banco de dados, por exemplo. O lado ruim é que você perde um pouco da agilidade global; o sistema inteiro não consegue reagir tão rápido a mudanças.</p>
+<p>
+A arquitetura em camadas é organizada por &#34;divisões técnicas&#34; (ao contrário de divisões por domínio). Isso significa que os componentes são separados pela sua função técnica, e não pelo assunto do negócio. Por exemplo, o assunto &#34;cliente&#34; vai ficar espalhado pela Apresentação, Negócio, Regras, Serviços e Banco de Dados. Isso torna muito chato e difícil fazer alterações em uma funcionalidade específica, por isso o <strong>Domain-Driven Design</strong> (DDD) não encaixa muito bem aqui.</p>
+<p>
+### Detalhes do Estilo</p>
+<p>
+Cada camada encapsula uma área técnica, mas elas também possuem características próprias.</p>
+<p>
+#### Camadas de Isolamento</p>
+<p>
+Cada camada pode ser &#34;fechada&#34; ou &#34;aberta&#34;. Se ela é fechada, o pedido que vem de cima para baixo não pode pular nenhuma etapa; ele tem que passar obrigatoriamente pela camada imediatamente abaixo (veja a Figura 10-3). Num sistema onde todas são fechadas, um pedido da Apresentação tem que passar pelo Negócio, depois pela Persistência, para só então chegar no Banco de Dados.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-3. Camadas fechadas em uma arquitetura em camadas</p>
+<p>
+Repare que, na Figura 10-3, seria muito mais rápido se a camada de Apresentação pudesse bater direto no Banco de Dados para consultas simples, sem perder tempo passando por tudo. Para isso acontecer, as camadas de Negócio e Persistência teriam que ser &#34;abertas&#34;. Mas o que é melhor? O segredo está no conceito de &#34;camadas de isolamento&#34;.</p>
+<p>
+Isso significa que, se você mudar algo em uma camada, isso não deve quebrar as outras, desde que o &#34;contrato&#34; entre elas (a forma como conversam) continue o mesmo. Cada camada é independente. Mas, para isso funcionar direito, as camadas têm que ser fechadas. Se a Apresentação puder acessar o Banco direto, qualquer mudança no Banco vai quebrar o Negócio e a Apresentação. Isso cria um sistema muito amarrado, frágil e caro de manter.</p>
+<p>
+O isolamento também permite que você troque uma camada inteira (tipo trocar seu <strong>framework</strong> de interface) sem afetar o resto do sistema.</p>
+<p>
+#### Adicionando Camadas</p>
+<p>
+Embora camadas fechadas ajudem no isolamento, às vezes você precisa de uma camada aberta. Por exemplo, imagine que o seu Negócio tem objetos compartilhados (classes de utilitários de data, <strong>logs</strong>, auditoria, etc.). Você decide que a Apresentação não deve usar esses objetos. Esse cenário está na Figura 10-4. É difícil controlar isso, porque, arquiteturalmente, a Apresentação tem acesso ao Negócio.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-4. Objetos compartilhados na camada de Negócio</p>
+<p>
+Um jeito de resolver isso é criar uma nova camada de &#34;Serviços&#34; só para esses objetos (veja a Figura 10-5). Como a camada de Negócio é fechada, a Apresentação não consegue mais pular direto para os objetos que você quer proteger. Mas atenção: você precisa marcar essa nova camada de Serviços como &#34;aberta&#34;, senão a camada de Negócio seria obrigada a passar por ela para acessar o Banco de Dados. Assim, a camada de Negócio pode usar a de Serviços ou passar direto por ela para baixo.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-5. Adicionando uma nova camada de Serviços à arquitetura</p>
+<p>
+Usar esse conceito de camadas abertas e fechadas ajuda a definir como o pedido flui e guia os desenvolvedores sobre o que pode ou não ser acessado. Se você não documentar e explicar isso direito, acaba com uma arquitetura cheia de &#34;gambiarras&#34;, difícil de testar e atualizar.</p>
+<p>
+Toda arquitetura em camadas acaba caindo, em algum momento, no antia-padrão do &#34;Sumidouro de Arquitetura&#34; (<strong>Architecture Sinkhole</strong>). Isso acontece quando o pedido passa por várias camadas sem fazer absolutamente nada — só repassando o dado. Se 80% das suas requisições são só um &#34;passa-passa&#34; de dados sem lógica nenhuma, provavelmente a arquitetura em camadas não é a ideal para o seu problema.</p>
+<p>
+#### Topologias de Dados</p>
+<p>
+Tradicionalmente, essas arquiteturas são sistemas monolíticos com um único banco de dados, também monolítico. A camada de Persistência é quem faz a ponte entre o seu código orientado a objetos e o banco de dados relacional.</p>
+<p>
+#### Considerações sobre Nuvem</p>
+<p>
+Como são tipicamente monolíticas e divididas em camadas, as opções na nuvem são limitadas a colocar uma ou mais camadas lá. A divisão técnica ajuda a separar as partes, mas a latência de comunicação entre servidores locais e a nuvem pode dar dor de cabeça, já que os fluxos costumam percorrer todas as camadas.</p>
+<p>
+#### Riscos Comuns</p>
+<p>
+Arquiteturas em camadas não aguentam falhas muito bem, já que são monolíticas. Se uma parte pequena der um erro de memória, o sistema inteiro cai. A disponibilidade também sofre porque o tempo de recuperação (o <strong>reboot</strong> da aplicação) costuma ser alto: pode levar desde 2 minutos em sistemas pequenos até mais de 15 minutos em grandes aplicações.</p>
+<p>
+#### Governança</p>
+<p>
+Aqui a notícia é excelente: como esse estilo é muito comum, existem várias ferramentas de teste estrutural focadas nisso. O exemplo 10-1 mostra como usar uma dessas ferramentas (<strong>ArchUnit</strong>) para garantir que a equipe respeite as regras de quais camadas podem acessar quais.</p>
+<p>
+Exemplo 10-1. Função de <strong>fitness</strong> (ArchUnit) para governar camadas</p>
+<p>
+```java
+layeredArchitecture()
+.layer(&#34;Controller&#34;).definedBy(&#34;..controller..&#34;)
+.layer(&#34;Service&#34;).definedBy(&#34;..service..&#34;)
+.layer(&#34;Persistence&#34;).definedBy(&#34;..persistence..&#34;)</p>
+<p>
+.whereLayer(&#34;Controller&#34;).mayNotBeAccessedByAnyLayer()
+.whereLayer(&#34;Service&#34;).mayOnlyBeAccessedByLayers(&#34;Controller&#34;)
+.whereLayer(&#34;Persistence&#34;).mayOnlyBeAccessedByLayers(&#34;Service&#34;)</p>
+<p>
+```</p>
+<p>
+No exemplo, o arquiteto define o que cada camada é e quem pode conversar com quem. Isso automatiza o controle durante o desenvolvimento.</p>
+<p>
+#### Considerações de Topologia de Equipes</p>
+<p>
+Ao contrário de outros estilos, esse aqui funciona com quase qualquer configuração de equipe:</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+<strong><strong>Equipes alinhadas ao fluxo:</strong></strong> Como o sistema é pequeno e autocontido, funciona bem para equipes que cuidam de uma jornada de ponta a ponta.
+</h2>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+<strong><strong>Equipes habilitadoras:</strong></strong> Como é muito modular e separado por funções técnicas, especialistas podem entrar em uma camada específica para fazer testes e melhorias sem estragar o resto.
+</h2>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+<strong><strong>Equipes de subsistemas complicados:</strong></strong> Como cada camada tem uma tarefa clara, uma equipe pode cuidar só da Persistência, por exemplo, para fins de análise de dados, sem atrapalhar quem está cuidando do fluxo principal.
+</h2>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+<strong><strong>Equipes de plataforma:</strong></strong> Conseguem aproveitar a modularidade, mas o maior desafio é o crescimento do monólito. Com o tempo, o sistema fica pesado (muito consumo de memória, conexão de banco, lentidão), exigindo trabalho pesado da equipe de plataforma.
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>
+### Características do Estilo</p>
+<p>
+A tabela abaixo (Figura 10-6) mostra como o estilo se sai. Uma estrela significa que o estilo não é bom nisso; cinco estrelas significa que é o seu ponto forte.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 10-6. Classificação das características da arquitetura em camadas</p>
+<p>
+O custo baixo e a simplicidade são as maiores forças. Por ser monolítico, é muito mais simples de entender e manter do que sistemas distribuídos. Só tome cuidado: essa vantagem diminui conforme o sistema cresce e fica complexo.</p>
+<p>
+A capacidade de implantação e a facilidade de teste não são boas. Implantar é arriscado, raro e dá trabalho. Uma mudança minúscula exige que você reimplante o sistema todo, aumentando o risco de quebrar algo no caminho. Como tudo está junto, ninguém quer rodar um teste completo por causa de uma alteração de três linhas. A nota de testabilidade é dois porque, pelo menos, dá para simular (<strong>mockar</strong>) partes do sistema para facilitar um pouco.</p>
+<p>
+Escalabilidade e elasticidade são bem fracas (uma estrela) devido ao formato monolítico. É difícil escalar partes isoladas sem técnicas complexas (como multithreading) para as quais esse estilo não foi feito.</p>
+<p>
+Dá para conseguir uma boa responsividade com um projeto cuidadoso, usando <strong>cache</strong>, por exemplo, mas a arquitetura acaba sofrendo com a falta de processamento paralelo nativo.</p>
+<p>
+### Quando usar</p>
+<p>
+É uma ótima escolha para aplicações simples, sites pequenos ou quando você tem prazo e orçamento muito apertados. É um bom ponto de partida se você ainda não sabe se vai precisar de algo mais complexo no futuro. Quando usar, mantenha o reaproveitamento de código baixo e a herança de objetos simples para facilitar uma migração futura para outro estilo.</p>
+<p>
+### Quando não usar</p>
+<p>
+Como vimos, conforme o sistema cresce, a agilidade, manutenibilidade e testabilidade vão para o espaço. Se você tem um sistema grande em vista, é melhor buscar algo mais modular.</p>
+<p>
+### Exemplos e Casos de Uso</p>
+<p>
+É um dos estilos mais comuns. Sistemas operacionais, por exemplo, usam camadas para separar as coisas (Camada de Hardware, <strong>Kernel</strong>, Interface de chamadas do sistema, e a camada do Usuário). O modelo de rede OSI, que define como a internet funciona (TCP/IP), também é dividido em camadas (Física, Link de Dados, Rede, Transporte, Aplicação).</p>
+<p>
+A arquitetura em camadas é excelente para equipes que precisam entregar algo rápido (&#34;será que conseguimos entregar isso no prazo?&#34;). Se você precisa colocar um produto na rua logo por causa de investidores, a simplicidade desse estilo ganha o jogo, mesmo que você precise reescrever partes do sistema depois para escalar.</p>
+<p>
+O Estilo de Arquitetura de Monólito Modular</p>
+<p>
+Graças à adoção generalizada do Design Orientado a Domínio (DDD) e a um foco maior na partição por domínios, o estilo de arquitetura de monólito modular ganhou tanta popularidade desde que escrevemos a primeira edição deste livro em 2020, que decidimos adicionar um capítulo à segunda edição descrevendo (e avaliando) ele.</p>
+<p>
+### Topologia</p>
+<p>
+Como o nome sugere, o estilo de arquitetura de monólito modular é uma arquitetura monolítica. Sendo assim, ele é implantado como uma única unidade de software: um arquivo de arquivo da web (WAR), um único assembly no .NET, um arquivo de arquivo corporativo (EAR) na plataforma Java, e assim por diante. Como o monólito modular é considerado uma arquitetura particionada por domínio (organizada por domínios de negócio em vez de capacidades técnicas), seu formato isomórfico é definido como uma única unidade de implantação com funcionalidades agrupadas por área de domínio. A figura abaixo ilustra a topologia típica de um monólito modular.</p>
+<p>
+[Imagem da topologia típica de um monólito modular]</p>
+<p>
+Para entender a natureza do foco em domínio do monólito modular, considere a arquitetura em camadas tradicional (descrita no Capítulo 10). Seus componentes são definidos e organizados por suas capacidades técnicas: camadas de Apresentação, Negócio e Persistência, e assim por diante. Por exemplo, a lógica de apresentação para manter informações de perfil de cliente poderia ser representada por um componente com o namespace `com.app.presentation.customer.profile`. O terceiro nó no namespace representa a preocupação técnica da camada (neste caso, a camada de Apresentação).</p>
+<p>
+[Imagem mostrando que no monólito modular, a funcionalidade é agrupada por área de domínio]</p>
+<p>
+Por outro lado, os componentes de um monólito modular são organizados principalmente por domínio. Portanto, em uma arquitetura de monólito modular, o mesmo componente de manutenção de perfil de cliente seria representado pelo namespace `com.app.customer.profile`. Aqui, o terceiro nó do namespace refere-se a uma preocupação de domínio, e não técnica. Dependendo da complexidade do componente, o namespace pode ser ainda mais dividido por preocupação técnica após a de domínio, como `com.app.customer.profile.presentation` ou `com.app.customer.profile.business`.</p>
+<p>
+### Especificidades do Estilo</p>
+<p>
+Domínios (ou subdomínios, em alguns casos) são chamados de módulos neste estilo arquitetural. Os módulos podem ser organizados de duas maneiras. A arquitetura mais simples é a estrutura monolítica, onde todos os módulos e componentes lógicos correspondentes estão contidos na mesma base de código, delineados pelo namespace ou pela estrutura de diretórios em que estão contidos. Uma opção um pouco mais complexa é a estrutura modular, onde cada módulo é representado como um artefato independente e autocontido (como um arquivo JAR ou DLL), e os módulos são combinados em uma única unidade monolítica de software durante a implantação.</p>
+<p>
+Como tudo em arquitetura de software, a escolha entre essas duas opções estruturais depende de muitos fatores e concessões (trade-offs). As seções a seguir descrevem ambas e discutem suas respectivas compensações.</p>
+<p>
+#### Estrutura Monolítica</p>
+<p>
+Na estrutura monolítica, todos os módulos que representam o sistema estão contidos em um único repositório de código-fonte. Todo o código associado a cada módulo é implantado como uma unidade única ao entregar ou liberar o software. Esta opção estrutural é ilustrada na figura abaixo. Cada módulo é representado por um diretório de alto nível separado que contém os componentes e quaisquer subdomínios que compõem aquele módulo.</p>
+<p>
+[Imagem de um exemplo da opção de estrutura monolítica]</p>
+<p>
+Os namespaces a seguir ilustram como um monólito modular poderia parecer para a arquitetura mostrada na imagem acima:</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+`com.orderentry.orderplacement`
+</h2>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+`com.orderentry.inventorymanagement`
+</h2>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
+<h2 id="headline-7">
+`com.orderentry.paymentprocessing`
+</h2>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
+<h2 id="headline-8">
+`com.orderentry.notification`
+</h2>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+`com.orderentry.fulfillment`
+</h2>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
+<h2 id="headline-10">
+`com.orderentry.shipping`
+</h2>
+<div id="outline-text-headline-10" class="outline-text-2">
+<p>
+Esta é a opção mais simples para o monólito modular: todo o código-fonte do sistema está localizado em um só lugar e, portanto, é mais facilmente mantido, testado e implantado. No entanto, é necessária uma governança rigorosa (veja &#34;Governança&#34; na página 172) para manter as fronteiras de cada módulo. Embora esta opção estrutural seja simples, os desenvolvedores tendem a reutilizar código demais entre os módulos, além de permitir comunicação excessiva entre eles (veja &#34;Comunicação entre Módulos&#34; na página 168). Essas práticas podem transformar um monólito modular bem arquitetado em um &#34;Big Ball of Mud&#34; (uma grande bola de lama) sem estrutura.</p>
+<p>
+#### Estrutura Modular</p>
+<p>
+Com a estrutura modular, os módulos são representados como artefatos autocontidos (como arquivos JAR e DLL), sendo depois colocados juntos em uma única unidade de implantação durante a liberação. A figura abaixo ilustra esta opção usando arquivos JAR na plataforma Java.</p>
+<p>
+[Imagem de um exemplo da opção de estrutura modular usando arquivos JAR]</p>
+<p>
+A vantagem dessa estrutura é que cada módulo é autocontido, permitindo que as equipes trabalhem em módulos separados (veja &#34;Considerações sobre Topologia de Equipe&#34; na página 174), muitas vezes até dentro do repositório de código-fonte dedicado da própria equipe para esses módulos. Esta opção funciona bem quando os módulos são amplamente independentes de outros. Também funciona bem para sistemas maiores e mais complexos, onde cada módulo requer um tipo diferente de conhecimento técnico ou de negócio. Com a opção de estrutura modular, os desenvolvedores são menos propensos a reutilizar código demais ou a fazer com que os módulos se comuniquem excessivamente (veja &#34;Comunicação entre Módulos&#34; na página 168). Esta opção também tende a produzir fronteiras mais limpas entre os módulos e uma melhor separação geral das preocupações.</p>
+<p>
+No entanto, essa opção estrutural perde sua eficácia quando módulos que são dependentes um do outro precisam se comunicar. Onde este é o caso, a abordagem da estrutura monolítica é mais eficaz.</p>
+<p>
+### Comunicação entre Módulos</p>
+<p>
+A comunicação entre módulos nunca é algo bom neste estilo arquitetural, mas reconhecemos que, em muitos casos, é necessária. Por exemplo, na arquitetura mostrada anteriormente, o módulo `OrderPlacement` deve se comunicar com o módulo `InventoryManagement` para ajustar o inventário do item pedido e realizar qualquer processamento adicional (por exemplo, encomendar mais estoque se o inventário estiver muito baixo). Ele também precisa se comunicar com o módulo `PaymentProcessing` para processar o pagamento de um pedido. Existem duas opções principais para comunicação entre módulos, que descrevemos nas seções a seguir.</p>
+<p>
+#### Abordagem Ponto-a-Ponto (Peer-to-peer)</p>
+<p>
+A solução mais direta é uma comunicação simples ponto-a-ponto entre os módulos. Com essa abordagem, um arquivo de classe em um módulo instancia uma classe em outro módulo e invoca o(s) método(s) necessário(s) naquela classe para realizar a operação (veja a figura abaixo).</p>
+<p>
+[Imagem da comunicação ponto-a-ponto entre módulos]</p>
+<p>
+Um problema com a abordagem monolítica é que é conveniente demais para os desenvolvedores instanciar qualquer classe contida em outro módulo. Isso torna fácil passar de uma arquitetura bem estruturada para o antipadrão &#34;Big Ball of Mud&#34; (veja a Figura 9-1). Com a estrutura modular, no entanto, as classes contidas em outro módulo podem estar localizadas em artefatos externos separados (JARs ou DLLs) em vez de em um diretório separado no repositório de código-fonte. Um módulo que se comunica com outros não compila a menos que tenha as referências de classe, o que significa que o desenvolvedor tem que criar uma dependência em tempo de compilação entre esses módulos. A resposta usual a esse problema é criar uma classe de interface compartilhada entre esses módulos (em um arquivo JAR ou DLL compartilhado separadamente) para que cada módulo possa compilar independentemente dos outros. De qualquer forma, o excesso de comunicação entre módulos usando a abordagem de estrutura modular resulta no antipadrão &#34;DLL Hell&#34; (ou, na plataforma Java, &#34;JAR Hell&#34;).</p>
+<p>
+#### Abordagem de Mediador</p>
+<p>
+A abordagem de mediador desacopla os módulos usando um componente mediador para formar uma camada de abstração entre eles. O mediador atua como um orquestrador, aceitando solicitações e entregando-as aos módulos apropriados. A figura abaixo ilustra esta abordagem.</p>
+<p>
+[Imagem do mediador desacoplando módulos]</p>
+<p>
+O leitor atento observará que, embora a abordagem de mediador desacople os módulos, cada módulo fica efetivamente acoplado ao mediador. Esta abordagem não remove todos os acoplamentos e dependências, mas simplifica a arquitetura e mantém os módulos independentes um do outro. Observe que é o mediador, e não os módulos dependentes, que precisa de algum tipo de API ou interface para invocar a funcionalidade em outros módulos.</p>
+<p>
+### Topologias de Dados</p>
+<p>
+Como a arquitetura de monólito modular é geralmente implantada como uma única unidade de software, ela normalmente depende de uma topologia de banco de dados monolítica. Usar um único banco de dados ajuda a reduzir a comunicação entre os módulos, já que os dados são compartilhados. No entanto, se os módulos forem independentes uns dos outros e realizarem funções específicas, eles também podem ter seus próprios bancos de dados contendo dados contextuais específicos, mesmo que a arquitetura em si seja monolítica. A figura abaixo ilustra essas duas opções de topologia de banco de dados.</p>
+<p>
+[Imagem de topologias de dados: monolítica vs. cada módulo com seu banco de dados]</p>
+<p>
+### Considerações sobre a Nuvem</p>
+<p>
+Embora arquiteturas de monólito modular possam ser implantadas em ambientes de nuvem (particularmente se for um sistema pequeno), elas geralmente não são bem adequadas para implantação em nuvem: sua natureza monolítica as torna menos capazes de aproveitar o provisionamento sob demanda que os ambientes de nuvem oferecem. Dito isso, sistemas menores implementados neste estilo arquitetural ainda podem aproveitar muitos serviços em nuvem, como armazenamento de arquivos, banco de dados e mensagens.</p>
+<p>
+### Riscos Comuns</p>
+<p>
+Como em qualquer sistema monolítico, o risco principal com o estilo de arquitetura de monólito modular é que ele pode se tornar grande demais para ser mantido, testado e implantado adequadamente. Arquiteturas monolíticas, por si só, não são ruins; é quando se tornam grandes demais que os problemas começam a ocorrer. O que significa &#34;grande demais&#34; varia de sistema para sistema, mas aqui estão alguns dos sinais de alerta de que o sistema pode estar muito grande:</p>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
+<h2 id="headline-11">
+Mudanças demoram demais para serem feitas.
+</h2>
+</div>
+<div id="outline-container-headline-12" class="outline-2">
+<h2 id="headline-12">
+Quando uma área do sistema é alterada, outras áreas quebram inesperadamente.
+</h2>
+</div>
+<div id="outline-container-headline-13" class="outline-2">
+<h2 id="headline-13">
+Os membros da equipe atrapalham uns aos outros ao aplicar mudanças.
+</h2>
+</div>
+<div id="outline-container-headline-14" class="outline-2">
+<h2 id="headline-14">
+O sistema demora muito para iniciar.
+</h2>
+<div id="outline-text-headline-14" class="outline-text-2">
+<p>
+Outro risco é exagerar na reutilização de código. A reutilização e o compartilhamento de código são partes necessárias do desenvolvimento de software, mas, neste estilo de arquitetura, a reutilização excessiva confunde as fronteiras dos módulos, levando a arquitetura para o território arriscado do monólito sem estrutura: uma arquitetura monolítica com um código tão altamente interdependente que não pode ser desenredado.</p>
+<p>
+O excesso de comunicação entre módulos é outro risco neste estilo arquitetural. Idealmente, os módulos devem ser independentes e autocontidos. Como notamos, é normal (e às vezes necessário) que alguns módulos se comuniquem com outros, particularmente dentro de um fluxo de trabalho complexo. No entanto, se houver comunicação excessiva entre os módulos, é uma boa indicação de que os domínios podem ter sido mal definidos desde o início. Nesses casos, vale a pena pensar mais na redefinição dos domínios para acomodar fluxos de trabalho complexos e interdependências.</p>
+<p>
+### Governança</p>
+<p>
+O artefato principal no estilo de monólito modular é um módulo, que representa um domínio ou subdomínio específico e é geralmente representado através da estrutura de diretórios ou namespace (ou estrutura de pacotes na plataforma Java). Portanto, uma das primeiras formas de governança automatizada que os arquitetos podem aplicar é definir e garantir a conformidade com os módulos usados na arquitetura.</p>
+<p>
+Para escrever verificações de governança automatizadas, os arquitetos usam uma série de ferramentas, incluindo ArchUnit para a plataforma Java, ArchUnitNet e NetArchTest para a plataforma .NET, PyTestArch para Python e TSArch para TypeScript e JavaScript. O pseudocódigo no Exemplo 11-1 garante que todo o código-fonte representado no exemplo de arquitetura mostrado na Figura 11-2 esteja sob um dos namespaces listados que representam cada módulo definido no sistema.</p>
+<p>
+<strong>Exemplo 11-1. Pseudocódigo para garantir que o código siga os módulos definidos pelo sistema</strong></p>
+<p>
+```</p>
+<p>LIST module_list = {
+com.orderentry.orderplacement,
+com.orderentry.inventorymanagement,
+com.orderentry.paymentprocessing,
+com.orderentry.notification,
+com.orderentry.fulfillment,
+com.orderentry.shipping
+}</p>
+<p>LIST namespace_list = get_all_namespaces(root_directory)</p>
+<p>FOREACH namespace IN namespace_list {
+IF NOT namespace.starts_with(module_list) {
+send_alert(namespace)
+}
+}</p>
+<p>
+```</p>
+<p>
+Se um desenvolvedor criar quaisquer namespaces ou diretórios de alto nível adicionais fora dos módulos definidos e seus namespaces (ou diretórios) correspondentes, ele receberá um alerta indicando que o código-fonte não está em conformidade com a arquitetura. Essa forma de governança funciona bem com a opção de estrutura monolítica deste estilo de arquitetura, mas é um desafio com a opção de estrutura modular, porque o código pode não estar contido no mesmo repositório de código-fonte monolítico. Com a opção de estrutura modular, cada módulo deve ser testado separadamente.</p>
+<p>
+Outra maneira de governar uma arquitetura de monólito modular é controlar a quantidade de comunicação entre os módulos. Definir o que é comunicação &#34;excessiva&#34; é altamente subjetivo e varia de sistema para sistema, mas, na maior parte, os arquitetos devem tentar minimizar o número de interdependências entre os módulos.</p>
+<p>
+Uma forma final de governança automatizada é garantir que os módulos permaneçam independentes uns dos outros, restringindo a comunicação de um módulo específico com outro. Por exemplo, o módulo `OrderPlacement` não deveria se comunicar com o módulo `Shipping`.</p>
+<p>
+### Considerações sobre Topologia de Equipe</p>
+<p>
+Como o monólito modular é considerado uma arquitetura particionada por domínio, ele funciona melhor quando as equipes também estão alinhadas por área de domínio (como equipes multifuncionais com especialização). Quando surge um requisito baseado em domínio, uma equipe multifuncional focada em domínio pode trabalhar em conjunto naquela funcionalidade, desde a lógica de apresentação até o banco de dados. Por outro lado, equipes organizadas por categorias técnicas (como equipes de UI, equipes de backend, equipes de banco de dados, etc.) não funcionam bem com este estilo arquitetural, principalmente devido ao seu particionamento por domínio. Atribuir requisitos baseados em domínio a equipes organizadas tecnicamente exige muita comunicação e colaboração, o que muitas vezes se mostra difícil.</p>
+<p>
+Aqui estão algumas considerações para alinhar as topologias de equipe específicas:</p>
+</div>
+</div>
+<div id="outline-container-headline-15" class="outline-2">
+<h2 id="headline-15">
+<strong><strong>Equipes alinhadas ao fluxo (Stream-aligned teams):</strong></strong> Geralmente possuem o fluxo através do sistema de ponta a ponta, combinando muito bem com a forma monolítica e geralmente autocontida do monólito modular.
+</h2>
+</div>
+<div id="outline-container-headline-16" class="outline-2">
+<h2 id="headline-16">
+<strong><strong>Equipes habilitadoras (Enabling teams):</strong></strong> Devido ao alto nível de modularidade e separação de preocupações deste estilo, as topologias de equipes habilitadoras também funcionam bem. Especialistas e membros de equipes transversais podem dar sugestões e realizar experimentos introduzindo módulos adicionais ao sistema, com impacto mínimo em outros módulos existentes.
+</h2>
+</div>
+<div id="outline-container-headline-17" class="outline-2">
+<h2 id="headline-17">
+<strong><strong>Equipes de subsistemas complicados:</strong></strong> Cada módulo em uma arquitetura de monólito modular geralmente desempenha um papel específico baseado em seu domínio ou subdomínio (como `PaymentProcessing`). Isso funciona bem com esta topologia, pois diferentes membros da equipe podem focar em processos complexos de domínio ou subdomínio independentemente de outros membros da equipe (e módulos).
+</h2>
+</div>
+<div id="outline-container-headline-18" class="outline-2">
+<h2 id="headline-18">
+<strong><strong>Equipes de plataforma:</strong></strong> Os desenvolvedores podem aproveitar os benefícios da topologia de equipes de plataforma utilizando ferramentas comuns, serviços, APIs e tarefas, principalmente devido ao alto grau de modularidade encontrado neste estilo arquitetural.
+</h2>
+<div id="outline-text-headline-18" class="outline-text-2">
+<p>
+### Características do Estilo</p>
+<p>
+A figura abaixo apresenta a tabela de avaliação das características do monólito modular. Uma classificação de uma estrela significa que a característica arquitetural específica não é bem suportada, enquanto uma classificação de cinco estrelas significa que ela é um dos pontos mais fortes do estilo.</p>
+<p>
+[Imagem da tabela de avaliação de características para o monólito modular]</p>
+<p>
+O estilo de arquitetura de monólito modular é uma arquitetura particionada por domínio, porque sua lógica de aplicação é particionada em módulos. Como ele é geralmente implementado como uma implantação monolítica, seu quantum arquitetural é tipicamente 1.</p>
+<p>
+O custo geral, a simplicidade e a modularidade são os pontos fortes primários deste estilo. Sendo monolíticas por natureza, essas arquiteturas não possuem as complexidades associadas a estilos de arquitetura distribuída. Elas são mais simples e fáceis de entender, e têm um custo relativamente baixo para construir e manter. A modularidade arquitetural é alcançada através da separação de preocupações entre os vários módulos.</p>
+<p>
+A implantabilidade e a testabilidade, embora com apenas duas estrelas, classificam-se um pouco mais alto no monólito modular do que na arquitetura em camadas, devido ao seu nível de modularidade. Dito isso, este estilo de arquitetura ainda é um monólito: como tal, a cerimônia, o risco, a frequência de implantação e a completude dos testes impactam negativamente essas pontuações.</p>
+<p>
+A elasticidade e escalabilidade da arquitetura de monólito modular classificam-se muito baixo (uma estrela), principalmente devido às implantações monolíticas. Embora seja possível fazer com que certas funções dentro de um monólito escalem mais que outras, esse esforço geralmente requer técnicas de design muito complexas (como multithreading, mensagens internas e outras práticas de processamento paralelo) para as quais esta arquitetura não é bem adequada.</p>
+<p>
+As implantações monolíticas do monólito modular não suportam tolerância a falhas. Se uma pequena parte da arquitetura causar uma condição de falta de memória (out-of-memory), a unidade de aplicação inteira trava. Além disso, como na maioria das aplicações monolíticas, a disponibilidade geral é afetada pelo alto tempo médio de recuperação (MTTR), com tempos de inicialização geralmente medidos em minutos.</p>
+<p>
+### Quando Usar</p>
+<p>
+Devido à sua simplicidade e baixo custo, o estilo de arquitetura de monólito modular é uma boa escolha quando se enfrenta orçamentos apertados e restrições de tempo. Também é uma boa escolha para começar um novo sistema. Se a direção arquitetural do sistema ainda não estiver clara, muitas vezes é mais eficaz começar com um monólito modular e, posteriormente, mover-se para um estilo de arquitetura distribuída mais complicado e caro, como baseado em serviços ou microsserviços, do que pular direto para a arquitetura distribuída.</p>
+<p>
+O monólito modular também é uma boa escolha para equipes focadas em domínio, como equipes multifuncionais com especialização. Isso permite que cada equipe foque em um módulo específico dentro da arquitetura de ponta a ponta, com coordenação mínima com outras equipes de domínio. Este estilo arquitetural também é bem adequado para situações onde a maioria das mudanças no sistema é baseada em domínio (como adicionar datas de expiração a itens na lista de desejos de um cliente). Por fim, por ser uma arquitetura particionada por domínio, é bem adequada para equipes que praticam DDD.</p>
+<p>
+### Quando Não Usar</p>
+<p>
+O motivo principal para não usar este estilo arquitetural é quando os sistemas ou produtos requerem altos níveis de certas características operacionais, como escalabilidade, elasticidade, disponibilidade, tolerância a falhas, responsividade e desempenho. Como a maioria das arquiteturas monolíticas, o monólito modular é mal adequado para essas preocupações arquiteturais.</p>
+<p>
+Evite usar o monólito modular quando a maioria das mudanças for orientada tecnicamente, como substituir continuamente a interface do usuário ou a tecnologia de banco de dados. Como esta arquitetura é particionada por domínio, tais mudanças impactam cada módulo e geralmente exigem comunicação e coordenação significativas entre as equipes de domínio. Nessas situações, o estilo de arquitetura em camadas é uma escolha muito melhor.</p>
+<p>
+### Exemplos e Casos de Uso</p>
+<p>
+A &#34;EasyMeals&#34; é uma nova startup de entrega de refeições, atendendo pessoas que trabalham e que nem sempre têm tempo para cozinhar ao chegar em casa após um dia atarefado. Clientes famintos podem pedir um jantar online e recebê-lo na porta de casa dentro de uma hora. Como um pequeno negócio local, eles não têm grandes necessidades de escalabilidade ou responsividade. E, como seu orçamento é limitado, não querem gastar muito dinheiro em um sistema de software elaborado. O formato deste problema de negócio torna o monólito modular uma boa escolha para a EasyMeals.</p>
+<p>
+A figura abaixo mostra como o sistema simples de gerenciamento de restaurante da EasyMeals poderia ser usando o estilo de arquitetura de monólito modular.</p>
+<p>
+[Imagem de um sistema de gerenciamento de restaurante usando o estilo de monólito modular]</p>
+<p>
+Os clientes acessam os módulos `PlaceOrder` e `PaymentProcessing` através de uma interface de usuário dedicada. Os namespaces a seguir representam cada um dos módulos para este sistema:</p>
+</div>
+</div>
+<div id="outline-container-headline-19" class="outline-2">
+<h2 id="headline-19">
+`com.easymeals.placeorder`
+</h2>
+</div>
+<div id="outline-container-headline-20" class="outline-2">
+<h2 id="headline-20">
+`com.easymeals.payment`
+</h2>
+</div>
+<div id="outline-container-headline-21" class="outline-2">
+<h2 id="headline-21">
+`com.easymeals.prepareorder`
+</h2>
+</div>
+<div id="outline-container-headline-22" class="outline-2">
+<h2 id="headline-22">
+`com.easymeals.delivery`
+</h2>
+</div>
+<div id="outline-container-headline-23" class="outline-2">
+<h2 id="headline-23">
+`com.easymeals.recipes`
+</h2>
+</div>
+<div id="outline-container-headline-24" class="outline-2">
+<h2 id="headline-24">
+`com.easymeals.inventory`
+</h2>
+<div id="outline-text-headline-24" class="outline-text-2">
+<p>
+O módulo `PlaceOrder` permite que cada cliente visualize o menu; selecione itens; adicione seu nome, endereço e informações de pagamento; e envie o pedido. Os componentes para este módulo podem ser representados pelos seguintes namespaces:</p>
+</div>
+</div>
+<div id="outline-container-headline-25" class="outline-2">
+<h2 id="headline-25">
+`com.easymeals.placeorder.menu`
+</h2>
+</div>
+<div id="outline-container-headline-26" class="outline-2">
+<h2 id="headline-26">
+`com.easymeals.placeorder.shoppingcart`
+</h2>
+</div>
+<div id="outline-container-headline-27" class="outline-2">
+<h2 id="headline-27">
+`com.easymeals.placeorder.customerdata`
+</h2>
+</div>
+<div id="outline-container-headline-28" class="outline-2">
+<h2 id="headline-28">
+`com.easymeals.placeorder.paymentdata`
+</h2>
+</div>
+<div id="outline-container-headline-29" class="outline-2">
+<h2 id="headline-29">
+`com.easymeals.placeorder.checkout`
+</h2>
+<div id="outline-text-headline-29" class="outline-text-2">
+<p>
+Este exemplo ilustra que um módulo no monólito modular é composto por um ou vários componentes. O módulo `PaymentProcessing` é responsável por aplicar o pagamento. A EasyMeals aceita cartões de crédito, débito e PayPal; a modularidade desta arquitetura torna fácil adicionar um tipo de pagamento adicional (como pontos de fidelidade). Os clientes inserem essas informações no módulo `PlaceOrder`, que as passa para o módulo `PaymentProcessing`.</p>
+<p>
+Uma vez que o pedido é pago, o módulo `PlaceOrder` comunica-se com o módulo `PrepareOrder`, que exibe todo o pedido para a equipe da cozinha. Após cozinhar, a equipe da cozinha marca o pedido como pronto para entrega e ele é então enviado para o módulo `Delivery`. O módulo `Delivery` atribui um entregador ao pedido e indica o endereço de entrega. Ele permite que o entregador marque o pedido como entregue, terminando o ciclo de vida daquele pedido específico, e registre quaisquer problemas (como um cachorro agressivo no portão da frente ou um cliente que não está em casa).</p>
+<p>
+O módulo `Recipes` permite que os cozinheiros e a equipe de gestão adicionem itens ao menu e mantenham a lista de ingredientes e medidas para cada item do menu. Finalmente, o módulo `IngredientsInventory` garante que haja ingredientes suficientes à mão para as receitas no menu. Este módulo é um pouco mais complexo que os outros: ele possui um componente de IA sofisticado que prevê o volume de vendas para automatizar o processo de aquisição de ingredientes para a semana.</p>
+<p>
+E é isso! A simplicidade e o nível de modularidade do monólito modular tornam relativamente fácil localizar e manter o código para corrigir um bug ou adicionar uma nova funcionalidade. Isso ilustra o poder deste estilo arquitetural simples e direto.</p>
+<p>
+Este é um resumo detalhado sobre o <strong><strong>Estilo de Arquitetura de Pipeline</strong></strong> (também conhecido como arquitetura de &#34;pipes and filters&#34; ou canos e filtros).</p>
+<p>
+### O que é a Arquitetura de Pipeline?</p>
+<p>
+A arquitetura de pipeline é um dos estilos fundamentais no design de software. Ela surgiu naturalmente assim que desenvolvedores e arquitetos decidiram que era melhor dividir as funcionalidades em partes menores e distintas. Se você já usou o terminal do Linux ou macOS (com Bash ou Zsh), você já conhece o princípio básico dessa arquitetura, onde você encadeia comandos para processar dados.</p>
+<p>
+Muitas linguagens de programação funcional e modelos de processamento, como o MapReduce, seguem essa mesma lógica. Embora muitos exemplos aqui sejam de baixo nível, esse estilo também funciona perfeitamente para aplicações de negócio mais complexas.</p>
+<p>
+—</p>
+<p>
+### Topologia</p>
+<p>
+A estrutura dessa arquitetura se baseia em dois componentes principais: <strong><strong>filtros</strong></strong> e <strong><strong>pipes (canos)</strong></strong>.</p>
+</div>
+</div>
+<div id="outline-container-headline-30" class="outline-2">
+<h2 id="headline-30">
+<strong><strong>Filtros:</strong></strong> Contêm a funcionalidade do sistema e realizam uma tarefa de negócio específica.
+</h2>
+</div>
+<div id="outline-container-headline-31" class="outline-2">
+<h2 id="headline-31">
+<strong><strong>Pipes:</strong></strong> Transportam os dados de um filtro para o próximo na corrente.
+</h2>
+<div id="outline-text-headline-31" class="outline-text-2">
+<p>
+Eles trabalham de forma coordenada, com os pipes criando uma comunicação unidirecional (geralmente ponto a ponto) entre os filtros, conforme ilustrado abaixo:</p>
+<p>
+[Imagem da topologia básica da arquitetura de pipeline]</p>
+<p>
+A &#34;forma&#34; básica dessa arquitetura é uma unidade de implantação única, onde a funcionalidade fica dentro de filtros conectados por tubos que levam os dados apenas em uma direção.</p>
+<p>
+—</p>
+<p>
+### Especificações do Estilo</p>
+<p>
+Embora a maioria das implementações sejam monolíticas (tudo em um lugar só), é possível implantar cada filtro (ou um grupo deles) como um serviço separado, criando uma arquitetura distribuída. Independentemente de como for implantada, a arquitetura continua composta apenas por filtros e pipes.</p>
+<p>
+#### Os Filtros</p>
+<p>
+Filtros são peças de funcionalidade independentes, geralmente sem estado, e devem fazer apenas uma única tarefa. Tarefas complexas são resolvidas sequenciando vários filtros. Existem quatro tipos:</p>
+<ol>
+<li><strong><strong>Produtor (Producer):</strong></strong> É o ponto de partida (fonte). Exemplos: uma interface de usuário ou uma requisição externa.</li>
+<li><strong><strong>Transformador (Transformer):</strong></strong> Aceita a entrada, transforma parte ou todos os dados e os envia adiante. Na programação funcional, isso é equivalente ao conceito de <strong>map</strong>.</li>
+<li><strong><strong>Testador (Tester):</strong></strong> Recebe o dado, testa seguindo critérios e decide se o processamento deve continuar. Equivale ao <strong>reduce</strong>. Exemplo: &#34;não passe o dado adiante se o valor for menor que 5 reais&#34;.</li>
+<li><strong><strong>Consumidor (Consumer):</strong></strong> O ponto final do pipeline. Persiste o resultado em um banco de dados ou exibe na tela.</li>
+</ol>
+<p>A simplicidade dessa estrutura incentiva a reutilização. Existe uma história famosa onde o gênio da computação Donald Knuth escreveu 10 páginas de código Pascal para resolver um problema de processamento de texto, enquanto Doug McIlroy resolveu o mesmo problema de forma elegante com apenas uma linha de comando de shell:</p>
+<p>
+```bash
+tr -cs A-Za-z &#39;\n&#39; | tr A-Z a-z | sort | uniq -c | sort -rn | sed ${1}q</p>
+<p>
+```</p>
+<p>
+#### Os Pipes (Canos)</p>
+<p>
+Os pipes são os canais de comunicação. São geralmente unidirecionais e ponto a ponto. Eles podem carregar qualquer formato de dado, mas arquitetos preferem volumes menores para garantir alta performance. Se a arquitetura for distribuída, os pipes realizam chamadas remotas (REST, mensageria, etc.).</p>
+<p>
+—</p>
+<p>
+### Topologias de Dados e Nuvem</p>
+<p>
+Embora a maioria use um único banco de dados monolítico, é possível ter um banco para cada filtro.</p>
+<p>
+[Imagem ilustrando que arquiteturas de pipeline podem ter um ou vários bancos de dados]</p>
+<p>
+<strong><strong>Na Nuvem:</strong></strong> Esse estilo é excelente para a nuvem devido à sua modularidade. No AWS, por exemplo, o <strong>Step Functions</strong> permite que cada filtro seja uma função Lambda separada.</p>
+<p>
+—</p>
+<p>
+### Riscos Comuns</p>
+</div>
+</div>
+<div id="outline-container-headline-32" class="outline-2">
+<h2 id="headline-32">
+<strong><strong>Sobrecarga de Filtros:</strong></strong> Tentar colocar muita responsabilidade em um filtro só.
+</h2>
+</div>
+<div id="outline-container-headline-33" class="outline-2">
+<h2 id="headline-33">
+<strong><strong>Comunicação Bidirecional:</strong></strong> Tentar fazer os filtros conversarem entre si (indo e voltando). Se precisar disso, o estilo de pipeline provavelmente não é o ideal.
+</h2>
+</div>
+<div id="outline-container-headline-34" class="outline-2">
+<h2 id="headline-34">
+<strong><strong>Tratamento de erros:</strong></strong> Pode ser difícil saber como sair do pipeline e recuperar o estado se algo falhar no meio do caminho.
+</h2>
+</div>
+<div id="outline-container-headline-35" class="outline-2">
+<h2 id="headline-35">
+<strong><strong>Contratos entre filtros:</strong></strong> Cada pipe tem um &#34;contrato&#34; (o tipo de dado que envia). Mudar isso pode quebrar filtros lá na frente.
+</h2>
+<div id="outline-text-headline-35" class="outline-text-2">
+<p>
+—</p>
+<p>
+### Governança e Equipes</p>
+<p>
+Para evitar que os filtros fiquem &#34;bagunçados&#34;, arquitetos costumam usar <strong><strong>tags</strong></strong> (anotações no Java ou atributos no C#) para identificar o papel de cada filtro. Isso ajuda a equipe a manter o propósito de cada componente claro.</p>
+<p>
+Sobre as equipes, esse estilo funciona bem com quase qualquer configuração:</p>
+</div>
+</div>
+<div id="outline-container-headline-36" class="outline-2">
+<h2 id="headline-36">
+<strong><strong>Equipes de fluxo (Stream-aligned):</strong></strong> Perfeito, pois a equipe cuida da jornada inteira do dado.
+</h2>
+</div>
+<div id="outline-container-headline-37" class="outline-2">
+<h2 id="headline-37">
+<strong><strong>Equipes de habilitação (Enabling):</strong></strong> Podem inserir novos filtros para testar melhorias sem quebrar o resto.
+</h2>
+</div>
+<div id="outline-container-headline-38" class="outline-2">
+<h2 id="headline-38">
+<strong><strong>Equipes de subsistemas complicados:</strong></strong> Permite que especialistas foquem apenas na complexidade de um filtro específico.
+</h2>
+</div>
+<div id="outline-container-headline-39" class="outline-2">
+<h2 id="headline-39">
+<strong><strong>Equipes de plataforma:</strong></strong> Podem criar ferramentas e APIs padronizadas para todos usarem.
+</h2>
+<div id="outline-text-headline-39" class="outline-text-2">
+<p>
+—</p>
+<p>
+### Características do Estilo</p>
+<p>
+[Imagem das características e notas da arquitetura de pipeline]</p>
+</div>
+</div>
+<div id="outline-container-headline-40" class="outline-2">
+<h2 id="headline-40">
+<strong><strong>Pontos fortes:</strong></strong> Baixo custo, simplicidade e alta modularidade. É fácil substituir um filtro sem afetar o resto.
+</h2>
+</div>
+<div id="outline-container-headline-41" class="outline-2">
+<h2 id="headline-41">
+<strong><strong>Pontos fracos:</strong></strong> Escalabilidade e elasticidade são baixas (em implementações monolíticas). A tolerância a falhas também é limitada, pois se uma parte cai, o pipeline inteiro pode parar.
+</h2>
+<div id="outline-text-headline-41" class="outline-text-2">
+<p>
+### Quando usar e quando evitar?</p>
+</div>
+</div>
+<div id="outline-container-headline-42" class="outline-2">
+<h2 id="headline-42">
+<strong><strong>Use quando:</strong></strong> O sistema precisar de um processamento linear, ordenado e com passos claros (como ferramentas de ETL ou processamento de logs). É ótimo para orçamentos apertados.
+</h2>
+</div>
+<div id="outline-container-headline-43" class="outline-2">
+<h2 id="headline-43">
+<strong><strong>Não use quando:</strong></strong> Precisar de alta escalabilidade, tolerância a falhas complexa ou fluxos de trabalho &#34;vai e vem&#34; (não determinísticos). Para fluxos complexos, uma Arquitetura Orientada a Eventos é melhor.
+</h2>
+<div id="outline-text-headline-43" class="outline-text-2">
+<p>
+### Exemplo Prático: Telemetria de Serviços</p>
+<p>
+No exemplo do gráfico abaixo, vemos dados de serviços sendo enviados para o Apache Kafka. Cada filtro tem uma responsabilidade única: um captura o dado, um testa se é tempo de duração, outro calcula a métrica, e o final salva no banco.</p>
+<p>
+[Imagem do exemplo de arquitetura de pipeline com processamento de telemetria]</p>
+<p>
+Essa modularidade permite que, a qualquer momento, você adicione um novo filtro para uma nova métrica, provando que, mesmo sendo simples, a arquitetura de pipeline é extremamente poderosa.</p>
+</div>
+</div>
+
+  </div>
+</article>
+
+    </main>
+    <hr>
+    <footer>
+    </footer>
+  </div>
+<script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+<script src="/vendor/prism/prism-core.min.js"></script>
+<script src="/vendor/prism/prism-clike.min.js"></script>
+<script src="/vendor/prism/prism-bash.min.js"></script>
+<script src="/vendor/prism/prism-c.min.js"></script>
+<script src="/vendor/prism/prism-cpp.min.js"></script>
+<script src="/vendor/prism/prism-rust.min.js"></script>
+<script src="/vendor/prism/prism-go.min.js"></script>
+<script src="/vendor/prism/prism-javascript.min.js"></script>
+<script src="/vendor/prism/prism-typescript.min.js"></script>
+<script src="/vendor/prism/prism-clojure.min.js"></script>
+<script src="/vendor/prism/prism-lisp.min.js"></script>
+<script src="/vendor/prism/prism-swift.min.js"></script>
+<script src="/vendor/prism/prism-zig.min.js"></script>
+<script src="/vendor/prism/prism-sql.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+  <script src="/vendor/mermaid/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { fontFamily: '"Inter", system-ui, sans-serif', fontSize: '14px', primaryColor: '#cba6f7', primaryTextColor: '#cdd6f4', primaryBorderColor: '#7f849c', lineColor: '#89b4fa', secondaryColor: '#313244', tertiaryColor: '#45475a' } });
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('code.language-mermaid').forEach(function(el) {
+        var mDiv = document.createElement('div');
+        mDiv.className = 'mermaid';
+        mDiv.textContent = el.textContent;
+        var wrap = el.closest('.src-mermaid') || el.closest('.src') || el.closest('.highlight') || el.parentElement;
+        if (wrap) wrap.replaceWith(mDiv);
+      });
+      mermaid.run();
+    });
+  </script>
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">^ top</button>
+  <script>
+    document.querySelectorAll('.content table').forEach(function(t) {
+      if (t.closest('.table-wrapper')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrapper';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  </script>
+  <script>
+    var btn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 400);
+    });
+  </script>
+</body>
+</html>

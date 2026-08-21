@@ -42,4 +42,8 @@ This blog is a space to share knowledge about:
 
 ---
 
+[curriculum vitae (PDF)](/cv.pdf)
+
+---
+
 *Thank you for visiting my blog! I hope you find useful content here.*

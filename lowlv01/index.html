@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.svg">
+  <title>Programação em Baixo Nível — lobovit</title>
+  <meta name="description" content="engenharia de software, compiladores, sistemas e programacao">
+  <link rel="stylesheet" href="/css/main.css?v=4">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/prism/prism-mocha.min.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-title" href="http://localhost:1313/">/home/lobovit_</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        
+        <li><a href="/page/about/">about</a></li>
+        
+        <li><a href="/page/contact/">contact</a></li>
+        
+      </ul>
+      
+      <a href="https://github.com/lobovit" class="nav-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="18" height="18"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      
+    </div>
+  </nav>
+
+  <div class="reading-progress" id="reading-progress"></div>
+  <div class="frame">
+    
+<article class="single">
+  <header>
+    <h1>Programação em Baixo Nível</h1>
+    <p class="meta">
+      <time>2025-07-21</time>
+       · <span class="tag tag-default">Assembly</span><span class="tag tag-default">Arquitetura de Computadores</span><span class="tag tag-default">Baixo Nível</span>
+    </p>
+  </header>
+  <div class="content">
+    
+<p>
+Para programar em Assembly você precisa entender o hardware sobre o qual seu código vai rodar — não como curiosidade, mas porque cada instrução que você escreve manipula diretamente registradores, memória e a pilha. Este é o primeiro artigo de uma série sobre programação em baixo nível. Aqui você vai entender o que acontece depois que seu código em C, Python ou Rust é compilado — não como curiosidade acadêmica, mas porque esse conhecimento transforma você em um programador de outra classe.</p>
+<p>
+Quando você entende Assembly, deixa de enxergar uma caixa-preta. Um segmentation fault não é mais um mistério: você sabe que o <code class="verbatim">rsp</code> invadiu uma página não mapeada. Uma vulnerabilidade de buffer overflow não é teoria: você visualiza o <code class="verbatim">rip</code> sendo sequestrado na pilha. Um programa lento não é culpa do compilador: você olha o disassembly e vê cache misses, branch mispredictions, registradores sendo derramados na memória.</p>
+<p>
+Com esse conhecimento, você será capaz de fazer engenharia reversa de malware, escrever exploits, debugar crashes em produção sem símbolos de debug, otimizar loops que fazem a diferença entre 2 e 60 quadros por segundo, portar sistemas operacionais para novo hardware, criar shells, hypervisors, emuladores — as ferramentas que constroem todo o resto da stack.</p>
+<p>
+Neste primeiro artigo, cobrimos o modelo de computação da <a href="https://en.wikipedia.org/wiki/X86-64">Intel 64</a>, seus registradores e a pilha de hardware. Ao final, você terá escrito um clone do comando <code class="verbatim">cat</code> em Assembly puro — e entenderá cada byte que seu programa move.</p>
+<div id="outline-container-headline-1" class="outline-3">
+<h3 id="headline-1">
+1 O modelo de computação
+</h3>
+<div id="outline-text-headline-1" class="outline-text-3">
+<p>
+Antes de escrever código, você precisa de um conjunto de operações básicas que sua máquina entende. Sem isso, nenhum algoritmo é implementável. Pense nisso: toda a pilha de software que você usa — do kernel Linux ao navegador, do compilador Rust ao WhatsApp — em algum momento se reduz a instruções que um processador físico executa. Entender qual é esse conjunto mínimo de operações é entender o chão sobre o qual toda a computação está construída.</p>
+<p>
+Um <em>modelo de computação</em> define exatamente isso: um conjunto de operações primitivas e seus respectivos custos. Os custos são usados para analisar complexidade; não vamos focar nisso aqui. O que importa: cada modelo de computação é uma <em>máquina abstrata</em> — um computador hipotético cujas instruções correspondem às operações do modelo.</p>
+<p>
+O modelo que nos interessa é o que de fato roda no seu processador: a <a href="https://en.wikipedia.org/wiki/Von_Neumann_architecture">arquitetura de von Neumann</a>. A arquitetura de von Neumann é o molde de praticamente todo computador moderno. Ela define três componentes conectados por um barramento:</p>
+<dl>
+<dt>
+<em><a href="https://en.wikipedia.org/wiki/Central_processing_unit">CPU</a></em>
+</dt>
+<dd>Unidade Central de Processamento. Executa instruções buscadas da memória. Composta por uma unidade de <em>controle</em> (busca e decodifica instruções) e uma <em><a href="https://en.wikipedia.org/wiki/Arithmetic_logic_unit">ALU</a></em> (Arithmetic Logic Unit — executa as operações).</dd>
+<dt>
+<em><a href="https://en.wikipedia.org/wiki/Computer_memory">Memória</a></em>
+</dt>
+<dd>Banco único que armazena tanto código quanto dados. Bits são bits: não há distinção física entre instrução e dado.</dd>
+<dt>
+<em><a href="https://en.wikipedia.org/wiki/Bus_(computing)">Barramento</a></em>
+</dt>
+<dd>Via compartilhada que conecta CPU e memória.</dd>
+</dl>
+<figure>
+<img src="/images/lowlv01/fig1-1.png" alt="/images/lowlv01/fig1-1.png" title="/images/lowlv01/fig1-1.png" /><figcaption>
+Figura 1 – Arquitetura de von Neumann – visão geral.
+</figcaption>
+</figure>
+<figure>
+<img src="/images/lowlv01/fig1-2.png" alt="/images/lowlv01/fig1-2.png" title="/images/lowlv01/fig1-2.png" /><figcaption>
+Figura 2 – Arquitetura de von Neumann – memória.
+</figcaption>
+</figure>
+<p>
+Características fundamentais com as quais você vai lidar diretamente ao programar em Assembly:</p>
+<ul>
+<li>A memória é um array de células indexadas a partir de 0. Cada célula tem 1 byte (8 bits).</li>
+<li>Código e dados compartilham o mesmo espaço de endereçamento. Nada impede que você leia código como se fosse dado — ou vice-versa.</li>
+<li>A execução é sequencial: a CPU busca uma instrução por vez. O fluxo só se altera com instruções de salto (<em>jump</em>).</li>
+</ul>
+<p>O Assembly existe justamente para você não ter que escrever os bits manualmente. Cada instrução Assembly é um mnemônico que corresponde a uma instrução binária (código de máquina). Você escreve <code class="verbatim">mov rax, 42</code>; o montador traduz para os bytes que a CPU entende.</p>
+<div class="note-block">
+<p>O estado da CPU — do ponto de vista do programador — é inteiramente descrito pela memória e pelos valores nos registradores. Entender uma instrução é entender como ela altera esses dois.</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-3">
+<h3 id="headline-2">
+3 Por que a arquitetura evoluiu
+</h3>
+<div id="outline-text-headline-2" class="outline-text-3">
+<p>
+O modelo simples de von Neumann funciona, mas tem limitações severas. Cada limitação motivou uma extensão de hardware. A tabela abaixo resume os problemas e as soluções — todas elas impactam diretamente como você programa em Assembly.</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Problema</th>
+<th>Solução</th>
+<th>Impacto para você</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acesso à memória é centenas de vezes mais lento que a CPU</td>
+<td>Registradores, caches</td>
+<td>Você decide o que mantém em registrador vs. memória; isso define o desempenho</td>
+</tr>
+<tr>
+<td>Impossível reagir a eventos externos (teclado, rede, disco)</td>
+<td><a href="https://en.wikipedia.org/wiki/Interrupt">Interrupções</a></td>
+<td>Seu código pode ser interrompido a qualquer momento; precisa estar ciente do estado salvo/restaurado</td>
+</tr>
+<tr>
+<td>Sem suporte nativo para chamadas de função e escopo local</td>
+<td>Pilha de hardware</td>
+<td><code class="verbatim">call</code>, <code class="verbatim">ret</code>, <code class="verbatim">push</code>, <code class="verbatim">pop</code> e variáveis locais dependem da pilha; você gerencia <code class="verbatim">rsp</code> e <code class="verbatim">rbp</code></td>
+</tr>
+<tr>
+<td>Qualquer código pode executar instruções privilegiadas</td>
+<td>Anéis de proteção</td>
+<td>Seu código roda no anel 3; instruções como <code class="verbatim">cli</code>, <code class="verbatim">hlt</code>, <code class="verbatim">lgdt</code> são inacessíveis</td>
+</tr>
+<tr>
+<td>Programas enxergam a memória física diretamente (sem isolamento)</td>
+<td><a href="https://en.wikipedia.org/wiki/Virtual_memory">Memória virtual</a></td>
+<td>Endereços que você usa são virtuais, não físicos; o SO mapeia páginas transparentemente</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 1 – Limitações da arquitetura de von Neumann e suas extensões
+</figcaption>
+</figure>
+<p>
+Cada uma dessas extensões está presente na <a href="https://en.wikipedia.org/wiki/X86-64">Intel 64</a> (também chamada de <a href="https://en.wikipedia.org/wiki/X86-64">x86-64</a> ou <a href="https://en.wikipedia.org/wiki/X86-64#AMD64">AMD64</a>), a arquitetura que usaremos. A Intel mantém compatibilidade binária desde os anos 1970 — um <code class="verbatim">mov</code> escrito para o 8086 ainda roda num Core i9. Trabalharemos exclusivamente no <a href="https://en.wikipedia.org/wiki/Long_mode">modo longo</a> (<em>long mode</em>), o modo nativo de 64 bits.</p>
+<div id="outline-container-headline-3" class="outline-4">
+<h4 id="headline-3">
+3.1 Registradores
+</h4>
+<div id="outline-text-headline-3" class="outline-text-4">
+<p>
+Registradores são a memória mais rápida do sistema. Ficam dentro do chip da CPU e não usam o barramento. Latência típica: 1–2 ciclos de CPU. A RAM, em comparação, leva centenas de ciclos.</p>
+<p>
+Por que tão poucos (16 registradores de propósito geral)? Três razões práticas:</p>
+<ol>
+<li>Cada registrador é endereçado por bits dentro da própria instrução. Mais registradores = instruções mais longas = código maior.</li>
+<li>Circuitos de chaveamento para muitos registradores não escalam bem acima de ~5 GHz.</li>
+<li>Programas bem escritos exibem <a href="https://en.wikipedia.org/wiki/Locality_of_reference">localidade de referência</a>: o conjunto de dados ativo é pequeno e cabe nos registradores. Você carrega da memória uma vez, opera muito, descarrega de volta.</li>
+</ol>
+<p>A localidade tem duas faces:</p>
+<dl>
+<dt>
+<em>Temporal</em>
+</dt>
+<dd>se você acessou um endereço agora, provavelmente vai acessá-lo de novo em breve (ex.: acumulador num laço).</dd>
+<dt>
+<em>Espacial</em>
+</dt>
+<dd>se você acessou o endereço X, o próximo acesso tende a ser X+1, X+4, X+8… (ex.: percorrer um array).</dd>
+</dl>
+<p>Use isso a seu favor: mantenha dados quentes em registradores; acesse memória em padrão sequencial.</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-4">
+<h4 id="headline-4">
+3.2 Registradores de propósito geral
+</h4>
+<div id="outline-text-headline-4" class="outline-text-4">
+<p>
+A Intel 64 oferece 16 registradores de 64 bits. Internamente, no encoding das instruções, eles são indexados de 0 a 15 — mas você nunca escreve <code class="verbatim">r0</code> no código. Os 8 primeiros são nomeados com os aliases históricos que você vai encontrar em todo lugar; apenas os registradores adicionados pelo x86-64 (<code class="verbatim">r8</code> a <code class="verbatim">r15</code>) usam nomenclatura numérica no NASM:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Registrador</th>
+<th>Alias</th>
+<th>Função típica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rax</td>
+<td>Acumulador. Usado implicitamente em <code class="verbatim">div</code>, <code class="verbatim">mul</code>, <code class="verbatim">stos</code>, <code class="verbatim">lods</code> e como retorno de função (cdecl/System V)</td>
+<td></td>
+</tr>
+<tr>
+<td>rcx</td>
+<td>Contador. Usado implicitamente por <code class="verbatim">loop</code>, <code class="verbatim">rep movs</code>, <code class="verbatim">rep stos</code> e como 4º argumento no System V</td>
+<td></td>
+</tr>
+<tr>
+<td>rdx</td>
+<td>Extensão de <code class="verbatim">rax</code> para operações de 128 bits (<code class="verbatim">div</code>, <code class="verbatim">mul</code>) e 3º argumento no System V</td>
+<td></td>
+</tr>
+<tr>
+<td>rbx</td>
+<td>Registrador de base. Único GPR que sobrevive a chamadas de função no System V (callee-saved)</td>
+<td></td>
+</tr>
+<tr>
+<td>rsp</td>
+<td><em>Stack pointer</em>. Aponta para o topo da pilha. <code class="verbatim">push</code>, <code class="verbatim">pop</code>, <code class="verbatim">call</code>, <code class="verbatim">ret</code> manipulam <code class="verbatim">rsp</code> automaticamente</td>
+<td></td>
+</tr>
+<tr>
+<td>rbp</td>
+<td><em>Base pointer</em>. Marca a base do stack frame atual. Essencial para acessar argumentos e variáveis locais</td>
+<td></td>
+</tr>
+<tr>
+<td>rsi</td>
+<td><em>Source index</em>. Usado como origem em <code class="verbatim">movs</code>, <code class="verbatim">cmps</code>, <code class="verbatim">lods</code> e 2º argumento no System V</td>
+<td></td>
+</tr>
+<tr>
+<td>rdi</td>
+<td><em>Destination index</em>. Usado como destino em <code class="verbatim">movs</code>, <code class="verbatim">cmps</code>, <code class="verbatim">stos</code> e 1º argumento no System V</td>
+<td></td>
+</tr>
+<tr>
+<td>r8 – r15</td>
+<td>Registradores adicionais (x86-64). Uso livre como temporários. <code class="verbatim">r10</code> é usado pelo <code class="verbatim">syscall</code> para salvar <code class="verbatim">rflags</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 2 – Registradores de 64 bits de propósito geral
+</figcaption>
+</figure>
+<figure>
+<img src="/images/lowlv01/fig1-3.png" alt="/images/lowlv01/fig1-3.png" title="/images/lowlv01/fig1-3.png" /><figcaption>
+Figura 3 – Registradores de 64 bits de propósito geral.
+</figcaption>
+</figure>
+<div class="note-block">
+<p>Registradores não têm endereço de memória. Você não pode tirar o endereço de <code class="verbatim">rax</code> como faria com uma variável na stack. São um banco físico separado da RAM.</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-4">
+<h4 id="headline-5">
+3.3 Endereçamento parcial de registradores
+</h4>
+<div id="outline-text-headline-5" class="outline-text-4">
+<p>
+Você pode acessar fatias menores de cada registrador adicionando um sufixo ao nome. Para os registradores históricos (<code class="verbatim">rax</code>, <code class="verbatim">rbx</code>, <code class="verbatim">rcx</code>, <code class="verbatim">rdx</code>, <code class="verbatim">rsp</code>, <code class="verbatim">rbp</code>, <code class="verbatim">rsi</code>, <code class="verbatim">rdi</code>), a convenção é:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Sufixo</th>
+<th>Significado</th>
+<th>Exemplo</th>
+<th>Bits acessados</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">e</code></td>
+<td><em>extended</em> (32b)</td>
+<td><code class="verbatim">eax</code></td>
+<td>32 bits menos significativos</td>
+</tr>
+<tr>
+<td>—</td>
+<td><em>word</em> (16b)</td>
+<td><code class="verbatim">ax</code></td>
+<td>16 bits menos significativos</td>
+</tr>
+<tr>
+<td><code class="verbatim">l</code></td>
+<td><em>low byte</em> (8b)</td>
+<td><code class="verbatim">al</code></td>
+<td>8 bits menos significativos</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 3 – Sufixos de acesso parcial para registradores históricos
+</figcaption>
+</figure>
+<p>
+Para os registradores numéricos (<code class="verbatim">r8</code> a <code class="verbatim">r15</code>), usa-se um sufixo de letra no final do nome:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Sufixo</th>
+<th>Significado</th>
+<th>Exemplo</th>
+<th>Bits acessados</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">d</code></td>
+<td><em>double word</em> (32b)</td>
+<td><code class="verbatim">r8d</code></td>
+<td>32 bits menos significativos</td>
+</tr>
+<tr>
+<td><code class="verbatim">w</code></td>
+<td><em>word</em> (16b)</td>
+<td><code class="verbatim">r8w</code></td>
+<td>16 bits menos significativos</td>
+</tr>
+<tr>
+<td><code class="verbatim">b</code></td>
+<td><em>byte</em> (8b)</td>
+<td><code class="verbatim">r8b</code></td>
+<td>8 bits menos significativos</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 4 – Sufixos de acesso parcial para registradores numéricos
+</figcaption>
+</figure>
+<p>
+Para <code class="verbatim">rax</code>, <code class="verbatim">rbx</code>, <code class="verbatim">rcx</code>, <code class="verbatim">rdx</code>, há também acesso ao segundo byte menos significativo: <code class="verbatim">ah</code>, <code class="verbatim">bh</code>, <code class="verbatim">ch</code>, <code class="verbatim">dh</code>. Para <code class="verbatim">rsi</code>, <code class="verbatim">rdi</code>, <code class="verbatim">rsp</code>, <code class="verbatim">rbp</code>, os bytes baixos são <code class="verbatim">sil</code>, <code class="verbatim">dil</code>, <code class="verbatim">spl</code>, <code class="verbatim">bpl</code>.</p>
+<figure>
+<img src="/images/lowlv01/fig1-4.png" alt="/images/lowlv01/fig1-4.png" title="/images/lowlv01/fig1-4.png" /><figcaption>
+Figura 4 – Decomposição dos registradores de propósito geral em partes menores.
+</figcaption>
+</figure>
+<figure>
+<img src="/images/lowlv01/fig1-5.png" alt="/images/lowlv01/fig1-5.png" title="/images/lowlv01/fig1-5.png" /><figcaption>
+Figura 5 – Decomposição de rsi e de rdi.
+</figcaption>
+</figure>
+<figure>
+<img src="/images/lowlv01/fig1-6.png" alt="/images/lowlv01/fig1-6.png" title="/images/lowlv01/fig1-6.png" /><figcaption>
+Figura 6 – Decomposição de rsp e de rbp.
+</figcaption>
+</figure>
+<div class="note-block">
+<p><strong>Cuidado com escritas de 32 bits</strong></p>
+<p>
+Escrever nos 32 bits baixos de um registrador (ex.: <code class="verbatim">mov eax, 0</code>) zera os 32 bits superiores do registrador completo. Isso é intencional: evita dependências falsas no pipeline. Escritas de 16 ou 8 bits <em>não</em> afetam os bits superiores.</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-4">
+<h4 id="headline-6">
+3.4 Registrador de instrução: <code class="verbatim">rip</code>
+</h4>
+<div id="outline-text-headline-6" class="outline-text-4">
+<p>
+O registrador <code class="verbatim">rip</code> (Instruction Pointer) armazena o endereço da <em>próxima</em> instrução a ser executada. Você não o modifica diretamente — use <code class="verbatim">jmp</code>, <code class="verbatim">call</code>, <code class="verbatim">ret</code>, <code class="verbatim">jcc</code> (saltos condicionais). Toda vez que uma instrução termina, <code class="verbatim">rip</code> avança para o próximo endereço (cada instrução tem tamanho próprio — não assuma incrementos fixos).</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-4">
+<h4 id="headline-7">
+3.5 Registrador de flags: <code class="verbatim">rflags</code>
+</h4>
+<div id="outline-text-headline-7" class="outline-text-4">
+<p>
+O <code class="verbatim">rflags</code> armazena bits que refletem o resultado da última operação aritmética/lógica. As flags que você mais consulta são:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Significado</th>
+<th>Saltos condicionais</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">CF</code> (Carry)</td>
+<td>Transporte em operação sem sinal (ex.: soma estourou 64 bits).</td>
+<td><code class="verbatim">jc</code> (jump if carry), <code class="verbatim">jnc</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">ZF</code> (Zero)</td>
+<td>Resultado foi zero.</td>
+<td><code class="verbatim">jz</code> (jump if zero), <code class="verbatim">jnz</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">SF</code> (Sign)</td>
+<td>Bit mais significativo do resultado (<code class="verbatim">1</code> indica negativo).</td>
+<td><code class="verbatim">js</code> (jump if sign), <code class="verbatim">jns</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">OF</code> (Overflow)</td>
+<td>Transporte em operação com sinal. Diferente de <code class="verbatim">CF</code>: <code class="verbatim">OF</code> detecta overflow de inteiro com sinal.</td>
+<td><code class="verbatim">jo</code> (jump if overflow), <code class="verbatim">jno</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">AF</code> (Adjust)</td>
+<td>Transporte entre os nibbles baixos (usado por instruções BCD — raramente relevante).</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 5 – Principais flags do registrador <code class="verbatim">rflags</code>
+</figcaption>
+</figure>
+<div class="note-block">
+<p><strong>Diferença entre CF e OF</strong></p>
+<p>
+Consulte a seção 3.4.3 do volume 1 do <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel SDM</a> para entender a diferença exata entre <code class="verbatim">CF</code> e <code class="verbatim">OF</code>, e em qual situação <code class="verbatim">CF</code> é setado mas <code class="verbatim">OF</code> não.</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-4">
+<h4 id="headline-8">
+3.6 Registradores multimídia: <code class="verbatim">xmm0=–=xmm15</code>
+</h4>
+<div id="outline-text-headline-8" class="outline-text-4">
+<p>
+São registradores de 128 bits (podem chegar a 512 bits com AVX-512) usados para operações <a href="https://en.wikipedia.org/wiki/Single_instruction,_multiple_data">SIMD</a> — uma instrução opera sobre múltiplos dados em paralelo. Essenciais para processamento de áudio, vídeo, criptografia e qualquer coisa que exija throughput numérico.</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-4">
+<h4 id="headline-9">
+3.7 <code class="verbatim">MSRs</code> (Model-Specific Registers)
+</h4>
+<div id="outline-text-headline-9" class="outline-text-4">
+<p>
+São registradores de controle que variam conforme o modelo da CPU. Acessíveis somente via instruções <code class="verbatim">rdmsr</code> e <code class="verbatim">wrmsr</code> (privilegiadas, anel 0). Armazenam coisas como contadores de desempenho, configuração de cache e bases de tabelas do sistema. Você não os usa diretamente de uma aplicação comum, mas um engenheiro de kernel ou de ferramentas de profiling lida com eles o tempo todo.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+4 Registradores de sistema
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>
+São registradores que o SO usa para configurar o ambiente onde suas aplicações rodam. Você como programador de aplicação não os modifica, mas precisa saber que eles existem porque explicam o comportamento da máquina:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Registrador</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">cr0</code>, <code class="verbatim">cr4</code></td>
+<td>Flags de modo do processador (modo protegido, paginação, extensões)</td>
+</tr>
+<tr>
+<td><code class="verbatim">cr2</code></td>
+<td>Endereço que causou uma page fault</td>
+</tr>
+<tr>
+<td><code class="verbatim">cr3</code></td>
+<td>Base da tabela de páginas (memória virtual)</td>
+</tr>
+<tr>
+<td><code class="verbatim">cr8</code> (tpr)</td>
+<td>Prioridade de interrupção (ajuste fino de APIC)</td>
+</tr>
+<tr>
+<td><code class="verbatim">efer</code></td>
+<td>Habilita modo longo (<code class="verbatim">LME</code>), syscall (<code class="verbatim">SCE</code>), NX bit (<code class="verbatim">NXE</code>)</td>
+</tr>
+<tr>
+<td><code class="verbatim">idtr</code></td>
+<td>Endereço da IDT (Interrupt Descriptor Table)</td>
+</tr>
+<tr>
+<td><code class="verbatim">gdtr</code>, <code class="verbatim">ldtr</code></td>
+<td>Endereços da GDT e LDT (tabelas de segmento — legado, mas usadas no modo longo)</td>
+</tr>
+<tr>
+<td><code class="verbatim">cs</code>, <code class="verbatim">ds</code>, <code class="verbatim">ss</code>, <code class="verbatim">es</code>, <code class="verbatim">fs</code>, <code class="verbatim">gs</code></td>
+<td>Registradores de segmento. No modo longo, <code class="verbatim">cs</code>, <code class="verbatim">fs</code> e <code class="verbatim">gs</code> ainda são relevantes</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 6 – Registradores de sistema
+</figcaption>
+</figure>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-3">
+<h3 id="headline-11">
+5 Anéis de proteção
+</h3>
+<div id="outline-text-headline-11" class="outline-text-3">
+<p>
+O processador Intel 64 opera em 4 <a href="https://en.wikipedia.org/wiki/Protection_ring">níveis de privilégio</a> (anéis 0 a 3). Apenas dois são usados na prática:</p>
+<dl>
+<dt>
+<em>Anel 0</em> (kernel mode)
+</dt>
+<dd>acesso irrestrito a todas as instruções, registradores e dispositivos.</dd>
+<dt>
+<em>Anel 3</em> (user mode)
+</dt>
+<dd>apenas instruções seguras. Tentar executar uma instrução privilegiada gera interrupção (#GP).</dd>
+</dl>
+<p>Seu código Assembly roda no anel 3. Isso significa que instruções como <code class="verbatim">cli</code> (clear interrupts), <code class="verbatim">hlt</code> (halt), <code class="verbatim">lgdt</code> (load GDT), <code class="verbatim">in</code>, <code class="verbatim">out</code> (I/O), <code class="verbatim">wrmsr</code> são inacessíveis. Para interagir com hardware, você faz uma chamada de sistema (<code class="verbatim">syscall</code>), que transiciona para o anel 0, executa o serviço e retorna (<code class="verbatim">sysret</code>).</p>
+<p>
+O anel atual está codificado nos 2 bits menos significativos de <code class="verbatim">cs</code> (e ecoado em <code class="verbatim">ss</code>). Esses bits só mudam via interrupção ou <code class="verbatim">syscall=/=sysret</code> — você não pode simplesmente setá-los.</p>
+</div>
+</div>
+<div id="outline-container-headline-12" class="outline-3">
+<h3 id="headline-12">
+6 Pilha de hardware
+</h3>
+<div id="outline-text-headline-12" class="outline-text-3">
+<p>
+A pilha de hardware é a estrutura de dados que viabiliza chamadas de função, variáveis locais e salvamento de contexto. Não é um hardware separado — é memória comum, gerenciada pelo registrador <code class="verbatim">rsp</code> e por duas instruções.</p>
+<div id="outline-container-headline-13" class="outline-4">
+<h4 id="headline-13">
+6.1 Mecanismo
+</h4>
+<div id="outline-text-headline-13" class="outline-text-4">
+<figure>
+<table>
+<thead>
+<tr>
+<th>Instrução</th>
+<th>Registrador</th>
+<th>Passo 1</th>
+<th>Passo 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">push X</code></td>
+<td><code class="verbatim">rsp</code></td>
+<td>Decrementa <code class="verbatim">rsp</code> conforme o tamanho de X (2, 4 ou 8)</td>
+<td>Escreve X no endereço apontado por <code class="verbatim">rsp</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">pop X</code></td>
+<td><code class="verbatim">rsp</code></td>
+<td>Lê o valor no endereço <code class="verbatim">rsp</code> e copia para X</td>
+<td>Incrementa <code class="verbatim">rsp</code> conforme o tamanho de X</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 8 – Mecanismo de <code class="verbatim">push</code> e <code class="verbatim">pop</code>
+</figcaption>
+</figure>
+<p>
+A pilha <em>cresce para baixo</em> (em direção ao endereço 0). Um <code class="verbatim">push</code> diminui <code class="verbatim">rsp</code>; um <code class="verbatim">pop</code> aumenta.</p>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-4">
+<h4 id="headline-14">
+6.2 Para que serve
+</h4>
+<div id="outline-text-headline-14" class="outline-text-4">
+<dl>
+<dt>
+<em>Chamadas de função</em>
+</dt>
+<dd><code class="verbatim">call</code> empilha o endereço de retorno (valor de <code class="verbatim">rip</code>); <code class="verbatim">ret</code> desempilha e salta para ele.</dd>
+<dt>
+<em>Salvamento de registradores</em>
+</dt>
+<dd>a função chamada empilha registradores que vai modificar (callee-saved).</dd>
+<dt>
+<em>Passagem de argumentos</em>
+</dt>
+<dd>no <a href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI">System V AMD64</a>, argumentos além do 6º vão na pilha. No Windows x64, a partir do 5º.</dd>
+<dt>
+<em>Variáveis locais</em>
+</dt>
+<dd>alocadas deslocando <code class="verbatim">rsp</code> para baixo (subtraindo um valor constante).</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-headline-15" class="outline-4">
+<h4 id="headline-15">
+6.3 Comportamento que você precisa conhecer
+</h4>
+<div id="outline-text-headline-15" class="outline-text-4">
+<ul>
+<li>A pilha <em>nunca está vazia</em>. <code class="verbatim">rsp</code> sempre aponta para algum lugar. Fazer <code class="verbatim">pop</code> sem <code class="verbatim">push</code> correspondente retorna lixo.</li>
+<li><code class="verbatim">push</code> com operandos menores que 64 bits usa extensão de sinal. <code class="verbatim">push -1</code> sempre armazena <code class="verbatim">0xFFFFFFFFFFFFFFFF</code> na pilha (8 bytes). Passe <code class="verbatim">push word -1</code> se quiser 2 bytes.</li>
+<li>Em algumas arquiteturas, <code class="verbatim">rsp</code> aponta para a <em>próxima</em> posição livre; na Intel 64, <code class="verbatim">rsp</code> aponta para o <em>último elemento empilhado</em>.</li>
+</ul>
+<figure>
+<img src="/images/lowlv01/fig1-7.png" alt="/images/lowlv01/fig1-7.png" title="/images/lowlv01/fig1-7.png" /><figcaption>
+Figura 7 – Intel 64, registradores e pilha.
+</figcaption>
+</figure>
+<div class="note-block">
+<p><strong>Trabalhando com o Intel SDM</strong></p>
+<p>
+O <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel 64 and IA-32 Architectures Software Developer&#39;s Manual</a> é sua referência definitiva. O volume 2 contém a descrição completa de cada instrução.</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Coluna</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">OPCODE</code></td>
+<td>Codificação binária da instrução.</td>
+</tr>
+<tr>
+<td><code class="verbatim">INSTRUCTION</code></td>
+<td>Mnemônico e operandos permitidos. Ex.: <code class="verbatim">r/m16</code> = registrador ou memória de 16 bits; <code class="verbatim">imm8</code> = imediato de 8 bits.</td>
+</tr>
+<tr>
+<td><code class="verbatim">64-bit Mode</code></td>
+<td>Suporte no modo longo (<code class="verbatim">Valid</code>, <code class="verbatim">Invalid</code>, ou condicional).</td>
+</tr>
+<tr>
+<td><code class="verbatim">DESCRIPTION</code></td>
+<td>Efeitos da instrução e flags alteradas.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 9 – Colunas da tabela de instruções no Intel SDM
+</figcaption>
+</figure>
+<p>
+Exemplo de consulta: o manual da instrução <code class="verbatim">push</code> informa que operandos imediatos são estendidos com sinal para o tamanho padrão da pilha (64 bits no modo longo), exceto quando o tamanho é explicitamente especificado (<code class="verbatim">push word 0x1234</code>).</p>
+<ul>
+<li>Quando o operando de <code class="verbatim">push</code> <em>não</em> tem o sinal estendido?</li>
+<li>O que acontece com a memória e <code class="verbatim">rsp</code> ao executar <code class="verbatim">push rsp</code>?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-16" class="outline-3">
+<h3 id="headline-16">
+7 Escrevendo seu primeiro programa Assembly
+</h3>
+<div id="outline-text-headline-16" class="outline-text-3">
+<p>
+Você já conhece o hardware. Sabe o que são registradores, como a CPU busca e executa instruções, para que serve a pilha. Agora vamos fazer a transição que separa quem estuda arquitetura de quem programa de verdade: pegar esse conhecimento e transformá-lo em código que roda no metal.</p>
+<p>
+Cada instrução que você vai escrever daqui em diante tem um efeito direto e previsível sobre o estado da máquina. Não há garbage collector, não há type checker, não há runtime salvando você de si mesmo. O que você escreve é o que o processador executa. Isso é intimidador — e é exatamente o que torna esse conhecimento tão poderoso.</p>
+<p>
+A forma mais direta de entender Assembly é escrevê-lo. Vamos construir um &#34;Hello, world&#34; para Linux x86-64, usando o montador <a href="https://www.nasm.us/">NASM</a> e o linkeditor <code class="verbatim">ld</code>.</p>
+<div id="outline-container-headline-17" class="outline-4">
+<h4 id="headline-17">
+7.1 Estrutura mínima
+</h4>
+<div id="outline-text-headline-17" class="outline-text-4">
+<p>
+O programa mais simples que faz algo visível escreve em <code class="verbatim">stdout</code> e encerra. Em Assembly, isso significa duas chamadas de sistema: <code class="verbatim">write</code> (código 1) e <code class="verbatim">exit</code> (código 60).</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl"><span class="nl">message:</span> <span class="nf">db</span> <span class="err">&#39;</span><span class="no">hello</span><span class="p">,</span> <span class="no">world</span><span class="p">!</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">10</span>    <span class="c1">; 10 = &#39;\n&#39;
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl"><span class="nf">global</span> <span class="no">_start</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">_start:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">1</span>           <span class="c1">; syscall write
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="mi">1</span>           <span class="c1">; fd = stdout
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rsi</span><span class="p">,</span> <span class="no">message</span>     <span class="c1">; buffer
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdx</span><span class="p">,</span> <span class="mi">13</span>          <span class="c1">; tamanho
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">60</span>          <span class="c1">; syscall exit
+</span></span></span><span class="line"><span class="cl">    <span class="nf">xor</span> <span class="no">edi</span><span class="p">,</span> <span class="no">edi</span>         <span class="c1">; código 0
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span></span></span></code></pre></div>
+</div>
+<p>
+Cada linha merece atenção:</p>
+<ul>
+<li><code class="verbatim">section .data</code> agrupa dados com valores iniciais. <code class="verbatim">section .text</code> agrupa instruções. O linkeditor posiciona cada seção contiguamente no binário final.</li>
+<li><code class="verbatim">global _start</code> declara o rótulo como visível ao linkeditor. Sem isso, o <code class="verbatim">ld</code> não encontra o ponto de entrada e o programa não linka.</li>
+<li><code class="verbatim">_start</code> é o ponto de entrada: o kernel transfere o controle para esse endereço após carregar o binário. Não é uma função C — não há <code class="verbatim">main</code>, não há <code class="verbatim">libc</code>, não há <code class="verbatim">ret</code> que funcione. O <code class="verbatim">rsp</code> aponta para a pilha com <code class="verbatim">argc</code>, <code class="verbatim">argv</code> e <code class="verbatim">envp</code>, mas não precisamos disso agora.</li>
+<li><code class="verbatim">mov rax, 1</code> define qual syscall: 1 é <code class="verbatim">write</code>. <code class="verbatim">rdi</code> recebe o file descriptor (1 = stdout), <code class="verbatim">rsi</code> o endereço do buffer, <code class="verbatim">rdx</code> a quantidade de bytes.</li>
+<li><code class="verbatim">syscall</code> transfere para o kernel. Os valores em <code class="verbatim">rax</code>, <code class="verbatim">rdi</code>, <code class="verbatim">rsi</code>, <code class="verbatim">rdx</code>, <code class="verbatim">r10</code>, <code class="verbatim">r8</code>, <code class="verbatim">r9</code> são lidos; o resultado volta em <code class="verbatim">rax</code>.</li>
+<li>O segundo bloco chama <code class="verbatim">exit(0)</code>. <code class="verbatim">xor edi, edi</code> zera <code class="verbatim">rdi</code> com 2 bytes — a escrita em 32 bits automaticamente zera a metade superior do registrador de 64 bits, como explicado na seção 3.3. Comparado com <code class="verbatim">mov rdi, 0</code> (7 bytes) ou <code class="verbatim">xor rdi, rdi</code> (3 bytes), esta é a forma mais compacta.</li>
+</ul>
+<p>Para compilar e executar:</p>
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nasm -felf64 hello.asm -o hello.o
+</span></span><span class="line"><span class="cl">ld -o hello hello.o
+</span></span><span class="line"><span class="cl">./hello</span></span></code></pre></div>
+</div>
+<p>
+A flag <code class="verbatim">-felf64</code> produz objeto ELF64. O <code class="verbatim">ld</code> resolve símbolos e gera o executável. Nenhuma libc é linkada — o binário depende apenas do kernel.</p>
+</div>
+</div>
+<div id="outline-container-headline-18" class="outline-4">
+<h4 id="headline-18">
+7.2 Por que o programa quebra sem exit
+</h4>
+<div id="outline-text-headline-18" class="outline-text-4">
+<p>
+Se você remover o bloco <code class="verbatim">exit</code> e executar, muito provavelmente verá um <em>segmentation fault</em> após a mensagem. O motivo: após <code class="verbatim">syscall write</code>, <code class="verbatim">rip</code> avança para o próximo byte na memória. O que existe ali é lixo — bytes que não foram escritos como instrução. A CPU tenta decodificar e encontra um opcode inválido; o resultado é a interrupção #UD (Undefined Opcode, código 6), que o kernel traduz para <code class="verbatim">SIGILL</code>. Se por acaso os bytes forem um opcode válido, o comportamento é pior: a CPU executa lixo indeterminado até eventualmente acessar memória inválida.</p>
+<p>
+A lição: Assembly não tem &#34;fim de programa&#34; implícito. Você precisa explicitamente devolver o controle ao kernel.</p>
+</div>
+</div>
+<div id="outline-container-headline-19" class="outline-4">
+<h4 id="headline-19">
+7.3 Seções e rótulos
+</h4>
+<div id="outline-text-headline-19" class="outline-text-4">
+<p>
+Um programa Assembly é organizado em seções — regiões de memória com permissões e propósitos diferentes:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Seção</th>
+<th>Propósito</th>
+<th>Permissões</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="verbatim">.text</code></td>
+<td>Código executável</td>
+<td><code class="verbatim">read + execute</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">.data</code></td>
+<td>Variáveis globais inicializadas</td>
+<td><code class="verbatim">read + write</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">.bss</code></td>
+<td>Variáveis globais não inicializadas (zero-fill). Ocupam zero bytes no binário; o SO aloca e zera no carregamento.</td>
+<td><code class="verbatim">read + write</code></td>
+</tr>
+<tr>
+<td><code class="verbatim">.rodata</code></td>
+<td>Constantes somente-leitura</td>
+<td><code class="verbatim">read</code></td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 10 – Seções de um programa Assembly
+</figcaption>
+</figure>
+<p>
+Rótulos são nomes simbólicos para endereços. <code class="verbatim">message: db &#39;hello&#39;</code> define um rótulo <code class="verbatim">message</code> que aponta para o primeiro byte da string. O montador resolve referências a rótulos em endereços numéricos. Não existe &#34;variável&#34; em Assembly — existe endereço com um nome. Você decide quantos bytes lê a partir dali.</p>
+<p>
+Rótulos que começam com ponto (ex.: <code class="verbatim">.loop</code>) são locais: o nome completo é prefixado pelo último rótulo global. Dentro de <code class="verbatim">_start</code>, <code class="verbatim">.loop</code> é <code class="verbatim">_start.loop</code>. Isso permite reutilizar nomes sem colisão em funções diferentes.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-20" class="outline-3">
+<h3 id="headline-20">
+8 Instruções essenciais
+</h3>
+<div id="outline-text-headline-20" class="outline-text-3">
+<div id="outline-container-headline-21" class="outline-4">
+<h4 id="headline-21">
+8.1 <code class="verbatim">mov</code>
+</h4>
+<div id="outline-text-headline-21" class="outline-text-4">
+<p>
+<code class="verbatim">mov destino, origem</code> copia um valor. Três regras:</p>
+<ol>
+<li>Destino e origem devem ter o mesmo tamanho. <code class="verbatim">mov rax, ebx</code> não compila — <code class="verbatim">rax</code> é 64 bits, <code class="verbatim">ebx</code> é 32 bits.</li>
+<li>Não existe <code class="verbatim">mov mem, mem</code>. Você precisa de um registrador intermediário.</li>
+<li>O valor de origem pode ser imediato (<code class="verbatim">mov rax, 42</code>), registrador (<code class="verbatim">mov rax, rbx</code>) ou memória (<code class="verbatim">mov rax, [rbx]</code>).</li>
+</ol>
+<p>Escrever em registrador de 32 bits zera a metade superior do registrador de 64 bits. <code class="verbatim">mov eax, 1</code> é equivalente a <code class="verbatim">mov rax, 1</code>, mas custa 1 byte a menos (5 vs 7 bytes). Escrever em 16 ou 8 bits preserva os bits superiores.</p>
+</div>
+</div>
+<div id="outline-container-headline-22" class="outline-4">
+<h4 id="headline-22">
+8.2 <code class="verbatim">syscall</code>
+</h4>
+<div id="outline-text-headline-22" class="outline-text-4">
+<p>
+A instrução <code class="verbatim">syscall</code> é a porta para o kernel. O fluxo:</p>
+<ol>
+<li>Coloque o número da syscall em <code class="verbatim">rax</code>.</li>
+<li>Coloque até 6 argumentos em <code class="verbatim">rdi</code>, <code class="verbatim">rsi</code>, <code class="verbatim">rdx</code>, <code class="verbatim">r10</code>, <code class="verbatim">r8</code>, <code class="verbatim">r9</code>.</li>
+<li>Execute <code class="verbatim">syscall</code>.</li>
+<li>O resultado (ou erro) retorna em <code class="verbatim">rax</code>.</li>
+</ol>
+<p>Syscalls essenciais para começar:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">Código</th>
+<th>Nome</th>
+<th><code class="verbatim">rdi</code></th>
+<th><code class="verbatim">rsi</code></th>
+<th><code class="verbatim">rdx</code></th>
+<th>Retorno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">0</td>
+<td>read</td>
+<td>file descriptor</td>
+<td>buffer</td>
+<td>tamanho</td>
+<td>bytes lidos</td>
+</tr>
+<tr>
+<td class="align-right">1</td>
+<td>write</td>
+<td>file descriptor</td>
+<td>buffer</td>
+<td>tamanho</td>
+<td>bytes escritos</td>
+</tr>
+<tr>
+<td class="align-right">60</td>
+<td>exit</td>
+<td>código de saída</td>
+<td>—</td>
+<td>—</td>
+<td>não retorna</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 7 – Syscalls essenciais
+</figcaption>
+</figure>
+<p>
+Os file descriptors padrão: 0 (<code class="verbatim">stdin</code>), 1 (<code class="verbatim">stdout</code>), 2 (<code class="verbatim">stderr</code>). Todo processo Unix já os recebe abertos.</p>
+<p>
+A instrução <code class="verbatim">syscall</code> altera <code class="verbatim">rcx</code> e <code class="verbatim">r11</code> — o kernel salva <code class="verbatim">rip</code> em <code class="verbatim">rcx</code> e <code class="verbatim">rflags</code> em <code class="verbatim">r11</code> para poder retornar. Não dependa dos valores nesses registradores após <code class="verbatim">syscall</code>.</p>
+</div>
+</div>
+<div id="outline-container-headline-23" class="outline-4">
+<h4 id="headline-23">
+8.3 Controle de fluxo
+</h4>
+<div id="outline-text-headline-23" class="outline-text-4">
+<p>
+Assembly não tem <code class="verbatim">if</code>, <code class="verbatim">for</code> ou <code class="verbatim">while</code>. Você constrói essas estruturas com comparações e saltos:</p>
+<ul>
+<li><code class="verbatim">cmp a, b</code> calcula <code class="verbatim">a - b</code> e atualiza <code class="verbatim">rflags</code>, sem armazenar o resultado.</li>
+<li><code class="verbatim">test a, b</code> calcula <code class="verbatim">a &amp; b</code> e atualiza <code class="verbatim">rflags</code>.</li>
+<li>Saltos condicionais leem <code class="verbatim">rflags</code>: <code class="verbatim">je</code> (jump if equal), <code class="verbatim">jne</code>, <code class="verbatim">jg</code>, <code class="verbatim">jl</code>, <code class="verbatim">ja</code>, <code class="verbatim">jb</code>, etc.</li>
+</ul>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">; if (rax &lt; 42) rbx = 1 else rbx = 0
+</span></span></span><span class="line"><span class="cl">    <span class="nf">cmp</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">42</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jl</span>  <span class="no">.yes</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rbx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jmp</span> <span class="no">.end</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.yes:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rbx</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.end:</span></span></span></code></pre></div>
+</div>
+<p>
+A distinção entre saltos com e sem sinal é crucial:</p>
+<ul>
+<li><code class="verbatim">jg</code> (greater) / <code class="verbatim">jl</code> (less) usam <code class="verbatim">SF</code> e <code class="verbatim">OF</code> — comparação com sinal.</li>
+<li><code class="verbatim">ja</code> (above) / <code class="verbatim">jb</code> (below) usam <code class="verbatim">CF</code> — comparação sem sinal.</li>
+</ul>
+<p>Comparar <code class="verbatim">rax</code>-1 com <code class="verbatim">rdx=2 com =jl</code> indica que -1 &lt; 2 (true). Com <code class="verbatim">jb</code>, o flags de carry determinam o resultado, e -1 como unsigned (<code class="verbatim">0xFFFFFFFFFFFFFFFF</code>) é maior que 2 — o salto não é tomado. Bugs de sinal/sem-sinal estão entre os mais comuns em Assembly.</p>
+<p>
+<code class="verbatim">test reg, reg</code> é um idiom para verificar se um registrador é zero (mais compacto que <code class="verbatim">cmp reg, 0</code>).</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-24" class="outline-3">
+<h3 id="headline-24">
+9 Trabalhando com dados
+</h3>
+<div id="outline-text-headline-24" class="outline-text-3">
+<div id="outline-container-headline-25" class="outline-4">
+<h4 id="headline-25">
+9.1 Diretivas de alocação
+</h4>
+<div id="outline-text-headline-25" class="outline-text-4">
+<p>
+As diretivas <code class="verbatim">db</code>, <code class="verbatim">dw</code>, <code class="verbatim">dd</code>, <code class="verbatim">dq</code> alocam bytes inicializados na seção atual:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl"><span class="nl">a:</span> <span class="nf">db</span> <span class="mi">0x55</span>              <span class="c1">; 1 byte
+</span></span></span><span class="line"><span class="cl"><span class="nl">b:</span> <span class="nf">dw</span> <span class="mi">0x1234</span>            <span class="c1">; 2 bytes (word)
+</span></span></span><span class="line"><span class="cl"><span class="nl">c:</span> <span class="nf">dd</span> <span class="mi">0xDEADBEEF</span>        <span class="c1">; 4 bytes (double word)
+</span></span></span><span class="line"><span class="cl"><span class="nl">d:</span> <span class="nf">dq</span> <span class="mi">0x0123456789ABCDEF</span><span class="c1">; 8 bytes (quad word)
+</span></span></span><span class="line"><span class="cl"><span class="nl">arr:</span> <span class="nf">times</span> <span class="mi">999</span> <span class="no">db</span> <span class="mi">42</span>     <span class="err">;</span> <span class="mi">999</span> <span class="no">bytes</span><span class="p">,</span> <span class="no">todos</span> <span class="err">=</span> <span class="mi">42</span></span></span></code></pre></div>
+</div>
+<p>
+<code class="verbatim">times n cmd</code> repete <code class="verbatim">cmd</code> <code class="verbatim">n</code> vezes. Funciona com instruções também, embora raramente útil.</p>
+<p>
+Strings em Assembly são sequências de bytes. A terminação é convenção — tipicamente um byte nulo (0) ao final, como em C:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nl">msg:</span> <span class="nf">db</span> <span class="err">&#39;</span><span class="no">hello</span><span class="err">&#39;</span><span class="p">,</span> <span class="mi">0</span></span></span></code></pre></div>
+</div>
+<p>
+Sem terminador, qualquer rotina que percorra a string não sabe onde parar. O comprimento pode ser armazenado explicitamente, mas strings null-terminated são o padrão da libc e das syscalls Unix.</p>
+</div>
+</div>
+<div id="outline-container-headline-26" class="outline-4">
+<h4 id="headline-26">
+9.2 Endianness
+</h4>
+<div id="outline-text-headline-26" class="outline-text-4">
+<p>
+Quando você armazena um valor multibyte na memória, a ordem dos bytes depende da arquitetura. Intel 64 é <a href="https://en.wikipedia.org/wiki/Endianness">little-endian</a>: o byte menos significativo ocupa o endereço mais baixo.</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl"><span class="nl">val:</span> <span class="nf">dq</span> <span class="mi">0x0123456789ABCDEF</span></span></span></code></pre></div>
+</div>
+<p>
+Na memória, partindo de <code class="verbatim">val</code>:</p>
+<div class="src src-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">val+0: EF
+</span></span><span class="line"><span class="cl">val+1: CD
+</span></span><span class="line"><span class="cl">val+2: AB
+</span></span><span class="line"><span class="cl">val+3: 89
+</span></span><span class="line"><span class="cl">val+4: 67
+</span></span><span class="line"><span class="cl">val+5: 45
+</span></span><span class="line"><span class="cl">val+6: 23
+</span></span><span class="line"><span class="cl">val+7: 01</span></span></code></pre></div>
+</div>
+<p>
+O impacto prático: se você lê <code class="verbatim">dword [val]</code>, obtém <code class="verbatim">0x89ABCDEF</code> (os 4 bytes menos significativos, que estão nos 4 primeiros endereços). Isso é conveniente para conversão implícita de tamanho — ler uma double word de um quad word little-endian retorna o valor truncado corretamente, sem precisar ajustar o ponteiro.</p>
+<p>
+O oposto é <a href="https://en.wikipedia.org/wiki/Endianness#Networking">big-endian</a>, usado em protocolos de rede (TCP/IP). A JVM também especifica big-endian internamente. Se você programa sockets em Assembly, precisa converter: bytes da rede vêm em big-endian; o processador espera little-endian. Instruções como <code class="verbatim">bswap</code> (byte swap) ou <code class="verbatim">htonl</code> (em C) fazem essa conversão.</p>
+<p>
+Nos registradores, a ordem não se aplica — registradores não têm endereços. O bit 0 é sempre o menos significativo, independentemente da arquitetura. Endianness só importa na interface com a memória.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-27" class="outline-3">
+<h3 id="headline-27">
+10 Modos de endereçamento
+</h3>
+<div id="outline-text-headline-27" class="outline-text-3">
+<p>
+O Intel 64 oferece um esquema poderoso para calcular endereços de memória. A forma geral:</p>
+<div class="src src-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">[base + índice * escala + deslocamento]</span></span></code></pre></div>
+</div>
+<ul>
+<li><code class="verbatim">base</code>: registrador de 64 bits (qualquer GPR).</li>
+<li><code class="verbatim">índice</code>: registrador de 64 bits (exceto <code class="verbatim">rsp</code>).</li>
+<li><code class="verbatim">escala</code>: 1, 2, 4, ou 8 — o tamanho do elemento referenciado.</li>
+<li><code class="verbatim">deslocamento</code>: valor imediato (constante).</li>
+</ul>
+<p>Todos os componentes são opcionais. Exemplos:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">rbx</span><span class="p">]</span>              <span class="c1">; só base: endereço em rbx
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">rbx</span> <span class="err">+</span> <span class="mi">8</span><span class="p">]</span>          <span class="c1">; base + deslocamento constante
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">rbx</span> <span class="err">+</span> <span class="mi">4</span><span class="p">*</span><span class="no">rcx</span><span class="p">]</span>      <span class="c1">; base + índice com escala
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">rbx</span> <span class="err">+</span> <span class="mi">4</span><span class="p">*</span><span class="no">rcx</span> <span class="err">+</span> <span class="mi">16</span><span class="p">]</span> <span class="c1">; todos os componentes
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">array</span> <span class="err">+</span> <span class="no">rsi</span><span class="p">*</span><span class="mi">8</span><span class="p">]</span>    <span class="c1">; deslocamento (rótulo) + índice com escala
+</span></span></span><span class="line"><span class="cl"><span class="nf">lea</span> <span class="no">rax</span><span class="p">,</span> <span class="p">[</span><span class="no">rbx</span> <span class="err">+</span> <span class="no">rbx</span><span class="p">*</span><span class="mi">4</span><span class="p">]</span>      <span class="err">;</span> <span class="no">lea</span><span class="p">:</span> <span class="no">calcula</span> <span class="no">endereço</span><span class="p">,</span> <span class="no">não</span> <span class="no">acessa</span> <span class="no">memória</span> <span class="p">(</span><span class="no">rax</span> <span class="err">=</span> <span class="no">rbx</span><span class="p">*</span><span class="mi">5</span><span class="p">)</span></span></span></code></pre></div>
+</div>
+<p>
+Colchetes indicam acesso à memória. A diferença entre <code class="verbatim">mov rax, rbx</code> e <code class="verbatim">mov rax, [rbx]</code> é fundamental: o primeiro copia o valor de <code class="verbatim">rbx</code>; o segundo copia os 8 bytes da memória no endereço contido em <code class="verbatim">rbx</code>.</p>
+<p>
+A instrução <code class="verbatim">lea</code> (Load Effective Address) calcula o endereço sem acessar a memória — é um atalho para aritmética. <code class="verbatim">lea rax, [rbx + rbx*4]</code> equivale a <code class="verbatim">mov rax, rbx</code> + <code class="verbatim">imul rax, 5</code>, mas em um único ciclo, sem alterar flags.</p>
+<p>
+Quando o tamanho do operando de memória é ambíguo, o montador exige um qualificador:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">byte</span> <span class="p">[</span><span class="no">rsi</span><span class="p">],</span> <span class="mi">0</span>    <span class="c1">; escreve 1 byte
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">word</span> <span class="p">[</span><span class="no">rsi</span><span class="p">],</span> <span class="mi">0</span>    <span class="c1">; escreve 2 bytes
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">dword</span> <span class="p">[</span><span class="no">rsi</span><span class="p">],</span> <span class="mi">0</span>   <span class="c1">; escreve 4 bytes
+</span></span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">qword</span> <span class="p">[</span><span class="no">rsi</span><span class="p">],</span> <span class="mi">0</span>   <span class="err">;</span> <span class="no">escreve</span> <span class="mi">8</span> <span class="no">bytes</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-28" class="outline-3">
+<h3 id="headline-28">
+11 Chamadas de função
+</h3>
+<div id="outline-text-headline-28" class="outline-text-3">
+<div id="outline-container-headline-29" class="outline-4">
+<h4 id="headline-29">
+11.1 <code class="verbatim">call</code> e <code class="verbatim">ret</code>
+</h4>
+<div id="outline-text-headline-29" class="outline-text-4">
+<p>
+A arquitetura Intel 64 implementa chamadas de função com duas instruções e a pilha:</p>
+<ul>
+<li><code class="verbatim">call addr</code> empilha o <code class="verbatim">rip</code> atual (endereço de retorno) e salta para <code class="verbatim">addr</code>.</li>
+<li><code class="verbatim">ret</code> desempilha o topo da pilha e salta para esse endereço.</li>
+</ul>
+<p>É equivalente a:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">; call addr:
+</span></span></span><span class="line"><span class="cl"><span class="nf">push</span> <span class="no">rip</span>
+</span></span><span class="line"><span class="cl"><span class="nf">jmp</span> <span class="no">addr</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">; ret:
+</span></span></span><span class="line"><span class="cl"><span class="nf">pop</span> <span class="no">rip</span></span></span></code></pre></div>
+</div>
+<p>
+A simetria é frágil: <code class="verbatim">ret</code> confia que o topo da pilha contém um endereço de retorno válido. Se a função desbalanceou a pilha (mais <code class="verbatim">push</code> que <code class="verbatim">pop</code>, ou <code class="verbatim">sub rsp</code> sem o correspondente <code class="verbatim">add</code>), <code class="verbatim">ret</code> saltará para lixo — tipicamente um crash por execução de memória inválida.</p>
+</div>
+</div>
+<div id="outline-container-headline-30" class="outline-4">
+<h4 id="headline-30">
+11.2 Convenção de chamada do System V AMD64
+</h4>
+<div id="outline-text-headline-30" class="outline-text-4">
+<p>
+Para que funções escritas por pessoas diferentes (ou compiladores diferentes) interoperem, existe uma <a href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI">convenção de chamada</a>. A do System V AMD64 (Linux, macOS, BSDs) especifica:</p>
+<p>
+<em>Argumentos</em>:</p>
+<ul>
+<li>1º a 6º argumento inteiro: <code class="verbatim">rdi</code>, <code class="verbatim">rsi</code>, <code class="verbatim">rdx</code>, <code class="verbatim">rcx</code>, <code class="verbatim">r8</code>, <code class="verbatim">r9</code> (nessa ordem).</li>
+<li>1º a 8º argumento float/double: <code class="verbatim">xmm0</code> a <code class="verbatim">xmm7</code>.</li>
+<li>Argumentos além do 6º (ou 8º) vão na pilha, em ordem inversa (último argumento empilhado primeiro).</li>
+<li>O valor de retorno vai em <code class="verbatim">rax</code> (inteiro) ou <code class="verbatim">xmm0</code> (float). Se forem dois valores, <code class="verbatim">rdx</code> complementa.</li>
+</ul>
+<p><em>Registradores</em>:</p>
+<ul>
+<li><em>Callee-saved</em> (a função chamada deve preservá-los): <code class="verbatim">rbx</code>, <code class="verbatim">rbp</code>, <code class="verbatim">rsp</code>, <code class="verbatim">r12</code> a <code class="verbatim">r15</code>. Se a função os modificar, deve restaurá-los antes de <code class="verbatim">ret</code>.</li>
+<li><em>Caller-saved</em> (o chamador assume que serão destruídos): todos os demais — <code class="verbatim">rax</code>, <code class="verbatim">rcx</code>, <code class="verbatim">rdx</code>, <code class="verbatim">rsi</code>, <code class="verbatim">rdi</code>, <code class="verbatim">r8</code> a <code class="verbatim">r11</code>, <code class="verbatim">xmm0</code> a <code class="verbatim">xmm15</code>.</li>
+</ul>
+<p><em>Alinhamento de pilha</em>:</p>
+<ul>
+<li><code class="verbatim">rsp</code> deve estar alinhado em 16 bytes no momento de cada <code class="verbatim">call</code>.</li>
+<li>Na entrada da função, <code class="verbatim">rsp ≡ 8 (mod 16)</code> porque <code class="verbatim">call</code> empilhou 8 bytes (<code class="verbatim">rip</code>).</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-31" class="outline-4">
+<h4 id="headline-31">
+11.3 Exemplo: função que retorna o quadrado
+</h4>
+<div id="outline-text-headline-31" class="outline-text-4">
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">; int square(int n) { return n * n; }
+</span></span></span><span class="line"><span class="cl"><span class="nl">square:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="no">rdi</span>    <span class="c1">; n está em rdi (1º argumento)
+</span></span></span><span class="line"><span class="cl">    <span class="nf">imul</span> <span class="no">rax</span><span class="p">,</span> <span class="no">rdi</span>   <span class="c1">; rax = n * n
+</span></span></span><span class="line"><span class="cl">    <span class="nf">ret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">; Uso:
+</span></span></span><span class="line"><span class="cl"><span class="nl">main:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="mi">7</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">call</span> <span class="no">square</span>     <span class="c1">; rax = 49
+</span></span></span><span class="line"><span class="cl">    <span class="err">;</span> <span class="na">...</span></span></span></code></pre></div>
+</div>
+<p>
+<code class="verbatim">square</code> é uma função folha (não chama outras funções), então não precisa salvar nada na pilha. Basta retornar o valor em <code class="verbatim">rax</code>.</p>
+<p>
+Para funções não-folha, o padrão de stack frame é:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nl">minha_funcao:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">push</span> <span class="no">rbp</span>            <span class="c1">; salva base pointer do caller
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rbp</span><span class="p">,</span> <span class="no">rsp</span>        <span class="c1">; estabelece frame
+</span></span></span><span class="line"><span class="cl">    <span class="nf">sub</span> <span class="no">rsp</span><span class="p">,</span> <span class="no">N</span>          <span class="c1">; aloca N bytes de variáveis locais
+</span></span></span><span class="line"><span class="cl">    <span class="nf">push</span> <span class="no">rbx</span>            <span class="c1">; salva callee-saved que vamos usar
+</span></span></span><span class="line"><span class="cl">    <span class="c1">; ... corpo: chamadas a outras funções, etc. ...
+</span></span></span><span class="line"><span class="cl">    <span class="nf">pop</span> <span class="no">rbx</span>             <span class="c1">; restaura
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rsp</span><span class="p">,</span> <span class="no">rbp</span>        <span class="c1">; libera variáveis locais (ou &#39;add rsp, N&#39;)
+</span></span></span><span class="line"><span class="cl">    <span class="nf">pop</span> <span class="no">rbp</span>             <span class="c1">; restaura rbp do caller
+</span></span></span><span class="line"><span class="cl">    <span class="nf">ret</span></span></span></code></pre></div>
+</div>
+<p>
+O frame permite acessar argumentos e variáveis locais com offsets fixos a partir de <code class="verbatim">rbp</code> (<code class="verbatim">rbp+16</code> é o primeiro argumento na pilha, <code class="verbatim">rbp-8</code> é a primeira variável local, etc.) e facilita a depuração e o unwinding de stack.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-32" class="outline-3">
+<h3 id="headline-32">
+12 Exemplo prático: calculando o tamanho de uma string
+</h3>
+<div id="outline-text-headline-32" class="outline-text-3">
+<p>
+Juntando os conceitos, uma função <code class="verbatim">strlen</code> que calcula o comprimento de uma string null-terminated:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">; size_t strlen(const char *s)
+</span></span></span><span class="line"><span class="cl"><span class="c1">; Argumento: rdi = ponteiro para string
+</span></span></span><span class="line"><span class="cl"><span class="c1">; Retorno: rax = comprimento (sem o terminador nulo)
+</span></span></span><span class="line"><span class="cl"><span class="nl">strlen:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="no">rdi</span>        <span class="c1">; copia o ponteiro
+</span></span></span><span class="line"><span class="cl"><span class="nl">.loop:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">cmp</span> <span class="no">byte</span> <span class="p">[</span><span class="no">rax</span><span class="p">],</span> <span class="mi">0</span>   <span class="c1">; compara o byte atual com 0
+</span></span></span><span class="line"><span class="cl">    <span class="nf">je</span>  <span class="no">.done</span>           <span class="c1">; se for nulo, terminamos
+</span></span></span><span class="line"><span class="cl">    <span class="nf">inc</span> <span class="no">rax</span>             <span class="c1">; avança para o próximo byte
+</span></span></span><span class="line"><span class="cl">    <span class="nf">jmp</span> <span class="no">.loop</span>
+</span></span><span class="line"><span class="cl"><span class="nl">.done:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">sub</span> <span class="no">rax</span><span class="p">,</span> <span class="no">rdi</span>        <span class="c1">; rax = (ptr_final - ptr_inicial) = comprimento
+</span></span></span><span class="line"><span class="cl">    <span class="nf">ret</span></span></span></code></pre></div>
+</div>
+<p>
+Alguns detalhes desse código:</p>
+<ul>
+<li>Usamos <code class="verbatim">rax</code> como ponteiro de iteração. Poderíamos usar <code class="verbatim">rcx</code> ou outro registrador caller-saved, mas <code class="verbatim">rax</code> já é o registrador de retorno — reaproveitá-lo evita um <code class="verbatim">mov</code> extra no final.</li>
+<li><code class="verbatim">cmp byte [rax], 0</code> é um acesso à memória de 1 byte. O qualificador <code class="verbatim">byte</code> é necessário porque o montador não sabe se você quer comparar 1, 2, 4 ou 8 bytes.</li>
+<li><code class="verbatim">sub rax, rdi</code> no final calcula a diferença entre o ponteiro que avançou e o ponteiro original: essa é exatamente a quantidade de caracteres.</li>
+<li>A função não modifica nenhum registrador callee-saved — não precisa de prólogo/epílogo.</li>
+</ul>
+<p>Para usá-la:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.data</span>
+</span></span><span class="line"><span class="cl"><span class="nl">msg:</span> <span class="nf">db</span> <span class="err">&#34;</span><span class="no">Assembly</span><span class="err">&#34;</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl"><span class="nf">global</span> <span class="no">_start</span>
+</span></span><span class="line"><span class="cl"><span class="nl">_start:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="no">msg</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">call</span> <span class="no">strlen</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="no">rax</span>        <span class="c1">; código de saída = comprimento
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">60</span>         <span class="c1">; syscall exit
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span></span></span></code></pre></div>
+</div>
+<p>
+Execute e verifique com <code class="verbatim">echo $?</code> — o código de saída será 8.</p>
+</div>
+</div>
+<div id="outline-container-headline-33" class="outline-3">
+<h3 id="headline-33">
+13 O <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel SDM</a> como referência diária
+</h3>
+<div id="outline-text-headline-33" class="outline-text-3">
+<p>
+O Intel Software Developer&#39;s Manual não é um livro para ler linearmente — é uma referência. O volume 2 é o mais consultado: cada instrução tem uma página com a codificação binária (<code class="verbatim">OPCODE</code>), os operandos permitidos, o efeito sobre flags e pseudocódigo do que a instrução faz.</p>
+<p>
+Exemplo prático de consulta: pesquise <code class="verbatim">push</code> no volume 2. A tabela mostra que operandos imediatos com menos de 64 bits são sign-extended para o tamanho padrão da pilha (64 bits no modo longo), a menos que o tamanho seja explicitamente especificado (<code class="verbatim">push word 0x1234</code>). É o tipo de detalhe que você só descobre no manual.</p>
+<p>
+A notação de operandos é compacta mas consistente: <code class="verbatim">r/m16</code> significa &#34;registrador ou memória de 16 bits&#34;; <code class="verbatim">imm8</code> é &#34;imediato de 8 bits&#34;; <code class="verbatim">r64</code> é &#34;registrador de 64 bits&#34;. Depois de consultar algumas instruções, você decifra a notação sem esforço.</p>
+<p>
+O volume 1 cobre arquitetura (o conteúdo das seções 1 a 6 deste artigo). O volume 3 é referência de sistema (registradores de controle, paginação, interrupções, modos de operação). Você não precisa ler tudo — saiba onde encontrar cada tipo de informação e consulte sob demanda.</p>
+</div>
+</div>
+<div id="outline-container-headline-34" class="outline-3">
+<h3 id="headline-34">
+14 Hands-on: criando um <code class="verbatim">mycat</code>
+</h3>
+<div id="outline-text-headline-34" class="outline-text-3">
+<p>
+Você já sabe o suficiente para construir algo que funciona de verdade. Nada de &#34;Hello, world&#34; descartável: vamos escrever um clone simplificado do comando <code class="verbatim">cat</code> do Unix — um programa que lê da entrada padrão e ecoa na saída padrão até encontrar EOF (<code class="verbatim">Ctrl+D</code>). Em ~30 linhas de Assembly, você terá uma ferramenta que pode ser usada em pipelines do shell.</p>
+<p>
+O programa usa exatamente o que cobrimos: as syscalls <code class="verbatim">read</code> (código 0) e <code class="verbatim">write</code> (código 1), um buffer alocado na pilha ou no <code class="verbatim">.data</code>, comparações e saltos para controlar o laço, e <code class="verbatim">exit</code> para encerrar.</p>
+<div id="outline-container-headline-35" class="outline-4">
+<h4 id="headline-35">
+14.1 Especificação
+</h4>
+<div id="outline-text-headline-35" class="outline-text-4">
+<ul>
+<li>Lê blocos de até 256 bytes de <code class="verbatim">stdin</code> (fd 0) usando a syscall <code class="verbatim">read</code>.</li>
+<li>Se <code class="verbatim">read</code> retornar 0, chegou ao EOF — encerra.</li>
+<li>Se <code class="verbatim">read</code> retornar um valor negativo (erro), encerra com código 1.</li>
+<li>Caso contrário, escreve os bytes lidos em <code class="verbatim">stdout</code> (fd 1) usando <code class="verbatim">write</code> e volta a ler.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-36" class="outline-4">
+<h4 id="headline-36">
+14.2 Código
+</h4>
+<div id="outline-text-headline-36" class="outline-text-4">
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.bss</span>
+</span></span><span class="line"><span class="cl"><span class="nl">buffer:</span> <span class="nf">resb</span> <span class="mi">256</span>          <span class="c1">; buffer de 256 bytes (não inicializado)
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">section</span> <span class="no">.text</span>
+</span></span><span class="line"><span class="cl"><span class="nf">global</span> <span class="no">_start</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">_start:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">; --- read ---
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">0</span>            <span class="c1">; syscall read
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="mi">0</span>            <span class="c1">; fd = stdin
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rsi</span><span class="p">,</span> <span class="no">buffer</span>       <span class="c1">; destino
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdx</span><span class="p">,</span> <span class="mi">256</span>          <span class="c1">; tamanho máximo
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">cmp</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">0</span>            <span class="c1">; EOF?
+</span></span></span><span class="line"><span class="cl">    <span class="nf">je</span>  <span class="no">.exit_ok</span>          <span class="c1">; rax == 0 → terminou
+</span></span></span><span class="line"><span class="cl">    <span class="nf">jl</span>  <span class="no">.exit_err</span>         <span class="c1">; rax &lt; 0  → erro
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">; --- write ---
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdx</span><span class="p">,</span> <span class="no">rax</span>          <span class="c1">; bytes lidos → tamanho do write
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">1</span>            <span class="c1">; syscall write
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="mi">1</span>            <span class="c1">; fd = stdout
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rsi</span><span class="p">,</span> <span class="no">buffer</span>       <span class="c1">; origem
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">cmp</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jl</span>  <span class="no">.exit_err</span>         <span class="c1">; write falhou
+</span></span></span><span class="line"><span class="cl">    <span class="nf">jmp</span> <span class="no">_start</span>            <span class="c1">; próximo bloco
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">.exit_ok:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">xor</span> <span class="no">edi</span><span class="p">,</span> <span class="no">edi</span>          <span class="c1">; código 0
+</span></span></span><span class="line"><span class="cl">    <span class="nf">jmp</span> <span class="no">.exit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">.exit_err:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rdi</span><span class="p">,</span> <span class="mi">1</span>            <span class="c1">; código 1
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nl">.exit:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">60</span>           <span class="c1">; syscall exit
+</span></span></span><span class="line"><span class="cl">    <span class="nf">syscall</span></span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-37" class="outline-4">
+<h4 id="headline-37">
+14.3 O que está acontecendo, instrução por instrução
+</h4>
+<div id="outline-text-headline-37" class="outline-text-4">
+<ul>
+<li><code class="verbatim">section .bss</code> reserva memória não inicializada. <code class="verbatim">resb 256</code> aloca 256 bytes zerados no carregamento — ideal para buffers. Diferente de <code class="verbatim">.data</code>, não ocupa espaço no binário.</li>
+<li>O laço principal está em <code class="verbatim">_start</code>: cada iteração chama <code class="verbatim">read</code>, confere o resultado e, se houver dados, chama <code class="verbatim">write</code>. Um <code class="verbatim">jmp _start</code> fecha o ciclo — a flag <code class="verbatim">ZF</code> e <code class="verbatim">SF</code> do <code class="verbatim">cmp rax, 0</code> determinam se saímos do laço.</li>
+<li><code class="verbatim">cmp rax, 0</code> seguido de <code class="verbatim">je</code> verifica EOF: <code class="verbatim">read</code> retorna 0 quando o descritor chega ao fim. <code class="verbatim">jl</code> verifica se o resultado é negativo — syscalls retornam -errno em <code class="verbatim">rax</code> em caso de erro (ex.: -EBADF se o fd for inválido).</li>
+<li><code class="verbatim">mov rdx, rax</code> antes de <code class="verbatim">write</code> é essencial: <code class="verbatim">read</code> retorna em <code class="verbatim">rax</code> quantos bytes realmente foram lidos. Se você passasse sempre 256 para <code class="verbatim">write</code>, escreveria lixo nos bytes além do que foi lido.</li>
+<li><code class="verbatim">jmp _start</code> em vez de <code class="verbatim">jmp .start</code> (rótulo local): <code class="verbatim">_start</code> é global, então usamos o nome completo. Poderíamos ter usado um rótulo local <code class="verbatim">.loop</code>, mas <code class="verbatim">_start</code> já está definido e é claro.</li>
+</ul>
+<div class="note-block">
+<p><strong>Cuidado com partial writes</strong></p>
+<p>
+Este código assume que <code class="verbatim">write</code> sempre consegue escrever todos os bytes solicitados de uma vez. Na prática, uma chamada a <code class="verbatim">write</code> pode retornar um valor positivo <em>menor</em> que <code class="verbatim">rdx</code> — isso é um <em>partial write</em>. O kernel garante que escreveu pelo menos 1 byte, mas não necessariamente todos. Se isso acontecer, o restante dos bytes ainda está no buffer e precisa ser escrito antes de um novo <code class="verbatim">read</code>.</p>
+<p>
+Para um programa de produção, o tratamento seria:</p>
+<div class="src src-asm">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">; Após write, esperamos que rax == rdx (bytes solicitados)
+</span></span></span><span class="line"><span class="cl">    <span class="nf">cmp</span> <span class="no">rax</span><span class="p">,</span> <span class="no">rdx</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">je</span>  <span class="no">_start</span>            <span class="c1">; tudo escrito, próximo bloco
+</span></span></span><span class="line"><span class="cl"><span class="c1">; Partial write: ajusta o ponteiro do buffer e tenta de novo
+</span></span></span><span class="line"><span class="cl">    <span class="nf">add</span> <span class="no">rsi</span><span class="p">,</span> <span class="no">rax</span>          <span class="c1">; avança o ponteiro
+</span></span></span><span class="line"><span class="cl">    <span class="nf">sub</span> <span class="no">rdx</span><span class="p">,</span> <span class="no">rax</span>          <span class="c1">; reduz o contador
+</span></span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">rax</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">jmp</span> <span class="no">write_loop</span>        <span class="err">;</span> <span class="no">reenvia</span> <span class="no">o</span> <span class="no">restante</span></span></span></code></pre></div>
+</div>
+<p>
+Para testes com pipes e arquivos locais, partial writes são raros — por isso o código simplificado funciona. Mas em sockets, TTYs ou quando o disco está sob pressão, eles ocorrem e o programa perderia dados silenciosamente.</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-38" class="outline-4">
+<h4 id="headline-38">
+14.4 Compilando e testando
+</h4>
+<div id="outline-text-headline-38" class="outline-text-4">
+<div class="src src-bash">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nasm -felf64 mycat.asm -o mycat.o
+</span></span><span class="line"><span class="cl">ld -o mycat mycat.o
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Teste básico</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;Assembly funciona&#34;</span> <span class="p">|</span> ./mycat
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Pipeline com outro comando</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;assembly é portátil?&#34;</span> <span class="p">|</span> ./mycat <span class="p">|</span> tr <span class="s1">&#39;a-z&#39;</span> <span class="s1">&#39;A-Z&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Com arquivo real</span>
+</span></span><span class="line"><span class="cl">./mycat &lt; mycat.asm
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Teste de estresse (arquivo de 1 MB via /dev/urandom)</span>
+</span></span><span class="line"><span class="cl">dd <span class="k">if</span><span class="o">=</span>/dev/urandom <span class="nv">bs</span><span class="o">=</span><span class="m">1024</span> <span class="nv">count</span><span class="o">=</span><span class="m">1024</span> 2&gt;/dev/null <span class="p">|</span> <span class="nb">time</span> ./mycat &gt; /dev/null</span></span></code></pre></div>
+</div>
+<p>
+O último comando mostra que mesmo um loop ingênuo em Assembly é rápido — você está a um <code class="verbatim">syscall</code> de distância do kernel, sem buffers intermediários da libc, sem <code class="verbatim">FILE *</code>, sem overhead de linguagem.</p>
+</div>
+</div>
+<div id="outline-container-headline-39" class="outline-4">
+<h4 id="headline-39">
+14.5 Extensões sugeridas
+</h4>
+<div id="outline-text-headline-39" class="outline-text-4">
+<p>
+Se quiser ir além antes do próximo artigo:</p>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Extensão</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Buffer maior</td>
+<td>Experimente 4096 ou 8192 bytes (múltiplos do tamanho de página). Syscalls são caras; menos chamadas com buffers maiores aumentam o throughput.</td>
+</tr>
+<tr>
+<td>Suporte a múltiplos arquivos</td>
+<td>Se o programa receber argumentos (<code class="verbatim">argc &gt; 1</code>), leia de cada arquivo em vez de <code class="verbatim">stdin</code>. Use a syscall <code class="verbatim">open</code> (código 2) e parsing de <code class="verbatim">argv</code>.</td>
+</tr>
+<tr>
+<td>Medir desempenho</td>
+<td>Use <code class="verbatim">perf stat ./mycat &lt; arquivo_grande &gt; /dev/null</code> e compare com o <code class="verbatim">cat</code> do sistema. A diferença está no buffer e no <code class="verbatim">splice=/=sendfile</code>, não na linguagem.</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+Tabela 11 – Extensões sugeridas para o <code class="verbatim">mycat</code>
+</figcaption>
+</figure>
+<p>
+No próximo artigo, vamos expandir esse <code class="verbatim">mycat</code> para manipular os dados que passam pelo programa: converter case, calcular hashes, filtrar linhas — transformadores de stream, os precursores de ferramentas como <code class="verbatim">grep</code>, <code class="verbatim">sed</code> e <code class="verbatim">awk</code>, implementados em Assembly puro. Você já tem o esqueleto de leitura e escrita; o que faremos a seguir é inserir inteligência entre a entrada e a saída.</p>
+<p>
+O caminho que você começou aqui — entender o hardware, escrever instruções, controlar o fluxo byte a byte — é o mesmo que levou pessoas a criar sistemas operacionais, engines de jogo, ferramentas de segurança ofensiva, emuladores de console e kernels embarcados. Não existe mágica abaixo dessa camada. Você está no fundo da stack. E agora sabe o que fazer com isso.</p>
+</div>
+</div>
+</div>
+</div>
+
+  </div>
+</article>
+
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <p>&copy; 2026 lobovit</p>
+    </div>
+  </footer>
+
+<script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+<script src="/vendor/prism/prism-core.min.js"></script>
+<script src="/vendor/prism/prism-clike.min.js"></script>
+<script src="/vendor/prism/prism-bash.min.js"></script>
+<script src="/vendor/prism/prism-c.min.js"></script>
+<script src="/vendor/prism/prism-cpp.min.js"></script>
+<script src="/vendor/prism/prism-rust.min.js"></script>
+<script src="/vendor/prism/prism-go.min.js"></script>
+<script src="/vendor/prism/prism-javascript.min.js"></script>
+<script src="/vendor/prism/prism-typescript.min.js"></script>
+<script src="/vendor/prism/prism-clojure.min.js"></script>
+<script src="/vendor/prism/prism-lisp.min.js"></script>
+<script src="/vendor/prism/prism-swift.min.js"></script>
+<script src="/vendor/prism/prism-zig.min.js"></script>
+<script src="/vendor/prism/prism-sql.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+<script src="/vendor/mermaid/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: {
+    fontFamily: '"Inter", system-ui, sans-serif',
+    fontSize: '14px',
+    primaryColor: '#1e1e28',
+    primaryTextColor: '#d4d4e0',
+    primaryBorderColor: '#25252f',
+    lineColor: '#7c9aff',
+    secondaryColor: '#13131a',
+    tertiaryColor: '#18181f'
+  }});
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('code.language-mermaid').forEach(function(el) {
+      var mDiv = document.createElement('div');
+      mDiv.className = 'mermaid';
+      mDiv.textContent = el.textContent;
+      var wrap = el.closest('.src-mermaid') || el.closest('.src') || el.closest('.highlight') || el.parentElement;
+      if (wrap) wrap.replaceWith(mDiv);
+    });
+    mermaid.run();
+  });
+</script>
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">^ top</button>
+  <script>
+    document.querySelectorAll('.content table').forEach(function(t) {
+      if (t.closest('.table-wrapper')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrapper';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  </script>
+  <script>
+    var btn = document.querySelector('.back-to-top');
+    var progress = document.getElementById('reading-progress');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 400);
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var scrollPercent = (scrollTop / docHeight) * 100;
+      progress.style.width = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>

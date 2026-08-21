@@ -1,8 +1,11 @@
 {{ define "main" }}
-<article>
+<article class="single">
   <header>
     <h1>{{ .Title }}</h1>
-    <p class="meta"><time>{{ .Date.Format "2006-01-02" }}</time>{{ if .Params.tags }} · {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}{{ end }}</p>
+    <p class="meta">
+      <time>{{ .Date.Format "2006-01-02" }}</time>
+      {{ if .Params.tags }} · {{ range .Params.tags }}<span class="tag {{ if eq (lower .) "go" }}tag-go{{ else if eq (lower .) "rust" }}tag-rust{{ else if or (eq (lower .) "performance") (eq (lower .) "perf") }}tag-perf{{ else }}tag-default{{ end }}">{{ . }}</span>{{ end }}{{ end }}
+    </p>
   </header>
   <div class="content">
     {{ .Content }}

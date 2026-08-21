@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.svg">
+  <title>Baixo Nível — lobovit</title>
+  <meta name="description" content="engenharia de software, compiladores, sistemas e programacao">
+  <link rel="stylesheet" href="/css/main.css?v=4">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/prism/prism-mocha.min.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <a class="site-title" href="http://localhost:1313/">/home/lobovit_</a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        
+        <li><a href="/page/about/">about</a></li>
+        
+        <li><a href="/page/contact/">contact</a></li>
+        
+      </ul>
+      
+      <a href="https://github.com/lobovit" class="nav-github" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" width="18" height="18"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      
+    </div>
+  </nav>
+
+  <div class="reading-progress" id="reading-progress"></div>
+  <div class="frame">
+    
+<div class="list-page">
+  <div class="section-label">// Baixo Nível</div>
+  <h1>Baixo Nível</h1>
+  
+  <a href="/lowlv01/" class="post-item">
+    <div class="post-left">
+      <div class="post-title">Programação em Baixo Nível</div>
+      <div class="post-desc">Do modelo de von Neumann ao seu primeiro programa em Assembly: entenda o que acontece no fundo da stack e o que você pode construir com esse conhecimento.</div>
+    </div>
+    <div class="post-right">
+      
+      <span class="post-tag tag-defaulttag-defaulttag-default">assembly</span>
+      
+      
+      <span class="post-date">2025-07-21</span>
+      
+    </div>
+  </a>
+  
+</div>
+
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <p>&copy; 2026 lobovit</p>
+    </div>
+  </footer>
+
+<script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+<script src="/vendor/prism/prism-core.min.js"></script>
+<script src="/vendor/prism/prism-clike.min.js"></script>
+<script src="/vendor/prism/prism-bash.min.js"></script>
+<script src="/vendor/prism/prism-c.min.js"></script>
+<script src="/vendor/prism/prism-cpp.min.js"></script>
+<script src="/vendor/prism/prism-rust.min.js"></script>
+<script src="/vendor/prism/prism-go.min.js"></script>
+<script src="/vendor/prism/prism-javascript.min.js"></script>
+<script src="/vendor/prism/prism-typescript.min.js"></script>
+<script src="/vendor/prism/prism-clojure.min.js"></script>
+<script src="/vendor/prism/prism-lisp.min.js"></script>
+<script src="/vendor/prism/prism-swift.min.js"></script>
+<script src="/vendor/prism/prism-zig.min.js"></script>
+<script src="/vendor/prism/prism-sql.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+<script src="/vendor/mermaid/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: {
+    fontFamily: '"Inter", system-ui, sans-serif',
+    fontSize: '14px',
+    primaryColor: '#1e1e28',
+    primaryTextColor: '#d4d4e0',
+    primaryBorderColor: '#25252f',
+    lineColor: '#7c9aff',
+    secondaryColor: '#13131a',
+    tertiaryColor: '#18181f'
+  }});
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('code.language-mermaid').forEach(function(el) {
+      var mDiv = document.createElement('div');
+      mDiv.className = 'mermaid';
+      mDiv.textContent = el.textContent;
+      var wrap = el.closest('.src-mermaid') || el.closest('.src') || el.closest('.highlight') || el.parentElement;
+      if (wrap) wrap.replaceWith(mDiv);
+    });
+    mermaid.run();
+  });
+</script>
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">^ top</button>
+  <script>
+    document.querySelectorAll('.content table').forEach(function(t) {
+      if (t.closest('.table-wrapper')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrapper';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  </script>
+  <script>
+    var btn = document.querySelector('.back-to-top');
+    var progress = document.getElementById('reading-progress');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 400);
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var scrollPercent = (scrollTop / docHeight) * 100;
+      progress.style.width = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>

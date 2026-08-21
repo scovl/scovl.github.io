@@ -1,12 +1,21 @@
 {{ define "main" }}
-  <ul class="post-list">
-    {{ range where .Site.RegularPages "Section" "post" }}
-    {{ if ne (.Date.Format "2006-01-02") "0001-01-01" }}
-    <li>
-      <time>{{ .Date.Format "2006-01-02" }}</time>
-      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-    </li>
-    {{ end }}
-    {{ end }}
-  </ul>
+<section class="posts">
+  <div class="section-label">// posts recentes</div>
+  {{ range where .Site.RegularPages "Section" "post" }}
+  {{ if ne (.Date.Format "2006-01-02") "0001-01-01" }}
+  <a href="{{ .RelPermalink }}" class="post-item">
+    <div class="post-left">
+      <div class="post-title">{{ .Title }}</div>
+      {{ with .Description }}<div class="post-desc">{{ . }}</div>{{ end }}
+    </div>
+    <div class="post-right">
+      {{ with .Params.tags }}
+      <span class="post-tag {{ range $i, $tag := . }}{{ if eq (lower $tag) "go" }}tag-go{{ else if eq (lower $tag) "rust" }}tag-rust{{ else if or (eq (lower $tag) "performance") (eq (lower $tag) "perf") }}tag-perf{{ else }}tag-default{{ end }}{{ end }}">{{ index . 0 | lower }}</span>
+      {{ end }}
+      <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+    </div>
+  </a>
+  {{ end }}
+  {{ end }}
+</section>
 {{ end }}

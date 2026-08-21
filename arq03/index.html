@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title> — lobovit</title>
+  <link rel="stylesheet" href="/css/main.css?v=3">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/prism/prism-mocha.min.css">
+</head>
+<body>
+  <div class="frame">
+    <header>
+      <nav>
+        <a class="site-title" href="http://localhost:1313/">lobovit</a>
+        <span class="nav-links">
+          <a href="/page/about/">about</a>
+          <a href="/page/contact/">contact</a>
+        </span>
+      </nav>
+      <hr>
+    </header>
+    <main>
+      
+<article>
+  <header>
+    <h1></h1>
+    <p class="meta"><time>0001-01-01</time></p>
+  </header>
+  <div class="content">
+    
+<p>Aqui está a tradução, mantendo o tom coloquial e acessível, como se estivéssemos batendo um papo sobre arquitetura de sistemas.</p>
+<p>
+—</p>
+<p>
+## Pensamento Baseado em Componentes</p>
+<p>
+No Capítulo 3, introduzimos o conceito de módulo como uma coleção de códigos relacionados. Neste capítulo, vamos mergulhar muito mais fundo nisso, focando no aspecto arquitetural da modularidade em termos de componentes lógicos — ou seja, os blocos de construção de um sistema. Identificar e gerenciar esses componentes é parte do &#34;pensamento arquitetural&#34; (dá uma olhada no Capítulo 2), tanto que chamamos essa atividade de <strong><strong>pensamento baseado em componentes</strong></strong>.</p>
+<p>
+O pensamento baseado em componentes consiste em enxergar a estrutura de um sistema como um conjunto de peças lógicas, todas interagindo para realizar certas funções de negócio. É nesse nível (e não no nível de classes) que o arquiteto realmente &#34;enxerga&#34; o sistema.</p>
+<p>
+Neste capítulo, definimos o que são componentes lógicos na arquitetura de software, como identificá-los e como chegar a um nível de granularidade apropriado analisando o que chamamos de <strong>coesão</strong> (vamos definir o que isso significa logo mais). Também discutimos o <strong>acoplamento</strong> entre componentes e como — e por que — criar sistemas fracamente acoplados.</p>
+<p>
+### Definindo Componentes Lógicos</p>
+<p>
+Pense na planta baixa de uma casa típica, como ilustrado na Figura 8-1. Note que a planta é feita de vários cômodos (como cozinha, quartos, banheiros, sala de estar, escritório, etc.), e cada um serve para um propósito diferente. Esses cômodos representam os blocos de construção — os componentes — da casa.</p>
+<p>
+<strong><strong>Figura 8-1.</strong></strong> Os vários cômodos representam os componentes da casa.</p>
+<p>
+Da mesma forma, as principais funções que um sistema executa representam os componentes desse sistema, como mostrado na Figura 8-2. Assim como os cômodos de uma casa, cada componente executa uma função específica, como gerenciar estoque, despachar pedidos ou processar pagamentos. Juntos, eles formam o sistema. Cada componente contém o código-fonte que implementa aquela função de negócio específica.</p>
+<p>
+<strong><strong>Figura 8-2.</strong></strong> As várias funções principais representam os componentes do sistema.</p>
+<p>
+Componentes lógicos na arquitetura de software geralmente se manifestam através de um <strong>namespace</strong> ou uma estrutura de diretórios que contém o código-fonte que implementa aquela funcionalidade específica. Normalmente, os nós finais (as pastas mais profundas) dessa estrutura representam os componentes lógicos na arquitetura, enquanto diretórios de nível superior representam os domínios e subdomínios do sistema. Na estrutura de diretórios ilustrada na Figura 8-3, o caminho `order_entry/ordering/payment` representa o componente de Processamento de Pagamento, e o caminho `order_entry/processing/fulfillment` representa o componente de Atendimento de Pedidos. O código-fonte dentro dessas pastas é o que implementa esses componentes.</p>
+<p>
+<strong><strong>Figura 8-3.</strong></strong> Os nós finais da estrutura de diretórios representam os componentes do sistema.</p>
+<p>
+Um arquiteto pode analisar as estruturas de diretórios ou <strong>namespaces</strong> de um software para entender sua estrutura interna — ou seja, sua arquitetura lógica. Vamos descrever as diferenças entre arquiteturas lógicas e físicas na próxima seção.</p>
+<p>
+—</p>
+<p>
+### Arquitetura Lógica vs. Arquitetura Física</p>
+<p>
+Uma <strong><strong>arquitetura lógica</strong></strong> consiste nos componentes lógicos (blocos de construção) de um sistema e como eles interagem entre si. Ela também costuma mostrar as interações com vários atores (usuários que interagem com o sistema) e pode mostrar um repositório (não um banco de dados, mas um local de armazenamento) para esclarecer onde os dados são usados ou transferidos entre componentes. A Figura 8-4 ilustra um exemplo.</p>
+<p>
+<strong><strong>Figura 8-4.</strong></strong> Diagrama de uma arquitetura lógica.</p>
+<p>
+Um diagrama de arquitetura lógica geralmente não mostra interface de usuário, bancos de dados, serviços ou outros artefatos físicos. Em vez disso, ele mostra os componentes lógicos e como eles se comunicam, o que deve bater com as estruturas de pastas e <strong>namespaces</strong> que organizam o código.</p>
+<p>
+Já uma <strong><strong>arquitetura física</strong></strong>, por outro lado, inclui esses artefatos físicos: serviços, interfaces, bancos de dados, etc. A Figura 8-5 é um exemplo.</p>
+<p>
+<strong><strong>Figura 8-5.</strong></strong> Diagrama de uma arquitetura física.</p>
+<p>
+A arquitetura física do sistema deve representar bem de perto um (ou mais) dos muitos estilos arquiteturais descritos na Parte II deste livro: microsserviços, arquitetura em camadas, arquitetura orientada a eventos, etc.</p>
+<p>
+Muitos arquitetos optam por pular a criação de uma arquitetura lógica e começam direto pela física. Nós não aconselhamos isso, porque a arquitetura física nem sempre mostra onde a funcionalidade do sistema está e como tudo se encaixa. Por exemplo, em uma arquitetura física, a função de processar pagamentos pode estar espalhada por vários serviços, dificultando ver como ela interage com o restante do sistema. Além disso, a arquitetura física não dá às equipes de desenvolvimento qualquer orientação sobre como construir um sistema monolítico ou distribuído, ou como organizar seu código, resultando em arquiteturas sem estrutura, difíceis de manter, testar e implantar.</p>
+<p>
+Geralmente, a arquitetura lógica de um sistema é independente da física. Em outras palavras, ao criar uma arquitetura lógica, o foco é no que o sistema faz, como essa funcionalidade é separada e como as partes funcionais interagem, em vez da estrutura física. Por exemplo, ao criar o diagrama da Figura 8-4, o arquiteto pode nem ter decidido ainda se esses componentes vão rodar num monólito (uma única unidade de implantação) ou como serviços separados.</p>
+<p>
+—</p>
+<p>
+### Criando uma Arquitetura Lógica</p>
+<p>
+Criar uma arquitetura lógica envolve identificar e reestruturar componentes continuamente. A identificação de componentes funciona melhor como um processo iterativo: você cria componentes candidatos e os refina através de um ciclo de feedback, como ilustrado na Figura 8-6.</p>
+<p>
+<strong><strong>Figura 8-6.</strong></strong> O ciclo de identificação e refatoração de componentes.</p>
+<p>
+A primeira atividade do arquiteto é identificar os componentes centrais iniciais e atribuir a eles histórias de usuário ou requisitos. Depois, ele analisa os papéis e responsabilidades para ver se faz sentido. Em seguida, o arquiteto olha para as características arquiteturais que o sistema precisa suportar e determina se é necessário refatorar (quebrar ou combinar componentes). Finalmente, ele refina os componentes. Esse processo é um ciclo que, essencialmente, nunca para.</p>
+<p>
+Esse fluxo funciona tanto para sistemas novos quanto para quando você adiciona ou muda uma funcionalidade. Imagine que você precise permitir que os usuários busquem itens na loja em vez de entregá-los em casa. Isso envolverá adicionar código de agendamento e mudar o processo de pedidos existente. Como os componentes mudam, seus papéis também podem mudar, levando você a reestruturar o código ou criar componentes novos.</p>
+<p>
+### Identificando Componentes Centrais</p>
+<p>
+O desafio ao começar uma arquitetura nova é definir quais são os componentes centrais iniciais. Um erro comum é tentar deixar tudo perfeito logo de cara. A melhor abordagem é fazer um &#34;melhor palpite&#34; baseado nas funções principais do sistema e ir refinando através do fluxo da Figura 8-6. É melhor iterar conforme você aprende mais sobre o sistema do que tentar acertar tudo no começo, quando você sabe menos sobre ele.</p>
+<p>
+Na maioria dos casos, os componentes iniciais são baseados em ações que os usuários tomam ou fluxos de trabalho principais. Gostamos de pensar neles como <strong><strong>baldes vazios</strong></strong>. O balde não faz nada até que você comece a &#34;enchê-lo&#34; — ou seja, atribuindo histórias de usuário ou requisitos a ele. Como mostra a Figura 8-7, o nome do componente deve representar seu papel, mas, até você atribuir as tarefas, ele é apenas um <strong>placeholder</strong>, um palpite de um bloco funcional.</p>
+<p>
+<strong><strong>Figura 8-7.</strong></strong> No início, os componentes são como baldes vazios.</p>
+<p>
+Aqui estão duas abordagens úteis e uma que recomendamos evitar:</p>
+<p>
+#### 1. Abordagem de Fluxo de Trabalho (Workflow)</p>
+<p>
+Essa abordagem aproveita os fluxos principais (sem erros) que um usuário segue no sistema. Se você sabe o fluxo geral, pode criar componentes para cada etapa.
+Exemplo:</p>
+<ol>
+<li>Usuário navega no catálogo → <strong><strong>Item Browser</strong></strong></li>
+<li>Usuário faz o pedido → <strong><strong>Order Placement</strong></strong></li>
+<li>Usuário paga → <strong><strong>Order Payment</strong></strong></li>
+</ol>
+<p>… e assim por diante. Nem todo passo vira um componente; o foco é nos fluxos principais.</p>
+<p>
+#### 2. Abordagem Ator/Ação</p>
+<p>
+Muito útil quando o sistema tem múltiplos atores (cliente, funcionário do estoque, o próprio sistema realizando tarefas automáticas). Você lista as ações que cada ator realiza e cria componentes para elas.</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+<strong><strong>Cliente:</strong></strong> Pesquisar itens, Ver detalhes, Fazer pedido…
+</h2>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+<strong><strong>Funcionário:</strong></strong> Selecionar caixa, Marcar como pronto…
+</h2>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+<strong><strong>Sistema:</strong></strong> Ajustar estoque, Aplicar pagamento…
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>
+#### 3. A &#34;Armadilha da Entidade&#34; (Antipadrão)</p>
+<p>
+É tentador identificar componentes baseados em entidades (como <strong>Customer Manager</strong>, <strong>Item Manager</strong>, <strong>Order Manager</strong>). <strong><strong>Fuja disso.</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+<strong><strong>Nomes ambíguos:</strong></strong> &#34;Gerenciador de Pedidos&#34; não diz nada sobre a responsabilidade real. Se o nome terminar com <strong>Manager, Controller, Handler, Engine</strong> ou <strong>Processor</strong>, você provavelmente caiu na armadilha.
+</h2>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+<strong><strong>Depósito de lixo:</strong></strong> Componentes desse tipo viram um &#34;faz-tudo&#34; gigante e desorganizado.
+</h2>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+<strong><strong>Granularidade:</strong></strong> Componentes assim ficam gigantescos, difíceis de manter e testar. Se o seu sistema só faz CRUD, você não precisa de arquitetura, mas sim de uma ferramenta de automação.
+</h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<p>
+—</p>
+<p>
+### Atribuindo Histórias de Usuário aos Componentes</p>
+<p>
+O próximo passo é atribuir requisitos aos componentes. Isso começa a encher os &#34;baldes vazios&#34;, dando a eles papéis concretos (Figura 8-9).</p>
+<p>
+<strong><strong>Figura 8-9.</strong></strong> Enchendo os baldes vazios com histórias de usuário.</p>
+<p>
+Às vezes, uma funcionalidade (como enviar e-mail) não cabe bem em nenhum componente existente, o que indica que você precisa criar um novo componente (ex: <strong>Customer Notification</strong>), fazendo o sistema evoluir (Figura 8-10).</p>
+<p>
+<strong><strong>Figura 8-10.</strong></strong> Componentes evoluindo com base em novas histórias de usuário.</p>
+<p>
+—</p>
+<p>
+### Analisando Papéis, Responsabilidades e Características</p>
+<p>
+A <strong><strong>coesão</strong></strong> é o que nos diz se o que está dentro do componente faz sentido junto. Se a descrição do que um componente faz contém muitos &#34;e&#34;, &#34;também&#34;, &#34;além disso&#34; e vírgulas demais, ele está fazendo coisa demais. É hora de quebrar esse componente em outros menores e mais específicos.</p>
+<p>
+Além disso, considere as <strong><strong>características arquiteturais</strong></strong>: escalabilidade, disponibilidade, etc. Se uma parte do sistema precisa lidar com milhares de acessos simultâneos e outra não, talvez você precise dividir seu componente inicial em dois menores para atender melhor a essas necessidades técnicas diferentes.</p>
+<p>
+### Acoplamento de Componentes</p>
+<p>
+Quando um componente depende de outro, dizemos que eles estão <strong><strong>acoplados</strong></strong>. Quanto mais acoplado, mais difícil é manter e testar (Figura 8-11).</p>
+<p>
+<strong><strong>Figura 8-11.</strong></strong> Componentes podem ser acoplados mesmo sem comunicação direta.</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
+<h2 id="headline-7">
+<strong><strong>Acoplamento Estático (Sincronizado):</strong></strong> Pode ser <strong>aferente</strong> (quantos dependem de mim - entrada) ou <strong>eferente</strong> (quantos eu dependo - saída).
+</h2>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
+<h2 id="headline-8">
+<strong><strong>Acoplamento Temporal:</strong></strong> Acontece quando a ordem das coisas importa (ex: o pedido precisa ser criado antes de ser despachado). É difícil de detectar com ferramentas comuns, muitas vezes só aparecendo em erros.
+</h2>
+<div id="outline-text-headline-8" class="outline-text-2">
+<p>
+#### A Lei de Demeter (Princípio do Menor Conhecimento)</p>
+<p>
+O objetivo é que um componente saiba o mínimo possível sobre os outros. Na Figura 8-14, o componente de <strong>Order Placement</strong> sabe demais sobre o que os outros precisam fazer.</p>
+<p>
+<strong><strong>Figura 8-14.</strong></strong> O <strong>Order Placement</strong> está muito acoplado porque tem conhecimento demais.</p>
+<p>
+Ao aplicar a Lei de Demeter, você redistribui esse conhecimento. Se o <strong>Order Placement</strong> só precisa disparar o pedido, ele não precisa saber que o <strong>Inventory Management</strong> precisa ajustar o preço ou pedir mais estoque. Ele delega isso (Figura 8-15).</p>
+<p>
+<strong><strong>Figura 8-15.</strong></strong> O <strong>Order Placement</strong> fica menos acoplado quando sabe menos.</p>
+<p>
+—</p>
+<p>
+### Estudo de Caso: &#34;Going, Going, Gone&#34;</p>
+<p>
+Se você não tem restrições específicas, a abordagem <strong><strong>Ator/Ação</strong></strong> é um ótimo ponto de partida. No caso do sistema de leilão (GGG), identificamos os papéis (Bidder, Auctioneer, System) e as ações. O design inicial (Figura 8-16) cria componentes como <strong>Video Streamer</strong>, <strong>Bid Capture</strong>, <strong>Auction Session</strong>, etc.</p>
+<p>
+<strong><strong>Figura 8-16.</strong></strong> Conjunto inicial de componentes para o GGG.</p>
+<p>
+Ao analisar as características (como a necessidade de alta disponibilidade para o leiloeiro versus a escalabilidade para milhares de lances de usuários), percebemos que o componente <strong>Bid Capture</strong> deve ser dividido em <strong>Bid Capture</strong> e <strong>Auctioneer Capture</strong> (Figura 8-17).</p>
+<p>
+<strong><strong>Figura 8-17.</strong></strong> Componentes revisados do estudo de caso GGG.</p>
+<p>
+Lembre-se: não existe uma única &#34;design perfeito&#34;. Sempre haverá <strong>trade-offs</strong> (escolhas com prós e contras). Como arquiteto, seu trabalho é avaliar essas trocas e escolher a solução que tenha o conjunto de desvantagens menos doloroso.</p>
+<p>
+Aqui está a tradução completa, mantendo o tom acessível e direto.</p>
+<p>
+—</p>
+<p>
+## Estilos de Arquitetura</p>
+<p>
+A diferença entre um estilo de arquitetura e um padrão de arquitetura pode ser confusa; nós definimos isso logo de cara, no próximo Capítulo 9.</p>
+<p>
+Entender os estilos de arquitetura ocupa muito tempo e esforço dos novos arquitetos, porque os estilos são importantes e numerosos. Os arquitetos precisam compreender os vários estilos e os <strong>trade-offs</strong> (compensações/trocas) contidos em cada um para tomar decisões eficazes; cada estilo de arquitetura incorpora um conjunto bem conhecido de <strong>trade-offs</strong> que ajudam o arquiteto a fazer a escolha certa para um problema de negócio específico.</p>
+<p>
+### Fundamentos</p>
+<p>
+Sabemos que você está ansioso para chegar aos detalhes dos estilos e padrões de arquitetura, mas primeiro precisamos cobrir um material fundamental e de definições para preparar o contexto adequado para os capítulos posteriores.</p>
+<p>
+### Estilos versus Padrões</p>
+<p>
+Primeiro, precisamos distinguir entre estilos arquiteturais e padrões na arquitetura, que são facilmente confundidos.</p>
+<p>
+O estilo de uma arquitetura descreve várias características diferentes dela, incluindo:</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+<strong><strong>Topologia de componentes:</strong></strong> Um estilo arquitetural define como os componentes e suas dependências são organizados. Por exemplo, uma arquitetura em camadas organiza as camadas dos componentes por suas capacidades técnicas, enquanto um monólito modular organiza seus componentes em torno de domínios (falaremos mais sobre essa diferença em &#34;Particionamento de Arquitetura&#34;, na página 137).
+</h2>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
+<h2 id="headline-10">
+<strong><strong>Arquitetura física:</strong></strong> Muitas vezes, o estilo dita o tipo de arquitetura física: ou monolítica ou distribuída. Por exemplo, um monólito modular é geralmente uma arquitetura monolítica com um único banco de dados, enquanto uma arquitetura orientada a eventos é sempre distribuída.
+</h2>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
+<h2 id="headline-11">
+<strong>*Implantação (*Deployment</strong>):** A granularidade de um sistema e sua frequência de implantação estão frequentemente associadas ao seu estilo arquitetural. As equipes geralmente implantam arquiteturas monolíticas como uma única implantação, junto com um único banco de dados relacional. Por outro lado, arquiteturas distribuídas altamente ágeis, como microsserviços, apresentam integração automatizada, provisionamento automatizado e, às vezes, implantações automatizadas; elas são geralmente implantadas em partes, com um ritmo muito mais rápido.
+</h2>
+</div>
+<div id="outline-container-headline-12" class="outline-2">
+<h2 id="headline-12">
+<strong><strong>Estilo de comunicação:</strong></strong> O estilo arquitetural também dita como os componentes se comunicam entre si. Arquiteturas monolíticas podem fazer chamadas de método dentro do próprio monólito, enquanto arquiteturas distribuídas se comunicam via protocolos de rede, como REST ou filas de mensagens.
+</h2>
+</div>
+<div id="outline-container-headline-13" class="outline-2">
+<h2 id="headline-13">
+<strong><strong>Topologia de dados:</strong></strong> Assim como a topologia de componentes, a topologia de dados de um sistema é frequentemente ditada pelo seu estilo arquitetural. Arquiteturas monolíticas tendem a ter um banco de dados monolítico, enquanto arquiteturas distribuídas às vezes separam os dados—dependendo da filosofia do estilo de arquitetura.
+</h2>
+<div id="outline-text-headline-13" class="outline-text-2">
+<p>
+Dar nome a um estilo fornece uma maneira concisa de descrever esse conjunto complexo de fatores. Cada nome captura uma riqueza de detalhes compreendidos—esse é um dos propósitos dos padrões de projeto. No entanto, enquanto um padrão captura uma solução contextualizada, um estilo é mais específico para a arquitetura, descrevendo os aspectos listados acima. Um estilo de arquitetura descreve a topologia da arquitetura e suas características assumidas e padrão, tanto as benéficas quanto as prejudiciais. Cobrimos alguns padrões modernos comuns de arquitetura no Capítulo 20. Os arquitetos devem estar familiarizados com vários estilos fundamentais que são os blocos de construção comuns dos sistemas.</p>
+<p>
+### De onde vêm os estilos arquiteturais?</p>
+<p>
+Ao contrário da opinião popular, não existe uma cabala oficial de arquitetos que se reúne em uma torre de marfim para decidir quais serão os novos estilos arquiteturais. Em vez disso, novos estilos emergem dos ecossistemas em constante evolução nos quais os arquitetos trabalham.</p>
+<p>
+Por exemplo, digamos que um arquiteto esperto perceba que uma nova capacidade que acabou de aparecer no ecossistema resolve um problema específico e persistente. Ele decide combiná-la com várias outras coisas, novas e antigas. Outros arquitetos veem essa solução inteligente e a copiam. Ela se torna comum o suficiente a ponto de dar um nome a ela facilitar a discussão.</p>
+<p>
+O estilo de arquitetura de microsserviços é um ótimo exemplo desse fenômeno. O surgimento de novas capacidades de DevOps, sistemas operacionais de código aberto confiáveis e a filosofia de <strong>domain-driven design</strong> (design orientado ao domínio) permitiram que os arquitetos construíssem sistemas de novas maneiras para resolver problemas como a escalabilidade. O nome microsserviços surgiu como uma reação aos estilos de arquitetura comuns na época, que apresentavam grandes serviços e orquestração extensiva. Microsserviços é um rótulo, não uma descrição. Não é um mandamento para as equipes construírem os menores serviços que conseguirem, mas sim uma maneira de se referir ao estilo de arquitetura.</p>
+<p>
+### Padrões Fundamentais</p>
+<p>
+Vários padrões fundamentais aparecem repetidamente ao longo da história da arquitetura de software, geralmente porque fornecem uma perspectiva útil sobre a organização de código, implantações ou outros aspectos da arquitetura. Por exemplo, o conceito de camadas separando diferentes preocupações com base na funcionalidade é tão antigo quanto o próprio software. No entanto, as camadas (tanto em estilos quanto em padrões) continuam a se manifestar em diferentes formas, incluindo as variantes modernas que discutimos no Capítulo 10.</p>
+<p>
+Infelizmente, existe outro antipadrão comum que decorre da ausência de arquitetura: a &#34;Grande Bola de Lama&#34; (<strong>Big Ball of Mud</strong>).</p>
+<p>
+### Grande Bola de Lama</p>
+<p>
+Os arquitetos se referem à ausência de qualquer estrutura arquitetural discernível como uma &#34;Grande Bola de Lama&#34;, nomeada após o antipadrão que Brian Foote e Joseph Yoder definiram em um artigo de 1997, apresentado na conferência de 1997 sobre Padrões de Linguagens de Programação.</p>
+<p>
+Uma Grande Bola de Lama é uma selva de código espaguete, estruturada ao acaso, expansiva, desleixada, feita com fita adesiva e arame farpado. Esses sistemas mostram sinais inconfundíveis de crescimento não regulamentado e reparos rápidos e repetidos. As informações são compartilhadas indiscriminadamente entre elementos distantes do sistema, muitas vezes ao ponto de quase todas as informações importantes se tornarem globais ou duplicadas.</p>
+<p>
+A estrutura geral do sistema pode nunca ter sido bem definida. Se foi, pode ter se erodido além do reconhecimento. Programadores com uma pitada de sensibilidade arquitetural evitam esses atoleiros. Apenas aqueles que não se preocupam com a arquitetura, e, talvez, que se sentem confortáveis com a inércia da tarefa diária de tapar os buracos nessas barragens falhas, ficam satisfeitos em trabalhar em tais sistemas.</p>
+<p>
+Hoje, Grande Bola de Lama pode descrever um aplicativo de script simples, sem estrutura interna real, que tem seus manipuladores de eventos conectados diretamente a chamadas de banco de dados. Muitos aplicativos triviais começam assim, então se tornam difíceis de manejar à medida que crescem.</p>
+<p>
+Em geral, evite esse tipo de arquitetura a todo custo. Sua falta de estrutura torna as mudanças cada vez mais difíceis. Tais arquiteturas também sofrem com problemas de implantação, testabilidade, escalabilidade e desempenho. Quanto maiores esses sistemas se tornam, pior é a dor causada pela falta de arquitetura.</p>
+<p>
+Infelizmente, esse antipadrão ocorre com bastante frequência no mundo real. Poucos arquitetos pretendem criar uma bagunça, mas muitos projetos inadvertidamente conseguem, geralmente devido à falta de governança sobre a qualidade e a estrutura do código. Por exemplo, Neal trabalhou em um projeto de cliente cuja estrutura aparece na Figura 9-1.</p>
+<p>
+O cliente (cujo nome é omitido por razões óbvias) criou uma aplicação web baseada em Java o mais rápido possível ao longo de vários anos. A visualização técnica na Figura 9-1 mostra seu acoplamento: cada ponto no perímetro do círculo representa uma classe, e cada linha representa uma conexão entre as classes, com linhas mais ousadas indicando conexões mais fortes. Nessa base de código, alterar uma classe de qualquer maneira torna difícil prever o efeito em outras classes, tornando a mudança um caso aterrorizante.</p>
+<p>
+[imagem do diagrama de uma rede complexa e emaranhada, representando o antipadrão &#34;Big Ball of Mud&#34;]</p>
+<p>
+<strong><strong>Figura 9-1.</strong></strong> Uma arquitetura &#34;Grande Bola de Lama&#34; visualizada a partir de uma base de código real. (Feita com uma ferramenta agora aposentada chamada XRay, um plug-in do Eclipse.)</p>
+<p>
+O problema com as arquiteturas de Grande Bola de Lama não é apenas a falta de estrutura. Como tudo está acoplado a tudo, as mudanças tendem a ter efeitos colaterais em cascata difíceis de prever. Esse problema pode atingir um ponto crítico onde os desenvolvedores gastam todo o seu tempo perseguindo bugs e seus efeitos colaterais, em vez de trabalhar em novas funcionalidades.</p>
+<p>
+### Arquitetura Unitária</p>
+<p>
+No início, havia apenas o computador, e o software rodava nele. Os dois começaram como uma única entidade, depois se separaram à medida que evoluíram e surgiu a necessidade de capacidades mais sofisticadas. Por exemplo, computadores mainframe começaram como sistemas singulares, depois gradualmente separaram os dados em seu próprio tipo de sistema. Da mesma forma, quando os computadores pessoais (PCs) foram desenvolvidos comercialmente pela primeira vez, o foco era amplamente em máquinas individuais. À medida que a conexão em rede de PCs se tornou comum, surgiram sistemas distribuídos (como cliente/servidor).</p>
+<p>
+### Cliente/Servidor</p>
+<p>
+Poucas arquiteturas unitárias existem fora de sistemas embarcados e outros ambientes altamente limitados. Geralmente, os sistemas de software tendem a adicionar funcionalidade ao longo do tempo, e separar as preocupações torna-se necessário para manter suas características de arquitetura operacional, como desempenho e escala.</p>
+<p>
+Muitos estilos de arquitetura lidam com como separar partes do sistema de forma eficiente. Um estilo fundamental na arquitetura separa a funcionalidade técnica entre <strong>frontend</strong> e <strong>backend</strong>: isso é chamado de arquitetura de duas camadas, ou cliente/servidor. Ele vem em diferentes sabores, dependendo da era e das capacidades computacionais do sistema.</p>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-2">
+<h2 id="headline-14">
+<strong><strong>Desktop e servidor de banco de dados:</strong></strong> Uma arquitetura de PC antiga incentivava os desenvolvedores a escrever aplicações desktop ricas em interfaces de usuário como Windows, separando os dados em um servidor de banco de dados separado. Essa arquitetura coincidiu com o aparecimento de servidores de banco de dados independentes que podiam se conectar através de protocolos de rede padrão. Isso permitiu que a lógica de apresentação residisse no desktop, enquanto a ação mais intensamente computacional (tanto em volume quanto em complexidade) ocorria em servidores de banco de dados mais robustos.
+</h2>
+</div>
+<div id="outline-container-headline-15" class="outline-2">
+<h2 id="headline-15">
+<strong><strong>Navegador e servidor web:</strong></strong> Assim que o desenvolvimento web moderno chegou, tornou-se comum dividir arquiteturas em um navegador web conectado a um servidor web (que, por sua vez, estava conectado a um servidor de banco de dados). Essa separação de responsabilidades era semelhante à variante desktop, mas com clientes ainda mais leves como navegadores, permitindo uma distribuição mais ampla tanto dentro quanto fora de firewalls. Embora o banco de dados esteja separado do servidor web, muitos arquitetos ainda consideram isso uma arquitetura de duas camadas, porque os servidores web e de banco de dados rodam em uma classe de máquina dentro do centro de operações, enquanto a interface de usuário roda no navegador do usuário.
+</h2>
+</div>
+<div id="outline-container-headline-16" class="outline-2">
+<h2 id="headline-16">
+<strong>*Aplicações JavaScript de página única (*Single-page applications</strong>):** À medida que a capacidade de resposta da web melhorou, o mesmo aconteceu com as implementações de JavaScript nos navegadores. Surgiu uma família de aplicações no estilo cliente/servidor que se assemelha à variação original de desktop, mas com o cliente rico escrito em JavaScript no navegador, em vez de ser uma aplicação desktop.
+</h2>
+<div id="outline-text-headline-16" class="outline-text-2">
+<p>
+Como ilustra esta seção, sempre haverá camadas para separar diferentes partes das arquiteturas, dependendo das necessidades da aplicação e das capacidades da plataforma.</p>
+<p>
+### Três camadas (<strong>Three-tier</strong>)</p>
+<p>
+A arquitetura de três camadas, que forneceu ainda mais camadas de separação, tornou-se popular durante o final da década de 1990. À medida que ferramentas como servidores de aplicação se tornaram proeminentes em Java e .NET, as empresas começaram a construir ainda mais camadas em suas topologias. Um sistema poderia ter uma camada de banco de dados usando um servidor de banco de dados de nível industrial; uma camada de aplicação gerenciada por um servidor de aplicação; e um <strong>frontend</strong> codificado em HTML gerado e, cada vez mais, JavaScript (à medida que suas capacidades se expandiam).</p>
+<p>
+A arquitetura de três camadas correspondia a protocolos de nível de rede como CORBA (<strong>Common Object Request Broker Architecture</strong>) e DCOM (<strong>Distributed Component Object Model</strong>) para facilitar a construção de arquiteturas distribuídas.</p>
+<p>
+Assim como os desenvolvedores hoje não se preocupam com o funcionamento de protocolos de rede como TCP/IP (porque eles simplesmente funcionam), a maioria dos arquitetos não precisa se preocupar com esse nível de encanamento (<strong>plumbing</strong>) em arquiteturas distribuídas. As capacidades oferecidas pelas ferramentas daquela época existem hoje ou como ferramentas (como filas de mensagens) ou como padrões de arquitetura (como arquitetura orientada a eventos, coberta no Capítulo 15).</p>
+<p>
+### Arquiteturas de Três Camadas, Design de Linguagem e Implicações de Longo Prazo</p>
+<p>
+Durante a década de 1990, enquanto a linguagem Java era projetada, a computação de três camadas estava na moda. As pessoas presumiam que, no futuro, todos os sistemas teriam arquiteturas de três camadas. Uma das dores de cabeça comuns com as linguagens existentes na época, como C++, era o quão trabalhoso era mover objetos pela rede de maneira consistente entre sistemas. Então, os designers do Java decidiram incorporar essa capacidade ao seu núcleo, usando um mecanismo chamado serialização.</p>
+<p>
+Todo objeto Java implementa uma interface que exige que ele suporte serialização. Os designers imaginaram que, como a arquitetura de três camadas existiria para sempre, embuti-la na linguagem ofereceria grande conveniência. Claro, esse estilo arquitetural foi e voltou—ainda assim, os restos aparecem no Java até hoje. Embora praticamente ninguém ainda use serialização, novos recursos do Java devem suportá-la para compatibilidade com versões anteriores, frustrando muito os designers da linguagem.</p>
+<p>
+Entender as implicações de longo prazo das decisões de design sempre nos escapou, no software como em outras disciplinas de engenharia. O conselho perpétuo de favorecer designs simples é, de muitas maneiras, uma estratégia de proteção para o futuro.</p>
+<p>
+### Particionamento de Arquitetura</p>
+<p>
+A Primeira Lei da Arquitetura de Software afirma que tudo no software é um <strong>trade-off</strong>, e isso inclui como os arquitetos particionam componentes em uma arquitetura. Como os componentes representam um mecanismo geral de contenção, os arquitetos podem particioná-los da maneira que quiserem. Existem vários estilos comuns, com diferentes conjuntos de <strong>trade-offs</strong>. Um tipo particular de arranjo de componentes tem um impacto desproporcional: o particionamento de nível superior.</p>
+<p>
+Dos dois estilos de arquitetura retratados na Figura 9-2, um será familiar para muitos: o monólito em camadas (discutido em detalhes no Capítulo 10). O outro, chamado de monólito modular, é um estilo de arquitetura popularizado por Simon Brown que consiste em uma única unidade de implantação, associada a um banco de dados e particionada em torno de domínios, em vez de capacidades técnicas (discutido no Capítulo 11). Esses dois estilos representam métodos diferentes de particionamento de nível superior. Observe que, em ambas as variações, cada camada ou componente de nível superior provavelmente tem outros componentes incorporados dentro dele. O particionamento de nível superior é de particular interesse para os arquitetos porque define um estilo de arquitetura fundamental e uma maneira de particionar código.</p>
+<p>
+[imagem mostrando dois tipos de particionamento: um focado em &#39;Technical&#39; (Technical partitioning) e outro em &#39;Domain&#39; (Domain partitioning)]</p>
+<p>
+<strong><strong>Figura 9-2.</strong></strong> Dois tipos de particionamento de nível superior: técnico (como a arquitetura em camadas) e de domínio (como o monólito modular)</p>
+<p>
+Organizar a arquitetura com base em suas capacidades técnicas, como o estilo monólito em camadas faz, representa o particionamento técnico de nível superior.</p>
+<p>
+Uma versão comum disso aparece na Figura 9-3, onde o arquiteto particionou a funcionalidade do sistema em capacidades técnicas: apresentação, regras de negócio, serviços, persistência, e assim por diante. Essa maneira de organizar uma base de código certamente faz sentido. Todo o código de persistência reside em uma camada, tornando fácil para os desenvolvedores encontrarem código relacionado à persistência. Embora o conceito básico de arquitetura em camadas seja anterior a isso por décadas, o padrão de projeto Modelo-Visão-Controlador (um dos padrões fundamentais em <strong>Head First Design Patterns</strong> de Eric Freeman e Elisabeth Robson (O&#39;Reilly, 2020)), combina com esse padrão arquitetural, tornando fácil para os desenvolvedores entenderem. Assim, em muitas organizações, é a arquitetura padrão.</p>
+<p>
+[imagem comparando as estruturas de particionamento Técnico vs. de Domínio]</p>
+<p>
+<strong><strong>Figura 9-3.</strong></strong> Dois tipos de particionamento de nível superior na arquitetura</p>
+<p>
+Um efeito colateral interessante da predominância da arquitetura em camadas relaciona-se a como as empresas frequentemente organizavam o assento em seus escritórios físicos de acordo com diferentes funções do projeto. Por causa da Lei de Conway, ao usar uma arquitetura em camadas, faz algum sentido ter todos os desenvolvedores de <strong>backend</strong> sentados juntos em um departamento, os DBAs em outro, a equipe de apresentação em outro, e assim por diante.</p>
+<p>
+A outra variação arquitetural na Figura 9-3 é o particionamento de domínio, uma técnica de modelagem para decompor sistemas de software complexos que organiza os componentes por domínio, em vez de capacidades técnicas. O particionamento de domínio foi inspirado no livro <strong>Domain-Driven Design</strong> de Eric Evans. No DDD, o arquiteto identifica domínios ou fluxos de trabalho, independentes e desacoplados uns dos outros. O estilo de arquitetura de microsserviços é baseado nessa filosofia.</p>
+<p>
+Uma arquitetura de monólito modular é particionada em torno de domínios ou fluxos de trabalho, em vez de capacidades técnicas. Como os componentes geralmente se aninham uns dentro dos outros, cada componente na arquitetura particionada por domínio mostrada na Figura 9-3 (por exemplo, CatalogCheckout) pode usar uma biblioteca de persistência e ter uma camada separada para regras de negócio, mas o particionamento de nível superior ainda girará em torno de domínios.</p>
+<p>
+### Lei de Conway</p>
+<p>
+Lá no final da década de 1960, Melvin Conway fez uma observação que ficou conhecida como a Lei de Conway:</p>
+<p>
+&gt; Organizações que projetam sistemas… estão limitadas a produzir designs que são cópias das estruturas de comunicação dessas organizações.</p>
+<p>
+Parafraseando, essa lei sugere que quando um grupo de pessoas projeta algum artefato técnico, as estruturas de seu design replicarão como essas pessoas se comunicam. Pessoas em todos os níveis das organizações veem essa lei em ação, e às vezes baseiam decisões nela. Por exemplo, embora seja comum para organizações particionarem trabalhadores com base em capacidades técnicas, essa é uma separação artificial de preocupações comuns que pode dificultar a colaboração.</p>
+<p>
+Uma observação relacionada, cunhada por Jonny Leroy da Thoughtworks, é o <strong>Inverse Conway Maneuver</strong> (Manobra Inversa de Conway), que sugere evoluir as estruturas de equipes e organizações juntas para promover a arquitetura desejada. Essa consideração desde então tornou-se universalmente conhecida como topologias de equipe.</p>
+<p>
+As organizações começaram a perceber que as topologias de equipe podem ter um impacto significativo em muitas facetas importantes de seus negócios, incluindo a arquitetura de software. Nos próximos capítulos focados em estilo, discutimos o efeito de cada estilo de arquitetura nesses tipos de equipe.</p>
+<p>
+Uma das distinções fundamentais entre padrões de arquitetura é que tipo de particionamento de nível superior cada um suporta. Nos capítulos específicos de estilo que se seguem, cobrimos essa distinção para cada padrão individual. O particionamento de nível superior também tem um enorme impacto sobre se o arquiteto decide identificar os componentes inicialmente tecnicamente ou por domínio.</p>
+<p>
+Arquitetos que usam particionamento técnico organizam os componentes do sistema por suas capacidades técnicas: apresentação, regras de negócio, persistência, e assim por diante. Um dos princípios organizacionais da arquitetura em camadas é a separação de preocupações técnicas, o que cria níveis úteis de desacoplamento. Por exemplo, se a camada de Serviço está conectada apenas à camada de Persistência abaixo e à camada de Regras de Negócio acima, então as mudanças na persistência afetarão potencialmente apenas essas camadas. Esse desacoplamento reduz o potencial de efeitos colaterais em cascata em componentes dependentes.</p>
+<p>
+É certamente lógico organizar sistemas usando particionamento técnico, mas, como tudo na arquitetura de software, existem alguns <strong>trade-offs</strong>. A separação imposta pelo particionamento técnico permite que os desenvolvedores encontrem certas categorias da base de código rapidamente, já que é organizada por capacidades, mas a maioria dos sistemas de software realistas requer fluxos de trabalho que cruzam as capacidades técnicas.</p>
+<p>
+Na arquitetura particionada tecnicamente mostrada na Figura 9-4, considere o fluxo de trabalho de negócio comum de <strong>CatalogCheckout</strong>. O código para lidar com <strong>CatalogCheckout</strong> na arquitetura particionada tecnicamente aparece em todas as camadas. Em outras palavras, o domínio está espalhado pelas camadas técnicas.</p>
+<p>
+[imagem mostrando como domínios/workflows aparecem em arquiteturas com diferentes tipos de particionamento]</p>
+<p>
+<strong><strong>Figura 9-4.</strong></strong> Onde domínios/fluxos de trabalho aparecem em arquiteturas particionadas tecnicamente e particionadas por domínio.</p>
+<p>
+Contraste isso com a arquitetura particionada por domínio mostrada na Figura 9-4, na qual os arquitetos construíram componentes de nível superior em torno de fluxos de trabalho e domínios. Cada componente pode ter subcomponentes, incluindo camadas, mas o particionamento de nível superior foca em domínios, o que reflete melhor os tipos de mudanças que ocorrem com mais frequência nos projetos.</p>
+<p>
+Nenhum desses estilos é mais correto do que o outro. (Consulte a Primeira Lei da Arquitetura de Software.) Dito isto, observamos uma tendência decidida da indústria nos últimos anos em direção ao particionamento por domínio para arquiteturas monolíticas e distribuídas (por exemplo, microsserviços). Como notamos, esta é uma das primeiras decisões que um arquiteto deve tomar.</p>
+<p>
+### Kata: Sanduíches de Silício — Particionamento</p>
+<p>
+Considere o caso de um dos nossos exemplos de kata, &#34;Kata: Sanduíches de Silício&#34; na página 71. Vamos começar considerando a primeira das duas possibilidades para Sanduíches de Silício: particionamento de domínio, mostrado na Figura 9-5.</p>
+<p>
+[imagem mostrando design particionado por domínio]</p>
+<p>
+<strong><strong>Figura 9-5.</strong></strong> Um design particionado por domínio para Sanduíches de Silício</p>
+<p>
+Na Figura 9-5, o arquiteto projetou em torno de domínios (fluxos de trabalho), criando componentes discretos para <strong>Purchase</strong> (Compra), <strong>Promotion</strong> (Promoção), <strong>MakeOrder</strong> (FazerPedido), <strong>ManageInventory</strong> (GerenciarEstoque), <strong>Recipes</strong> (Receitas), <strong>Delivery</strong> (Entrega) e <strong>Location</strong> (Localização). Dentro de muitos desses componentes residem subcomponentes para lidar com variações comuns e locais tipos de personalização.</p>
+<p>
+[imagem mostrando design particionado tecnicamente]</p>
+<p>
+<strong><strong>Figura 9-6.</strong></strong> Um design particionado tecnicamente para Sanduíches de Silício</p>
+<p>
+Um design alternativo isola as partes comuns e locais em suas próprias partições, como ilustrado na Figura 9-6. <strong>Common</strong> (Comum) e <strong>Local</strong> (Local) representam componentes de nível superior, enquanto <strong>Purchase</strong> e <strong>Delivery</strong> permanecem para lidar com o fluxo de trabalho.</p>
+<p>
+Qual é melhor? Depende! Cada tipo de particionamento oferece diferentes vantagens e desvantagens.</p>
+<p>
+#### Particionamento de domínio</p>
+<p>
+Arquiteturas particionadas por domínio separam componentes de nível superior por fluxos de trabalho e/ou domínios.</p>
+<p>
+<strong><strong>Vantagens</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-17" class="outline-2">
+<h2 id="headline-17">
+Modelado mais estreitamente em como o negócio funciona, em vez de em um detalhe de implementação.
+</h2>
+</div>
+<div id="outline-container-headline-18" class="outline-2">
+<h2 id="headline-18">
+Mais fácil de construir equipes multifuncionais em torno de domínios.
+</h2>
+</div>
+<div id="outline-container-headline-19" class="outline-2">
+<h2 id="headline-19">
+Alinha-se mais estreitamente aos estilos de arquitetura de monólito modular e microsserviços.
+</h2>
+</div>
+<div id="outline-container-headline-20" class="outline-2">
+<h2 id="headline-20">
+O fluxo de mensagens corresponde ao domínio do problema.
+</h2>
+</div>
+<div id="outline-container-headline-21" class="outline-2">
+<h2 id="headline-21">
+Fácil de migrar dados e componentes para uma arquitetura distribuída.
+</h2>
+<div id="outline-text-headline-21" class="outline-text-2">
+<p>
+<strong><strong>Desvantagem</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-22" class="outline-2">
+<h2 id="headline-22">
+O código de personalização aparece em vários lugares.
+</h2>
+<div id="outline-text-headline-22" class="outline-text-2">
+<p>
+#### Particionamento técnico</p>
+<p>
+Arquiteturas particionadas tecnicamente separam componentes de nível superior com base em capacidades técnicas, em vez de fluxos de trabalho discretos. Isso pode se manifestar como camadas inspiradas pela separação Modelo-Visão-Controlador ou algum outro particionamento técnico <strong>ad hoc</strong>. A arquitetura retratada na Figura 9-6 separa seus componentes com base na personalização.</p>
+<p>
+<strong><strong>Vantagens</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-23" class="outline-2">
+<h2 id="headline-23">
+Separa claramente o código de personalização.
+</h2>
+</div>
+<div id="outline-container-headline-24" class="outline-2">
+<h2 id="headline-24">
+Alinha-se mais estreitamente ao padrão de arquitetura em camadas.
+</h2>
+<div id="outline-text-headline-24" class="outline-text-2">
+<p>
+<strong><strong>Desvantagens</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-25" class="outline-2">
+<h2 id="headline-25">
+Maior grau de acoplamento global. Mudanças no componente <strong>Common</strong> ou <strong>Local</strong> provavelmente afetarão todos os outros componentes.
+</h2>
+</div>
+<div id="outline-container-headline-26" class="outline-2">
+<h2 id="headline-26">
+Os desenvolvedores podem ter que duplicar conceitos de domínio tanto nas camadas <strong>Common</strong> quanto <strong>Local</strong>.
+</h2>
+</div>
+<div id="outline-container-headline-27" class="outline-2">
+<h2 id="headline-27">
+Tipicamente, maior acoplamento no nível de dados. Em um sistema como este, os arquitetos de aplicação e os arquitetos de dados provavelmente colaborariam para criar um único banco de dados, incluindo personalização e domínios. Isso, por sua vez, criaria dificuldades em desembaraçar os relacionamentos de dados posteriormente, se os arquitetos eventualmente quiserem migrar essa arquitetura para um sistema distribuído. Muitos outros fatores contribuem para a escolha de um estilo de arquitetura, como cobrimos na Parte II.
+</h2>
+<div id="outline-text-headline-27" class="outline-text-2">
+<p>
+### Arquiteturas Monolíticas Versus Distribuídas</p>
+<p>
+Como você aprendeu na Parte I, estilos de arquitetura podem ser classificados em dois tipos principais: monolítico (única unidade de implantação de todo o código) e distribuído (múltiplas unidades de implantação conectadas através de protocolos de acesso remoto). Embora nenhum esquema de classificação seja perfeito, as arquiteturas distribuídas compartilham um conjunto comum de desafios e problemas não encontrados nos estilos de arquitetura monolítica, tornando este esquema de classificação uma boa separação entre os vários estilos de arquitetura.</p>
+<p>
+Na Parte II deste livro, descrevemos os seguintes estilos de arquitetura em detalhes:</p>
+<p>
+<strong><strong>Monolítico</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-28" class="outline-2">
+<h2 id="headline-28">
+Arquitetura em camadas (Capítulo 10)
+</h2>
+</div>
+<div id="outline-container-headline-29" class="outline-2">
+<h2 id="headline-29">
+Arquitetura de pipeline (Capítulo 12)
+</h2>
+</div>
+<div id="outline-container-headline-30" class="outline-2">
+<h2 id="headline-30">
+Arquitetura de microkernel (Capítulo 13)
+</h2>
+<div id="outline-text-headline-30" class="outline-text-2">
+<p>
+<strong><strong>Distribuído</strong></strong></p>
+</div>
+</div>
+<div id="outline-container-headline-31" class="outline-2">
+<h2 id="headline-31">
+Arquitetura baseada em serviços (Capítulo 14)
+</h2>
+</div>
+<div id="outline-container-headline-32" class="outline-2">
+<h2 id="headline-32">
+Arquitetura orientada a eventos (Capítulo 15)
+</h2>
+</div>
+<div id="outline-container-headline-33" class="outline-2">
+<h2 id="headline-33">
+Arquitetura baseada em espaço (Capítulo 16)
+</h2>
+</div>
+<div id="outline-container-headline-34" class="outline-2">
+<h2 id="headline-34">
+Arquitetura orientada a serviços (Capítulo 17)
+</h2>
+</div>
+<div id="outline-container-headline-35" class="outline-2">
+<h2 id="headline-35">
+Arquitetura de microsserviços (Capítulo 18)
+</h2>
+<div id="outline-text-headline-35" class="outline-text-2">
+<p>
+Estilos de arquitetura distribuída, embora muito mais poderosos em termos de desempenho, escalabilidade e disponibilidade do que estilos de arquitetura monolítica, têm <strong>trade-offs</strong> significativos. O primeiro grupo de problemas que todas as arquiteturas distribuídas enfrentam é descrito nas &#34;falácias da computação distribuída&#34;, listadas pela primeira vez por L. Peter Deutsch e outros colegas da Sun Microsystems em 1994. Uma falácia é algo falso que alguém acredita ou assume ser verdadeiro. Todas as oito falácias da computação distribuída se aplicam às arquiteturas distribuídas hoje. As seções a seguir descrevem cada falácia.</p>
+<p>
+### Falácia nº 1: A rede é confiável</p>
+<p>
+[imagem mostrando o problema da confiabilidade de rede entre dois serviços]</p>
+<p>
+<strong><strong>Figura 9-7.</strong></strong> A rede não é confiável</p>
+<p>
+Desenvolvedores e arquitetos assumem que a rede é confiável, mas não é. Embora as redes tenham se tornado mais confiáveis ao longo do tempo, o fato é que as redes ainda permanecem geralmente não confiáveis. Isso é significativo para todos os estilos de arquitetura distribuída, porque eles dependem da rede para se comunicar de, para e entre serviços. Como ilustrado na Figura 9-7, o Serviço B pode estar totalmente saudável, mas o Serviço A não consegue alcançá-lo devido a um problema de rede. Pior ainda, o Serviço A pode solicitar que o Serviço B processe alguns dados, mas não receber nenhuma resposta por causa de um problema de rede. É por isso que coisas como <strong>timeouts</strong> e disjuntores (<strong>circuit breakers</strong>) existem entre os serviços. Quanto mais um sistema depende da rede (como as arquiteturas de microsserviços notavelmente fazem), mais potencial ele tem de se tornar não confiável.</p>
+<p>
+### Falácia nº 2: A latência é zero</p>
+<p>
+[imagem comparando latência local vs. latência remota]</p>
+<p>
+<strong><strong>Figura 9-8.</strong></strong> A latência não é zero</p>
+<p>
+Como mostra a Figura 9-8, quando uma chamada local é feita para outro componente via uma chamada de método ou função, o tempo para acessar esse componente ($t_{local}$) é medido em nanossegundos ou microssegundos. No entanto, quando essa mesma chamada é feita através de um protocolo de acesso remoto (como REST, mensagens ou RPC), o tempo ($t_{remote}$) é medido em milissegundos e, portanto, será sempre maior que $t_{local}$. A latência, em qualquer arquitetura distribuída, não é zero—ainda assim, a maioria dos arquitetos ignora essa falácia, insistindo que eles têm redes rápidas. Pergunte a si mesmo: você sabe qual é a latência média de ida e volta (<strong>round-trip</strong>) para uma chamada RESTful em seu ambiente de produção? São 60 milissegundos? São 500 milissegundos?</p>
+<p>
+Ao considerar o uso de qualquer arquitetura distribuída, particularmente microsserviços, os arquitetos devem conhecer essa média de latência. É a única maneira de determinar se uma arquitetura distribuída é viável, devido à natureza de grão fino dos serviços e à quantidade de comunicação entre eles.</p>
+<p>
+Por exemplo, digamos que assumimos uma média de 100 ms de latência por solicitação. Encadear chamadas de serviço juntas para realizar uma função de negócio específica adiciona 1.000 ms à solicitação! Conhecer a latência média é importante, mas conhecer a latência do percentil 95 ao 99 é ainda mais importante. Embora a latência média do sistema possa ser de apenas 60 ms (o que é bom), o percentil 95 pode ser de 400 ms! Geralmente é essa latência de &#34;cauda longa&#34; que destruirá o desempenho em uma arquitetura distribuída. Na maioria dos casos, um administrador de rede pode fornecer valores de latência (consulte &#34;Falácia nº 6: Existe apenas um administrador&#34; na página 148).</p>
+<p>
+### Falácia nº 3: A largura de banda é infinita</p>
+<p>
+[imagens mostrando o impacto da largura de banda]</p>
+<p>
+<strong><strong>Figura 9-9.</strong></strong> A largura de banda não é infinita</p>
+<p>
+A largura de banda geralmente não é uma preocupação em arquiteturas monolíticas, porque uma vez que uma solicitação de negócio entra em um monólito, pouca ou nenhuma largura de banda é necessária para processá-la. No entanto, como mostrado na Figura 9-9, uma vez que um sistema é dividido em unidades de implantação menores (serviços) em uma arquitetura distribuída, como microsserviços, a comunicação para e entre esses serviços usa largura de banda significativa. Isso retarda a rede, impactando a latência (falácia nº 2) e a confiabilidade (falácia nº 1).</p>
+<p>
+Para ilustrar a importância dessa falácia, considere os dois serviços mostrados na Figura 9-9. Digamos que o Serviço A gerencia os itens da lista de desejos para o site, e o Serviço B gerencia os perfis dos clientes. Sempre que uma solicitação para uma lista de desejos entra no Serviço A, o Serviço A precisa do nome do cliente para o contrato de resposta para a lista de desejos. Para obter o nome, ele deve fazer uma chamada entre serviços para o Serviço B. O Serviço B retorna 45 atributos, totalizando 500 KB, para o Serviço A, que só precisa do nome (200 bytes). Isso pode não soar significativo, mas solicitações para os itens da lista de desejos acontecem cerca de 2.000 vezes por segundo. Isso significa que o Serviço A está chamando o Serviço B 2.000 vezes por segundo. A 500 KB para cada solicitação, cada chamada entre serviços leva 1 GBps de largura de banda!</p>
+<p>
+Essa forma de acoplamento, chamada acoplamento de selo (<strong>stamp coupling</strong>), consome quantidades significativas de largura de banda em arquiteturas distribuídas. Se o Serviço B passasse de volta apenas os 200 bytes de dados que o Serviço A precisa, ele usaria apenas 400 Kbps no total.</p>
+<p>
+O acoplamento de selo pode ser resolvido por:</p>
+</div>
+</div>
+<div id="outline-container-headline-36" class="outline-2">
+<h2 id="headline-36">
+Criar endpoints de API RESTful privados.
+</h2>
+</div>
+<div id="outline-container-headline-37" class="outline-2">
+<h2 id="headline-37">
+Usar seletores de campo em contratos.
+</h2>
+</div>
+<div id="outline-container-headline-38" class="outline-2">
+<h2 id="headline-38">
+Usar GraphQL para desacoplar contratos.
+</h2>
+</div>
+<div id="outline-container-headline-39" class="outline-2">
+<h2 id="headline-39">
+Usar contratos orientados a valor com contratos orientados ao consumidor.
+</h2>
+</div>
+<div id="outline-container-headline-40" class="outline-2">
+<h2 id="headline-40">
+Usar endpoints de mensagens internas.
+</h2>
+<div id="outline-text-headline-40" class="outline-text-2">
+<p>
+Independentemente da técnica usada, a melhor maneira de abordar essa falácia em uma arquitetura distribuída é garantir que serviços ou sistemas transmitam apenas os dados necessários.</p>
+<p>
+### Falácia nº 4: A rede é segura</p>
+<p>
+[imagem mostrando o aumento da superfície de ataque]</p>
+<p>
+<strong><strong>Figura 9-10.</strong></strong> A rede não é segura</p>
+<p>
+A maioria dos arquitetos e desenvolvedores fica tão confortável usando redes privadas virtuais (VPNs), redes confiáveis e firewalls que tendem a esquecer essa falácia da computação distribuída—mas a rede não é segura. Como mostrado na Figura 9-10, cada ponto de extremidade para cada unidade de implantação distribuída deve ser protegido contra solicitações desconhecidas ou ruins. A superfície para ameaças e ataques aumenta em magnitudes ao mudar de uma arquitetura monolítica para uma distribuída, tornando a segurança muito mais desafiadora. Proteger cada endpoint, mesmo na comunicação entre serviços, é outra razão pela qual o desempenho tende a ser mais lento em estilos de arquitetura síncronos e altamente distribuídos, como microsserviços e arquiteturas baseadas em serviços.</p>
+<p>
+### Falácia nº 5: A topologia nunca muda</p>
+<p>
+[imagem mostrando mudanças constantes na topologia de rede]</p>
+<p>
+<strong><strong>Figura 9-11.</strong></strong> A topologia da rede sempre muda</p>
+<p>
+A falácia nº 5, como mostrado na Figura 9-11, refere-se à topologia de rede geral, incluindo todos os seus roteadores, hubs, switches, firewalls, redes e aparelhos. Os arquitetos assumem que a topologia é fixa e nunca muda. Claro que ela muda. Ela muda o tempo todo. Qual é o significado dessa falácia?</p>
+<p>
+Suponha que você chegue ao trabalho em uma segunda-feira de manhã e todos estejam correndo como loucos, porque os serviços continuam excedendo o tempo limite (<strong>timeout</strong>) em produção. Você trabalha com as equipes, tentando freneticamente descobrir por que isso está acontecendo. Nenhum novo serviço foi implantado durante o fim de semana. O que poderia ser? Após várias horas, você descobre que uma atualização de rede supostamente &#34;menor&#34; às duas horas da manhã daquele dia invalidou todas as suposições de latência do sistema, acionando <strong>timeouts</strong> e disjuntores.</p>
+<p>
+Os arquitetos devem estar em comunicação constante com os administradores de operações e de rede sobre o que está mudando e quando, para que possam fazer ajustes para evitar tais surpresas. Isso pode parecer óbvio e fácil, mas não é. Na verdade, essa falácia leva diretamente à próxima falácia.</p>
+<p>
+### Falácia nº 6: Existe apenas um administrador</p>
+<p>
+[imagem mostrando múltiplos administradores de rede]</p>
+<p>
+<strong><strong>Figura 9-12.</strong></strong> Existem muitos administradores de rede, não apenas um</p>
+<p>
+Os arquitetos caem nessa falácia o tempo todo: assumir que só precisam colaborar e se comunicar com um administrador. Como a Figura 9-12 mostra, existem dezenas de administradores de rede em uma grande empresa típica. Com quem o arquiteto deve falar sobre latência ou mudanças de topologia? Essa falácia aponta para a complexidade da arquitetura distribuída e a quantidade de coordenação que deve acontecer para fazer tudo funcionar corretamente. Uma aplicação monolítica, com sua única unidade de implantação, não requer esse nível de comunicação e colaboração.</p>
+<p>
+### Falácia nº 7: O custo de transporte é zero</p>
+<p>
+[imagem ilustrando custos financeiros de acessos remotos]</p>
+<p>
+<strong><strong>Figura 9-13.</strong></strong> Acesso remoto custa dinheiro</p>
+<p>
+Muitos arquitetos de software confundem essa falácia, mostrada na Figura 9-13, com a falácia nº 2 (latência é zero). Custo de transporte aqui não se refere à latência, mas ao custo monetário real de fazer uma &#34;chamada RESTful simples&#34;. Os arquitetos assumem incorretamente que a infraestrutura necessária e suficiente já está em vigor para fazer uma chamada RESTful simples ou dividir uma aplicação monolítica. Geralmente não está. Arquiteturas distribuídas custam significativamente mais do que arquiteturas monolíticas, principalmente devido às maiores necessidades de hardware, servidores, gateways, firewalls, novas sub-redes, proxies, e assim por diante.</p>
+<p>
+Incentivamos os arquitetos que embarcam em uma arquitetura distribuída a analisar sua topologia atual de servidor e rede em relação à capacidade, largura de banda, latência e zonas de segurança, para evitar serem surpreendidos por essa falácia.</p>
+<p>
+### Falácia nº 8: A rede é homogênea</p>
+<p>
+[imagem mostrando rede heterogênea]</p>
+<p>
+<strong><strong>Figura 9-14.</strong></strong> A rede não é homogênea</p>
+<p>
+A maioria dos arquitetos e desenvolvedores assume que uma rede é homogênea, como mostrado na Figura 9-14—que ela é feita de hardware de rede de apenas um fornecedor. Nada poderia estar mais longe da verdade. A maioria das infraestruturas das empresas tem múltiplos fornecedores de hardware de rede.</p>
+<p>
+E daí? O significado dessa falácia é que nem todos esses fornecedores de hardware heterogêneos funcionam bem juntos. O hardware da Juniper Networks integra-se perfeitamente com o hardware da Cisco Systems? A maior parte funciona, e os padrões de rede evoluíram ao longo dos anos, tornando isso menos um problema. No entanto, nem todas as situações, cargas e circunstâncias foram totalmente testadas, então pacotes de rede ocasionalmente se perdem. Isso, por sua vez, afeta a confiabilidade da rede e as suposições e afirmações sobre latência e largura de banda. Em outras palavras, essa falácia se conecta de volta a todas as outras falácias, formando um ciclo infinito de confusão e frustração ao lidar com redes (o que é inescapável ao usar arquiteturas distribuídas).</p>
+<p>
+### As Outras Falácias</p>
+<p>
+As oito falácias listadas anteriormente formam um famoso conjunto de observações—todo arquiteto as aprende ou a partir da lista de Deutsch ou da maneira difícil, uma por uma, ao longo do curso de sua carreira. Os autores também aprenderam algumas lições dolorosas e quase universais que oferecemos como uma extensão a essa famosa lista.</p>
+<p>
+<strong><strong>Falácia nº 9. Controle de versão é fácil</strong></strong>
+Quando dois serviços precisam se comunicar, eles passam informações em um contrato, que inclui informações necessárias para a comunicação. Muitas vezes, a implementação interna de um serviço evolui ao longo do tempo, alterando campos que o serviço aceita e passa para outros serviços. Uma maneira de resolver esse problema é usar controle de versão para o contrato—ou seja, criar versões diferentes para os contratos antigos e novos, incluindo diferentes conjuntos de informações. No entanto, essa decisão aparentemente simples leva a uma série de <strong>trade-offs</strong>:</p>
+</div>
+</div>
+<div id="outline-container-headline-41" class="outline-2">
+<h2 id="headline-41">
+A equipe deve fazer o controle de versão no nível do serviço individual ou para o sistema inteiro?
+</h2>
+</div>
+<div id="outline-container-headline-42" class="outline-2">
+<h2 id="headline-42">
+Até onde o controle de versão deve alcançar? Que parte da arquitetura precisará suportá-lo?
+</h2>
+</div>
+<div id="outline-container-headline-43" class="outline-2">
+<h2 id="headline-43">
+Quantas versões a equipe deve suportar a qualquer momento? (Algumas equipes acidentalmente se veem honrando dezenas de versões diferentes para propósitos diferentes.)
+</h2>
+</div>
+<div id="outline-container-headline-44" class="outline-2">
+<h2 id="headline-44">
+A equipe deve descontinuar (<strong>deprecate</strong>) versões mais antigas no nível do sistema ou serviço por serviço?
+</h2>
+<div id="outline-text-headline-44" class="outline-text-2">
+<p>
+Embora o controle de versão seja uma abordagem razoável para evoluir a comunicação entre serviços, ele tem uma série de <strong>trade-offs</strong> que os arquitetos devem antecipar.</p>
+<p>
+<strong><strong>Falácia nº 10. Atualizações de compensação sempre funcionam</strong></strong>
+Atualizações de compensação é um padrão arquitetural no qual algum mecanismo (como um serviço de Orquestrador) garante que vários serviços relacionados se atualizem em conjunto. Se não o fizerem, o orquestrador reverte a atualização. A atualização de compensação vem do orquestrador que emite uma operação de reversão para colocar o estado de volta ao que era antes.</p>
+<p>
+Este é um padrão comum que a maioria dos arquitetos assume alegremente que sempre funciona… mas não funciona. O que acontece se a atualização de compensação falhar? Quando os arquitetos demonstram como funcionam interações complexas em arquiteturas distribuídas como microsserviços, eles também devem mostrar como funcionam as atualizações de compensação. Portanto, arquitetos que projetam fluxos de trabalho transacionais em microsserviços devem acomodar o fluxo de trabalho de compensação &#34;normal&#34;, mas também devem considerar como recuperar se a atualização e a atualização de compensação (ou uma parte dela) falharem.</p>
+<p>
+<strong><strong>Falácia nº 11. Observabilidade é opcional (para arquiteturas distribuídas)</strong></strong>
+Uma característica arquitetural comum para os arquitetos priorizarem em arquiteturas distribuídas é a observabilidade: a capacidade de observar as interações de cada serviço com outros serviços e com o ecossistema, conforme capturado por meio de monitores ou logs. Embora o registro em log seja útil em arquiteturas monolíticas, ele é crítico em arquiteturas distribuídas, que oferecem muitos modos de falha de comunicação que são difíceis de depurar sem logs de interação abrangentes.</p>
+<p>
+### Topologias de Equipe e Arquitetura</p>
+<p>
+Arquitetos e equipes fizeram muitas pesquisas sobre a interseção da arquitetura e topologias de equipe, além das implicações do particionamento de arquitetura, que discutimos anteriormente. O livro muito influente <strong>Team Topologies</strong> de Matthew Skelton e Manuel Pais (IT Revolution Press, 2019) define vários tipos de equipe que se cruzam com a arquitetura de software:</p>
+</div>
+</div>
+<div id="outline-container-headline-45" class="outline-2">
+<h2 id="headline-45">
+<strong>*Equipes alinhadas ao fluxo (*Stream-aligned teams</strong>):** Na terminologia de topologias de equipe, um fluxo é um fluxo de trabalho com escopo definido para um domínio ou capacidade de negócio particular. Equipes alinhadas ao fluxo focam estreitamente em uma única linha de trabalho, como um produto, serviço ou conjunto específico de recursos. O objetivo das equipes alinhadas ao fluxo é mover-se o mais rápido possível porque estão entregando valor discreto para a organização. Consequentemente, os outros tipos de equipe são projetados para reduzir qualquer atrito que possa impedir as equipes alinhadas ao fluxo.
+</h2>
+</div>
+<div id="outline-container-headline-46" class="outline-2">
+<h2 id="headline-46">
+<strong>*Equipes de habilitação (*Enabling teams</strong>):** Uma equipe de habilitação preenche uma lacuna em alguma capacidade, fornecendo um lugar para pesquisas necessárias, aprendizado e outras tarefas que são importantes, mas não urgentes. Elas fornecem conhecimento e recursos de domínios especializados para apoiar equipes alinhadas ao fluxo. Boas equipes de habilitação são altamente colaborativas e proativas.
+</h2>
+</div>
+<div id="outline-container-headline-47" class="outline-2">
+<h2 id="headline-47">
+<strong>*Equipes de subsistema complicado (*Complicated-subsystem teams</strong>):** Muitos sistemas incluem sistemas altamente especializados ou partes que exigem habilidades igualmente especializadas. Os membros de equipes de subsistema complicado entendem totalmente um subsistema ou domínio complexo e podem ajudar uma equipe alinhada ao fluxo a aplicá-lo. Seu objetivo é reduzir a carga cognitiva de outras equipes.
+</h2>
+</div>
+<div id="outline-container-headline-48" class="outline-2">
+<h2 id="headline-48">
+<strong>*Equipes de plataforma (*Platform teams</strong>):** Uma equipe de plataforma fornece serviços internos e blocos de construção para soluções. Conforme definido por Evan Botcher, uma plataforma é uma fundação de APIs de autoatendimento, ferramentas, serviços, conhecimento e suporte que são organizados como um produto interno atraente. Equipes de entrega autônomas podem fazer uso da plataforma para entregar recursos de produto em um ritmo mais rápido, com coordenação reduzida. Equipes de plataforma apoiam as outras equipes, tentando remover atrito desnecessário enquanto fornecem a governança necessária em torno de preocupações como qualidade e segurança.
+</h2>
+<div id="outline-text-headline-48" class="outline-text-2">
+<p>
+### Seguindo para Estilos Específicos</p>
+<p>
+Os arquitetos precisam entender vários estilos de arquitetura diferentes antes de poderem realizar a análise de <strong>trade-offs</strong>. Cada estilo suporta um conjunto diferente de características arquiteturais—cada um tem um &#34;ponto ideal&#34; que ele lida melhor. Ao aprender os diferentes estilos e suas filosofias subjacentes, um arquiteto entende melhor quando cada um funciona melhor (ou menos pior, de qualquer maneira).</p>
+</div>
+</div>
+
+  </div>
+</article>
+
+    </main>
+    <hr>
+    <footer>
+    </footer>
+  </div>
+<script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+<script src="/vendor/prism/prism-core.min.js"></script>
+<script src="/vendor/prism/prism-clike.min.js"></script>
+<script src="/vendor/prism/prism-bash.min.js"></script>
+<script src="/vendor/prism/prism-c.min.js"></script>
+<script src="/vendor/prism/prism-cpp.min.js"></script>
+<script src="/vendor/prism/prism-rust.min.js"></script>
+<script src="/vendor/prism/prism-go.min.js"></script>
+<script src="/vendor/prism/prism-javascript.min.js"></script>
+<script src="/vendor/prism/prism-typescript.min.js"></script>
+<script src="/vendor/prism/prism-clojure.min.js"></script>
+<script src="/vendor/prism/prism-lisp.min.js"></script>
+<script src="/vendor/prism/prism-swift.min.js"></script>
+<script src="/vendor/prism/prism-zig.min.js"></script>
+<script src="/vendor/prism/prism-sql.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+  <script src="/vendor/mermaid/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { fontFamily: '"Inter", system-ui, sans-serif', fontSize: '14px', primaryColor: '#cba6f7', primaryTextColor: '#cdd6f4', primaryBorderColor: '#7f849c', lineColor: '#89b4fa', secondaryColor: '#313244', tertiaryColor: '#45475a' } });
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('code.language-mermaid').forEach(function(el) {
+        var mDiv = document.createElement('div');
+        mDiv.className = 'mermaid';
+        mDiv.textContent = el.textContent;
+        var wrap = el.closest('.src-mermaid') || el.closest('.src') || el.closest('.highlight') || el.parentElement;
+        if (wrap) wrap.replaceWith(mDiv);
+      });
+      mermaid.run();
+    });
+  </script>
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">^ top</button>
+  <script>
+    document.querySelectorAll('.content table').forEach(function(t) {
+      if (t.closest('.table-wrapper')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrapper';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  </script>
+  <script>
+    var btn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 400);
+    });
+  </script>
+</body>
+</html>

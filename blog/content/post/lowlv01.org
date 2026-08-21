@@ -1,0 +1,725 @@
++++
+title = "Programação em Baixo Nível"
+description = "Do modelo de von Neumann ao seu primeiro programa em Assembly: entenda o que acontece no fundo da stack e o que você pode construir com esse conhecimento."
+date = 2025-07-21T12:00:00-00:00
+tags = ["Assembly", "Arquitetura de Computadores", "Baixo Nível"]
+draft = true
+weight = 4
+author = "Vitor Lobo Ramos"
+showToc = true
++++
+
+Para programar em Assembly você precisa entender o hardware sobre o qual seu código vai rodar — não como curiosidade, mas porque cada instrução que você escreve manipula diretamente registradores, memória e a pilha. Este é o primeiro artigo de uma série sobre programação em baixo nível. Aqui você vai entender o que acontece depois que seu código em C, Python ou Rust é compilado — não como curiosidade acadêmica, mas porque esse conhecimento transforma você em um programador de outra classe.
+
+Quando você entende Assembly, deixa de enxergar uma caixa-preta. Um segmentation fault não é mais um mistério: você sabe que o =rsp= invadiu uma página não mapeada. Uma vulnerabilidade de buffer overflow não é teoria: você visualiza o =rip= sendo sequestrado na pilha. Um programa lento não é culpa do compilador: você olha o disassembly e vê cache misses, branch mispredictions, registradores sendo derramados na memória.
+
+Com esse conhecimento, você será capaz de fazer engenharia reversa de malware, escrever exploits, debugar crashes em produção sem símbolos de debug, otimizar loops que fazem a diferença entre 2 e 60 quadros por segundo, portar sistemas operacionais para novo hardware, criar shells, hypervisors, emuladores — as ferramentas que constroem todo o resto da stack.
+
+Neste primeiro artigo, cobrimos o modelo de computação da [[https://en.wikipedia.org/wiki/X86-64][Intel 64]], seus registradores e a pilha de hardware. Ao final, você terá escrito um clone do comando =cat= em Assembly puro — e entenderá cada byte que seu programa move.
+
+** 1 O modelo de computação
+
+Antes de escrever código, você precisa de um conjunto de operações básicas que sua máquina entende. Sem isso, nenhum algoritmo é implementável. Pense nisso: toda a pilha de software que você usa — do kernel Linux ao navegador, do compilador Rust ao WhatsApp — em algum momento se reduz a instruções que um processador físico executa. Entender qual é esse conjunto mínimo de operações é entender o chão sobre o qual toda a computação está construída.
+
+Um /modelo de computação/ define exatamente isso: um conjunto de operações primitivas e seus respectivos custos. Os custos são usados para analisar complexidade; não vamos focar nisso aqui. O que importa: cada modelo de computação é uma /máquina abstrata/ — um computador hipotético cujas instruções correspondem às operações do modelo.
+
+O modelo que nos interessa é o que de fato roda no seu processador: a [[https://en.wikipedia.org/wiki/Von_Neumann_architecture][arquitetura de von Neumann]]. A arquitetura de von Neumann é o molde de praticamente todo computador moderno. Ela define três componentes conectados por um barramento:
+
+- /[[https://en.wikipedia.org/wiki/Central_processing_unit][CPU]]/ :: Unidade Central de Processamento. Executa instruções buscadas da memória. Composta por uma unidade de /controle/ (busca e decodifica instruções) e uma /[[https://en.wikipedia.org/wiki/Arithmetic_logic_unit][ALU]]/ (Arithmetic Logic Unit — executa as operações).
+- /[[https://en.wikipedia.org/wiki/Computer_memory][Memória]]/ :: Banco único que armazena tanto código quanto dados. Bits são bits: não há distinção física entre instrução e dado.
+- /[[https://en.wikipedia.org/wiki/Bus_(computing)][Barramento]]/ :: Via compartilhada que conecta CPU e memória.
+
+#+CAPTION: Figura 1 – Arquitetura de von Neumann – visão geral.
+[[/images/lowlv01/fig1-1.png]]
+
+#+CAPTION: Figura 2 – Arquitetura de von Neumann – memória.
+[[/images/lowlv01/fig1-2.png]]
+
+Características fundamentais com as quais você vai lidar diretamente ao programar em Assembly:
+
+- A memória é um array de células indexadas a partir de 0. Cada célula tem 1 byte (8 bits).
+- Código e dados compartilham o mesmo espaço de endereçamento. Nada impede que você leia código como se fosse dado — ou vice-versa.
+- A execução é sequencial: a CPU busca uma instrução por vez. O fluxo só se altera com instruções de salto (/jump/).
+
+O Assembly existe justamente para você não ter que escrever os bits manualmente. Cada instrução Assembly é um mnemônico que corresponde a uma instrução binária (código de máquina). Você escreve =mov rax, 42=; o montador traduz para os bytes que a CPU entende.
+
+#+BEGIN_NOTE
+O estado da CPU — do ponto de vista do programador — é inteiramente descrito pela memória e pelos valores nos registradores. Entender uma instrução é entender como ela altera esses dois.
+#+END_NOTE
+
+** 3 Por que a arquitetura evoluiu
+
+O modelo simples de von Neumann funciona, mas tem limitações severas. Cada limitação motivou uma extensão de hardware. A tabela abaixo resume os problemas e as soluções — todas elas impactam diretamente como você programa em Assembly.
+
+#+CAPTION: Tabela 1 – Limitações da arquitetura de von Neumann e suas extensões
+| Problema                                                               | Solução                 | Impacto para você                                                                                   |
+|------------------------------------------------------------------------|-------------------------|-----------------------------------------------------------------------------------------------------|
+| Acesso à memória é centenas de vezes mais lento que a CPU              | Registradores, caches   | Você decide o que mantém em registrador vs. memória; isso define o desempenho                       |
+| Impossível reagir a eventos externos (teclado, rede, disco)            | [[https://en.wikipedia.org/wiki/Interrupt][Interrupções]]            | Seu código pode ser interrompido a qualquer momento; precisa estar ciente do estado salvo/restaurado |
+| Sem suporte nativo para chamadas de função e escopo local              | Pilha de hardware       | =call=, =ret=, =push=, =pop= e variáveis locais dependem da pilha; você gerencia =rsp= e =rbp=      |
+| Qualquer código pode executar instruções privilegiadas                 | Anéis de proteção       | Seu código roda no anel 3; instruções como =cli=, =hlt=, =lgdt= são inacessíveis                        |
+| Programas enxergam a memória física diretamente (sem isolamento)       | [[https://en.wikipedia.org/wiki/Virtual_memory][Memória virtual]]         | Endereços que você usa são virtuais, não físicos; o SO mapeia páginas transparentemente             |
+
+Cada uma dessas extensões está presente na [[https://en.wikipedia.org/wiki/X86-64][Intel 64]] (também chamada de [[https://en.wikipedia.org/wiki/X86-64][x86-64]] ou [[https://en.wikipedia.org/wiki/X86-64#AMD64][AMD64]]), a arquitetura que usaremos. A Intel mantém compatibilidade binária desde os anos 1970 — um =mov= escrito para o 8086 ainda roda num Core i9. Trabalharemos exclusivamente no [[https://en.wikipedia.org/wiki/Long_mode][modo longo]] (/long mode/), o modo nativo de 64 bits.
+
+*** 3.1 Registradores
+
+Registradores são a memória mais rápida do sistema. Ficam dentro do chip da CPU e não usam o barramento. Latência típica: 1–2 ciclos de CPU. A RAM, em comparação, leva centenas de ciclos.
+
+Por que tão poucos (16 registradores de propósito geral)? Três razões práticas:
+1. Cada registrador é endereçado por bits dentro da própria instrução. Mais registradores = instruções mais longas = código maior.
+2. Circuitos de chaveamento para muitos registradores não escalam bem acima de ~5 GHz.
+3. Programas bem escritos exibem [[https://en.wikipedia.org/wiki/Locality_of_reference][localidade de referência]]: o conjunto de dados ativo é pequeno e cabe nos registradores. Você carrega da memória uma vez, opera muito, descarrega de volta.
+
+A localidade tem duas faces:
+- /Temporal/ :: se você acessou um endereço agora, provavelmente vai acessá-lo de novo em breve (ex.: acumulador num laço).
+- /Espacial/ :: se você acessou o endereço X, o próximo acesso tende a ser X+1, X+4, X+8... (ex.: percorrer um array).
+
+Use isso a seu favor: mantenha dados quentes em registradores; acesse memória em padrão sequencial.
+
+*** 3.2 Registradores de propósito geral
+
+A Intel 64 oferece 16 registradores de 64 bits. Internamente, no encoding das instruções, eles são indexados de 0 a 15 — mas você nunca escreve =r0= no código. Os 8 primeiros são nomeados com os aliases históricos que você vai encontrar em todo lugar; apenas os registradores adicionados pelo x86-64 (=r8= a =r15=) usam nomenclatura numérica no NASM:
+
+#+CAPTION: Tabela 2 – Registradores de 64 bits de propósito geral
+| Registrador | Alias | Função típica                                                                                                 |
+|-------------|-------|---------------------------------------------------------------------------------------------------------------|
+| rax | Acumulador. Usado implicitamente em =div=, =mul=, =stos=, =lods= e como retorno de função (cdecl/System V) |
+| rcx | Contador. Usado implicitamente por =loop=, =rep movs=, =rep stos= e como 4º argumento no System V |
+| rdx | Extensão de =rax= para operações de 128 bits (=div=, =mul=) e 3º argumento no System V |
+| rbx | Registrador de base. Único GPR que sobrevive a chamadas de função no System V (callee-saved) |
+| rsp | /Stack pointer/. Aponta para o topo da pilha. =push=, =pop=, =call=, =ret= manipulam =rsp= automaticamente |
+| rbp | /Base pointer/. Marca a base do stack frame atual. Essencial para acessar argumentos e variáveis locais |
+| rsi | /Source index/. Usado como origem em =movs=, =cmps=, =lods= e 2º argumento no System V |
+| rdi | /Destination index/. Usado como destino em =movs=, =cmps=, =stos= e 1º argumento no System V |
+| r8 – r15 | Registradores adicionais (x86-64). Uso livre como temporários. =r10= é usado pelo =syscall= para salvar =rflags= |
+
+#+CAPTION: Figura 3 – Registradores de 64 bits de propósito geral.
+[[/images/lowlv01/fig1-3.png]]
+
+#+BEGIN_NOTE
+Registradores não têm endereço de memória. Você não pode tirar o endereço de =rax= como faria com uma variável na stack. São um banco físico separado da RAM.
+#+END_NOTE
+
+*** 3.3 Endereçamento parcial de registradores
+
+Você pode acessar fatias menores de cada registrador adicionando um sufixo ao nome. Para os registradores históricos (=rax=, =rbx=, =rcx=, =rdx=, =rsp=, =rbp=, =rsi=, =rdi=), a convenção é:
+
+#+CAPTION: Tabela 3 – Sufixos de acesso parcial para registradores históricos
+| Sufixo | Significado        | Exemplo  | Bits acessados                |
+|--------|--------------------|----------|-------------------------------|
+| =e=    | /extended/ (32b)    | =eax=    | 32 bits menos significativos   |
+| —      | /word/ (16b)        | =ax=     | 16 bits menos significativos   |
+| =l=    | /low byte/ (8b)     | =al=     |  8 bits menos significativos   |
+
+Para os registradores numéricos (=r8= a =r15=), usa-se um sufixo de letra no final do nome:
+
+#+CAPTION: Tabela 4 – Sufixos de acesso parcial para registradores numéricos
+| Sufixo | Significado        | Exemplo  | Bits acessados                |
+|--------|--------------------|----------|-------------------------------|
+| =d=    | /double word/ (32b) | =r8d=    | 32 bits menos significativos   |
+| =w=    | /word/ (16b)        | =r8w=    | 16 bits menos significativos   |
+| =b=    | /byte/ (8b)         | =r8b=    |  8 bits menos significativos   |
+
+Para =rax=, =rbx=, =rcx=, =rdx=, há também acesso ao segundo byte menos significativo: =ah=, =bh=, =ch=, =dh=. Para =rsi=, =rdi=, =rsp=, =rbp=, os bytes baixos são =sil=, =dil=, =spl=, =bpl=.
+
+#+CAPTION: Figura 4 – Decomposição dos registradores de propósito geral em partes menores.
+[[/images/lowlv01/fig1-4.png]]
+
+#+CAPTION: Figura 5 – Decomposição de rsi e de rdi.
+[[/images/lowlv01/fig1-5.png]]
+
+#+CAPTION: Figura 6 – Decomposição de rsp e de rbp.
+[[/images/lowlv01/fig1-6.png]]
+
+#+BEGIN_NOTE
+*Cuidado com escritas de 32 bits*
+
+Escrever nos 32 bits baixos de um registrador (ex.: =mov eax, 0=) zera os 32 bits superiores do registrador completo. Isso é intencional: evita dependências falsas no pipeline. Escritas de 16 ou 8 bits /não/ afetam os bits superiores.
+#+END_NOTE
+
+*** 3.4 Registrador de instrução: =rip=
+
+O registrador =rip= (Instruction Pointer) armazena o endereço da /próxima/ instrução a ser executada. Você não o modifica diretamente — use =jmp=, =call=, =ret=, =jcc= (saltos condicionais). Toda vez que uma instrução termina, =rip= avança para o próximo endereço (cada instrução tem tamanho próprio — não assuma incrementos fixos).
+
+*** 3.5 Registrador de flags: =rflags=
+
+O =rflags= armazena bits que refletem o resultado da última operação aritmética/lógica. As flags que você mais consulta são:
+
+#+CAPTION: Tabela 5 – Principais flags do registrador =rflags=
+| Flag               | Significado                                                                                  | Saltos condicionais                     |
+|--------------------|----------------------------------------------------------------------------------------------|-----------------------------------------|
+| =CF= (Carry)       | Transporte em operação sem sinal (ex.: soma estourou 64 bits).                               | =jc= (jump if carry), =jnc=             |
+| =ZF= (Zero)        | Resultado foi zero.                                                                          | =jz= (jump if zero), =jnz=              |
+| =SF= (Sign)        | Bit mais significativo do resultado (=1= indica negativo).                                    | =js= (jump if sign), =jns=              |
+| =OF= (Overflow)    | Transporte em operação com sinal. Diferente de =CF=: =OF= detecta overflow de inteiro com sinal. | =jo= (jump if overflow), =jno=          |
+| =AF= (Adjust)      | Transporte entre os nibbles baixos (usado por instruções BCD — raramente relevante).          | —                                       |
+
+#+BEGIN_NOTE
+*Diferença entre CF e OF*
+
+Consulte a seção 3.4.3 do volume 1 do [[https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html][Intel SDM]] para entender a diferença exata entre =CF= e =OF=, e em qual situação =CF= é setado mas =OF= não.
+#+END_NOTE
+
+*** 3.6 Registradores multimídia: =xmm0=–=xmm15=
+
+São registradores de 128 bits (podem chegar a 512 bits com AVX-512) usados para operações [[https://en.wikipedia.org/wiki/Single_instruction,_multiple_data][SIMD]] — uma instrução opera sobre múltiplos dados em paralelo. Essenciais para processamento de áudio, vídeo, criptografia e qualquer coisa que exija throughput numérico.
+
+*** 3.7 =MSRs= (Model-Specific Registers)
+
+São registradores de controle que variam conforme o modelo da CPU. Acessíveis somente via instruções =rdmsr= e =wrmsr= (privilegiadas, anel 0). Armazenam coisas como contadores de desempenho, configuração de cache e bases de tabelas do sistema. Você não os usa diretamente de uma aplicação comum, mas um engenheiro de kernel ou de ferramentas de profiling lida com eles o tempo todo.
+
+** 4 Registradores de sistema
+
+São registradores que o SO usa para configurar o ambiente onde suas aplicações rodam. Você como programador de aplicação não os modifica, mas precisa saber que eles existem porque explicam o comportamento da máquina:
+
+#+CAPTION: Tabela 6 – Registradores de sistema
+| Registrador     | Função                                                                 |
+|-----------------|------------------------------------------------------------------------|
+| =cr0=, =cr4=      | Flags de modo do processador (modo protegido, paginação, extensões)    |
+| =cr2=            | Endereço que causou uma page fault                                     |
+| =cr3=            | Base da tabela de páginas (memória virtual)                            |
+| =cr8= (tpr)      | Prioridade de interrupção (ajuste fino de APIC)                        |
+| =efer=           | Habilita modo longo (=LME=), syscall (=SCE=), NX bit (=NXE=)              |
+| =idtr=           | Endereço da IDT (Interrupt Descriptor Table)                           |
+| =gdtr=, =ldtr=     | Endereços da GDT e LDT (tabelas de segmento — legado, mas usadas no modo longo) |
+| =cs=, =ds=, =ss=, =es=, =fs=, =gs= | Registradores de segmento. No modo longo, =cs=, =fs= e =gs= ainda são relevantes |
+
+** 5 Anéis de proteção
+
+O processador Intel 64 opera em 4 [[https://en.wikipedia.org/wiki/Protection_ring][níveis de privilégio]] (anéis 0 a 3). Apenas dois são usados na prática:
+
+- /Anel 0/ (kernel mode) :: acesso irrestrito a todas as instruções, registradores e dispositivos.
+- /Anel 3/ (user mode) :: apenas instruções seguras. Tentar executar uma instrução privilegiada gera interrupção (#GP).
+
+Seu código Assembly roda no anel 3. Isso significa que instruções como =cli= (clear interrupts), =hlt= (halt), =lgdt= (load GDT), =in=, =out= (I/O), =wrmsr= são inacessíveis. Para interagir com hardware, você faz uma chamada de sistema (=syscall=), que transiciona para o anel 0, executa o serviço e retorna (=sysret=).
+
+O anel atual está codificado nos 2 bits menos significativos de =cs= (e ecoado em =ss=). Esses bits só mudam via interrupção ou =syscall=/=sysret= — você não pode simplesmente setá-los.
+
+** 6 Pilha de hardware
+
+A pilha de hardware é a estrutura de dados que viabiliza chamadas de função, variáveis locais e salvamento de contexto. Não é um hardware separado — é memória comum, gerenciada pelo registrador =rsp= e por duas instruções.
+
+*** 6.1 Mecanismo
+
+#+CAPTION: Tabela 8 – Mecanismo de =push= e =pop=
+| Instrução  | Registrador | Passo 1                                              | Passo 2                                          |
+|------------|-------------|------------------------------------------------------|--------------------------------------------------|
+| =push X=   | =rsp=       | Decrementa =rsp= conforme o tamanho de X (2, 4 ou 8) | Escreve X no endereço apontado por =rsp=          |
+| =pop X=    | =rsp=       | Lê o valor no endereço =rsp= e copia para X          | Incrementa =rsp= conforme o tamanho de X          |
+
+A pilha /cresce para baixo/ (em direção ao endereço 0). Um =push= diminui =rsp=; um =pop= aumenta.
+
+*** 6.2 Para que serve
+
+1. /Chamadas de função/ :: =call= empilha o endereço de retorno (valor de =rip=); =ret= desempilha e salta para ele.
+2. /Salvamento de registradores/ :: a função chamada empilha registradores que vai modificar (callee-saved).
+3. /Passagem de argumentos/ :: no [[https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI][System V AMD64]], argumentos além do 6º vão na pilha. No Windows x64, a partir do 5º.
+4. /Variáveis locais/ :: alocadas deslocando =rsp= para baixo (subtraindo um valor constante).
+
+*** 6.3 Comportamento que você precisa conhecer
+
+- A pilha /nunca está vazia/. =rsp= sempre aponta para algum lugar. Fazer =pop= sem =push= correspondente retorna lixo.
+- =push= com operandos menores que 64 bits usa extensão de sinal. =push -1= sempre armazena =0xFFFFFFFFFFFFFFFF= na pilha (8 bytes). Passe =push word -1= se quiser 2 bytes.
+- Em algumas arquiteturas, =rsp= aponta para a /próxima/ posição livre; na Intel 64, =rsp= aponta para o /último elemento empilhado/.
+
+#+CAPTION: Figura 7 – Intel 64, registradores e pilha.
+[[/images/lowlv01/fig1-7.png]]
+
+#+BEGIN_NOTE
+*Trabalhando com o Intel SDM*
+
+O [[https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html][Intel 64 and IA-32 Architectures Software Developer's Manual]] é sua referência definitiva. O volume 2 contém a descrição completa de cada instrução.
+
+#+CAPTION: Tabela 9 – Colunas da tabela de instruções no Intel SDM
+| Coluna          | Significado                                                                                             |
+|-----------------|---------------------------------------------------------------------------------------------------------|
+| =OPCODE=        | Codificação binária da instrução.                                                                       |
+| =INSTRUCTION=   | Mnemônico e operandos permitidos. Ex.: =r/m16= = registrador ou memória de 16 bits; =imm8= = imediato de 8 bits. |
+| =64-bit Mode=   | Suporte no modo longo (=Valid=, =Invalid=, ou condicional).                                             |
+| =DESCRIPTION=   | Efeitos da instrução e flags alteradas.                                                                 |
+
+Exemplo de consulta: o manual da instrução =push= informa que operandos imediatos são estendidos com sinal para o tamanho padrão da pilha (64 bits no modo longo), exceto quando o tamanho é explicitamente especificado (=push word 0x1234=).
+
+- Quando o operando de =push= /não/ tem o sinal estendido?
+- O que acontece com a memória e =rsp= ao executar =push rsp=?
+#+END_NOTE
+
+[fn:1] Referência sobre custo de tecnologias de hardware — a ser completada.
+[fn:2] Intel 64 e AMD64 são tratados como equivalentes neste artigo; as diferenças são marginais no escopo abordado.
+
+
+** 7 Escrevendo seu primeiro programa Assembly
+
+Você já conhece o hardware. Sabe o que são registradores, como a CPU busca e executa instruções, para que serve a pilha. Agora vamos fazer a transição que separa quem estuda arquitetura de quem programa de verdade: pegar esse conhecimento e transformá-lo em código que roda no metal.
+
+Cada instrução que você vai escrever daqui em diante tem um efeito direto e previsível sobre o estado da máquina. Não há garbage collector, não há type checker, não há runtime salvando você de si mesmo. O que você escreve é o que o processador executa. Isso é intimidador — e é exatamente o que torna esse conhecimento tão poderoso.
+
+A forma mais direta de entender Assembly é escrevê-lo. Vamos construir um "Hello, world" para Linux x86-64, usando o montador [[https://www.nasm.us/][NASM]] e o linkeditor =ld=.
+
+*** 7.1 Estrutura mínima
+
+O programa mais simples que faz algo visível escreve em =stdout= e encerra. Em Assembly, isso significa duas chamadas de sistema: =write= (código 1) e =exit= (código 60).
+
+#+BEGIN_SRC asm
+section .data
+message: db 'hello, world!', 10    ; 10 = '\n'
+
+section .text
+global _start
+
+_start:
+    mov rax, 1           ; syscall write
+    mov rdi, 1           ; fd = stdout
+    mov rsi, message     ; buffer
+    mov rdx, 13          ; tamanho
+    syscall
+
+    mov rax, 60          ; syscall exit
+    xor edi, edi         ; código 0
+    syscall
+#+END_SRC
+
+Cada linha merece atenção:
+
+- =section .data= agrupa dados com valores iniciais. =section .text= agrupa instruções. O linkeditor posiciona cada seção contiguamente no binário final.
+- =global _start= declara o rótulo como visível ao linkeditor. Sem isso, o =ld= não encontra o ponto de entrada e o programa não linka.
+- =_start= é o ponto de entrada: o kernel transfere o controle para esse endereço após carregar o binário. Não é uma função C — não há =main=, não há =libc=, não há =ret= que funcione. O =rsp= aponta para a pilha com =argc=, =argv= e =envp=, mas não precisamos disso agora.
+- =mov rax, 1= define qual syscall: 1 é =write=. =rdi= recebe o file descriptor (1 = stdout), =rsi= o endereço do buffer, =rdx= a quantidade de bytes.
+- =syscall= transfere para o kernel. Os valores em =rax=, =rdi=, =rsi=, =rdx=, =r10=, =r8=, =r9= são lidos; o resultado volta em =rax=.
+- O segundo bloco chama =exit(0)=. =xor edi, edi= zera =rdi= com 2 bytes — a escrita em 32 bits automaticamente zera a metade superior do registrador de 64 bits, como explicado na seção 3.3. Comparado com =mov rdi, 0= (7 bytes) ou =xor rdi, rdi= (3 bytes), esta é a forma mais compacta.
+
+Para compilar e executar:
+
+#+BEGIN_SRC bash
+nasm -felf64 hello.asm -o hello.o
+ld -o hello hello.o
+./hello
+#+END_SRC
+
+A flag =-felf64= produz objeto ELF64. O =ld= resolve símbolos e gera o executável. Nenhuma libc é linkada — o binário depende apenas do kernel.
+
+*** 7.2 Por que o programa quebra sem exit
+
+Se você remover o bloco =exit= e executar, muito provavelmente verá um /segmentation fault/ após a mensagem. O motivo: após =syscall write=, =rip= avança para o próximo byte na memória. O que existe ali é lixo — bytes que não foram escritos como instrução. A CPU tenta decodificar e encontra um opcode inválido; o resultado é a interrupção #UD (Undefined Opcode, código 6), que o kernel traduz para =SIGILL=. Se por acaso os bytes forem um opcode válido, o comportamento é pior: a CPU executa lixo indeterminado até eventualmente acessar memória inválida.
+
+A lição: Assembly não tem "fim de programa" implícito. Você precisa explicitamente devolver o controle ao kernel.
+
+*** 7.3 Seções e rótulos
+
+Um programa Assembly é organizado em seções — regiões de memória com permissões e propósitos diferentes:
+
+#+CAPTION: Tabela 10 – Seções de um programa Assembly
+| Seção      | Propósito                                         | Permissões        |
+|------------|---------------------------------------------------|-------------------|
+| =.text=    | Código executável                                 | =read + execute=  |
+| =.data=    | Variáveis globais inicializadas                   | =read + write=    |
+| =.bss=     | Variáveis globais não inicializadas (zero-fill). Ocupam zero bytes no binário; o SO aloca e zera no carregamento. | =read + write=    |
+| =.rodata=  | Constantes somente-leitura                        | =read=            |
+
+Rótulos são nomes simbólicos para endereços. =message: db 'hello'= define um rótulo =message= que aponta para o primeiro byte da string. O montador resolve referências a rótulos em endereços numéricos. Não existe "variável" em Assembly — existe endereço com um nome. Você decide quantos bytes lê a partir dali.
+
+Rótulos que começam com ponto (ex.: =.loop=) são locais: o nome completo é prefixado pelo último rótulo global. Dentro de =_start=, =.loop= é =_start.loop=. Isso permite reutilizar nomes sem colisão em funções diferentes.
+
+** 8 Instruções essenciais
+
+*** 8.1 =mov=
+
+=mov destino, origem= copia um valor. Três regras:
+
+1. Destino e origem devem ter o mesmo tamanho. =mov rax, ebx= não compila — =rax= é 64 bits, =ebx= é 32 bits.
+2. Não existe =mov mem, mem=. Você precisa de um registrador intermediário.
+3. O valor de origem pode ser imediato (=mov rax, 42=), registrador (=mov rax, rbx=) ou memória (=mov rax, [rbx]=).
+
+Escrever em registrador de 32 bits zera a metade superior do registrador de 64 bits. =mov eax, 1= é equivalente a =mov rax, 1=, mas custa 1 byte a menos (5 vs 7 bytes). Escrever em 16 ou 8 bits preserva os bits superiores.
+
+*** 8.2 =syscall=
+
+A instrução =syscall= é a porta para o kernel. O fluxo:
+
+1. Coloque o número da syscall em =rax=.
+2. Coloque até 6 argumentos em =rdi=, =rsi=, =rdx=, =r10=, =r8=, =r9=.
+3. Execute =syscall=.
+4. O resultado (ou erro) retorna em =rax=.
+
+Syscalls essenciais para começar:
+
+#+CAPTION: Tabela 7 – Syscalls essenciais
+| Código | Nome   | =rdi=          | =rsi=    | =rdx=      | Retorno               |
+|--------|--------|----------------|----------|------------|-----------------------|
+| 0      | read   | file descriptor | buffer   | tamanho    | bytes lidos           |
+| 1      | write  | file descriptor | buffer   | tamanho    | bytes escritos        |
+| 60     | exit   | código de saída| —        | —          | não retorna           |
+
+Os file descriptors padrão: 0 (=stdin=), 1 (=stdout=), 2 (=stderr=). Todo processo Unix já os recebe abertos.
+
+A instrução =syscall= altera =rcx= e =r11= — o kernel salva =rip= em =rcx= e =rflags= em =r11= para poder retornar. Não dependa dos valores nesses registradores após =syscall=.
+
+*** 8.3 Controle de fluxo
+
+Assembly não tem =if=, =for= ou =while=. Você constrói essas estruturas com comparações e saltos:
+
+- =cmp a, b= calcula =a - b= e atualiza =rflags=, sem armazenar o resultado.
+- =test a, b= calcula =a & b= e atualiza =rflags=.
+- Saltos condicionais leem =rflags=: =je= (jump if equal), =jne=, =jg=, =jl=, =ja=, =jb=, etc.
+
+#+BEGIN_SRC asm
+; if (rax < 42) rbx = 1 else rbx = 0
+    cmp rax, 42
+    jl  .yes
+    mov rbx, 0
+    jmp .end
+.yes:
+    mov rbx, 1
+.end:
+#+END_SRC
+
+A distinção entre saltos com e sem sinal é crucial:
+- =jg= (greater) / =jl= (less) usam =SF= e =OF= — comparação com sinal.
+- =ja= (above) / =jb= (below) usam =CF= — comparação sem sinal.
+
+Comparar =rax=-1 com =rdx=2 com =jl= indica que -1 < 2 (true). Com =jb=, o flags de carry determinam o resultado, e -1 como unsigned (=0xFFFFFFFFFFFFFFFF=) é maior que 2 — o salto não é tomado. Bugs de sinal/sem-sinal estão entre os mais comuns em Assembly.
+
+=test reg, reg= é um idiom para verificar se um registrador é zero (mais compacto que =cmp reg, 0=).
+
+** 9 Trabalhando com dados
+
+*** 9.1 Diretivas de alocação
+
+As diretivas =db=, =dw=, =dd=, =dq= alocam bytes inicializados na seção atual:
+
+#+BEGIN_SRC asm
+section .data
+a: db 0x55              ; 1 byte
+b: dw 0x1234            ; 2 bytes (word)
+c: dd 0xDEADBEEF        ; 4 bytes (double word)
+d: dq 0x0123456789ABCDEF; 8 bytes (quad word)
+arr: times 999 db 42     ; 999 bytes, todos = 42
+#+END_SRC
+
+=times n cmd= repete =cmd= =n= vezes. Funciona com instruções também, embora raramente útil.
+
+Strings em Assembly são sequências de bytes. A terminação é convenção — tipicamente um byte nulo (0) ao final, como em C:
+
+#+BEGIN_SRC asm
+msg: db 'hello', 0
+#+END_SRC
+
+Sem terminador, qualquer rotina que percorra a string não sabe onde parar. O comprimento pode ser armazenado explicitamente, mas strings null-terminated são o padrão da libc e das syscalls Unix.
+
+*** 9.2 Endianness
+
+Quando você armazena um valor multibyte na memória, a ordem dos bytes depende da arquitetura. Intel 64 é [[https://en.wikipedia.org/wiki/Endianness][little-endian]]: o byte menos significativo ocupa o endereço mais baixo.
+
+#+BEGIN_SRC asm
+section .data
+val: dq 0x0123456789ABCDEF
+#+END_SRC
+
+Na memória, partindo de =val=:
+
+#+BEGIN_SRC
+val+0: EF
+val+1: CD
+val+2: AB
+val+3: 89
+val+4: 67
+val+5: 45
+val+6: 23
+val+7: 01
+#+END_SRC
+
+O impacto prático: se você lê =dword [val]=, obtém =0x89ABCDEF= (os 4 bytes menos significativos, que estão nos 4 primeiros endereços). Isso é conveniente para conversão implícita de tamanho — ler uma double word de um quad word little-endian retorna o valor truncado corretamente, sem precisar ajustar o ponteiro.
+
+O oposto é [[https://en.wikipedia.org/wiki/Endianness#Networking][big-endian]], usado em protocolos de rede (TCP/IP). A JVM também especifica big-endian internamente. Se você programa sockets em Assembly, precisa converter: bytes da rede vêm em big-endian; o processador espera little-endian. Instruções como =bswap= (byte swap) ou =htonl= (em C) fazem essa conversão.
+
+Nos registradores, a ordem não se aplica — registradores não têm endereços. O bit 0 é sempre o menos significativo, independentemente da arquitetura. Endianness só importa na interface com a memória.
+
+** 10 Modos de endereçamento
+
+O Intel 64 oferece um esquema poderoso para calcular endereços de memória. A forma geral:
+
+#+BEGIN_SRC
+[base + índice * escala + deslocamento]
+#+END_SRC
+
+- =base=: registrador de 64 bits (qualquer GPR).
+- =índice=: registrador de 64 bits (exceto =rsp=).
+- =escala=: 1, 2, 4, ou 8 — o tamanho do elemento referenciado.
+- =deslocamento=: valor imediato (constante).
+
+Todos os componentes são opcionais. Exemplos:
+
+#+BEGIN_SRC asm
+mov rax, [rbx]              ; só base: endereço em rbx
+mov rax, [rbx + 8]          ; base + deslocamento constante
+mov rax, [rbx + 4*rcx]      ; base + índice com escala
+mov rax, [rbx + 4*rcx + 16] ; todos os componentes
+mov rax, [array + rsi*8]    ; deslocamento (rótulo) + índice com escala
+lea rax, [rbx + rbx*4]      ; lea: calcula endereço, não acessa memória (rax = rbx*5)
+#+END_SRC
+
+Colchetes indicam acesso à memória. A diferença entre =mov rax, rbx= e =mov rax, [rbx]= é fundamental: o primeiro copia o valor de =rbx=; o segundo copia os 8 bytes da memória no endereço contido em =rbx=.
+
+A instrução =lea= (Load Effective Address) calcula o endereço sem acessar a memória — é um atalho para aritmética. =lea rax, [rbx + rbx*4]= equivale a =mov rax, rbx= + =imul rax, 5=, mas em um único ciclo, sem alterar flags.
+
+Quando o tamanho do operando de memória é ambíguo, o montador exige um qualificador:
+
+#+BEGIN_SRC asm
+mov byte [rsi], 0    ; escreve 1 byte
+mov word [rsi], 0    ; escreve 2 bytes
+mov dword [rsi], 0   ; escreve 4 bytes
+mov qword [rsi], 0   ; escreve 8 bytes
+#+END_SRC
+
+** 11 Chamadas de função
+
+*** 11.1 =call= e =ret=
+
+A arquitetura Intel 64 implementa chamadas de função com duas instruções e a pilha:
+
+- =call addr= empilha o =rip= atual (endereço de retorno) e salta para =addr=.
+- =ret= desempilha o topo da pilha e salta para esse endereço.
+
+É equivalente a:
+
+#+BEGIN_SRC asm
+; call addr:
+push rip
+jmp addr
+
+; ret:
+pop rip
+#+END_SRC
+
+A simetria é frágil: =ret= confia que o topo da pilha contém um endereço de retorno válido. Se a função desbalanceou a pilha (mais =push= que =pop=, ou =sub rsp= sem o correspondente =add=), =ret= saltará para lixo — tipicamente um crash por execução de memória inválida.
+
+*** 11.2 Convenção de chamada do System V AMD64
+
+Para que funções escritas por pessoas diferentes (ou compiladores diferentes) interoperem, existe uma [[https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI][convenção de chamada]]. A do System V AMD64 (Linux, macOS, BSDs) especifica:
+
+/Argumentos/:
+- 1º a 6º argumento inteiro: =rdi=, =rsi=, =rdx=, =rcx=, =r8=, =r9= (nessa ordem).
+- 1º a 8º argumento float/double: =xmm0= a =xmm7=.
+- Argumentos além do 6º (ou 8º) vão na pilha, em ordem inversa (último argumento empilhado primeiro).
+- O valor de retorno vai em =rax= (inteiro) ou =xmm0= (float). Se forem dois valores, =rdx= complementa.
+
+/Registradores/:
+- /Callee-saved/ (a função chamada deve preservá-los): =rbx=, =rbp=, =rsp=, =r12= a =r15=. Se a função os modificar, deve restaurá-los antes de =ret=.
+- /Caller-saved/ (o chamador assume que serão destruídos): todos os demais — =rax=, =rcx=, =rdx=, =rsi=, =rdi=, =r8= a =r11=, =xmm0= a =xmm15=.
+
+/Alinhamento de pilha/:
+- =rsp= deve estar alinhado em 16 bytes no momento de cada =call=.
+- Na entrada da função, =rsp ≡ 8 (mod 16)= porque =call= empilhou 8 bytes (=rip=).
+
+*** 11.3 Exemplo: função que retorna o quadrado
+
+#+BEGIN_SRC asm
+; int square(int n) { return n * n; }
+square:
+    mov rax, rdi    ; n está em rdi (1º argumento)
+    imul rax, rdi   ; rax = n * n
+    ret
+
+; Uso:
+main:
+    mov rdi, 7
+    call square     ; rax = 49
+    ; ...
+#+END_SRC
+
+=square= é uma função folha (não chama outras funções), então não precisa salvar nada na pilha. Basta retornar o valor em =rax=.
+
+Para funções não-folha, o padrão de stack frame é:
+
+#+BEGIN_SRC asm
+minha_funcao:
+    push rbp            ; salva base pointer do caller
+    mov rbp, rsp        ; estabelece frame
+    sub rsp, N          ; aloca N bytes de variáveis locais
+    push rbx            ; salva callee-saved que vamos usar
+    ; ... corpo: chamadas a outras funções, etc. ...
+    pop rbx             ; restaura
+    mov rsp, rbp        ; libera variáveis locais (ou 'add rsp, N')
+    pop rbp             ; restaura rbp do caller
+    ret
+#+END_SRC
+
+O frame permite acessar argumentos e variáveis locais com offsets fixos a partir de =rbp= (=rbp+16= é o primeiro argumento na pilha, =rbp-8= é a primeira variável local, etc.) e facilita a depuração e o unwinding de stack.
+
+** 12 Exemplo prático: calculando o tamanho de uma string
+
+Juntando os conceitos, uma função =strlen= que calcula o comprimento de uma string null-terminated:
+
+#+BEGIN_SRC asm
+; size_t strlen(const char *s)
+; Argumento: rdi = ponteiro para string
+; Retorno: rax = comprimento (sem o terminador nulo)
+strlen:
+    mov rax, rdi        ; copia o ponteiro
+.loop:
+    cmp byte [rax], 0   ; compara o byte atual com 0
+    je  .done           ; se for nulo, terminamos
+    inc rax             ; avança para o próximo byte
+    jmp .loop
+.done:
+    sub rax, rdi        ; rax = (ptr_final - ptr_inicial) = comprimento
+    ret
+#+END_SRC
+
+Alguns detalhes desse código:
+
+- Usamos =rax= como ponteiro de iteração. Poderíamos usar =rcx= ou outro registrador caller-saved, mas =rax= já é o registrador de retorno — reaproveitá-lo evita um =mov= extra no final.
+- =cmp byte [rax], 0= é um acesso à memória de 1 byte. O qualificador =byte= é necessário porque o montador não sabe se você quer comparar 1, 2, 4 ou 8 bytes.
+- =sub rax, rdi= no final calcula a diferença entre o ponteiro que avançou e o ponteiro original: essa é exatamente a quantidade de caracteres.
+- A função não modifica nenhum registrador callee-saved — não precisa de prólogo/epílogo.
+
+Para usá-la:
+
+#+BEGIN_SRC asm
+section .data
+msg: db "Assembly", 0
+
+section .text
+global _start
+_start:
+    mov rdi, msg
+    call strlen
+    mov rdi, rax        ; código de saída = comprimento
+    mov rax, 60         ; syscall exit
+    syscall
+#+END_SRC
+
+Execute e verifique com =echo $?= — o código de saída será 8.
+
+** 13 O [[https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html][Intel SDM]] como referência diária
+
+O Intel Software Developer's Manual não é um livro para ler linearmente — é uma referência. O volume 2 é o mais consultado: cada instrução tem uma página com a codificação binária (=OPCODE=), os operandos permitidos, o efeito sobre flags e pseudocódigo do que a instrução faz.
+
+Exemplo prático de consulta: pesquise =push= no volume 2. A tabela mostra que operandos imediatos com menos de 64 bits são sign-extended para o tamanho padrão da pilha (64 bits no modo longo), a menos que o tamanho seja explicitamente especificado (=push word 0x1234=). É o tipo de detalhe que você só descobre no manual.
+
+A notação de operandos é compacta mas consistente: =r/m16= significa "registrador ou memória de 16 bits"; =imm8= é "imediato de 8 bits"; =r64= é "registrador de 64 bits". Depois de consultar algumas instruções, você decifra a notação sem esforço.
+
+O volume 1 cobre arquitetura (o conteúdo das seções 1 a 6 deste artigo). O volume 3 é referência de sistema (registradores de controle, paginação, interrupções, modos de operação). Você não precisa ler tudo — saiba onde encontrar cada tipo de informação e consulte sob demanda.
+
+** 14 Hands-on: criando um =mycat=
+
+Você já sabe o suficiente para construir algo que funciona de verdade. Nada de "Hello, world" descartável: vamos escrever um clone simplificado do comando =cat= do Unix — um programa que lê da entrada padrão e ecoa na saída padrão até encontrar EOF (=Ctrl+D=). Em ~30 linhas de Assembly, você terá uma ferramenta que pode ser usada em pipelines do shell.
+
+O programa usa exatamente o que cobrimos: as syscalls =read= (código 0) e =write= (código 1), um buffer alocado na pilha ou no =.data=, comparações e saltos para controlar o laço, e =exit= para encerrar.
+
+*** 14.1 Especificação
+
+- Lê blocos de até 256 bytes de =stdin= (fd 0) usando a syscall =read=.
+- Se =read= retornar 0, chegou ao EOF — encerra.
+- Se =read= retornar um valor negativo (erro), encerra com código 1.
+- Caso contrário, escreve os bytes lidos em =stdout= (fd 1) usando =write= e volta a ler.
+
+*** 14.2 Código
+
+#+BEGIN_SRC asm
+section .bss
+buffer: resb 256          ; buffer de 256 bytes (não inicializado)
+
+section .text
+global _start
+
+_start:
+    ; --- read ---
+    mov rax, 0            ; syscall read
+    mov rdi, 0            ; fd = stdin
+    mov rsi, buffer       ; destino
+    mov rdx, 256          ; tamanho máximo
+    syscall
+
+    cmp rax, 0            ; EOF?
+    je  .exit_ok          ; rax == 0 → terminou
+    jl  .exit_err         ; rax < 0  → erro
+
+    ; --- write ---
+    mov rdx, rax          ; bytes lidos → tamanho do write
+    mov rax, 1            ; syscall write
+    mov rdi, 1            ; fd = stdout
+    mov rsi, buffer       ; origem
+    syscall
+
+    cmp rax, 0
+    jl  .exit_err         ; write falhou
+    jmp _start            ; próximo bloco
+
+.exit_ok:
+    xor edi, edi          ; código 0
+    jmp .exit
+
+.exit_err:
+    mov rdi, 1            ; código 1
+
+.exit:
+    mov rax, 60           ; syscall exit
+    syscall
+#+END_SRC
+
+*** 14.3 O que está acontecendo, instrução por instrução
+
+- =section .bss= reserva memória não inicializada. =resb 256= aloca 256 bytes zerados no carregamento — ideal para buffers. Diferente de =.data=, não ocupa espaço no binário.
+- O laço principal está em =_start=: cada iteração chama =read=, confere o resultado e, se houver dados, chama =write=. Um =jmp _start= fecha o ciclo — a flag =ZF= e =SF= do =cmp rax, 0= determinam se saímos do laço.
+- =cmp rax, 0= seguido de =je= verifica EOF: =read= retorna 0 quando o descritor chega ao fim. =jl= verifica se o resultado é negativo — syscalls retornam -errno em =rax= em caso de erro (ex.: -EBADF se o fd for inválido).
+- =mov rdx, rax= antes de =write= é essencial: =read= retorna em =rax= quantos bytes realmente foram lidos. Se você passasse sempre 256 para =write=, escreveria lixo nos bytes além do que foi lido.
+- =jmp _start= em vez de =jmp .start= (rótulo local): =_start= é global, então usamos o nome completo. Poderíamos ter usado um rótulo local =.loop=, mas =_start= já está definido e é claro.
+
+#+BEGIN_NOTE
+*Cuidado com partial writes*
+
+Este código assume que =write= sempre consegue escrever todos os bytes solicitados de uma vez. Na prática, uma chamada a =write= pode retornar um valor positivo /menor/ que =rdx= — isso é um /partial write/. O kernel garante que escreveu pelo menos 1 byte, mas não necessariamente todos. Se isso acontecer, o restante dos bytes ainda está no buffer e precisa ser escrito antes de um novo =read=.
+
+Para um programa de produção, o tratamento seria:
+
+#+BEGIN_SRC asm
+; Após write, esperamos que rax == rdx (bytes solicitados)
+    cmp rax, rdx
+    je  _start            ; tudo escrito, próximo bloco
+; Partial write: ajusta o ponteiro do buffer e tenta de novo
+    add rsi, rax          ; avança o ponteiro
+    sub rdx, rax          ; reduz o contador
+    mov rax, 1
+    jmp write_loop        ; reenvia o restante
+#+END_SRC
+
+Para testes com pipes e arquivos locais, partial writes são raros — por isso o código simplificado funciona. Mas em sockets, TTYs ou quando o disco está sob pressão, eles ocorrem e o programa perderia dados silenciosamente.
+#+END_NOTE
+
+*** 14.4 Compilando e testando
+
+#+BEGIN_SRC bash
+nasm -felf64 mycat.asm -o mycat.o
+ld -o mycat mycat.o
+
+# Teste básico
+echo "Assembly funciona" | ./mycat
+
+# Pipeline com outro comando
+echo "assembly é portátil?" | ./mycat | tr 'a-z' 'A-Z'
+
+# Com arquivo real
+./mycat < mycat.asm
+
+# Teste de estresse (arquivo de 1 MB via /dev/urandom)
+dd if=/dev/urandom bs=1024 count=1024 2>/dev/null | time ./mycat > /dev/null
+#+END_SRC
+
+O último comando mostra que mesmo um loop ingênuo em Assembly é rápido — você está a um =syscall= de distância do kernel, sem buffers intermediários da libc, sem =FILE *=, sem overhead de linguagem.
+
+*** 14.5 Extensões sugeridas
+
+Se quiser ir além antes do próximo artigo:
+
+#+CAPTION: Tabela 11 – Extensões sugeridas para o =mycat=
+| Extensão                      | Descrição                                                                                                                              |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| Buffer maior                  | Experimente 4096 ou 8192 bytes (múltiplos do tamanho de página). Syscalls são caras; menos chamadas com buffers maiores aumentam o throughput. |
+| Suporte a múltiplos arquivos  | Se o programa receber argumentos (=argc > 1=), leia de cada arquivo em vez de =stdin=. Use a syscall =open= (código 2) e parsing de =argv=.    |
+| Medir desempenho              | Use =perf stat ./mycat < arquivo_grande > /dev/null= e compare com o =cat= do sistema. A diferença está no buffer e no =splice=/=sendfile=, não na linguagem. |
+
+No próximo artigo, vamos expandir esse =mycat= para manipular os dados que passam pelo programa: converter case, calcular hashes, filtrar linhas — transformadores de stream, os precursores de ferramentas como =grep=, =sed= e =awk=, implementados em Assembly puro. Você já tem o esqueleto de leitura e escrita; o que faremos a seguir é inserir inteligência entre a entrada e a saída.
+
+O caminho que você começou aqui — entender o hardware, escrever instruções, controlar o fluxo byte a byte — é o mesmo que levou pessoas a criar sistemas operacionais, engines de jogo, ferramentas de segurança ofensiva, emuladores de console e kernels embarcados. Não existe mágica abaixo dessa camada. Você está no fundo da stack. E agora sabe o que fazer com isso.

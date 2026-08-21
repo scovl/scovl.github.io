@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>Características Arquiteturais — lobovit</title>
+  <link rel="stylesheet" href="/css/main.css?v=3">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/prism/prism-mocha.min.css">
+</head>
+<body>
+  <div class="frame">
+    <header>
+      <nav>
+        <a class="site-title" href="http://localhost:1313/">lobovit</a>
+        <span class="nav-links">
+          <a href="/page/about/">about</a>
+          <a href="/page/contact/">contact</a>
+        </span>
+      </nav>
+      <hr>
+    </header>
+    <main>
+      
+<article>
+  <header>
+    <h1>Características Arquiteturais</h1>
+    <p class="meta"><time>2026-06-29</time> · <span class="tag">arquitetura</span><span class="tag">software</span></p>
+  </header>
+  <div class="content">
+    
+<p>
+Este artigo é uma síntese comentada do Capítulo 4 (<strong>Architecture Characteristics</strong>) do livro <a href="https://www.oreilly.com/library/view/fundamentals-of-software/9781492043423/"><strong>Fundamentals of Software Architecture: A Modern Engineering Approach</strong></a>, de Mark Richards e Neal Ford (O&#39;Reilly, 2020).</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Definição de Características Arquiteturais
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+Agora vamos mergulhar nos detalhes do design estrutural, que é um dos papéis fundamentais dos arquitetos de software. Isso consiste, basicamente, em duas atividades: a análise das características arquiteturais, que abordamos neste artigo, e o design de componentes lógicos, que trataremos em um artigo futuro. Os arquitetos podem realizar essas duas tarefas em qualquer ordem (ou até mesmo paralelamente), mas elas se encontram em um ponto de junção crucial.</p>
+<p>
+Quando uma empresa decide resolver um problema específico usando software, ela levanta uma lista de requisitos para esse sistema (existem várias técnicas para extrair isso). Ao longo deste artigo, vamos nos referir a esses requisitos como o domínio do problema (ou apenas domínio). Características arquiteturais são aqueles aspectos importantes do sistema que são independentes do domínio do problema e que são essenciais para o sucesso do projeto. Neste artigo, vamos definir melhor esse termo e listar algumas características específicas.</p>
+<p>
+Arquitetos frequentemente colaboram na definição do domínio, mas também precisam definir, descobrir e analisar tudo o que o software deve fazer que não esteja diretamente ligado às funcionalidades de negócio: essas são as características arquiteturais. O papel do arquiteto em definir essas características é parte do que diferencia a arquitetura de software da simples codificação ou do design comum. Eles também precisam levar em conta muitos outros fatores ao projetar uma solução, como mostra a Figura 4-1.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 4-1. Uma solução de software consiste tanto em requisitos de domínio quanto em características arquiteturais.</p>
+<div id="outline-container-headline-2" class="outline-3">
+<h3 id="headline-2">
+A Longevidade do termo &#34;Requisitos Não-Funcionais&#34;
+</h3>
+<div id="outline-text-headline-2" class="outline-text-3">
+<p>
+Muitas empresas usam vários nomes para descrever características arquiteturais, incluindo o famoso &#34;requisitos não-funcionais&#34;, um termo criado para separar essas características dos requisitos funcionais. Nós não gostamos desse termo porque ele é autodepreciativo e causa um impacto negativo na linguagem: como você convence uma equipe a dar atenção suficiente a algo que é &#34;não-funcional&#34;? Outro termo popular é &#34;atributos de qualidade&#34;, que também não nos agrada, pois sugere uma avaliação de qualidade feita depois que o trabalho já está pronto, em vez de focar no design.</p>
+<p>
+Preferimos o termo &#34;características arquiteturais&#34; porque ele descreve pontos que são críticos para o sucesso da arquitetura — e, consequentemente, para o sistema como um todo — sem desmerecer a importância desses pontos. Em <strong>Head First Software Architecture</strong> (O&#39;Reilly, 2024), nós chamamos as características arquiteturais de capacidades do sistema; em contrapartida, o domínio representa o comportamento do sistema.</p>
+<p>
+Às vezes, alguns termos &#34;pegam&#34;, e requisitos não-funcionais parece ser um dos mais resistentes entre os arquitetos de software. Ainda é muito comum em diversas organizações. Esse termo começou a aparecer na literatura de engenharia de software no final dos anos 70, mais ou menos na mesma época da &#34;análise de pontos de função&#34;, uma técnica de estimativa que quebrava os requisitos do sistema em &#34;pontos de função&#34;, onde cada um representava uma unidade de trabalho. Teoricamente, as equipes podiam somar todos os pontos ao final da análise e ter uma ideia do projeto. Infelizmente, isso dava uma falsa sensação de certeza, mas era cheio de subjetividade, como a maioria dos esquemas de estimativa, e hoje não é mais utilizado.</p>
+<p>
+No entanto, um aprendizado que ficou daquela época é que grande parte do esforço para criar um sistema tem a ver com as capacidades desse sistema, e não apenas com seus requisitos. Eles chamavam esses esforços de &#34;pontos não-funcionais&#34;, o que levou o termo requisitos não-funcionais a se popularizar.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
+<h3 id="headline-3">
+Características Arquiteturais e o Design do Sistema
+</h3>
+<div id="outline-text-headline-3" class="outline-text-3">
+<p>
+Para ser considerada uma característica arquitetural, um requisito precisa atender a três critérios. Ele deve especificar uma consideração de design que não seja do domínio, influenciar algum aspecto estrutural do design e ser crítico ou importante para o sucesso da aplicação. Essas partes interligadas da nossa definição estão ilustradas na Figura 4-2, que consiste nesses três componentes e alguns modificadores.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 4-2. As características diferenciadoras das características arquiteturais.</p>
+<p>
+Vamos olhar mais de perto para esses componentes:</p>
+<ol>
+<li>**Uma característica arquitetural especifica uma consideração de design que não é de domínio. O design estrutural na arquitetura de software consiste em duas atividades do arquiteto: entender o domínio do problema e descobrir quais tipos de capacidades o sistema precisa ter para ser bem-sucedido. As considerações de design de domínio cobrem o comportamento do sistema, e as características arquiteturais definem as capacidades. Juntas, essas duas atividades definem o design estrutural. Enquanto os requisitos de design dizem o que a aplicação deve fazer, as características arquiteturais dizem como implementar os requisitos e por que certas escolhas foram feitas: em resumo, são os critérios operacionais e de design para o sucesso do projeto. Por exemplo, níveis específicos de desempenho são muitas vezes uma característica arquitetural importante, mas raramente aparecem nos documentos de requisitos. Mais importante ainda: nenhum documento de requisitos diz que um design deve &#34;evitar dívida técnica&#34;, mas essa é uma consideração de design comum.</li>
+<li>**Uma característica arquitetural influencia algum aspecto estrutural do design. O principal motivo pelo qual os arquitetos tentam descrever essas características é para extrair considerações de design importantes. O arquiteto pode implementar isso via design ou essa característica exige uma consideração estrutural especial para dar certo? Por exemplo, a segurança é uma preocupação em praticamente todo projeto. No entanto, a segurança sobe para o nível de característica arquitetural quando o arquiteto determina que a arquitetura precisa de uma estrutura especial para apoiá-la. Em um monolito, você resolve com boa higiene de código (criptografia, hashing, etc.). Já em uma arquitetura distribuída, como microsserviços, o arquiteto precisaria construir um serviço mais blindado com protocolos de acesso mais rigorosos — isso é uma abordagem estrutural. Já a escalabilidade, por exemplo, não há design que faça um monolito escalar além de certo ponto; nesse caso, o sistema precisa mudar para um estilo arquitetural distribuído.</li>
+<li>**Uma característica arquitetural deve ser crítica ou importante para o sucesso da aplicação. As aplicações podem suportar um número enorme de características, mas não deveriam. Cada característica que um sistema suporta adiciona complexidade ao design. É por isso que os arquitetos devem se esforçar para escolher o menor número possível de características, em vez do máximo. Nós dividimos as características em implícitas e explícitas. As implícitas raramente aparecem nos requisitos, mas são necessárias para o projeto dar certo (disponibilidade, confiabilidade, segurança). As explícitas aparecem nos documentos de requisitos ou em instruções claras.</li>
+</ol>
+<p>Na Figura 4-2, a escolha de um triângulo é proposital: cada elemento da definição apoia os outros, o que por sua vez apoia o design geral do sistema. O ponto de equilíbrio criado pelo triângulo ilustra como essas características frequentemente interagem entre si. É por isso que arquitetos usam tanto o termo &#34;trade-off&#34; (troca).</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Características Arquiteturais (Parcialmente) Listadas
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>
+As características existem em um espectro amplo de complexidade, variando desde coisas de baixo nível (como modularidade) até preocupações operacionais sofisticadas (como escalabilidade e elasticidade). Não existe um padrão universal verdadeiro, embora as pessoas tentem criar um. Cada organização interpreta esses termos à sua maneira. Além disso, como o ecossistema de software muda muito rápido, novos conceitos, termos e medidas surgem constantemente. Embora seja difícil quantificar o volume delas, os arquitetos costumam categorizá-las.</p>
+<div id="outline-container-headline-5" class="outline-3">
+<h3 id="headline-5">
+Características Arquiteturais Operacionais
+</h3>
+<div id="outline-text-headline-5" class="outline-text-3">
+<p>
+Cobre capacidades como desempenho, escalabilidade, elasticidade, disponibilidade e confiabilidade. Elas se sobrepõem muito às preocupações de operações e DevOps.</p>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Definição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><strong>Disponibilidade</strong></strong></td>
+<td>Quanto tempo o sistema precisa ficar no ar; se for 24/7, precisa de passos para recuperar rápido em caso de falha.</td>
+</tr>
+<tr>
+<td><strong><strong>Continuidade</strong></strong></td>
+<td>Capacidade de recuperação de desastres do sistema.</td>
+</tr>
+<tr>
+<td><strong><strong>Desempenho</strong></strong></td>
+<td>Quão bem o sistema funciona; inclui testes de estresse, análise de pico e tempos de resposta.</td>
+</tr>
+<tr>
+<td><strong><strong>Recuperabilidade</strong></strong></td>
+<td>Em caso de desastre, quão rápido o sistema deve voltar ao ar.</td>
+</tr>
+<tr>
+<td><strong><strong>Confiabilidade/Segurança</strong></strong></td>
+<td>Se o sistema precisa ser à prova de falhas ou se é crítico a ponto de afetar vidas.</td>
+</tr>
+<tr>
+<td><strong><strong>Robustez</strong></strong></td>
+<td>Capacidade de lidar com erros e situações de borda (como queda de conexão ou energia).</td>
+</tr>
+<tr>
+<td><strong><strong>Escalabilidade</strong></strong></td>
+<td>Capacidade de operar conforme o número de usuários ou requisições aumenta.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
+<h3 id="headline-6">
+Características Arquiteturais Estruturais
+</h3>
+<div id="outline-text-headline-6" class="outline-text-3">
+<p>
+Os arquitetos são responsáveis pela estrutura do código. Em muitos casos, o arquiteto tem responsabilidade total ou compartilhada pela qualidade interna do código.</p>
+<table>
+<thead>
+<tr>
+<th>Termo</th>
+<th>Definição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><strong>Configurabilidade</strong></strong></td>
+<td>Facilidade de usuários finais mudarem configurações via interface.</td>
+</tr>
+<tr>
+<td><strong><strong>Extensibilidade</strong></strong></td>
+<td>Quão bem a arquitetura aceita mudanças que estendem sua funcionalidade.</td>
+</tr>
+<tr>
+<td><strong><strong>Instalabilidade</strong></strong></td>
+<td>Quão fácil é instalar o sistema em todas as plataformas necessárias.</td>
+</tr>
+<tr>
+<td><strong><strong>Capacidade de reuso</strong></strong></td>
+<td>Até onde os componentes comuns podem ser usados em vários produtos.</td>
+</tr>
+<tr>
+<td><strong><strong>Localização</strong></strong></td>
+<td>Suporte a múltiplos idiomas e regiões.</td>
+</tr>
+<tr>
+<td><strong><strong>Manutenibilidade</strong></strong></td>
+<td>Facilidade de aplicar mudanças e melhorias.</td>
+</tr>
+<tr>
+<td><strong><strong>Portabilidade</strong></strong></td>
+<td>Capacidade de rodar em mais de uma plataforma.</td>
+</tr>
+<tr>
+<td><strong><strong>Upgradabilidade</strong></strong></td>
+<td>Facilidade e rapidez de atualizar para uma versão mais nova.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
+<h3 id="headline-7">
+Características de Nuvem
+</h3>
+<div id="outline-text-headline-7" class="outline-text-3">
+<p>
+O ecossistema muda e o exemplo mais recente é a nuvem. Hoje, a maioria dos sistemas interage com a nuvem de alguma forma. Exemplos incluem <strong><strong>escalabilidade sob demanda</strong></strong>, <strong><strong>elasticidade sob demanda</strong></strong>, <strong><strong>disponibilidade por zona</strong></strong> e <strong><strong>privacidade/segurança baseada em região</strong></strong> (leis que regem onde dados de cidadãos podem ser armazenados).</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+Características Arquiteturais Transversais (Cross-Cutting)
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<p>
+Algumas características ficam fora das categorias acima ou desafiam a classificação, mas formam restrições importantes:</p>
+<ul>
+<li><strong><strong>Acessibilidade:</strong></strong> Facilidade de acesso para pessoas com deficiências.</li>
+<li><strong><strong>Arquivabilidade:</strong></strong> Restrições sobre arquivar ou deletar dados.</li>
+<li><strong><strong>Autenticação/Autorização:</strong></strong> Segurança de identidade e controle de acesso a funções.</li>
+<li><strong><strong>Legal:</strong></strong> Restrições legislativas (como GDPR ou leis financeiras).</li>
+<li><strong><strong>Privacidade:</strong></strong> Capacidade de esconder transações, até mesmo de DBAs.</li>
+<li><strong><strong>Segurança:</strong></strong> Regras de criptografia e proteção de rede.</li>
+<li><strong><strong>Suportabilidade:</strong></strong> Nível de suporte técnico necessário (logging, debug).</li>
+<li><strong><strong>Usabilidade:</strong></strong> Nível de treinamento necessário para o usuário.</li>
+</ul>
+<p>Muitas dessas definições se sobrepõem, e qualquer lista será incompleta. O importante é entender que termos como interoperabilidade e compatibilidade, embora parecidos, possuem nuances técnicas diferentes.</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+As Muitas Ambiguidades na Arquitetura de Software
+</h2>
+<div id="outline-text-headline-9" class="outline-text-2">
+<p>
+Uma fonte constante de frustração entre arquitetos é a falta de definições claras para tantas coisas críticas, inclusive para o próprio trabalho de arquitetura! A ausência de um padrão leva as empresas a definirem seus próprios termos, o que gera confusão na indústria. Recomendamos que, dentro de cada organização, seja estabelecida uma &#34;linguagem ubíqua&#34; (comum) entre os funcionários para evitar esses mal-entendidos.</p>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+Trade-offs e a Arquitetura &#34;Menos Pior&#34;
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>
+Dissemos antes que os arquitetos devem apoiar apenas as características críticas para o sucesso do sistema. Isso porque o suporte a cada característica raramente é gratuito: exige esforço de design, de desenvolvimento e, muitas vezes, suporte estrutural. Além disso, as características são sinérgicas: se você melhorar a segurança, quase certamente terá um impacto negativo no desempenho. É como um piloto de helicóptero tentando equilibrar controles: mexer em um impacta os outros.</p>
+<p>
+O arquiteto nunca deve buscar a &#34;melhor&#34; arquitetura, mas sim a <strong><strong>arquitetura menos pior</strong></strong>. Tentar abraçar tudo torna o design inútil e complexo demais. Esforce-se para que a arquitetura seja o mais iterativa possível. Quanto mais fácil for mudar, menos o time precisa sofrer para acertar tudo na primeira tentativa.</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
+<h2 id="headline-11">
+Identificando Características Arquiteturais
+</h2>
+<div id="outline-text-headline-11" class="outline-text-2">
+<p>
+Para criar ou validar uma arquitetura, você deve olhar para dois lados: o domínio do problema e as características arquiteturais. Existem três fontes para descobrir o que um projeto precisa: preocupações do domínio, requisitos do projeto e seu conhecimento tácito (implícito).</p>
+<div id="outline-container-headline-12" class="outline-3">
+<h3 id="headline-12">
+Traduzindo Preocupações de Domínio
+</h3>
+<div id="outline-text-headline-12" class="outline-text-3">
+<p>
+O grande problema é que arquitetos e <strong>stakeholders</strong> (interessados) do negócio falam línguas diferentes. Arquitetos falam de escalabilidade e tolerância a falhas; o negócio fala de fusões, aquisições e fatia de mercado. O segredo é traduzir isso.</p>
+<ul>
+<li><strong><strong>Fusões e aquisições:</strong></strong> Pedem interoperabilidade e extensibilidade.</li>
+<li><strong><strong>Tempo de lançamento no mercado:</strong></strong> Pede agilidade e facilidade de deploy.</li>
+<li><strong><strong>Satisfação do usuário:</strong></strong> Pede desempenho e disponibilidade.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-13" class="outline-3">
+<h3 id="headline-13">
+O Perigo das &#34;Características Compostas&#34;
+</h3>
+<div id="outline-text-headline-13" class="outline-text-3">
+<p>
+Cuidado com as falsas equivalências. Por exemplo, &#34;agilidade&#34; não é um número único; ela é composta por coisas menores e mensuráveis, como facilidade de deploy, modularidade e testabilidade. Se alguém pede &#34;agilidade&#34;, você precisa decompor isso em características que podem ser realmente projetadas e medidas.</p>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-3">
+<h3 id="headline-14">
+A Origem das &#34;Katas de Arquitetura&#34;
+</h3>
+<div id="outline-text-headline-14" class="outline-text-3">
+<p>
+Criadas por Ted Neward, as <strong>Katas</strong> são exercícios para praticar a arquitetura. Imagine que é como um treino de artes marciais para aprender a forma correta. O exercício consiste em um problema de domínio com requisitos e um contexto, onde um time deve propor uma arquitetura dentro de um tempo limitado. É uma excelente forma de treinar o &#34;olho&#34; para o que é realmente importante.</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-15" class="outline-2">
+<h2 id="headline-15">
+Estudo de Caso: O navio Vasa
+</h2>
+<div id="outline-text-headline-15" class="outline-text-2">
+<p>
+A história do navio sueco Vasa é o exemplo perfeito de over-engineering (excesso de engenharia). O rei queria o navio mais magnífico do mundo: dois decks (em vez de um) e o dobro de canhões. Por causa disso, o navio ficou pesado demais na parte superior e afundou logo no seu primeiro teste. Se você perguntar aos <strong>stakeholders</strong> o que eles querem, eles dirão &#34;todos os recursos&#34;. É papel do arquiteto, através de técnicas como a &#34;planilha de características arquiteturais&#34; (onde listamos e priorizamos as 3 mais críticas), filtrar o que realmente faz o sistema ter sucesso, evitando transformar seu projeto em um &#34;Vasa&#34;.</p>
+<p>
+<strong><strong>Conclusão:</strong></strong> Não tente maximizar todas as características. Escolha as que são vitais para o sucesso, negocie o que é possível e mantenha a simplicidade. Arquitetura é a arte de gerenciar escolhas e as consequências (os <strong>trade-offs</strong>) dessas escolhas.</p>
+<hr>
+</div>
+</div>
+<div id="outline-container-headline-16" class="outline-2">
+<h2 id="headline-16">
+Medindo e Governando Características de Arquitetura
+</h2>
+<div id="outline-text-headline-16" class="outline-text-2">
+<p>
+Arquitetos precisam lidar com uma variedade extraordinariamente ampla de características de arquitetura em todos os aspectos dos projetos de software. Aspectos operacionais, como desempenho, elasticidade e escalabilidade, se misturam com preocupações estruturais, como modularidade e facilidade de implantação (<strong>deployability</strong>). Para o arquiteto, é muito mais vantajoso saber como medir e governar essas características do que se afogar em termos ambíguos e definições genéricas. Este artigo foca em definir de forma concreta algumas das características mais comuns e discute como criar mecanismos de governança para elas.</p>
+<div id="outline-container-headline-17" class="outline-3">
+<h3 id="headline-17">
+Medindo Características de Arquitetura
+</h3>
+<div id="outline-text-headline-17" class="outline-text-3">
+<p>
+Arquitetos têm dificuldade em definir características de arquitetura por vários motivos:</p>
+<ul>
+<li><strong><strong>Não são leis da física:</strong></strong> Muitas características de arquitetura de uso comum têm significados vagos. Por exemplo, como um arquiteto projeta para agilidade ou facilidade de implantação? E quanto a um &#34;desempenho ultra-rápido&#34;? As pessoas na indústria têm perspectivas muito diferentes sobre termos comuns — às vezes por contextos legítimos diferentes, às vezes por acaso.</li>
+<li><strong><strong>Definições que variam demais:</strong></strong> Mesmo dentro da mesma organização, departamentos diferentes podem discordar sobre as definições de características críticas, como desempenho. Até que desenvolvedores, arquitetos, operações e outros consigam chegar a um consenso sobre uma definição comum, como poderão ter uma conversa produtiva?</li>
+<li><strong><strong>Composição excessiva:</strong></strong> Muitas características desejáveis de arquitetura são, na verdade, coleções de outras características em escala menor (como vimos na discussão sobre características arquiteturais compostas). Por exemplo, a agilidade se divide em características como modularidade, facilidade de implantação e testabilidade.</li>
+</ul>
+<p>Decompor características arquiteturais compostas em suas partes constituintes é uma parte importante para estabelecer definições objetivas, o que resolve esses três problemas. Quando uma organização concorda que todos usarão definições padrão e concretas para as características de arquitetura, cria-se uma linguagem comum (ou <strong>ubiquitous language</strong>) em torno da arquitetura. Essa padronização permite desmembrar características compostas para descobrir recursos que podem ser medidos objetivamente.</p>
+</div>
+</div>
+<div id="outline-container-headline-18" class="outline-3">
+<h3 id="headline-18">
+Medidas Operacionais
+</h3>
+<div id="outline-text-headline-18" class="outline-text-3">
+<p>
+Muitas características de arquitetura têm medidas diretas óbvias, como desempenho ou escalabilidade. No entanto, mesmo elas oferecem muitas interpretações sutis, dependendo dos objetivos da equipe. Por exemplo, talvez sua equipe meça o tempo médio de resposta para certas requisições — um bom exemplo de medida para uma característica de arquitetura operacional. Mas se sua equipe mede apenas a média, o que acontece se alguma condição de contorno fizer com que 1% das requisições levem 10 vezes mais tempo que as outras? Se o site tiver tráfego suficiente, esses valores discrepantes (<strong>outliers</strong>) podem nem aparecer. Para capturar esses casos, você também pode querer medir os tempos máximos de resposta.</p>
+<p>
+Equipes de alto nível não estabelecem apenas números rígidos de desempenho; elas baseiam suas definições em análises estatísticas. Por exemplo, digamos que um serviço de streaming de vídeo queira monitorar a escalabilidade. Em vez de definir um número arbitrário como meta, os engenheiros medem a escala ao longo do tempo, criam modelos estatísticos e disparam alarmes se as métricas em tempo real fugirem dos modelos de previsão. Se isso acontecer, a falha pode significar duas coisas: o modelo está incorreto (o que as equipes gostam de saber) ou algo está errado (o que as equipes também gostam de saber).</p>
+<p>
+Os tipos de características que as equipes medem evoluem rapidamente em conjunto com ferramentas, alvos, dispositivos e capacidades. Recentemente, muitas equipes têm focado em orçamentos de desempenho para métricas como o <strong>first contentful paint</strong> (primeira exibição de conteúdo) e <strong>first CPU idle</strong> (quando a CPU fica ociosa pela primeira vez), que dizem muito sobre problemas de desempenho para usuários de páginas web em dispositivos móveis. À medida que essas e inúmeras outras coisas mudam, as equipes encontrarão novas formas de medir.</p>
+</div>
+</div>
+<div id="outline-container-headline-19" class="outline-3">
+<h3 id="headline-19">
+Os Vários Sabores do Desempenho
+</h3>
+<div id="outline-text-headline-19" class="outline-text-3">
+<p>
+Muitas das características de arquitetura que descrevemos têm múltiplas definições. Desempenho é um ótimo exemplo. Muitos projetos olham para o desempenho geral: por exemplo, quanto tempo levam os ciclos de requisição e resposta de uma aplicação web. No entanto, através de um trabalho imenso, arquitetos e engenheiros de DevOps em muitas organizações estabeleceram orçamentos de desempenho específicos para partes específicas de uma aplicação. Por exemplo, muitas organizações pesquisaram o comportamento do usuário e determinaram que o tempo ideal para a renderização da primeira página (o primeiro sinal visível de progresso para uma página web em um navegador ou dispositivo móvel) é uma fração de segundo. A maioria das aplicações fica na casa das dezenas de milissegundos para essa métrica. Mas, para sites modernos que tentam capturar o maior número possível de usuários, essa é uma métrica importante a ser rastreada, e as organizações por trás desses sites construíram medidas extremamente detalhadas.</p>
+<p>
+Algumas dessas métricas têm implicações adicionais para o design da aplicação. Muitas organizações visionárias definem orçamentos de &#34;peso em K&#34; para downloads de páginas; ou seja, permitem um número máximo de bytes de bibliotecas e frameworks em uma página específica. A justificativa vem de restrições físicas: apenas um número limitado de bytes pode trafegar por uma rede por vez, especialmente para dispositivos móveis em áreas com baixa largura de banda.</p>
+</div>
+</div>
+<div id="outline-container-headline-20" class="outline-3">
+<h3 id="headline-20">
+Medidas Estruturais
+</h3>
+<div id="outline-text-headline-20" class="outline-text-3">
+<p>
+Algumas medidas objetivas não são tão óbvias quanto o desempenho. E quanto às características estruturais internas, como uma modularidade bem definida? Este é um ótimo exemplo de uma característica arquitetural implícita — arquitetos são responsáveis por definir componentes e interações, e querem construir uma estrutura sustentável para alta qualidade geral. Infelizmente, ainda não existem métricas abrangentes para avaliar a qualidade de uma arquitetura. No entanto, existem métricas e ferramentas comuns que permitem aos arquitetos abordar alguns aspectos críticos da estrutura do código, embora em dimensões limitadas.</p>
+<p>
+Um aspecto mensurável do código é a complexidade, definida pela métrica de <strong><strong>Complexidade Ciclomática</strong></strong>.</p>
+<div id="outline-container-headline-21" class="outline-4">
+<h4 id="headline-21">
+Complexidade Ciclomática
+</h4>
+<div id="outline-text-headline-21" class="outline-text-4">
+<p>
+A Complexidade Ciclomática (CC) é uma métrica de nível de código criada por Thomas McCabe Sr., em 1976, para fornecer uma medida objetiva da complexidade do código no nível de função/método, classe ou aplicação. Ela é calculada aplicando a teoria dos grafos ao código — especificamente, a pontos de decisão que causam diferentes caminhos de execução. Por exemplo, se uma função não tem declarações de decisão (como comandos `if`), então CC = 1. Se a função tem um único condicional, então CC = 2, porque existem dois caminhos de execução possíveis.</p>
+<p>
+A fórmula para calcular a CC de uma única função ou método é $CC = E - N + 2$, onde $N$ representa nós (linhas de código) e $E$ representa arestas (decisões possíveis). Considere o código abaixo, parecido com a linguagem C, no Exemplo 6-1.</p>
+<p>
+<strong>Exemplo 6-1. Código de exemplo para avaliação de Complexidade Ciclomática</strong></p>
+<div class="src src-java">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">decision</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">c1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">100</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">C2</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">500</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">else</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+A Complexidade Ciclomática para o Exemplo 6-1 é 3 (3 – 2 + 2), conforme mostrado na Figura 6-1.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 6-1. Grafo de Complexidade Ciclomática para a função de decisão</p>
+<p>
+O número 2 que aparece na fórmula da Complexidade Ciclomática representa uma simplificação para uma única função/método. Para chamadas externas para outros métodos (conhecidos como componentes conectados na teoria dos grafos), a fórmula mais geral é $CC = E - N + 2P$, onde $P$ representa o número de componentes conectados.</p>
+<p>
+Arquitetos e desenvolvedores concordam universalmente que código excessivamente complexo representa um &#34;cheiro de código&#34; (<strong>code smell</strong>) — algo que aparece no código que é tão ruim que tem um odor imaginário. Isso prejudica praticamente todas as características desejáveis de bases de código: modularidade, testabilidade, facilidade de implantação e assim por diante. Se as equipes não ficarem de olho no crescimento gradual da complexidade, ela dominará a base de código.</p>
+<p>
+A Complexidade Ciclomática é um ótimo exemplo da &#34;brutalidade&#34; das métricas que os arquitetos têm à disposição. Embora meça a complexidade do código, ela não consegue determinar se essa complexidade é essencial (porque estamos resolvendo um problema complicado) ou acidental (porque implementamos um design ruim). Métricas como a CC são extremamente úteis para avaliar o código, seja ele escrito por desenvolvedores ou por IA generativa. A IA generativa tende a resolver problemas por força bruta, muitas vezes levando a uma complexidade acidental.</p>
+</div>
+</div>
+<div id="outline-container-headline-22" class="outline-4">
+<h4 id="headline-22">
+Qual é um bom valor para a Complexidade Ciclomática?
+</h4>
+<div id="outline-text-headline-22" class="outline-text-4">
+<p>
+Uma pergunta comum que os autores recebem ao falar sobre este assunto é: qual é um bom valor limite para a CC? Claro, como todas as perguntas em arquitetura de software, a resposta é: depende! Especificamente, depende da complexidade do domínio do problema. Por exemplo, se você tem um problema complexo algoritmicamente, a solução produzirá funções complexas. Alguns dos aspectos principais para os arquitetos monitorarem são: as funções são complexas por causa do domínio do problema ou por causa de uma codificação ruim? Alternativamente, o código está mal particionado? Em outras palavras, um método grande poderia ser dividido em pedaços lógicos menores, distribuindo o trabalho (e a complexidade) em métodos mais bem fatorados?</p>
+<p>
+Em geral, os limites da indústria para CC sugerem que um valor abaixo de 10 é aceitável, salvo outras considerações, como domínios complexos. Consideramos esse limite muito alto e preferimos que o código fique abaixo de cinco, indicando um código coeso e bem fatorado. Uma ferramenta de métricas no mundo Java, a <strong>Crap4J</strong>, tenta determinar o quão ruim (<strong>crappy</strong>) seu código é avaliando uma combinação de CC e cobertura de código (<strong>code coverage</strong>); se a CC cresce para mais de 50, nenhuma quantidade de cobertura de código salva esse código da ruindade. O artefato profissional mais aterrorizante que o Neal já encontrou foi uma única função em C que servia como o coração de um pacote de software comercial cuja CC era superior a 800! Era uma única função com mais de 4.000 linhas de código, incluindo o uso liberal de declarações `GOTO` (para escapar de loops aninhados impossivelmente profundos).</p>
+<p>
+Práticas de engenharia como o Desenvolvimento Orientado a Testes (TDD) têm o efeito colateral benéfico de gerar métodos menores e menos complexos, em média, para um determinado domínio de problema. Ao praticar o TDD, os desenvolvedores tentam escrever um teste simples e, em seguida, escrevem a menor quantidade de código possível para passar no teste. Esse foco em comportamento discreto e bons limites de teste incentiva métodos bem fatorados e altamente coesos que exibem baixa CC.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-23" class="outline-3">
+<h3 id="headline-23">
+Medidas de Processo
+</h3>
+<div id="outline-text-headline-23" class="outline-text-3">
+<p>
+Algumas características de arquitetura se cruzam com processos de desenvolvimento de software. Por exemplo, a agilidade costuma aparecer como um recurso desejável. No entanto, é uma característica de arquitetura composta, feita de recursos como testabilidade e facilidade de implantação. A testabilidade é mensurável através de ferramentas de cobertura de código para praticamente todas as plataformas que relatam qual porcentagem do código os testes executam. Como todas as verificações de software, no entanto, elas não podem substituir o pensamento e a intenção. Por exemplo, uma base de código pode ter 100% de cobertura de código, mas usar asserções ruins que não fornecem confiança na correção do código.</p>
+<p>
+A testabilidade é uma característica objetivamente mensurável, assim como a facilidade de implantação. As métricas de facilidade de implantação incluem porcentagem de implantações bem-sucedidas, quanto tempo levam as implantações e problemas/bugs levantados pelas implantações. Cada equipe deve chegar a um bom conjunto de medidas que capturem dados qualitativos e quantitativos úteis para as prioridades e objetivos de sua organização e equipe.</p>
+<p>
+Embora a agilidade e suas partes relacionadas se relacionem claramente com o processo de desenvolvimento de software, esse processo pode influenciar a estrutura da arquitetura. Por exemplo, se a facilidade de implantação e a testabilidade são altas prioridades, o arquiteto enfatizará uma boa modularidade e isolamento no nível da arquitetura — um exemplo de uma característica de arquitetura direcionando uma decisão estrutural. Praticamente qualquer coisa dentro do escopo de um projeto de software pode subir ao nível de uma característica de arquitetura se conseguir atender aos nossos três critérios, forçando um arquiteto a tomar decisões significativas para dar conta disso.</p>
+<hr>
+</div>
+</div>
+<div id="outline-container-headline-24" class="outline-3">
+<h3 id="headline-24">
+Governança e Funções de Aptidão
+</h3>
+<div id="outline-text-headline-24" class="outline-text-3">
+<p>
+Uma vez que os arquitetos estabelecem e priorizam as características de arquitetura, como podem garantir que os desenvolvedores respeitem essas prioridades e implementem seus designs correta e seguramente, independentemente da pressão de cronograma? Em muitos projetos de software, a urgência domina, mas os arquitetos ainda precisam de ferramentas e técnicas para fornecer governança arquitetural. A modularidade é um ótimo exemplo de um aspecto da arquitetura que é importante, mas não urgente.</p>
+<div id="outline-container-headline-25" class="outline-4">
+<h4 id="headline-25">
+Governando Características de Arquitetura
+</h4>
+<div id="outline-text-headline-25" class="outline-text-4">
+<p>
+Governança, derivada da palavra grega <strong>kubernan</strong> (guiar/pilotar), é uma responsabilidade importante do papel de arquiteto. Como o nome sugere, seu escopo cobre qualquer aspecto do processo de desenvolvimento de software que os arquitetos queiram influenciar. Por exemplo, garantir a qualidade do software cai sob a governança arquitetural, porque negligenciá-la pode levar a problemas de qualidade desastrosos.</p>
+<p>
+Felizmente, os arquitetos têm soluções cada vez mais sofisticadas para esse problema — um bom exemplo de crescimento incremental dentro das capacidades do ecossistema de desenvolvimento de software. A busca pela automação gerada pelo <strong>Extreme Programming</strong> criou a Integração Contínua (CI). A CI levou a uma maior automação em operações, que agora chamamos de DevOps, e essa cadeia continua até a governança arquitetural. O livro <strong>Building Evolutionary Architectures</strong> (O&#39;Reilly, 2022), de Neal Ford et al., descreve uma família de técnicas chamadas de <strong><strong>funções de aptidão</strong></strong> (<strong>fitness functions</strong>) usadas para automatizar muitos aspectos da governança de arquitetura. Passaremos o restante deste artigo analisando as funções de aptidão.</p>
+</div>
+</div>
+<div id="outline-container-headline-26" class="outline-4">
+<h4 id="headline-26">
+Funções de Aptidão
+</h4>
+<div id="outline-text-headline-26" class="outline-text-4">
+<p>
+A palavra <strong>evolucionária</strong> no título <strong>Building Evolutionary Architectures</strong> vem mais da computação evolucionária do que da biologia. Uma das autoras, a Dra. Rebecca Parsons, passou algum tempo no espaço da computação evolucionária, incluindo o trabalho com ferramentas como algoritmos genéticos. Quando um desenvolvedor projeta um algoritmo genético para produzir algum resultado benéfico, ele muitas vezes quer guiar o algoritmo fornecendo uma medida objetiva da qualidade de seu resultado. Esse mecanismo de orientação é chamado de <strong><strong>função de aptidão</strong></strong>: uma função objeto usada para avaliar quão perto o resultado chega de atingir seu objetivo.</p>
+<p>
+Por exemplo, suponha que você precise resolver o problema do caixeiro-viajante, um problema famoso usado como base para aprendizado de máquina. Dado um caixeiro, uma lista de cidades que ele deve visitar e as distâncias entre essas cidades, qual é a rota ideal possível — minimizando distância, tempo e custo? Se você projetar um algoritmo genético para resolver esse problema, você pode usar uma função de aptidão para avaliar a duração da rota e outra para avaliar o custo total associado à rota. Ainda outra poderia avaliar o tempo que o caixeiro-viajante está fora.</p>
+<p>
+Práticas em arquitetura evolucionária tomam emprestado esse conceito para criar uma <strong><strong>função de aptidão arquitetural</strong></strong>: qualquer mecanismo que forneça uma avaliação objetiva da integridade de alguma característica de arquitetura ou combinação de características de arquitetura.</p>
+<p>
+Funções de aptidão não são algum novo framework para os arquitetos baixarem. Em vez disso, elas oferecem uma nova perspectiva sobre muitas ferramentas existentes. Observe na definição a frase <strong>qualquer mecanismo</strong> — as técnicas de verificação para características de arquitetura são tão variadas quanto as características. As funções de aptidão se sobrepõem a muitos mecanismos de verificação existentes, dependendo da maneira como são usadas: em engenharia de caos ou como métricas, monitores ou bibliotecas de teste unitário (veja a Figura 6-2).</p>
+<p>
+[imagem]</p>
+<p>
+Figura 6-2. Os mecanismos das funções de aptidão</p>
+<p>
+Muitas ferramentas diferentes podem ser usadas para implementar funções de aptidão, dependendo das características de arquitetura. Vamos dar uma olhada em alguns exemplos de funções de aptidão que testam vários aspectos da modularidade.</p>
+</div>
+</div>
+<div id="outline-container-headline-27" class="outline-4">
+<h4 id="headline-27">
+Dependências Cíclicas
+</h4>
+<div id="outline-text-headline-27" class="outline-text-4">
+<p>
+A modularidade é uma característica arquitetural implícita com a qual a maioria dos arquitetos se preocupa. Como a modularidade mal mantida prejudica a estrutura de uma base de código, os arquitetos geralmente priorizam a manutenção de uma boa modularidade. No entanto, em muitas plataformas, existem forças trabalhando contra essas boas intenções. Por exemplo, ao codificar em qualquer ambiente de desenvolvimento Java ou .NET popular, assim que um desenvolvedor referencia uma classe que ainda não foi importada, a IDE apresenta de forma prestativa uma caixa de diálogo perguntando se eles gostariam de importar automaticamente a referência. Isso ocorre com tanta frequência que a maioria dos programadores descarta a caixa de diálogo de auto-importação por reflexo. Mas importar classes arbitrariamente entre componentes pode significar um desastre para a modularidade. Por exemplo, a Figura 6-3 ilustra Dependências Cíclicas, um antipadrão particularmente prejudicial que os arquitetos aspiram evitar.</p>
+<p>
+Na Figura 6-3, cada componente referencia algo nos outros componentes. Ter uma rede como essa prejudica a modularidade, porque é impossível reutilizar um único componente sem trazer os outros junto. E se esses outros componentes estiverem acoplados a outros componentes? A arquitetura tenderá cada vez mais para o antipadrão da &#34;Bola de Lama&#34; (<strong>Big Ball of Mud</strong>). Como os arquitetos podem governar esse comportamento sem ficar constantemente olhando por cima dos ombros dos desenvolvedores? Revisões de código ajudam, mas acontecem tarde demais no ciclo de desenvolvimento para serem totalmente eficazes. Se a equipe de desenvolvimento importar desenfreadamente pela base de código durante uma semana até a revisão de código, eles já causaram sérios danos à base de código.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 6-3. Dependências cíclicas entre componentes</p>
+<p>
+A solução para esse problema é escrever uma função de aptidão para cuidar dos ciclos, como mostrado no Exemplo 6-2.</p>
+<p>
+<strong>Exemplo 6-2. Função de aptidão para detectar ciclos de componentes</strong></p>
+<div class="src src-java">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CycleTest</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">JDepend</span><span class="w"> </span><span class="n">jdepend</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@BeforeEach</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">jdepend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JDepend</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">jdepend</span><span class="p">.</span><span class="na">addDirectory</span><span class="p">(</span><span class="s">&#34;/path/to/project/persistence/classes&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">jdepend</span><span class="p">.</span><span class="na">addDirectory</span><span class="p">(</span><span class="s">&#34;/path/to/project/web/classes&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">jdepend</span><span class="p">.</span><span class="na">addDirectory</span><span class="p">(</span><span class="s">&#34;/path/to/project/thirdpartyjars&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">testAllPackages</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Collection</span><span class="w"> </span><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jdepend</span><span class="p">.</span><span class="na">analyze</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">&#34;Cycles exist&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="n">jdepend</span><span class="p">.</span><span class="na">containsCycles</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Este código usa a ferramenta de métricas <strong>JDepend</strong> para verificar as dependências entre pacotes. A ferramenta entende a estrutura dos pacotes Java e falha no teste se encontrar quaisquer ciclos. Um arquiteto pode conectar esse teste na compilação contínua de um projeto e parar de se preocupar com desenvolvedores de gatilho fácil introduzindo ciclos acidentalmente. Este é um ótimo exemplo de uma função de aptidão protegendo as práticas importantes, mas não urgentes, do desenvolvimento de software: é uma preocupação importante para os arquitetos, mas tem pouco impacto na codificação do dia a dia.</p>
+</div>
+</div>
+<div id="outline-container-headline-28" class="outline-4">
+<h4 id="headline-28">
+Função de aptidão de Distância da Sequência Principal
+</h4>
+<div id="outline-text-headline-28" class="outline-text-4">
+<p>
+Em &#34;Acoplamento&#34;, introduzimos a métrica mais esotérica de <strong>Distância da Sequência Principal</strong>, que também pode ser verificada usando funções de aptidão, como mostrado no Exemplo 6-3.</p>
+<p>
+<strong>Exemplo 6-3. Função de aptidão de Distância da Sequência Principal</strong></p>
+<div class="src src-java">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">AllPackages</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ideal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">.</span><span class="na">5</span><span class="p">;</span><span class="w"> </span><span class="c1">// dependente do projeto</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Collection</span><span class="w"> </span><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jdepend</span><span class="p">.</span><span class="na">analyze</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Iterator</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">packages</span><span class="p">.</span><span class="na">iterator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iter</span><span class="p">.</span><span class="na">hasNext</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">JavaPackage</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavaPackage</span><span class="p">)</span><span class="n">iter</span><span class="p">.</span><span class="na">next</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">assertEquals</span><span class="p">(</span><span class="s">&#34;Distance exceeded: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">getName</span><span class="p">(),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">ideal</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="na">distance</span><span class="p">(),</span><span class="w"> </span><span class="n">tolerance</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+</div>
+<p>
+Este código usa <strong>JDepend</strong> para estabelecer um limite para valores aceitáveis, falhando no teste se uma classe ficar fora do intervalo. (A ferramenta <strong>ArchUnit</strong>, destacada na próxima seção, permite que os arquitetos criem funções de aptidão semelhantes.) Este exemplo de uma medida objetiva para uma característica de arquitetura ilustra a importância da colaboração entre desenvolvedores e arquitetos ao projetar e implementar funções de aptidão. A intenção não é que um grupo de arquitetos suba a uma torre de marfim e desenvolva funções de aptidão esotéricas que os desenvolvedores não conseguem entender — é implementar regras de governança automatizadas que garantam a qualidade da base de código.</p>
+<blockquote>
+<p>Os arquitetos devem garantir que os desenvolvedores entendam o propósito de uma função de aptidão antes de impô-la a eles.</p>
+</blockquote>
+<p>
+A sofisticação das ferramentas de função de aptidão aumentou nos últimos anos, especialmente à medida que algumas ferramentas de propósito especial surgiram. Uma dessas ferramentas é o <strong>ArchUnit</strong>, um framework de teste Java inspirado em — e usando — várias partes do ecossistema JUnit. O <strong>ArchUnit</strong> fornece uma variedade de regras de governança predefinidas, codificadas como testes unitários, e permite que os arquitetos escrevam testes específicos que abordam a modularidade. Considere a arquitetura em camadas ilustrada na Figura 6-4.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 6-4. Arquitetura em camadas</p>
+<p>
+Ao projetar um monolito em camadas como o da Figura 6-4, o arquiteto define as camadas por boas razões. No entanto, alguns desenvolvedores podem não entender a importância desses padrões, enquanto outros podem adotar uma atitude de &#34;é melhor pedir perdão do que permissão&#34; por causa de alguma preocupação local predominante, como desempenho. Mas permitir que eles corroam as razões para a arquitetura prejudicará a saúde a longo prazo da arquitetura.</p>
+<p>
+O <strong>ArchUnit</strong> permite que os arquitetos abordem esse problema através de uma função de aptidão, mostrada no Exemplo 6-4.</p>
+<p>
+<strong>Exemplo 6-4. Função de aptidão ArchUnit para governar camadas</strong></p>
+<div class="src src-java">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">layeredArchitecture</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">layer</span><span class="p">(</span><span class="s">&#34;Controller&#34;</span><span class="p">).</span><span class="na">definedBy</span><span class="p">(</span><span class="s">&#34;..controller..&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">layer</span><span class="p">(</span><span class="s">&#34;Service&#34;</span><span class="p">).</span><span class="na">definedBy</span><span class="p">(</span><span class="s">&#34;..service..&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">layer</span><span class="p">(</span><span class="s">&#34;Persistence&#34;</span><span class="p">).</span><span class="na">definedBy</span><span class="p">(</span><span class="s">&#34;..persistence..&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">whereLayer</span><span class="p">(</span><span class="s">&#34;Controller&#34;</span><span class="p">).</span><span class="na">mayNotBeAccessedByAnyLayer</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">whereLayer</span><span class="p">(</span><span class="s">&#34;Service&#34;</span><span class="p">).</span><span class="na">mayOnlyBeAccessedByLayers</span><span class="p">(</span><span class="s">&#34;Controller&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">whereLayer</span><span class="p">(</span><span class="s">&#34;Persistence&#34;</span><span class="p">).</span><span class="na">mayOnlyBeAccessedByLayers</span><span class="p">(</span><span class="s">&#34;Service&#34;</span><span class="p">)</span></span></span></code></pre></div>
+</div>
+<p>
+No Exemplo 6-4, o arquiteto define o relacionamento desejável entre camadas e escreve uma função de aptidão de verificação para governá-lo.</p>
+<p>
+Existe uma ferramenta semelhante no espaço .NET, o <strong>NetArchTest</strong>. O Exemplo 6-5 mostra uma verificação de camada em C#.</p>
+<p>
+<strong>Exemplo 6-5. NetArchTest para dependências de camada</strong></p>
+<div class="src src-csharp">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-csharp" data-lang="csharp"><span class="line"><span class="cl"><span class="c1">// Classes na apresentação não devem referenciar repositórios diretamente</span>
+</span></span><span class="line"><span class="cl"><span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">Types</span><span class="p">.</span><span class="n">InCurrentDomain</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">That</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">ResideInNamespace</span><span class="p">(</span><span class="s">&#34;NetArchTest.SampleLibrary.Presentation&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">ShouldNot</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">HaveDependencyOn</span><span class="p">(</span><span class="s">&#34;NetArchTest.SampleLibrary.Data&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">GetResult</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="n">IsSuccessful</span><span class="p">;</span></span></span></code></pre></div>
+</div>
+<p>
+Nossa discussão sobre testabilidade destaca um problema com qualquer métrica ou medida: a possibilidade de que os desenvolvedores tentem &#34;trapacear&#34; o sistema. Uma vez que aprendem como os arquitetos estão medindo a conformidade, eles podem codificar para a métrica em vez de construir a coisa correta. Por exemplo, uma falha comum da testabilidade ocorre quando desenvolvedores que estão tomando atalhos escrevem testes unitários, mas sem quaisquer asserções. &#34;Tocar&#34; no código, mas não verificar se ele funciona, equivale a trapacear na métrica de cobertura de código. Escrever código de governança usando ferramentas como o <strong>ArchUnit</strong> ajuda os arquitetos a evitar esse comportamento, garantindo que cada teste unitário inclua pelo menos uma asserção. Claro, aqueles que quebram regras dedicados sempre encontrarão um caminho, mas funções de aptidão como essa evitam lapsos acidentais.</p>
+<p>
+Outro exemplo de funções de aptidão são o &#34;Chaos Monkey&#34; da Netflix e o seu <strong>Simian Army</strong> (Exército Simiesco). Quando a Netflix decidiu mover suas operações para a nuvem da Amazon, os arquitetos não tinham mais controle sobre as operações, o que os preocupava: o que aconteceria se um defeito aparecesse operacionalmente? Para resolver esse problema, eles criaram a disciplina de engenharia do caos. O <strong>Chaos Monkey</strong> atua essencialmente como uma função de aptidão em produção, simulando caos geral para ver quão bem o sistema consegue suportá-lo. Latência era um problema com algumas instâncias da AWS, então o <strong>Chaos Monkey</strong> simulava alta latência. (Na verdade, isso era um problema tão grande, que eles eventualmente criaram um <strong>Latency Monkey</strong> especializado). Isso os levou a desenvolver ferramentas adicionais: por exemplo, o <strong>Chaos Kong</strong>, que simula a falha de um datacenter inteiro da Amazon, tem ajudado a Netflix a evitar tais interrupções quando elas ocorrem de verdade.</p>
+<p>
+Em particular, os &#34;Macacos&#34; (funções de aptidão) de Conformidade, Segurança e Zelador (<strong>Janitor</strong>) exemplificam a abordagem de governança automatizada. O <strong>Conformity Monkey</strong> permite que os arquitetos da Netflix definam regras de governança aplicadas pelo &#34;macaco&#34; em produção. Por exemplo, se eles decidirem que cada serviço deve responder sem erros para todas as requisições, eles incorporam essa verificação no <strong>Conformity Monkey</strong>. O <strong>Security Monkey</strong> verifica cada serviço em busca de defeitos de segurança bem conhecidos, como portas que não deveriam estar ativas e erros de configuração.</p>
+<p>
+Finalmente, o <strong>Janitor Monkey</strong> procura por instâncias para as quais nenhum outro serviço roteia mais nada. A Netflix tem uma arquitetura evolucionária, então os desenvolvedores migram rotineiramente para serviços mais novos, deixando serviços antigos rodando sem colaboradores. Como rodar serviços na nuvem consome dinheiro, o <strong>Janitor Monkey</strong> procura por serviços órfãos e os desintegra da produção.</p>
+<p>
+A engenharia do caos oferece uma nova perspectiva interessante sobre a arquitetura: não é uma questão de se algo irá quebrar eventualmente, mas <strong>quando</strong>. Antecipar essas quebras e testar para preveni-las torna os sistemas muito mais robustos. Um livro de alguns dos inovadores da Netflix, Casey Rosenthal e Nora Jones, chamado <strong>Chaos Engineering</strong> (O&#39;Reilly, 2020), destaca essa abordagem.</p>
+<p>
+O influente livro de Atul Gawande, <strong>O Manifesto do Checklist</strong> (Metropolitan, 2009), descreve como profissionais como pilotos de linha aérea e cirurgiões usam listas de verificação. (Às vezes, eles são até legalmente obrigados a fazê-lo). Não é porque esses profissionais não conhecem seus trabalhos ou são esquecidos. Pelo contrário, quando os profissionais fazem um trabalho altamente detalhado repetidas vezes, torna-se fácil que detalhes escapem; uma lista de verificação sucinta forma um lembrete eficaz.</p>
+<p>
+Esta é a perspectiva correta sobre as funções de aptidão — elas não são um mecanismo de governança pesado, mas um mecanismo para os arquitetos expressarem e verificarem automaticamente princípios arquiteturais importantes. Os desenvolvedores sabem que não devem lançar código inseguro, mas isso compete com dezenas ou centenas de outras prioridades. Ferramentas como o <strong>Security Monkey</strong>, e funções de aptidão em geral, permitem que os arquitetos construam verificações de governança importantes no substrato da arquitetura.</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-29" class="outline-3">
+<h3 id="headline-29">
+O Escopo das Características de Arquitetura
+</h3>
+<div id="outline-text-headline-29" class="outline-text-3">
+<p>
+O pensamento dos arquitetos de software deve evoluir com nosso ecossistema, e isso não é mais evidente do que no escopo das características de arquitetura. Muitos dos frameworks obsoletos para determinar características de arquitetura tinham uma falha fatal: assumir um único conjunto de características de arquitetura para todo o sistema. Embora isso ainda seja verdade às vezes, muitas arquiteturas modernas, como microsserviços, contêm características de arquitetura diferentes nos níveis de serviço e de sistema.</p>
+<p>
+O escopo das características de arquitetura é uma medida útil para os arquitetos, especialmente para determinar o estilo de arquitetura mais apropriado a ser usado como ponto de partida para a implementação. Quando estávamos escrevendo nosso livro <strong>Building Evolutionary Architectures</strong>, precisávamos de uma técnica para medir a evolutividade estrutural de estilos de arquitetura específicos. Nenhuma das medidas existentes oferecia o nível correto de detalhes. A seção &#34;Medidas Estruturais&#34; discute uma variedade de métricas de nível de código que permitem aos arquitetos analisar aspectos estruturais de uma arquitetura — mas nenhuma dessas métricas reflete o escopo. Elas revelam detalhes de baixo nível sobre o código, mas não podem avaliar componentes dependentes fora da base de código (como bancos de dados) que afetam muitas características arquiteturais, especialmente as operacionais. Não importa o esforço que um arquiteto coloque no design de uma base de código para ser performática ou elástica, se o banco de dados do sistema não corresponder a essas características, seu esforço não será bem-sucedido.</p>
+<p>
+Ao não encontrar uma boa medida de escopo, desenvolvemos uma. Nós a chamamos de <strong><strong>quantum de arquitetura</strong></strong>.</p>
+<div id="outline-container-headline-30" class="outline-4">
+<h4 id="headline-30">
+Quanta e Granularidade Arquitetural
+</h4>
+<div id="outline-text-headline-30" class="outline-text-4">
+<p>
+O acoplamento no nível de componente não é a única coisa que une o software. Muitos conceitos de negócios unem partes do sistema semanticamente, criando coesão funcional. Para projetar, analisar e evoluir o software com sucesso, arquitetos e desenvolvedores devem considerar todos os pontos de acoplamento que podem quebrar.</p>
+<blockquote>
+<p><strong><strong>Plurais para Termos Técnicos Derivados do Latim</strong></strong>
+<strong>Quantum</strong> origina-se do latim, o que significa que o plural termina com um &#34;a&#34;. Se você tiver mais de um <strong>quantum</strong>, você tem <strong>quanta</strong> — como o mais comum <strong>data</strong> (dados), também derivado do latim. Arquitetos raramente discutem um único <strong>datum</strong>. O guia de uso <strong>Chicago Manual of Style</strong> observa: &#34;Embora originalmente esta palavra fosse um plural de <strong>datum</strong>, agora é comumente tratada como um substantivo de massa e acoplada a um verbo no singular&#34; (18ª edição, 2024, p. 336).</p>
+</blockquote>
+<p>
+Muitos arquitetos com conhecimento científico conhecem o conceito de <strong>quantum</strong> da física, onde ele se refere à menor quantidade possível de algo — geralmente energia. A palavra <strong>quantum</strong> deriva do latim, significando &#34;quão grande&#34; ou &#34;quanto&#34;. No uso geral, tende a significar &#34;coisa pequena e inquebrável&#34;, que é como definimos um <strong>quantum</strong> de arquitetura. Outra definição informal comum de <strong>quantum</strong> de arquitetura é &#34;a menor parte do sistema que roda independentemente&#34;. Por exemplo, microsserviços frequentemente formam <strong>quanta</strong> de arquitetura, o que exemplifica essa definição: um serviço pode rodar independentemente dentro da arquitetura, incluindo seus próprios dados e outras dependências.</p>
+<p>
+Um <strong>quantum</strong> de arquitetura estabelece o escopo para um conjunto de características de arquitetura. Ele possui:</p>
+<ul>
+<li>Implantação independente de outras partes da arquitetura</li>
+<li>Alta coesão funcional</li>
+<li>Baixo acoplamento estático de implementação externa</li>
+<li>Comunicação síncrona com outros <strong>quanta</strong></li>
+</ul>
+<p>Esta definição contém várias partes. Vamos decompô-las:</p>
+<ul>
+<li><strong><strong>Estabelece o escopo para um conjunto de características de arquitetura:</strong></strong> Os arquitetos usam o <strong>quantum</strong> de arquitetura como um limite que delineia um conjunto de características de arquitetura, particularmente as operacionais. Por ser implantável independentemente e ter alta coesão funcional (discutida a seguir), o <strong>quantum</strong> de arquitetura fornece uma medida útil de modularidade de arquitetura.</li>
+<li><strong><strong>Implantável independentemente:</strong></strong> Um <strong>quantum</strong> de arquitetura inclui todos os componentes necessários para funcionar independentemente de outras partes da arquitetura. Por exemplo, se uma aplicação usa um banco de dados, esse banco de dados faz parte do <strong>quantum</strong>, porque o sistema não funcionará sem ele. Esse requisito significa que praticamente todos os sistemas legados que são implantados usando um único banco de dados, por definição, formam um <strong>quantum</strong> de um. No entanto, no estilo de arquitetura de microsserviços, cada serviço inclui seu próprio banco de dados (parte da filosofia de condução de contexto delimitado, descrita em detalhes em um artigo futuro). Isso cria múltiplos <strong>quanta</strong> dentro dessa arquitetura, porque cada serviço tem seu próprio escopo de características de arquitetura.</li>
+<li><strong><strong>Alta coesão funcional:</strong></strong> Coesão no design de componentes refere-se a quão unificado o código contido é em seu propósito. Por exemplo, um componente <strong>Cliente</strong>, com propriedades e métodos todos pertinentes a uma entidade <strong>Cliente</strong>, exibe alta coesão. Um componente <strong>Utilitário</strong> com uma coleção aleatória de métodos diversos não. Alta coesão funcional implica que um <strong>quantum</strong> de arquitetura faz algo proposital. Essa distinção importa pouco em aplicações monolíticas tradicionais com um único banco de dados, onde a coesão é essencialmente todo o sistema. No entanto, em arquiteturas distribuídas como orientadas a eventos ou microsserviços, os arquitetos são mais propensos a projetar cada serviço para corresponder a um único fluxo de trabalho (um contexto delimitado, como descrito em &#34;Contexto Delimitado do Design Orientado ao Domínio&#34;), de modo que o serviço exibiria alta coesão funcional.</li>
+</ul>
+<blockquote>
+<p><strong><strong>Contexto Delimitado do Design Orientado ao Domínio</strong></strong>
+O livro de Eric Evans, <strong>Design Orientado ao Domínio</strong> (<strong>Domain-Driven Design</strong> - Addison-Wesley Professional, 2003), influenciou profundamente o pensamento arquitetural moderno. O <strong>Domain-Driven Design</strong> (DDD) é uma técnica de modelagem que permite aos arquitetos decompor domínios de problemas complexos de uma maneira organizada. O DDD define um contexto delimitado, onde tudo relacionado a uma porção do domínio é visível internamente, mas opaco para outros contextos delimitados. Antes do DDD, os arquitetos buscavam reutilizar código holisticamente em entidades comuns dentro da organização. Mas eles descobriram que criar artefatos compartilhados comuns causa uma série de problemas, como acoplamento forte, coordenação mais difícil e maior complexidade. O conceito de contexto delimitado reconhece que cada entidade funciona melhor dentro de um contexto localizado. Assim, em vez de criar uma classe <strong>Cliente</strong> unificada em toda a organização, cada domínio de problema pode criar sua própria classe <strong>Cliente</strong> e reconciliar as diferenças nos pontos de comunicação com outros domínios.</p>
+</blockquote>
+<p>
+Para esclarecer as próximas partes da definição, precisamos fazer algumas distinções mais precisas sobre os tipos de acoplamento:</p>
+<ul>
+<li><strong><strong>Acoplamento semântico:</strong></strong> O acoplamento semântico descreve o acoplamento natural do problema para o qual um arquiteto está construindo uma solução. Por exemplo, o acoplamento inerente de uma aplicação de processamento de pedidos inclui coisas como inventário, catálogos, carrinhos de compras, clientes e vendas. A natureza do problema que motiva a construção de uma solução de software define esse acoplamento. Arquitetos têm poucas técnicas que impedem que mudanças no domínio se espalhem pelo sistema: uma mudança no domínio (e, portanto, na semântica) significa que estamos mudando os requisitos para o sistema. Embora os arquitetos possam se adaptar a isso, nenhum padrão de arquitetura mágico impede que a mudança no problema central afete a arquitetura.</li>
+<li><strong><strong>Acoplamento de implementação:</strong></strong> O acoplamento de implementação descreve como um arquiteto e uma equipe decidem implementar dependências específicas. Em uma aplicação de processamento de pedidos, a equipe deve considerar uma variedade de restrições ao definir limites de domínio. Por exemplo, todos os dados devem residir em um único banco de dados, ou parte deles deve ser dividida para melhor escalabilidade ou disponibilidade? Devemos construir um monolito ou uma arquitetura distribuída? As respostas a essas perguntas têm pouco efeito sobre o acoplamento semântico do sistema, mas afetam muito as decisões arquiteturais.</li>
+<li><strong><strong>Acoplamento estático:</strong></strong> O acoplamento estático refere-se à &#34;fiação&#34; de uma arquitetura — como os serviços dependem uns dos outros. Dois serviços fazem parte do mesmo <strong>quantum</strong> de arquitetura se ambos dependerem do mesmo ponto de acoplamento. Por exemplo, digamos que dois microsserviços, <strong>Catálogo</strong> e <strong>Envio</strong>, precisem compartilhar informações de endereço, então ambos criam uma dependência para um componente compartilhado. Como ambos os serviços estão acoplados a essa dependência, eles fazem parte do mesmo <strong>quantum</strong> de arquitetura. Aqui está uma maneira fácil de pensar sobre acoplamento em arquitetura de software: duas coisas estão acopladas se mudar uma puder quebrar a outra. O acoplamento estático define as dependências de escopo em uma arquitetura. Por exemplo, se vários serviços usam o mesmo banco de dados relacional, eles fazem parte do mesmo <strong>quantum</strong>.</li>
+<li><strong><strong>Acoplamento dinâmico:</strong></strong> O acoplamento dinâmico descreve as forças envolvidas quando os <strong>quanta</strong> de arquitetura devem se comunicar uns com os outros. Por exemplo, quando dois serviços estão rodando, eles devem se comunicar para formar fluxos de trabalho e executar tarefas dentro do sistema. Arquitetos devem considerar as trocas ao se comunicar entre serviços em uma arquitetura distribuída, o que é discutido em um artigo futuro.</li>
+</ul>
+<p>Com essas definições em mãos, podemos completar nossa definição de <strong>quantum</strong> de arquitetura:</p>
+<ul>
+<li><strong><strong>Baixo acoplamento estático de implementação externa:</strong></strong> O nível de acoplamento de implementação entre <strong>quanta</strong> de arquitetura deve ser baixo. Essa característica também deriva da filosofia do DDD de baixo acoplamento entre contextos delimitados. <strong>Quanta</strong> formam os blocos de construção operacionais da arquitetura que ficam um nível de abstração acima dos componentes. Eles geralmente se sobrepõem aos limites dos serviços. Esse objetivo reflete a preferência geral dos arquitetos pelo baixo acoplamento entre diferentes partes da arquitetura.</li>
+</ul>
+<p>Em geral, o acoplamento forte é desejável quando é necessária alta coesão, como dentro de um serviço ou subsistema. Chamamos uma arquitetura de &#34;frágil&#34; quando uma única mudança de implementação pode causar efeitos colaterais inesperados em cascata que quebram muitas outras coisas (supostamente não relacionadas). Quanto mais amplo o escopo do acoplamento do sistema, mais o baixo acoplamento ajuda a tornar a arquitetura menos frágil. Por exemplo, um arquiteto pode renomear um campo em uma chamada de serviço de <strong>State</strong> para <strong>StateCode</strong>, pensando que isso afetará apenas um chamador, apenas para descobrir que muitas outras dependências acabaram de quebrar inesperadamente.</p>
+<blockquote>
+<p>Maior acoplamento é permitido para escopos mais estreitos; quanto mais amplo o escopo, mais baixo deve ser o acoplamento.</p>
+</blockquote>
+<ul>
+<li><strong><strong>Comunicação Síncrona:</strong></strong> Comunicação refere-se ao acoplamento dinâmico — quando os <strong>quanta</strong> de arquitetura chamam uns aos outros, o que é comum em arquiteturas distribuídas. Isso preocupa particularmente a família de características arquiteturais operacionais descritas em &#34;Características Arquiteturais Operacionais&#34;, porque elas frequentemente determinam tempos e bloqueios importantes em arquiteturas distribuídas.</li>
+</ul>
+<p>Por exemplo, considere uma arquitetura de microsserviços com um serviço de <strong>Pagamento</strong> e um serviço de <strong>Leilão</strong>. Quando um leilão termina, o serviço de <strong>Leilão</strong> envia informações de pagamento de forma síncrona para o serviço de <strong>Pagamento</strong>. No entanto, digamos que o serviço de <strong>Pagamento</strong> só consiga lidar com um pagamento a cada 500 ms. O que acontece quando um grande número de leilões termina de uma vez? Os dois serviços têm características arquiteturais operacionais diferentes. A primeira chamada funcionará, mas depois as chamadas começarão a falhar porque o serviço de <strong>Pagamento</strong> não consegue lidar com o número de requisições — ele não é tão escalável quanto o serviço de <strong>Leilão</strong>. Chamamos a atenção aqui para a comunicação síncrona porque a comunicação assíncrona tem menos impacto potencial.</p>
+<p>
+Por exemplo, se o serviço de <strong>Leilão</strong> chamar o serviço de <strong>Pagamento</strong> de forma assíncrona, usando uma fila de mensagens, a fila pode atuar como um buffer para permitir que os dois sistemas operem. Claro, se o serviço de <strong>Leilão</strong> enviar continuamente mais mensagens do que o <strong>Pagamento</strong> consegue lidar, ele acabará transbordando a fila de mensagens. No entanto, quando a enxurrada de mensagens chega em rajadas, a fila pode segurar as mensagens pendentes até que o receptor esteja pronto. A comunicação síncrona é implacável em arquiteturas distribuídas, especialmente se partes da arquitetura tiverem características arquiteturais diferentes. Um artigo futuro cobrirá os tipos de comunicação em arquiteturas orientadas a eventos.</p>
+<p>
+O conceito de <strong>quantum</strong> de arquitetura fornece uma nova maneira de pensar sobre escopo. Em sistemas modernos, os arquitetos definem características de arquitetura no nível do <strong>quantum</strong> em vez do nível do sistema. Isso fornece informações importantes ao analisar um novo domínio de problema.</p>
+<hr>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-31" class="outline-3">
+<h3 id="headline-31">
+O Impacto da Definição de Escopo
+</h3>
+<div id="outline-text-headline-31" class="outline-text-3">
+<p>
+Os arquitetos podem usar o escopo das características de arquitetura para ajudar a determinar limites de serviço apropriados, ilustrados no geral na árvore de decisão na Figura 7-1 e detalhados nos passos.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-1. Uma árvore de decisão que usa o escopo de características de arquitetura para ajudar a determinar o estilo arquitetural</p>
+<div id="outline-container-headline-32" class="outline-4">
+<h4 id="headline-32">
+Definição de Escopo e Estilo Arquitetural
+</h4>
+<div id="outline-text-headline-32" class="outline-text-4">
+<p>
+Determinar os limites de <strong>quantum</strong> do domínio do problema ajuda na escolha de um estilo de arquitetura: uma arquitetura monolítica ou uma arquitetura distribuída é mais adequada? Considere a primeira parte do gráfico de decisão mostrado na Figura 7-2.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-2. Escolhendo um estilo arquitetural apropriado com base nas características arquiteturais</p>
+<p>
+Como discutimos neste artigo, os arquitetos devem analisar as características de arquitetura e o domínio para determinar o estilo de arquitetura mais apropriado. Parte dessa análise diz respeito a se a solução precisa de múltiplos grupos de características de arquitetura. No passo um na Figura 7-2, o arquiteto determina se o sistema pode ter sucesso com um único conjunto de características de arquitetura, ou se mais de um grupo é necessário (veja a seção &#34;Kata: Tornando-se Verde&#34; para um exemplo).</p>
+<p>
+Se o arquiteto determinar que um único conjunto de características de arquitetura será suficiente, ele pode escolher uma arquitetura monolítica, reduzindo o número de escolhas subsequentes. Se ele escolher uma arquitetura distribuída, o próximo passo é determinar seus limites de <strong>quantum</strong>, como mostrado na Figura 7-3.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-3. Em arquiteturas distribuídas, os arquitetos devem escolher os limites de quantum apropriados</p>
+<p>
+Fornecemos algumas diretrizes para determinar a granularidade em um artigo futuro. O próximo passo é escolher um mecanismo de persistência, que diz respeito a ambas as famílias de arquitetura, mostrado na Figura 7-4.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-4. Ambos os estilos de arquitetura geralmente exigem persistência de algum tipo</p>
+<p>
+Para arquiteturas monolíticas, um único banco de dados monolítico é geralmente adequado. A arquitetura e o banco de dados são desenvolvidos e implantados juntos, em sintonia. Isso completa o processo — o arquiteto pode seguir em frente para escolher o estilo monolítico mais apropriado.</p>
+<p>
+Arquiteturas distribuídas, por outro lado, podem usar um único banco de dados (comum em arquiteturas orientadas a eventos) ou particionar os dados ao longo das linhas da granularidade do serviço (como em arquiteturas de microsserviços). Resta um passo adicional: determinar que tipo de comunicação usar entre os <strong>quanta</strong>, síncrona ou assíncrona. (Discutimos essa questão em um artigo futuro.) Lembre-se de que, em alguns sistemas, escolher a comunicação síncrona pode alterar os limites de <strong>quantum</strong> estabelecidos através do acoplamento estático; os dois tipos de acoplamento interagem frequentemente.</p>
+</div>
+</div>
+<div id="outline-container-headline-33" class="outline-4">
+<h4 id="headline-33">
+Kata: Tornando-se Verde
+</h4>
+<div id="outline-text-headline-33" class="outline-text-4">
+<p>
+Vamos tentar analisar um problema usando o <strong>quantum</strong> de arquitetura como um escopo para características de arquitetura. O problema, chamado <strong>Going Green</strong> (Tornando-se Verde), é ilustrado na Figura 7-5. Você está trabalhando com a <strong>Going Green</strong> (GG), uma empresa que recicla e revende eletrônicos antigos, como telefones celulares. Seu sistema usa quiosques públicos e um site, todos rodando o mesmo sistema. Um usuário pode fazer o upload do número do modelo e da condição do seu dispositivo, e a GG fará um lance por ele. Se o usuário aceitar o lance, ele pode depositá-lo no quiosque ou, se usar o site, a GG enviará uma caixa para enviá-lo pelo correio. Ao receber o dispositivo, a GG o avalia e envia o pagamento ao usuário. A GG então estima o valor do dispositivo e o recicla ou revende. Seu sistema também produz relatórios e outras análises.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-5. Visão geral dos requisitos da Going Green</p>
+<p>
+Ao realizar sua análise de características de arquitetura, você percebe a formação de três grupos distintos, como mostrado na Figura 7-6.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-6. A análise das características arquiteturais da GG gera três grupos de recursos</p>
+<p>
+As partes da aplicação voltadas para o público precisam de escalabilidade, disponibilidade e agilidade; as funções de <strong>back-office</strong> precisam de segurança, integridade de dados e auditabilidade; e a parte de avaliação precisa de manutenibilidade, facilidade de implantação e testabilidade (que compõem a característica de arquitetura composta de agilidade). Por que a parte de avaliação precisa de um conjunto separado de características de arquitetura? Este é um bom exemplo de como os impulsionadores de negócios se cruzam com as preocupações arquiteturais. O modelo de negócios da GG depende da revenda dos eletrônicos usados de maior valor, e novos modelos surgem em um fluxo constante. Quanto mais rápido eles puderem atualizar suas avaliações de dispositivos, mais poderão obter dispositivos mais novos (e, portanto, mais valiosos) para revender.</p>
+<p>
+Você poderia projetar um sistema que atenda a todos esses critérios: escalabilidade, disponibilidade, segurança, integridade de dados, auditabilidade, manutenibilidade, facilidade de implantação e testabilidade? É possível… mas seria difícil. Essas características de arquitetura frequentemente se contrapõem: por exemplo, alcançar uma rápida facilidade de implantação é mais difícil quando você também está priorizando preocupações de <strong>back-office</strong> como auditabilidade. E a interface do usuário exige um nível de escalabilidade vastamente diferente de outras partes do sistema.</p>
+<p>
+Em vez de tentar fazer tudo, você pode usar os grupos de características de arquitetura como seu guia para separar os <strong>quanta</strong>. Na Figura 7-7, as linhas pontilhadas ilustram cada <strong>quantum</strong> de arquitetura. Usar o escopo da característica como um guia para a granularidade do serviço é um bom primeiro passo para determinar o conjunto de trocas mais benéfico.</p>
+<p>
+[imagem]</p>
+<p>
+Figura 7-7. Esta arquitetura da GG captura cada conjunto de características de arquitetura como um limite arquitetural</p>
+</div>
+</div>
+<div id="outline-container-headline-34" class="outline-4">
+<h4 id="headline-34">
+Definição de Escopo e a Nuvem
+</h4>
+<div id="outline-text-headline-34" class="outline-text-4">
+<p>
+Recursos baseados em nuvem complicam o quadro, porque eles encapsulam muitas das características arquiteturais operacionais de um sistema. Os arquitetos devem considerar pelo menos dois cenários ao usar recursos baseados em nuvem para toda ou parte de uma aplicação, dependendo do modelo de implantação:</p>
+<ul>
+<li><strong><strong>Usando a nuvem para hospedar contêineres:</strong></strong> Muitas equipes de desenvolvimento usam a nuvem como um centro de operações alternativo, rodando (e orquestrando) contêineres para servidores. Nessas situações, os arquitetos devem considerar as características de arquitetura dos contêineres e as restrições introduzidas pela ferramenta de orquestração (por exemplo, Kubernetes).</li>
+<li><strong><strong>Usando recursos do provedor de nuvem como componentes do sistema:</strong></strong> Outro sabor de um sistema baseado em nuvem reúne aplicações usando blocos de construção do provedor de nuvem, como funções acionadas, bancos de dados, e assim por diante. Nesse caso, os arquitetos devem olhar para as capacidades que o provedor anuncia (e, esperamos, mantém) para obter insights sobre como construir capacidades adequadas para aquele contexto específico.</li>
+</ul>
+<p>Muitas das capacidades que conhecemos hoje como configurações de provedores de nuvem, como elasticidade, foram conquistadas a duras penas pela geração anterior de arquitetos que trabalhavam em sistemas físicos. Suas principais preocupações tornaram-se mais fáceis — mas temos nosso próprio conjunto moderno de trocas, como a disponibilidade do provedor e preocupações aumentadas com a segurança. Os detalhes da arquitetura de software mudam muito, mas o trabalho de analisar trocas permanece constante.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+  </div>
+</article>
+
+    </main>
+    <hr>
+    <footer>
+    </footer>
+  </div>
+<script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+<script src="/vendor/prism/prism-core.min.js"></script>
+<script src="/vendor/prism/prism-clike.min.js"></script>
+<script src="/vendor/prism/prism-bash.min.js"></script>
+<script src="/vendor/prism/prism-c.min.js"></script>
+<script src="/vendor/prism/prism-cpp.min.js"></script>
+<script src="/vendor/prism/prism-rust.min.js"></script>
+<script src="/vendor/prism/prism-go.min.js"></script>
+<script src="/vendor/prism/prism-javascript.min.js"></script>
+<script src="/vendor/prism/prism-typescript.min.js"></script>
+<script src="/vendor/prism/prism-clojure.min.js"></script>
+<script src="/vendor/prism/prism-lisp.min.js"></script>
+<script src="/vendor/prism/prism-swift.min.js"></script>
+<script src="/vendor/prism/prism-zig.min.js"></script>
+<script src="/vendor/prism/prism-sql.min.js"></script>
+<script src="/vendor/prism/prism-autoloader.min.js"></script>
+  <script src="/vendor/mermaid/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { fontFamily: '"Inter", system-ui, sans-serif', fontSize: '14px', primaryColor: '#cba6f7', primaryTextColor: '#cdd6f4', primaryBorderColor: '#7f849c', lineColor: '#89b4fa', secondaryColor: '#313244', tertiaryColor: '#45475a' } });
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('code.language-mermaid').forEach(function(el) {
+        var mDiv = document.createElement('div');
+        mDiv.className = 'mermaid';
+        mDiv.textContent = el.textContent;
+        var wrap = el.closest('.src-mermaid') || el.closest('.src') || el.closest('.highlight') || el.parentElement;
+        if (wrap) wrap.replaceWith(mDiv);
+      });
+      mermaid.run();
+    });
+  </script>
+  <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">^ top</button>
+  <script>
+    document.querySelectorAll('.content table').forEach(function(t) {
+      if (t.closest('.table-wrapper')) return;
+      var w = document.createElement('div');
+      w.className = 'table-wrapper';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  </script>
+  <script>
+    var btn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', function() {
+      btn.classList.toggle('visible', window.scrollY > 400);
+    });
+  </script>
+</body>
+</html>
